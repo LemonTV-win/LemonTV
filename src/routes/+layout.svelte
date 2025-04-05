@@ -2,6 +2,8 @@
 	import '../app.css';
 
 	let { children } = $props();
+
+	import { m } from '$lib/paraglide/messages.js';
 </script>
 
 <header
@@ -9,10 +11,10 @@
 >
 	<a href="/" class="text-2xl font-bold">🍋 LemonTV</a>
 	<nav class="flex items-center gap-4">
-		<a href="/news">News</a>
-		<a href="/events">Events</a>
-		<a href="/teams">Teams</a>
-		<a href="/players">Players</a>
+		<a href="/news">{m.news()}</a>
+		<a href="/events">{m.events()}</a>
+		<a href="/teams">{m.teams()}</a>
+		<a href="/players">{m.players()}</a>
 	</nav>
 </header>
 

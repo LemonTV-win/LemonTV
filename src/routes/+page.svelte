@@ -1,11 +1,12 @@
 <script lang="ts">
+	import { m } from '$lib/paraglide/messages';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
 </script>
 
 <main class="mx-auto max-w-screen-lg">
-	<h2 class="my-10 text-2xl font-bold">Events</h2>
+	<h2 class="my-10 text-2xl font-bold">{m.events()}</h2>
 	<ul>
 		{#each data.events as event}
 			{#if event.status !== 'upcoming'}
@@ -21,7 +22,7 @@
 			{/if}
 		{/each}
 	</ul>
-	<h3 class="my-10 text-xl font-bold">Upcoming</h3>
+	<h3 class="my-10 text-xl font-bold">{m.upcoming()}</h3>
 	<ul>
 		{#each data.events as event}
 			{#if event.status === 'upcoming'}
