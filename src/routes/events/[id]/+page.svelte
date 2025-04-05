@@ -36,6 +36,9 @@
 			<div class="text-gray-400">
 				{data.event.participants} Teams・<time datetime={data.event.date}>{data.event.date}</time>
 			</div>
+			{#if data.event.website}
+				<a href={data.event.website} class="text-gray-400"> Visit Website </a>
+			{/if}
 		</div>
 		<nav class="m-2 flex gap-4 rounded-sm bg-gray-200/50 p-2">
 			<button>Overview</button>

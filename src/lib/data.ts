@@ -113,6 +113,7 @@ export interface Event {
 	};
 	participants: number;
 	date: string;
+	website?: string;
 }
 
 const teams: Record<string, Team> = {
