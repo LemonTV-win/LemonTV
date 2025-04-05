@@ -661,6 +661,24 @@ const events: Event[] = [
 		matches: tournamentMatches,
 		participants: 16,
 		date: '2025-02-01'
+	},
+	{
+		id: 2,
+		name: 'Apac No.1 tournament KAWA cup',
+		official: false,
+		server: 'strinova',
+		image:
+			'https://img.tonamel.com/c!/f=webp:auto,w=1600,h=900,a=2/upload_images/organize_competition/yROLW/fc1ed3f7ca5a35d6de5c20a8db90b617b89a063bedaaba6a205de19c1b00ad07.jpg',
+		status: 'upcoming',
+		matches: [],
+		organizer: {
+			name: '川島宮殿',
+			logo: 'https://pbs.twimg.com/profile_images/1792733020912545792/NKEIhBSI_400x400.jpg',
+			url: 'https://x.com/kawakyuden'
+		},
+		participants: 8,
+		date: '2025-05-04',
+		website: 'https://tonamel.com/competition/OU2cd'
 	}
 ];
 
