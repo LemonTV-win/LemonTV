@@ -161,7 +161,7 @@ const teams: Record<string, Team> = {
 			},
 			{
 				ingame: 'ぺこどん',
-				common: 'ぺこどん'
+				common: 'MIZU'
 			},
 			{
 				ingame: '箱子箱',
