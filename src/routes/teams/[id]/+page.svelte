@@ -11,29 +11,21 @@
 
 {#if data.team}
 	<main class="mx-auto max-w-screen-lg">
-		<!--
-  <h2>Ongoing Events</h2>
-  
-  <h2>Upcoming Events</h2>
-  
-  <h2>Past Events</h2> -->
-
-		<div>
-			<h1>{data.team.name}</h1>
-			{#if data.team.logo}
-				<img src={data.team.logo} alt={data.team.name} />
-			{/if}
-			<p>{data.team.region}</p>
-			{#if data.team.players}
-				<ul>
-					{#each data.team.players as player}
-						<li>
-							<a href={`/players/${player.id}`}>{player.ingame}</a>
-						</li>
-					{/each}
-				</ul>
-			{/if}
-		</div>
+		<h1 class="my-10 text-2xl font-bold">{data.team.name}</h1>
+		<p>{data.team.region}</p>
+		{#if data.team.logo}
+			<img src={data.team.logo} alt={data.team.name} />
+		{/if}
+		<h2 class="my-5 text-xl font-bold">Active members</h2>
+		{#if data.team.players}
+			<ul>
+				{#each data.team.players as player}
+					<li>
+						<a href={`/players/${player.id}`}>{player.ingame}</a>
+					</li>
+				{/each}
+			</ul>
+		{/if}
 	</main>
 {/if}
 
