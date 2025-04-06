@@ -36,6 +36,7 @@ export type UrbinoCharacter =
 export type Character = PUSCharacter | ScissorsCharacter | UrbinoCharacter;
 
 export interface Player {
+	id: number;
 	ingame: string;
 	common: string;
 }
@@ -122,22 +123,27 @@ const teams: Record<string, Team> = {
 		region: 'NA',
 		players: [
 			{
+				id: 1,
 				ingame: 'frostyZK',
 				common: 'frostyZK'
 			},
 			{
+				id: 2,
 				ingame: 'grustleking',
 				common: 'grustleking'
 			},
 			{
+				id: 3,
 				ingame: 'gengu',
 				common: 'gengu'
 			},
 			{
+				id: 4,
 				ingame: 'Ascinei',
 				common: 'Ascinei'
 			},
 			{
+				id: 5,
 				ingame: 'ttvBlexiss',
 				common: 'Blexiss'
 			}
@@ -148,30 +154,37 @@ const teams: Record<string, Team> = {
 		region: 'APAC',
 		players: [
 			{
+				id: 1,
 				ingame: 'JY10137',
 				common: '瑾玥'
 			},
 			{
+				id: 2,
 				ingame: '｜結城さくな｜',
 				common: '逍遥sama'
 			},
 			{
+				id: 3,
 				ingame: 'twitchー77427',
 				common: '羽生翼'
 			},
 			{
+				id: 4,
 				ingame: 'ぺこどん',
 				common: 'MIZU'
 			},
 			{
+				id: 5,
 				ingame: '箱子箱',
 				common: 'BOXCAT'
 			},
 			{
+				id: 6,
 				ingame: 'Chtho1ly',
 				common: 'Chtho1ly'
 			},
 			{
+				id: 7,
 				ingame: 'ChengCheng',
 				common: 'ChengCheng'
 			}
@@ -182,22 +195,27 @@ const teams: Record<string, Team> = {
 		region: 'NA',
 		players: [
 			{
+				id: 8,
 				ingame: 'xohfiy',
 				common: 'xohfiy'
 			},
 			{
+				id: 9,
 				ingame: 'Kariyuu',
 				common: 'Kariyuu'
 			},
 			{
+				id: 10,
 				ingame: 'FOX1Yukino',
 				common: 'FOX1Yukino'
 			},
 			{
+				id: 11,
 				ingame: 'HonkWith4ks',
 				common: 'HonkWith4ks'
 			},
 			{
+				id: 12,
 				ingame: 'numOneZKFan',
 				common: 'numOneZKFan'
 			}
@@ -208,22 +226,27 @@ const teams: Record<string, Team> = {
 		region: 'NA',
 		players: [
 			{
+				id: 13,
 				ingame: 'Creepz',
 				common: 'Creepz'
 			},
 			{
+				id: 14,
 				ingame: 'Poison',
 				common: 'Poison'
 			},
 			{
+				id: 15,
 				ingame: 'Moozor',
 				common: 'Moozor'
 			},
 			{
+				id: 16,
 				ingame: 'Vampire',
 				common: 'Vampire'
 			},
 			{
+				id: 17,
 				ingame: 'GWZH',
 				common: 'GWZH'
 			}
@@ -234,30 +257,37 @@ const teams: Record<string, Team> = {
 		region: 'APAC',
 		players: [
 			{
+				id: 18,
 				ingame: 'cherry',
 				common: 'cherry'
 			},
 			{
+				id: 19,
 				ingame: 'iYu',
 				common: 'iYu'
 			},
 			{
+				id: 20,
 				ingame: 'Actyuki',
 				common: 'Actyuki'
 			},
 			{
+				id: 21,
 				ingame: 'Saya',
 				common: 'Saya'
 			},
 			{
+				id: 22,
 				ingame: 'Jav',
 				common: 'Jav'
 			},
 			{
+				id: 23,
 				ingame: 'SilliestOfThreat',
 				common: 'SilliestOfThreat'
 			},
 			{
+				id: 24,
 				ingame: 'Actyuki丶Student',
 				common: 'Actyuki丶Student'
 			}
@@ -692,4 +722,15 @@ export function getEvent(id: number) {
 
 export function getMatch(id: number) {
 	return tournamentMatches.find((match) => match.id === id);
+}
+
+export function getTeams() {
+	return Object.entries(teams).map(([key, value]) => ({
+		id: key,
+		...value
+	}));
+}
+
+export function getTeam(id: string) {
+	return teams[id];
 }
