@@ -10,18 +10,22 @@
 	<h1 class="my-10 text-2xl font-bold">{m.teams()}</h1>
 	<ul>
 		{#each data.teams as team}
-			<li class="border-b-1 border-gray-500 bg-gray-800 p-4 shadow-2xl">
-				<a href={`/teams/${team.id}`} class="mb-8 text-2xl font-bold">{team.name}</a>
-				{#if team.players}
-					<ul class="grid grid-cols-3 gap-4 p-4">
-						{#each team.players as player}
-							<li>
-								<a href={`/players/${player.id}`}>{player.name}</a>
-							</li>
-						{/each}
-					</ul>
-				{/if}
-			</li>
+			{#if team}
+				<li class="border-b-1 border-gray-500 bg-gray-800 p-4 shadow-2xl">
+					<a href={`/teams/${team.id}`} class="mb-8 text-2xl font-bold">{team.name}</a>
+					{#if team.players}
+						<ul class="grid grid-cols-3 gap-4 p-4">
+							{#each team.players as player}
+								<li>
+									{#if player}
+										<a href={`/players/${player.id}`}>{player.name}</a>
+									{/if}
+								</li>
+							{/each}
+						</ul>
+					{/if}
+				</li>
+			{/if}
 		{/each}
 	</ul>
 </main>
