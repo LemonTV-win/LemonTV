@@ -1534,3 +1534,13 @@ export function getPlayers() {
 export function getPlayer(id: string) {
 	return players[id];
 }
+
+export function getPlayerTeams(id: string) {
+	return getTeams().filter((team) => team.players?.some((player) => player && player.id === id));
+}
+
+export function getPlayerEvents(id: string) {
+	return getEvents().filter((event) =>
+		event.teams.some((team) => team.players?.some((player) => player && player.id === id))
+	);
+}

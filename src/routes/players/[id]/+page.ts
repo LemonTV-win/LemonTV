@@ -1,9 +1,11 @@
 import type { PageLoad } from './$types';
 
-import { getPlayer } from '$lib/data';
+import { getPlayer, getPlayerTeams, getPlayerEvents } from '$lib/data';
 
 export const load: PageLoad = ({ params }) => {
 	return {
-		player: getPlayer(params.id)
+		player: getPlayer(params.id),
+		playerTeams: getPlayerTeams(params.id),
+		playerEvents: getPlayerEvents(params.id)
 	};
 };

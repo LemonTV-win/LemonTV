@@ -24,16 +24,29 @@
 				{/each}
 			</ul>
 		{/if}
-		<!-- <h2 class="my-5 text-xl font-bold">Active members</h2> -->
-		<!-- {#if data.player.teams}
+		{#if data.playerTeams}
 			<ul>
-				{#each data.player.teams as team}
-					<li>
-						<a href={`/teams/${team.id}`}>{team.name}</a>
-					</li>
+				{#each data.playerTeams as team}
+					{#if team}
+						<li>
+							<a href={`/teams/${team.id}`}>{team.name}</a>
+						</li>
+					{/if}
 				{/each}
 			</ul>
-		{/if} -->
+		{/if}
+		{#if data.playerEvents}
+			<h2 class="my-5 text-xl font-bold">Events</h2>
+			<ul>
+				{#each data.playerEvents as event}
+					{#if event}
+						<li>
+							<a href={`/events/${event.id}`}>{event.name}</a>
+						</li>
+					{/if}
+				{/each}
+			</ul>
+		{/if}
 	</main>
 {/if}
 
