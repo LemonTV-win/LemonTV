@@ -4,7 +4,7 @@
 	let { children } = $props();
 
 	import { m } from '$lib/paraglide/messages.js';
-	import { setLocale, type Locale } from '$lib/paraglide/runtime';
+	import { setLocale, type Locale, getLocale } from '$lib/paraglide/runtime';
 
 	const locales: Record<Locale, string> = {
 		en: 'English',
@@ -19,7 +19,7 @@
 		ru: 'Русский'
 	};
 
-	let locale = $state('en');
+	let locale = $state(getLocale());
 </script>
 
 <header
