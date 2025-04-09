@@ -1526,3 +1526,11 @@ export function getTeams() {
 export function getTeam(id: string) {
 	return teams[id];
 }
+
+export function getPlayers() {
+	return Object.values(players);
+}
+
+export function getPlayer(id: string) {
+	return players[id];
+}
