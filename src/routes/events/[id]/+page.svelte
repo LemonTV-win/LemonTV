@@ -62,9 +62,11 @@
 					<span class="text-gray-400">({team.region})</span>
 					<ul>
 						{#each team.players ?? [] as player}
-							<li>
-								<a href={`/players/${player.id}`}>{player.common}</a>
-							</li>
+							{#if player}
+								<li>
+									<a href={`/players/${player.id}`}>{player.name}</a>
+								</li>
+							{/if}
 						{/each}
 					</ul>
 				</li>

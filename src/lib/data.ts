@@ -36,10 +36,19 @@ export type UrbinoCharacter =
 export type Character = PUSCharacter | ScissorsCharacter | UrbinoCharacter;
 
 export interface Player {
-	id: number;
-	ingame: string;
-	common: string;
-	nationality?: 'KR' | 'JP' | 'TW' | 'US' | 'VN' | 'ID';
+	id?: string;
+	name: string;
+	nationality?: 'KR' | 'JP' | 'TW' | 'US' | 'VN' | 'ID' | 'CN';
+	aliases?: string[];
+	gameAccounts: GameAccount[];
+}
+
+export interface GameAccount {
+	id?: number;
+	accountId: number;
+	currentName: string;
+	previousNames?: string[];
+	region: 'CN' | 'APAC' | 'NA' | 'EU';
 }
 
 export interface Team {
@@ -119,181 +128,857 @@ export interface Event {
 	teams: Team[];
 }
 
+const players: Record<string, Player> = {
+	frostyZK: {
+		id: 'frostyZK',
+		name: 'frostyZK',
+		nationality: 'US',
+		gameAccounts: [
+			{
+				accountId: 2947836,
+				currentName: 'frostyZK',
+				region: 'NA'
+			}
+		]
+	},
+	grustleking: {
+		id: 'grustleking',
+		name: 'grustleking',
+		nationality: 'US',
+		gameAccounts: [
+			{
+				accountId: 2003944,
+				currentName: 'grustleking',
+				region: 'NA'
+			}
+		]
+	},
+	gengu: {
+		id: 'gengu',
+		name: 'gengu',
+		nationality: 'US',
+		gameAccounts: [
+			{
+				accountId: 2005346,
+				currentName: 'gengu',
+				region: 'NA'
+			}
+		]
+	},
+	Ascinei: {
+		id: 'Ascinei',
+		name: 'Ascinei',
+		nationality: 'US',
+		gameAccounts: [
+			{
+				accountId: 2003513,
+				currentName: 'Ascinei',
+				region: 'NA'
+			}
+		]
+	},
+	Blexiss: {
+		id: 'Blexiss',
+		name: 'Blexiss',
+		nationality: 'US',
+		gameAccounts: [
+			{
+				accountId: 2003592,
+				currentName: 'Blexiss',
+				region: 'NA'
+			}
+		]
+	},
+	JY10137: {
+		id: 'JY10137',
+		name: '瑾玥',
+		nationality: 'CN',
+		gameAccounts: [
+			{
+				accountId: 2340207,
+				currentName: 'JY10137',
+				region: 'APAC'
+			}
+		]
+	},
+	逍遥sama: {
+		id: '逍遥Samaノ',
+		name: '逍遥Samaノ',
+		nationality: 'CN',
+		gameAccounts: []
+	},
+	羽生翼: {
+		id: '羽生翼',
+		name: '羽生翼',
+		nationality: 'CN',
+		gameAccounts: []
+	},
+	MIZU: {
+		id: 'MIZU',
+		name: 'MIZU',
+		nationality: 'JP',
+		gameAccounts: [
+			{
+				accountId: 2047299,
+				currentName: 'ぺこどん',
+				region: 'APAC'
+			}
+		]
+	},
+	BOXCAT: {
+		id: 'BOXCAT',
+		name: 'BOXCAT',
+		nationality: 'CN',
+		gameAccounts: [
+			{
+				accountId: 2988260,
+				currentName: '箱子箱',
+				region: 'APAC'
+			}
+		]
+	},
+	Chtho1ly: {
+		id: 'Chtho1ly',
+		name: 'Chtho1ly',
+		nationality: 'CN',
+		gameAccounts: []
+	},
+	ChengCheng: {
+		id: 'ChengCheng',
+		name: 'ChengCheng',
+		nationality: 'CN',
+		gameAccounts: [
+			{
+				accountId: 2108435,
+				currentName: 'ChengCheng',
+				region: 'APAC'
+			}
+		]
+	},
+	xohfiy: {
+		id: 'xohfiy',
+		name: 'xohfiy',
+		nationality: 'US',
+		gameAccounts: [
+			{
+				accountId: 2007805,
+				currentName: 'xohfiy',
+				region: 'NA'
+			}
+		]
+	},
+	Kariyu: {
+		id: 'Kariyu',
+		name: 'Kariyu',
+		nationality: 'JP',
+		gameAccounts: [
+			{
+				accountId: 2000837,
+				currentName: 'Kariyu',
+				region: 'NA'
+			}
+		]
+	},
+	FOX1Yukino: {
+		id: 'FOX1Yukino',
+		name: 'FOX1Yukino',
+		nationality: 'JP',
+		gameAccounts: [
+			{
+				accountId: 2153306,
+				currentName: 'FOX1Yukino',
+				region: 'NA'
+			}
+		]
+	},
+	HonkWith4ks: {
+		id: 'HonkWith4ks',
+		name: 'HonkWith4ks',
+		nationality: 'JP',
+		gameAccounts: [
+			{
+				accountId: 2024432,
+				currentName: 'HonkWith4ks',
+				region: 'NA'
+			}
+		]
+	},
+	numOneZKFan: {
+		id: 'numOneZKFan',
+		name: 'numOneZKFan',
+		nationality: 'US',
+		gameAccounts: []
+	},
+	Creepz: {
+		id: 'Creepz',
+		name: 'Creepz',
+		nationality: 'US',
+		gameAccounts: [
+			{
+				accountId: 2002886,
+				currentName: 'Creepz',
+				region: 'NA'
+			}
+		]
+	},
+	Poison: {
+		id: 'Poison',
+		name: 'Poison',
+		nationality: 'US',
+		gameAccounts: []
+	},
+	Moozor: {
+		id: 'Moozor',
+		name: 'Moozor',
+		nationality: 'US',
+		gameAccounts: [
+			{
+				accountId: 2003583,
+				currentName: 'Moozor',
+				region: 'NA'
+			}
+		]
+	},
+	Vampire: {
+		id: 'Vampire',
+		name: 'Vampire',
+		nationality: 'US',
+		gameAccounts: [
+			{
+				accountId: 2088110,
+				currentName: 'Vampire',
+				region: 'NA'
+			}
+		]
+	},
+	GWZH: {
+		id: 'GWZH',
+		name: 'GWZH',
+		nationality: 'US',
+		gameAccounts: [
+			{
+				accountId: 2027849,
+				currentName: 'GWZH',
+				region: 'NA'
+			}
+		]
+	},
+	cherry: {
+		id: 'cherry',
+		name: 'cherry',
+		nationality: 'VN',
+		gameAccounts: [
+			{
+				accountId: 3721658,
+				currentName: 'cherry',
+				region: 'APAC'
+			}
+		]
+	},
+	iYu: {
+		id: 'iYu',
+		name: 'iYu',
+		nationality: 'VN',
+		gameAccounts: [
+			{
+				accountId: 2017921,
+				currentName: 'iYu',
+				region: 'APAC'
+			}
+		]
+	},
+	Actyuki: {
+		id: 'Actyuki',
+		name: 'Actyuki',
+		nationality: 'ID',
+		gameAccounts: [
+			{
+				accountId: 2002930,
+				currentName: 'Actyuki',
+				region: 'APAC'
+			}
+		]
+	},
+	Saya: {
+		id: 'Saya',
+		name: 'Saya',
+		gameAccounts: [
+			{
+				accountId: 2001148,
+				currentName: 'Saya',
+				region: 'APAC'
+			}
+		]
+	},
+	Jav: {
+		id: 'Jav',
+		name: 'Jav',
+		gameAccounts: [
+			{
+				accountId: 2035970,
+				currentName: 'Jav',
+				region: 'APAC'
+			}
+		]
+	},
+	SilliestOfThreat: {
+		id: 'SilliestOfThreat',
+		name: 'SilliestOfThreat',
+		gameAccounts: [
+			{
+				accountId: 2002681,
+				currentName: 'SilliestOfThreat',
+				region: 'APAC'
+			}
+		]
+	},
+	Actyuki丶Student: {
+		id: 'Actyuki丶Student',
+		name: 'Actyuki丶Student',
+		gameAccounts: [
+			{
+				accountId: 3097341,
+				currentName: 'Actyuki丶Student',
+				region: 'APAC'
+			}
+		]
+	},
+	ChildHelper: {
+		id: 'ChildHelper',
+		name: 'ChildHelper',
+		gameAccounts: [
+			{
+				accountId: 2526837,
+				currentName: 'ChildHelper',
+				region: 'APAC'
+			}
+		]
+	},
+	MemeVPND: {
+		id: 'MemeVPND',
+		name: 'MemeVPND',
+		gameAccounts: [
+			{
+				accountId: 2116730,
+				currentName: 'MemeVPND',
+				region: 'APAC'
+			}
+		]
+	},
+	京こ: {
+		id: '京こ',
+		name: '京こ',
+		aliases: ['きょうこ'],
+		gameAccounts: [
+			{
+				accountId: 2202592,
+				currentName: '運トリいくわ',
+				region: 'APAC'
+			}
+		]
+	},
+	xelcee: {
+		id: 'xelcee',
+		name: 'xelcee',
+		aliases: ['せら'],
+		gameAccounts: []
+	},
+	Zacro: {
+		id: 'Zacro',
+		name: 'Zacro',
+		aliases: ['ザクロ'],
+		gameAccounts: [
+			{
+				accountId: 2033264,
+				currentName: 'Zacro',
+				region: 'APAC'
+			}
+		]
+	},
+	kuronory: {
+		id: 'kuronory',
+		name: 'kuronory',
+		aliases: ['くろのりー'],
+		gameAccounts: [
+			{
+				accountId: 2216164,
+				currentName: 'uonory',
+				region: 'APAC'
+			}
+		]
+	},
+	rt0803: {
+		id: 'rt0803',
+		name: 'rt0803',
+		aliases: ['あーるてぃー', 'arutei0803'],
+		gameAccounts: [
+			{
+				accountId: 2018404,
+				currentName: 'rt0803',
+				region: 'APAC'
+			}
+		]
+	},
+	おっか: {
+		id: 'おっか',
+		name: 'おっか',
+		aliases: ['おっか'],
+		gameAccounts: [
+			{
+				accountId: 2002634,
+				currentName: 'おっか',
+				region: 'APAC'
+			}
+		]
+	},
+	Nanase: {
+		id: 'Nanase',
+		name: 'Nanase',
+		aliases: ['ななせ'],
+		gameAccounts: [
+			{
+				accountId: 2005800,
+				currentName: 'Nanase',
+				region: 'APAC'
+			}
+		]
+	},
+	Lph4m4218: {
+		id: 'Lph4m4218',
+		name: 'Lph4m4218',
+		gameAccounts: [
+			{
+				accountId: 2202592,
+				currentName: 'Lph4m4218',
+				region: 'APAC'
+			}
+		]
+	},
+	FrostyNade: {
+		id: 'FrostyNade',
+		name: 'FrostyNade',
+		gameAccounts: [
+			{
+				accountId: 2028856,
+				currentName: 'FrostyNade',
+				region: 'APAC'
+			}
+		]
+	},
+	Fis: {
+		id: 'Fis',
+		name: 'Fis',
+		gameAccounts: [
+			{
+				accountId: 2248385,
+				currentName: 'Fis',
+				region: 'APAC'
+			}
+		]
+	},
+	HoangTuHaDong: {
+		id: 'HoangTuHaDong',
+		name: 'HoangTuHaDong',
+		gameAccounts: [
+			{
+				accountId: 2306692,
+				currentName: 'HoangTuHaDong',
+				region: 'APAC'
+			}
+		]
+	},
+	Dinaaa: {
+		id: 'Dinaaa',
+		name: 'Dinaaa',
+		gameAccounts: [
+			{
+				accountId: 2108374,
+				currentName: 'Dinaaa',
+				region: 'APAC'
+			}
+		]
+	},
+	nekocyan: {
+		id: 'nekocyan',
+		name: 'nekocyan',
+		gameAccounts: []
+	},
+	Khanh3993: {
+		id: 'Khanh3993',
+		name: 'Khanh3993',
+		gameAccounts: []
+	},
+	Teakomi: {
+		id: 'Teakomi',
+		name: 'Teakomi',
+		gameAccounts: [
+			{
+				accountId: 3258110,
+				currentName: 'Teakomi',
+				region: 'APAC'
+			}
+		]
+	},
+	Emilinaz: {
+		id: 'Emilinaz',
+		name: 'Emilinaz',
+		gameAccounts: [
+			{
+				accountId: 3873106,
+				currentName: 'Emilinaz',
+				region: 'APAC'
+			}
+		]
+	},
+	hyacinexcon: {
+		id: 'hyacinexcon',
+		name: 'hyacinexcon',
+		gameAccounts: []
+	},
+	Flamesicon: {
+		id: 'Flamesicon',
+		name: 'Flamesicon',
+		gameAccounts: [
+			{
+				accountId: 5832641,
+				currentName: 'Flamesicon',
+				region: 'APAC'
+			}
+		]
+	},
+	Put: {
+		id: 'Put',
+		name: 'Put',
+		gameAccounts: [
+			{
+				accountId: 5529053,
+				currentName: 'Put',
+				region: 'APAC'
+			}
+		]
+	},
+	KanamiMyDearest: {
+		id: 'KanamiMyDearest',
+		name: 'KanamiMyDearest',
+		gameAccounts: [
+			{
+				accountId: 2456956,
+				currentName: 'KanamiMyDearest',
+				region: 'APAC'
+			}
+		]
+	},
+	bululelysia: {
+		id: 'bululelysia',
+		name: 'bululelysia',
+		gameAccounts: []
+	},
+	ToiYeuRem: {
+		id: 'ToiYeuRem',
+		name: 'ToiYeuRem',
+		gameAccounts: []
+	},
+	Unmei: {
+		id: 'Unmei',
+		name: 'Unmei',
+		gameAccounts: [
+			{
+				accountId: 7678631,
+				currentName: 'Unmei',
+				region: 'APAC'
+			}
+		]
+	},
+	Miaa: {
+		id: 'Miaa',
+		name: 'Miaa',
+		gameAccounts: []
+	},
+	Korofunk: {
+		id: 'Korofunk',
+		name: 'Korofunk',
+		gameAccounts: [
+			{
+				accountId: 2144717,
+				currentName: 'Korofunk',
+				region: 'APAC'
+			}
+		]
+	},
+	Helixu: {
+		id: 'Helixu',
+		name: 'Helixu',
+		gameAccounts: []
+	},
+	Davy: {
+		id: 'Davy',
+		name: 'Davy',
+		gameAccounts: [
+			{
+				accountId: 3680447,
+				currentName: 'Davy',
+				region: 'APAC'
+			}
+		]
+	},
+	HVO: {
+		id: 'HVO',
+		name: 'HVO',
+		gameAccounts: []
+	},
+	EFFECT: {
+		id: 'EFFECT',
+		name: 'EFFECT',
+		gameAccounts: [
+			{
+				accountId: 2006752,
+				currentName: 'EFFECT',
+				region: 'APAC'
+			}
+		]
+	},
+	마들렌: {
+		id: '마들렌',
+		name: '마들렌',
+		gameAccounts: [
+			{
+				accountId: 2007795,
+				currentName: '마들렌',
+				region: 'APAC'
+			}
+		]
+	},
+	Y0ungEgg: {
+		id: 'Y0ungEgg',
+		name: 'Y0ungEgg',
+		gameAccounts: [
+			{
+				accountId: 2005475,
+				currentName: 'Y0ungEgg',
+				region: 'APAC'
+			}
+		]
+	},
+	P1ckUp: {
+		id: 'P1ckUp',
+		name: 'P1ckUp',
+		gameAccounts: [
+			{
+				accountId: 2004045,
+				currentName: 'P1ckUp',
+				region: 'APAC'
+			}
+		]
+	},
+	aewan: {
+		id: 'aewan',
+		name: 'aewan',
+		gameAccounts: [
+			{
+				accountId: 2383768,
+				currentName: 'aewan',
+				region: 'APAC'
+			}
+		]
+	},
+	Shingwan: {
+		id: 'Shingwan',
+		name: 'Shingwan',
+		gameAccounts: [
+			{
+				accountId: 2030904,
+				currentName: 'Shingwan',
+				region: 'APAC'
+			}
+		]
+	},
+	clown: {
+		id: 'clown',
+		name: 'clown',
+		gameAccounts: [
+			{
+				accountId: 2334799,
+				currentName: 'clown',
+				region: 'APAC'
+			}
+		]
+	},
+	時雨綺羅: {
+		id: '時雨綺羅',
+		name: '時雨綺羅',
+		gameAccounts: [
+			{
+				accountId: 4900249,
+				currentName: '時雨綺羅',
+				region: 'APAC'
+			}
+		]
+	},
+	myan777みゃん: {
+		id: 'myan777みゃん',
+		name: 'myan777みゃん',
+		gameAccounts: []
+	},
+	さめじまさめみ: {
+		id: 'さめじまさめみ',
+		name: 'さめじまさめみ',
+		gameAccounts: []
+	},
+	Yueee: {
+		id: 'Yueee',
+		name: 'Yueee',
+		gameAccounts: [
+			{
+				accountId: 2418504,
+				currentName: 'Yueee',
+				region: 'APAC'
+			}
+		]
+	},
+	Killersans: {
+		id: 'Killersans',
+		name: 'Killersans',
+		gameAccounts: [
+			{
+				accountId: 2206234,
+				currentName: 'Killersans',
+				region: 'APAC'
+			}
+		]
+	},
+	LOVE: {
+		id: 'LOVE',
+		name: 'LOVE',
+		gameAccounts: [
+			{
+				accountId: 2037110,
+				currentName: 'LOVE',
+				region: 'APAC'
+			}
+		]
+	},
+	Katarieeku: {
+		id: 'Katarieeku',
+		name: 'Katarieeku',
+		gameAccounts: [
+			{
+				accountId: 4810803,
+				currentName: 'Katarieeku',
+				region: 'APAC'
+			}
+		]
+	},
+	belongtoyou: {
+		id: 'belongtoyou',
+		name: 'belongtoyou',
+		gameAccounts: [
+			{
+				accountId: 5807525,
+				currentName: 'belongtoyou',
+				region: 'APAC'
+			}
+		]
+	},
+	YunaLiv: {
+		id: 'YunaLiv',
+		name: 'YunaLiv',
+		nationality: 'VN',
+		gameAccounts: [
+			{
+				accountId: 2003669,
+				currentName: 'YunaLiv',
+				region: 'APAC'
+			}
+		]
+	},
+	Karuto丶Beloved: {
+		id: 'Karuto丶Beloved',
+		name: 'Karuto丶Beloved',
+		nationality: 'VN',
+		gameAccounts: [
+			{
+				accountId: 2130819,
+				currentName: 'Karuto丶Beloved',
+				region: 'APAC'
+			}
+		]
+	},
+	Rinko: {
+		id: 'Rinko',
+		name: 'Rinko',
+		gameAccounts: [
+			{
+				accountId: 2117119,
+				currentName: 'Rinko',
+				region: 'APAC'
+			}
+		]
+	},
+	zKeiser: {
+		id: 'zKeiser',
+		name: 'zKeiser',
+		gameAccounts: []
+	}
+};
+
 const teams: Record<string, Team> = {
 	TG: {
 		name: 'The Grustlers',
 		region: 'NA',
 		players: [
-			{
-				id: 1,
-				ingame: 'frostyZK',
-				common: 'frostyZK'
-			},
-			{
-				id: 2,
-				ingame: 'grustleking',
-				common: 'grustleking'
-			},
-			{
-				id: 3,
-				ingame: 'gengu',
-				common: 'gengu'
-			},
-			{
-				id: 4,
-				ingame: 'Ascinei',
-				common: 'Ascinei'
-			},
-			{
-				id: 5,
-				ingame: 'ttvBlexiss',
-				common: 'Blexiss'
-			}
+			players['frostyZK'],
+			players['grustleking'],
+			players['gengu'],
+			players['Ascinei'],
+			players['Blexiss']
 		]
 	},
 	GUGF: {
 		name: 'GUGF(give us girlfriend)',
 		region: 'APAC',
 		players: [
-			{
-				id: 2340207,
-				ingame: 'JY10137',
-				common: '瑾玥'
-			},
-			{
-				id: 2,
-				ingame: '｜結城さくな｜',
-				common: '逍遥sama'
-			},
-			{
-				id: 3,
-				ingame: 'twitch―77427',
-				common: '羽生翼'
-			},
-			{
-				id: 2047299,
-				ingame: 'ぺこどん',
-				common: 'MIZU'
-			},
-			{
-				id: 2988260,
-				ingame: '箱子箱',
-				common: 'BOXCAT'
-			},
-			{
-				id: 6,
-				ingame: 'Chtho1ly',
-				common: 'Chtho1ly'
-			},
-			{
-				id: 2108435,
-				ingame: 'ChengCheng',
-				common: 'ChengCheng'
-			}
+			players['JY10137'],
+			players['逍遥sama'],
+			players['羽生翼'],
+			players['MIZU'],
+			players['BOXCAT'],
+			players['Chtho1ly'],
+			players['ChengCheng']
 		]
 	},
 	KRC: {
 		name: 'KITTEN ROLL CALL',
 		region: 'NA',
 		players: [
-			{
-				id: 2007805,
-				ingame: 'xohfiy',
-				common: 'xohfiy'
-			},
-			{
-				id: 2000837,
-				ingame: 'Kariyu',
-				common: 'Kariyu'
-			},
-			{
-				id: 2153306,
-				ingame: 'FOX1Yukino',
-				common: 'FOX1Yukino'
-			},
-			{
-				id: 2024432,
-				ingame: 'HonkWith4ks',
-				common: 'HonkWith4ks'
-			},
-			{
-				id: 12,
-				ingame: 'numOneZKFan',
-				common: 'numOneZKFan'
-			}
+			players['xohfiy'],
+			players['Kariyu'],
+			players['FOX1Yukino'],
+			players['HonkWith4ks'],
+			players['numOneZKFan']
 		]
 	},
 	DRI: {
 		name: 'Drillas',
 		region: 'NA',
 		players: [
-			{
-				id: 2002886,
-				ingame: 'Creepz',
-				common: 'Creepz'
-			},
-			{
-				id: 14,
-				ingame: 'Poison',
-				common: 'Poison'
-			},
-			{
-				id: 2003583,
-				ingame: 'Moozor',
-				common: 'Moozor'
-			},
-			{
-				id: 2088110,
-				ingame: 'Vampire',
-				common: 'Vampire'
-			},
-			{
-				id: 2027849,
-				ingame: 'GWZH',
-				common: 'GWZH'
-			}
+			players['Creepz'],
+			players['Poison'],
+			players['Moozor'],
+			players['Vampire'],
+			players['GWZH']
 		]
 	},
 	GA: {
 		name: 'GachaAddicts',
 		region: 'APAC',
 		players: [
-			{
-				id: 3721658,
-				ingame: 'cherry',
-				common: 'cherry'
-			},
-			{
-				id: 2017921,
-				ingame: 'iYu',
-				common: 'iYu'
-			},
-			{
-				id: 2002930,
-				ingame: 'Actyuki',
-				common: 'Actyuki',
-				nationality: 'ID'
-			},
-			{
-				id: 2001148,
-				ingame: 'Saya',
-				common: 'Saya'
-			},
-			{
-				id: 2035970,
-				ingame: 'Jav',
-				common: 'Jav'
-			},
-			{
-				id: 2002681,
-				ingame: 'SilliestOfThreat',
-				common: 'SilliestOfThreat'
-			},
-			{
-				id: 3097341,
-				ingame: 'Actyuki丶Student',
-				common: 'Actyuki丶Student'
-			}
+			players['cherry'],
+			players['iYu'],
+			players['Actyuki'],
+			players['Saya'],
+			players['Jav'],
+			players['SilliestOfThreat'],
+			players['Actyuki丶Student']
 		]
 	}
 };
@@ -718,111 +1403,101 @@ const events: Event[] = [
 				name: 'Cơm Rang Cháy Chảo',
 				region: 'APAC',
 				players: [
-					{ id: 2202592, ingame: 'Lph4m4218', common: 'Lph4m4218', nationality: 'VN' },
-					{ id: 2028856, ingame: 'FrostyNade', common: 'FrostyNade', nationality: 'VN' },
-					{ id: 2248385, ingame: 'Fis', common: 'Fis', nationality: 'VN' },
-					{ id: 2306692, ingame: 'HoangTuHaDong', common: 'HoangTuHaDong', nationality: 'VN' },
-					{ id: 2108374, ingame: 'Dinaaa', common: 'Dinaaa', nationality: 'VN' },
-					{ id: 776, ingame: 'nekocyan', common: 'nekocyan', nationality: 'VN' },
-					{ id: 775, ingame: 'Khanh3993', common: 'Khanh3993', nationality: 'VN' }
+					players['Lph4m4218'],
+					players['FrostyNade'],
+					players['Fis'],
+					players['HoangTuHaDong'],
+					players['Dinaaa'],
+					players['nekocyan'],
+					players['Khanh3993']
 				]
 			},
 			{
 				name: 'All for tada',
 				region: 'APAC',
 				players: [
-					{ id: 2022965, ingame: '運トリいくわ', common: 'きょうこ' },
-					{ id: 773, ingame: 'せら', common: 'せら' },
-					{ id: 2033264, ingame: 'ザクロ', common: 'ザクロ' },
-					{ id: 2216164, ingame: 'くろのりー', common: 'くろのりー' },
-					{ id: 2018404, ingame: 'あーるてぃー', common: 'あーるてぃー' },
-					{ id: 2002634, ingame: 'おっか', common: 'おっか' },
-					{ id: 2005800, ingame: 'ななせ', common: 'ななせ' }
+					players['京こ'],
+					players['xelcee'],
+					players['Zacro'],
+					players['kuronory'],
+					players['rt0803'],
+					players['おっか'],
+					players['ななせ']
 				]
 			},
 			{
 				name: 'Gà Chiên Sốt Cay',
 				region: 'APAC',
 				players: [
-					{ id: 3258110, ingame: 'Teakomi', common: 'Teakomi' },
-					{ id: 3873106, ingame: 'Emilinaz', common: 'Emilinaz' },
-					{ id: 771, ingame: 'hyacinexcon', common: 'hyacinexcon' },
-					{ id: 5832641, ingame: 'Flamesicon', common: 'Flamesicon' },
-					{ id: 5529053, ingame: 'Put', common: 'Put' },
-					{ id: 2456956, ingame: 'KanamiMyDearest', common: 'KanamiMyDearest' },
-					{ id: 770, ingame: 'bululelysia', common: 'bululelysia' }
+					players['Teakomi'],
+					players['Emilinaz'],
+					players['hyacinexcon'],
+					players['Flamesicon'],
+					players['Put'],
+					players['KanamiMyDearest'],
+					players['bululelysia']
 				]
 			},
 			{
 				name: 'Skill Issues',
 				region: 'APAC',
 				players: [
-					{ id: 763, ingame: 'ToiYeuRem', common: 'ToiYeuRem' },
-					{ id: 7678631, ingame: 'Unmei', common: 'Unmei' },
-					{ id: 762, ingame: 'Miaa', common: 'Miaa' },
-					{ id: 2144717, ingame: 'Korofunk', common: 'Korofunk', nationality: 'VN' },
-					{ id: 761, ingame: 'Helixu', common: 'Helixu' },
-					{ id: 3680447, ingame: 'Davy', common: 'Davy' },
-					{ id: 760, ingame: 'HVO', common: 'HVO' }
+					players['ToiYeuRem'],
+					players['Unmei'],
+					players['Miaa'],
+					players['Korofunk'],
+					players['Helixu'],
+					players['Davy'],
+					players['HVO']
 				]
 			},
 			{
 				name: 'Become Paper',
 				region: 'APAC',
 				players: [
-					{ id: 2006752, ingame: 'EFFECT', common: 'EFFECT', nationality: 'KR' },
-					{ id: 2007795, ingame: '마들렌', common: '마들렌', nationality: 'KR' },
-					{ id: 2005475, ingame: 'Y0ungEgg', common: 'Y0ungEgg', nationality: 'KR' },
-					{ id: 2004045, ingame: 'P1ckUp', common: 'P1ckUp', nationality: 'KR' },
-					{ id: 2383768, ingame: 'aewan', common: 'aewan', nationality: 'KR' },
-					{ id: 2030904, ingame: 'Shingwan', common: 'Shingwan', nationality: 'KR' },
-					{ id: 2334799, ingame: 'clown', common: 'clown', nationality: 'KR' }
+					players['EFFECT'],
+					players['마들렌'],
+					players['Y0ungEgg'],
+					players['P1ckUp'],
+					players['aewan'],
+					players['Shingwan'],
+					players['clown']
 				]
 			},
 			{
 				name: 'Shigure Kira Saikyou',
 				region: 'APAC',
 				players: [
-					{ id: 4900249, ingame: '時雨綺羅', common: '時雨綺羅', nationality: 'JP' },
-					{ id: 777, ingame: 'myan777みゃん', common: 'myan777みゃん' },
-					{ id: 778, ingame: 'さめじまさめみ', common: 'さめじまさめみ' },
-					{ id: 2418504, ingame: 'Yueee', common: 'Yueee' },
-					{ id: 2206234, ingame: 'Killersans', common: 'Killersans', nationality: 'JP' },
-					{ id: 2691498, ingame: 'LOVE', common: 'LOVE' },
-					{ id: 2691498, ingame: 'LOVE', common: 'LOVE' }
+					players['時雨綺羅'],
+					players['myan777みゃん'],
+					players['さめじまさめみ'],
+					players['Yueee'],
+					players['Killersans'],
+					players['LOVE']
 				]
 			},
 			{
 				name: 'Kanojo ga hoshi',
 				region: 'APAC',
 				players: [
-					{ id: 2001148, ingame: 'Saya', common: 'Saya' },
-					{ id: 2017921, ingame: 'iYu', common: 'iYu' },
-					{ id: 2002681, ingame: 'SilliestOfThreat', common: 'SilliestOfThreat' },
-					{ id: 2116730, ingame: 'MEMEVPND', common: 'MEMEVPND' },
-					{ id: 2526837, ingame: 'ChildHelper', common: 'ChildHelper' }
+					players['Saya'],
+					players['iYu'],
+					players['SilliestOfThreat'],
+					players['MemeVPND'],
+					players['ChildHelper']
 				]
 			},
 			{
 				name: 'CryWolf ( new Strinoway )',
 				region: 'APAC',
 				players: [
-					{ id: 4810803, ingame: 'Katarieeku', common: 'Katarieeku' },
-					{ id: 5807525, ingame: 'belongtoyou', common: 'belongtoyou' },
-					{ id: 2003669, ingame: 'YunaLiv', common: 'YunaLiv', nationality: 'VN' },
-					{
-						id: 2130819,
-						ingame: 'Karuto丶Beloved',
-						common: 'Karuto丶Beloved',
-						nationality: 'VN'
-					},
-					{
-						id: 2117119,
-						ingame: 'Rinko (ターミヌスエスト)',
-						common: 'Rinko (ターミヌスエスト)'
-					},
-					{ id: 3097341, ingame: 'Actyuki丶Student', common: 'Actyuki丶Student' },
-					{ id: 2165869, ingame: 'zKeiser', common: 'zKeiser' }
+					players['Katarieeku'],
+					players['belongtoyou'],
+					players['YunaLiv'],
+					players['Karuto丶Beloved'],
+					players['Rinko'],
+					players['Actyuki丶Student'],
+					players['zKeiser']
 				]
 			}
 		]
