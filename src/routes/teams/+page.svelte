@@ -16,7 +16,7 @@
 					<ul class="grid grid-cols-3 gap-4 p-4">
 						{#each team.players as player}
 							<li>
-								<a href={`/players/${player.id}`}>{player.ingame}</a>
+								<a href={`/players/${player.id}`}>{player.name}</a>
 							</li>
 						{/each}
 					</ul>
