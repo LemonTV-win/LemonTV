@@ -1,3 +1,9 @@
 {
-	"$schema": "https://inlang.com/schema/inlang-message-format"
+	"$schema": "https://inlang.com/schema/inlang-message-format",
+	"news": "Новости",
+	"events": "События",
+	"teams": "Команды",
+	"players": "Игроки",
+	"upcoming": "Предстоящие",
+	"attending_teams": "Команды"
 }

@@ -1,3 +1,9 @@
 {
-	"$schema": "https://inlang.com/schema/inlang-message-format"
+	"$schema": "https://inlang.com/schema/inlang-message-format",
+	"news": "뉴스",
+	"events": "이벤트",
+	"teams": "팀",
+	"players": "플레이어",
+	"upcoming": "예정된",
+	"attending_teams": "팀"
 }

@@ -1,3 +1,9 @@
 {
-	"$schema": "https://inlang.com/schema/inlang-message-format"
+	"$schema": "https://inlang.com/schema/inlang-message-format",
+	"news": "Actualités",
+	"events": "Événements",
+	"teams": "Équipes",
+	"players": "Joueurs",
+	"upcoming": "À venir",
+	"attending_teams": "Équipes"
 }
