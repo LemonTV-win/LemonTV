@@ -5,5 +5,6 @@
 	"events": "Events",
 	"teams": "Teams",
 	"players": "Players",
-	"upcoming": "Upcoming"
+	"upcoming": "Upcoming",
+	"attending_teams": "Attending Teams"
 }

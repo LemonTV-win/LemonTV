@@ -39,6 +39,7 @@ export interface Player {
 	id: number;
 	ingame: string;
 	common: string;
+	nationality?: 'KR' | 'JP' | 'TW' | 'US' | 'VN' | 'ID';
 }
 
 export interface Team {
@@ -115,6 +116,7 @@ export interface Event {
 	participants: number;
 	date: string;
 	website?: string;
+	teams: Team[];
 }
 
 const teams: Record<string, Team> = {
@@ -154,7 +156,7 @@ const teams: Record<string, Team> = {
 		region: 'APAC',
 		players: [
 			{
-				id: 1,
+				id: 2340207,
 				ingame: 'JY10137',
 				common: '瑾玥'
 			},
@@ -165,16 +167,16 @@ const teams: Record<string, Team> = {
 			},
 			{
 				id: 3,
-				ingame: 'twitchー77427',
+				ingame: 'twitch―77427',
 				common: '羽生翼'
 			},
 			{
-				id: 4,
+				id: 2047299,
 				ingame: 'ぺこどん',
 				common: 'MIZU'
 			},
 			{
-				id: 5,
+				id: 2988260,
 				ingame: '箱子箱',
 				common: 'BOXCAT'
 			},
@@ -184,7 +186,7 @@ const teams: Record<string, Team> = {
 				common: 'Chtho1ly'
 			},
 			{
-				id: 7,
+				id: 2108435,
 				ingame: 'ChengCheng',
 				common: 'ChengCheng'
 			}
@@ -195,22 +197,22 @@ const teams: Record<string, Team> = {
 		region: 'NA',
 		players: [
 			{
-				id: 8,
+				id: 2007805,
 				ingame: 'xohfiy',
 				common: 'xohfiy'
 			},
 			{
-				id: 9,
-				ingame: 'Kariyuu',
-				common: 'Kariyuu'
+				id: 2000837,
+				ingame: 'Kariyu',
+				common: 'Kariyu'
 			},
 			{
-				id: 10,
+				id: 2153306,
 				ingame: 'FOX1Yukino',
 				common: 'FOX1Yukino'
 			},
 			{
-				id: 11,
+				id: 2024432,
 				ingame: 'HonkWith4ks',
 				common: 'HonkWith4ks'
 			},
@@ -226,7 +228,7 @@ const teams: Record<string, Team> = {
 		region: 'NA',
 		players: [
 			{
-				id: 13,
+				id: 2002886,
 				ingame: 'Creepz',
 				common: 'Creepz'
 			},
@@ -236,17 +238,17 @@ const teams: Record<string, Team> = {
 				common: 'Poison'
 			},
 			{
-				id: 15,
+				id: 2003583,
 				ingame: 'Moozor',
 				common: 'Moozor'
 			},
 			{
-				id: 16,
+				id: 2088110,
 				ingame: 'Vampire',
 				common: 'Vampire'
 			},
 			{
-				id: 17,
+				id: 2027849,
 				ingame: 'GWZH',
 				common: 'GWZH'
 			}
@@ -257,37 +259,38 @@ const teams: Record<string, Team> = {
 		region: 'APAC',
 		players: [
 			{
-				id: 18,
+				id: 3721658,
 				ingame: 'cherry',
 				common: 'cherry'
 			},
 			{
-				id: 19,
+				id: 2017921,
 				ingame: 'iYu',
 				common: 'iYu'
 			},
 			{
-				id: 20,
+				id: 2002930,
 				ingame: 'Actyuki',
-				common: 'Actyuki'
+				common: 'Actyuki',
+				nationality: 'ID'
 			},
 			{
-				id: 21,
+				id: 2001148,
 				ingame: 'Saya',
 				common: 'Saya'
 			},
 			{
-				id: 22,
+				id: 2035970,
 				ingame: 'Jav',
 				common: 'Jav'
 			},
 			{
-				id: 23,
+				id: 2002681,
 				ingame: 'SilliestOfThreat',
 				common: 'SilliestOfThreat'
 			},
 			{
-				id: 24,
+				id: 3097341,
 				ingame: 'Actyuki丶Student',
 				common: 'Actyuki丶Student'
 			}
@@ -690,7 +693,8 @@ const events: Event[] = [
 		},
 		matches: tournamentMatches,
 		participants: 16,
-		date: '2025-02-01'
+		date: '2025-02-01',
+		teams: Object.values(teams)
 	},
 	{
 		id: 2,
@@ -708,7 +712,120 @@ const events: Event[] = [
 		},
 		participants: 8,
 		date: '2025-05-04',
-		website: 'https://tonamel.com/competition/OU2cd'
+		website: 'https://tonamel.com/competition/OU2cd',
+		teams: [
+			{
+				name: 'Cơm Rang Cháy Chảo',
+				region: 'APAC',
+				players: [
+					{ id: 2202592, ingame: 'Lph4m4218', common: 'Lph4m4218', nationality: 'VN' },
+					{ id: 2028856, ingame: 'FrostyNade', common: 'FrostyNade', nationality: 'VN' },
+					{ id: 2248385, ingame: 'Fis', common: 'Fis', nationality: 'VN' },
+					{ id: 2306692, ingame: 'HoangTuHaDong', common: 'HoangTuHaDong', nationality: 'VN' },
+					{ id: 2108374, ingame: 'Dinaaa', common: 'Dinaaa', nationality: 'VN' },
+					{ id: 776, ingame: 'nekocyan', common: 'nekocyan', nationality: 'VN' },
+					{ id: 775, ingame: 'Khanh3993', common: 'Khanh3993', nationality: 'VN' }
+				]
+			},
+			{
+				name: 'All for tada',
+				region: 'APAC',
+				players: [
+					{ id: 2022965, ingame: '運トリいくわ', common: 'きょうこ' },
+					{ id: 773, ingame: 'せら', common: 'せら' },
+					{ id: 2033264, ingame: 'ザクロ', common: 'ザクロ' },
+					{ id: 2216164, ingame: 'くろのりー', common: 'くろのりー' },
+					{ id: 2018404, ingame: 'あーるてぃー', common: 'あーるてぃー' },
+					{ id: 2002634, ingame: 'おっか', common: 'おっか' },
+					{ id: 2005800, ingame: 'ななせ', common: 'ななせ' }
+				]
+			},
+			{
+				name: 'Gà Chiên Sốt Cay',
+				region: 'APAC',
+				players: [
+					{ id: 3258110, ingame: 'Teakomi', common: 'Teakomi' },
+					{ id: 3873106, ingame: 'Emilinaz', common: 'Emilinaz' },
+					{ id: 771, ingame: 'hyacinexcon', common: 'hyacinexcon' },
+					{ id: 5832641, ingame: 'Flamesicon', common: 'Flamesicon' },
+					{ id: 5529053, ingame: 'Put', common: 'Put' },
+					{ id: 2456956, ingame: 'KanamiMyDearest', common: 'KanamiMyDearest' },
+					{ id: 770, ingame: 'bululelysia', common: 'bululelysia' }
+				]
+			},
+			{
+				name: 'Skill Issues',
+				region: 'APAC',
+				players: [
+					{ id: 763, ingame: 'ToiYeuRem', common: 'ToiYeuRem' },
+					{ id: 7678631, ingame: 'Unmei', common: 'Unmei' },
+					{ id: 762, ingame: 'Miaa', common: 'Miaa' },
+					{ id: 2144717, ingame: 'Korofunk', common: 'Korofunk', nationality: 'VN' },
+					{ id: 761, ingame: 'Helixu', common: 'Helixu' },
+					{ id: 3680447, ingame: 'Davy', common: 'Davy' },
+					{ id: 760, ingame: 'HVO', common: 'HVO' }
+				]
+			},
+			{
+				name: 'Become Paper',
+				region: 'APAC',
+				players: [
+					{ id: 2006752, ingame: 'EFFECT', common: 'EFFECT', nationality: 'KR' },
+					{ id: 2007795, ingame: '마들렌', common: '마들렌', nationality: 'KR' },
+					{ id: 2005475, ingame: 'Y0ungEgg', common: 'Y0ungEgg', nationality: 'KR' },
+					{ id: 2004045, ingame: 'P1ckUp', common: 'P1ckUp', nationality: 'KR' },
+					{ id: 2383768, ingame: 'aewan', common: 'aewan', nationality: 'KR' },
+					{ id: 2030904, ingame: 'Shingwan', common: 'Shingwan', nationality: 'KR' },
+					{ id: 2334799, ingame: 'clown', common: 'clown', nationality: 'KR' }
+				]
+			},
+			{
+				name: 'Shigure Kira Saikyou',
+				region: 'APAC',
+				players: [
+					{ id: 4900249, ingame: '時雨綺羅', common: '時雨綺羅', nationality: 'JP' },
+					{ id: 777, ingame: 'myan777みゃん', common: 'myan777みゃん' },
+					{ id: 778, ingame: 'さめじまさめみ', common: 'さめじまさめみ' },
+					{ id: 2418504, ingame: 'Yueee', common: 'Yueee' },
+					{ id: 2206234, ingame: 'Killersans', common: 'Killersans', nationality: 'JP' },
+					{ id: 2691498, ingame: 'LOVE', common: 'LOVE' },
+					{ id: 2691498, ingame: 'LOVE', common: 'LOVE' }
+				]
+			},
+			{
+				name: 'Kanojo ga hoshi',
+				region: 'APAC',
+				players: [
+					{ id: 2001148, ingame: 'Saya', common: 'Saya' },
+					{ id: 2017921, ingame: 'iYu', common: 'iYu' },
+					{ id: 2002681, ingame: 'SilliestOfThreat', common: 'SilliestOfThreat' },
+					{ id: 2116730, ingame: 'MEMEVPND', common: 'MEMEVPND' },
+					{ id: 2526837, ingame: 'ChildHelper', common: 'ChildHelper' }
+				]
+			},
+			{
+				name: 'CryWolf ( new Strinoway )',
+				region: 'APAC',
+				players: [
+					{ id: 4810803, ingame: 'Katarieeku', common: 'Katarieeku' },
+					{ id: 5807525, ingame: 'belongtoyou', common: 'belongtoyou' },
+					{ id: 2003669, ingame: 'YunaLiv', common: 'YunaLiv', nationality: 'VN' },
+					{
+						id: 2130819,
+						ingame: 'Karuto丶Beloved',
+						common: 'Karuto丶Beloved',
+						nationality: 'VN'
+					},
+					{
+						id: 2117119,
+						ingame: 'Rinko (ターミヌスエスト)',
+						common: 'Rinko (ターミヌスエスト)'
+					},
+					{ id: 3097341, ingame: 'Actyuki丶Student', common: 'Actyuki丶Student' },
+					{ id: 2165869, ingame: 'zKeiser', common: 'zKeiser' }
+				]
+			}
+		]
 	}
 ];
 

@@ -2,6 +2,8 @@
 	import { error } from '@sveltejs/kit';
 	import type { PageProps } from './$types';
 
+	import { m } from '$lib/paraglide/messages';
+
 	let { data }: PageProps = $props();
 
 	if (!data.event) {
@@ -48,6 +50,27 @@
 	</div>
 	<!-- <h2 class="text-2xl font-bold text-white">Brackets</h2> -->
 	<BracketGraph matches={data.event.matches} />
+	<div class="flex flex-col gap-4 px-8 py-4">
+		<h2 class="my-4 text-2xl font-bold text-white">{m.attending_teams()}</h2>
+		<ul class="flex flex-wrap gap-4">
+			{#each data.event.teams as team}
+				<li class="flex min-w-48 flex-col items-center gap-2 rounded-sm bg-gray-200/10 p-2">
+					{#if team.logo}
+						<img src={team.logo} alt={team.name} class="h-4 w-4 rounded-full" />
+					{/if}
+					{team.name}
+					<span class="text-gray-400">({team.region})</span>
+					<ul>
+						{#each team.players ?? [] as player}
+							<li>
+								<a href={`/players/${player.id}`}>{player.common}</a>
+							</li>
+						{/each}
+					</ul>
+				</li>
+			{/each}
+		</ul>
+	</div>
 {/if}
 
 <style lang="postcss">
