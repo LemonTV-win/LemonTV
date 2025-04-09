@@ -1517,10 +1517,16 @@ export function getMatch(id: number) {
 }
 
 export function getTeams() {
-	return Object.entries(teams).map(([key, value]) => ({
-		id: key,
-		...value
-	}));
+	return [
+		...new Set(
+			events
+				.flatMap((event) => event.teams)
+				.map((team) => ({
+					id: team.name,
+					...team
+				}))
+		)
+	];
 }
 
 export function getTeam(id: string) {

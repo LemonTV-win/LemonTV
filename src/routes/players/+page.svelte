@@ -11,16 +11,18 @@
 	<ul>
 		{#each data.players as player}
 			<li class="border-b-1 border-gray-500 bg-gray-800 p-4 shadow-2xl">
-				<a href={`/players/${player.id}`} class="mb-8 text-2xl font-bold">{player.name}</a>
-				{#if player.gameAccounts}
-					<ul class="grid grid-cols-3 gap-4 p-4">
+				<a href={`/players/${player.id}`} class="mb-8 font-bold">
+					{player.name}
+					{#if player.gameAccounts}
 						{#each player.gameAccounts as account}
-							<li>
-								<a href={`/players/${player.id}`}>{account.currentName}</a>
-							</li>
+							{#if account.currentName !== player.name}
+								<span class="text-gray-400">
+									({account.currentName})
+								</span>
+							{/if}
 						{/each}
-					</ul>
-				{/if}
+					{/if}
+				</a>
 			</li>
 		{/each}
 	</ul>
