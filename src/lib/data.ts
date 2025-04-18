@@ -1467,8 +1467,8 @@ const events: Event[] = [
 			logo: 'https://pbs.twimg.com/profile_images/1792733020912545792/NKEIhBSI_400x400.jpg',
 			url: 'https://x.com/kawakyuden'
 		},
-		participants: 8,
-		date: '2025-05-04',
+		participants: 16,
+		date: '2025-05-04/2025-05-05',
 		website: 'https://tonamel.com/competition/OU2cd',
 		teams: [
 			{
