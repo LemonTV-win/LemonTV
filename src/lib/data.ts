@@ -926,7 +926,68 @@ const players: Record<string, Player> = {
 		id: 'zKeiser',
 		name: 'zKeiser',
 		gameAccounts: []
-	}
+	},
+	'0nesyo (あねしょ)': { id: '0nesyo (あねしょ)', name: '0nesyo (あねしょ)', gameAccounts: [] },
+	AKUKU: { id: 'AKUKU', name: 'AKUKU', gameAccounts: [] },
+	AeriMayBee: { id: 'AeriMayBee', name: 'AeriMayBee', gameAccounts: [] },
+	AerixD: { id: 'AerixD', name: 'AerixD', gameAccounts: [] },
+	Airii: { id: 'Airii', name: 'Airii', gameAccounts: [] },
+	Artツ: { id: 'Artツ', name: 'Artツ', gameAccounts: [] },
+	Asuaka: { id: 'Asuaka', name: 'Asuaka', gameAccounts: [] },
+	Cream6230: { id: 'Cream6230', name: 'Cream6230', gameAccounts: [] },
+	DPTTDM: { id: 'DPTTDM', name: 'DPTTDM', gameAccounts: [] },
+	EmperorHikJinwoo: { id: 'EmperorHikJinwoo', name: 'EmperorHikJinwoo', gameAccounts: [] },
+	FPThahyun: { id: 'FPThahyun', name: 'FPThahyun', gameAccounts: [] },
+	Hik: { id: 'Hik', name: 'Hik', gameAccounts: [] },
+	Hinako: { id: 'Hinako', name: 'Hinako', gameAccounts: [] },
+	Hiyokotte: { id: 'Hiyokotte', name: 'Hiyokotte', gameAccounts: [] },
+	Ken256: { id: 'Ken256', name: 'Ken256', gameAccounts: [] },
+	Koalski: { id: 'Koalski', name: 'Koalski', gameAccounts: [] },
+	KuroTama39: { id: 'KuroTama39', name: 'KuroTama39', gameAccounts: [] },
+	'Mejiro Ryan': { id: 'Mejiro Ryan', name: 'Mejiro Ryan', gameAccounts: [] },
+	MistaGojoooookun: { id: 'MistaGojoooookun', name: 'MistaGojoooookun', gameAccounts: [] },
+	Naphta: { id: 'Naphta', name: 'Naphta', gameAccounts: [] },
+	PGtexas: { id: 'PGtexas', name: 'PGtexas', gameAccounts: [] },
+	Papyrus: { id: 'Papyrus', name: 'Papyrus', gameAccounts: [] },
+	RiN林: { id: 'RiN林', name: 'RiN林', gameAccounts: [] },
+	RoiPaetSip: { id: 'RoiPaetSip', name: 'RoiPaetSip', gameAccounts: [] },
+	Su4y: { id: 'Su4y', name: 'Su4y', gameAccounts: [] },
+	Viatorice: { id: 'Viatorice', name: 'Viatorice', gameAccounts: [] },
+	'begonia (べごにあ)': { id: 'begonia (べごにあ)', name: 'begonia (べごにあ)', gameAccounts: [] },
+	bili会求风的鱼: { id: 'bili会求风的鱼', name: 'bili会求风的鱼', gameAccounts: [] },
+	'dore52x (どれっくす)': {
+		id: 'dore52x (どれっくす)',
+		name: 'dore52x (どれっくす)',
+		gameAccounts: []
+	},
+	'iLiss (いりす)': { id: 'iLiss (いりす)', name: 'iLiss (いりす)', gameAccounts: [] },
+	itsChun: { id: 'itsChun', name: 'itsChun', gameAccounts: [] },
+	maimainoob: { id: 'maimainoob', name: 'maimainoob', gameAccounts: [] },
+	redARA: { id: 'redARA', name: 'redARA', gameAccounts: [] },
+	swaegaepinoe: { id: 'swaegaepinoe', name: 'swaegaepinoe', gameAccounts: [] },
+	twitchWenli: { id: 'twitchWenli', name: 'twitchWenli', gameAccounts: [] },
+	'visucuit125 (ゆきむら)': {
+		id: 'visucuit125 (ゆきむら)',
+		name: 'visucuit125 (ゆきむら)',
+		gameAccounts: []
+	},
+	whattheskibidi: { id: 'whattheskibidi', name: 'whattheskibidi', gameAccounts: [] },
+	'yusia (ゆしゃ)': { id: 'yusia (ゆしゃ)', name: 'yusia (ゆしゃ)', gameAccounts: [] },
+	いよたけ: { id: 'いよたけ', name: 'いよたけ', gameAccounts: [] },
+	はーいあなた: { id: 'はーいあなた', name: 'はーいあなた', gameAccounts: [] },
+	カミリウイ: { id: 'カミリウイ', name: 'カミリウイ', gameAccounts: [] },
+	世間天使雨宮優子: { id: '世間天使雨宮優子', name: '世間天使雨宮優子', gameAccounts: [] },
+	暗闇の紅茶: { id: '暗闇の紅茶', name: '暗闇の紅茶', gameAccounts: [] },
+	月神: { id: '月神', name: '月神', gameAccounts: [] },
+	陌悠理: { id: '陌悠理', name: '陌悠理', gameAccounts: [] },
+	공백: { id: '공백', name: '공백', gameAccounts: [] },
+	레고: { id: '레고', name: '레고', gameAccounts: [] },
+	리로: { id: '리로', name: '리로', gameAccounts: [] },
+	만두도둑: { id: '만두도둑', name: '만두도둑', gameAccounts: [] },
+	살찐족제비: { id: '살찐족제비', name: '살찐족제비', gameAccounts: [] },
+	시벌: { id: '시벌', name: '시벌', gameAccounts: [] },
+	칠흑: { id: '칠흑', name: '칠흑', gameAccounts: [] },
+	한월2: { id: '한월2', name: '한월2', gameAccounts: [] }
 };
 
 const teams: Record<string, Team> = {
@@ -1506,6 +1567,108 @@ const events: Event[] = [
 					players['Rinko'],
 					players['Actyuki丶Student'],
 					players['zKeiser']
+				]
+			},
+			{
+				name: 'おとげのぅ゙ぁ',
+				region: 'APAC',
+				players: [
+					players['0nesyo (あねしょ)'],
+					players['begonia (べごにあ)'],
+					players['dore52x (どれっくす)'],
+					players['visucuit125 (ゆきむら)'],
+					players['yusia (ゆしゃ)'],
+					players['iLiss (いりす)'],
+					players['いよたけ']
+				]
+			},
+			{
+				name: '뉴비팀',
+				region: 'APAC',
+				players: [
+					players['FPThahyun'],
+					players['시벌'],
+					players['레고'],
+					players['살찐족제비'],
+					players['만두도둑'],
+					players['리로'],
+					players['공백']
+				]
+			},
+			{
+				name: "Kokona's Drones",
+				region: 'APAC',
+				players: [
+					players['RiN林'],
+					players['Papyrus'],
+					players['Koalski'],
+					players['itsChun'],
+					players['Airii'],
+					players['Naphta'],
+					players['KuroTama39']
+				]
+			},
+			{
+				name: '受け皿',
+				region: 'APAC',
+				players: [
+					players['Ken256'],
+					players['暗闇の紅茶'],
+					players['maimainoob'],
+					players['Cream6230'],
+					players['Viatorice'],
+					players['カミリウイ'],
+					players['Hiyokotte']
+				]
+			},
+			{
+				name: 'Supreme Shadow Emperor Hik-Jinwoo',
+				region: 'APAC',
+				players: [
+					players['Hinako'],
+					players['Su4y'],
+					players['はーいあなた'],
+					players['RoiPaetSip'],
+					players['Artツ'],
+					players['Hik'],
+					players['EmperorHikJinwoo']
+				]
+			},
+			{
+				name: 'KSQ',
+				region: 'APAC',
+				players: [
+					players['칠흑'],
+					players['Mejiro Ryan'],
+					players['한월2'],
+					players['PGtexas'],
+					players['AKUKU']
+				]
+			},
+			{
+				name: 'Knotorious',
+				region: 'APAC',
+				players: [
+					players['swaegaepinoe'],
+					players['redARA'],
+					players['whattheskibidi'],
+					players['DPTTDM'],
+					players['AerixD'],
+					players['MistaGojoooookun'],
+					players['AeriMayBee']
+				]
+			},
+			{
+				name: 'しゅうどうふ',
+				region: 'APAC',
+				players: [
+					players['月神'],
+					players['世間天使雨宮優子'],
+					players['twitchWenli'],
+					players['ChengCheng'],
+					players['陌悠理'],
+					players['bili会求风的鱼'],
+					players['Asuaka']
 				]
 			}
 		]
