@@ -1,4 +1,5 @@
 <script lang="ts">
+	import EventCard from '$lib/components/EventCard.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -9,13 +10,7 @@
 	<ul>
 		{#each data.events as event}
 			<li>
-				<a
-					href="/events/{event.id}"
-					class="flex items-center gap-2 border-b-1 border-gray-500 bg-gray-800 shadow-2xl"
-				>
-					<img src={event.image} alt={event.name} class="w-full max-w-64" />
-					<span class="p-4 text-2xl text-white">{event.name}</span>
-				</a>
+				<EventCard {event} />
 			</li>
 		{/each}
 	</ul>
