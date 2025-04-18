@@ -36,7 +36,9 @@
 				</a>
 			</div>
 			<div class="text-gray-400">
-				{data.event.participants} Teams・<time datetime={data.event.date}>{data.event.date}</time>
+				{data.event.participants} Teams・<time datetime={data.event.date}
+					>{data.event.date.replace('/', ' - ')}</time
+				>
 			</div>
 			{#if data.event.website}
 				<a href={data.event.website} class="text-gray-400"> Visit Website </a>
