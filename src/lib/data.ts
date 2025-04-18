@@ -43,18 +43,26 @@ export interface Player {
 	gameAccounts: GameAccount[];
 }
 
+export type Region =
+	| 'CN' // China
+	| 'APAC' // Asia Pacific
+	| 'NA' // North America
+	| 'SA' // South America
+	| 'EU' // Europe
+	| 'WA'; // Western Asia
+
 export interface GameAccount {
 	id?: number;
 	accountId: number;
 	currentName: string;
 	previousNames?: string[];
-	region: 'CN' | 'APAC' | 'NA' | 'EU';
+	region: Region;
 }
 
 export interface Team {
 	name: string;
 	logo?: string;
-	region: 'APAC' | 'NA' | 'EU' | 'CN';
+	region: Region;
 	players?: Player[];
 }
 
