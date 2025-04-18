@@ -1509,6 +1509,25 @@ const events: Event[] = [
 				]
 			}
 		]
+	},
+	{
+		id: 3,
+		name: 'Origami Cup',
+		official: false,
+		server: 'strinova',
+		image: 'https://panels.twitch.tv/panel-1266163234-image-05e3f805-6cda-43d1-98b1-e28a540f9003',
+		status: 'finished',
+		organizer: {
+			name: 'OrigamiCup',
+			logo: 'https://lh3.googleusercontent.com/docsubipk/AP9E6xXsS7f7lkPdHZI-Q3JGePPY3jLvytkH87Nv3xjq_ZLxAOfz2bLeSdCQL59MrLnTbTX2M5jfSaLuhR4dKJghXD6Ts6ttN_Dv47311ySQgkj7Zy9h',
+			url: 'https://www.twitch.tv/origamicup'
+		},
+		participants: 16,
+		date: '2025-02-24',
+		teams: [],
+		matches: [],
+		website:
+			'https://docs.google.com/spreadsheets/d/1eL5kWIBFGlrQ4HLLAaYyFoJvAMNswvQFSFC00-A8M9M/edit'
 	}
 ];
 
