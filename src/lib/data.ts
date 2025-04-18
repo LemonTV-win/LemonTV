@@ -113,6 +113,7 @@ export interface Game {
 
 export interface Event {
 	id: number;
+	slug: string;
 	name: string;
 	official: boolean;
 	server: 'calabiyau' | 'strinova';
@@ -1435,6 +1436,7 @@ const tournamentMatches: Match[] = [
 const events: Event[] = [
 	{
 		id: 1,
+		slug: 'mmcs1',
 		name: 'Mighty Meow Cup Season 1',
 		official: false,
 		server: 'strinova',
@@ -1452,6 +1454,7 @@ const events: Event[] = [
 	},
 	{
 		id: 2,
+		slug: 'kawacup',
 		name: 'Apac No.1 tournament KAWA cup',
 		official: false,
 		server: 'strinova',
@@ -1675,6 +1678,7 @@ const events: Event[] = [
 	},
 	{
 		id: 3,
+		slug: 'origami',
 		name: 'Origami Cup',
 		official: false,
 		server: 'strinova',
@@ -1698,8 +1702,11 @@ export function getEvents() {
 	return events;
 }
 
-export function getEvent(id: number) {
-	return events.find((event) => event.id === id);
+export function getEvent(id: string) {
+	if (!isNaN(Number(id))) {
+		return events.find((event) => event.id === Number(id));
+	}
+	return events.find((event) => event.slug === id);
 }
 
 export function getMatch(id: number) {

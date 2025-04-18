@@ -4,6 +4,6 @@ import { getEvent } from '$lib/data';
 
 export const load: PageLoad = ({ params }) => {
 	return {
-		event: getEvent(Number(params.id))
+		event: getEvent(params.id)
 	};
 };
