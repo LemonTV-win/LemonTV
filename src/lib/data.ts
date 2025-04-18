@@ -928,17 +928,98 @@ const players: Record<string, Player> = {
 		name: 'zKeiser',
 		gameAccounts: []
 	},
-	'0nesyo (あねしょ)': { id: '0nesyo (あねしょ)', name: '0nesyo (あねしょ)', gameAccounts: [] },
-	AKUKU: { id: 'AKUKU', name: 'AKUKU', gameAccounts: [] },
-	AeriMayBee: { id: 'AeriMayBee', name: 'AeriMayBee', gameAccounts: [] },
-	AerixD: { id: 'AerixD', name: 'AerixD', gameAccounts: [] },
-	Airii: { id: 'Airii', name: 'Airii', gameAccounts: [] },
-	Artツ: { id: 'Artツ', name: 'Artツ', gameAccounts: [] },
-	Asuaka: { id: 'Asuaka', name: 'Asuaka', gameAccounts: [] },
-	Cream6230: { id: 'Cream6230', name: 'Cream6230', gameAccounts: [] },
-	DPTTDM: { id: 'DPTTDM', name: 'DPTTDM', gameAccounts: [] },
-	EmperorHikJinwoo: { id: 'EmperorHikJinwoo', name: 'EmperorHikJinwoo', gameAccounts: [] },
-	FPThahyun: { id: 'FPThahyun', name: 'FPThahyun', gameAccounts: [] },
+	'0nesyo (あねしょ)': {
+		id: '0nesyo',
+		name: '0nesyo',
+		aliases: ['あねしょ'],
+		gameAccounts: [
+			{
+				accountId: 3379762,
+				currentName: '0nesyo',
+				region: 'APAC'
+			}
+		]
+	},
+	AKUKU: {
+		id: 'AKUKU',
+		name: 'AKUKU',
+		nationality: 'KR',
+		gameAccounts: [
+			{
+				accountId: 6603250,
+				currentName: 'AKUKU',
+				region: 'APAC'
+			}
+		]
+	},
+	AeriMayBee: {
+		id: 'AeriMayBee',
+		name: 'AeriMayBee',
+		gameAccounts: [
+			{
+				accountId: 6190211,
+				currentName: 'AeriMayBee',
+				region: 'APAC'
+			}
+		]
+	},
+	AerixD: {
+		id: 'AerixD',
+		name: 'AerixD',
+		gameAccounts: [
+			{
+				accountId: 3022369,
+				currentName: 'AerixD',
+				region: 'APAC'
+			}
+		]
+	},
+	Airii: {
+		id: 'Airii',
+		name: 'Airii',
+		gameAccounts: [
+			{
+				accountId: 2240051,
+				currentName: 'Airii',
+				region: 'APAC'
+			}
+		]
+	},
+	DPTTDM: {
+		id: 'DPTTDM',
+		name: 'DPTTDM',
+		gameAccounts: [
+			{
+				accountId: 7223310,
+				currentName: 'DPTTDM',
+				region: 'APAC'
+			}
+		]
+	},
+	EmperorHikJinwoo: {
+		id: 'EmperorHikJinwoo',
+		name: 'EmperorHikJinwoo',
+		nationality: 'KR',
+		gameAccounts: [
+			{
+				accountId: 5823704,
+				currentName: 'EmperorHikJinwoo',
+				region: 'APAC'
+			}
+		]
+	},
+	FPThahyun: {
+		id: 'FPThahyun',
+		name: 'FPThahyun',
+		nationality: 'KR',
+		gameAccounts: [
+			{
+				accountId: 6554943,
+				currentName: 'FPThahyun',
+				region: 'APAC'
+			}
+		]
+	},
 	Hik: { id: 'Hik', name: 'Hik', gameAccounts: [] },
 	Hinako: { id: 'Hinako', name: 'Hinako', gameAccounts: [] },
 	Hiyokotte: { id: 'Hiyokotte', name: 'Hiyokotte', gameAccounts: [] },
@@ -955,7 +1036,18 @@ const players: Record<string, Player> = {
 	Su4y: { id: 'Su4y', name: 'Su4y', gameAccounts: [] },
 	Viatorice: { id: 'Viatorice', name: 'Viatorice', gameAccounts: [] },
 	'begonia (べごにあ)': { id: 'begonia (べごにあ)', name: 'begonia (べごにあ)', gameAccounts: [] },
-	bili会求风的鱼: { id: 'bili会求风的鱼', name: 'bili会求风的鱼', gameAccounts: [] },
+	bili会求风的鱼: {
+		id: 'bili会求风的鱼',
+		name: 'bili会求风的鱼',
+		nationality: 'CN',
+		gameAccounts: [
+			{
+				accountId: 4363073,
+				currentName: 'bili会求风的鱼',
+				region: 'APAC'
+			}
+		]
+	},
 	'dore52x (どれっくす)': {
 		id: 'dore52x (どれっくす)',
 		name: 'dore52x (どれっくす)',
@@ -979,8 +1071,28 @@ const players: Record<string, Player> = {
 	カミリウイ: { id: 'カミリウイ', name: 'カミリウイ', gameAccounts: [] },
 	世間天使雨宮優子: { id: '世間天使雨宮優子', name: '世間天使雨宮優子', gameAccounts: [] },
 	暗闇の紅茶: { id: '暗闇の紅茶', name: '暗闇の紅茶', gameAccounts: [] },
-	月神: { id: '月神', name: '月神', gameAccounts: [] },
-	陌悠理: { id: '陌悠理', name: '陌悠理', gameAccounts: [] },
+	月神: {
+		id: '月神',
+		name: '月神',
+		gameAccounts: [
+			{
+				accountId: 2521681,
+				currentName: '月神',
+				region: 'APAC'
+			}
+		]
+	},
+	陌悠理: {
+		id: '陌悠理',
+		name: '陌悠理',
+		gameAccounts: [
+			{
+				accountId: 2364502,
+				currentName: '陌悠理',
+				region: 'APAC'
+			}
+		]
+	},
 	공백: { id: '공백', name: '공백', gameAccounts: [] },
 	레고: { id: '레고', name: '레고', gameAccounts: [] },
 	리로: { id: '리로', name: '리로', gameAccounts: [] },
