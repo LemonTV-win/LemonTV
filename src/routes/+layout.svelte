@@ -46,3 +46,10 @@
 </header>
 
 {@render children()}
+
+<footer class="mt-4 border-t-1 border-gray-500 bg-gray-800 px-3 py-4 text-center text-white">
+	<p>
+		© 2025 LemonTV. Strinova is a trademark of iDreamSky. This site is not affiliated with or
+		endorsed by Strinova or iDreamSky.
+	</p>
+</footer>
