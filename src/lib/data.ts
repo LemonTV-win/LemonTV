@@ -1,3 +1,5 @@
+import type { Player } from './data/players';
+
 export type Map =
 	| 'base_404'
 	| 'space_lab'
@@ -722,7 +724,8 @@ export function getTeam(id: string) {
 export function getPlayers() {
 	return Object.values(players).map((player) => ({
 		...player,
-		wins: getPlayerWins(player.id ?? '')
+		wins: getPlayerWins(player.id ?? ''),
+		rating: calculatePlayerRating(player)
 	}));
 }
 
@@ -814,4 +817,37 @@ export function getPlayersTeams(limit: number = 3): Record<string, Team[]> {
 	return Object.fromEntries(
 		Object.entries(players).map(([id, _player]) => [id, getPlayerTeams(id).slice(0, limit)])
 	);
+}
+
+function calculatePlayerRating(player: Player) {
+	if (!player.id) {
+		return 0;
+	}
+
+	const matches = getPlayerMatches(player.id);
+	if (!matches || matches.length === 0) {
+		return 0;
+	}
+
+	const scores = matches
+		.flatMap((match) => {
+			const playerTeamIndex = match.playerTeamIndex;
+
+			const playerScore = match.games?.flatMap((game) =>
+				game.scores[playerTeamIndex]
+					.filter(
+						(score) =>
+							score.player === player.id ||
+							player.gameAccounts?.some((account) => account.currentName === score.player)
+					)
+					.map((score) => score.score)
+			);
+
+			return playerScore;
+		})
+		.filter(Boolean) as number[];
+
+	const averageScore = scores.reduce((acc, score) => acc + score, 0) / scores.length;
+
+	return isNaN(averageScore) ? 0 : averageScore / 200;
 }

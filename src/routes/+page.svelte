@@ -74,7 +74,7 @@
 							{/if}
 						</span>
 						<!-- TODO: Introduce rating -->
-						<span class="text-yellow-500" title="Wins">{player.wins}</span>
+						<span class="text-yellow-500" title={m.rating()}>{player.rating.toFixed(2)}</span>
 					</a>
 				</li>
 			{/each}

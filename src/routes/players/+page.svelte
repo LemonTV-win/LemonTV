@@ -11,7 +11,8 @@
 
 	let { data }: PageProps = $props();
 
-	let sortBy: 'name-abc' | 'name-cba' | 'wins-asc' | 'wins-desc' = $state('name-abc');
+	let sortBy: 'name-abc' | 'name-cba' | 'wins-asc' | 'wins-desc' | 'rating-asc' | 'rating-desc' =
+		$state('name-abc');
 
 	let sorted = $derived(
 		data.players.toSorted((a, b) => {
@@ -23,6 +24,10 @@
 				return a.wins - b.wins;
 			} else if (sortBy === 'wins-desc') {
 				return b.wins - a.wins;
+			} else if (sortBy === 'rating-asc') {
+				return a.rating - b.rating;
+			} else if (sortBy === 'rating-desc') {
+				return b.rating - a.rating;
 			}
 			return 0;
 		})
@@ -83,6 +88,20 @@
 						{/if}
 					</button>
 				</th>
+				<th class="px-4 py-1">
+					<button
+						class="text-left"
+						onclick={() => (sortBy = sortBy === 'rating-asc' ? 'rating-desc' : 'rating-asc')}
+						>{m.rating()}
+						{#if sortBy === 'rating-asc'}
+							<TypcnArrowSortedUp class="inline-block" />
+						{:else if sortBy === 'rating-desc'}
+							<TypcnArrowSortedDown class="inline-block" />
+						{:else}
+							<TypcnArrowUnsorted class="inline-block" />
+						{/if}
+					</button>
+				</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -116,6 +135,9 @@
 						{/each}
 					</td>
 					<td class="px-4 py-1 text-gray-300">{player.wins}</td>
+					<td class="px-4 py-1 text-gray-300" title={m.rating() + ' ' + player.rating}>
+						{player.rating.toFixed(2)}
+					</td>
 				</tr>
 			{/each}
 		</tbody>
