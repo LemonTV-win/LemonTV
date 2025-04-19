@@ -110,7 +110,7 @@ export interface Event {
 		logo?: string;
 		url: string;
 	};
-	participants: number;
+	capacity: number; // expected number of teams
 	date: string;
 	website?: string;
 	teams: Team[];
@@ -511,7 +511,7 @@ const events: Event[] = [
 			url: 'https://x.com/BriBri_TSG'
 		},
 		matches: tournamentMatches,
-		participants: 16,
+		capacity: 16,
 		date: '2025-02-01',
 		teams: [teams['TG'], teams['GUGF'], teams['KRC'], teams['DRI'], teams['GA']]
 	},
@@ -530,7 +530,7 @@ const events: Event[] = [
 			logo: 'https://pbs.twimg.com/profile_images/1792733020912545792/NKEIhBSI_400x400.jpg',
 			url: 'https://x.com/kawakyuden'
 		},
-		participants: 16,
+		capacity: 16,
 		date: '2025-05-04/2025-05-05',
 		website: 'https://tonamel.com/competition/OU2cd',
 		teams: [
@@ -752,7 +752,7 @@ const events: Event[] = [
 			logo: 'https://lh3.googleusercontent.com/docsubipk/AP9E6xXsS7f7lkPdHZI-Q3JGePPY3jLvytkH87Nv3xjq_ZLxAOfz2bLeSdCQL59MrLnTbTX2M5jfSaLuhR4dKJghXD6Ts6ttN_Dv47311ySQgkj7Zy9h',
 			url: 'https://www.twitch.tv/origamicup'
 		},
-		participants: 16,
+		capacity: 14,
 		date: '2025-02-24',
 		teams: [
 			teams['TG'],

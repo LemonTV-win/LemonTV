@@ -36,7 +36,7 @@
 				</a>
 			</div>
 			<div class="text-gray-400">
-				{data.event.participants} Teams・<time datetime={data.event.date}
+				{data.event.capacity} Teams・<time datetime={data.event.date}
 					>{data.event.date.replace('/', ' - ')}</time
 				>
 			</div>
