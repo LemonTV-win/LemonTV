@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { error } from '@sveltejs/kit';
 	import type { PageProps } from './$types';
+	import { m } from '$lib/paraglide/messages.js';
 	import PlaceholderAvatar from '$assets/placeholder_avatar.png';
 	import CharacterIcon from '$lib/components/CharacterIcon.svelte';
 
@@ -50,12 +51,12 @@
 			</div>
 		</div>
 		<div class="flex flex-col">
-			<h2 class="my-5 text-xl font-bold">Stats</h2>
+			<h2 class="my-5 text-xl font-bold">{m.stats()}</h2>
 			<div class="flex flex-col gap-2 rounded-sm bg-gray-800 p-4 shadow-2xl">
 				<table>
 					<tbody>
 						<tr>
-							<td>Wins</td>
+							<td>{m.wins()}</td>
 							<td>{data.playerWins}</td>
 						</tr>
 					</tbody>
@@ -63,7 +64,7 @@
 			</div>
 		</div>
 		<div>
-			<h3 class="my-5 text-lg font-bold">Superstrings</h3>
+			<h3 class="my-5 text-lg font-bold">{m.superstrings()}</h3>
 			<ul class="flex list-none flex-col gap-4 rounded-sm bg-gray-800 p-4 shadow-2xl">
 				{#each data.playerAgents.toSorted((a, b) => b[1] - a[1]) as [character, count]}
 					{@const percentage =
@@ -72,8 +73,8 @@
 						<CharacterIcon {character} />
 						<div class="flex flex-col gap-1">
 							<div class="flex justify-between text-sm">
-								<span class="text-white">{character}</span><span class="text-slate-400"
-									>{percentage.toFixed(0)}% ({count})</span
+								<span class="text-white">{m[character as keyof typeof m]()}</span><span
+									class="text-slate-400">{percentage.toFixed(0)}% ({count})</span
 								>
 							</div>
 							<div class="h-2 w-full overflow-hidden rounded-full bg-slate-600">
@@ -86,7 +87,7 @@
 		</div>
 		{#if data.playerEvents}
 			<div>
-				<h2 class="my-5 text-xl font-bold">Attended Events</h2>
+				<h2 class="my-5 text-xl font-bold">{m.attended_events()}</h2>
 				<ul class="grid grid-cols-2 gap-4">
 					{#each data.playerEvents as event}
 						{#if event}
@@ -106,7 +107,7 @@
 			</div>
 		{/if}
 		<div class="col-span-2">
-			<h2 class="my-5 text-xl font-bold">Recent Matches</h2>
+			<h2 class="my-5 text-xl font-bold">{m.recent_matches()}</h2>
 			<ul class="flex flex-col gap-2">
 				{#each data.playerMatches as match}
 					{#if match}
