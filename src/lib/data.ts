@@ -120,59 +120,7 @@ export interface Event {
 }
 
 const tournamentMatches: Match[] = [
-	{
-		id: 1,
-		teams: [
-			{
-				team: teams['TG'],
-				score: 2
-			},
-			{
-				team: teams['DRI'],
-				score: 0
-			}
-		],
-		battleOf: 'BO3',
-		maps: [],
-		round: 1,
-		winnerId: 1
-	},
-	{
-		id: 2,
-		teams: [
-			{
-				team: teams['TG'],
-				score: 1
-			},
-			{
-				team: teams['GA'],
-				score: 2
-			}
-		],
-		battleOf: 'BO3',
-		maps: [],
-		round: 1,
-		winnerId: 2
-	},
-	{
-		id: 5,
-		teams: [
-			{
-				team: teams['GUGF'],
-				score: 2
-			},
-			{
-				team: teams['KRC'],
-				score: 0
-			}
-		],
-		battleOf: 'BO3',
-		maps: [],
-		round: 2,
-		winnerId: 1
-	},
-
-	// GUGF vs GA (done)
+	// GUGF vs GA
 	{
 		id: 10,
 		teams: [
@@ -446,42 +394,281 @@ const tournamentMatches: Match[] = [
 		]
 	},
 
+	// DRI vs KRC
 	{
-		id: 14,
+		id: 11,
 		teams: [
 			{
-				team: teams['KRC'],
+				team: teams['DRI'],
 				score: 2
 			},
 			{
-				team: teams['DRI'],
+				team: teams['KRC'],
 				score: 0
 			}
+		],
+		battleOf: 'BO3',
+		maps: [
+			{ map: 'space_lab', pickerId: 1, pickedSide: 'Attack' },
+			{ map: 'cosmite', pickerId: 2, pickedSide: 'Defense' },
+			{ map: 'cauchy_district', pickerId: 2, pickedSide: 'Attack' }
 		],
 		round: 3,
 		winnerId: 1,
-		battleOf: 'BO3',
-		maps: []
-	},
-	{
-		id: 15,
-		teams: [
+		vod: 'https://youtu.be/j7Nt3gGzLkg?t=1565',
+		games: [
 			{
-				team: teams['KRC'],
-				score: 0
+				id: 1,
+				map: 'space_lab',
+				teams: [teams['DRI'], teams['KRC']],
+				duration: 1353,
+				result: [3, 9],
+				winner: 2,
+				scores: [
+					[
+						{
+							player: 'xohfiy',
+							characters: ['Michele', 'Lawine'],
+							score: 230,
+							damageScore: 170,
+							kills: 13,
+							knocks: 13,
+							deaths: 3,
+							assists: 18,
+							damage: 2948
+						},
+						{
+							player: 'HonkWith4ks',
+							characters: ['Yugiri', 'Reiichi'],
+							score: 228,
+							damageScore: 198,
+							kills: 12,
+							knocks: 16,
+							deaths: 3,
+							assists: 11,
+							damage: 3535
+						},
+						{
+							player: 'Kariyu',
+							characters: ['Audrey', 'Celestia'],
+							score: 202,
+							damageScore: 183,
+							kills: 11,
+							knocks: 11,
+							deaths: 5,
+							assists: 10,
+							damage: 3342
+						},
+						{
+							player: 'FOXY1Yukino',
+							characters: ['Nobunaga', 'Ming'],
+							score: 169,
+							damageScore: 123,
+							kills: 7,
+							knocks: 7,
+							deaths: 4,
+							assists: 18,
+							damage: 2318
+						},
+						{
+							player: 'numOneZKFan',
+							characters: ['Flavia', 'Eika'],
+							score: 129,
+							damageScore: 106,
+							kills: 6,
+							knocks: 6,
+							deaths: 6,
+							assists: 11,
+							damage: 2061
+						}
+					],
+					[
+						{
+							player: 'Poison',
+							characters: ['Lawine', 'Nobunaga'],
+							score: 191,
+							damageScore: 158,
+							kills: 8,
+							knocks: 11,
+							deaths: 9,
+							assists: 4,
+							damage: 2948
+						},
+						{
+							player: 'Creepz',
+							characters: ['Galatea', 'Michele'],
+							score: 149,
+							damageScore: 129,
+							kills: 3,
+							knocks: 5,
+							deaths: 10,
+							assists: 5,
+							damage: 2798
+						},
+						{
+							player: 'Moozor',
+							characters: ['Meredith', 'Audrey'],
+							score: 140,
+							damageScore: 117,
+							kills: 5,
+							knocks: 5,
+							deaths: 10,
+							assists: 6,
+							damage: 2399
+						},
+						{
+							player: 'GWZH',
+							characters: ['Ming', 'Flavia'],
+							score: 118,
+							damageScore: 97,
+							kills: 4,
+							knocks: 4,
+							deaths: 9,
+							assists: 3,
+							damage: 2001
+						},
+						{
+							player: 'Vampire',
+							characters: ['Reiichi', 'Fuschia'],
+							score: 79,
+							damageScore: 62,
+							kills: 1,
+							knocks: 2,
+							deaths: 11,
+							assists: 4,
+							damage: 1413
+						}
+					]
+				]
 			},
 			{
-				team: teams['GUGF'],
-				score: 2
+				id: 4,
+				map: 'cosmite',
+				teams: [teams['DRI'], teams['KRC']],
+				duration: 1604,
+				result: [5, 9],
+				winner: 2,
+				scores: [
+					[
+						{
+							player: 'Creepz',
+							characters: ['Kanami', 'Galatea'],
+							score: 254,
+							damageScore: 196,
+							kills: 9,
+							knocks: 14,
+							deaths: 9,
+							assists: 16,
+							damage: 4583
+						},
+						{
+							player: 'Moozor',
+							characters: ['Meredith', 'Audrey'],
+							score: 184,
+							damageScore: 138,
+							kills: 5,
+							knocks: 6,
+							deaths: 11,
+							assists: 16,
+							damage: 3430
+						},
+						{
+							player: 'Vampire',
+							characters: ['Reiichi', 'Fuschia'],
+							score: 109,
+							damageScore: 80,
+							kills: 6,
+							knocks: 6,
+							deaths: 12,
+							assists: 13,
+							damage: 1691
+						},
+						{
+							player: 'GWZH',
+							characters: ['Ming', 'Flavia'],
+							score: 80,
+							damageScore: 60,
+							kills: 3,
+							knocks: 3,
+							deaths: 12,
+							assists: 9,
+							damage: 1437
+						},
+						{
+							player: 'Poison',
+							characters: ['Lawine', 'Nobunaga'],
+							score: 216,
+							damageScore: 170,
+							kills: 9,
+							knocks: 13,
+							deaths: 10,
+							assists: 11,
+							damage: 3841
+						}
+					],
+					[
+						{
+							player: 'xohfiy',
+							characters: ['Michele', 'Lawine'],
+							score: 239,
+							damageScore: 177,
+							kills: 17,
+							knocks: 17,
+							deaths: 5,
+							assists: 14,
+							damage: 3403
+						},
+						{
+							player: 'HonkWith4ks',
+							characters: ['Yugiri', 'Reiichi'],
+							score: 208,
+							damageScore: 167,
+							kills: 13,
+							knocks: 14,
+							deaths: 7,
+							assists: 15,
+							damage: 3414
+						},
+						{
+							player: 'Kariyu',
+							characters: ['Audrey', 'Audrey'],
+							score: 169,
+							damageScore: 151,
+							kills: 9,
+							knocks: 12,
+							deaths: 7,
+							assists: 15,
+							damage: 3320
+						},
+						{
+							player: 'FOXY1Yukino',
+							characters: ['Nobunaga', 'Ming'],
+							score: 161,
+							damageScore: 123,
+							kills: 8,
+							knocks: 8,
+							deaths: 6,
+							assists: 17,
+							damage: 2749
+						},
+						{
+							player: 'numOneZKFan',
+							characters: ['Flavia', 'Eika'],
+							score: 117,
+							damageScore: 91,
+							kills: 7,
+							knocks: 7,
+							deaths: 10,
+							assists: 10,
+							damage: 1977
+						}
+					]
+				]
 			}
-		],
-		round: 3,
-		winnerId: 2,
-		battleOf: 'BO3',
-		maps: []
+		]
 	},
 
-	// TG vs GUGF (done)
+	// TG vs GUGF
 	{
 		id: 16,
 		round: 4,
