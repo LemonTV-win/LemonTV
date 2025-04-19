@@ -1236,30 +1236,17 @@ export function getPlayerWins(id: string): number {
 }
 
 export function getPlayerAgents(id: string): [Character, number][] {
-	const characters = getPlayerMatches(id).flatMap((match) => {
-		// get the team that the player is on
-		const teamIndex = match.teams.findIndex((team) =>
-			team.team.players?.some((player) => player && player.id === id)
-		);
-
-		if (teamIndex === -1) {
-			return [];
-		}
-
-		const playerIndex =
-			match.teams[teamIndex].team.players?.findIndex((player) => player && player.id === id) ?? -1;
-
-		if (playerIndex === -1) {
-			return [];
-		}
-
-		// get the scores for the player
-		const scores = match.games?.flatMap((game) => game.scores[teamIndex][playerIndex]) ?? [];
-
-		// get the characters for the player
-		return scores.flatMap((score) => score?.characters ?? []);
-	});
-
+	const characters = getPlayerMatches(id)
+		.flatMap((match) =>
+			(match.games ?? []).flatMap((game) => {
+				for (const score of game.scores[match.playerTeamIndex]) {
+					if (score.player === id) {
+						return score.characters;
+					}
+				}
+			})
+		)
+		.filter(Boolean) as Character[];
 	// Count occurrences of each character
 	const characterCounts = new Map<Character, number>();
 	for (const character of characters) {
