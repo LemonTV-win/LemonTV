@@ -65,6 +65,7 @@ export interface Match {
 		pickedSide: 'Attack' | 'Defense';
 	}[];
 	games?: Game[];
+	vod?: string; // url to the vod
 }
 
 export interface PlayerScore {
@@ -186,7 +187,8 @@ const tournamentMatches: Match[] = [
 		battleOf: 'BO3',
 		maps: [],
 		round: 3,
-		winnerId: 2
+		winnerId: 2,
+		vod: 'https://youtu.be/gEPv96BlZRc?t=1299'
 	},
 
 	{
