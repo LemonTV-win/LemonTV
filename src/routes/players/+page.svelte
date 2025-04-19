@@ -5,10 +5,13 @@
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import CharacterIcon from '$lib/components/CharacterIcon.svelte';
+	import TypcnArrowUnsorted from '~icons/typcn/arrow-unsorted';
+	import TypcnArrowSortedDown from '~icons/typcn/arrow-sorted-down';
+	import TypcnArrowSortedUp from '~icons/typcn/arrow-sorted-up';
 
 	let { data }: PageProps = $props();
 
-	let sortBy: 'name-abc' | 'name-cba' | 'wins' = $state('name-abc');
+	let sortBy: 'name-abc' | 'name-cba' | 'wins-asc' | 'wins-desc' = $state('name-abc');
 
 	let sorted = $derived(
 		data.players.toSorted((a, b) => {
@@ -16,7 +19,9 @@
 				return a.name.localeCompare(b.name);
 			} else if (sortBy === 'name-cba') {
 				return b.name.localeCompare(a.name);
-			} else if (sortBy === 'wins') {
+			} else if (sortBy === 'wins-asc') {
+				return a.wins - b.wins;
+			} else if (sortBy === 'wins-desc') {
 				return b.wins - a.wins;
 			}
 			return 0;
@@ -32,7 +37,10 @@
 		const urlSortBy = url.searchParams.get('sortBy');
 		if (
 			urlSortBy &&
-			(urlSortBy === 'name-abc' || urlSortBy === 'name-cba' || urlSortBy === 'wins')
+			(urlSortBy === 'name-abc' ||
+				urlSortBy === 'name-cba' ||
+				urlSortBy === 'wins-asc' ||
+				urlSortBy === 'wins-desc')
 		) {
 			sortBy = urlSortBy;
 		}
@@ -45,17 +53,35 @@
 	<table class="w-full table-auto border-collapse border-y-2 border-gray-500 bg-gray-800">
 		<thead>
 			<tr class="border-b-2 border-gray-500 text-left text-sm text-gray-400">
-				<th class="px-4 py-1"
-					><button
+				<th class="px-4 py-1">
+					<button
 						class="text-left"
 						onclick={() => (sortBy = sortBy === 'name-abc' ? 'name-cba' : 'name-abc')}
-						>{m.name()}</button
-					></th
-				>
+						>{m.name()}
+						{#if sortBy === 'name-abc'}
+							<TypcnArrowSortedUp class="inline-block" />
+						{:else if sortBy === 'name-cba'}
+							<TypcnArrowSortedDown class="inline-block" />
+						{:else}
+							<TypcnArrowUnsorted class="inline-block" />
+						{/if}
+					</button>
+				</th>
 				<th class="px-4 py-1">{m.superstrings()}</th>
-				<th class="px-4 py-1"
-					><button class="text-left" onclick={() => (sortBy = 'wins')}>{m.wins()}</button></th
-				>
+				<th class="px-4 py-1">
+					<button
+						class="text-left"
+						onclick={() => (sortBy = sortBy === 'wins-asc' ? 'wins-desc' : 'wins-asc')}
+						>{m.wins()}
+						{#if sortBy === 'wins-asc'}
+							<TypcnArrowSortedUp class="inline-block" />
+						{:else if sortBy === 'wins-desc'}
+							<TypcnArrowSortedDown class="inline-block" />
+						{:else}
+							<TypcnArrowUnsorted class="inline-block" />
+						{/if}
+					</button>
+				</th>
 			</tr>
 		</thead>
 		<tbody>
