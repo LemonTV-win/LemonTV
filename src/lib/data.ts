@@ -1213,11 +1213,9 @@ export function getPlayerMatches(id: string): (Match & { playerTeamIndex: number
 }
 
 export function getPlayerWins(id: string): number {
-	return getPlayerMatches(id).filter((match) =>
-		match.teams[(match.winnerId ?? 0) - 1].team.players?.some(
-			(player) => player && player.id === id
-		)
-	).length;
+	return getPlayerMatches(id).filter((match) => {
+		return match.winnerId === match.playerTeamIndex + 1;
+	}).length;
 }
 export function getPlayerAgents(id: string): [Character, number][] {
 	const characters = getPlayerMatches(id).flatMap((match) => {
