@@ -140,7 +140,7 @@ const tournamentMatches: Match[] = [
 			{ map: 'space_lab', pickerId: 2, pickedSide: 'Defense' }
 		],
 		round: 3,
-		winnerId: 2,
+		winnerId: 1,
 		vod: 'https://youtu.be/gEPv96BlZRc?t=1299',
 		games: [
 			{
