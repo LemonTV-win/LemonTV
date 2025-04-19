@@ -40,35 +40,43 @@
 
 <main class="mx-auto max-w-screen-lg">
 	<h1 class="my-10 text-2xl font-bold">{m.players()}</h1>
-	<select
-		class="mb-4 rounded-md border-2 border-gray-500 bg-gray-800 p-2 px-4 text-sm text-gray-400"
-		bind:value={sortBy}
-	>
-		<option value="name-abc">ABC</option>
-		<option value="name-cba">CBA</option>
-		<option value="wins">Wins</option>
-	</select>
-	<ul>
-		{#each sorted as player}
-			<li class="border-b-1 border-gray-500 bg-gray-800 p-4 shadow-2xl">
-				<a href={`/players/${player.id}`} class="mb-8 font-bold">
-					{player.name}
-					{#if player.gameAccounts}
-						{#each player.gameAccounts as account}
-							{#if account.currentName !== player.name}
-								<span class="text-gray-400">
-									({account.currentName})
-								</span>
-							{/if}
-						{/each}
-					{/if}
-					<span class="text-gray-400">
-						{player.wins}
-					</span>
-				</a>
-			</li>
-		{/each}
-	</ul>
+
+	<table class="w-full table-auto border-collapse border-y-2 border-gray-500 bg-gray-800">
+		<thead>
+			<tr class="border-b-2 border-gray-500 text-left text-sm text-gray-400">
+				<th class="px-4 py-1"
+					><button
+						class="text-left"
+						onclick={() => (sortBy = sortBy === 'name-abc' ? 'name-cba' : 'name-abc')}>Name</button
+					></th
+				>
+				<th class="px-4 py-1"
+					><button class="text-left" onclick={() => (sortBy = 'wins')}>{m.wins()}</button></th
+				>
+			</tr>
+		</thead>
+		<tbody>
+			{#each sorted as player}
+				<tr class="border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl">
+					<td class="px-4 py-1">
+						<a href={`/players/${player.id}`}
+							>{player.name}
+							{#if player.gameAccounts}
+								{#each player.gameAccounts as account}
+									{#if account.currentName !== player.name}
+										<span class="text-gray-400">
+											({account.currentName})
+										</span>
+									{/if}
+								{/each}
+							{/if}</a
+						>
+					</td>
+					<td class="px-4 py-1 text-gray-300">{player.wins}</td>
+				</tr>
+			{/each}
+		</tbody>
+	</table>
 </main>
 
 <style>
