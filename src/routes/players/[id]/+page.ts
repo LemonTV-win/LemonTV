@@ -16,6 +16,6 @@ export const load: PageLoad = ({ params }) => {
 		playerEvents: getPlayerEvents(params.id),
 		playerMatches: getPlayerMatches(params.id),
 		playerWins: getPlayerWins(params.id),
-		playerAgents: getPlayerAgents(params.id)
+		playerAgents: getPlayerAgents(getPlayer(params.id))
 	};
 };

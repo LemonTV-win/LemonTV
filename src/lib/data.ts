@@ -1182,7 +1182,9 @@ export function getPlayer(id: string) {
 
 export function isPlayerInTeam(id: string, team: Team) {
 	return [...(team.players ?? []), ...(team.substitutes ?? [])]?.some(
-		(player) => player && player.id === id
+		(player) =>
+			player &&
+			(player.id === id || player.gameAccounts?.some((account) => account.currentName === id))
 	);
 }
 
@@ -1208,7 +1210,9 @@ export function getPlayerMatches(id: string): (Match & { playerTeamIndex: number
 			...match,
 			playerTeamIndex: match.teams.findIndex((team) =>
 				[...(team.team.players ?? []), ...(team.team.substitutes ?? [])].some(
-					(player) => player && player.id === id
+					(player) =>
+						player &&
+						(player.id === id || player.gameAccounts?.some((account) => account.currentName === id))
 				)
 			)
 		}));
@@ -1235,18 +1239,22 @@ export function getPlayerWins(id: string): number {
 	}).length;
 }
 
-export function getPlayerAgents(id: string): [Character, number][] {
-	const characters = getPlayerMatches(id)
+export function getPlayerAgents(player: Player): [Character, number][] {
+	const characters = getPlayerMatches(player.id ?? '')
 		.flatMap((match) =>
 			(match.games ?? []).flatMap((game) => {
 				for (const score of game.scores[match.playerTeamIndex]) {
-					if (score.player === id) {
+					if (
+						score.player === player.id ||
+						player.gameAccounts?.some((account) => account.currentName === score.player)
+					) {
 						return score.characters;
 					}
 				}
 			})
 		)
 		.filter(Boolean) as Character[];
+
 	// Count occurrences of each character
 	const characterCounts = new Map<Character, number>();
 	for (const character of characters) {
@@ -1259,7 +1267,7 @@ export function getPlayerAgents(id: string): [Character, number][] {
 
 export function getPlayersAgents(limit: number = 3): Record<string, [Character, number][]> {
 	return Object.fromEntries(
-		Object.entries(players).map(([id, _player]) => [id, getPlayerAgents(id).slice(0, limit)])
+		Object.entries(players).map(([id, player]) => [id, getPlayerAgents(player).slice(0, limit)])
 	);
 }
 
