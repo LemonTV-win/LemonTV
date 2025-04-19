@@ -37,6 +37,8 @@
 				{/each}
 			</ul>
 		{/if}
+		<h2 class="my-5 text-xl font-bold">Stats</h2>
+		<p>Wins: {data.playerWins}</p>
 		{#if data.playerEvents}
 			<h2 class="my-5 text-xl font-bold">Attended Events</h2>
 			<ul class="grid grid-cols-3 gap-4">
