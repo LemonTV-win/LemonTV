@@ -559,6 +559,177 @@ const tournamentMatches: Match[] = [
 	}
 ];
 
+const origamiTeams: Record<string, Team> = {
+	TG: {
+		name: 'The Grustlers',
+		region: 'NA',
+		players: [
+			players['gengu'],
+			players['Ascinei'],
+			players['grustleking'],
+			players['ttvBlexiss'],
+			players['frostyZK']
+		],
+		substitutes: [players['uno']]
+	},
+	WK: {
+		name: 'Wilden Kerle',
+		region: 'NA',
+		players: [
+			players['Jstn'],
+			players['Xaly'],
+			players['extraya'],
+			players['GloriousNico'],
+			players['DEMXN']
+		],
+		substitutes: [players['Juzify'], players['Vora']]
+	},
+	ML: {
+		name: 'Meowliora',
+		region: 'NA',
+		players: [
+			players['akwa'],
+			players['BriBri'],
+			players['nine'],
+			players['HiroRune'],
+			players['Kito']
+		],
+		substitutes: [players['jayeezy']]
+	},
+	OC: {
+		name: 'October',
+		region: 'NA',
+		players: [
+			players['Skyerzz'],
+			players['whoisLexu'],
+			players['AjDemon'],
+			players['MEGATRONOFDEATH'],
+			players['Fjin']
+		],
+		substitutes: [players['Stykades'], players['zcz']]
+	},
+	DA: {
+		name: 'Drillas Academy',
+		region: 'NA',
+		players: [
+			players['Mansek'],
+			players['Scylla'],
+			players['sinna'],
+			players['ARGHGHGHGHGHHGHG'],
+			players['will']
+		],
+		substitutes: [players['Voxy']]
+	},
+	YU: {
+		name: 'YugifeetLover',
+		region: 'NA',
+		players: [
+			players['aKura'],
+			players['Flausch'],
+			players['00YUE00'],
+			players['GrizzlyGripper28'],
+			players['NekoNoTsuki']
+		],
+		substitutes: [players['schwertfish'], players['KatzenMilch']]
+	},
+	YG: {
+		name: "yuri's gang",
+		region: 'NA',
+		players: [
+			players['nxreq'],
+			players['pookie'],
+			players['ze'],
+			players['KanamiDoggye'],
+			players['audience']
+		],
+		substitutes: [players['MaddeFeetSniffer'], players['SophieRain']]
+	},
+	HC: {
+		name: 'hopecore',
+		region: 'NA',
+		players: [
+			players['Krihville'],
+			players['трагедия'],
+			players['m1sa'],
+			players['canparty'],
+			players['Stardx']
+		],
+		substitutes: [players['NikZON'], players['GigglingWill']]
+	},
+	GS: {
+		name: 'GweahShindago!!',
+		region: 'NA',
+		players: [
+			players['kane'],
+			players['Unknown0Neko'],
+			players['Squall'],
+			players['WEGOINGMENTAL'],
+			players['polishcat']
+		],
+		substitutes: [players['S1nine'], players['Majime']]
+	},
+	DR: {
+		name: 'Drillas',
+		region: 'NA',
+		players: [
+			players['Poison'],
+			players['Vampire'],
+			players['Creepz'],
+			players['Moozor'],
+			players['GWZH']
+		],
+		substitutes: []
+	},
+	KK: {
+		name: '小可爱们',
+		region: 'NA',
+		players: [
+			players['진주'],
+			players['百荷'],
+			players['AmyamyaThe女神'],
+			players['Accellerator'],
+			players['RuleR']
+		],
+		substitutes: [players['爱莉希雅丨侵蚀']]
+	},
+	LD: {
+		name: 'LONG DISTANCE PALS <3',
+		region: 'NA',
+		players: [
+			players['FOX1Yukino'],
+			players['HonkWith4ks'],
+			players['xohfiy'],
+			players['weeping'],
+			players['Asscinei']
+		],
+		substitutes: [players['numoneZKFan']]
+	},
+	MA: {
+		name: 'Michele Armpits',
+		region: 'NA',
+		players: [
+			players['Ely'],
+			players['shadow'],
+			players['lachevre'],
+			players['Revali'],
+			players['BurningStar']
+		],
+		substitutes: [players['PHRESHBOYSWAG']]
+	},
+	SF: {
+		name: 'Stringifries',
+		region: 'NA',
+		players: [
+			players['GhostElectricity'],
+			players['Ria'],
+			players['FocalorsinBlue'],
+			players['JustZero'],
+			players['messup']
+		],
+		substitutes: [players['supercrownnegev'], players['Soulen']]
+	}
+};
+
 const events: Event[] = [
 	{
 		id: 1,
@@ -817,177 +988,97 @@ const events: Event[] = [
 		},
 		participants: 16,
 		date: '2025-02-24',
-		teams: [
+		teams: Object.values(origamiTeams),
+		matches: [
 			{
-				name: 'The Grustlers',
-				region: 'NA',
-				players: [
-					players['gengu'],
-					players['Ascinei'],
-					players['grustleking'],
-					players['ttvBlexiss'],
-					players['frostyZK']
+				id: 1,
+				round: 1,
+				teams: [
+					{ team: origamiTeams['TG'], score: 2 },
+					{ team: origamiTeams['MA'], score: 0 }
 				],
-				substitutes: [players['uno']]
+				winnerId: 1,
+				battleOf: 'BO3',
+				maps: []
 			},
 			{
-				name: 'Wilden Kerle',
-				region: 'NA',
-				players: [
-					players['Jstn'],
-					players['Xaly'],
-					players['extraya'],
-					players['GloriousNico'],
-					players['DEMXN']
+				id: 2,
+				round: 1,
+				teams: [
+					{ team: origamiTeams['HC'], score: 1 },
+					{ team: origamiTeams['DA'], score: 2 }
 				],
-				substitutes: [players['Juzify'], players['Vora']]
+				winnerId: 2,
+				battleOf: 'BO3',
+				maps: []
 			},
 			{
-				name: 'Meowliora',
-				region: 'NA',
-				players: [
-					players['akwa'],
-					players['BriBri'],
-					players['nine'],
-					players['HiroRune'],
-					players['Kito']
+				id: 3,
+				round: 1,
+				teams: [
+					{ team: origamiTeams['ML'], score: 2 },
+					{ team: origamiTeams['OC'], score: 1 }
 				],
-				substitutes: [players['jayeezy']]
+				winnerId: 1,
+				battleOf: 'BO3',
+				maps: []
 			},
 			{
-				name: 'October',
-				region: 'NA',
-				players: [
-					players['Skyerzz'],
-					players['whoisLexu'],
-					players['AjDemon'],
-					players['MEGATRONOFDEATH'],
-					players['Fjin']
+				id: 4,
+				round: 1,
+				teams: [
+					{ team: origamiTeams['KK'], score: 0 },
+					{ team: origamiTeams['YG'], score: 2 }
 				],
-				substitutes: [players['Stykades'], players['zcz']]
+				winnerId: 2,
+				battleOf: 'BO3',
+				maps: []
 			},
 			{
-				name: 'Drillas Academy',
-				region: 'NA',
-				players: [
-					players['Mansek'],
-					players['Scylla'],
-					players['sinna'],
-					players['ARGHGHGHGHGHHGHG'],
-					players['will']
+				id: 5,
+				round: 2,
+				teams: [
+					{ team: origamiTeams['TG'], score: 2 },
+					{ team: origamiTeams['DR'], score: 0 }
 				],
-				substitutes: [players['Voxy']]
+				winnerId: 1,
+				battleOf: 'BO3',
+				maps: []
 			},
 			{
-				name: 'YugifeetLover',
-				region: 'NA',
-				players: [
-					players['aKura'],
-					players['Flausch'],
-					players['00YUE00'],
-					players['GrizzlyGripper28'],
-					players['NekoNoTsuki']
+				id: 6,
+				round: 2,
+				teams: [
+					{ team: origamiTeams['ML'], score: 2 },
+					{ team: origamiTeams['DA'], score: 0 }
 				],
-				substitutes: [players['schwertfish'], players['KatzenMilch']]
+				winnerId: 1,
+				battleOf: 'BO3',
+				maps: []
 			},
 			{
-				name: "yuri's gang",
-				region: 'NA',
-				players: [
-					players['nxreq'],
-					players['pookie'],
-					players['ze'],
-					players['KanamiDoggye'],
-					players['audience']
+				id: 7,
+				round: 3,
+				teams: [
+					{ team: origamiTeams['TG'], score: 2 },
+					{ team: origamiTeams['ML'], score: 0 }
 				],
-				substitutes: [players['MaddeFeetSniffer'], players['SophieRain']]
+				winnerId: 1,
+				battleOf: 'BO3',
+				maps: []
 			},
 			{
-				name: 'hopecore',
-				region: 'NA',
-				players: [
-					players['Krihville'],
-					players['трагедия'],
-					players['m1sa'],
-					players['canparty'],
-					players['Stardx']
+				id: 8,
+				round: 3,
+				teams: [
+					{ team: origamiTeams['DR'], score: 0 },
+					{ team: origamiTeams['DA'], score: 2 }
 				],
-				substitutes: [players['NikZON'], players['GigglingWill']]
-			},
-			{
-				name: 'GweahShindago!!',
-				region: 'NA',
-				players: [
-					players['kane'],
-					players['Unknown0Neko'],
-					players['Squall'],
-					players['WEGOINGMENTAL'],
-					players['polishcat']
-				],
-				substitutes: [players['S1nine'], players['Majime']]
-			},
-			{
-				name: 'Drillas',
-				region: 'NA',
-				players: [
-					players['Poison'],
-					players['Vampire'],
-					players['Creepz'],
-					players['Moozor'],
-					players['GWZH']
-				],
-				substitutes: []
-			},
-			{
-				name: '小可爱们',
-				region: 'NA',
-				players: [
-					players['진주'],
-					players['百荷'],
-					players['AmyamyaThe女神'],
-					players['Accellerator'],
-					players['RuleR']
-				],
-				substitutes: [players['爱莉希雅丨侵蚀']]
-			},
-			{
-				name: 'LONG DISTANCE PALS <3',
-				region: 'NA',
-				players: [
-					players['FOX1Yukino'],
-					players['HonkWith4ks'],
-					players['xohfiy'],
-					players['weeping'],
-					players['Asscinei']
-				],
-				substitutes: [players['numoneZKFan']]
-			},
-			{
-				name: 'Michele Armpits',
-				region: 'NA',
-				players: [
-					players['Ely'],
-					players['shadow'],
-					players['lachevre'],
-					players['Revali'],
-					players['BurningStar']
-				],
-				substitutes: [players['PHRESHBOYSWAG']]
-			},
-			{
-				name: 'Stringifries',
-				region: 'NA',
-				players: [
-					players['GhostElectricity'],
-					players['Ria'],
-					players['FocalorsinBlue'],
-					players['JustZero'],
-					players['messup']
-				],
-				substitutes: [players['supercrownnegev'], players['Soulen']]
+				winnerId: 2,
+				battleOf: 'BO3',
+				maps: []
 			}
 		],
-		matches: [],
 		website:
 			'https://docs.google.com/spreadsheets/d/1eL5kWIBFGlrQ4HLLAaYyFoJvAMNswvQFSFC00-A8M9M/edit'
 	}
@@ -1019,7 +1110,7 @@ export function getTeams() {
 						.flatMap((event) => event.matches)
 						.filter(
 							(match) =>
-								match.teams.some((t) => t.team.name === team.name) &&
+								match.teams.some((t) => t.team?.name === team.name) &&
 								match.teams[(match.winnerId ?? 0) - 1].team.name === team.name
 						).length,
 					...team
