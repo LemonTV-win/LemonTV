@@ -2815,7 +2815,13 @@ export function getPlayer(id: string) {
 }
 
 export function getPlayerTeams(id: string) {
-	return getTeams().filter((team) => team.players?.some((player) => player && player.id === id));
+	return [
+		...new Set(
+			getTeams()
+				.filter((team) => team.players?.some((player) => player && player.id === id))
+				.map((team) => team.id)
+		)
+	].map((id) => getTeams().find((team) => team.id === id)!);
 }
 
 export function getPlayerEvents(id: string) {
