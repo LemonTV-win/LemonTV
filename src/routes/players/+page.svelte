@@ -45,7 +45,9 @@
 			(urlSortBy === 'name-abc' ||
 				urlSortBy === 'name-cba' ||
 				urlSortBy === 'wins-asc' ||
-				urlSortBy === 'wins-desc')
+				urlSortBy === 'wins-desc' ||
+				urlSortBy === 'rating-asc' ||
+				urlSortBy === 'rating-desc')
 		) {
 			sortBy = urlSortBy;
 		}
