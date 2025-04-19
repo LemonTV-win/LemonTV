@@ -172,12 +172,13 @@ const tournamentMatches: Match[] = [
 		winnerId: 1
 	},
 
+	// GUGF vs GA (done)
 	{
 		id: 10,
 		teams: [
 			{
 				team: teams['GUGF'],
-				score: 0
+				score: 2
 			},
 			{
 				team: teams['GA'],
@@ -185,10 +186,264 @@ const tournamentMatches: Match[] = [
 			}
 		],
 		battleOf: 'BO3',
-		maps: [],
+		maps: [
+			{ map: 'cauchy_district', pickerId: 1, pickedSide: 'Attack' },
+			{ map: 'area_88', pickerId: 2, pickedSide: 'Defense' },
+			{ map: 'space_lab', pickerId: 2, pickedSide: 'Defense' }
+		],
 		round: 3,
 		winnerId: 2,
-		vod: 'https://youtu.be/gEPv96BlZRc?t=1299'
+		vod: 'https://youtu.be/gEPv96BlZRc?t=1299',
+		games: [
+			{
+				id: 1,
+				map: 'cauchy_district',
+				teams: [teams['GUGF'], teams['GA']],
+				duration: 1830,
+				result: [9, 5],
+				winner: 1,
+				scores: [
+					[
+						{
+							player: 'iYu',
+							characters: ['Fuschia', 'Ming'],
+							score: 204,
+							damageScore: 172,
+							kills: 10,
+							knocks: 13,
+							deaths: 10,
+							assists: 11,
+							damage: 3812
+						},
+						{
+							player: 'cherry',
+							characters: ['Audrey', 'Reiichi'],
+							score: 180,
+							damageScore: 177,
+							kills: 7,
+							knocks: 9,
+							deaths: 10,
+							assists: 12,
+							damage: 4309
+						},
+						{
+							player: 'Jav',
+							characters: ['Flavia', 'Celestia'],
+							score: 153,
+							damageScore: 120,
+							kills: 7,
+							knocks: 9,
+							deaths: 10,
+							assists: 14,
+							damage: 2746
+						},
+						{
+							player: 'Actyuki',
+							characters: ['Bai Mo', 'Eika'],
+							score: 139,
+							damageScore: 129,
+							kills: 4,
+							knocks: 5,
+							deaths: 9,
+							assists: 12,
+							damage: 3291
+						},
+						{
+							player: 'Saya',
+							characters: ['Michele', 'Lawine'],
+							score: 115,
+							damageScore: 68,
+							kills: 3,
+							knocks: 5,
+							deaths: 12,
+							assists: 13,
+							damage: 1588
+						}
+					],
+					[
+						{
+							player: 'JY10137',
+							characters: ['Ming', 'Bai Mo'], // Not provided
+							score: 244,
+							damageScore: 216,
+							kills: 9,
+							knocks: 9,
+							deaths: 7,
+							assists: 25,
+							damage: 5371
+						},
+						{
+							player: '箱子箱',
+							characters: ['Lawine', 'Fuschia'],
+							score: 232,
+							damageScore: 164,
+							kills: 11,
+							knocks: 14,
+							deaths: 6,
+							assists: 29,
+							damage: 3462
+						},
+						{
+							player: 'twitch一77427',
+							characters: ['Kanami', 'Kokona'],
+							score: 217,
+							damageScore: 160,
+							kills: 9,
+							knocks: 10,
+							deaths: 5,
+							assists: 19,
+							damage: 3700
+						},
+						{
+							player: 'ChengCheng',
+							characters: ['Eika', 'Flavia'],
+							score: 153,
+							damageScore: 132,
+							kills: 14,
+							knocks: 13,
+							deaths: 7,
+							assists: 11,
+							damage: 2428
+						},
+						{
+							player: 'ぺこどん',
+							characters: ['Celestia', 'Michele'],
+							score: 172,
+							damageScore: 141,
+							kills: 11,
+							knocks: 12,
+							deaths: 6,
+							assists: 13,
+							damage: 2944
+						}
+					]
+				]
+			},
+			{
+				id: 2,
+				map: 'area_88',
+				teams: [teams['GUGF'], teams['GA']],
+				duration: 1830,
+				result: [9, 4],
+				winner: 1,
+				scores: [
+					[
+						{
+							player: 'ChengCheng',
+							characters: ['Lawine', 'Audrey'],
+							score: 273,
+							damageScore: 201,
+							kills: 14,
+							knocks: 14,
+							deaths: 4,
+							assists: 21,
+							damage: 4082
+						},
+						{
+							player: '箱子箱',
+							characters: ['Fuschia', 'Michele'],
+							score: 252,
+							damageScore: 189,
+							kills: 12,
+							knocks: 12,
+							deaths: 4,
+							assists: 23,
+							damage: 3793
+						},
+						{
+							player: 'twitch一77427',
+							characters: ['Kanami', 'Kokona'],
+							score: 240,
+							damageScore: 169,
+							kills: 9,
+							knocks: 9,
+							deaths: 8,
+							assists: 20,
+							damage: 3648
+						},
+						{
+							player: 'ぺこどん',
+							characters: ['Ming', 'Flavia'],
+							score: 222,
+							damageScore: 182,
+							kills: 10,
+							knocks: 11,
+							deaths: 6,
+							assists: 19,
+							damage: 3834
+						},
+						{
+							player: 'JY10137',
+							characters: ['Reiichi', 'Nobunaga'],
+							score: 130,
+							damageScore: 108,
+							kills: 5,
+							knocks: 6,
+							deaths: 6,
+							assists: 12,
+							damage: 2353
+						}
+					],
+					[
+						{
+							player: 'cherry',
+							characters: ['Kokona', 'Kanami'],
+							score: 187,
+							damageScore: 162,
+							kills: 7,
+							knocks: 9,
+							deaths: 11,
+							assists: 6,
+							damage: 3461
+						},
+						{
+							player: 'Saya',
+							characters: ['Celestia', 'Lawine'],
+							score: 184,
+							damageScore: 139,
+							kills: 8,
+							knocks: 9,
+							deaths: 9,
+							assists: 8,
+							damage: 2904
+						},
+						{
+							player: 'Jav',
+							characters: ['Michele', 'Celestia'],
+							score: 165,
+							damageScore: 128,
+							kills: 8,
+							knocks: 10,
+							deaths: 9,
+							assists: 4,
+							damage: 2769
+						},
+						{
+							player: 'iYu',
+							characters: ['Flavia', 'Ming'],
+							score: 125,
+							damageScore: 96,
+							kills: 3,
+							knocks: 4,
+							deaths: 10,
+							assists: 12,
+							damage: 2213
+						},
+						{
+							player: 'Actyuki',
+							characters: ['Bai Mo', 'Meredith'],
+							score: 122,
+							damageScore: 102,
+							kills: 3,
+							knocks: 5,
+							deaths: 10,
+							assists: 9,
+							damage: 2349
+						}
+					]
+				]
+			}
+		]
 	},
 
 	{
@@ -225,13 +480,16 @@ const tournamentMatches: Match[] = [
 		battleOf: 'BO3',
 		maps: []
 	},
+
+	// TG vs GUGF (done)
 	{
 		id: 16,
 		round: 4,
 		teams: [
 			{
 				team: teams['TG'],
-				score: 2
+				score: 2,
+				roaster: ['Ascinei', 'Ascinei', 'Ascinei', 'Ascinei', 'Ascinei']
 			},
 			{
 				team: teams['GUGF'],
