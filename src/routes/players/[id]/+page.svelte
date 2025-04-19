@@ -55,6 +55,28 @@
 				{/each}
 			</ul>
 		{/if}
+		<h2 class="my-5 text-xl font-bold">Recent Matches</h2>
+		<ul class="flex flex-col gap-2">
+			{#each data.playerMatches as match}
+				{#if match}
+					<li
+						class="grid grid-cols-[1fr_auto_1fr] items-center gap-2 gap-4 rounded-sm bg-gray-800 shadow-2xl"
+					>
+						<a href={`/matches/${match.id}`} class="contents">
+							<span class="text-right text-gray-400">{match.teams[0].team.name}</span>
+							<span
+								class="p-4 text-white"
+								class:bg-green-400={match.winnerId === 1}
+								class:bg-red-400={match.winnerId === 2}
+							>
+								{match.teams[0].score} - {match.teams[1].score}
+							</span>
+							<span class="text-left text-gray-400">{match.teams[1].team.name}</span>
+						</a>
+					</li>
+				{/if}
+			{/each}
+		</ul>
 	</main>
 {/if}
 

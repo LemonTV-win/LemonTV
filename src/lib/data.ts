@@ -2824,7 +2824,7 @@ export function getPlayerEvents(id: string) {
 	);
 }
 
-export function getPlayerMatches(id: string) {
+export function getPlayerMatches(id: string): Match[] {
 	return getEvents()
 		.flatMap((event) => event.matches)
 		.filter((match) =>
