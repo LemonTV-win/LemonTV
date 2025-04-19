@@ -2838,8 +2838,10 @@ export function getPlayerMatches(id: string): Match[] {
 		);
 }
 
-export function getPlayerWins(id: string) {
-	return getPlayerMatches(id).filter(
-		(match) => match.teams[(match.winnerId ?? 0) - 1].team.name === id
+export function getPlayerWins(id: string): number {
+	return getPlayerMatches(id).filter((match) =>
+		match.teams[(match.winnerId ?? 0) - 1].team.players?.some(
+			(player) => player && player.id === id
+		)
 	).length;
 }
