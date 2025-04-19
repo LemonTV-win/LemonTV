@@ -8,7 +8,7 @@
 	let sortBy: 'name-abc' | 'name-cba' | 'wins' = $state('name-abc');
 
 	let sorted = $derived(
-		data.players.sort((a, b) => {
+		data.players.toSorted((a, b) => {
 			if (sortBy === 'name-abc') {
 				return a.name.localeCompare(b.name);
 			} else if (sortBy === 'name-cba') {
