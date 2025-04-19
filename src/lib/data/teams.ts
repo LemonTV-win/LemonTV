@@ -5,8 +5,9 @@ export interface Team {
 	name: string;
 	logo?: string;
 	region?: Region;
-	players?: Player[];
-	substitutes?: Player[];
+	players?: Player[]; // active roaster
+	substitutes?: Player[]; // bench
+	former?: Player[]; // former players
 }
 
 export const teams: Record<string, Team> = {
@@ -18,7 +19,8 @@ export const teams: Record<string, Team> = {
 			players['grustleking'],
 			players['gengu'],
 			players['Ascinei'],
-			players['Blexiss']
+			players['Blexiss'],
+			players['uno']
 		]
 	},
 	GUGF: {
@@ -68,23 +70,6 @@ export const teams: Record<string, Team> = {
 			players['SilliestOfThreat'],
 			players['Actyuki丶Student']
 		]
-	}
-};
-
-// TODO: Add abbr
-
-export const origamiTeams: Record<string, Team> = {
-	TG: {
-		name: 'The Grustlers',
-		region: 'NA',
-		players: [
-			players['gengu'],
-			players['Ascinei'],
-			players['grustleking'],
-			players['Blexiss'],
-			players['frostyZK']
-		],
-		substitutes: [players['uno']]
 	},
 	WK: {
 		name: 'Wilden Kerle',
@@ -182,19 +167,7 @@ export const origamiTeams: Record<string, Team> = {
 		],
 		substitutes: [players['S1nine'], players['Majime']]
 	},
-	DR: {
-		name: 'Drillas',
-		region: 'NA',
-		players: [
-			players['Poison'],
-			players['Vampire'],
-			players['Creepz'],
-			players['Moozor'],
-			players['GWZH']
-		],
-		substitutes: []
-	},
-	KK: {
+	XKAM: {
 		name: '小可爱们',
 		region: 'NA',
 		players: [
@@ -206,7 +179,7 @@ export const origamiTeams: Record<string, Team> = {
 		],
 		substitutes: [players['爱莉希雅丨侵蚀']]
 	},
-	LD: {
+	LDP: {
 		name: 'LONG DISTANCE PALS <3',
 		region: 'NA',
 		players: [
@@ -244,4 +217,4 @@ export const origamiTeams: Record<string, Team> = {
 	}
 };
 
-// TG WK ML OC DA YU YG HC GS DR KK LD MA SF
+// TODO: Add abbr

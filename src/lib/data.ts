@@ -35,8 +35,8 @@ export type UrbinoCharacter =
 
 export type Character = PUSCharacter | ScissorsCharacter | UrbinoCharacter;
 
-import { players, type Player } from '$lib/data/players';
-import { origamiTeams, teams, type Team } from '$lib/data/teams';
+import { players } from '$lib/data/players';
+import { teams, type Team } from '$lib/data/teams';
 
 export interface EventParticipant {
 	team: Team;
@@ -755,28 +755,28 @@ const events: Event[] = [
 		participants: 16,
 		date: '2025-02-24',
 		teams: [
-			origamiTeams['TG'],
-			origamiTeams['WK'],
-			origamiTeams['ML'],
-			origamiTeams['OC'],
-			origamiTeams['DA'],
-			origamiTeams['YU'],
-			origamiTeams['YG'],
-			origamiTeams['HC'],
-			origamiTeams['GS'],
-			origamiTeams['DR'],
-			origamiTeams['KK'],
-			origamiTeams['LD'],
-			origamiTeams['MA'],
-			origamiTeams['SF']
+			teams['TG'],
+			teams['WK'],
+			teams['ML'],
+			teams['OC'],
+			teams['DA'],
+			teams['YU'],
+			teams['YG'],
+			teams['HC'],
+			teams['GS'],
+			teams['DRI'],
+			teams['XKAM'],
+			teams['LDP'],
+			teams['MA'],
+			teams['SF']
 		],
 		matches: [
 			{
 				id: 1,
 				round: 1,
 				teams: [
-					{ team: origamiTeams['TG'], score: 2 },
-					{ team: origamiTeams['MA'], score: 0 }
+					{ team: teams['TG'], score: 2 },
+					{ team: teams['MA'], score: 0 }
 				],
 				winnerId: 1,
 				battleOf: 'BO3',
@@ -786,8 +786,8 @@ const events: Event[] = [
 				id: 2,
 				round: 1,
 				teams: [
-					{ team: origamiTeams['HC'], score: 1 },
-					{ team: origamiTeams['DA'], score: 2 }
+					{ team: teams['HC'], score: 1 },
+					{ team: teams['DA'], score: 2 }
 				],
 				winnerId: 2,
 				battleOf: 'BO3',
@@ -797,8 +797,8 @@ const events: Event[] = [
 				id: 3,
 				round: 1,
 				teams: [
-					{ team: origamiTeams['ML'], score: 2 },
-					{ team: origamiTeams['OC'], score: 1 }
+					{ team: teams['ML'], score: 2 },
+					{ team: teams['OC'], score: 1 }
 				],
 				winnerId: 1,
 				battleOf: 'BO3',
@@ -808,8 +808,8 @@ const events: Event[] = [
 				id: 4,
 				round: 1,
 				teams: [
-					{ team: origamiTeams['KK'], score: 0 },
-					{ team: origamiTeams['YG'], score: 2 }
+					{ team: teams['XKAM'], score: 0 },
+					{ team: teams['YG'], score: 2 }
 				],
 				winnerId: 2,
 				battleOf: 'BO3',
@@ -819,8 +819,8 @@ const events: Event[] = [
 				id: 5,
 				round: 2,
 				teams: [
-					{ team: origamiTeams['TG'], score: 2 },
-					{ team: origamiTeams['DR'], score: 0 }
+					{ team: teams['TG'], score: 2 },
+					{ team: teams['DRI'], score: 0 }
 				],
 				winnerId: 1,
 				battleOf: 'BO3',
@@ -830,8 +830,8 @@ const events: Event[] = [
 				id: 6,
 				round: 2,
 				teams: [
-					{ team: origamiTeams['ML'], score: 2 },
-					{ team: origamiTeams['DA'], score: 0 }
+					{ team: teams['ML'], score: 2 },
+					{ team: teams['DA'], score: 0 }
 				],
 				winnerId: 1,
 				battleOf: 'BO3',
@@ -841,8 +841,8 @@ const events: Event[] = [
 				id: 7,
 				round: 3,
 				teams: [
-					{ team: origamiTeams['TG'], score: 2 },
-					{ team: origamiTeams['ML'], score: 0 }
+					{ team: teams['TG'], score: 2 },
+					{ team: teams['ML'], score: 0 }
 				],
 				winnerId: 1,
 				battleOf: 'BO3',
@@ -852,8 +852,8 @@ const events: Event[] = [
 				id: 8,
 				round: 3,
 				teams: [
-					{ team: origamiTeams['DR'], score: 0 },
-					{ team: origamiTeams['DA'], score: 2 }
+					{ team: teams['DRI'], score: 0 },
+					{ team: teams['DA'], score: 2 }
 				],
 				winnerId: 2,
 				battleOf: 'BO3',
@@ -864,6 +864,14 @@ const events: Event[] = [
 			'https://docs.google.com/spreadsheets/d/1eL5kWIBFGlrQ4HLLAaYyFoJvAMNswvQFSFC00-A8M9M/edit'
 	}
 ];
+
+for (const event of events) {
+	for (const team of event.teams) {
+		if (!team) {
+			console.log(event.teams);
+		}
+	}
+}
 
 export function getEvents() {
 	return events;
