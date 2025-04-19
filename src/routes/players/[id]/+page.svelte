@@ -39,6 +39,10 @@
 		{/if}
 		<h2 class="my-5 text-xl font-bold">Stats</h2>
 		<p>Wins: {data.playerWins}</p>
+		<h3 class="my-5 text-lg font-bold">Agents</h3>
+		{#each data.playerAgents.toSorted((a, b) => b[1] - a[1]) as [character, count]}
+			<p>{character}: {count}</p>
+		{/each}
 		{#if data.playerEvents}
 			<h2 class="my-5 text-xl font-bold">Attended Events</h2>
 			<ul class="grid grid-cols-3 gap-4">

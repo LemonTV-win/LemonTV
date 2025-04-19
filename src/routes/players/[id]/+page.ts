@@ -5,7 +5,8 @@ import {
 	getPlayerTeams,
 	getPlayerEvents,
 	getPlayerMatches,
-	getPlayerWins
+	getPlayerWins,
+	getPlayerAgents
 } from '$lib/data';
 
 export const load: PageLoad = ({ params }) => {
@@ -14,6 +15,7 @@ export const load: PageLoad = ({ params }) => {
 		playerTeams: getPlayerTeams(params.id),
 		playerEvents: getPlayerEvents(params.id),
 		playerMatches: getPlayerMatches(params.id),
-		playerWins: getPlayerWins(params.id)
+		playerWins: getPlayerWins(params.id),
+		playerAgents: getPlayerAgents(params.id)
 	};
 };
