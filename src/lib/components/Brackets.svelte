@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Match } from '$lib/data';
+	import { calculateWinnerIndex, type Match } from '$lib/data';
 	import type { Team } from '$lib/data/teams';
 
 	let { matches }: { matches: Match[] } = $props();
@@ -11,10 +11,10 @@
 	}
 
 	function isWinner(match: Match, team: Team) {
-		if (!team || !match.winnerId) return false;
+		if (!team || !calculateWinnerIndex(match)) return false;
 		return (
-			(match.winnerId === 1 && team === match.teams[0].team) ||
-			(match.winnerId === 2 && team === match.teams[1].team)
+			(calculateWinnerIndex(match) === 1 && team === match.teams[0].team) ||
+			(calculateWinnerIndex(match) === 2 && team === match.teams[1].team)
 		);
 	}
 </script>

@@ -4,6 +4,7 @@
 	import { m } from '$lib/paraglide/messages.js';
 	import PlaceholderAvatar from '$assets/placeholder_avatar.png';
 	import CharacterIcon from '$lib/components/CharacterIcon.svelte';
+	import { calculateWinnerIndex } from '$lib/data';
 
 	let { data }: PageProps = $props();
 
@@ -122,8 +123,8 @@
 								>
 								<span
 									class="p-4 text-white"
-									class:bg-green-400={match.winnerId === match.playerTeamIndex + 1}
-									class:bg-red-400={match.winnerId !== match.playerTeamIndex + 1}
+									class:bg-green-400={calculateWinnerIndex(match) === match.playerTeamIndex + 1}
+									class:bg-red-400={calculateWinnerIndex(match) !== match.playerTeamIndex + 1}
 								>
 									{match.teams[0].score} - {match.teams[1].score}
 								</span>

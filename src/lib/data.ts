@@ -1158,7 +1158,7 @@ export function getTeams() {
 			.filter(
 				(match) =>
 					match.teams.some((t) => t.team?.name === team.name) &&
-					match.teams[(match.winnerId ?? 0) - 1].team.name === team.name
+					match.teams[calculateWinnerIndex(match) - 1].team.name === team.name
 			).length,
 		...team
 	}));
@@ -1214,11 +1214,27 @@ export function getPlayerMatches(id: string): (Match & { playerTeamIndex: number
 		}));
 }
 
+export function calculateWinnerIndex(match: Match): number {
+	if (match.teams.length !== 2) {
+		throw new Error('Match must have 2 and only 2 teams');
+	}
+
+	const team1 = match.teams[0];
+	const team2 = match.teams[1];
+
+	if (team1.score === team2.score) {
+		throw new Error('Match cannot be a draw');
+	}
+
+	return team1.score > team2.score ? 1 : 2;
+}
+
 export function getPlayerWins(id: string): number {
 	return getPlayerMatches(id).filter((match) => {
-		return match.winnerId === match.playerTeamIndex + 1;
+		return calculateWinnerIndex(match) === match.playerTeamIndex + 1;
 	}).length;
 }
+
 export function getPlayerAgents(id: string): [Character, number][] {
 	const characters = getPlayerMatches(id).flatMap((match) => {
 		// get the team that the player is on
