@@ -70,6 +70,13 @@
 								</li>
 							{/if}
 						{/each}
+						{#each team.substitutes ?? [] as player}
+							{#if player}
+								<li class="text-white/50">
+									<a href={`/players/${player.id}`}>{player.name}</a>
+								</li>
+							{/if}
+						{/each}
 					</ul>
 				</li>
 			{/each}
