@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Character } from '$lib/data';
+	import { m } from '$lib/paraglide/messages.js';
 	const CHARACTER_2_IMAGE: Record<Character, string> = {
 		Michele:
 			'https://static.wikitide.net/strinovawiki/thumb/f/f9/Michele_Profile.png/150px-Michele_Profile.png',
@@ -37,4 +38,9 @@
 	export let character: Character;
 </script>
 
-<img class="h-9 w-9 rounded-full" src={CHARACTER_2_IMAGE[character]} alt={character} />
+<img
+	class="h-9 w-9 rounded-full"
+	src={CHARACTER_2_IMAGE[character]}
+	alt={m[character as keyof typeof m]()}
+	title={m[character as keyof typeof m]()}
+/>
