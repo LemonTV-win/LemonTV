@@ -1832,6 +1832,13 @@ export function getTeams() {
 				.flatMap((event) => event.teams)
 				.map((team) => ({
 					id: team.name,
+					wins: events
+						.flatMap((event) => event.matches)
+						.filter(
+							(match) =>
+								match.teams.some((t) => t.team.name === team.name) &&
+								match.teams[(match.winnerId ?? 0) - 1].team.name === team.name
+						).length,
 					...team
 				}))
 		)
