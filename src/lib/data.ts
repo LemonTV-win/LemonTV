@@ -1043,28 +1043,30 @@ export function getPlayer(id: string) {
 	return players[id];
 }
 
+export function isPlayerInTeam(id: string, team: Team) {
+	return [...(team.players ?? []), ...(team.substitutes ?? [])]?.some(
+		(player) => player && player.id === id
+	);
+}
+
 export function getPlayerTeams(id: string) {
 	return [
 		...new Set(
 			getTeams()
-				.filter((team) => team.players?.some((player) => player && player.id === id))
+				.filter((team) => isPlayerInTeam(id, team))
 				.map((team) => team.id)
 		)
 	].map((id) => getTeams().find((team) => team.id === id)!);
 }
 
 export function getPlayerEvents(id: string) {
-	return getEvents().filter((event) =>
-		event.teams.some((team) => team.players?.some((player) => player && player.id === id))
-	);
+	return getEvents().filter((event) => event.teams.some((team) => isPlayerInTeam(id, team)));
 }
 
 export function getPlayerMatches(id: string): Match[] {
 	return getEvents()
 		.flatMap((event) => event.matches)
-		.filter((match) =>
-			match.teams.some((team) => team.team.players?.some((player) => player && player.id === id))
-		);
+		.filter((match) => match.teams.some((team) => isPlayerInTeam(id, team.team)));
 }
 
 export function getPlayerWins(id: string): number {
