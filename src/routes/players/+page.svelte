@@ -47,7 +47,8 @@
 				<th class="px-4 py-1"
 					><button
 						class="text-left"
-						onclick={() => (sortBy = sortBy === 'name-abc' ? 'name-cba' : 'name-abc')}>Name</button
+						onclick={() => (sortBy = sortBy === 'name-abc' ? 'name-cba' : 'name-abc')}
+						>{m.name()}</button
 					></th
 				>
 				<th class="px-4 py-1"
