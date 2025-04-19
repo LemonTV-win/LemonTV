@@ -702,29 +702,17 @@ export function getMatch(id: number) {
 }
 
 export function getTeams() {
-	for (const event of events) {
-		if (event.teams.some((team) => !team)) {
-			console.log(event.id);
-			console.log(event.teams);
-		}
-	}
-	return [
-		...new Set(
-			events
-				.flatMap((event) => event.teams)
-				.map((team) => ({
-					id: team.name,
-					wins: events
-						.flatMap((event) => event.matches)
-						.filter(
-							(match) =>
-								match.teams.some((t) => t.team?.name === team.name) &&
-								match.teams[(match.winnerId ?? 0) - 1].team.name === team.name
-						).length,
-					...team
-				}))
-		)
-	];
+	return Object.entries(teams).map(([id, team]) => ({
+		id,
+		wins: events
+			.flatMap((event) => event.matches)
+			.filter(
+				(match) =>
+					match.teams.some((t) => t.team?.name === team.name) &&
+					match.teams[(match.winnerId ?? 0) - 1].team.name === team.name
+			).length,
+		...team
+	}));
 }
 
 export function getTeam(id: string) {
