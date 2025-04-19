@@ -56,14 +56,15 @@ export interface GameAccount {
 	accountId: number;
 	currentName: string;
 	previousNames?: string[];
-	region: Region;
+	region?: Region; // undefined if unknown
 }
 
 export interface Team {
 	name: string;
 	logo?: string;
-	region: Region;
+	region?: Region;
 	players?: Player[];
+	substitutes?: Player[];
 }
 
 export interface Participant {
@@ -329,12 +330,6 @@ const players: Record<string, Player> = {
 				region: 'NA'
 			}
 		]
-	},
-	Poison: {
-		id: 'Poison',
-		name: 'Poison',
-		nationality: 'US',
-		gameAccounts: []
 	},
 	Moozor: {
 		id: 'Moozor',
@@ -1100,7 +1095,797 @@ const players: Record<string, Player> = {
 	살찐족제비: { id: '살찐족제비', name: '살찐족제비', gameAccounts: [] },
 	시벌: { id: '시벌', name: '시벌', gameAccounts: [] },
 	칠흑: { id: '칠흑', name: '칠흑', gameAccounts: [] },
-	한월2: { id: '한월2', name: '한월2', gameAccounts: [] }
+	한월2: { id: '한월2', name: '한월2', gameAccounts: [] },
+	'00YUE00': {
+		id: '00YUE00',
+		name: '00YUE00',
+		gameAccounts: [
+			{
+				accountId: 2984603,
+				currentName: '00YUE00'
+			}
+		]
+	},
+	ARGHGHGHGHGHHGHG: {
+		id: 'ARGHGHGHGHGHHGHG',
+		name: 'ARGHGHGHGHGHHGHG',
+		gameAccounts: [
+			{
+				accountId: 2007660,
+				currentName: 'ARGHGHGHGHGHHGHG'
+			}
+		]
+	},
+	Accellerator: {
+		id: 'Accellerator',
+		name: 'Accellerator',
+		gameAccounts: [
+			{
+				accountId: 2692001,
+				currentName: 'Accellerator'
+			}
+		]
+	},
+	AjDemon: {
+		id: 'AjDemon',
+		name: 'AjDemon',
+		gameAccounts: [
+			{
+				accountId: 2574258,
+				currentName: 'AjDemon'
+			}
+		]
+	},
+	AmyamyaThe女神: {
+		id: 'AmyamyaThe女神',
+		name: 'AmyamyaThe女神',
+		gameAccounts: [
+			{
+				accountId: 2027000,
+				currentName: 'AmyamyaThe女神'
+			}
+		]
+	},
+	Asscinei: {
+		id: 'Asscinei',
+		name: 'Asscinei',
+		gameAccounts: [
+			{
+				accountId: 2569573,
+				currentName: 'Asscinei'
+			}
+		]
+	},
+	BriBri: {
+		id: 'BriBri',
+		name: 'BriBri',
+		gameAccounts: [
+			{
+				accountId: 2007650,
+				currentName: 'BriBri'
+			}
+		]
+	},
+	BurningStar: {
+		id: 'BurningStar',
+		name: 'BurningStar',
+		gameAccounts: [
+			{
+				accountId: 2012519,
+				currentName: 'BurningStar'
+			}
+		]
+	},
+	DEMXN: {
+		id: 'DEMXN',
+		name: 'DEMXN',
+		gameAccounts: [
+			{
+				accountId: 3158888,
+				currentName: 'DEMXN'
+			}
+		]
+	},
+	Ely: {
+		id: 'Ely',
+		name: 'Ely',
+		gameAccounts: [
+			{
+				accountId: 2002426,
+				currentName: 'Ely'
+			}
+		]
+	},
+	Fjin: {
+		id: 'Fjin',
+		name: 'Fjin',
+		gameAccounts: [
+			{
+				accountId: 4963044,
+				currentName: 'Fjin'
+			}
+		]
+	},
+	Flausch: {
+		id: 'Flausch',
+		name: 'Flausch',
+		gameAccounts: [
+			{
+				accountId: 4931134,
+				currentName: 'Flausch'
+			}
+		]
+	},
+	FocalorsinBlue: {
+		id: 'FocalorsinBlue',
+		name: 'FocalorsinBlue',
+		gameAccounts: [
+			{
+				accountId: 2295429,
+				currentName: 'FocalorsinBlue'
+			}
+		]
+	},
+	GhostElectricity: {
+		id: 'GhostElectricity',
+		name: 'GhostElectricity',
+		gameAccounts: [
+			{
+				accountId: 2060350,
+				currentName: 'GhostElectricity'
+			}
+		]
+	},
+	GigglingWill: {
+		id: 'GigglingWill',
+		name: 'GigglingWill',
+		gameAccounts: [
+			{
+				accountId: 2018900,
+				currentName: 'GigglingWill'
+			}
+		]
+	},
+	GloriousNico: {
+		id: 'GloriousNico',
+		name: 'GloriousNico',
+		gameAccounts: [
+			{
+				accountId: 2569105,
+				currentName: 'GloriousNico'
+			}
+		]
+	},
+	GrizzlyGripper28: {
+		id: 'GrizzlyGripper28',
+		name: 'GrizzlyGripper28',
+		gameAccounts: [
+			{
+				accountId: 2746798,
+				currentName: 'GrizzlyGripper28'
+			}
+		]
+	},
+	HiroRune: {
+		id: 'HiroRune',
+		name: 'HiroRune',
+		gameAccounts: [
+			{
+				accountId: 2003207,
+				currentName: 'HiroRune'
+			}
+		]
+	},
+	Jstn: {
+		id: 'Jstn',
+		name: 'Jstn',
+		gameAccounts: [
+			{
+				accountId: 2557678,
+				currentName: 'Jstn'
+			}
+		]
+	},
+	JustZero: {
+		id: 'JustZero',
+		name: 'JustZero',
+		gameAccounts: [
+			{
+				accountId: 2007702,
+				currentName: 'JustZero'
+			}
+		]
+	},
+	Juzify: {
+		id: 'Juzify',
+		name: 'Juzify',
+		gameAccounts: [
+			{
+				accountId: 2214148,
+				currentName: 'Juzify'
+			}
+		]
+	},
+	KanamiDoggye: {
+		id: 'KanamiDoggye',
+		name: 'KanamiDoggye',
+		gameAccounts: [
+			{
+				accountId: 2004316,
+				currentName: 'KanamiDoggye'
+			}
+		]
+	},
+	KatzenMilch: {
+		id: 'KatzenMilch',
+		name: 'KatzenMilch',
+		gameAccounts: [
+			{
+				accountId: 2727532,
+				currentName: 'KatzenMilch'
+			}
+		]
+	},
+	Kito: {
+		id: 'Kito',
+		name: 'Kito',
+		gameAccounts: [
+			{
+				accountId: 2003596,
+				currentName: 'Kito'
+			}
+		]
+	},
+	Krihville: {
+		id: 'Krihville',
+		name: 'Krihville',
+		gameAccounts: [
+			{
+				accountId: 2016425,
+				currentName: 'Krihville'
+			}
+		]
+	},
+	MEGATRONOFDEATH: {
+		id: 'MEGATRONOFDEATH',
+		name: 'MEGATRONOFDEATH',
+		gameAccounts: [
+			{
+				accountId: 2008638,
+				currentName: 'MEGATRONOFDEATH'
+			}
+		]
+	},
+	MaddeFeetSniffer: {
+		id: 'MaddeFeetSniffer',
+		name: 'MaddeFeetSniffer',
+		gameAccounts: [
+			{
+				accountId: 5446199,
+				currentName: 'MaddeFeetSniffer'
+			}
+		]
+	},
+	Majime: {
+		id: 'Majime',
+		name: 'Majime',
+		gameAccounts: [
+			{
+				accountId: 2654916,
+				currentName: 'Majime'
+			}
+		]
+	},
+	Mansek: {
+		id: 'Mansek',
+		name: 'Mansek',
+		gameAccounts: [
+			{
+				accountId: 2012280,
+				currentName: 'Mansek'
+			}
+		]
+	},
+	NekoNoTsuki: {
+		id: 'NekoNoTsuki',
+		name: 'NekoNoTsuki',
+		gameAccounts: [
+			{
+				accountId: 2319511,
+				currentName: 'NekoNoTsuki'
+			}
+		]
+	},
+	NikZON: {
+		id: 'NikZON',
+		name: 'NikZON',
+		gameAccounts: [
+			{
+				accountId: 2475875,
+				currentName: 'NikZON'
+			}
+		]
+	},
+	PHRESHBOYSWAG: {
+		id: 'PHRESHBOYSWAG',
+		name: 'PHRESHBOYSWAG',
+		gameAccounts: [
+			{
+				accountId: 2005876,
+				currentName: 'PHRESHBOYSWAG'
+			}
+		]
+	},
+	Poison: {
+		id: 'Poison',
+		name: 'Poison',
+		gameAccounts: [
+			{
+				accountId: 2003112,
+				currentName: 'Poison'
+			}
+		]
+	},
+	Revali: {
+		id: 'Revali',
+		name: 'Revali',
+		gameAccounts: [
+			{
+				accountId: 2004219,
+				currentName: 'Revali'
+			}
+		]
+	},
+	Ria: {
+		id: 'Ria',
+		name: 'Ria',
+		gameAccounts: [
+			{
+				accountId: 2178958,
+				currentName: 'Ria'
+			}
+		]
+	},
+	RuleR: {
+		id: 'RuleR',
+		name: 'RuleR',
+		gameAccounts: [
+			{
+				accountId: 3478691,
+				currentName: 'RuleR'
+			}
+		]
+	},
+	S1nine: {
+		id: 'S1nine',
+		name: 'S1nine',
+		gameAccounts: [
+			{
+				accountId: 2740790,
+				currentName: 'S1nine'
+			}
+		]
+	},
+	Scylla: {
+		id: 'Scylla',
+		name: 'Scylla',
+		gameAccounts: [
+			{
+				accountId: 2002698,
+				currentName: 'Scylla'
+			}
+		]
+	},
+	Skyerzz: {
+		id: 'Skyerzz',
+		name: 'Skyerzz',
+		gameAccounts: [
+			{
+				accountId: 4170695,
+				currentName: 'Skyerzz'
+			}
+		]
+	},
+	SophieRain: {
+		id: 'SophieRain',
+		name: 'SophieRain',
+		gameAccounts: [
+			{
+				accountId: 2644405,
+				currentName: 'SophieRain'
+			}
+		]
+	},
+	Soulen: {
+		id: 'Soulen',
+		name: 'Soulen',
+		gameAccounts: [
+			{
+				accountId: 2046500,
+				currentName: 'Soulen'
+			}
+		]
+	},
+	Squall: {
+		id: 'Squall',
+		name: 'Squall',
+		gameAccounts: [
+			{
+				accountId: 2012734,
+				currentName: 'Squall'
+			}
+		]
+	},
+	Stardx: {
+		id: 'Stardx',
+		name: 'Stardx',
+		gameAccounts: [
+			{
+				accountId: 4337349,
+				currentName: 'Stardx'
+			}
+		]
+	},
+	Stykades: {
+		id: 'Stykades',
+		name: 'Stykades',
+		gameAccounts: [
+			{
+				accountId: 2119392,
+				currentName: 'Stykades'
+			}
+		]
+	},
+	Unknown0Neko: {
+		id: 'Unknown0Neko',
+		name: 'Unknown0Neko',
+		gameAccounts: [
+			{
+				accountId: 5054096,
+				currentName: 'Unknown0Neko'
+			}
+		]
+	},
+	Vora: {
+		id: 'Vora',
+		name: 'Vora',
+		gameAccounts: [
+			{
+				accountId: 2062111,
+				currentName: 'Vora'
+			}
+		]
+	},
+	Voxy: {
+		id: 'Voxy',
+		name: 'Voxy',
+		gameAccounts: [
+			{
+				accountId: 2004030,
+				currentName: 'Voxy'
+			}
+		]
+	},
+	WEGOINGMENTAL: {
+		id: 'WEGOINGMENTAL',
+		name: 'WEGOINGMENTAL',
+		gameAccounts: [
+			{
+				accountId: 3244489,
+				currentName: 'WEGOINGMENTAL'
+			}
+		]
+	},
+	Xaly: {
+		id: 'Xaly',
+		name: 'Xaly',
+		gameAccounts: [
+			{
+				accountId: 2526198,
+				currentName: 'Xaly'
+			}
+		]
+	},
+	aKura: {
+		id: 'aKura',
+		name: 'aKura',
+		gameAccounts: [
+			{
+				accountId: 2422046,
+				currentName: 'aKura'
+			}
+		]
+	},
+	akwa: {
+		id: 'akwa',
+		name: 'akwa',
+		gameAccounts: [
+			{
+				accountId: 2003027,
+				currentName: 'akwa'
+			}
+		]
+	},
+	audience: {
+		id: 'audience',
+		name: 'audience',
+		gameAccounts: [
+			{
+				accountId: 2665882,
+				currentName: 'audience'
+			}
+		]
+	},
+	canparty: {
+		id: 'canparty',
+		name: 'canparty',
+		gameAccounts: [
+			{
+				accountId: 2102581,
+				currentName: 'canparty'
+			}
+		]
+	},
+	extraya: {
+		id: 'extraya',
+		name: 'extraya',
+		gameAccounts: [
+			{
+				accountId: 3145854,
+				currentName: 'extraya'
+			}
+		]
+	},
+	jayeezy: {
+		id: 'jayeezy',
+		name: 'jayeezy',
+		gameAccounts: [
+			{
+				accountId: 2029185,
+				currentName: 'jayeezy'
+			}
+		]
+	},
+	kane: {
+		id: 'kane',
+		name: 'kane',
+		gameAccounts: [
+			{
+				accountId: 2023440,
+				currentName: 'kane'
+			}
+		]
+	},
+	lachevre: {
+		id: 'lachevre',
+		name: 'lachevre',
+		gameAccounts: [
+			{
+				accountId: 2014568,
+				currentName: 'lachevre'
+			}
+		]
+	},
+	m1sa: {
+		id: 'm1sa',
+		name: 'm1sa',
+		gameAccounts: [
+			{
+				accountId: 2312734,
+				currentName: 'm1sa'
+			}
+		]
+	},
+	messup: {
+		id: 'messup',
+		name: 'messup',
+		gameAccounts: [
+			{
+				accountId: 4931249,
+				currentName: 'messup'
+			}
+		]
+	},
+	nine: {
+		id: 'nine',
+		name: 'nine',
+		gameAccounts: [
+			{
+				accountId: 2003285,
+				currentName: 'nine'
+			}
+		]
+	},
+	numoneZKFan: {
+		id: 'numoneZKFan',
+		name: 'numoneZKFan',
+		gameAccounts: [
+			{
+				accountId: 2014735,
+				currentName: 'numoneZKFan'
+			}
+		]
+	},
+	nxreq: {
+		id: 'nxreq',
+		name: 'nxreq',
+		gameAccounts: [
+			{
+				accountId: 2007004,
+				currentName: 'nxreq'
+			}
+		]
+	},
+	polishcat: {
+		id: 'polishcat',
+		name: 'polishcat',
+		gameAccounts: [
+			{
+				accountId: 2777256,
+				currentName: 'polishcat'
+			}
+		]
+	},
+	pookie: {
+		id: 'pookie',
+		name: 'pookie',
+		gameAccounts: [
+			{
+				accountId: 2001623,
+				currentName: 'pookie'
+			}
+		]
+	},
+	schwertfish: {
+		id: 'schwertfish',
+		name: 'schwertfish',
+		gameAccounts: [
+			{
+				accountId: 2473204,
+				currentName: 'schwertfish'
+			}
+		]
+	},
+	shadow: {
+		id: 'shadow',
+		name: 'shadow',
+		gameAccounts: [
+			{
+				accountId: 2008299,
+				currentName: 'shadow'
+			}
+		]
+	},
+	sinna: {
+		id: 'sinna',
+		name: 'sinna',
+		gameAccounts: [
+			{
+				accountId: 2233623,
+				currentName: 'sinna'
+			}
+		]
+	},
+	supercrownnegev: {
+		id: 'supercrownnegev',
+		name: 'supercrownnegev',
+		gameAccounts: [
+			{
+				accountId: 4049780,
+				currentName: 'supercrownnegev'
+			}
+		]
+	},
+	ttvBlexiss: {
+		id: 'ttvBlexiss',
+		name: 'ttvBlexiss',
+		gameAccounts: [
+			{
+				accountId: 2003592,
+				currentName: 'ttvBlexiss'
+			}
+		]
+	},
+	uno: {
+		id: 'uno',
+		name: 'uno',
+		gameAccounts: [
+			{
+				accountId: 2004861,
+				currentName: 'uno'
+			}
+		]
+	},
+	weeping: {
+		id: 'weeping',
+		name: 'weeping',
+		gameAccounts: [
+			{
+				accountId: 2962341,
+				currentName: 'weeping'
+			}
+		]
+	},
+	whoisLexu: {
+		id: 'whoisLexu',
+		name: 'whoisLexu',
+		gameAccounts: [
+			{
+				accountId: 4496059,
+				currentName: 'whoisLexu'
+			}
+		]
+	},
+	will: {
+		id: 'will',
+		name: 'will',
+		gameAccounts: [
+			{
+				accountId: 2002667,
+				currentName: 'will'
+			}
+		]
+	},
+	zcz: {
+		id: 'zcz',
+		name: 'zcz',
+		gameAccounts: [
+			{
+				accountId: 2548614,
+				currentName: 'zcz'
+			}
+		]
+	},
+	ze: {
+		id: 'ze',
+		name: 'ze',
+		gameAccounts: [
+			{
+				accountId: 2140210,
+				currentName: 'ze'
+			}
+		]
+	},
+	трагедия: {
+		id: 'трагедия',
+		name: 'трагедия',
+		gameAccounts: [
+			{
+				accountId: 5810047,
+				currentName: 'трагедия'
+			}
+		]
+	},
+	爱莉希雅丨侵蚀: {
+		id: '爱莉希雅丨侵蚀',
+		name: '爱莉希雅丨侵蚀',
+		gameAccounts: [
+			{
+				accountId: 3652265,
+				currentName: '爱莉希雅丨侵蚀'
+			}
+		]
+	},
+	百荷: {
+		id: '百荷',
+		name: '百荷',
+		gameAccounts: [
+			{
+				accountId: 3394080,
+				currentName: '百荷'
+			}
+		]
+	},
+	진주: {
+		id: '진주',
+		name: '진주',
+		gameAccounts: [
+			{
+				accountId: 2437416,
+				currentName: '진주'
+			}
+		]
+	}
 };
 
 const teams: Record<string, Team> = {
@@ -1803,7 +2588,176 @@ const events: Event[] = [
 		},
 		participants: 16,
 		date: '2025-02-24',
-		teams: [],
+		teams: [
+			{
+				name: 'The Grustlers',
+				region: 'NA',
+				players: [
+					players['gengu'],
+					players['Ascinei'],
+					players['grustleking'],
+					players['ttvBlexiss'],
+					players['frostyZK']
+				],
+				substitutes: [players['uno']]
+			},
+			{
+				name: 'Wilden Kerle',
+				region: 'NA',
+				players: [
+					players['Jstn'],
+					players['Xaly'],
+					players['extraya'],
+					players['GloriousNico'],
+					players['DEMXN']
+				],
+				substitutes: [players['Juzify'], players['Vora']]
+			},
+			{
+				name: 'Meowliora',
+				region: 'NA',
+				players: [
+					players['akwa'],
+					players['BriBri'],
+					players['nine'],
+					players['HiroRune'],
+					players['Kito']
+				],
+				substitutes: [players['jayeezy']]
+			},
+			{
+				name: 'October',
+				region: 'NA',
+				players: [
+					players['Skyerzz'],
+					players['whoisLexu'],
+					players['AjDemon'],
+					players['MEGATRONOFDEATH'],
+					players['Fjin']
+				],
+				substitutes: [players['Stykades'], players['zcz']]
+			},
+			{
+				name: 'Drillas Academy',
+				region: 'NA',
+				players: [
+					players['Mansek'],
+					players['Scylla'],
+					players['sinna'],
+					players['ARGHGHGHGHGHHGHG'],
+					players['will']
+				],
+				substitutes: [players['Voxy']]
+			},
+			{
+				name: 'YugifeetLover',
+				region: 'NA',
+				players: [
+					players['aKura'],
+					players['Flausch'],
+					players['00YUE00'],
+					players['GrizzlyGripper28'],
+					players['NekoNoTsuki']
+				],
+				substitutes: [players['schwertfish'], players['KatzenMilch']]
+			},
+			{
+				name: "yuri's gang",
+				region: 'NA',
+				players: [
+					players['nxreq'],
+					players['pookie'],
+					players['ze'],
+					players['KanamiDoggye'],
+					players['audience']
+				],
+				substitutes: [players['MaddeFeetSniffer'], players['SophieRain']]
+			},
+			{
+				name: 'hopecore',
+				region: 'NA',
+				players: [
+					players['Krihville'],
+					players['трагедия'],
+					players['m1sa'],
+					players['canparty'],
+					players['Stardx']
+				],
+				substitutes: [players['NikZON'], players['GigglingWill']]
+			},
+			{
+				name: 'GweahShindago!!',
+				region: 'NA',
+				players: [
+					players['kane'],
+					players['Unknown0Neko'],
+					players['Squall'],
+					players['WEGOINGMENTAL'],
+					players['polishcat']
+				],
+				substitutes: [players['S1nine'], players['Majime']]
+			},
+			{
+				name: 'Drillas',
+				region: 'NA',
+				players: [
+					players['Poison'],
+					players['Vampire'],
+					players['Creepz'],
+					players['Moozor'],
+					players['GWZH']
+				],
+				substitutes: []
+			},
+			{
+				name: '小可爱们',
+				region: 'NA',
+				players: [
+					players['진주'],
+					players['百荷'],
+					players['AmyamyaThe女神'],
+					players['Accellerator'],
+					players['RuleR']
+				],
+				substitutes: [players['爱莉希雅丨侵蚀']]
+			},
+			{
+				name: 'LONG DISTANCE PALS <3',
+				region: 'NA',
+				players: [
+					players['FOX1Yukino'],
+					players['HonkWith4ks'],
+					players['xohfiy'],
+					players['weeping'],
+					players['Asscinei']
+				],
+				substitutes: [players['numoneZKFan']]
+			},
+			{
+				name: 'Michele Armpits',
+				region: 'NA',
+				players: [
+					players['Ely'],
+					players['shadow'],
+					players['lachevre'],
+					players['Revali'],
+					players['BurningStar']
+				],
+				substitutes: [players['PHRESHBOYSWAG']]
+			},
+			{
+				name: 'Stringifries',
+				region: 'NA',
+				players: [
+					players['GhostElectricity'],
+					players['Ria'],
+					players['FocalorsinBlue'],
+					players['JustZero'],
+					players['messup']
+				],
+				substitutes: [players['supercrownnegev'], players['Soulen']]
+			}
+		],
 		matches: [],
 		website:
 			'https://docs.google.com/spreadsheets/d/1eL5kWIBFGlrQ4HLLAaYyFoJvAMNswvQFSFC00-A8M9M/edit'
