@@ -122,11 +122,15 @@
 									class:text-gray-400={match.playerTeamIndex === 1}>{match.teams[0].team.name}</span
 								>
 								<span
-									class="p-4 text-white"
-									class:bg-green-400={calculateWinnerIndex(match) === match.playerTeamIndex + 1}
-									class:bg-red-400={calculateWinnerIndex(match) !== match.playerTeamIndex + 1}
+									class="grid w-18 grid-cols-[1fr_auto_1fr] items-center justify-center gap-1 p-4 text-center text-white"
+									class:bg-green-500={calculateWinnerIndex(match) === match.playerTeamIndex + 1}
+									class:bg-red-500={calculateWinnerIndex(match) !== match.playerTeamIndex + 1}
 								>
-									{match.teams[0].score} - {match.teams[1].score}
+									<span>
+										{match.teams[0].score}
+									</span>
+									<span class="text-white">-</span>
+									<span>{match.teams[1].score}</span>
 								</span>
 								<span
 									class="text-left"
