@@ -1207,7 +1207,9 @@ export function getPlayerMatches(id: string): (Match & { playerTeamIndex: number
 		.map((match) => ({
 			...match,
 			playerTeamIndex: match.teams.findIndex((team) =>
-				team.team.players?.some((player) => player && player.id === id)
+				[...(team.team.players ?? []), ...(team.team.substitutes ?? [])].some(
+					(player) => player && player.id === id
+				)
 			)
 		}));
 }
