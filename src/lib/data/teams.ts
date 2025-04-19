@@ -214,6 +214,209 @@ export const teams: Record<string, Team> = {
 			players['messup']
 		],
 		substitutes: [players['supercrownnegev'], players['Soulen']]
+	},
+	CRCC: {
+		name: 'Cơm Rang Cháy Chảo',
+		region: 'APAC',
+		players: [
+			players['Lph4m4218'],
+			players['FrostyNade'],
+			players['Fis'],
+			players['HoangTuHaDong'],
+			players['Dinaaa'],
+			players['nekocyan'],
+			players['Khanh3993']
+		]
+	},
+	AFT: {
+		name: 'All for tada',
+		region: 'APAC',
+		players: [
+			players['京こ'],
+			players['xelcee'],
+			players['Zacro'],
+			players['kuronory'],
+			players['rt0803'],
+			players['おっか'],
+			players['ななせ']
+		]
+	},
+	GCSC: {
+		name: 'Gà Chiên Sốt Cay',
+		region: 'APAC',
+		players: [
+			players['Teakomi'],
+			players['Emilinaz'],
+			players['hyacinexcon'],
+			players['Flamesicon'],
+			players['Put'],
+			players['KanamiMyDearest'],
+			players['bululelysia']
+		]
+	},
+	SI: {
+		name: 'Skill Issues',
+		region: 'APAC',
+		players: [
+			players['ToiYeuRem'],
+			players['Unmei'],
+			players['Miaa'],
+			players['Korofunk'],
+			players['Helixu'],
+			players['Davy'],
+			players['HVO']
+		]
+	},
+	BP: {
+		name: 'Become Paper',
+		region: 'APAC',
+		players: [
+			players['EFFECT'],
+			players['마들렌'],
+			players['Y0ungEgg'],
+			players['P1ckUp'],
+			players['aewan'],
+			players['Shingwan'],
+			players['clown']
+		]
+	},
+	SKS: {
+		name: 'Shigure Kira Saikyou',
+		region: 'APAC',
+		players: [
+			players['時雨綺羅'],
+			players['myan777みゃん'],
+			players['さめじまさめみ'],
+			players['Yueee'],
+			players['Killersans'],
+			players['LOVE']
+		]
+	},
+	KGH: {
+		name: 'Kanojo ga hoshi',
+		region: 'APAC',
+		players: [
+			players['Saya'],
+			players['iYu'],
+			players['SilliestOfThreat'],
+			players['MemeVPND'],
+			players['ChildHelper']
+		]
+	},
+	CW: {
+		name: 'CryWolf', // (new Strinoway)
+		region: 'APAC',
+		players: [
+			players['Katarieeku'],
+			players['belongtoyou'],
+			players['YunaLiv'],
+			players['Karuto丶Beloved'],
+			players['Rinko'],
+			players['Actyuki丶Student'],
+			players['zKeiser']
+		]
+	},
+	OTG: {
+		name: 'おとげのぅ゙ぁ',
+		region: 'APAC',
+		players: [
+			players['0nesyo (あねしょ)'],
+			players['begonia (べごにあ)'],
+			players['dore52x (どれっくす)'],
+			players['visucuit125 (ゆきむら)'],
+			players['yusia (ゆしゃ)'],
+			players['iLiss (いりす)'],
+			players['いよたけ']
+		]
+	},
+	NBT: {
+		name: '뉴비팀',
+		region: 'APAC',
+		players: [
+			players['FPThahyun'],
+			players['시벌'],
+			players['레고'],
+			players['살찐족제비'],
+			players['만두도둑'],
+			players['리로'],
+			players['공백']
+		]
+	},
+	KD: {
+		name: "Kokona's Drones",
+		region: 'APAC',
+		players: [
+			players['RiN林'],
+			players['Papyrus'],
+			players['Koalski'],
+			players['itsChun'],
+			players['Airii'],
+			players['Naphta'],
+			players['KuroTama39']
+		]
+	},
+	UKZ: {
+		name: '受け皿',
+		region: 'APAC',
+		players: [
+			players['Ken256'],
+			players['暗闇の紅茶'],
+			players['maimainoob'],
+			players['Cream6230'],
+			players['Viatorice'],
+			players['カミリウイ'],
+			players['Hiyokotte']
+		]
+	},
+	SSE: {
+		name: 'Supreme Shadow Emperor Hik-Jinwoo',
+		region: 'APAC',
+		players: [
+			players['Hinako'],
+			players['Su4y'],
+			players['はーいあなた'],
+			players['RoiPaetSip'],
+			players['Artツ'],
+			players['Hik'],
+			players['EmperorHikJinwoo']
+		]
+	},
+	KSQ: {
+		name: 'KSQ',
+		region: 'APAC',
+		players: [
+			players['칠흑'],
+			players['Mejiro Ryan'],
+			players['한월2'],
+			players['PGtexas'],
+			players['AKUKU']
+		]
+	},
+	KNO: {
+		name: 'Knotorious',
+		region: 'APAC',
+		players: [
+			players['swaegaepinoe'],
+			players['redARA'],
+			players['whattheskibidi'],
+			players['DPTTDM'],
+			players['AerixD'],
+			players['MistaGojoooookun'],
+			players['AeriMayBee']
+		]
+	},
+	SDF: {
+		name: 'しゅうどうふ',
+		region: 'APAC',
+		players: [
+			players['月神'],
+			players['世間天使雨宮優子'],
+			players['twitchWenli'],
+			players['ChengCheng'],
+			players['陌悠理'],
+			players['bili会求风的鱼'],
+			players['Asuaka']
+		]
 	}
 };
 
