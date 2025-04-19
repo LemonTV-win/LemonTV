@@ -1114,3 +1114,9 @@ export function getPlayersAgents(limit: number = 3): Record<string, [Character, 
 		Object.entries(players).map(([id, _player]) => [id, getPlayerAgents(id).slice(0, limit)])
 	);
 }
+
+export function getPlayersTeams(limit: number = 3): Record<string, Team[]> {
+	return Object.fromEntries(
+		Object.entries(players).map(([id, _player]) => [id, getPlayerTeams(id).slice(0, limit)])
+	);
+}

@@ -67,6 +67,7 @@
 						{/if}
 					</button>
 				</th>
+				<th class="px-4 py-1">{m.teams()}</th>
 				<th class="px-4 py-1">{m.superstrings()}</th>
 				<th class="px-4 py-1">
 					<button
@@ -100,6 +101,14 @@
 								{/each}
 							{/if}</a
 						>
+					</td>
+					<td class="px-4 py-1 text-sm">
+						{#each data.playersTeams[player.id ?? ''] as team, i}
+							<a href={`/teams/${team.name}`}>{team.name}</a
+							>{#if i < data.playersTeams[player.id ?? ''].length - 1}
+								<span class="mx-1 text-gray-400">|</span>
+							{/if}
+						{/each}
 					</td>
 					<td class="flex flex-wrap gap-1">
 						{#each data.playersAgents[player.id ?? ''] as superstring}
