@@ -1,5 +1,6 @@
 <script lang="ts">
-	import type { Match, Team } from '$lib/data';
+	import type { Match } from '$lib/data';
+	import type { Team } from '$lib/data/teams';
 
 	let { matches }: { matches: Match[] } = $props();
 
