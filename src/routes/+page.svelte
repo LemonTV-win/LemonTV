@@ -59,7 +59,7 @@
 	<div class="flex flex-col gap-2">
 		<h2 class="my-5 text-2xl font-bold">{m.players()}</h2>
 		<ul>
-			{#each data.players.toSorted((a, b) => b.wins - a.wins).slice(0, 5) as player}
+			{#each data.players.toSorted((a, b) => b.rating - a.rating).slice(0, 5) as player}
 				<li>
 					<a
 						href={`/players/${player.id}`}
