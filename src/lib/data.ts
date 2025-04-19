@@ -585,7 +585,7 @@ const events: Event[] = [
 		],
 		matches: [
 			{
-				id: 1,
+				id: 10001,
 				round: 1,
 				teams: [
 					{ team: teams['TG'], score: 2 },
@@ -596,7 +596,7 @@ const events: Event[] = [
 				maps: []
 			},
 			{
-				id: 2,
+				id: 10002,
 				round: 1,
 				teams: [
 					{ team: teams['HC'], score: 1 },
@@ -607,7 +607,7 @@ const events: Event[] = [
 				maps: []
 			},
 			{
-				id: 3,
+				id: 10003,
 				round: 1,
 				teams: [
 					{ team: teams['ML'], score: 2 },
@@ -618,7 +618,7 @@ const events: Event[] = [
 				maps: []
 			},
 			{
-				id: 4,
+				id: 10004,
 				round: 1,
 				teams: [
 					{ team: teams['XKAM'], score: 0 },
@@ -629,7 +629,7 @@ const events: Event[] = [
 				maps: []
 			},
 			{
-				id: 5,
+				id: 10005,
 				round: 2,
 				teams: [
 					{ team: teams['TG'], score: 2 },
@@ -640,7 +640,7 @@ const events: Event[] = [
 				maps: []
 			},
 			{
-				id: 6,
+				id: 10006,
 				round: 2,
 				teams: [
 					{ team: teams['ML'], score: 2 },
@@ -651,7 +651,7 @@ const events: Event[] = [
 				maps: []
 			},
 			{
-				id: 7,
+				id: 10007,
 				round: 3,
 				teams: [
 					{ team: teams['TG'], score: 2 },
@@ -662,7 +662,7 @@ const events: Event[] = [
 				maps: []
 			},
 			{
-				id: 8,
+				id: 10008,
 				round: 3,
 				teams: [
 					{ team: teams['DRI'], score: 0 },
