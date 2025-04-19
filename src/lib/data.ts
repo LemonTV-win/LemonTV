@@ -2804,7 +2804,10 @@ export function getTeam(id: string) {
 }
 
 export function getPlayers() {
-	return Object.values(players);
+	return Object.values(players).map((player) => ({
+		...player,
+		wins: getPlayerWins(player.id ?? '')
+	}));
 }
 
 export function getPlayer(id: string) {
@@ -2819,4 +2822,18 @@ export function getPlayerEvents(id: string) {
 	return getEvents().filter((event) =>
 		event.teams.some((team) => team.players?.some((player) => player && player.id === id))
 	);
+}
+
+export function getPlayerMatches(id: string) {
+	return getEvents()
+		.flatMap((event) => event.matches)
+		.filter((match) =>
+			match.teams.some((team) => team.team.players?.some((player) => player && player.id === id))
+		);
+}
+
+export function getPlayerWins(id: string) {
+	return getPlayerMatches(id).filter(
+		(match) => match.teams[(match.winnerId ?? 0) - 1].team.name === id
+	).length;
 }
