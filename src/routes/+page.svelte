@@ -39,13 +39,14 @@
 	<div class="flex flex-col gap-2">
 		<h2 class="my-10 text-2xl font-bold">{m.teams()}</h2>
 		<ul>
-			{#each data.teams.slice(0, 10) as team}
+			{#each data.teams.toSorted((a, b) => b.wins - a.wins).slice(0, 10) as team}
 				<li>
 					<a
-						class="flex items-center gap-2 border-b-1 border-gray-500 bg-gray-800 shadow-2xl"
+						class="grid grid-cols-[1fr_auto] items-center gap-2 gap-4 border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl"
 						href={`/teams/${team.id}`}
 					>
-						<span class="px-4 py-2 text-white">{team.name}</span>
+						<span class="text-white">{team.name}</span>
+						<span class="text-gray-400" title="Wins">{team.wins}</span>
 					</a>
 				</li>
 			{/each}
