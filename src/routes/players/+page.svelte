@@ -4,6 +4,7 @@
 	import { m } from '$lib/paraglide/messages.js';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
+	import CharacterIcon from '$lib/components/CharacterIcon.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -51,6 +52,7 @@
 						>{m.name()}</button
 					></th
 				>
+				<th class="px-4 py-1">{m.superstrings()}</th>
 				<th class="px-4 py-1"
 					><button class="text-left" onclick={() => (sortBy = 'wins')}>{m.wins()}</button></th
 				>
@@ -72,6 +74,11 @@
 								{/each}
 							{/if}</a
 						>
+					</td>
+					<td class="flex flex-wrap gap-1">
+						{#each data.playersAgents[player.id ?? ''] as superstring}
+							<CharacterIcon character={superstring[0]} />
+						{/each}
 					</td>
 					<td class="px-4 py-1 text-gray-300">{player.wins}</td>
 				</tr>

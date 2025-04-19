@@ -2867,7 +2867,7 @@ export function getPlayerAgents(id: string): [Character, number][] {
 		const scores = match.games?.flatMap((game) => game.scores[teamIndex][playerIndex]) ?? [];
 
 		// get the characters for the player
-		return scores.flatMap((score) => score.characters);
+		return scores.flatMap((score) => score?.characters ?? []);
 	});
 
 	// Count occurrences of each character
@@ -2878,4 +2878,10 @@ export function getPlayerAgents(id: string): [Character, number][] {
 
 	// Convert to array of tuples
 	return Array.from(characterCounts.entries());
+}
+
+export function getPlayersAgents(limit: number = 3): Record<string, [Character, number][]> {
+	return Object.fromEntries(
+		Object.entries(players).map(([id, _player]) => [id, getPlayerAgents(id).slice(0, limit)])
+	);
 }
