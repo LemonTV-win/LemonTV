@@ -1154,10 +1154,16 @@ export function getPlayerEvents(id: string) {
 	return getEvents().filter((event) => event.teams.some((team) => isPlayerInTeam(id, team)));
 }
 
-export function getPlayerMatches(id: string): Match[] {
+export function getPlayerMatches(id: string): (Match & { playerTeamIndex: number })[] {
 	return getEvents()
 		.flatMap((event) => event.matches)
-		.filter((match) => match.teams.some((team) => isPlayerInTeam(id, team.team)));
+		.filter((match) => match.teams.some((team) => isPlayerInTeam(id, team.team)))
+		.map((match) => ({
+			...match,
+			playerTeamIndex: match.teams.findIndex((team) =>
+				team.team.players?.some((player) => player && player.id === id)
+			)
+		}));
 }
 
 export function getPlayerWins(id: string): number {
