@@ -4,6 +4,7 @@
     "": {
       "name": "lemontv",
       "dependencies": {
+        "@fontsource-variable/saira": "^5.2.6",
         "@inlang/paraglide-js": "^2.0.0",
         "@libsql/client": "^0.14.0",
         "@node-rs/argon2": "^2.0.2",
@@ -126,6 +127,8 @@
     "@eslint/object-schema": ["@eslint/object-schema@2.1.6", "", {}, "sha512-RBMg5FRL0I0gs51M/guSAj5/e14VQ4tpZnQNWwuDT66P14I43ItmPfIZRhO9fUVIPOAQXU47atlywZ/czoqFPA=="],
 
     "@eslint/plugin-kit": ["@eslint/plugin-kit@0.2.8", "", { "dependencies": { "@eslint/core": "^0.13.0", "levn": "^0.4.1" } }, "sha512-ZAoA40rNMPwSm+AeHpCq8STiNAwzWLJuP8Xv4CHIc9wv/PSuExjMrmjfYNj682vW0OOiZ1HKxzvjQr9XZIisQA=="],
+
+    "@fontsource-variable/saira": ["@fontsource-variable/saira@5.2.6", "", {}, "sha512-S14tGYTMAHUZVdrakNK0Evr0xkWuoByHbLe4aWJuB7f9sjWYsS3Ei7TVtOZs2DM/SpBC58scn3bc4xI/QiIOcg=="],
 
     "@humanfs/core": ["@humanfs/core@0.19.1", "", {}, "sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA=="],
 

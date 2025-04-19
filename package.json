@@ -42,6 +42,7 @@
 		"vite": "^6.2.5"
 	},
 	"dependencies": {
+		"@fontsource-variable/saira": "^5.2.6",
 		"@inlang/paraglide-js": "^2.0.0",
 		"@libsql/client": "^0.14.0",
 		"@node-rs/argon2": "^2.0.2",

@@ -1,6 +1,8 @@
+@import '@fontsource-variable/saira';
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 
 body {
 	@apply bg-black text-white;
+	font-family: 'Saira Variable', 'Noto Sans CJK JP', sans-serif;
 }
