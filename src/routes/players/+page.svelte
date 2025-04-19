@@ -2,6 +2,8 @@
 	import type { PageProps } from './$types';
 
 	import { m } from '$lib/paraglide/messages.js';
+	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 
 	let { data }: PageProps = $props();
 
@@ -19,6 +21,21 @@
 			return 0;
 		})
 	);
+
+	$effect(() => {
+		goto(`/players?sortBy=${sortBy}`);
+	});
+
+	onMount(() => {
+		const url = new URL(window.location.href);
+		const urlSortBy = url.searchParams.get('sortBy');
+		if (
+			urlSortBy &&
+			(urlSortBy === 'name-abc' || urlSortBy === 'name-cba' || urlSortBy === 'wins')
+		) {
+			sortBy = urlSortBy;
+		}
+	});
 </script>
 
 <main class="mx-auto max-w-screen-lg">
