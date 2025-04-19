@@ -81,7 +81,7 @@ export const origamiTeams: Record<string, Team> = {
 			players['gengu'],
 			players['Ascinei'],
 			players['grustleking'],
-			players['ttvBlexiss'],
+			players['Blexiss'],
 			players['frostyZK']
 		],
 		substitutes: [players['uno']]

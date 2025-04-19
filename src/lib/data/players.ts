@@ -70,7 +70,7 @@ export const players: Record<string, Player> = {
 		gameAccounts: [
 			{
 				accountId: 2003592,
-				currentName: 'Blexiss',
+				currentName: 'ttvBlexiss',
 				region: 'NA'
 			}
 		]
@@ -1649,16 +1649,6 @@ export const players: Record<string, Player> = {
 			{
 				accountId: 4049780,
 				currentName: 'supercrownnegev'
-			}
-		]
-	},
-	ttvBlexiss: {
-		id: 'ttvBlexiss',
-		name: 'ttvBlexiss',
-		gameAccounts: [
-			{
-				accountId: 2003592,
-				currentName: 'ttvBlexiss'
 			}
 		]
 	},
