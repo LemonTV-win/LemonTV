@@ -8,9 +8,11 @@
 	import TypcnArrowUnsorted from '~icons/typcn/arrow-unsorted';
 	import TypcnArrowSortedDown from '~icons/typcn/arrow-sorted-down';
 	import TypcnArrowSortedUp from '~icons/typcn/arrow-sorted-up';
+	import MaterialSymbolsSearchRounded from '~icons/material-symbols/search-rounded';
 
 	let { data }: PageProps = $props();
 
+	let search = $state('');
 	let sortBy: 'name-abc' | 'name-cba' | 'wins-asc' | 'wins-desc' | 'rating-asc' | 'rating-desc' =
 		$state('name-abc');
 
@@ -30,6 +32,11 @@
 				return b.rating - a.rating;
 			}
 			return 0;
+		})
+	);
+	let filtered = $derived(
+		sorted.filter((player) => {
+			return player.name.toLowerCase().includes(search.toLowerCase());
 		})
 	);
 
@@ -56,6 +63,21 @@
 
 <main class="mx-auto max-w-screen-lg">
 	<h1 class="my-10 text-2xl font-bold">{m.players()}</h1>
+
+	<div class="mb-4 flex items-center justify-end gap-2">
+		<div
+			class="flex w-full max-w-64 items-center gap-2 rounded-md border-2 border-gray-500 bg-gray-800 px-4 text-gray-400 focus-within:border-gray-400 hover:border-gray-400"
+		>
+			<MaterialSymbolsSearchRounded class="h-6 w-6" />
+			<input
+				type="search"
+				placeholder="Search"
+				bind:value={search}
+				class="w-full border-none bg-transparent p-2 ring-0 outline-none focus:outline-none"
+			/>
+			<span class="text-xs text-gray-500">{filtered.length}/{sorted.length}</span>
+		</div>
+	</div>
 
 	<table class="w-full table-auto border-collapse border-y-2 border-gray-500 bg-gray-800">
 		<thead>
@@ -107,7 +129,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each sorted as player}
+			{#each filtered as player}
 				<tr class="border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl">
 					<td class="px-4 py-1">
 						<a href={`/players/${player.id}`}
