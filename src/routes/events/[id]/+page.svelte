@@ -75,12 +75,17 @@
 			{/each}
 		</nav>
 	</div>
-	<div class="flex flex-col gap-4 px-8 py-4">
+	<div class="flex flex-col gap-4 px-8">
 		<!-- <h2 class="text-2xl font-bold text-white">Brackets</h2> -->
 		{#if activeStage}
 			<!-- TODO Use tab -->
 			<h2 class="text-2xl font-bold text-white">{activeStage.title}</h2>
 			<BracketGraph stage={activeStage} />
+		{:else}
+			{#each data.event.stages as stage}
+				<h2 class="text-2xl font-bold text-white">{stage.title}</h2>
+				<BracketGraph {stage} />
+			{/each}
 		{/if}
 		<h2 class="my-4 text-2xl font-bold text-white">{m.attending_teams()}</h2>
 		<ul class="flex flex-wrap gap-4">
