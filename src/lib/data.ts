@@ -963,7 +963,7 @@ const events: Event[] = [
 		status: 'finished',
 		organizer: {
 			name: 'OrigamiCup',
-			logo: 'https://lh3.googleusercontent.com/docsubipk/AP9E6xXsS7f7lkPdHZI-Q3JGePPY3jLvytkH87Nv3xjq_ZLxAOfz2bLeSdCQL59MrLnTbTX2M5jfSaLuhR4dKJghXD6Ts6ttN_Dv47311ySQgkj7Zy9h',
+			logo: 'https://static-cdn.jtvnw.net/jtv_user_pictures/ba65e84b-8314-46e2-8b9a-becd794fcd48-profile_image-70x70.png',
 			url: 'https://www.twitch.tv/origamicup'
 		},
 		capacity: 14,
