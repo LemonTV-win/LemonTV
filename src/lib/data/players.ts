@@ -1,4 +1,4 @@
-import type { Region } from '$lib/data/region';
+import type { Region } from '$lib/data/game';
 
 export interface Player {
 	id?: string;

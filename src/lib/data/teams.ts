@@ -1,5 +1,5 @@
 import { players, type Player } from './players';
-import { type Region } from './region';
+import { type Region } from './game';
 
 export interface Team {
 	name: string;
