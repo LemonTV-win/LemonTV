@@ -2,14 +2,25 @@
 	import type { PageProps } from './$types';
 
 	import { m } from '$lib/paraglide/messages.js';
+	import SearchInput from '$lib/components/SearchInput.svelte';
 
 	let { data }: PageProps = $props();
+
+	let search = $state('');
+	let filtered = $derived(
+		data.teams.filter((team) => team.name.toLowerCase().includes(search.toLowerCase()))
+	);
 </script>
 
 <main class="mx-auto max-w-screen-lg">
 	<h1 class="my-10 text-2xl font-bold">{m.teams()}</h1>
+
+	<div class="mb-4 flex items-center justify-end gap-2">
+		<SearchInput bind:search filtered={filtered.length} total={data.teams.length} />
+	</div>
+
 	<ul>
-		{#each data.teams.toSorted((a, b) => b.wins - a.wins) as team}
+		{#each filtered as team}
 			{#if team}
 				<li class="border-b-1 border-gray-500 bg-gray-800 p-4 shadow-2xl">
 					<a href={`/teams/${team.id}`} class="mb-8 text-2xl font-bold">{team.name}</a>
