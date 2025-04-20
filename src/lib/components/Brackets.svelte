@@ -35,7 +35,8 @@
 			parallelRounds.map((r) => [
 				r.parallelGroup ?? 0,
 				[
-					r.title?.[getLocale() as Locale] ?? m[r.type as keyof typeof m](),
+					r.title?.[getLocale() as Locale] ??
+						m[r.type as 'thirdplace' | 'semifinals' | 'final' | 'quarterfinals'](),
 					matches.filter(
 						(m) => stage.structure.nodes.find((n) => n.matchId === m.id)?.round === r.id
 					)
@@ -148,7 +149,10 @@
 	style="grid-template-columns: repeat({rounds.length}, 1fr);"
 >
 	{#each rounds as r}
-		<h4 class="mb-4">{r.title?.[getLocale() as Locale] ?? m[r.type as keyof typeof m]()}</h4>
+		<h4 class="mb-4">
+			{r.title?.[getLocale() as Locale] ??
+				m[r.type as 'thirdplace' | 'semifinals' | 'final' | 'quarterfinals']()}
+		</h4>
 	{/each}
 	{#each rounds as r, i}
 		<div class="flex flex-col items-center justify-center" style:grid-column={i + 1}>
