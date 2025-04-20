@@ -33,5 +33,7 @@
 	"Fuschia": "绯莎",
 	"Galatea": "加拉蒂亚",
 	"name": "名字",
-	"rating": "评分"
+	"rating": "评分",
+	"view_all_teams": "查看所有队伍",
+	"view_all_players": "查看所有选手"
 }

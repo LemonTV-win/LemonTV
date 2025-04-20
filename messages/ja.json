@@ -33,5 +33,7 @@
 	"Fuschia": "フューシャ",
 	"Galatea": "ガラテア",
 	"name": "名前",
-	"rating": "評価"
+	"rating": "評価",
+	"view_all_teams": "すべてのチーム",
+	"view_all_players": "すべてのプレイヤー"
 }

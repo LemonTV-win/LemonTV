@@ -33,5 +33,7 @@
 	"Fuschia": "Fuchsia",
 	"Galatea": "Galatea",
 	"name": "Nome",
-	"rating": "Avaliação"
+	"rating": "Avaliação",
+	"view_all_teams": "Ver Todas as Equipes",
+	"view_all_players": "Ver Todos os Jogadores"
 }

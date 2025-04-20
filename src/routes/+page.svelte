@@ -53,7 +53,7 @@
 			{/each}
 		</ul>
 		<!-- TODO: Add locale -->
-		<a href="/teams" class="mt-2 px-4 text-center text-lg font-bold">View all teams</a>
+		<a href="/teams" class="mt-2 px-4 text-center text-lg font-bold">{m.view_all_teams()}</a>
 	</div>
 
 	<div class="flex flex-col gap-2">
@@ -79,7 +79,7 @@
 				</li>
 			{/each}
 		</ul>
-		<a href="/players" class="mt-2 px-4 text-center text-lg font-bold">View all players</a>
+		<a href="/players" class="mt-2 px-4 text-center text-lg font-bold">{m.view_all_players()}</a>
 	</div>
 </main>
 
