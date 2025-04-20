@@ -12,7 +12,9 @@
 	}
 
 	import BracketGraph from '$lib/components/Brackets.svelte';
-
+	import GgOrganisation from '~icons/gg/organisation';
+	import IconParkSolidPeoples from '~icons/icon-park-solid/peoples';
+	import IconParkSolidCalendar from '~icons/icon-park-solid/calendar';
 	let activeStage = $state<Stage | null>(null);
 
 	$inspect(activeStage);
@@ -20,16 +22,15 @@
 
 {#if data.event}
 	<div
-		class="banner flex min-h-48 flex-col gap-2 bg-cover bg-center bg-top p-4 text-white"
+		class="banner flex min-h-48 flex-col gap-2 bg-cover bg-top p-4 text-white"
 		style:--banner-image={`url(${data.event.image})`}
 	>
-		<h1 class="my-3 text-3xl font-bold">{data.event.name}</h1>
+		<h1 class="my-2 text-3xl font-bold">{data.event.name}</h1>
 		<div class="flex flex-col gap-2 py-2">
 			<div class="text-gray-400">
-				Organized by <a
-					href={data.event.organizer.url}
-					class="ml-1 inline-flex items-baseline gap-1 text-white"
-				>
+				<GgOrganisation class="inline-block h-4 w-4" />
+				Organized by
+				<a href={data.event.organizer.url} class="ml-1 inline-flex items-baseline gap-1 text-white">
 					{#if data.event.organizer.logo}
 						<img
 							src={data.event.organizer.logo}
@@ -39,21 +40,25 @@
 					{/if}
 					{data.event.organizer.name}
 				</a>
-			</div>
-			<div class="text-gray-400">
-				{data.event.capacity} Teams・<time datetime={data.event.date}
-					>{data.event.date.replace('/', ' - ')}</time
-				>
+				<br />
+				<IconParkSolidPeoples class="inline-block h-4 w-4" />
+				{data.event.capacity} Teams・<IconParkSolidCalendar class="inline-block h-4 w-4" />
+				<time datetime={data.event.date}>{data.event.date.replace('/', ' - ')}</time>
 			</div>
 			{#if data.event.website}
-				<a href={data.event.website} class="text-gray-400"> Visit Website </a>
+				<a
+					href={data.event.website}
+					class="w-fit rounded-sm border-2 border-yellow-500 bg-yellow-500/10 px-2 py-1 text-yellow-500 hover:border-yellow-500 hover:bg-yellow-500 hover:text-white"
+				>
+					Visit Website
+				</a>
 			{/if}
 		</div>
-		<nav class="m-2 flex rounded-sm bg-gray-200/50">
+		<nav class="m-2 flex overflow-clip rounded-sm bg-gray-200/50">
 			<button
 				class={[
-					'px-4 py-2 hover:bg-gray-200',
-					!activeStage ? 'bg-gray-200 font-bold' : 'bg-transparent font-normal'
+					'px-4 py-2 hover:bg-gray-200 hover:text-black',
+					!activeStage ? 'bg-gray-300 font-bold text-black' : 'bg-transparent font-normal'
 				]}
 				onclick={() => (activeStage = null)}
 			>
@@ -66,8 +71,10 @@
 				<button
 					onclick={() => (activeStage = stage)}
 					class={[
-						'p-2 hover:bg-gray-200',
-						activeStage?.id === stage.id ? 'bg-gray-200 font-bold' : 'bg-transparent font-normal'
+						'px-4 py-2 hover:bg-gray-200 hover:text-black',
+						activeStage?.id === stage.id
+							? 'bg-gray-300 font-bold text-black'
+							: 'bg-transparent font-normal'
 					]}
 				>
 					{stage.title}
