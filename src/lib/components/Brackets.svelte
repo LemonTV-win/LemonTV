@@ -1,14 +1,99 @@
 <script lang="ts">
-	import { calculateWinnerIndex, type Match } from '$lib/data';
+	import { calculateWinnerIndex, type Stage } from '$lib/data';
+	import type { Match } from '$lib/data/matches';
 	import type { Team } from '$lib/data/teams';
+	import { getLocale, type Locale } from '$lib/paraglide/runtime';
+	import { onMount, tick } from 'svelte';
+	import { SvelteMap } from 'svelte/reactivity';
 
-	let { matches }: { matches: Match[] } = $props();
+	let { stage }: { stage: Stage } = $props();
 
-	const rounds = Array.from(new Set(matches.map((m) => m.round))).sort();
+	if (!stage) console.error('Stage is required');
 
-	function getMatchesByRound(round: number) {
-		return matches.filter((m) => m.round === round);
+	let rounds = $derived(
+		stage.structure.rounds
+			.filter((r) => r.parallelGroup === undefined)
+			.toSorted((a, b) => a.id - b.id)
+	);
+
+	let matches = $derived(stage.matches);
+	let matchesByRound: Map<number, Match[]> = $derived(
+		new Map(
+			rounds.map((r) => [
+				r.id,
+				matches.filter((m) => stage.structure.nodes.find((n) => n.matchId === m.id)?.round === r.id)
+			])
+		)
+	);
+
+	let parallelRounds = $derived(
+		stage.structure.rounds.filter((r) => r.parallelGroup !== undefined)
+	);
+	let parallelMatchesByRound: Map<number, [title: string, matches: Match[]]> = $derived(
+		new Map(
+			parallelRounds.map((r) => [
+				r.parallelGroup ?? 0,
+				[
+					r.title?.[getLocale() as Locale] ?? r.type,
+					matches.filter(
+						(m) => stage.structure.nodes.find((n) => n.matchId === m.id)?.round === r.id
+					)
+				]
+			])
+		)
+	);
+
+	let container = $state<HTMLDivElement>();
+	let positions = new SvelteMap<number, { x: number; y: number }>();
+	function register(el: HTMLElement, matchId: number) {
+		if (!container) {
+			tick().then(() => register(el, matchId));
+			return;
+		}
+		matchRefs.set(matchId, el);
+		const rect = el.getBoundingClientRect();
+		// relative to container’s top‑left:
+		const cRect = container.getBoundingClientRect();
+		positions.set(matchId, {
+			x: rect.left + rect.width / 2 - cRect.left,
+			y: rect.top + rect.height / 2 - cRect.top
+		});
 	}
+
+	$inspect('container', container);
+
+	// $inspect('positions', positions);
+	$effect(() => {
+		console.log('positions', positions);
+	});
+
+	let matchRefs = new SvelteMap<number, HTMLElement>();
+
+	onMount(() => {
+		const recalc = () => {
+			if (!container) return;
+			positions.clear();
+			for (const [matchId, el] of matchRefs) {
+				const rect = el.getBoundingClientRect();
+				const cRect = container.getBoundingClientRect();
+				positions.set(matchId, {
+					x: rect.left + rect.width / 2 - cRect.left,
+					y: rect.top + rect.height / 2 - cRect.top
+				});
+			}
+		};
+
+		window.addEventListener('resize', recalc);
+		container?.addEventListener('scroll', recalc);
+
+		// optionally trigger once after mount
+		recalc();
+
+		return () => {
+			window.removeEventListener('resize', recalc);
+			container?.removeEventListener('scroll', recalc);
+		};
+	});
 
 	function isWinner(match: Match, team: Team) {
 		if (!team || !calculateWinnerIndex(match)) return false;
@@ -19,113 +104,95 @@
 	}
 </script>
 
-<div class="bracket-container">
-	{#each rounds as round, i}
-		<div class="round">
-			{#each getMatchesByRound(round) as match}
-				<a href={`/matches/${match.id}`} class="match">
-					<div class="team {isWinner(match, match.teams[0].team) ? 'winner' : 'loser'}">
-						{match.teams[0].team.name}
-						{#if match.teams[0].score !== undefined}
-							<span class="score">{match.teams[0].score}</span>
-						{/if}
-					</div>
-					<div class="team {isWinner(match, match.teams[1].team) ? 'winner' : 'loser'}">
-						{match.teams[1].team.name}
-						{#if match.teams[1].score !== undefined}
-							<span class="score">{match.teams[1].score}</span>
-						{/if}
-					</div>
-				</a>
-			{/each}
-		</div>
-		{#if i < rounds.length - 1}
-			<div class="connector"></div>
-		{/if}
+{#snippet matchContainer(match: Match, i: number)}
+	<div
+		class="relative z-10 cursor-pointer bg-zinc-800 text-white decoration-0 shadow-md transition-shadow duration-200 hover:shadow-lg"
+		use:register={match.id}
+	>
+		<!-- your MatchCard or custom markup -->
+		<a href={`/matches/${match.id}`} class="match">
+			<div
+				class={[
+					'flex justify-between gap-4 border-b-1 border-l-4 border-gray-500 px-2 py-1',
+					isWinner(match, match.teams[0].team)
+						? 'border-l-yellow-400 font-semibold'
+						: 'border-l-red-500 text-gray-300'
+				]}
+			>
+				{match.teams[0].team.name}
+				{#if match.teams[0].score !== undefined}
+					<span class="score">{match.teams[0].score}</span>
+				{/if}
+			</div>
+			<div
+				class={[
+					'flex justify-between gap-4 border-l-4 border-gray-500 px-2 py-1',
+					isWinner(match, match.teams[1].team)
+						? 'border-l-4 border-yellow-500 font-semibold'
+						: 'border-l-4 border-red-500 text-gray-300'
+				]}
+			>
+				{match.teams[1].team.name}
+				{#if match.teams[1].score !== undefined}
+					<span class="score">{match.teams[1].score}</span>
+				{/if}
+			</div>
+		</a>
+	</div>
+{/snippet}
+
+<div
+	bind:this={container}
+	class="relative grid auto-rows-min justify-items-center gap-x-8 gap-y-0 overflow-x-auto bg-zinc-900 px-4 py-8"
+	style="grid-template-columns: repeat({rounds.length}, 1fr);"
+>
+	{#each rounds as r}
+		<h4 class="my-4">{r.title?.[getLocale() as Locale] ?? r.type}</h4>
 	{/each}
+	{#each rounds as r, i}
+		<div class="flex flex-col items-center justify-center" style:grid-column={i + 1}>
+			<div class="flex flex-col gap-6">
+				{#each matchesByRound.get(r.id) ?? [] as match (match.id)}
+					{@render matchContainer(match, i)}
+				{/each}
+			</div>
+		</div>
+	{/each}
+
+	{#each rounds as r, i}
+		{@const [title, matches] = parallelMatchesByRound.get(r.id) ?? ['', []]}
+		<div class="flex flex-col items-center justify-center" style:grid-column={i + 1}>
+			<div class="flex flex-col gap-6">
+				<h4 class="text-center">{title}</h4>
+				{#each matches as match (match.id)}
+					{@render matchContainer(match, i)}
+				{/each}
+			</div>
+		</div>
+	{/each}
+
+	<svg class="pointer-events-none absolute top-0 left-0 h-full w-full">
+		{#each stage.structure.nodes as node}
+			{#if node.dependsOn}
+				{#each node.dependsOn as dep}
+					{#if positions.has(dep.matchId) && positions.has(node.matchId)}
+						{@const from = positions.get(dep.matchId) ?? { x: 0, y: 0 }}
+						{@const to = positions.get(node.matchId) ?? { x: 0, y: 0 }}
+						<!-- draw a bent line: horizontal then vertical -->
+						<polyline
+							points="
+                {from.x},{from.y}
+                {(from.x + to.x) / 2},{from.y}
+                {(from.x + to.x) / 2},{to.y}
+                {to.x},{to.y}
+              "
+							fill="none"
+							class="stroke-gray-500"
+							stroke-width="1"
+						/>
+					{/if}
+				{/each}
+			{/if}
+		{/each}
+	</svg>
 </div>
-
-<style lang="postcss">
-	.bracket-container {
-		display: flex;
-		align-items: center;
-		gap: 1rem;
-		overflow-x: auto;
-		padding: 1rem;
-		background-color: #1a1a1a;
-	}
-
-	.round {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-	}
-
-	.match {
-		background: linear-gradient(135deg, #2a2c31, #3a3c41);
-		border-radius: 0.1rem;
-		position: relative;
-		cursor: pointer;
-		color: white;
-		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-		text-decoration: none;
-	}
-
-	.team {
-		display: flex;
-		justify-content: space-between;
-		padding: 0.25rem;
-		border: 1px solid #4a4c51;
-	}
-
-	.team.winner {
-		border-left: 4px solid #e3b942;
-	}
-
-	.team.loser {
-		border-left: 4px solid #db4f47;
-		color: #b4b4b4;
-	}
-
-	.score {
-		font-weight: bold;
-		margin-left: 0.5rem;
-	}
-
-	.connector {
-		flex-grow: 1;
-		height: 2px;
-		background-color: #555;
-		position: relative;
-		margin-bottom: 2rem;
-	}
-
-	.connector::before,
-	.connector::after {
-		content: '';
-		position: absolute;
-		height: 10px;
-		width: 10px;
-		border-radius: 50%;
-		background-color: #555;
-		top: 50%;
-		transform: translateY(-50%);
-	}
-
-	.connector::before {
-		left: -5px;
-	}
-
-	.connector::after {
-		right: -5px;
-	}
-
-	::-webkit-scrollbar {
-		height: 6px;
-	}
-
-	::-webkit-scrollbar-thumb {
-		background: #e63946;
-		border-radius: 3px;
-	}
-</style>

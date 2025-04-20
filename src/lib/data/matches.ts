@@ -18,7 +18,6 @@ export interface Participant {
 export interface Match {
 	id: number;
 	teams: [Participant, Participant];
-	round: number;
 	winnerId?: number;
 	battleOf: 'BO1' | 'BO3' | 'BO5';
 	maps: {

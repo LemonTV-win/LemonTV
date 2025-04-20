@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { error } from '@sveltejs/kit';
 	import type { PageProps } from './$types';
+	import type { Stage } from '$lib/data';
 
 	import { m } from '$lib/paraglide/messages';
 
@@ -11,6 +12,10 @@
 	}
 
 	import BracketGraph from '$lib/components/Brackets.svelte';
+
+	let activeStage = $state<Stage | null>(null);
+
+	$inspect(activeStage);
 </script>
 
 {#if data.event}
@@ -44,15 +49,39 @@
 				<a href={data.event.website} class="text-gray-400"> Visit Website </a>
 			{/if}
 		</div>
-		<nav class="m-2 flex gap-4 rounded-sm bg-gray-200/50 p-2">
-			<button>Overview</button>
-			<button>Qualifiers</button>
-			<button>Main Brackets</button>
+		<nav class="m-2 flex rounded-sm bg-gray-200/50">
+			<button
+				class={[
+					'px-4 py-2 hover:bg-gray-200',
+					!activeStage ? 'bg-gray-200 font-bold' : 'bg-transparent font-normal'
+				]}
+				onclick={() => (activeStage = null)}
+			>
+				Overview
+			</button>
+
+			<!-- TODO: Results 1st place, 2nd place, 3rd place -->
+
+			{#each data.event.stages as stage}
+				<button
+					onclick={() => (activeStage = stage)}
+					class={[
+						'p-2 hover:bg-gray-200',
+						activeStage?.id === stage.id ? 'bg-gray-200 font-bold' : 'bg-transparent font-normal'
+					]}
+				>
+					{stage.title}
+				</button>
+			{/each}
 		</nav>
 	</div>
-	<!-- <h2 class="text-2xl font-bold text-white">Brackets</h2> -->
-	<BracketGraph matches={data.event.matches} />
 	<div class="flex flex-col gap-4 px-8 py-4">
+		<!-- <h2 class="text-2xl font-bold text-white">Brackets</h2> -->
+		{#if activeStage}
+			<!-- TODO Use tab -->
+			<h2 class="text-2xl font-bold text-white">{activeStage.title}</h2>
+			<BracketGraph stage={activeStage} />
+		{/if}
 		<h2 class="my-4 text-2xl font-bold text-white">{m.attending_teams()}</h2>
 		<ul class="flex flex-wrap gap-4">
 			{#each data.event.teams as team}
