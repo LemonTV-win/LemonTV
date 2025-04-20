@@ -2,60 +2,8 @@ import type { Player } from './data/players';
 
 import { players } from '$lib/data/players';
 import { teams, type Team } from '$lib/data/teams';
-import type { Character, GameMap } from './data/game';
-
-export interface EventParticipant {
-	team: Team;
-	roaster?: string[];
-	substitutes?: string[];
-}
-
-export interface Participant {
-	team: Team;
-	score: number;
-	roaster?: string[];
-	substitutes?: string[];
-}
-
-export interface Match {
-	id: number;
-	teams: [Participant, Participant];
-	round: number;
-	winnerId?: number;
-	battleOf: 'BO1' | 'BO3' | 'BO5';
-	maps: {
-		map: GameMap;
-		pickerId: number;
-		pickedSide: 'Attack' | 'Defense';
-	}[];
-	games?: Game[];
-	vod?: string; // url to the vod
-}
-
-export interface PlayerScore {
-	player: string;
-	characters: [firstHalf: Character, secondHalf: Character];
-	score: number;
-	damageScore: number;
-	kills: number;
-	knocks: number;
-	deaths: number;
-	assists: number;
-	damage: number;
-}
-
-export interface Game {
-	id: number;
-	map: GameMap;
-	duration: number;
-	teams: [A: Team, B: Team];
-	result: [A: number, B: number];
-	scores: [
-		A: [PlayerScore, PlayerScore, PlayerScore, PlayerScore, PlayerScore],
-		B: [PlayerScore, PlayerScore, PlayerScore, PlayerScore, PlayerScore]
-	];
-	winner: number;
-}
+import type { Character } from '$lib/data/game';
+import type { Match } from '$lib/data/matches';
 
 export interface Event {
 	id: number;
