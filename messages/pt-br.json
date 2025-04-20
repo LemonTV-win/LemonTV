@@ -39,5 +39,15 @@
 	"quarterfinals": "Quartas de Final",
 	"semifinals": "Semifinais",
 	"final": "Final",
-	"thirdplace": "Disputa do Terceiro Lugar"
+	"thirdplace": "Disputa do Terceiro Lugar",
+	"teams_count": "{count} Equipes",
+	"organized_by": "Organizado por {name}",
+	"visit_website": "Visitar Site",
+	"overview": "Visão Geral",
+	"main_bracket": "Chave Principal",
+	"playoff": "Playoff",
+	"qualifier": "Qualificatória",
+	"showmatch": "Partida de Exibição",
+	"group": "Grupo",
+	"single": "Individual"
 }

@@ -39,5 +39,15 @@
 	"quarterfinals": "Perempat Final",
 	"semifinals": "Semifinal",
 	"final": "Final",
-	"thirdplace": "Pertandingan Perebutan Juara Ketiga"
+	"thirdplace": "Pertandingan Perebutan Juara Ketiga",
+	"teams_count": "{count} Tim",
+	"organized_by": "Diselenggarakan oleh {name}",
+	"visit_website": "Kunjungi Situs Web",
+	"overview": "Ikhtisar",
+	"main_bracket": "Bracket Utama",
+	"playoff": "Playoff",
+	"qualifier": "Kualifikasi",
+	"showmatch": "Pertandingan Ekshibisi",
+	"group": "Grup",
+	"single": "Tunggal"
 }

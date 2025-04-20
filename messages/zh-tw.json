@@ -39,5 +39,15 @@
 	"quarterfinals": "八強賽",
 	"semifinals": "半決賽",
 	"final": "決賽",
-	"thirdplace": "季軍賽"
+	"thirdplace": "季軍賽",
+	"teams_count": "{count}支隊伍",
+	"organized_by": "主辦方：{name}",
+	"visit_website": "訪問網站",
+	"overview": "概覽",
+	"main_bracket": "主賽程",
+	"playoff": "季後賽",
+	"qualifier": "預選賽",
+	"showmatch": "表演賽",
+	"group": "小組",
+	"single": "單人"
 }

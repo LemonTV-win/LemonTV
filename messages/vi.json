@@ -39,5 +39,15 @@
 	"quarterfinals": "Tứ kết",
 	"semifinals": "Bán kết",
 	"final": "Chung kết",
-	"thirdplace": "Tranh hạng Ba"
+	"thirdplace": "Tranh hạng Ba",
+	"teams_count": "{count} Đội",
+	"organized_by": "Tổ chức bởi {name}",
+	"visit_website": "Truy cập trang web",
+	"overview": "Tổng quan",
+	"main_bracket": "Bảng đấu chính",
+	"playoff": "Vòng loại trực tiếp",
+	"qualifier": "Vòng loại",
+	"showmatch": "Trận đấu biểu diễn",
+	"group": "Bảng",
+	"single": "Đơn"
 }

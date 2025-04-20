@@ -39,5 +39,15 @@
 	"quarterfinals": "八强赛",
 	"semifinals": "半决赛",
 	"final": "决赛",
-	"thirdplace": "季军赛"
+	"thirdplace": "季军赛",
+	"teams_count": "{count} 队伍",
+	"organized_by": "由 {name} 组织",
+	"visit_website": "访问网站",
+	"overview": "概览",
+	"main_bracket": "主赛",
+	"playoff": "季后赛",
+	"qualifier": "预选赛",
+	"showmatch": "表演赛",
+	"group": "小组赛",
+	"single": "单人赛"
 }

@@ -29,7 +29,8 @@
 		<div class="flex flex-col gap-2 py-2">
 			<div class="text-gray-400">
 				<GgOrganisation class="inline-block h-4 w-4" />
-				Organized by
+				{m.organized_by({ name: '' })}
+				<!-- TODO: Add appropriate locale insertion	 -->
 				<a href={data.event.organizer.url} class="ml-1 inline-flex items-baseline gap-1 text-white">
 					{#if data.event.organizer.logo}
 						<img
@@ -41,8 +42,9 @@
 					{data.event.organizer.name}
 				</a>
 				<br />
-				<IconParkSolidPeoples class="inline-block h-4 w-4" />
-				{data.event.capacity} Teams・<IconParkSolidCalendar class="inline-block h-4 w-4" />
+				<IconParkSolidPeoples class="inline-block h-4 w-4" />{m.teams_count({
+					count: data.event.capacity
+				})}・<IconParkSolidCalendar class="inline-block h-4 w-4" />
 				<time datetime={data.event.date}>{data.event.date.replace('/', ' - ')}</time>
 			</div>
 			{#if data.event.website}
@@ -50,7 +52,7 @@
 					href={data.event.website}
 					class="w-fit rounded-sm border-2 border-yellow-500 bg-yellow-500/10 px-2 py-1 text-yellow-500 hover:border-yellow-500 hover:bg-yellow-500 hover:text-white"
 				>
-					Visit Website
+					{m.visit_website()}
 				</a>
 			{/if}
 		</div>
@@ -62,7 +64,7 @@
 				]}
 				onclick={() => (activeStage = null)}
 			>
-				Overview
+				{m.overview()}
 			</button>
 
 			<!-- TODO: Results 1st place, 2nd place, 3rd place -->
@@ -77,7 +79,7 @@
 							: 'bg-transparent font-normal'
 					]}
 				>
-					{stage.title}
+					{stage.title === 'Main Bracket' ? m.main_bracket() : stage.title}
 				</button>
 			{/each}
 		</nav>
@@ -86,11 +88,15 @@
 		<!-- <h2 class="text-2xl font-bold text-white">Brackets</h2> -->
 		{#if activeStage}
 			<!-- TODO Use tab -->
-			<h2 class="text-2xl font-bold text-white">{activeStage.title}</h2>
+			<h2 class="text-2xl font-bold text-white">
+				{activeStage.title === 'Main Bracket' ? m.main_bracket() : activeStage.title}
+			</h2>
 			<BracketGraph stage={activeStage} />
 		{:else}
 			{#each data.event.stages as stage}
-				<h2 class="text-2xl font-bold text-white">{stage.title}</h2>
+				<h2 class="text-2xl font-bold text-white">
+					{stage.title === 'Main Bracket' ? m.main_bracket() : stage.title}
+				</h2>
 				<BracketGraph {stage} />
 			{/each}
 		{/if}

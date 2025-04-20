@@ -39,5 +39,15 @@
 	"quarterfinals": "準々決勝",
 	"semifinals": "準決勝",
 	"final": "決勝",
-	"thirdplace": "3位決定戦"
+	"thirdplace": "3位決定戦",
+	"teams_count": "{count}チーム",
+	"organized_by": "主催{name}",
+	"visit_website": "ウェブサイトへ",
+	"overview": "概要",
+	"main_bracket": "メインブラケット",
+	"playoff": "プレーオフ",
+	"qualifier": "予選",
+	"showmatch": "エキシビションマッチ",
+	"group": "グループ",
+	"single": "シングル"
 }

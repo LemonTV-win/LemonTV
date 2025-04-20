@@ -37,5 +37,15 @@
 	"quarterfinals": "Четвертьфинал",
 	"semifinals": "Полуфинал",
 	"final": "Финал",
-	"thirdplace": "Матч за третье место"
+	"thirdplace": "Матч за третье место",
+	"teams_count": "{count} Команд",
+	"organized_by": "Организатор: {name}",
+	"visit_website": "Посетить сайт",
+	"overview": "Обзор",
+	"main_bracket": "Основная сетка",
+	"playoff": "Плей-офф",
+	"qualifier": "Квалификация",
+	"showmatch": "Показательный матч",
+	"group": "Группа",
+	"single": "Одиночный"
 }

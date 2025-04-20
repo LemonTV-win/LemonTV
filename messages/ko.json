@@ -35,5 +35,19 @@
 	"name": "이름",
 	"rating": "평점",
 	"view_all_teams": "모든 팀 보기",
-	"view_all_players": "모든 플레이어 보기"
+	"view_all_players": "모든 플레이어 보기",
+	"quarterfinals": "8강",
+	"semifinals": "4강",
+	"final": "결승",
+	"thirdplace": "3·4위전",
+	"teams_count": "팀 {count}개",
+	"organized_by": "{name} 주최",
+	"visit_website": "웹사이트 방문",
+	"overview": "개요",
+	"main_bracket": "메인 브래킷",
+	"playoff": "플레이오프",
+	"qualifier": "예선",
+	"showmatch": "쇼매치",
+	"group": "그룹",
+	"single": "싱글"
 }
