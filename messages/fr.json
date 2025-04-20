@@ -35,5 +35,9 @@
 	"name": "Nom",
 	"rating": "Note",
 	"view_all_teams": "Toutes les équipes",
-	"view_all_players": "Tous les joueurs"
+	"view_all_players": "Tous les joueurs",
+	"quarterfinals": "Quarts de finale",
+	"semifinals": "Demi-finales",
+	"final": "Finale",
+	"thirdplace": "Match pour la troisième place"
 }

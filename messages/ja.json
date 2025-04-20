@@ -35,5 +35,9 @@
 	"name": "名前",
 	"rating": "評価",
 	"view_all_teams": "すべてのチーム",
-	"view_all_players": "すべてのプレイヤー"
+	"view_all_players": "すべてのプレイヤー",
+	"quarterfinals": "準々決勝",
+	"semifinals": "準決勝",
+	"final": "決勝",
+	"thirdplace": "3位決定戦"
 }

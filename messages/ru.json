@@ -33,5 +33,9 @@
 	"Fuschia": "Фуксия",
 	"Galatea": "Галатея",
 	"name": "Имя",
-	"rating": "Рейтинг"
+	"rating": "Рейтинг",
+	"quarterfinals": "Четвертьфинал",
+	"semifinals": "Полуфинал",
+	"final": "Финал",
+	"thirdplace": "Матч за третье место"
 }

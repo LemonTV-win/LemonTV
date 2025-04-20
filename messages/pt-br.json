@@ -35,5 +35,9 @@
 	"name": "Nome",
 	"rating": "Avaliação",
 	"view_all_teams": "Ver Todas as Equipes",
-	"view_all_players": "Ver Todos os Jogadores"
+	"view_all_players": "Ver Todos os Jogadores",
+	"quarterfinals": "Quartas de Final",
+	"semifinals": "Semifinais",
+	"final": "Final",
+	"thirdplace": "Disputa do Terceiro Lugar"
 }

@@ -2,6 +2,7 @@
 	import { calculateWinnerIndex, type Stage } from '$lib/data';
 	import type { Match } from '$lib/data/matches';
 	import type { Team } from '$lib/data/teams';
+	import { m } from '$lib/paraglide/messages';
 	import { getLocale, type Locale } from '$lib/paraglide/runtime';
 	import { onMount, tick } from 'svelte';
 	import { SvelteMap } from 'svelte/reactivity';
@@ -34,7 +35,7 @@
 			parallelRounds.map((r) => [
 				r.parallelGroup ?? 0,
 				[
-					r.title?.[getLocale() as Locale] ?? r.type,
+					r.title?.[getLocale() as Locale] ?? m[r.type as keyof typeof m](),
 					matches.filter(
 						(m) => stage.structure.nodes.find((n) => n.matchId === m.id)?.round === r.id
 					)
@@ -147,7 +148,7 @@
 	style="grid-template-columns: repeat({rounds.length}, 1fr);"
 >
 	{#each rounds as r}
-		<h4 class="my-4">{r.title?.[getLocale() as Locale] ?? r.type}</h4>
+		<h4 class="my-4">{r.title?.[getLocale() as Locale] ?? m[r.type as keyof typeof m]()}</h4>
 	{/each}
 	{#each rounds as r, i}
 		<div class="flex flex-col items-center justify-center" style:grid-column={i + 1}>

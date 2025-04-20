@@ -35,5 +35,9 @@
 	"name": "名字",
 	"rating": "評分",
 	"view_all_teams": "查看所有隊伍",
-	"view_all_players": "查看所有選手"
+	"view_all_players": "查看所有選手",
+	"quarterfinals": "八強賽",
+	"semifinals": "半決賽",
+	"final": "決賽",
+	"thirdplace": "季軍賽"
 }
