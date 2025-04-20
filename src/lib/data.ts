@@ -1,44 +1,8 @@
 import type { Player } from './data/players';
 
-export type Map =
-	| 'base_404'
-	| 'space_lab'
-	| 'windy_town'
-	| 'area_88'
-	| 'port_euler'
-	| 'cosmite'
-	| 'orcanus'
-	| 'cauchy_district';
-
-export type PUSCharacter =
-	| 'Yvette'
-	| 'Nobunaga'
-	| 'Kokona'
-	| 'Michele'
-	| 'Flavia'
-	| 'Yugiri'
-	| 'Leona';
-export type ScissorsCharacter =
-	| 'Reiichi'
-	| 'Lawine'
-	| 'Ming'
-	| 'Meredith'
-	| 'Eika'
-	| 'Kanami'
-	| 'Fragrans'
-	| 'Mara';
-export type UrbinoCharacter =
-	| 'Audrey'
-	| 'Celestia'
-	| 'Maddelena'
-	| 'Bai Mo'
-	| 'Fuschia'
-	| 'Galatea';
-
-export type Character = PUSCharacter | ScissorsCharacter | UrbinoCharacter;
-
 import { players } from '$lib/data/players';
 import { teams, type Team } from '$lib/data/teams';
+import type { Character, GameMap } from './data/game';
 
 export interface EventParticipant {
 	team: Team;
@@ -60,7 +24,7 @@ export interface Match {
 	winnerId?: number;
 	battleOf: 'BO1' | 'BO3' | 'BO5';
 	maps: {
-		map: Map;
+		map: GameMap;
 		pickerId: number;
 		pickedSide: 'Attack' | 'Defense';
 	}[];
@@ -82,7 +46,7 @@ export interface PlayerScore {
 
 export interface Game {
 	id: number;
-	map: Map;
+	map: GameMap;
 	duration: number;
 	teams: [A: Team, B: Team];
 	result: [A: number, B: number];
