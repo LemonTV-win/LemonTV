@@ -1,6 +1,6 @@
 import type { PageLoad } from './$types';
 
-import { getTeam, getTeamMatches, getTeamMemberStatistics } from '$lib/data';
+import { getTeam, getTeamMatches, getTeamMemberStatistics, getTeamStatistics } from '$lib/data';
 import { error } from '@sveltejs/kit';
 
 export const load: PageLoad = ({ params }) => {
@@ -11,6 +11,7 @@ export const load: PageLoad = ({ params }) => {
 	return {
 		team,
 		teamMatches: getTeamMatches(params.id),
-		teamMemberStatistics: getTeamMemberStatistics(team)
+		teamMemberStatistics: getTeamMemberStatistics(team),
+		teamStatistics: getTeamStatistics(team)
 	};
 };

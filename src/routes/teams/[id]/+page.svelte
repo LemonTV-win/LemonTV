@@ -15,15 +15,34 @@
 </script>
 
 {#if data.team}
-	<main class="mx-auto max-w-screen-lg">
+	<main class="mx-auto max-w-screen-lg py-4">
 		<!-- Info -->
-		<div>
-			<h1 class="my-10 text-2xl font-bold">{data.team.name}</h1>
-			<p>{data.team.region}</p>
+
+		<section>
+			<div class="flex items-center gap-4">
+				<h1 class="my-6 text-3xl font-bold">{data.team.name}</h1>
+				<div class="flex items-center gap-2 rounded-sm bg-gray-700/50 px-2 py-1">
+					<IconParkSolidLocal class="h-4 w-4" />
+					<span>{data.team.region}</span>
+				</div>
+				<div
+					class={[
+						'flex items-center gap-2 rounded-sm bg-gray-700/50 px-2 py-1',
+						data.teamStatistics.ranking === 1 && 'bg-yellow-500',
+						data.teamStatistics.ranking === 2 && 'bg-blue-500',
+						data.teamStatistics.ranking === 3 && 'bg-red-500'
+					]}
+				>
+					<PhRankingFill class="h-4 w-4" />
+					<p>
+						Global #{data.teamStatistics.ranking}
+					</p>
+				</div>
+			</div>
 			{#if data.team.logo}
 				<img src={data.team.logo} alt={data.team.name} />
 			{/if}
-		</div>
+		</section>
 		<h2 class="my-5 flex items-center text-xl font-bold">
 			<IconParkSolidPeoples class="mr-2 inline-block text-yellow-300" />Active members
 		</h2>
