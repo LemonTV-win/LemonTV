@@ -3,8 +3,8 @@
 	import type { PageProps } from './$types';
 	import { m } from '$lib/paraglide/messages.js';
 	import CharacterIcon from '$lib/components/CharacterIcon.svelte';
-	import { calculateWinnerIndex } from '$lib/data';
 	import PlayerAvatar from '$lib/components/PlayerAvatar.svelte';
+	import MatchCard from '$lib/components/MatchCard.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -112,33 +112,7 @@
 			<ul class="flex flex-col gap-2">
 				{#each data.playerMatches as match}
 					{#if match}
-						<li
-							class="grid grid-cols-[1fr_auto_1fr] items-center gap-2 gap-4 rounded-sm bg-gray-800 shadow-2xl"
-						>
-							<a href={`/matches/${match.id}`} class="contents">
-								<span
-									class="text-right"
-									class:text-gray-200={match.playerTeamIndex === 0}
-									class:text-gray-400={match.playerTeamIndex === 1}>{match.teams[0].team.name}</span
-								>
-								<span
-									class="grid w-18 grid-cols-[1fr_auto_1fr] items-center justify-center gap-1 p-4 text-center text-white"
-									class:bg-green-500={calculateWinnerIndex(match) === match.playerTeamIndex + 1}
-									class:bg-red-500={calculateWinnerIndex(match) !== match.playerTeamIndex + 1}
-								>
-									<span>
-										{match.teams[0].score}
-									</span>
-									<span class="text-white">-</span>
-									<span>{match.teams[1].score}</span>
-								</span>
-								<span
-									class="text-left"
-									class:text-gray-200={match.playerTeamIndex === 1}
-									class:text-gray-400={match.playerTeamIndex === 0}>{match.teams[1].team.name}</span
-								>
-							</a>
-						</li>
+						<MatchCard {match} teamIndex={match.playerTeamIndex} event={match.event} />
 					{/if}
 				{/each}
 			</ul>

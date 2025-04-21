@@ -1297,9 +1297,10 @@ export function getPlayerEvents(id: string) {
 	return getEvents().filter((event) => event.teams.some((team) => isPlayerInTeam(id, team)));
 }
 
-export function getPlayerMatches(id: string): (Match & { playerTeamIndex: number })[] {
-	return getEvents()
-		.flatMap((event) => event.stages.flatMap((stage) => stage.matches))
+export function getPlayerMatches(
+	id: string
+): (Match & { playerTeamIndex: number; event: Event })[] {
+	return getMatches()
 		.filter((match) => match.teams.some((team) => isPlayerInTeam(id, team.team)))
 		.map((match) => ({
 			...match,
