@@ -49,5 +49,9 @@
 	"qualifier": "Qualifikation",
 	"showmatch": "Showmatch",
 	"group": "Gruppe",
-	"single": "Einzel"
+	"single": "Einzel",
+	"active_members": "Aktive Mitglieder",
+	"kd_ratio": "K/D",
+	"matches": "Matches",
+	"global_rank": "Global #{number}"
 }

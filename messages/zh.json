@@ -49,5 +49,9 @@
 	"qualifier": "预选赛",
 	"showmatch": "表演赛",
 	"group": "小组赛",
-	"single": "单人赛"
+	"single": "单人赛",
+	"active_members": "现役成员",
+	"kd_ratio": "K/D",
+	"matches": "比赛",
+	"global_rank": "世界第{number}名"
 }

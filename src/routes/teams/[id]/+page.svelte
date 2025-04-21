@@ -9,6 +9,7 @@
 	import IconParkSolidLocal from '~icons/icon-park-solid/local';
 	import PhRankingFill from '~icons/ph/ranking-fill';
 	import { getLocale } from '$lib/paraglide/runtime';
+	import { m } from '$lib/paraglide/messages';
 	let { data }: PageProps = $props();
 
 	if (!data.team) {
@@ -43,7 +44,7 @@
 				>
 					<PhRankingFill class="h-4 w-4" />
 					<p>
-						Global #{data.teamStatistics.ranking}
+						{m.global_rank({ number: data.teamStatistics.ranking })}
 					</p>
 				</div>
 			</div>
@@ -52,7 +53,7 @@
 			{/if}
 		</section>
 		<h2 class="my-5 flex items-center text-xl font-bold">
-			<IconParkSolidPeoples class="mr-2 inline-block text-yellow-300" />Active members
+			<IconParkSolidPeoples class="mr-2 inline-block text-yellow-300" />{m.active_members()}
 		</h2>
 		{#if data.team.players}
 			<ul class="flex flex-wrap gap-4">
@@ -68,7 +69,7 @@
 									<div
 										class="flex min-w-16 flex-col items-center rounded-sm bg-gray-700/50 px-2 py-1"
 									>
-										<span class="text-xs text-gray-400">Rating</span>
+										<span class="text-xs text-gray-400">{m.rating()}</span>
 										<span class="text-sm text-yellow-300">
 											{data.teamMemberStatistics[player.id].rating.toFixed(2)}
 										</span>
@@ -76,7 +77,7 @@
 									<div
 										class="flex min-w-16 flex-col items-center rounded-sm bg-gray-700/50 px-2 py-1"
 									>
-										<span class="text-xs text-gray-400">K/D</span>
+										<span class="text-xs text-gray-400">{m.kd_ratio()}</span>
 										<span class="text-sm">
 											{data.teamMemberStatistics[player.id].kd.toFixed(2)}
 										</span>
@@ -106,7 +107,7 @@
 		<!-- Previous members -->
 
 		<h2 class="my-5 flex items-center text-xl font-bold">
-			<IconParkSolidCalendar class="mr-2 inline-block text-yellow-300" />Matches
+			<IconParkSolidCalendar class="mr-2 inline-block text-yellow-300" />{m.matches()}
 		</h2>
 		{#if data.teamMatches}
 			<ul class="grid grid-cols-1 gap-3">

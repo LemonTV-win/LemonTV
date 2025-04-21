@@ -49,5 +49,9 @@
 	"qualifier": "예선",
 	"showmatch": "쇼매치",
 	"group": "그룹",
-	"single": "싱글"
+	"single": "싱글",
+	"active_members": "활동 중인 멤버",
+	"kd_ratio": "K/D",
+	"matches": "경기",
+	"global_rank": "글로벌 #{number}위"
 }

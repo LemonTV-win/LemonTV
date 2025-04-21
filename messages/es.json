@@ -49,5 +49,9 @@
 	"qualifier": "Clasificación",
 	"showmatch": "Partido de Exhibición",
 	"group": "Grupo",
-	"single": "Individual"
+	"single": "Individual",
+	"active_members": "Miembros Activos",
+	"kd_ratio": "K/D",
+	"matches": "Partidas",
+	"global_rank": "Global #{number}"
 }

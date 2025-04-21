@@ -49,5 +49,9 @@
 	"qualifier": "Vòng loại",
 	"showmatch": "Trận đấu biểu diễn",
 	"group": "Bảng",
-	"single": "Đơn"
+	"single": "Đơn",
+	"active_members": "Thành viên đang hoạt động",
+	"kd_ratio": "K/D",
+	"matches": "Trận đấu",
+	"global_rank": "Hạng #{number} Toàn cầu"
 }

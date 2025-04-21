@@ -49,5 +49,9 @@
 	"qualifier": "予選",
 	"showmatch": "エキシビションマッチ",
 	"group": "グループ",
-	"single": "シングル"
+	"single": "シングル",
+	"active_members": "アクティブメンバー",
+	"kd_ratio": "K/D",
+	"matches": "試合",
+	"global_rank": "世界ランク#{number}"
 }

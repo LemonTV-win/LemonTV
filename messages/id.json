@@ -49,5 +49,9 @@
 	"qualifier": "Kualifikasi",
 	"showmatch": "Pertandingan Ekshibisi",
 	"group": "Grup",
-	"single": "Tunggal"
+	"single": "Tunggal",
+	"active_members": "Anggota Aktif",
+	"kd_ratio": "K/D",
+	"matches": "Pertandingan",
+	"global_rank": "Peringkat Global #{number}"
 }
