@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { calculateWinnerIndex, type Stage } from '$lib/data';
+	import { calculateWinnerIndex } from '$lib/data';
+	import type { Stage } from '$lib/data/events';
 	import type { Match } from '$lib/data/matches';
 	import type { Team } from '$lib/data/teams';
 	import { m } from '$lib/paraglide/messages';

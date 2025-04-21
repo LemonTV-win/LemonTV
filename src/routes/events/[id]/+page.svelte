@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { error } from '@sveltejs/kit';
 	import type { PageProps } from './$types';
-	import type { Stage } from '$lib/data';
+	import type { Stage } from '$lib/data/events';
 
 	import { m } from '$lib/paraglide/messages';
 

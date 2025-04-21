@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { PlayerScore } from '$lib/data';
+	import type { PlayerScore } from '$lib/data/matches';
 
 	let { scores }: { scores: [PlayerScore[], PlayerScore[]] } = $props();
 

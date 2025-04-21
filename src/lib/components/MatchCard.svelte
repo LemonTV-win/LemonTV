@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Match } from '$lib/data/matches';
-	import { calculateWinnerIndex, type Event } from '$lib/data';
+	import type { Event } from '$lib/data/events';
+	import { calculateWinnerIndex } from '$lib/data';
 
 	import { getLocale } from '$lib/paraglide/runtime';
 	const dateFormatter = new Intl.DateTimeFormat(getLocale(), {
