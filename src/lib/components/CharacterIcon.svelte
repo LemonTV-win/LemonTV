@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Character } from '$lib/data';
+	import type { Character } from '$lib/data/game';
 	import { m } from '$lib/paraglide/messages.js';
 	const CHARACTER_2_IMAGE: Record<Character, string> = {
 		Michele:
@@ -35,12 +35,24 @@
 		Fuschia: 'https://static.wikitide.net/strinovawiki/a/ad/Fuchsia_Profile.png',
 		Galatea: 'https://static.wikitide.net/strinovawiki/f/ff/Galatea_Profile.png'
 	};
-	export let character: Character;
+	let { character, class: className = '' }: { character: Character | null; class: string } =
+		$props();
 </script>
 
-<img
-	class="h-9 w-9 rounded-full"
-	src={CHARACTER_2_IMAGE[character]}
-	alt={m[character as keyof typeof m]()}
-	title={m[character as keyof typeof m]()}
-/>
+{#if character}
+	<img
+		class={['h-9 w-9 rounded-full', className]}
+		src={CHARACTER_2_IMAGE[character]}
+		alt={m[character]()}
+		title={m[character]()}
+	/>
+{:else}
+	<div
+		class={[
+			'flex h-9 w-9 items-center justify-center rounded-full bg-gray-600 text-gray-400',
+			className
+		]}
+	>
+		?
+	</div>
+{/if}
