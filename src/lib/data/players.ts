@@ -1,7 +1,7 @@
 import type { Region } from '$lib/data/game';
 
 export interface Player {
-	id?: string;
+	id: string;
 	name: string;
 	nationality?: 'KR' | 'JP' | 'TW' | 'US' | 'VN' | 'ID' | 'CN';
 	aliases?: string[];

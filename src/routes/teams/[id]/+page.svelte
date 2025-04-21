@@ -2,6 +2,8 @@
 	import { error } from '@sveltejs/kit';
 	import type { PageProps } from './$types';
 	import { calculateWinnerIndex } from '$lib/data';
+	import PlayerAvatar from '$lib/components/PlayerAvatar.svelte';
+	import CharacterIcon from '$lib/components/CharacterIcon.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -22,10 +24,48 @@
 		</div>
 		<h2 class="my-5 text-xl font-bold">Active members</h2>
 		{#if data.team.players}
-			<ul>
-				{#each data.team.players as player}
-					<li>
-						<a href={`/players/${player.id}`}>{player.name}</a>
+			<ul class="flex flex-wrap gap-4">
+				{#each data.team.players.toSorted((a, b) => (data.teamMemberStatistics?.[b.id ?? '']?.rating ?? 0) - (data.teamMemberStatistics?.[a.id ?? '']?.rating ?? 0)) as player}
+					<li
+						class="grid min-w-32 grid-cols-[auto_1fr] grid-rows-[auto_auto] items-center gap-x-4 gap-y-2 rounded-sm bg-gray-800 px-2 py-2"
+					>
+						<PlayerAvatar {player} class="row-span-2 h-16 w-16 rounded-full" />
+						<a class="px-2 font-semibold" href={`/players/${player.id}`}>{player.name}</a>
+						{#if player.id}
+							{#if data.teamMemberStatistics?.[player.id]}
+								<div class="flex gap-2">
+									<div
+										class="flex min-w-16 flex-col items-center rounded-sm bg-gray-700/50 px-2 py-1"
+									>
+										<span class="text-xs text-gray-400">Rating</span>
+										<span class="text-sm text-yellow-300">
+											{data.teamMemberStatistics[player.id].rating.toFixed(2)}
+										</span>
+									</div>
+									<div
+										class="flex min-w-16 flex-col items-center rounded-sm bg-gray-700/50 px-2 py-1"
+									>
+										<span class="text-xs text-gray-400">K/D</span>
+										<span class="text-sm">
+											{data.teamMemberStatistics[player.id].kd.toFixed(2)}
+										</span>
+									</div>
+									<div class="flex flex-wrap items-center justify-center -space-x-3">
+										{#each data.teamMemberStatistics[player.id].characters
+											.toSorted((a, b) => b[1] - a[1])
+											.map(([character, count]) => character)
+											.slice(0, 3)
+											.concat(Array(3).fill(null))
+											.slice(0, 3) as character, i}
+											<CharacterIcon
+												{character}
+												class={`h-3 w-3 shadow-md ${i === 0 ? 'z-3' : i === 1 ? 'z-2' : 'z-1'}`}
+											/>
+										{/each}
+									</div>
+								</div>
+							{/if}
+						{/if}
 					</li>
 				{/each}
 			</ul>

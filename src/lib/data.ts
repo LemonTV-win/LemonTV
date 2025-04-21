@@ -1,6 +1,4 @@
-import type { Player } from './data/players';
-
-import { players } from '$lib/data/players';
+import { players, type Player } from '$lib/data/players';
 import { teams, type Team } from '$lib/data/teams';
 import type { Character } from '$lib/data/game';
 import type { Match } from '$lib/data/matches';
@@ -1238,6 +1236,26 @@ export function getTeamMatches(id: string) {
 		}));
 }
 
+export function getTeamMemberStatistics(team: Team): Record<
+	string,
+	{
+		kd: number;
+		rating: number;
+		characters: [Character, number][];
+	}
+> | null {
+	return Object.fromEntries(
+		team.players?.map((player) => [
+			player.id ?? '',
+			{
+				kd: calculatePlayerKD(player),
+				rating: calculatePlayerRating(player),
+				characters: getPlayerAgents(player)
+			}
+		]) ?? []
+	);
+}
+
 export function getPlayers() {
 	return Object.values(players).map((player) => ({
 		...player,
@@ -1378,4 +1396,45 @@ function calculatePlayerRating(player: Player) {
 	const averageScore = scores.reduce((acc, score) => acc + score, 0) / scores.length;
 
 	return isNaN(averageScore) ? 0 : averageScore / 200;
+}
+
+function calculatePlayerKD(player: Player): number {
+	const matches = getPlayerMatches(player.id ?? '');
+	return matches.reduce((acc, match) => {
+		const playerTeamIndex = match.playerTeamIndex;
+		const opponentTeamIndex = 1 - playerTeamIndex;
+
+		if (!match.games) {
+			return acc;
+		}
+
+		const kills = match.games
+			?.flatMap((game) =>
+				game.scores[playerTeamIndex]
+					.filter(
+						(score) =>
+							score.player === player.id ||
+							player.gameAccounts?.some((account) => account.currentName === score.player)
+					)
+					.map((score) => score.kills)
+					.reduce((acc, kill) => acc + kill, 0)
+			)
+			.reduce((acc, kill) => acc + kill, 0);
+
+		const deaths = match.games
+			?.flatMap((game) =>
+				game.scores[playerTeamIndex]
+					.filter(
+						(score) =>
+							score.player === player.id ||
+							player.gameAccounts?.some((account) => account.currentName === score.player)
+					)
+					.map((score) => score.deaths)
+			)
+			.reduce((acc, death) => acc + death, 0);
+
+		console.log('KD', kills, deaths);
+
+		return kills / deaths;
+	}, 0);
 }
