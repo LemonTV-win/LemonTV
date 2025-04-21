@@ -38,7 +38,9 @@
 					{/each}
 				</div>
 			</td>
-			<td class="text-center">{score.player}</td>
+			<td class="text-center">
+				<a href={`/players/${score.player}`} class="text-center">{score.player}</a>
+			</td>
 			<td class="text-center">{score.score}</td>
 			<td class="text-center">{score.kills} ({score.knocks}) / {score.deaths} / {score.assists}</td>
 			<td class="text-center">{score.damage}</td>
@@ -60,17 +62,23 @@
 	<tbody>
 		<tr>
 			<td colspan="6" class="h-6">
-				<div class="flex items-center justify-center gap-2 p-2 font-bold">
+				<a
+					href={`/teams/${teams[0].id}`}
+					class="flex items-center justify-center gap-2 p-2 font-bold"
+				>
 					{teams[0].name}
-				</div>
+				</a>
 			</td>
 		</tr>
 		{@render playerscores(scores[0], winner === 0)}
 		<tr>
 			<td colspan="6" class="h-6">
-				<div class="flex items-center justify-center gap-2 p-2 font-bold">
+				<a
+					href={`/teams/${teams[1].id}`}
+					class="flex items-center justify-center gap-2 p-2 font-bold"
+				>
 					{teams[1].name}
-				</div>
+				</a>
 			</td>
 		</tr>
 		{@render playerscores(scores[1], winner === 1)}
