@@ -534,9 +534,14 @@ export const events: Event[] = [
 						maps: []
 					},
 
+					// M10: Drillas vs. N/A (skipped phantom match, should be Drillas Academy but forfeited/walkover or something)
+
+					// M11: Drillas Academy vs. KITTEN ROLL CALL
+					// TODO:
+
 					// M12: DRI vs KRC
 					{
-						id: 11,
+						id: 12,
 						teams: [
 							{
 								team: teams['DRI'],
@@ -1078,7 +1083,9 @@ export const events: Event[] = [
 						]
 					},
 
-					// M16: TG vs GUGF
+					// M14: TG vs GUGF ???
+
+					// M15: TG vs GUGF
 					{
 						id: 15,
 						teams: [
@@ -1427,7 +1434,6 @@ export const events: Event[] = [
 							matchId: 8,
 							round: 1
 						},
-
 						// {
 						// 	matchId: 10,
 						// 	round: 1
@@ -1439,7 +1445,10 @@ export const events: Event[] = [
 						{
 							matchId: 12,
 							round: 1,
-							dependsOn: [{ matchId: 9, outcome: 'loser' }]
+							dependsOn: [
+								{ matchId: 6, outcome: 'loser' },
+								{ matchId: 11, outcome: 'winner' }
+							]
 						},
 						{
 							matchId: 13,
