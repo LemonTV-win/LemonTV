@@ -27,10 +27,10 @@
 			<ul class="flex flex-wrap gap-4">
 				{#each data.team.players.toSorted((a, b) => (data.teamMemberStatistics?.[b.id ?? '']?.rating ?? 0) - (data.teamMemberStatistics?.[a.id ?? '']?.rating ?? 0)) as player}
 					<li
-						class="grid min-w-32 grid-cols-[auto_1fr] grid-rows-[auto_auto] items-center gap-x-4 gap-y-2 rounded-sm bg-gray-800 px-2 py-2"
+						class="gap-y- grid min-w-32 grid-cols-[auto_1fr] grid-rows-[auto_auto] items-center gap-x-4 gap-y-2 rounded-sm bg-gray-800 px-2 py-2"
 					>
 						<PlayerAvatar {player} class="row-span-2 h-16 w-16 rounded-full" />
-						<a class="px-2 font-semibold" href={`/players/${player.id}`}>{player.name}</a>
+						<a class="px-1 text-lg font-semibold" href={`/players/${player.id}`}>{player.name}</a>
 						{#if player.id}
 							{#if data.teamMemberStatistics?.[player.id]}
 								<div class="flex gap-2">
@@ -76,11 +76,11 @@
 
 		<h2 class="my-5 text-xl font-bold">Matches</h2>
 		{#if data.teamMatches}
-			<ul class="grid grid-cols-1 gap-4">
+			<ul class="grid grid-cols-1 gap-3">
 				{#each data.teamMatches as match}
 					{#if match}
 						<li
-							class="grid grid-cols-[1fr_auto_1fr] items-center gap-2 gap-4 rounded-sm bg-gray-800 shadow-2xl"
+							class="grid grid-cols-[1fr_auto_1fr] items-center gap-4 rounded-sm bg-gray-800 shadow-2xl"
 						>
 							<a href={`/matches/${match.id}`} class="contents">
 								<span
