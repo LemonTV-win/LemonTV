@@ -53,5 +53,6 @@
 	"active_members": "现役成员",
 	"kd_ratio": "K/D",
 	"matches": "比赛",
-	"global_rank": "世界第{number}名"
+	"global_rank": "世界第{number}名",
+	"community": "社群"
 }

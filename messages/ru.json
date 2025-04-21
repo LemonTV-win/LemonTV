@@ -51,5 +51,6 @@
 	"active_members": "Активные участники",
 	"kd_ratio": "У/С",
 	"matches": "Матчи",
-	"global_rank": "Глобальный рейтинг #{number}"
+	"global_rank": "Глобальный рейтинг #{number}",
+	"community": "Сообщество"
 }

@@ -53,5 +53,6 @@
 	"active_members": "Miembros Activos",
 	"kd_ratio": "K/D",
 	"matches": "Partidas",
-	"global_rank": "Global #{number}"
+	"global_rank": "Global #{number}",
+	"community": "Comunidad"
 }

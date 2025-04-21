@@ -53,5 +53,6 @@
 	"active_members": "Thành viên đang hoạt động",
 	"kd_ratio": "K/D",
 	"matches": "Trận đấu",
-	"global_rank": "Hạng #{number} Toàn cầu"
+	"global_rank": "Hạng #{number} Toàn cầu",
+	"community": "Cộng đồng"
 }

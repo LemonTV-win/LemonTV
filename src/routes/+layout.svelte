@@ -33,6 +33,7 @@
 		<a href="/events">{m.events()}</a>
 		<a href="/teams">{m.teams()}</a>
 		<a href="/players">{m.players()}</a>
+		<a href="/community">{m.community()}</a>
 		<select
 			class="rounded-md bg-gray-800 px-4 py-1 text-white"
 			onchange={({ currentTarget }) => {

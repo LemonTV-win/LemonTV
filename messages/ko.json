@@ -53,5 +53,6 @@
 	"active_members": "활동 중인 멤버",
 	"kd_ratio": "K/D",
 	"matches": "경기",
-	"global_rank": "글로벌 #{number}위"
+	"global_rank": "글로벌 #{number}위",
+	"community": "커뮤니티"
 }
