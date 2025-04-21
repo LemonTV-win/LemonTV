@@ -1664,7 +1664,264 @@ export const events: Event[] = [
 							{ team: teams['DRI'], score: 0 }
 						],
 						battleOf: 'BO3',
-						maps: []
+						maps: [
+							{
+								map: 'windy_town'
+							},
+							{
+								map: 'space_lab'
+							}
+						],
+						games: [
+							{
+								id: 1,
+								map: 'windy_town',
+								duration: 16 * 60 + 32,
+								teams: [teams['TG'], teams['DRI']],
+								result: [9, 0],
+								winner: 1,
+								scores: [
+									[
+										{
+											player: 'frostyZK',
+											characters: [null, 'Meredith'],
+											score: 282,
+											damageScore: 197,
+											kills: 11,
+											knocks: 11,
+											deaths: 1,
+											assists: 17,
+											damage: 2649
+										},
+										{
+											player: 'ttvBlexiss',
+											characters: [null, 'Lawine'],
+											score: 270,
+											damageScore: 227,
+											kills: 15,
+											knocks: 15,
+											deaths: 1,
+											assists: 12,
+											damage: 2649
+										},
+										{
+											player: 'grustleking',
+											characters: [null, 'Celestia'],
+											score: 196,
+											damageScore: 130,
+											kills: 5,
+											knocks: 5,
+											deaths: 2,
+											assists: 21,
+											damage: 1977
+										},
+										{
+											player: 'gengu',
+											characters: [null, 'Ming'],
+											score: 193,
+											damageScore: 154,
+											kills: 9,
+											knocks: 9,
+											deaths: 4,
+											assists: 11,
+											damage: 1902
+										},
+										{
+											player: 'Ascinei',
+											characters: [null, 'Reiichi'],
+											score: 180,
+											damageScore: 125,
+											kills: 5,
+											knocks: 5,
+											deaths: 0,
+											assists: 11,
+											damage: 1838
+										}
+									],
+									[
+										{
+											player: 'Creepz',
+											characters: [null, 'Michele'],
+											score: 127,
+											damageScore: 117,
+											kills: 3,
+											knocks: 7,
+											deaths: 9,
+											assists: 2,
+											damage: 1667
+										},
+										{
+											player: 'Poison',
+											characters: [null, 'Nobunaga'],
+											score: 111,
+											damageScore: 83,
+											kills: 3,
+											knocks: 4,
+											deaths: 9,
+											assists: 2,
+											damage: 1181
+										},
+										{
+											player: 'GWZH',
+											characters: [null, 'Yvette'],
+											score: 108,
+											damageScore: 94,
+											kills: 2,
+											knocks: 2,
+											deaths: 9,
+											assists: 2,
+											damage: 1535
+										},
+										{
+											player: 'Moozor',
+											characters: [null, 'Audrey'],
+											score: 89,
+											damageScore: 59,
+											kills: 2,
+											knocks: 2,
+											deaths: 9,
+											assists: 4,
+											damage: 1113
+										},
+										{
+											player: 'Vampire',
+											characters: [null, 'Flavia'],
+											score: 53,
+											damageScore: 49,
+											kills: 0,
+											knocks: 2,
+											deaths: 9,
+											assists: 0,
+											damage: 846
+										}
+									]
+								]
+							},
+							{
+								id: 2,
+								map: 'space_lab',
+								duration: 16 * 60 + 31,
+								teams: [teams['TG'], teams['DRI']],
+								result: [9, 1],
+								winner: 2,
+								scores: [
+									[
+										{
+											player: 'Creepz',
+											characters: [null, 'Michele'],
+											score: 110,
+											damageScore: 104,
+											kills: 5,
+											knocks: 8,
+											deaths: 9,
+											assists: 0,
+											damage: 1508
+										},
+										{
+											player: 'Moozor',
+											characters: [null, 'Audrey'],
+											score: 92,
+											damageScore: 77,
+											kills: 1,
+											knocks: 3,
+											deaths: 10,
+											assists: 2,
+											damage: 1409
+										},
+										{
+											player: 'GWZH',
+											characters: [null, 'Yvette'],
+											score: 71,
+											damageScore: 62,
+											kills: 0,
+											knocks: 1,
+											deaths: 10,
+											assists: 1,
+											damage: 1254
+										},
+										{
+											player: 'Poison',
+											characters: [null, 'Nobunaga'],
+											score: 67,
+											damageScore: 47,
+											kills: 1,
+											knocks: 2,
+											deaths: 10,
+											assists: 4,
+											damage: 831
+										},
+										{
+											player: 'Vampire',
+											characters: [null, 'Flavia'],
+											score: 34,
+											damageScore: 34,
+											kills: 1,
+											knocks: 2,
+											deaths: 10,
+											assists: 1,
+											damage: 593
+										}
+									],
+									[
+										{
+											player: 'ttvBlexiss',
+											characters: [null, 'Lawine'],
+											score: 247,
+											damageScore: 209,
+											kills: 18,
+											knocks: 18,
+											deaths: 1,
+											assists: 12,
+											damage: 2491
+										},
+										{
+											player: 'grustleking',
+											characters: [null, 'Celestia'],
+											score: 222,
+											damageScore: 146,
+											kills: 8,
+											knocks: 8,
+											deaths: 2,
+											assists: 26,
+											damage: 2195
+										},
+										{
+											player: 'gengu',
+											characters: [null, 'Ming'],
+											score: 205,
+											damageScore: 172,
+											kills: 10,
+											knocks: 10,
+											deaths: 1,
+											assists: 17,
+											damage: 2601
+										},
+										{
+											player: 'frostyZK',
+											characters: [null, 'Meredith'],
+											score: 198,
+											damageScore: 135,
+											kills: 5,
+											knocks: 5,
+											deaths: 2,
+											assists: 24,
+											damage: 2315
+										},
+										{
+											player: 'Ascinei',
+											characters: [null, 'Kanami'],
+											score: 191,
+											damageScore: 162,
+											kills: 8,
+											knocks: 8,
+											deaths: 2,
+											assists: 12,
+											damage: 2463
+										}
+									]
+								]
+							}
+						]
 					},
 					{
 						id: 10006,
@@ -1673,7 +1930,264 @@ export const events: Event[] = [
 							{ team: teams['DA'], score: 0 }
 						],
 						battleOf: 'BO3',
-						maps: []
+						maps: [
+							{
+								map: 'cauchy_district'
+							},
+							{
+								map: 'base_404'
+							}
+						],
+						games: [
+							{
+								id: 1,
+								map: 'cauchy_district',
+								duration: 25 * 60 + 17,
+								result: [9, 7],
+								teams: [teams['ML'], teams['DA']],
+								winner: 1,
+								scores: [
+									[
+										{
+											player: 'Mansek',
+											characters: [null, 'Michele'],
+											score: 190,
+											damageScore: 170,
+											kills: 8,
+											knocks: 11,
+											deaths: 10,
+											assists: 8,
+											damage: 3609
+										},
+										{
+											player: 'will',
+											characters: [null, 'Maddelena'],
+											score: 178,
+											damageScore: 139,
+											kills: 7,
+											knocks: 11,
+											deaths: 11,
+											assists: 11,
+											damage: 2870
+										},
+										{
+											player: 'Scylla',
+											characters: [null, 'Flavia'],
+											score: 158,
+											damageScore: 132,
+											kills: 7,
+											knocks: 10,
+											deaths: 10,
+											assists: 8,
+											damage: 2686
+										},
+										{
+											player: 'Voxy',
+											characters: [null, 'Fuschia'],
+											score: 137,
+											damageScore: 92,
+											kills: 7,
+											knocks: 8,
+											deaths: 9,
+											assists: 13,
+											damage: 1743
+										},
+										{
+											player: 'ARGHGHGHGHGHGHG',
+											characters: [null, 'Nobunaga'],
+											score: 132,
+											damageScore: 96,
+											kills: 5,
+											knocks: 5,
+											deaths: 10,
+											assists: 12,
+											damage: 2031
+										}
+									],
+									[
+										{
+											player: 'minecraftsteve',
+											characters: [null, 'Reiichi'],
+											score: 269,
+											damageScore: 224,
+											kills: 12,
+											knocks: 14,
+											deaths: 7,
+											assists: 14,
+											damage: 4644
+										},
+										{
+											player: 'akwa',
+											characters: [null, 'Lawine'],
+											score: 229,
+											damageScore: 171,
+											kills: 13,
+											knocks: 14,
+											deaths: 7,
+											assists: 19,
+											damage: 3248
+										},
+										{
+											player: 'nine',
+											characters: [null, 'Ming'],
+											score: 199,
+											damageScore: 163,
+											kills: 12,
+											knocks: 12,
+											deaths: 6,
+											assists: 12,
+											damage: 3219
+										},
+										{
+											player: 'HiroRune',
+											characters: [null, 'Celestia'],
+											score: 174,
+											damageScore: 130,
+											kills: 5,
+											knocks: 6,
+											deaths: 8,
+											assists: 20,
+											damage: 2969
+										},
+										{
+											player: 'BriBri',
+											characters: [null, 'Eika'],
+											score: 157,
+											damageScore: 108,
+											kills: 8,
+											knocks: 8,
+											deaths: 6,
+											assists: 17,
+											damage: 2089
+										}
+									]
+								]
+							},
+							{
+								id: 2,
+								map: 'base_404',
+								duration: 28 * 60 + 43,
+								teams: [teams['ML'], teams['DA']],
+								result: [9, 7],
+								winner: 1,
+								scores: [
+									[
+										{
+											player: 'will',
+											characters: [null, 'Maddelena'],
+											score: 215,
+											damageScore: 146,
+											kills: 10,
+											knocks: 9,
+											deaths: 9,
+											assists: 17,
+											damage: 3828
+										},
+										{
+											player: 'Scylla',
+											characters: [null, 'Flavia'],
+											score: 208,
+											damageScore: 165,
+											kills: 11,
+											knocks: 13,
+											deaths: 10,
+											assists: 16,
+											damage: 4203
+										},
+										{
+											player: 'ARGHGHGHGHGHGHG',
+											characters: [null, 'Yvette'],
+											score: 186,
+											damageScore: 140,
+											kills: 9,
+											knocks: 13,
+											deaths: 9,
+											assists: 19,
+											damage: 3618
+										},
+										{
+											player: 'Mansek',
+											characters: [null, 'Michele'],
+											score: 167,
+											damageScore: 140,
+											kills: 8,
+											knocks: 8,
+											deaths: 10,
+											assists: 9,
+											damage: 3855
+										},
+										{
+											player: 'sinna',
+											characters: [null, 'Fuschia'],
+											score: 128,
+											damageScore: 102,
+											kills: 6,
+											knocks: 7,
+											deaths: 12,
+											assists: 13,
+											damage: 2685
+										}
+									],
+									[
+										{
+											player: 'minecraftsteve',
+											characters: [null, 'Kanami'],
+											score: 270,
+											damageScore: 199,
+											kills: 14,
+											knocks: 18,
+											deaths: 8,
+											assists: 19,
+											damage: 5011
+										},
+										{
+											player: 'nine',
+											characters: [null, 'Ming'],
+											score: 264,
+											damageScore: 226,
+											kills: 14,
+											knocks: 18,
+											deaths: 8,
+											assists: 18,
+											damage: 5905
+										},
+										{
+											player: 'HiroRune',
+											characters: [null, 'Celestia'],
+											score: 172,
+											damageScore: 125,
+											kills: 10,
+											knocks: 12,
+											deaths: 9,
+											assists: 20,
+											damage: 3085
+										},
+										{
+											player: 'akwa',
+											characters: [null, 'Lawine'],
+											score: 128,
+											damageScore: 81,
+											kills: 8,
+											knocks: 6,
+											deaths: 10,
+											assists: 23,
+											damage: 1891
+										},
+										{
+											player: 'BriBri',
+											characters: [null, 'Eika'],
+											score: 122,
+											damageScore: 83,
+											kills: 4,
+											knocks: 4,
+											deaths: 9,
+											assists: 18,
+											damage: 2395
+										}
+									]
+								]
+							}
+						]
 					},
 					{
 						id: 10007,
@@ -1682,7 +2196,265 @@ export const events: Event[] = [
 							{ team: teams['ML'], score: 0 }
 						],
 						battleOf: 'BO3',
-						maps: []
+						maps: [
+							{
+								map: 'space_lab'
+							},
+							{
+								map: 'windy_town'
+							}
+							// TODO:
+						],
+						games: [
+							{
+								id: 1,
+								map: 'space_lab',
+								duration: 100,
+								teams: [teams['TG'], teams['ML']],
+								result: [9, 4],
+								winner: 1,
+								scores: [
+									[
+										{
+											player: 'gengu',
+											characters: [null, 'Michele'],
+											score: 273,
+											damageScore: 247,
+											kills: 18,
+											knocks: 17,
+											deaths: 6,
+											assists: 10,
+											damage: 4829
+										},
+										{
+											player: 'frostyZK',
+											characters: [null, 'Yugiri'],
+											score: 257,
+											damageScore: 197,
+											kills: 16,
+											knocks: 16,
+											deaths: 6,
+											assists: 17,
+											damage: 3609
+										},
+										{
+											player: 'Ascinei',
+											characters: [null, 'Kokona'],
+											score: 230,
+											damageScore: 157,
+											kills: 7,
+											knocks: 8,
+											deaths: 5,
+											assists: 18,
+											damage: 3524
+										},
+										{
+											player: 'ttvBlexiss',
+											characters: [null, 'Flavia'],
+											score: 215,
+											damageScore: 156,
+											kills: 7,
+											knocks: 7,
+											deaths: 7,
+											assists: 15,
+											damage: 3479
+										},
+										{
+											player: 'grustleking',
+											characters: [null, 'Fuschia'],
+											score: 163,
+											damageScore: 89,
+											kills: 3,
+											knocks: 3,
+											deaths: 6,
+											assists: 18,
+											damage: 2131
+										}
+									],
+									[
+										{
+											player: 'minecraftsteve',
+											characters: [null, 'Kanami'],
+											score: 269,
+											damageScore: 215,
+											kills: 10,
+											knocks: 11,
+											deaths: 10,
+											assists: 10,
+											damage: 4655
+										},
+										{
+											player: 'akwa',
+											characters: [null, 'Lawine'],
+											score: 167,
+											damageScore: 130,
+											kills: 8,
+											knocks: 9,
+											deaths: 11,
+											assists: 9,
+											damage: 2679
+										},
+										{
+											player: 'nine',
+											characters: [null, 'Ming'],
+											score: 154,
+											damageScore: 128,
+											kills: 5,
+											knocks: 4,
+											deaths: 10,
+											assists: 7,
+											damage: 2982
+										},
+										{
+											player: 'HiroRune',
+											characters: [null, 'Celestia'],
+											score: 153,
+											damageScore: 100,
+											kills: 4,
+											knocks: 4,
+											deaths: 11,
+											assists: 13,
+											damage: 2311
+										},
+										{
+											player: 'BriBri',
+											characters: [null, 'Eika'],
+											score: 151,
+											damageScore: 99,
+											kills: 4,
+											knocks: 5,
+											deaths: 9,
+											assists: 11,
+											damage: 2236
+										}
+									]
+								]
+							},
+							{
+								id: 2,
+								map: 'windy_town',
+								duration: 100,
+								teams: [teams['TG'], teams['ML']],
+								result: [9, 6],
+								winner: 1,
+								scores: [
+									[
+										{
+											player: 'ttvBlexiss',
+											characters: [null, 'Lawine'],
+											score: 282,
+											damageScore: 226,
+											kills: 16,
+											knocks: 19,
+											deaths: 6,
+											assists: 19,
+											damage: 5227
+										},
+										{
+											player: 'gengu',
+											characters: [null, 'Ming'],
+											score: 224,
+											damageScore: 186,
+											kills: 11,
+											knocks: 11,
+											deaths: 8,
+											assists: 16,
+											damage: 4636
+										},
+										{
+											player: 'grustleking',
+											characters: [null, 'Celestia'],
+											score: 204,
+											damageScore: 148,
+											kills: 9,
+											knocks: 12,
+											deaths: 9,
+											assists: 15,
+											damage: 3542
+										},
+										{
+											player: 'frostyZK',
+											characters: [null, 'Meredith'],
+											score: 197,
+											damageScore: 144,
+											kills: 12,
+											knocks: 13,
+											deaths: 8,
+											assists: 21,
+											damage: 3217
+										},
+										{
+											player: 'Ascinei',
+											characters: [null, 'Reiichi'],
+											score: 162,
+											damageScore: 119,
+											kills: 7,
+											knocks: 9,
+											deaths: 7,
+											assists: 12,
+											damage: 2940
+										}
+									],
+									[
+										{
+											player: 'minecraftsteve',
+											characters: [null, 'Kokona'],
+											score: 256,
+											damageScore: 221,
+											kills: 13,
+											knocks: 17,
+											deaths: 10,
+											assists: 7,
+											damage: 5331
+										},
+										{
+											player: 'HiroRune',
+											characters: [null, 'Fuschia'],
+											score: 236,
+											damageScore: 174,
+											kills: 8,
+											knocks: 12,
+											deaths: 11,
+											assists: 16,
+											damage: 4417
+										},
+										{
+											player: 'BriBri',
+											characters: [null, 'Yvette'],
+											score: 178,
+											damageScore: 135,
+											kills: 9,
+											knocks: 8,
+											deaths: 11,
+											assists: 11,
+											damage: 3272
+										},
+										{
+											player: 'nine',
+											characters: [null, 'Flavia'],
+											score: 176,
+											damageScore: 120,
+											kills: 8,
+											knocks: 10,
+											deaths: 7,
+											assists: 12,
+											damage: 2935
+										},
+										{
+											player: 'akwa',
+											characters: [null, 'Michele'],
+											score: 140,
+											damageScore: 86,
+											kills: 1,
+											knocks: 3,
+											deaths: 11,
+											assists: 15,
+											damage: 2510
+										}
+									]
+								]
+							}
+						]
 					},
 					{
 						id: 10008,
