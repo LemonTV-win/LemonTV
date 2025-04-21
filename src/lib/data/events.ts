@@ -1526,7 +1526,17 @@ export const events: Event[] = [
 		],
 		capacity: 16,
 		date: '2025-02-01',
-		teams: [teams['TG'], teams['GUGF'], teams['KRC'], teams['DRI'], teams['GA']]
+		teams: [
+			// TODO: Add roaster at the time
+			teams['TG'],
+			teams['GUGF'],
+			teams['KRC'],
+			teams['DRI'],
+			teams['GA'],
+			teams['TA'],
+			teams['DA'],
+			teams['BP']
+		]
 	},
 	{
 		id: 2,
