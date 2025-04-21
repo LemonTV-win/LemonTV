@@ -88,11 +88,20 @@ export function getPlayer(id: string) {
 	return players[id];
 }
 
+export function identifyPlayer(id: string, player: Player): boolean {
+	return (
+		player.id === id ||
+		(player.gameAccounts?.some(
+			(account) => account.currentName === id || account.names?.includes(id)
+		) ??
+			false) ||
+		(player.aliases?.includes(id) ?? false)
+	);
+}
+
 export function isPlayerInTeam(id: string, team: Team) {
 	return [...(team.players ?? []), ...(team.substitutes ?? [])]?.some(
-		(player) =>
-			player &&
-			(player.id === id || player.gameAccounts?.some((account) => account.currentName === id))
+		(player) => player && identifyPlayer(id, player) // TODO: Use more robust method
 	);
 }
 
@@ -119,9 +128,7 @@ export function getPlayerMatches(
 			...match,
 			playerTeamIndex: match.teams.findIndex((team) =>
 				[...(team.team.players ?? []), ...(team.team.substitutes ?? [])].some(
-					(player) =>
-						player &&
-						(player.id === id || player.gameAccounts?.some((account) => account.currentName === id))
+					(player) => player && identifyPlayer(id, player)
 				)
 			)
 		}));
@@ -153,10 +160,7 @@ export function getPlayerAgents(player: Player): [Character, number][] {
 		.flatMap((match) =>
 			(match.games ?? []).flatMap((game) => {
 				for (const score of game.scores[match.playerTeamIndex]) {
-					if (
-						score.player === player.id ||
-						player.gameAccounts?.some((account) => account.currentName === score.player)
-					) {
+					if (identifyPlayer(score.player, player)) {
 						return score.characters;
 					}
 				}
@@ -202,11 +206,7 @@ function calculatePlayerRating(player: Player) {
 
 			const playerScore = match.games?.flatMap((game) =>
 				game.scores[playerTeamIndex]
-					.filter(
-						(score) =>
-							score.player === player.id ||
-							player.gameAccounts?.some((account) => account.currentName === score.player)
-					)
+					.filter((score) => identifyPlayer(score.player, player))
 					.map((score) => score.score)
 			);
 
@@ -232,11 +232,7 @@ function calculatePlayerKD(player: Player): number {
 		const kills = match.games
 			?.flatMap((game) =>
 				game.scores[playerTeamIndex]
-					.filter(
-						(score) =>
-							score.player === player.id ||
-							player.gameAccounts?.some((account) => account.currentName === score.player)
-					)
+					.filter((score) => identifyPlayer(score.player, player))
 					.map((score) => score.kills)
 					.reduce((acc, kill) => acc + kill, 0)
 			)
@@ -245,11 +241,7 @@ function calculatePlayerKD(player: Player): number {
 		const deaths = match.games
 			?.flatMap((game) =>
 				game.scores[playerTeamIndex]
-					.filter(
-						(score) =>
-							score.player === player.id ||
-							player.gameAccounts?.some((account) => account.currentName === score.player)
-					)
+					.filter((score) => identifyPlayer(score.player, player))
 					.map((score) => score.deaths)
 			)
 			.reduce((acc, death) => acc + death, 0);
