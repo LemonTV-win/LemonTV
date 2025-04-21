@@ -74,8 +74,8 @@
 						<CharacterIcon {character} />
 						<div class="flex flex-col gap-1">
 							<div class="flex justify-between text-sm">
-								<span class="text-white">{m[character as keyof typeof m]()}</span><span
-									class="text-slate-400">{percentage.toFixed(0)}% ({count})</span
+								<span class="text-white">{m[character]()}</span><span class="text-slate-400"
+									>{percentage.toFixed(0)}% ({count})</span
 								>
 							</div>
 							<div class="h-2 w-full overflow-hidden rounded-full bg-slate-600">

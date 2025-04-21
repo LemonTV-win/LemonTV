@@ -2,7 +2,7 @@
 	import { error } from '@sveltejs/kit';
 	import type { PageProps } from './$types';
 
-	import type { Map } from '$lib/data';
+	import type { GameMap } from '$lib/data/game';
 
 	let { data }: PageProps = $props();
 
@@ -12,7 +12,7 @@
 
 	import Scoreboard from '$lib/components/Scoreboard.svelte';
 
-	const MAP_2_IMAGE: Record<Map, string> = {
+	const MAP_2_IMAGE: Record<GameMap, string> = {
 		base_404:
 			'https://klbq-web-cms.strinova.com/prod/strinova_web/images/202411/830d991d-24ce-4c00-92e9-2b4eb5ff703c.jpg',
 		area_88:
@@ -31,7 +31,7 @@
 			'https://static.wikitide.net/strinovawiki/thumb/9/9d/Intro_Ocarnus.png/450px-Intro_Ocarnus.png'
 	};
 
-	const MAP_2_NAME: Record<Map, string> = {
+	const MAP_2_NAME: Record<GameMap, string> = {
 		base_404: 'Base 404',
 		area_88: 'Area 88',
 		port_euler: 'Port Euler',

@@ -35,7 +35,7 @@
 		Fuschia: 'https://static.wikitide.net/strinovawiki/a/ad/Fuchsia_Profile.png',
 		Galatea: 'https://static.wikitide.net/strinovawiki/f/ff/Galatea_Profile.png'
 	};
-	let { character, class: className = '' }: { character: Character | null; class: string } =
+	let { character, class: className = '' }: { character: Character | null; class?: string } =
 		$props();
 </script>
 
