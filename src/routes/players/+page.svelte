@@ -9,6 +9,7 @@
 	import TypcnArrowSortedDown from '~icons/typcn/arrow-sorted-down';
 	import TypcnArrowSortedUp from '~icons/typcn/arrow-sorted-up';
 	import SearchInput from '$lib/components/SearchInput.svelte';
+	import { getAllNames } from '$lib/data/players';
 
 	let { data }: PageProps = $props();
 
@@ -121,18 +122,12 @@
 			{#each filtered as player}
 				<tr class="border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl">
 					<td class="px-4 py-1">
-						<a href={`/players/${player.id}`}
+						<a class="flex items-baseline gap-1" href={`/players/${player.id}`}
 							>{player.name}
-							{#if player.gameAccounts}
-								{#each player.gameAccounts as account}
-									{#if account.currentName !== player.name}
-										<span class="text-gray-400">
-											({account.currentName})
-										</span>
-									{/if}
-								{/each}
-							{/if}</a
-						>
+							{#each getAllNames(player).filter((name) => name !== player.name) as name}
+								<span class="text-xs text-gray-400">({name})</span>
+							{/each}
+						</a>
 					</td>
 					<td class="px-4 py-1 text-sm">
 						{#each data.playersTeams[player.id ?? ''] as team, i}

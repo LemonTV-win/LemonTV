@@ -5,6 +5,7 @@
 	import CharacterIcon from '$lib/components/CharacterIcon.svelte';
 	import PlayerAvatar from '$lib/components/PlayerAvatar.svelte';
 	import MatchCard from '$lib/components/MatchCard.svelte';
+	import { getAllNames } from '$lib/data/players';
 
 	let { data }: PageProps = $props();
 
@@ -23,13 +24,9 @@
 				<h1 class="text-center text-2xl font-bold">
 					{data.player.name}
 					<span class="inline-flex gap-2">
-						{#if data.player.gameAccounts}
-							{#each data.player.gameAccounts as account}
-								{#if account.currentName !== data.player.name}
-									<span class="text-gray-400">({account.currentName})</span>
-								{/if}
-							{/each}
-						{/if}
+						{#each getAllNames(data.player).filter((name) => name !== data.player.name) as name}
+							<span class="text-gray-400">({name})</span>
+						{/each}
 					</span>
 				</h1>
 				{#if data.player.nationality}
