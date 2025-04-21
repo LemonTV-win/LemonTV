@@ -1214,7 +1214,6 @@ export function getMatch(id: number) {
 
 export function getTeams() {
 	return Object.entries(teams).map(([id, team]) => ({
-		id,
 		wins: events
 			.flatMap((event) => event.stages.flatMap((stage) => stage.matches))
 			.filter(
@@ -1229,6 +1228,14 @@ export function getTeams() {
 export function getTeam(id: string): Team | null {
 	return teams[id] ?? Object.values(teams).find((team) => team.id === id) ?? null;
 }
+
+export function getTeamMatches(id: string) {
+	return getMatches()
+		.filter((match) => match.teams.some((team) => team.team?.id === id))
+		.map((match) => ({
+			...match,
+			teamIndex: match.teams.findIndex((team) => team.team?.id === id)
+		}));
 }
 
 export function getPlayers() {
