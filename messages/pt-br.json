@@ -56,5 +56,6 @@
 	"global_rank": "Global #{number}",
 	"community": "Comunidade",
 	"top16": "Top 16",
-	"lower": "Chave Inferior"
+	"lower": "Chave Inferior",
+	"grandfinal": "Grande Final"
 }

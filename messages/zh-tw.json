@@ -56,5 +56,6 @@
 	"global_rank": "世界第{number}名",
 	"community": "社群",
 	"top16": "16強賽",
-	"lower": "敗者組"
+	"lower": "敗者組",
+	"grandfinal": "總決賽"
 }

@@ -13,7 +13,15 @@ export interface Stage {
 
 export interface StageRound {
 	id: number;
-	type: 'quarterfinals' | 'semifinals' | 'final' | 'top16' | 'group' | 'thirdplace' | 'lower';
+	type:
+		| 'quarterfinals'
+		| 'semifinals'
+		| 'final'
+		| 'top16'
+		| 'group'
+		| 'thirdplace'
+		| 'lower'
+		| 'grandfinal';
 	title?: LocalizedString;
 	parallelGroup?: number;
 }
@@ -538,6 +546,21 @@ export const events: Event[] = [
 
 					// M11: Drillas Academy vs. KITTEN ROLL CALL
 					// TODO:
+					{
+						id: 11,
+						teams: [
+							{
+								team: teams['DA'],
+								score: 0
+							},
+							{
+								team: teams['KRC'],
+								score: 999
+							}
+						],
+						battleOf: 'BO3',
+						maps: []
+					},
 
 					// M12: DRI vs KRC
 					{
@@ -1394,8 +1417,12 @@ export const events: Event[] = [
 						},
 						{
 							id: 7,
-							type: 'lower',
-							parallelGroup: 4
+							type: 'lower'
+							// parallelGroup: 3
+						},
+						{
+							id: 8,
+							type: 'grandfinal'
 						}
 					],
 					nodes: [
@@ -1460,7 +1487,14 @@ export const events: Event[] = [
 						// },
 						{
 							matchId: 11,
-							round: 5
+							round: 5,
+							dependsOn: [
+								{ matchId: 8, outcome: 'winner' },
+								{
+									matchId: 5,
+									outcome: 'loser'
+								}
+							]
 						},
 						{
 							matchId: 12,
@@ -1480,10 +1514,10 @@ export const events: Event[] = [
 						},
 						{
 							matchId: 15,
-							round: 3,
+							round: 8,
 							dependsOn: [
-								{ matchId: 13, outcome: 'winner' }
-								// { matchId: 9, outcome: 'winner' }
+								{ matchId: 13, outcome: 'winner' },
+								{ matchId: 9, outcome: 'winner' }
 							]
 						}
 					]

@@ -56,5 +56,6 @@
 	"global_rank": "世界ランク#{number}",
 	"community": "コミュニティ",
 	"top16": "ベスト16",
-	"lower": "ロウブラケット"
+	"lower": "ロウブラケット",
+	"grandfinal": "グランドファイナル"
 }
