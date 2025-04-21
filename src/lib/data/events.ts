@@ -100,7 +100,6 @@ export const events: Event[] = [
 							{ map: 'area_88', pickerId: 2, pickedSide: 'Defense' },
 							{ map: 'space_lab', pickerId: 2, pickedSide: 'Defense' }
 						],
-						winnerId: 1,
 						vod: 'https://youtu.be/gEPv96BlZRc?t=1299',
 						games: [
 							{
@@ -373,7 +372,6 @@ export const events: Event[] = [
 							{ map: 'cosmite', pickerId: 2, pickedSide: 'Defense' },
 							{ map: 'cauchy_district', pickerId: 2, pickedSide: 'Attack' }
 						],
-						winnerId: 1,
 						vod: 'https://youtu.be/j7Nt3gGzLkg?t=1565',
 						games: [
 							{
@@ -914,7 +912,6 @@ export const events: Event[] = [
 								roaster: ['瑾玥', '逍遥sama', '羽生翼', 'ぺこどん', 'BOXCAT']
 							}
 						],
-						winnerId: 1, // 0 means draw, 1 means team1 wins, 2 means team2 wins
 						maps: [
 							{ map: 'base_404', pickerId: 2, pickedSide: 'Attack' },
 							{ map: 'space_lab', pickerId: 1, pickedSide: 'Attack' },
@@ -1304,7 +1301,6 @@ export const events: Event[] = [
 							{ team: teams['TG'], score: 2 },
 							{ team: teams['MA'], score: 0 }
 						],
-						winnerId: 1,
 						battleOf: 'BO3',
 						maps: []
 					},
@@ -1314,7 +1310,6 @@ export const events: Event[] = [
 							{ team: teams['HC'], score: 1 },
 							{ team: teams['DRI'], score: 2 }
 						],
-						winnerId: 2,
 						battleOf: 'BO3',
 						maps: []
 					},
@@ -1324,7 +1319,6 @@ export const events: Event[] = [
 							{ team: teams['ML'], score: 2 },
 							{ team: teams['OC'], score: 1 }
 						],
-						winnerId: 1,
 						battleOf: 'BO3',
 						maps: []
 					},
@@ -1334,7 +1328,6 @@ export const events: Event[] = [
 							{ team: teams['XKAM'], score: 0 },
 							{ team: teams['DA'], score: 2 }
 						],
-						winnerId: 2,
 						battleOf: 'BO3',
 						maps: []
 					},
@@ -1344,7 +1337,6 @@ export const events: Event[] = [
 							{ team: teams['TG'], score: 2 },
 							{ team: teams['DRI'], score: 0 }
 						],
-						winnerId: 1,
 						battleOf: 'BO3',
 						maps: []
 					},
@@ -1354,7 +1346,6 @@ export const events: Event[] = [
 							{ team: teams['ML'], score: 2 },
 							{ team: teams['DA'], score: 0 }
 						],
-						winnerId: 1,
 						battleOf: 'BO3',
 						maps: []
 					},
@@ -1364,7 +1355,6 @@ export const events: Event[] = [
 							{ team: teams['TG'], score: 2 },
 							{ team: teams['ML'], score: 0 }
 						],
-						winnerId: 1,
 						battleOf: 'BO3',
 						maps: []
 					},
@@ -1374,7 +1364,6 @@ export const events: Event[] = [
 							{ team: teams['DRI'], score: 0 },
 							{ team: teams['DA'], score: 2 }
 						],
-						winnerId: 2,
 						battleOf: 'BO3',
 						maps: []
 					}
