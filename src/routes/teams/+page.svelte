@@ -8,7 +8,9 @@
 
 	let search = $state('');
 	let filtered = $derived(
-		data.teams.filter((team) => team.name.toLowerCase().includes(search.toLowerCase()))
+		data.teams
+			.toSorted((a, b) => b.wins - a.wins)
+			.filter((team) => team.name.toLowerCase().includes(search.toLowerCase()))
 	);
 </script>
 
@@ -20,11 +22,27 @@
 	</div>
 
 	<ul>
-		{#each filtered as team}
+		{#each filtered as team, i}
 			{#if team}
 				<li class="border-b-1 border-gray-500 bg-gray-800 p-4 shadow-2xl">
-					<a href={`/teams/${team.id}`} class="mb-8 text-2xl font-bold">{team.name}</a>
-					<p class="text-gray-400">{team.wins} wins</p>
+					<div class="mb-8 flex items-center gap-4">
+						<span
+							class={[
+								'flex h-8 w-8 items-center justify-center bg-gray-700 text-sm text-gray-400',
+								i === 0 && 'bg-yellow-500 text-white',
+								i === 1 && 'bg-neutral-500 text-white',
+								i === 2 && 'bg-red-500 text-white'
+							]}
+						>
+							{i + 1}</span
+						>
+						<div class="flex w-full justify-between">
+							<a href={`/teams/${team.id}`} class="text-2xl font-bold">{team.name}</a>
+							<p class="text-gray-400">
+								<span class="text-yellow-500">{team.wins}</span> wins
+							</p>
+						</div>
+					</div>
 					{#if team.players}
 						<ul class="grid grid-cols-3 gap-4 p-4">
 							{#each team.players as player}
