@@ -1949,63 +1949,6 @@ export const events: Event[] = [
 								scores: [
 									[
 										{
-											player: 'Mansek',
-											characters: [null, 'Michele'],
-											score: 190,
-											damageScore: 170,
-											kills: 8,
-											knocks: 11,
-											deaths: 10,
-											assists: 8,
-											damage: 3609
-										},
-										{
-											player: 'will',
-											characters: [null, 'Maddelena'],
-											score: 178,
-											damageScore: 139,
-											kills: 7,
-											knocks: 11,
-											deaths: 11,
-											assists: 11,
-											damage: 2870
-										},
-										{
-											player: 'Scylla',
-											characters: [null, 'Flavia'],
-											score: 158,
-											damageScore: 132,
-											kills: 7,
-											knocks: 10,
-											deaths: 10,
-											assists: 8,
-											damage: 2686
-										},
-										{
-											player: 'Voxy',
-											characters: [null, 'Fuschia'],
-											score: 137,
-											damageScore: 92,
-											kills: 7,
-											knocks: 8,
-											deaths: 9,
-											assists: 13,
-											damage: 1743
-										},
-										{
-											player: 'ARGHGHGHGHGHGHG',
-											characters: [null, 'Nobunaga'],
-											score: 132,
-											damageScore: 96,
-											kills: 5,
-											knocks: 5,
-											deaths: 10,
-											assists: 12,
-											damage: 2031
-										}
-									],
-									[
-										{
 											player: 'minecraftsteve',
 											characters: [null, 'Reiichi'],
 											score: 269,
@@ -2060,6 +2003,63 @@ export const events: Event[] = [
 											assists: 17,
 											damage: 2089
 										}
+									],
+									[
+										{
+											player: 'Mansek',
+											characters: [null, 'Michele'],
+											score: 190,
+											damageScore: 170,
+											kills: 8,
+											knocks: 11,
+											deaths: 10,
+											assists: 8,
+											damage: 3609
+										},
+										{
+											player: 'will',
+											characters: [null, 'Maddelena'],
+											score: 178,
+											damageScore: 139,
+											kills: 7,
+											knocks: 11,
+											deaths: 11,
+											assists: 11,
+											damage: 2870
+										},
+										{
+											player: 'Scylla',
+											characters: [null, 'Flavia'],
+											score: 158,
+											damageScore: 132,
+											kills: 7,
+											knocks: 10,
+											deaths: 10,
+											assists: 8,
+											damage: 2686
+										},
+										{
+											player: 'Voxy',
+											characters: [null, 'Fuschia'],
+											score: 137,
+											damageScore: 92,
+											kills: 7,
+											knocks: 8,
+											deaths: 9,
+											assists: 13,
+											damage: 1743
+										},
+										{
+											player: 'ARGHGHGHGHGHGHG',
+											characters: [null, 'Nobunaga'],
+											score: 132,
+											damageScore: 96,
+											kills: 5,
+											knocks: 5,
+											deaths: 10,
+											assists: 12,
+											damage: 2031
+										}
 									]
 								]
 							},
@@ -2071,63 +2071,6 @@ export const events: Event[] = [
 								result: [9, 7],
 								winner: 1,
 								scores: [
-									[
-										{
-											player: 'will',
-											characters: [null, 'Maddelena'],
-											score: 215,
-											damageScore: 146,
-											kills: 10,
-											knocks: 9,
-											deaths: 9,
-											assists: 17,
-											damage: 3828
-										},
-										{
-											player: 'Scylla',
-											characters: [null, 'Flavia'],
-											score: 208,
-											damageScore: 165,
-											kills: 11,
-											knocks: 13,
-											deaths: 10,
-											assists: 16,
-											damage: 4203
-										},
-										{
-											player: 'ARGHGHGHGHGHGHG',
-											characters: [null, 'Yvette'],
-											score: 186,
-											damageScore: 140,
-											kills: 9,
-											knocks: 13,
-											deaths: 9,
-											assists: 19,
-											damage: 3618
-										},
-										{
-											player: 'Mansek',
-											characters: [null, 'Michele'],
-											score: 167,
-											damageScore: 140,
-											kills: 8,
-											knocks: 8,
-											deaths: 10,
-											assists: 9,
-											damage: 3855
-										},
-										{
-											player: 'sinna',
-											characters: [null, 'Fuschia'],
-											score: 128,
-											damageScore: 102,
-											kills: 6,
-											knocks: 7,
-											deaths: 12,
-											assists: 13,
-											damage: 2685
-										}
-									],
 									[
 										{
 											player: 'minecraftsteve',
@@ -2183,6 +2126,63 @@ export const events: Event[] = [
 											deaths: 9,
 											assists: 18,
 											damage: 2395
+										}
+									],
+									[
+										{
+											player: 'will',
+											characters: [null, 'Maddelena'],
+											score: 215,
+											damageScore: 146,
+											kills: 10,
+											knocks: 9,
+											deaths: 9,
+											assists: 17,
+											damage: 3828
+										},
+										{
+											player: 'Scylla',
+											characters: [null, 'Flavia'],
+											score: 208,
+											damageScore: 165,
+											kills: 11,
+											knocks: 13,
+											deaths: 10,
+											assists: 16,
+											damage: 4203
+										},
+										{
+											player: 'ARGHGHGHGHGHGHG',
+											characters: [null, 'Yvette'],
+											score: 186,
+											damageScore: 140,
+											kills: 9,
+											knocks: 13,
+											deaths: 9,
+											assists: 19,
+											damage: 3618
+										},
+										{
+											player: 'Mansek',
+											characters: [null, 'Michele'],
+											score: 167,
+											damageScore: 140,
+											kills: 8,
+											knocks: 8,
+											deaths: 10,
+											assists: 9,
+											damage: 3855
+										},
+										{
+											player: 'sinna',
+											characters: [null, 'Fuschia'],
+											score: 128,
+											damageScore: 102,
+											kills: 6,
+											knocks: 7,
+											deaths: 12,
+											assists: 13,
+											damage: 2685
 										}
 									]
 								]
