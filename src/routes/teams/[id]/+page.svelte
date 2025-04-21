@@ -5,10 +5,10 @@
 	import CharacterIcon from '$lib/components/CharacterIcon.svelte';
 	import IconParkSolidPeoples from '~icons/icon-park-solid/peoples';
 	import IconParkSolidCalendar from '~icons/icon-park-solid/calendar';
-	import IconParkSolidLocal from '~icons/icon-park-solid/local';
 	import PhRankingFill from '~icons/ph/ranking-fill';
 	import { m } from '$lib/paraglide/messages';
 	import MatchCard from '$lib/components/MatchCard.svelte';
+	import RegionTag from '$lib/components/tags/RegionTag.svelte';
 	let { data }: PageProps = $props();
 
 	if (!data.team) {
@@ -23,10 +23,9 @@
 		<section>
 			<div class="flex items-center gap-4">
 				<h1 class="my-6 text-3xl font-bold">{data.team.name}</h1>
-				<div class="flex items-center gap-2 rounded-sm bg-gray-700/50 px-2 py-1">
-					<IconParkSolidLocal class="h-4 w-4" />
-					<span>{data.team.region}</span>
-				</div>
+				{#if data.team.region}
+					<RegionTag region={data.team.region} />
+				{/if}
 				<div
 					class={[
 						'flex items-center gap-2 rounded-sm bg-gray-700/50 px-2 py-1',
