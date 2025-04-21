@@ -3,6 +3,6 @@
 @plugin '@tailwindcss/forms';
 
 body {
-	@apply bg-black text-white;
+	@apply bg-gradient-to-b from-gray-950 to-gray-900 text-white;
 	font-family: 'Saira Variable', 'Noto Sans CJK JP', sans-serif;
 }
