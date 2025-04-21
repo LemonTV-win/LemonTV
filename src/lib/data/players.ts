@@ -12,6 +12,7 @@ export interface GameAccount {
 	accountId: number;
 	currentName: string;
 	region?: Region;
+	names?: string[];
 }
 
 export const players: Record<string, Player> = {
@@ -91,13 +92,26 @@ export const players: Record<string, Player> = {
 		id: '逍遥Samaノ',
 		name: '逍遥Samaノ',
 		nationality: 'CN',
-		gameAccounts: []
+		gameAccounts: [
+			{
+				accountId: 2413674,
+				currentName: '丨結城さくな丨',
+				region: 'APAC'
+			}
+		]
 	},
 	羽生翼: {
 		id: '羽生翼',
 		name: '羽生翼',
 		nationality: 'CN',
-		gameAccounts: []
+		gameAccounts: [
+			{
+				accountId: 2352901,
+				currentName: 'twitch一羽生翼',
+				region: 'APAC',
+				names: ['twitch一77427']
+			}
+		]
 	},
 	MIZU: {
 		id: 'MIZU',

@@ -627,6 +627,278 @@ export const events: Event[] = [
 						]
 					},
 
+					// KRC vs GUGF
+					{
+						id: 12,
+						teams: [
+							{
+								team: teams['GUGF'],
+								score: 2
+							},
+							{
+								team: teams['KRC'],
+								score: 0
+							}
+						],
+						battleOf: 'BO3',
+						maps: [
+							{ map: 'space_lab', pickerId: 1, pickedSide: 'Attack' },
+							{ map: 'windy_town', pickerId: 2, pickedSide: 'Attack' },
+							{ map: 'cauchy_district', pickerId: 2, pickedSide: 'Attack' }
+						],
+						vod: 'https://youtu.be/j7Nt3gGzLkg?t=8463',
+						games: [
+							{
+								id: 1,
+								map: 'space_lab',
+								teams: [teams['GUGF'], teams['KRC']],
+								duration: 1518,
+								result: [9, 6],
+								winner: 1,
+								scores: [
+									[
+										{
+											player: '丨結城さくな丨',
+											characters: ['Ming', 'Flavia'],
+											score: 244,
+											damageScore: 206,
+											kills: 16,
+											knocks: 17,
+											deaths: 7,
+											assists: 19,
+											damage: 4737
+										},
+										{
+											player: 'JY10137',
+											characters: ['Meredith', 'Celestia'],
+											score: 206,
+											damageScore: 163,
+											kills: 14,
+											knocks: 15,
+											deaths: 6,
+											assists: 22,
+											damage: 3615
+										},
+										{
+											player: 'ぺこどん',
+											characters: ['Celestia', 'Michele'],
+											score: 194,
+											damageScore: 140,
+											kills: 9,
+											knocks: 11,
+											deaths: 6,
+											assists: 15,
+											damage: 3368
+										},
+										{
+											player: '箱子箱',
+											characters: ['Lawine', 'Fuschia'],
+											score: 188,
+											damageScore: 126,
+											kills: 6,
+											knocks: 8,
+											deaths: 9,
+											assists: 26,
+											damage: 3190
+										},
+										{
+											player: 'twitch一77427',
+											characters: ['Kanami', 'Kokona'],
+											score: 160,
+											damageScore: 99,
+											kills: 4,
+											knocks: 4,
+											deaths: 8,
+											assists: 25,
+											damage: 2663
+										}
+									],
+									[
+										{
+											player: 'xohfiy',
+											characters: ['Michele', 'Lawine'],
+											score: 207,
+											damageScore: 167,
+											kills: 9,
+											knocks: 14,
+											deaths: 9,
+											assists: 15,
+											damage: 4094
+										},
+										{
+											player: 'HonkWith4ks',
+											characters: ['Yugiri', 'Reiichi'],
+											score: 145,
+											damageScore: 127,
+											kills: 8,
+											knocks: 9,
+											deaths: 9,
+											assists: 10,
+											damage: 3131
+										},
+										{
+											player: 'FOXY1Yukino',
+											characters: ['Nobunaga', 'Ming'],
+											score: 135,
+											damageScore: 120,
+											kills: 7,
+											knocks: 7,
+											deaths: 10,
+											assists: 13,
+											damage: 2999
+										},
+										{
+											player: 'Kariyu',
+											characters: ['Audrey', 'Celestia'],
+											score: 126,
+											damageScore: 103,
+											kills: 6,
+											knocks: 7,
+											deaths: 11,
+											assists: 10,
+											damage: 2553
+										},
+										{
+											player: 'numOneZKFan',
+											characters: ['Flavia', 'Eika'],
+											score: 120,
+											damageScore: 105,
+											kills: 6,
+											knocks: 6,
+											deaths: 10,
+											assists: 8,
+											damage: 2592
+										}
+									]
+								]
+							},
+							{
+								id: 2,
+								map: 'windy_town',
+								teams: [teams['GUGF'], teams['KRC']],
+								duration: 1396,
+								result: [9, 5],
+								winner: 1,
+								scores: [
+									[
+										{
+											player: '丨結城さくな丨',
+											characters: ['Flavia', 'Ming'],
+											score: 225,
+											damageScore: 184,
+											kills: 10,
+											knocks: 12,
+											deaths: 5,
+											assists: 22,
+											damage: 4322
+										},
+										{
+											player: 'twitch一77427',
+											characters: ['Kokona', 'Kanami'],
+											score: 221,
+											damageScore: 155,
+											kills: 12,
+											knocks: 12,
+											deaths: 5,
+											assists: 25,
+											damage: 3222
+										},
+										{
+											player: '箱子箱',
+											characters: ['Fuschia', 'Celestia'],
+											score: 203,
+											damageScore: 162,
+											kills: 15,
+											knocks: 14,
+											deaths: 9,
+											assists: 15,
+											damage: 3185
+										},
+										{
+											player: 'ぺこどん',
+											characters: ['Michele', 'Lawine'],
+											score: 180,
+											damageScore: 134,
+											kills: 8,
+											knocks: 7,
+											deaths: 9,
+											assists: 20,
+											damage: 3035
+										},
+										{
+											player: 'JY10137',
+											characters: ['Celestia', 'Reiichi'],
+											score: 175,
+											damageScore: 146,
+											kills: 9,
+											knocks: 11,
+											deaths: 6,
+											assists: 14,
+											damage: 3239
+										}
+									],
+									[
+										{
+											player: 'xohfiy',
+											characters: ['Lawine', 'Bai Mo'],
+											score: 215,
+											damageScore: 166,
+											kills: 9,
+											knocks: 12,
+											deaths: 12,
+											assists: 12,
+											damage: 3742
+										},
+										{
+											player: 'Kariyu',
+											characters: ['Meredith', 'Michele'],
+											score: 164,
+											damageScore: 118,
+											kills: 4,
+											knocks: 9,
+											deaths: 11,
+											assists: 16,
+											damage: 2833
+										},
+										{
+											player: 'FOXY1Yukino',
+											characters: ['Ming', 'Fuschia'],
+											score: 160,
+											damageScore: 135,
+											kills: 7,
+											knocks: 7,
+											deaths: 11,
+											assists: 14,
+											damage: 3335
+										},
+										{
+											player: 'HonkWith4ks',
+											characters: ['Reiichi', 'Yugiri'],
+											score: 144,
+											damageScore: 102,
+											kills: 6,
+											knocks: 10,
+											deaths: 10,
+											assists: 3,
+											damage: 2567
+										},
+										{
+											player: 'numOneZKFan',
+											characters: ['Eika', 'Flavia'],
+											score: 142,
+											damageScore: 122,
+											kills: 8,
+											knocks: 8,
+											deaths: 10,
+											assists: 7,
+											damage: 2721
+										}
+									]
+								]
+							}
+						]
+					},
+
 					// TG vs GUGF
 					{
 						id: 16,
@@ -717,7 +989,7 @@ export const events: Event[] = [
 									],
 									[
 										{
-											player: '| 結城さくな |',
+											player: '丨結城さくな丨',
 											characters: ['Ming', 'Flavia'],
 											score: 263,
 											damageScore: 229,
@@ -750,7 +1022,7 @@ export const events: Event[] = [
 											damage: 4627
 										},
 										{
-											player: 'twitchー77427',
+											player: 'twitch一77427',
 											characters: ['Kanami', 'Kokona'],
 											score: 193,
 											damageScore: 128,
@@ -841,7 +1113,7 @@ export const events: Event[] = [
 									],
 									[
 										{
-											player: 'twitchー77427',
+											player: 'twitch一77427',
 											characters: ['Kokona', 'Kanami'],
 											score: 205,
 											damageScore: 146,
@@ -852,7 +1124,7 @@ export const events: Event[] = [
 											damage: 3917
 										},
 										{
-											player: '| 結城さくな |',
+											player: '丨結城さくな丨',
 											characters: ['Flavia', 'Ming'],
 											score: 203,
 											damageScore: 169,
@@ -924,6 +1196,10 @@ export const events: Event[] = [
 						},
 						{
 							matchId: 11,
+							round: 2
+						},
+						{
+							matchId: 12,
 							round: 2
 						},
 						{
