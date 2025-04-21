@@ -60,6 +60,34 @@ export interface Event {
 	teams: Team[];
 }
 
+// const MMC_QUALIFIERS: Stage[] = [
+// 	{
+// 		id: 1,
+// 		title: 'APAC Qualifier',
+// 		stage: 'qualifier',
+// 		format: 'swiss',
+// 		// format: 'swiss',
+// 		matches: [],
+// 		structure: {
+// 			rounds: [
+// 				{
+// 					id: 1,
+// 					type: 'top16'
+// 				}
+// 			],
+// 			nodes: [
+// 				{
+// 					matchId: 1,
+// 					round: 1
+// 				}
+// 			]
+// 		}
+// 	}
+// 	// structure: {
+
+// 	// }
+// ];
+
 export const events: Event[] = [
 	{
 		id: 1,
@@ -81,162 +109,9 @@ export const events: Event[] = [
 				stage: 'playoff',
 				format: 'single',
 				matches: [
-					// M1: TA vs DrA
+					// Top16: GUGF vs GA
 					{
-						id: 1,
-						teams: [
-							{
-								team: teams['TA'],
-								score: 0
-							},
-							{
-								team: teams['DA'],
-								score: 999
-							}
-						],
-						battleOf: 'BO3',
-						maps: []
-					},
-
-					// M2: TG vs GA
-					{
-						id: 2,
-						teams: [
-							{
-								team: teams['TG'],
-								score: 999
-							},
-							{
-								team: teams['GA'],
-								score: 0
-							}
-						],
-						battleOf: 'BO3',
-						maps: []
-					},
-
-					// M3: BP vs DRI
-					{
-						id: 3,
-						teams: [
-							{
-								team: teams['BP'],
-								score: 0
-							},
-							{
-								team: teams['DRI'],
-								score: 999
-							}
-						],
-						battleOf: 'BO3',
-						maps: []
-					},
-
-					// M4: GUGF vs GA
-					{
-						id: 4,
-						teams: [
-							{
-								team: teams['GUGF'],
-								score: 999
-							},
-							{
-								team: teams['KRC'],
-								score: 0
-							}
-						],
-						battleOf: 'BO3',
-						maps: []
-					},
-
-					// M5: DA vs. TG
-					{
-						id: 5,
-						teams: [
-							{
-								team: teams['DA'],
-								score: 0
-							},
-							{
-								team: teams['TG'],
-								score: 999
-							}
-						],
-						battleOf: 'BO3',
-						maps: []
-					},
-
-					// M6: DRI vs. GUGF
-					{
-						id: 6,
-						teams: [
-							{
-								team: teams['DRI'],
-								score: 0
-							},
-							{
-								team: teams['GUGF'],
-								score: 999
-							}
-						],
-						battleOf: 'BO3',
-						maps: []
-					},
-
-					// M7: TA vs GA
-					{
-						id: 7,
-						teams: [
-							{
-								team: teams['TA'],
-								score: 0
-							},
-							{
-								team: teams['GA'],
-								score: 999
-							}
-						],
-						battleOf: 'BO3',
-						maps: []
-					},
-
-					// M8: BP vs. KRC
-					{
-						id: 8,
-						teams: [
-							{
-								team: teams['BP'],
-								score: 0
-							},
-							{
-								team: teams['KRC'],
-								score: 999
-							}
-						],
-						battleOf: 'BO3',
-						maps: []
-					},
-
-					// M9: TG vs GUGF
-					{
-						id: 9,
-						teams: [
-							{
-								team: teams['TG'],
-								score: 999
-							},
-							{
-								team: teams['GUGF'],
-								score: 0
-							}
-						],
-						battleOf: 'BO3',
-						maps: []
-					},
-
-					// GUGF vs GA
-					{
-						id: 10,
+						id: 1001,
 						teams: [
 							{
 								team: teams['GUGF'],
@@ -506,7 +381,160 @@ export const events: Event[] = [
 						]
 					},
 
-					// DRI vs KRC
+					// M1: TA vs DrA
+					{
+						id: 1,
+						teams: [
+							{
+								team: teams['TA'],
+								score: 0
+							},
+							{
+								team: teams['DA'],
+								score: 999
+							}
+						],
+						battleOf: 'BO3',
+						maps: []
+					},
+
+					// M2: TG vs GA
+					{
+						id: 2,
+						teams: [
+							{
+								team: teams['TG'],
+								score: 999
+							},
+							{
+								team: teams['GA'],
+								score: 0
+							}
+						],
+						battleOf: 'BO3',
+						maps: []
+					},
+
+					// M3: BP vs DRI
+					{
+						id: 3,
+						teams: [
+							{
+								team: teams['BP'],
+								score: 0
+							},
+							{
+								team: teams['DRI'],
+								score: 999
+							}
+						],
+						battleOf: 'BO3',
+						maps: []
+					},
+
+					// M4: GUGF vs GA
+					{
+						id: 4,
+						teams: [
+							{
+								team: teams['GUGF'],
+								score: 999
+							},
+							{
+								team: teams['KRC'],
+								score: 0
+							}
+						],
+						battleOf: 'BO3',
+						maps: []
+					},
+
+					// M5: DA vs. TG
+					{
+						id: 5,
+						teams: [
+							{
+								team: teams['DA'],
+								score: 0
+							},
+							{
+								team: teams['TG'],
+								score: 999
+							}
+						],
+						battleOf: 'BO3',
+						maps: []
+					},
+
+					// M6: DRI vs. GUGF
+					{
+						id: 6,
+						teams: [
+							{
+								team: teams['DRI'],
+								score: 0
+							},
+							{
+								team: teams['GUGF'],
+								score: 999
+							}
+						],
+						battleOf: 'BO3',
+						maps: []
+					},
+
+					// M7: TA vs GA
+					{
+						id: 7,
+						teams: [
+							{
+								team: teams['TA'],
+								score: 0
+							},
+							{
+								team: teams['GA'],
+								score: 999
+							}
+						],
+						battleOf: 'BO3',
+						maps: []
+					},
+
+					// M8: BP vs. KRC
+					{
+						id: 8,
+						teams: [
+							{
+								team: teams['BP'],
+								score: 0
+							},
+							{
+								team: teams['KRC'],
+								score: 999
+							}
+						],
+						battleOf: 'BO3',
+						maps: []
+					},
+
+					// M9: TG vs GUGF
+					{
+						id: 9,
+						teams: [
+							{
+								team: teams['TG'],
+								score: 999
+							},
+							{
+								team: teams['GUGF'],
+								score: 0
+							}
+						],
+						battleOf: 'BO3',
+						maps: []
+					},
+
+					// M12: DRI vs KRC
 					{
 						id: 11,
 						teams: [
@@ -778,9 +806,9 @@ export const events: Event[] = [
 						]
 					},
 
-					// KRC vs GUGF
+					// M13: KRC vs GUGF
 					{
-						id: 12,
+						id: 13,
 						teams: [
 							{
 								team: teams['GUGF'],
@@ -1050,9 +1078,9 @@ export const events: Event[] = [
 						]
 					},
 
-					// TG vs GUGF
+					// M16: TG vs GUGF
 					{
-						id: 16,
+						id: 15,
 						teams: [
 							{
 								team: teams['TG'],
@@ -1327,6 +1355,10 @@ export const events: Event[] = [
 				structure: {
 					rounds: [
 						{
+							id: 0,
+							type: 'top16'
+						},
+						{
 							id: 1,
 							type: 'quarterfinals'
 						},
@@ -1340,6 +1372,11 @@ export const events: Event[] = [
 						}
 					],
 					nodes: [
+						{
+							matchId: 1001,
+							round: 0
+						},
+
 						{
 							matchId: 1,
 							round: 1
@@ -1391,22 +1428,34 @@ export const events: Event[] = [
 							round: 1
 						},
 
-						{
-							matchId: 10,
-							round: 1
-						},
+						// {
+						// 	matchId: 10,
+						// 	round: 1
+						// },
 						{
 							matchId: 11,
 							round: 2
 						},
 						{
 							matchId: 12,
-							round: 2
+							round: 1,
+							dependsOn: [{ matchId: 9, outcome: 'loser' }]
 						},
 						{
-							matchId: 16,
+							matchId: 13,
+							round: 2,
+							dependsOn: [
+								{ matchId: 9, outcome: 'loser' },
+								{ matchId: 12, outcome: 'winner' }
+							]
+						},
+						{
+							matchId: 15,
 							round: 3,
-							dependsOn: [{ matchId: 12, outcome: 'winner' }]
+							dependsOn: [
+								{ matchId: 13, outcome: 'winner' }
+								// { matchId: 9, outcome: 'winner' }
+							]
 						}
 					]
 				}
