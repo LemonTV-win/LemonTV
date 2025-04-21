@@ -30,7 +30,7 @@ export interface Match {
 
 export interface PlayerScore {
 	player: string;
-	characters: [firstHalf: Character, secondHalf: Character];
+	characters: [firstHalf: Character | null, secondHalf: Character | null];
 	score: number;
 	damageScore: number;
 	kills: number;
