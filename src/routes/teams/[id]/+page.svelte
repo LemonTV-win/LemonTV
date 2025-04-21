@@ -4,6 +4,8 @@
 	import { calculateWinnerIndex } from '$lib/data';
 	import PlayerAvatar from '$lib/components/PlayerAvatar.svelte';
 	import CharacterIcon from '$lib/components/CharacterIcon.svelte';
+	import IconParkSolidPeoples from '~icons/icon-park-solid/peoples';
+	import IconParkSolidCalendar from '~icons/icon-park-solid/calendar';
 
 	let { data }: PageProps = $props();
 
@@ -22,7 +24,9 @@
 				<img src={data.team.logo} alt={data.team.name} />
 			{/if}
 		</div>
-		<h2 class="my-5 text-xl font-bold">Active members</h2>
+		<h2 class="my-5 flex items-center text-xl font-bold">
+			<IconParkSolidPeoples class="mr-2 inline-block text-yellow-300" />Active members
+		</h2>
 		{#if data.team.players}
 			<ul class="flex flex-wrap gap-4">
 				{#each data.team.players.toSorted((a, b) => (data.teamMemberStatistics?.[b.id ?? '']?.rating ?? 0) - (data.teamMemberStatistics?.[a.id ?? '']?.rating ?? 0)) as player}
@@ -74,7 +78,9 @@
 		<!-- Achievements -->
 		<!-- Previous members -->
 
-		<h2 class="my-5 text-xl font-bold">Matches</h2>
+		<h2 class="my-5 flex items-center text-xl font-bold">
+			<IconParkSolidCalendar class="mr-2 inline-block text-yellow-300" />Matches
+		</h2>
 		{#if data.teamMatches}
 			<ul class="grid grid-cols-1 gap-3">
 				{#each data.teamMatches as match}
