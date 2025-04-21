@@ -3,6 +3,7 @@
 
 	import { m } from '$lib/paraglide/messages.js';
 	import SearchInput from '$lib/components/SearchInput.svelte';
+	import TeamCard from '$lib/components/TeamCard.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -12,6 +13,8 @@
 			.toSorted((a, b) => b.wins - a.wins)
 			.filter((team) => team.name.toLowerCase().includes(search.toLowerCase()))
 	);
+
+	let expanded = $state(false);
 </script>
 
 <main class="mx-auto max-w-screen-lg">
@@ -24,37 +27,7 @@
 	<ul>
 		{#each filtered as team, i}
 			{#if team}
-				<li class="border-b-1 border-gray-500 bg-gray-800 p-4 shadow-2xl">
-					<div class="mb-8 flex items-center gap-4">
-						<span
-							class={[
-								'flex h-8 w-8 items-center justify-center bg-gray-700 text-sm text-gray-400',
-								i === 0 && 'bg-yellow-500 text-white',
-								i === 1 && 'bg-neutral-500 text-white',
-								i === 2 && 'bg-red-500 text-white'
-							]}
-						>
-							{i + 1}</span
-						>
-						<div class="flex w-full justify-between">
-							<a href={`/teams/${team.id}`} class="text-2xl font-bold">{team.name}</a>
-							<p class="text-gray-400">
-								<span class="text-yellow-500">{team.wins}</span> wins
-							</p>
-						</div>
-					</div>
-					{#if team.players}
-						<ul class="grid grid-cols-3 gap-4 p-4">
-							{#each team.players as player}
-								<li>
-									{#if player}
-										<a href={`/players/${player.id}`}>{player.name}</a>
-									{/if}
-								</li>
-							{/each}
-						</ul>
-					{/if}
-				</li>
+				<TeamCard {team} wins={team.wins} rank={i + 1} />
 			{/if}
 		{/each}
 	</ul>
