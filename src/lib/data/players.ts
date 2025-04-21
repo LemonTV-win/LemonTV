@@ -1767,3 +1767,14 @@ export const players: Record<string, Player> = {
 		]
 	}
 };
+
+export function getAllNames(player: Player) {
+	return [
+		// player.name,
+		...(player.gameAccounts?.flatMap((account) => [
+			account.currentName,
+			...(account.names ?? [])
+		]) ?? []),
+		...(player.aliases ?? [])
+	];
+}

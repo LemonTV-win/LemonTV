@@ -9,6 +9,7 @@
 	import { m } from '$lib/paraglide/messages';
 	import MatchCard from '$lib/components/MatchCard.svelte';
 	import RegionTag from '$lib/components/tags/RegionTag.svelte';
+	import { getAllNames } from '$lib/data/players';
 	let { data }: PageProps = $props();
 
 	if (!data.team) {
@@ -54,7 +55,13 @@
 						class="gap-y- grid min-w-32 grid-cols-[auto_1fr] grid-rows-[auto_auto] items-center gap-x-4 gap-y-2 rounded-sm bg-gray-800 px-2 py-2"
 					>
 						<PlayerAvatar {player} class="row-span-2 h-16 w-16 rounded-full" />
-						<a class="px-1 text-lg font-semibold" href={`/players/${player.id}`}>{player.name}</a>
+						<a class="flex gap-1 px-1 text-lg font-semibold" href={`/players/${player.id}`}
+							>{player.name}{#each getAllNames(player).filter((name) => name !== player.name) as name}
+								<span class="text-gray-400">
+									({name})
+								</span>
+							{/each}
+						</a>
 						{#if player.id}
 							{#if data.teamMemberStatistics?.[player.id]}
 								<div class="flex gap-2">
