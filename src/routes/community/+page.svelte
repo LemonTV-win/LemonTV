@@ -68,4 +68,14 @@
 			>
 		</li>
 	</ul>
+	<h2 class="text-xl font-bold">Speedrun</h2>
+	<ul class="m-4 flex flex-col flex-wrap gap-4 p-2">
+		<li class="flex items-center gap-2 rounded-md bg-gray-800 p-2">
+			<a
+				href="https://www.speedrun.com/Strinova"
+				class="text-yellow-300 hover:text-yellow-400 hover:underline"
+				target="_blank">Speedrun.com (Strinova)</a
+			>
+		</li>
+	</ul>
 </main>
