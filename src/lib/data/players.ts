@@ -89,7 +89,7 @@ export const players: Record<string, Player> = {
 		]
 	},
 	逍遥sama: {
-		id: '逍遥Samaノ',
+		id: '逍遥sama',
 		name: '逍遥Samaノ',
 		nationality: 'CN',
 		gameAccounts: [
