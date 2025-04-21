@@ -51,7 +51,11 @@
 
 <footer class="mt-4 border-t-1 border-gray-500 bg-gray-800 px-3 py-4 text-center text-white">
 	<p>
-		© 2025 LemonTV. Strinova is a trademark of iDreamSky. This site is not affiliated with or
-		endorsed by Strinova or iDreamSky.
+		© 2025 <a
+			href="https://github.com/mkpoli/LemonTV"
+			class="text-yellow-300 hover:text-yellow-400 hover:underline"
+			target="_blank">LemonTV</a
+		>. Strinova is a trademark of iDreamSky. This site is not affiliated with or endorsed by
+		Strinova or iDreamSky.
 	</p>
 </footer>
