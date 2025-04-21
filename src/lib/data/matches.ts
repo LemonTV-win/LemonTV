@@ -21,8 +21,8 @@ export interface Match {
 	battleOf: 'BO1' | 'BO3' | 'BO5';
 	maps: {
 		map: GameMap;
-		pickerId: number;
-		pickedSide: 'Attack' | 'Defense';
+		pickerId?: number;
+		pickedSide?: 'Attack' | 'Defense';
 	}[];
 	games?: Game[];
 	vod?: string; // url to the vod
