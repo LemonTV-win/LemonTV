@@ -2,6 +2,7 @@ import { players, type Player } from './players';
 import { type Region } from './game';
 
 export interface Team {
+	id: string;
 	name: string;
 	logo?: string;
 	region?: Region;
@@ -12,6 +13,7 @@ export interface Team {
 
 export const teams: Record<string, Team> = {
 	TG: {
+		id: 'the-grustlers',
 		name: 'The Grustlers',
 		region: 'NA',
 		players: [
@@ -24,6 +26,7 @@ export const teams: Record<string, Team> = {
 		]
 	},
 	GUGF: {
+		id: 'gugf',
 		name: 'GUGF(give us girlfriend)',
 		region: 'APAC',
 		players: [
@@ -37,6 +40,7 @@ export const teams: Record<string, Team> = {
 		]
 	},
 	KRC: {
+		id: 'kitten-roll-call',
 		name: 'KITTEN ROLL CALL',
 		region: 'NA',
 		players: [
@@ -48,6 +52,7 @@ export const teams: Record<string, Team> = {
 		]
 	},
 	DRI: {
+		id: 'drillas',
 		name: 'Drillas',
 		region: 'NA',
 		players: [
@@ -59,6 +64,7 @@ export const teams: Record<string, Team> = {
 		]
 	},
 	GA: {
+		id: 'gacha-addicts',
 		name: 'GachaAddicts',
 		region: 'APAC',
 		players: [
@@ -72,6 +78,7 @@ export const teams: Record<string, Team> = {
 		]
 	},
 	WK: {
+		id: 'wilden-kerle',
 		name: 'Wilden Kerle',
 		region: 'NA',
 		players: [
@@ -84,6 +91,7 @@ export const teams: Record<string, Team> = {
 		substitutes: [players['Juzify'], players['Vora']]
 	},
 	ML: {
+		id: 'meowliora',
 		name: 'Meowliora',
 		region: 'NA',
 		players: [
@@ -96,6 +104,7 @@ export const teams: Record<string, Team> = {
 		substitutes: [players['jayeezy']]
 	},
 	OC: {
+		id: 'october',
 		name: 'October',
 		region: 'NA',
 		players: [
@@ -108,6 +117,7 @@ export const teams: Record<string, Team> = {
 		substitutes: [players['Stykades'], players['zcz']]
 	},
 	DA: {
+		id: 'drillas-academy',
 		name: 'Drillas Academy',
 		region: 'NA',
 		players: [
@@ -120,6 +130,7 @@ export const teams: Record<string, Team> = {
 		substitutes: [players['Voxy']]
 	},
 	YU: {
+		id: 'yugifeetlover',
 		name: 'YugifeetLover',
 		region: 'NA',
 		players: [
@@ -132,6 +143,7 @@ export const teams: Record<string, Team> = {
 		substitutes: [players['schwertfish'], players['KatzenMilch']]
 	},
 	YG: {
+		id: "yuri's-gang",
 		name: "yuri's gang",
 		region: 'NA',
 		players: [
@@ -144,6 +156,7 @@ export const teams: Record<string, Team> = {
 		substitutes: [players['MaddeFeetSniffer'], players['SophieRain']]
 	},
 	HC: {
+		id: 'hopecore',
 		name: 'hopecore',
 		region: 'NA',
 		players: [
@@ -156,6 +169,7 @@ export const teams: Record<string, Team> = {
 		substitutes: [players['NikZON'], players['GigglingWill']]
 	},
 	GS: {
+		id: 'gweah-shindago',
 		name: 'GweahShindago!!',
 		region: 'NA',
 		players: [
@@ -168,6 +182,7 @@ export const teams: Record<string, Team> = {
 		substitutes: [players['S1nine'], players['Majime']]
 	},
 	XKAM: {
+		id: 'xiao-ke-ai-men',
 		name: '小可爱们',
 		region: 'NA',
 		players: [
@@ -180,6 +195,7 @@ export const teams: Record<string, Team> = {
 		substitutes: [players['爱莉希雅丨侵蚀']]
 	},
 	LDP: {
+		id: 'long-distance-pals',
 		name: 'LONG DISTANCE PALS <3',
 		region: 'NA',
 		players: [
@@ -192,6 +208,7 @@ export const teams: Record<string, Team> = {
 		substitutes: [players['numoneZKFan']]
 	},
 	MA: {
+		id: 'michele-armpits',
 		name: 'Michele Armpits',
 		region: 'NA',
 		players: [
@@ -204,6 +221,7 @@ export const teams: Record<string, Team> = {
 		substitutes: [players['PHRESHBOYSWAG']]
 	},
 	SF: {
+		id: 'stringifries',
 		name: 'Stringifries',
 		region: 'NA',
 		players: [
@@ -216,6 +234,7 @@ export const teams: Record<string, Team> = {
 		substitutes: [players['supercrownnegev'], players['Soulen']]
 	},
 	CRCC: {
+		id: 'com-rang-chay-chao',
 		name: 'Cơm Rang Cháy Chảo',
 		region: 'APAC',
 		players: [
@@ -229,6 +248,7 @@ export const teams: Record<string, Team> = {
 		]
 	},
 	AFT: {
+		id: 'all-for-tada',
 		name: 'All for tada',
 		region: 'APAC',
 		players: [
@@ -242,6 +262,7 @@ export const teams: Record<string, Team> = {
 		]
 	},
 	GCSC: {
+		id: 'ga-chien-so-tay',
 		name: 'Gà Chiên Sốt Cay',
 		region: 'APAC',
 		players: [
@@ -255,6 +276,7 @@ export const teams: Record<string, Team> = {
 		]
 	},
 	SI: {
+		id: 'skill-issues',
 		name: 'Skill Issues',
 		region: 'APAC',
 		players: [
@@ -268,6 +290,7 @@ export const teams: Record<string, Team> = {
 		]
 	},
 	BP: {
+		id: 'become-paper',
 		name: 'Become Paper',
 		region: 'APAC',
 		players: [
@@ -281,6 +304,7 @@ export const teams: Record<string, Team> = {
 		]
 	},
 	SKS: {
+		id: 'shigure-kira-saikyou',
 		name: 'Shigure Kira Saikyou',
 		region: 'APAC',
 		players: [
@@ -293,6 +317,7 @@ export const teams: Record<string, Team> = {
 		]
 	},
 	KGH: {
+		id: 'kanojo-ga-hoshi',
 		name: 'Kanojo ga hoshi',
 		region: 'APAC',
 		players: [
@@ -304,6 +329,7 @@ export const teams: Record<string, Team> = {
 		]
 	},
 	CW: {
+		id: 'crywolf',
 		name: 'CryWolf', // (new Strinoway)
 		region: 'APAC',
 		players: [
@@ -317,6 +343,7 @@ export const teams: Record<string, Team> = {
 		]
 	},
 	OTG: {
+		id: 'otogenova',
 		name: 'おとげのぅ゙ぁ',
 		region: 'APAC',
 		players: [
@@ -330,6 +357,7 @@ export const teams: Record<string, Team> = {
 		]
 	},
 	NBT: {
+		id: 'newbie-team',
 		name: '뉴비팀',
 		region: 'APAC',
 		players: [
@@ -343,6 +371,7 @@ export const teams: Record<string, Team> = {
 		]
 	},
 	KD: {
+		id: "kokona's-drones",
 		name: "Kokona's Drones",
 		region: 'APAC',
 		players: [
@@ -356,6 +385,7 @@ export const teams: Record<string, Team> = {
 		]
 	},
 	UKZ: {
+		id: 'ukezara',
 		name: '受け皿',
 		region: 'APAC',
 		players: [
@@ -369,6 +399,7 @@ export const teams: Record<string, Team> = {
 		]
 	},
 	SSE: {
+		id: 'supreme-shadow-emperor-hik-jinwoo',
 		name: 'Supreme Shadow Emperor Hik-Jinwoo',
 		region: 'APAC',
 		players: [
@@ -382,6 +413,7 @@ export const teams: Record<string, Team> = {
 		]
 	},
 	KSQ: {
+		id: 'ksq',
 		name: 'KSQ',
 		region: 'APAC',
 		players: [
@@ -393,6 +425,7 @@ export const teams: Record<string, Team> = {
 		]
 	},
 	KNO: {
+		id: 'knotorious',
 		name: 'Knotorious',
 		region: 'APAC',
 		players: [
@@ -406,6 +439,7 @@ export const teams: Record<string, Team> = {
 		]
 	},
 	SDF: {
+		id: 'shudoufu',
 		name: 'しゅうどうふ',
 		region: 'APAC',
 		players: [

@@ -1226,8 +1226,9 @@ export function getTeams() {
 	}));
 }
 
-export function getTeam(id: string) {
-	return teams[id];
+export function getTeam(id: string): Team | null {
+	return teams[id] ?? Object.values(teams).find((team) => team.id === id) ?? null;
+}
 }
 
 export function getPlayers() {
