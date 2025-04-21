@@ -12,6 +12,12 @@ export interface Team {
 }
 
 export const teams: Record<string, Team> = {
+	TA: {
+		id: 'temu-avengers',
+		name: 'Temu Avengers',
+		players: []
+	},
+
 	TG: {
 		id: 'the-grustlers',
 		name: 'The Grustlers',
