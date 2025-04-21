@@ -43,6 +43,20 @@
 	};
 
 	let currentMapID: number = $state(0);
+
+	function formatDuration(seconds: number): string {
+		const hrs = Math.floor(seconds / 3600);
+		const mins = Math.floor((seconds % 3600) / 60);
+		const secs = Math.floor(seconds % 60);
+
+		const padded = (num: number) => String(num).padStart(2, '0');
+
+		if (hrs > 0) {
+			return `${padded(hrs)}:${padded(mins)}:${padded(secs)}`;
+		} else {
+			return `${padded(mins)}:${padded(secs)}`;
+		}
+	}
 </script>
 
 {#if data.match}
@@ -61,6 +75,9 @@
 				>
 					<img src={MAP_2_IMAGE[map.map]} class="h-10 w-full" alt={MAP_2_NAME[map.map]} />
 					<span class="px-4 text-sm">{MAP_2_NAME[map.map]}</span>
+					<span class="px-4 text-sm text-yellow-300"
+						>{formatDuration(data.match.games?.[index]?.duration ?? 0)}</span
+					>
 				</button>
 			{/each}
 		</nav>
