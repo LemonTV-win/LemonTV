@@ -927,7 +927,7 @@ export const events: Event[] = [
 								map: 'base_404',
 								teams: [teams['TG'], teams['GUGF']],
 								duration: 1830,
-								result: [2, 0],
+								result: [11, 9],
 								winner: 1,
 								scores: [
 									[
@@ -1052,7 +1052,7 @@ export const events: Event[] = [
 								map: 'space_lab',
 								teams: [teams['TG'], teams['GUGF']],
 								duration: 1830,
-								result: [2, 0],
+								result: [9, 7],
 								scores: [
 									[
 										{
