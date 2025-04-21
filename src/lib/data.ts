@@ -1204,10 +1204,12 @@ export function getEvent(id: string) {
 	return events.find((event) => event.slug === id);
 }
 
+export function getMatches(): Match[] {
+	return getEvents().flatMap((event) => event.stages.flatMap((stage) => stage.matches));
+}
+
 export function getMatch(id: number) {
-	return getEvents()
-		.flatMap((event) => event.stages.flatMap((stage) => stage.matches))
-		.find((match) => match.id === id);
+	return getMatches().find((match) => match.id === id);
 }
 
 export function getTeams() {
