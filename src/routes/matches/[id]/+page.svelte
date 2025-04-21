@@ -83,7 +83,11 @@
 		</nav>
 		<!-- Scoreboard -->
 		{#if data.match.games?.[currentMapID]}
-			<Scoreboard scores={data.match.games?.[currentMapID].scores} />
+			<Scoreboard
+				scores={data.match.games?.[currentMapID].scores}
+				winner={data.match.games?.[currentMapID].winner}
+				teams={[data.match.teams[0].team, data.match.teams[1].team]}
+			/>
 		{/if}
 	</div>
 {/if}

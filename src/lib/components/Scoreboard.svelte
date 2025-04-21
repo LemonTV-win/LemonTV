@@ -1,14 +1,36 @@
 <script lang="ts">
 	import type { PlayerScore } from '$lib/data/matches';
+	import type { Team } from '$lib/data/teams';
 
-	let { scores }: { scores: [PlayerScore[], PlayerScore[]] } = $props();
+	let {
+		scores,
+		winner,
+		teams
+	}: { scores: [PlayerScore[], PlayerScore[]]; winner: number; teams: [Team, Team] } = $props();
 
 	import CharacterIcon from './CharacterIcon.svelte';
+
+	let mvps: [string, string] = $derived([getMVP(scores[0]), getMVP(scores[1])]);
+
+	function getMVP(scores: PlayerScore[]): string {
+		return scores.reduce((acc, score) => {
+			return score.score > acc.score ? score : acc;
+		}, scores[0]).player;
+	}
 </script>
 
-{#snippet playerscores(scores: PlayerScore[])}
+{#snippet playerscores(scores: PlayerScore[], winner: boolean)}
 	{#each scores as score}
 		<tr>
+			<td class="max-w-5 text-center font-bold">
+				{#if mvps[0] === score.player || mvps[1] === score.player}
+					{#if winner}
+						<span class="text-yellow-300">MVP</span>
+					{:else}
+						<span class="text-neutral-300">SVP</span>
+					{/if}
+				{/if}
+			</td>
 			<td class="text-center">
 				<div class="flex items-center justify-center gap-2">
 					{#each score.characters as character}
@@ -27,6 +49,7 @@
 <table class="w-auto">
 	<thead>
 		<tr class="rounded-full bg-gray-100/50 text-center">
+			<th></th>
 			<th class="py-3">Characters</th>
 			<th class="py-3">Player</th>
 			<th class="py-3">Score</th>
@@ -36,12 +59,20 @@
 	</thead>
 	<tbody>
 		<tr>
-			<td colspan="6" class="h-6"></td>
+			<td colspan="6" class="h-6">
+				<div class="flex items-center justify-center gap-2 p-2 font-bold">
+					{teams[0].name}
+				</div>
+			</td>
 		</tr>
-		{@render playerscores(scores[0])}
+		{@render playerscores(scores[0], winner === 0)}
 		<tr>
-			<td colspan="6" class="h-6"></td>
+			<td colspan="6" class="h-6">
+				<div class="flex items-center justify-center gap-2 p-2 font-bold">
+					{teams[1].name}
+				</div>
+			</td>
 		</tr>
-		{@render playerscores(scores[1])}
+		{@render playerscores(scores[1], winner === 1)}
 	</tbody>
 </table>
