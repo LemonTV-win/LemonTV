@@ -181,7 +181,7 @@
 	{#each rounds as r}
 		<h4 class="mb-4">
 			{r.title?.[getLocale() as Locale] ??
-				m[r.type as 'thirdplace' | 'semifinals' | 'final' | 'quarterfinals']()}
+				m[r.type as 'thirdplace' | 'semifinals' | 'final' | 'quarterfinals' | 'top16']()}
 		</h4>
 	{/each}
 	{#each rounds as r, i}

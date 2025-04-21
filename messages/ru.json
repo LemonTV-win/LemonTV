@@ -52,5 +52,6 @@
 	"kd_ratio": "У/С",
 	"matches": "Матчи",
 	"global_rank": "Глобальный рейтинг #{number}",
-	"community": "Сообщество"
+	"community": "Сообщество",
+	"top16": "Топ-16"
 }

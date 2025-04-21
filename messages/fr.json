@@ -54,5 +54,6 @@
 	"kd_ratio": "K/D",
 	"matches": "Matchs",
 	"global_rank": "Global #{number}",
-	"community": "Communauté"
+	"community": "Communauté",
+	"top16": "Top 16"
 }

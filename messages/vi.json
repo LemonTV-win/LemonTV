@@ -54,5 +54,6 @@
 	"kd_ratio": "K/D",
 	"matches": "Trận đấu",
 	"global_rank": "Hạng #{number} Toàn cầu",
-	"community": "Cộng đồng"
+	"community": "Cộng đồng",
+	"top16": "Top 16"
 }

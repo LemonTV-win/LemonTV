@@ -13,7 +13,7 @@ export interface Stage {
 
 export interface StageRound {
 	id: number;
-	type: 'quarterfinals' | 'semifinals' | 'final' | 'group' | 'thirdplace';
+	type: 'quarterfinals' | 'semifinals' | 'final' | 'top16' | 'group' | 'thirdplace';
 	title?: LocalizedString;
 	parallelGroup?: number;
 }

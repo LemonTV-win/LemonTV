@@ -54,5 +54,6 @@
 	"kd_ratio": "K/D",
 	"matches": "試合",
 	"global_rank": "世界ランク#{number}",
-	"community": "コミュニティ"
+	"community": "コミュニティ",
+	"top16": "ベスト16"
 }
