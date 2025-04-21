@@ -347,12 +347,12 @@ export const teams: Record<string, Team> = {
 		name: 'おとげのぅ゙ぁ',
 		region: 'APAC',
 		players: [
-			players['0nesyo (あねしょ)'],
-			players['begonia (べごにあ)'],
-			players['dore52x (どれっくす)'],
-			players['visucuit125 (ゆきむら)'],
-			players['yusia (ゆしゃ)'],
-			players['iLiss (いりす)'],
+			players['0nesyo'],
+			players['begonia'],
+			players['dore52x'],
+			players['visucuit125'],
+			players['yusia'],
+			players['iLiss'],
 			players['いよたけ']
 		]
 	},

@@ -920,7 +920,18 @@ export const players: Record<string, Player> = {
 	RoiPaetSip: { id: 'RoiPaetSip', name: 'RoiPaetSip', gameAccounts: [] },
 	Su4y: { id: 'Su4y', name: 'Su4y', gameAccounts: [] },
 	Viatorice: { id: 'Viatorice', name: 'Viatorice', gameAccounts: [] },
-	'begonia (べごにあ)': { id: 'begonia (べごにあ)', name: 'begonia (べごにあ)', gameAccounts: [] },
+	begonia: {
+		id: 'begonia',
+		name: 'begonia',
+		aliases: ['べごにあ'],
+		gameAccounts: [
+			{
+				accountId: 5601621,
+				currentName: 'begonia',
+				region: 'APAC'
+			}
+		]
+	},
 	bili会求风的鱼: {
 		id: 'bili会求风的鱼',
 		name: 'bili会求风的鱼',
@@ -933,24 +944,54 @@ export const players: Record<string, Player> = {
 			}
 		]
 	},
-	'dore52x (どれっくす)': {
-		id: 'dore52x (どれっくす)',
-		name: 'dore52x (どれっくす)',
-		gameAccounts: []
+	dore52x: {
+		id: 'dore52x',
+		name: 'dore52x',
+		aliases: ['どれっくす'],
+		gameAccounts: [
+			{
+				accountId: 3458947,
+				currentName: 'dore52x',
+				region: 'APAC'
+			}
+		]
 	},
-	'iLiss (いりす)': { id: 'iLiss (いりす)', name: 'iLiss (いりす)', gameAccounts: [] },
+	iLiss: {
+		id: 'iLiss',
+		name: 'iLiss',
+		aliases: ['いりす'],
+		gameAccounts: [
+			{
+				accountId: 3484985,
+				currentName: 'iLiss',
+				region: 'APAC'
+			}
+		]
+	},
 	itsChun: { id: 'itsChun', name: 'itsChun', gameAccounts: [] },
 	maimainoob: { id: 'maimainoob', name: 'maimainoob', gameAccounts: [] },
 	redARA: { id: 'redARA', name: 'redARA', gameAccounts: [] },
 	swaegaepinoe: { id: 'swaegaepinoe', name: 'swaegaepinoe', gameAccounts: [] },
 	twitchWenli: { id: 'twitchWenli', name: 'twitchWenli', gameAccounts: [] },
-	'visucuit125 (ゆきむら)': {
-		id: 'visucuit125 (ゆきむら)',
-		name: 'visucuit125 (ゆきむら)',
+	visucuit125: {
+		id: 'visucuit125',
+		name: 'visucuit125',
+		aliases: ['ゆきむら'],
 		gameAccounts: []
 	},
 	whattheskibidi: { id: 'whattheskibidi', name: 'whattheskibidi', gameAccounts: [] },
-	'yusia (ゆしゃ)': { id: 'yusia (ゆしゃ)', name: 'yusia (ゆしゃ)', gameAccounts: [] },
+	yusia: {
+		id: 'yusia',
+		name: 'yusia',
+		aliases: ['ゆしゃ'],
+		gameAccounts: [
+			{
+				accountId: 2198510,
+				currentName: 'yusia',
+				region: 'APAC'
+			}
+		]
+	},
 	いよたけ: { id: 'いよたけ', name: 'いよたけ', gameAccounts: [] },
 	はーいあなた: { id: 'はーいあなた', name: 'はーいあなた', gameAccounts: [] },
 	カミリウイ: { id: 'カミリウイ', name: 'カミリウイ', gameAccounts: [] },
