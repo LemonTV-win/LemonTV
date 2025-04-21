@@ -27,7 +27,10 @@
 <header
 	class="flex items-center justify-between border-b-1 border-gray-500 bg-gray-800 px-3 py-4 text-white"
 >
-	<a href="/" class="text-2xl font-bold">🍋 LemonTV</a>
+	<a href="/" class="flex items-center gap-2 text-2xl font-bold">
+		<img src="/favicon.svg" alt="LemonTV" class="h-10 w-10" />
+		LemonTV
+	</a>
 	<nav class="flex items-center gap-4">
 		<a href="/news">{m.news()}</a>
 		<a href="/events">{m.events()}</a>
