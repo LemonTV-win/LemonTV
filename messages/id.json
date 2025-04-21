@@ -55,5 +55,6 @@
 	"matches": "Pertandingan",
 	"global_rank": "Peringkat Global #{number}",
 	"community": "Komunitas",
-	"top16": "16 Besar"
+	"top16": "16 Besar",
+	"lower": "Bracket Bawah"
 }

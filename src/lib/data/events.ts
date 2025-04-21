@@ -13,7 +13,7 @@ export interface Stage {
 
 export interface StageRound {
 	id: number;
-	type: 'quarterfinals' | 'semifinals' | 'final' | 'top16' | 'group' | 'thirdplace';
+	type: 'quarterfinals' | 'semifinals' | 'final' | 'top16' | 'group' | 'thirdplace' | 'lower';
 	title?: LocalizedString;
 	parallelGroup?: number;
 }
@@ -1376,6 +1376,26 @@ export const events: Event[] = [
 						{
 							id: 3,
 							type: 'final'
+						},
+						{
+							id: 4,
+							type: 'lower',
+							parallelGroup: 1
+						},
+						{
+							id: 5,
+							type: 'lower',
+							parallelGroup: 2
+						},
+						{
+							id: 6,
+							type: 'lower',
+							parallelGroup: 3
+						},
+						{
+							id: 7,
+							type: 'lower',
+							parallelGroup: 4
 						}
 					],
 					nodes: [
@@ -1428,11 +1448,11 @@ export const events: Event[] = [
 
 						{
 							matchId: 7,
-							round: 1
+							round: 4
 						},
 						{
 							matchId: 8,
-							round: 1
+							round: 4
 						},
 						// {
 						// 	matchId: 10,
@@ -1440,11 +1460,11 @@ export const events: Event[] = [
 						// },
 						{
 							matchId: 11,
-							round: 2
+							round: 5
 						},
 						{
 							matchId: 12,
-							round: 1,
+							round: 6,
 							dependsOn: [
 								{ matchId: 6, outcome: 'loser' },
 								{ matchId: 11, outcome: 'winner' }
@@ -1452,7 +1472,7 @@ export const events: Event[] = [
 						},
 						{
 							matchId: 13,
-							round: 2,
+							round: 7,
 							dependsOn: [
 								{ matchId: 9, outcome: 'loser' },
 								{ matchId: 12, outcome: 'winner' }

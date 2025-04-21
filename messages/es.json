@@ -55,5 +55,6 @@
 	"matches": "Partidas",
 	"global_rank": "Global #{number}",
 	"community": "Comunidad",
-	"top16": "Top 16"
+	"top16": "Top 16",
+	"lower": "Cuadrilla Inferior"
 }

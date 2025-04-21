@@ -55,5 +55,6 @@
 	"matches": "경기",
 	"global_rank": "글로벌 #{number}위",
 	"community": "커뮤니티",
-	"top16": "16강"
+	"top16": "16강",
+	"lower": "하위 브래킷"
 }

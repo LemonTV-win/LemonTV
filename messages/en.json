@@ -55,5 +55,6 @@
 	"matches": "Matches",
 	"global_rank": "Global #{number}",
 	"community": "Community",
-	"top16": "Top 16"
+	"top16": "Top 16",
+	"lower": "Lower Bracket"
 }
