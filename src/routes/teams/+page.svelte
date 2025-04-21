@@ -27,7 +27,7 @@
 	<ul>
 		{#each filtered as team, i}
 			{#if team}
-				<TeamCard {team} wins={team.wins} rank={i + 1} />
+				<TeamCard {team} wins={team.wins} rank={i + 1} expanded={i === 0} />
 			{/if}
 		{/each}
 	</ul>

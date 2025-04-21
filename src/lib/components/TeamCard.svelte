@@ -1,11 +1,19 @@
 <script lang="ts">
 	import type { Team } from '$lib/data/teams';
 
-	let { team, wins, rank }: { team: Team; wins: number; rank: number } = $props();
+	let {
+		team,
+		wins,
+		rank,
+		expanded = false
+	}: { team: Team; wins: number; rank: number; expanded: boolean } = $props();
 </script>
 
-<li class="border-b-1 border-gray-500 bg-gray-800 p-4 shadow-2xl">
-	<div class="mb-8 flex items-center gap-4">
+<li class="flex flex-col gap-4 border-b-1 border-gray-500 bg-gray-800 p-4 shadow-2xl">
+	<button
+		class="flex w-full cursor-pointer items-center gap-4"
+		onclick={() => (expanded = !expanded)}
+	>
 		<span
 			class={[
 				'flex h-8 w-8 items-center justify-center bg-gray-700 text-sm text-gray-400',
@@ -22,8 +30,8 @@
 				<span class="text-yellow-500">{wins}</span> wins
 			</p>
 		</div>
-	</div>
-	{#if team.players}
+	</button>
+	{#if expanded && team.players}
 		<ul class="grid grid-cols-3 gap-4 p-4">
 			{#each team.players as player}
 				<li>
