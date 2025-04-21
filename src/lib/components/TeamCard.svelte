@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Team } from '$lib/data/teams';
-
+	import RegionTag from '$lib/components/tags/RegionTag.svelte';
 	let {
 		team,
 		wins,
@@ -25,7 +25,12 @@
 			{rank}</span
 		>
 		<div class="flex w-full justify-between">
-			<a href={`/teams/${team.id}`} class="text-2xl font-bold">{team.name}</a>
+			<a href={`/teams/${team.id}`} class="flex items-center gap-2 text-2xl font-bold">
+				{team.name}
+				{#if team.region}
+					<RegionTag region={team.region} class="text-sm" />
+				{/if}
+			</a>
 			<p class="text-gray-400">
 				<span class="text-yellow-500">{wins}</span> wins
 			</p>
