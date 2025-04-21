@@ -47,7 +47,7 @@
 
 {#if data.match}
 	<div
-		class="banner flex min-h-48 flex-col gap-2 bg-cover bg-center bg-top p-4 text-white"
+		class="banner flex min-h-48 flex-col gap-2 bg-cover bg-top p-4 text-white"
 		style:--banner-image={`url(${MAP_2_IMAGE[data.match.maps?.[currentMapID]?.map ?? 'base_404']})`}
 	>
 		<nav class="m-2 flex gap-4 rounded-sm">
