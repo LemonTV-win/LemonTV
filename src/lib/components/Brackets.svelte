@@ -105,11 +105,15 @@
 			(calculateWinnerIndex(match) === 2 && team === match.teams[1].team)
 		);
 	}
+
+	let tooltipID = $state<number>();
 </script>
 
 {#snippet matchContainer(match: Match, i: number)}
-	<div
+	<button
 		class="relative z-10 cursor-pointer bg-zinc-800 text-white decoration-0 shadow-md transition-shadow duration-200 hover:shadow-lg"
+		onmouseenter={() => (tooltipID = match.id)}
+		onmouseleave={() => (tooltipID = undefined)}
 		use:register={match.id}
 	>
 		<!-- your MatchCard or custom markup -->
@@ -141,7 +145,32 @@
 				{/if}
 			</div>
 		</a>
-	</div>
+		{#if match.games && tooltipID === match.id}
+			{@const results = match.games.map((g) => g.result)}
+			<div
+				id={`${match.id}-games`}
+				class="absolute top-0 left-full grid h-full w-fit text-center"
+				style:grid-template-columns={`repeat(${results.length}, 1fr)`}
+			>
+				{#each [0, 1] as rowIndex}
+					{#each results as result, colIndex}
+						<span
+							class="w-8 border-gray-500 p-1 text-white"
+							class:border-l={colIndex > 0}
+							class:border-t={rowIndex > 0}
+							class:bg-blue-500={result[0] === result[1]}
+							class:bg-yellow-500={(rowIndex === 0 && result[0] > result[1]) ||
+								(rowIndex === 1 && result[0] < result[1])}
+							class:bg-red-500={(rowIndex === 0 && result[0] < result[1]) ||
+								(rowIndex === 1 && result[0] > result[1])}
+						>
+							{result[rowIndex]}
+						</span>
+					{/each}
+				{/each}
+			</div>
+		{/if}
+	</button>
 {/snippet}
 
 <div
