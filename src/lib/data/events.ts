@@ -1204,7 +1204,8 @@ export const events: Event[] = [
 						},
 						{
 							matchId: 16,
-							round: 3
+							round: 3,
+							dependsOn: [{ matchId: 12, outcome: 'winner' }]
 						}
 					]
 				}
