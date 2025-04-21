@@ -2209,7 +2209,7 @@ export const events: Event[] = [
 							{
 								id: 1,
 								map: 'space_lab',
-								duration: 100,
+								duration: 26 * 60 + 46,
 								teams: [teams['TG'], teams['ML']],
 								result: [9, 4],
 								winner: 1,
@@ -2333,7 +2333,7 @@ export const events: Event[] = [
 							{
 								id: 2,
 								map: 'windy_town',
-								duration: 100,
+								duration: 29 * 60 + 45,
 								teams: [teams['TG'], teams['ML']],
 								result: [9, 6],
 								winner: 1,
