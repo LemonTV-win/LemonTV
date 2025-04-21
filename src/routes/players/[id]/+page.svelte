@@ -2,9 +2,9 @@
 	import { error } from '@sveltejs/kit';
 	import type { PageProps } from './$types';
 	import { m } from '$lib/paraglide/messages.js';
-	import PlaceholderAvatar from '$assets/placeholder_avatar.png';
 	import CharacterIcon from '$lib/components/CharacterIcon.svelte';
 	import { calculateWinnerIndex } from '$lib/data';
+	import PlayerAvatar from '$lib/components/PlayerAvatar.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -17,7 +17,7 @@
 	<main class="mx-auto grid max-w-screen-lg grid-cols-1 gap-6 p-4 md:grid-cols-3">
 		<div class="flex flex-col gap-2 overflow-hidden rounded-2xl bg-gray-800 shadow-2xl">
 			<div class="bg-gradient-to-r from-blue-900 to-purple-900 p-6">
-				<img src={PlaceholderAvatar} alt={data.player.name} class="mx-auto w-32 rounded-full" />
+				<PlayerAvatar player={data.player} class="mx-auto h-32 w-32" />
 			</div>
 			<div class="flex flex-col gap-4 p-6">
 				<h1 class="text-center text-2xl font-bold">
