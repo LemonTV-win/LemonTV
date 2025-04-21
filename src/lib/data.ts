@@ -1202,8 +1202,15 @@ export function getEvent(id: string) {
 	return events.find((event) => event.slug === id);
 }
 
-export function getMatches(): Match[] {
-	return getEvents().flatMap((event) => event.stages.flatMap((stage) => stage.matches));
+export function getMatches(): (Match & { event: Event })[] {
+	return getEvents().flatMap((event) =>
+		event.stages.flatMap((stage) =>
+			stage.matches.map((match) => ({
+				...match,
+				event
+			}))
+		)
+	);
 }
 
 export function getMatch(id: number) {
@@ -1227,7 +1234,7 @@ export function getTeam(id: string): Team | null {
 	return teams[id] ?? Object.values(teams).find((team) => team.id === id) ?? null;
 }
 
-export function getTeamMatches(id: string) {
+export function getTeamMatches(id: string): (Match & { event: Event; teamIndex: number })[] {
 	return getMatches()
 		.filter((match) => match.teams.some((team) => team.team?.id === id))
 		.map((match) => ({
@@ -1437,4 +1444,21 @@ function calculatePlayerKD(player: Player): number {
 
 		return kills / deaths;
 	}, 0);
+}
+
+export function getTeamStatistics(team: Team): {
+	ranking: number;
+	wins: number;
+} {
+	const matches = getTeamMatches(team.id);
+	const teams = getTeams();
+	const sortedByWins = teams.sort((a, b) => b.wins - a.wins);
+
+	return {
+		ranking: sortedByWins.findIndex((t) => t.id === team.id) + 1,
+		wins: matches.filter(
+			(match) =>
+				calculateWinnerIndex(match) === match.teams.findIndex((t) => t.team?.id === team.id) + 1
+		).length
+	};
 }

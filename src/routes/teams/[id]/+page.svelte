@@ -6,12 +6,20 @@
 	import CharacterIcon from '$lib/components/CharacterIcon.svelte';
 	import IconParkSolidPeoples from '~icons/icon-park-solid/peoples';
 	import IconParkSolidCalendar from '~icons/icon-park-solid/calendar';
-
+	import IconParkSolidLocal from '~icons/icon-park-solid/local';
+	import PhRankingFill from '~icons/ph/ranking-fill';
+	import { getLocale } from '$lib/paraglide/runtime';
 	let { data }: PageProps = $props();
 
 	if (!data.team) {
 		throw error(404, 'Team not found');
 	}
+
+	const dateFormatter = new Intl.DateTimeFormat(getLocale(), {
+		month: 'short',
+		day: 'numeric',
+		year: 'numeric'
+	});
 </script>
 
 {#if data.team}
@@ -105,8 +113,14 @@
 				{#each data.teamMatches as match}
 					{#if match}
 						<li
-							class="grid grid-cols-[1fr_auto_1fr] items-center gap-4 rounded-sm bg-gray-800 shadow-2xl"
+							class="grid grid-cols-[1fr_1fr_auto_1fr] items-center gap-4 rounded-sm bg-gray-800 px-4 shadow-2xl"
 						>
+							<a href={`/events/${match.event.id}`} class="flex flex-col">
+								<time datetime={match.event.date} class="text-xs text-gray-400">
+									{dateFormatter.format(new Date(match.event.date))}
+								</time>
+								<span class="text-sm text-yellow-300">{match.event.name}</span>
+							</a>
 							<a href={`/matches/${match.id}`} class="contents">
 								<span
 									class="text-right"
@@ -138,6 +152,3 @@
 		<!-- News -->
 	</main>
 {/if}
-
-<style lang="postcss">
-</style>
