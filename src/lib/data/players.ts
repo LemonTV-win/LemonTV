@@ -366,7 +366,8 @@ export const players: Record<string, Player> = {
 		gameAccounts: [
 			{
 				accountId: 2202592,
-				currentName: '運トリいくわ',
+				currentName: 'ストリノヴァ最高',
+				names: ['運トリいくわ'],
 				region: 'APAC'
 			}
 		]
