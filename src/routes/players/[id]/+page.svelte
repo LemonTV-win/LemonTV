@@ -21,9 +21,9 @@
 				<PlayerAvatar player={data.player} class="mx-auto h-32 w-32" />
 			</div>
 			<div class="flex flex-col gap-4 p-6">
-				<h1 class="text-center text-2xl font-bold">
-					{data.player.name}
-					<span class="inline-flex gap-2">
+				<h1 class="flex flex-col items-center gap-2 text-center text-2xl font-bold">
+					<span class="text-white">{data.player.name}</span>
+					<span class="inline-flex flex-col gap-2">
 						{#each getAllNames(data.player).filter((name) => name !== data.player.name) as name}
 							<span class="text-gray-400">({name})</span>
 						{/each}
