@@ -62,94 +62,96 @@
 	});
 </script>
 
-<main class="mx-auto max-w-screen-lg">
+<main class="mx-auto max-w-screen-lg px-4">
 	<h1 class="my-10 text-2xl font-bold">{m.players()}</h1>
 
-	<div class="mb-4 flex items-center justify-end gap-2">
+	<div class="mb-4 flex flex-col items-center justify-end gap-2 sm:flex-row">
 		<SearchInput bind:search filtered={filtered.length} total={sorted.length} />
 	</div>
 
-	<table class="w-full table-auto border-collapse border-y-2 border-gray-500 bg-gray-800">
-		<thead>
-			<tr class="border-b-2 border-gray-500 text-left text-sm text-gray-400">
-				<th class="px-4 py-1">
-					<button
-						class="text-left"
-						onclick={() => (sortBy = sortBy === 'name-abc' ? 'name-cba' : 'name-abc')}
-						>{m.name()}
-						{#if sortBy === 'name-abc'}
-							<TypcnArrowSortedUp class="inline-block" />
-						{:else if sortBy === 'name-cba'}
-							<TypcnArrowSortedDown class="inline-block" />
-						{:else}
-							<TypcnArrowUnsorted class="inline-block" />
-						{/if}
-					</button>
-				</th>
-				<th class="px-4 py-1">{m.teams()}</th>
-				<th class="px-4 py-1">{m.superstrings()}</th>
-				<th class="px-4 py-1">
-					<button
-						class="text-left"
-						onclick={() => (sortBy = sortBy === 'wins-asc' ? 'wins-desc' : 'wins-asc')}
-						>{m.wins()}
-						{#if sortBy === 'wins-asc'}
-							<TypcnArrowSortedUp class="inline-block" />
-						{:else if sortBy === 'wins-desc'}
-							<TypcnArrowSortedDown class="inline-block" />
-						{:else}
-							<TypcnArrowUnsorted class="inline-block" />
-						{/if}
-					</button>
-				</th>
-				<th class="px-4 py-1">
-					<button
-						class="text-left"
-						onclick={() => (sortBy = sortBy === 'rating-asc' ? 'rating-desc' : 'rating-asc')}
-						>{m.rating()}
-						{#if sortBy === 'rating-asc'}
-							<TypcnArrowSortedUp class="inline-block" />
-						{:else if sortBy === 'rating-desc'}
-							<TypcnArrowSortedDown class="inline-block" />
-						{:else}
-							<TypcnArrowUnsorted class="inline-block" />
-						{/if}
-					</button>
-				</th>
-			</tr>
-		</thead>
-		<tbody>
-			{#each filtered as player}
-				<tr class="border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl">
-					<td class="px-4 py-1">
-						<a class="flex items-baseline gap-1" href={`/players/${player.id}`}
-							>{player.name}
-							{#each getAllNames(player).filter((name) => name !== player.name) as name}
-								<span class="text-xs text-gray-400">({name})</span>
-							{/each}
-						</a>
-					</td>
-					<td class="px-4 py-1 text-sm">
-						{#each data.playersTeams[player.id ?? ''] as team, i}
-							<a href={`/teams/${team.name}`}>{team.name}</a
-							>{#if i < data.playersTeams[player.id ?? ''].length - 1}
-								<span class="mx-1 text-gray-400">|</span>
+	<div class="overflow-x-auto">
+		<table class="w-full table-auto border-collapse border-y-2 border-gray-500 bg-gray-800">
+			<thead>
+				<tr class="border-b-2 border-gray-500 text-left text-sm text-gray-400">
+					<th class="px-4 py-1">
+						<button
+							class="text-left"
+							onclick={() => (sortBy = sortBy === 'name-abc' ? 'name-cba' : 'name-abc')}
+							>{m.name()}
+							{#if sortBy === 'name-abc'}
+								<TypcnArrowSortedUp class="inline-block" />
+							{:else if sortBy === 'name-cba'}
+								<TypcnArrowSortedDown class="inline-block" />
+							{:else}
+								<TypcnArrowUnsorted class="inline-block" />
 							{/if}
-						{/each}
-					</td>
-					<td class="flex flex-wrap gap-1">
-						{#each data.playersAgents[player.id ?? ''] as superstring}
-							<CharacterIcon character={superstring[0]} />
-						{/each}
-					</td>
-					<td class="px-4 py-1 text-gray-300">{player.wins}</td>
-					<td class="px-4 py-1 text-gray-300" title={m.rating() + ' ' + player.rating}>
-						{player.rating.toFixed(2)}
-					</td>
+						</button>
+					</th>
+					<th class="px-4 py-1">{m.teams()}</th>
+					<th class="hidden px-4 py-1 sm:table-cell">{m.superstrings()}</th>
+					<th class="px-4 py-1">
+						<button
+							class="text-left"
+							onclick={() => (sortBy = sortBy === 'wins-asc' ? 'wins-desc' : 'wins-asc')}
+							>{m.wins()}
+							{#if sortBy === 'wins-asc'}
+								<TypcnArrowSortedUp class="inline-block" />
+							{:else if sortBy === 'wins-desc'}
+								<TypcnArrowSortedDown class="inline-block" />
+							{:else}
+								<TypcnArrowUnsorted class="inline-block" />
+							{/if}
+						</button>
+					</th>
+					<th class="px-4 py-1">
+						<button
+							class="text-left"
+							onclick={() => (sortBy = sortBy === 'rating-asc' ? 'rating-desc' : 'rating-asc')}
+							>{m.rating()}
+							{#if sortBy === 'rating-asc'}
+								<TypcnArrowSortedUp class="inline-block" />
+							{:else if sortBy === 'rating-desc'}
+								<TypcnArrowSortedDown class="inline-block" />
+							{:else}
+								<TypcnArrowUnsorted class="inline-block" />
+							{/if}
+						</button>
+					</th>
 				</tr>
-			{/each}
-		</tbody>
-	</table>
+			</thead>
+			<tbody>
+				{#each filtered as player}
+					<tr class="border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl">
+						<td class="px-4 py-1">
+							<a class="flex items-baseline gap-1" href={`/players/${player.id}`}
+								>{player.name}
+								{#each getAllNames(player).filter((name) => name !== player.name) as name}
+									<span class="text-xs text-gray-400">({name})</span>
+								{/each}
+							</a>
+						</td>
+						<td class="px-4 py-1 text-sm">
+							{#each data.playersTeams[player.id ?? ''] as team, i}
+								<a href={`/teams/${team.name}`}>{team.name}</a
+								>{#if i < data.playersTeams[player.id ?? ''].length - 1}
+									<span class="mx-1 text-gray-400">|</span>
+								{/if}
+							{/each}
+						</td>
+						<td class="flex hidden flex-wrap gap-1 sm:flex">
+							{#each data.playersAgents[player.id ?? ''] as superstring}
+								<CharacterIcon character={superstring[0]} />
+							{/each}
+						</td>
+						<td class="px-4 py-1 text-gray-300">{player.wins}</td>
+						<td class="px-4 py-1 text-gray-300" title={m.rating() + ' ' + player.rating}>
+							{player.rating.toFixed(2)}
+						</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+	</div>
 </main>
 
 <style>
