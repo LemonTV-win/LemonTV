@@ -91,31 +91,39 @@
 			<div class="md:col-span-3">
 				<h2 class="my-5 text-xl font-bold">{m.attended_events()}</h2>
 				<ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-					{#each data.playerEvents as event}
-						{#if event}
-							<li
-								class="grid grid-rows-[auto] gap-2 overflow-hidden rounded-sm bg-gray-800 shadow-2xl"
-							>
-								<a href="/events/{event.id}" class="contents">
-									<div class="flex h-full w-full items-center justify-center bg-gray-700">
-										<img src={event.image} alt={event.name} class="w-full object-cover" />
-									</div>
-									<div class="h-full p-4 text-white">{event.name}</div>
-								</a>
-							</li>
-						{/if}
-					{/each}
+					{#if data.playerEvents.length > 0}
+						{#each data.playerEvents as event}
+							{#if event}
+								<li
+									class="grid grid-rows-[auto] gap-2 overflow-hidden rounded-sm bg-gray-800 shadow-2xl"
+								>
+									<a href="/events/{event.id}" class="contents">
+										<div class="flex h-full w-full items-center justify-center bg-gray-700">
+											<img src={event.image} alt={event.name} class="w-full object-cover" />
+										</div>
+										<div class="h-full p-4 text-white">{event.name}</div>
+									</a>
+								</li>
+							{/if}
+						{/each}
+					{:else}
+						<li class="text-center text-gray-400">{m.no_data()}</li>
+					{/if}
 				</ul>
 			</div>
 		{/if}
 		<div class="md:col-span-3">
 			<h2 class="my-5 text-xl font-bold">{m.recent_matches()}</h2>
 			<ul class="flex flex-col gap-2">
-				{#each data.playerMatches as match}
-					{#if match}
-						<MatchCard {match} teamIndex={match.playerTeamIndex} event={match.event} />
-					{/if}
-				{/each}
+				{#if data.playerMatches.length > 0}
+					{#each data.playerMatches as match}
+						{#if match}
+							<MatchCard {match} teamIndex={match.playerTeamIndex} event={match.event} />
+						{/if}
+					{/each}
+				{:else}
+					<li class="text-center text-gray-400">{m.no_data()}</li>
+				{/if}
 			</ul>
 		</div>
 	</main>
