@@ -24,20 +24,20 @@
 		>
 			{rank}</span
 		>
-		<div class="flex w-full justify-between">
-			<a href={`/teams/${team.id}`} class="flex items-center gap-2 text-2xl font-bold">
+		<div class="flex w-full flex-col md:flex-row md:justify-between">
+			<a href={`/teams/${team.id}`} class="flex items-center gap-2 text-xl font-bold md:text-2xl">
 				{team.name}
 				{#if team.region}
 					<RegionTag region={team.region} class="text-sm" />
 				{/if}
 			</a>
-			<p class="text-gray-400">
+			<p class="mt-1 text-right text-gray-400 md:mt-0">
 				<span class="text-yellow-500">{wins}</span> wins
 			</p>
 		</div>
 	</button>
 	{#if expanded && team.players}
-		<ul class="grid grid-cols-3 gap-4 p-4">
+		<ul class="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 md:grid-cols-3">
 			{#each team.players as player}
 				<li>
 					{#if player}

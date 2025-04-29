@@ -5,8 +5,8 @@
 	let { data }: PageProps = $props();
 </script>
 
-<main class="mx-auto max-w-screen-lg">
-	<h1 class="my-10 text-2xl font-bold">Events</h1>
+<main class="mx-auto max-w-screen-lg md:px-4">
+	<h1 class="mx-0 my-10 text-2xl font-bold md:mx-4">Events</h1>
 	<ul>
 		{#each data.events as event}
 			<li>

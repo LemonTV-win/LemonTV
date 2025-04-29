@@ -17,10 +17,10 @@
 	let expanded = $state(false);
 </script>
 
-<main class="mx-auto max-w-screen-lg">
-	<h1 class="my-10 text-2xl font-bold">{m.teams()}</h1>
+<main class="mx-auto max-w-screen-lg md:px-4">
+	<h1 class="mx-4 my-10 text-2xl font-bold md:mx-0">{m.teams()}</h1>
 
-	<div class="mb-4 flex items-center justify-end gap-2">
+	<div class="mb-4 flex flex-col items-center justify-end gap-2 md:flex-row">
 		<SearchInput bind:search filtered={filtered.length} total={data.teams.length} />
 	</div>
 
