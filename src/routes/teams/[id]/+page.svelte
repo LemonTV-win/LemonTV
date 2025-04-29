@@ -18,27 +18,29 @@
 </script>
 
 {#if data.team}
-	<main class="mx-auto max-w-screen-lg py-4">
+	<main class="mx-auto max-w-screen-lg px-4 py-4">
 		<!-- Info -->
 
 		<section>
-			<div class="flex items-center gap-4">
+			<div class="flex flex-col gap-4 sm:flex-row sm:items-center">
 				<h1 class="my-6 text-3xl font-bold">{data.team.name}</h1>
-				{#if data.team.region}
-					<RegionTag region={data.team.region} />
-				{/if}
-				<div
-					class={[
-						'flex items-center gap-2 rounded-sm bg-gray-700/50 px-2 py-1',
-						data.teamStatistics.ranking === 1 && 'bg-yellow-500',
-						data.teamStatistics.ranking === 2 && 'bg-blue-500',
-						data.teamStatistics.ranking === 3 && 'bg-red-500'
-					]}
-				>
-					<PhRankingFill class="h-4 w-4" />
-					<p>
-						{m.global_rank({ number: data.teamStatistics.ranking })}
-					</p>
+				<div class="flex flex-wrap gap-2">
+					{#if data.team.region}
+						<RegionTag region={data.team.region} />
+					{/if}
+					<div
+						class={[
+							'flex items-center gap-2 rounded-sm bg-gray-700/50 px-2 py-1',
+							data.teamStatistics.ranking === 1 && 'bg-yellow-500',
+							data.teamStatistics.ranking === 2 && 'bg-blue-500',
+							data.teamStatistics.ranking === 3 && 'bg-red-500'
+						]}
+					>
+						<PhRankingFill class="h-4 w-4" />
+						<p>
+							{m.global_rank({ number: data.teamStatistics.ranking })}
+						</p>
+					</div>
 				</div>
 			</div>
 			{#if data.team.logo}
@@ -52,7 +54,7 @@
 			<ul class="flex flex-wrap gap-4">
 				{#each data.team.players.toSorted((a, b) => (data.teamMemberStatistics?.[b.id ?? '']?.rating ?? 0) - (data.teamMemberStatistics?.[a.id ?? '']?.rating ?? 0)) as player}
 					<li
-						class="gap-y- grid min-w-32 grid-cols-[auto_1fr] grid-rows-[auto_auto] items-center gap-x-4 gap-y-2 rounded-sm bg-gray-800 px-2 py-2"
+						class="gap-y- grid w-full min-w-32 grid-cols-[auto_1fr] grid-rows-[auto_auto] items-center gap-x-4 gap-y-2 rounded-sm bg-gray-800 px-2 py-2 sm:w-auto"
 					>
 						<PlayerAvatar {player} class="row-span-2 h-16 w-16 rounded-full" />
 						<a class="flex gap-1 px-1 text-lg font-semibold" href={`/players/${player.id}`}
