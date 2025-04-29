@@ -42,10 +42,13 @@
 			{#each data.teams.toSorted((a, b) => b.wins - a.wins).slice(0, 5) as team}
 				<li>
 					<a
-						class="grid grid-cols-[1fr_auto] items-center gap-2 gap-4 border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl"
+						class="grid grid-cols-[1fr_auto] items-center gap-2 border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl"
 						href={`/teams/${team.id}`}
 					>
-						<span class="text-white">{team.name}</span>
+						<span class="text-white">
+							{team.name}
+							<span class="text-xs text-gray-400" title="Wins">{team.region}</span>
+						</span>
 						<!-- TODO: Introduce rating -->
 						<span class="text-yellow-500" title="Wins">{team.wins}</span>
 					</a>
@@ -63,7 +66,7 @@
 				<li>
 					<a
 						href={`/players/${player.id}`}
-						class="grid grid-cols-[1fr_auto] items-center gap-2 gap-4 border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl"
+						class="grid grid-cols-[1fr_auto] items-center gap-2 border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl"
 					>
 						<span class="text-white">
 							{player.name}
