@@ -33,7 +33,7 @@
 					<p class="text-center text-gray-400">{data.player.nationality}</p>
 				{/if}
 				{#if data.playerTeams}
-					<div class="grid grid-cols-2 gap-4 py-4">
+					<div class="grid grid-cols-1 gap-4 py-4 sm:grid-cols-2">
 						<h3 class="text-lg font-bold">Teams</h3>
 						<ul>
 							{#each data.playerTeams as team}
@@ -84,17 +84,17 @@
 			</ul>
 		</div>
 		{#if data.playerEvents}
-			<div>
+			<div class="md:col-span-3">
 				<h2 class="my-5 text-xl font-bold">{m.attended_events()}</h2>
-				<ul class="grid grid-cols-2 gap-4">
+				<ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
 					{#each data.playerEvents as event}
 						{#if event}
 							<li
-								class="grid grid-rows-[6em_auto] gap-2 overflow-hidden rounded-sm bg-gray-800 shadow-2xl"
+								class="grid grid-rows-[auto] gap-2 overflow-hidden rounded-sm bg-gray-800 shadow-2xl"
 							>
 								<a href="/events/{event.id}" class="contents">
-									<div class="flex h-full items-center justify-center">
-										<img src={event.image} alt={event.name} class="w-full max-w-64 object-cover" />
+									<div class="flex h-full w-full items-center justify-center bg-gray-700">
+										<img src={event.image} alt={event.name} class="w-full object-cover" />
 									</div>
 									<div class="h-full p-4 text-white">{event.name}</div>
 								</a>
@@ -104,7 +104,7 @@
 				</ul>
 			</div>
 		{/if}
-		<div class="col-span-2">
+		<div class="md:col-span-3">
 			<h2 class="my-5 text-xl font-bold">{m.recent_matches()}</h2>
 			<ul class="flex flex-col gap-2">
 				{#each data.playerMatches as match}
