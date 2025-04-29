@@ -56,5 +56,7 @@
 	"global_rank": "Global #{number}",
 	"community": "Communauté",
 	"top16": "Top 16",
-	"lower": "Tableau Inférieur"
+	"lower": "Tableau Inférieur",
+	"grandfinal": "Grande finale",
+	"no_data": "Aucune donnée"
 }

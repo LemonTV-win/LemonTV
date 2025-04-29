@@ -57,5 +57,6 @@
 	"community": "커뮤니티",
 	"top16": "16강",
 	"lower": "하위 브래킷",
-	"grandfinal": "그랜드 파이널"
+	"grandfinal": "그랜드 파이널",
+	"no_data": "데이터가 없습니다"
 }

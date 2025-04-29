@@ -57,5 +57,6 @@
 	"community": "Community",
 	"top16": "Top 16",
 	"lower": "Lower Bracket",
-	"grandfinal": "Grand Final"
+	"grandfinal": "Grand Final",
+	"no_data": "No data"
 }

@@ -64,23 +64,27 @@
 		<div>
 			<h3 class="my-5 text-lg font-bold">{m.superstrings()}</h3>
 			<ul class="flex list-none flex-col gap-4 rounded-sm bg-gray-800 p-4 shadow-2xl">
-				{#each data.playerAgents.toSorted((a, b) => b[1] - a[1]) as [character, count]}
-					{@const percentage =
-						(count / data.playerAgents.reduce((acc, [_, count]) => acc + count, 0)) * 100}
-					<li class="grid grid-cols-[auto_1fr] items-center gap-2 rounded-sm shadow-2xl">
-						<CharacterIcon {character} />
-						<div class="flex flex-col gap-1">
-							<div class="flex justify-between text-sm">
-								<span class="text-white">{m[character]()}</span><span class="text-slate-400"
-									>{percentage.toFixed(0)}% ({count})</span
-								>
+				{#if data.playerAgents.length > 0}
+					{#each data.playerAgents.toSorted((a, b) => b[1] - a[1]) as [character, count]}
+						{@const percentage =
+							(count / data.playerAgents.reduce((acc, [_, count]) => acc + count, 0)) * 100}
+						<li class="grid grid-cols-[auto_1fr] items-center gap-2 rounded-sm shadow-2xl">
+							<CharacterIcon {character} />
+							<div class="flex flex-col gap-1">
+								<div class="flex justify-between text-sm">
+									<span class="text-white">{m[character]()}</span><span class="text-slate-400"
+										>{percentage.toFixed(0)}% ({count})</span
+									>
+								</div>
+								<div class="h-2 w-full overflow-hidden rounded-full bg-slate-600">
+									<div class="h-full bg-yellow-500" style="width: {percentage.toFixed(0)}%;"></div>
+								</div>
 							</div>
-							<div class="h-2 w-full overflow-hidden rounded-full bg-slate-600">
-								<div class="h-full bg-yellow-500" style="width: {percentage.toFixed(0)}%;"></div>
-							</div>
-						</div>
-					</li>
-				{/each}
+						</li>
+					{/each}
+				{:else}
+					<li class="text-center text-gray-400">{m.no_data()}</li>
+				{/if}
 			</ul>
 		</div>
 		{#if data.playerEvents}
