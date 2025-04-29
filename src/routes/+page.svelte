@@ -6,7 +6,7 @@
 	let { data }: PageProps = $props();
 </script>
 
-<main class="mx-auto grid max-w-screen-lg grid-cols-[1fr_auto] gap-10 p-4">
+<main class="mx-auto grid max-w-screen-lg gap-6 p-4 sm:grid-cols-[1fr_auto] sm:gap-10">
 	<div class="row-span-2">
 		<h2 class="my-5 text-2xl font-bold">{m.events()}</h2>
 		<ul>
@@ -25,10 +25,10 @@
 					<li>
 						<a
 							href="/events/{event.id}"
-							class="flex items-center gap-2 border-b-1 border-gray-500 bg-gray-800 shadow-2xl"
+							class="flex flex-col items-center gap-2 border-b-1 border-gray-500 bg-gray-800 shadow-2xl sm:flex-row"
 						>
-							<img src={event.image} alt={event.name} class="w-full max-w-64" />
-							<span class="p-4 text-2xl text-white">{event.name}</span>
+							<img src={event.image} alt={event.name} class="w-full max-w-full sm:max-w-64" />
+							<span class="p-4 text-xl text-white sm:text-2xl">{event.name}</span>
 						</a>
 					</li>
 				{/if}
