@@ -31,6 +31,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>LemonTV</title>
+</svelte:head>
+
 <header
 	class="flex items-center justify-between border-b-1 border-gray-500 bg-gray-800 px-3 py-4 text-white"
 >
