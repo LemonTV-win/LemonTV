@@ -4,6 +4,9 @@
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
+
+	let upcomingEvents = data.events.filter((event) => event.status === 'upcoming');
+	let finishedEvents = data.events.filter((event) => event.status === 'finished');
 </script>
 
 <main class="mx-auto grid max-w-screen-lg gap-6 p-4 sm:grid-cols-[1fr_auto] sm:gap-10">
@@ -11,28 +14,24 @@
 		<h2 class="my-5 text-2xl font-bold">{m.events()}</h2>
 		<h3 class="my-4 text-xl font-bold">{m.upcoming()}</h3>
 		<ul class="flex flex-col gap-2">
-			{#each data.events as event}
-				{#if event.status === 'upcoming'}
-					<li>
-						<a
-							href="/events/{event.id}"
-							class="flex flex-col items-center gap-2 border-b-1 border-gray-500 bg-gray-800 shadow-2xl sm:flex-row"
-						>
-							<img src={event.image} alt={event.name} class="w-full max-w-full sm:max-w-64" />
-							<span class="p-4 text-xl text-white sm:text-2xl">{event.name}</span>
-						</a>
-					</li>
-				{/if}
+			{#each upcomingEvents as event}
+				<li>
+					<a
+						href="/events/{event.id}"
+						class="flex flex-col items-center gap-2 border-b-1 border-gray-500 bg-gray-800 shadow-2xl sm:flex-row"
+					>
+						<img src={event.image} alt={event.name} class="w-full max-w-full sm:max-w-64" />
+						<span class="p-4 text-xl text-white sm:text-2xl">{event.name}</span>
+					</a>
+				</li>
 			{/each}
 		</ul>
 		<h3 class="my-4 text-xl font-bold">{m.finished()}</h3>
 		<ul>
-			{#each data.events as event}
-				{#if event.status === 'finished'}
-					<li>
-						<EventCard {event} />
-					</li>
-				{/if}
+			{#each finishedEvents as event}
+				<li>
+					<EventCard {event} />
+				</li>
 			{/each}
 		</ul>
 	</div>
