@@ -9,15 +9,6 @@
 <main class="mx-auto grid max-w-screen-lg gap-6 p-4 sm:grid-cols-[1fr_auto] sm:gap-10">
 	<div class="row-span-2">
 		<h2 class="my-5 text-2xl font-bold">{m.events()}</h2>
-		<ul>
-			{#each data.events as event}
-				{#if event.status !== 'upcoming'}
-					<li>
-						<EventCard {event} />
-					</li>
-				{/if}
-			{/each}
-		</ul>
 		<h3 class="my-4 text-xl font-bold">{m.upcoming()}</h3>
 		<ul class="flex flex-col gap-2">
 			{#each data.events as event}
@@ -30,6 +21,16 @@
 							<img src={event.image} alt={event.name} class="w-full max-w-full sm:max-w-64" />
 							<span class="p-4 text-xl text-white sm:text-2xl">{event.name}</span>
 						</a>
+					</li>
+				{/if}
+			{/each}
+		</ul>
+		<h3 class="my-4 text-xl font-bold">{m.finished()}</h3>
+		<ul>
+			{#each data.events as event}
+				{#if event.status === 'finished'}
+					<li>
+						<EventCard {event} />
 					</li>
 				{/if}
 			{/each}

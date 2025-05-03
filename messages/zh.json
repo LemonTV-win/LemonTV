@@ -58,5 +58,6 @@
 	"top16": "16强赛",
 	"lower": "败者组",
 	"grandfinal": "总决赛",
-	"no_data": "无数据"
+	"no_data": "无数据",
+	"finished": "已结束"
 }

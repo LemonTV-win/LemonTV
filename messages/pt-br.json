@@ -58,5 +58,6 @@
 	"top16": "Top 16",
 	"lower": "Chave Inferior",
 	"grandfinal": "Grande Final",
-	"no_data": "Nenhum dado"
+	"no_data": "Nenhum dado",
+	"finished": "Finalizado"
 }
