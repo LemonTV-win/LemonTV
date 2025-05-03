@@ -5,6 +5,7 @@
 
 	let { data }: PageProps = $props();
 
+	let ongoingEvents = data.events.filter((event) => event.status === 'live');
 	let upcomingEvents = data.events.filter((event) => event.status === 'upcoming');
 	let finishedEvents = data.events.filter((event) => event.status === 'finished');
 </script>
@@ -12,6 +13,10 @@
 <main class="mx-auto grid max-w-screen-lg gap-6 p-4 sm:grid-cols-[1fr_auto] sm:gap-10">
 	<div class="row-span-2">
 		<h2 class="my-5 text-2xl font-bold">{m.events()}</h2>
+
+		{#each ongoingEvents as event}
+			<EventCard {event} />
+		{/each}
 
 		{#if upcomingEvents.length > 0}
 			<h3 class="my-4 text-xl font-bold">{m.upcoming()}</h3>
