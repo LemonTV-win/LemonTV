@@ -15,7 +15,7 @@
 		<h2 class="my-5 text-2xl font-bold">{m.events()}</h2>
 
 		{#each ongoingEvents as event}
-			<EventCard {event} />
+			<EventCard {event} live />
 		{/each}
 
 		{#if upcomingEvents.length > 0}
