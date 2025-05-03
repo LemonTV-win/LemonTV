@@ -66,6 +66,10 @@ export interface Event {
 	date: string;
 	website?: string;
 	teams: Team[];
+	livestreams?: {
+		platform: 'twitch' | 'youtube';
+		url: string;
+	}[];
 }
 
 // const MMC_QUALIFIERS: Stage[] = [
@@ -1556,6 +1560,12 @@ export const events: Event[] = [
 		capacity: 16,
 		date: '2025-05-04/2025-05-05',
 		website: 'https://tonamel.com/competition/OU2cd',
+		livestreams: [
+			{
+				platform: 'twitch',
+				url: 'https://www.twitch.tv/kawashimakyuden'
+			}
+		],
 		teams: [
 			teams['CRCC'],
 			teams['AFT'],
