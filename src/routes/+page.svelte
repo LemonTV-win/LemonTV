@@ -21,7 +21,7 @@
 </script>
 
 <main class="mx-auto grid max-w-screen-lg gap-6 p-4 sm:grid-cols-[1fr_auto] sm:gap-10">
-	<div class="row-span-2">
+	<div>
 		<h2 class="my-5 text-2xl font-bold">
 			<a href="/events">
 				{m.events()}
@@ -55,52 +55,54 @@
 	</div>
 
 	<div class="flex flex-col gap-2">
-		<h2 class="my-5 text-2xl font-bold">{m.teams()}</h2>
-		<ul>
-			{#each data.teams.toSorted((a, b) => b.wins - a.wins).slice(0, 5) as team}
-				<li>
-					<a
-						class="grid grid-cols-[1fr_auto] items-center gap-2 border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl"
-						href={`/teams/${team.id}`}
-					>
-						<span class="text-white">
-							{team.name}
-							<span class="text-xs text-gray-400" title="Wins">{team.region}</span>
-						</span>
-						<!-- TODO: Introduce rating -->
-						<span class="text-yellow-500" title="Wins">{team.wins}</span>
-					</a>
-				</li>
-			{/each}
-		</ul>
-		<!-- TODO: Add locale -->
-		<a href="/teams" class="mt-2 px-4 text-center text-lg font-bold">{m.view_all_teams()}</a>
-	</div>
+		<div class="flex flex-col gap-2">
+			<h2 class="my-5 text-2xl font-bold">{m.teams()}</h2>
+			<ul>
+				{#each data.teams.toSorted((a, b) => b.wins - a.wins).slice(0, 5) as team}
+					<li>
+						<a
+							class="grid grid-cols-[1fr_auto] items-center gap-2 border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl"
+							href={`/teams/${team.id}`}
+						>
+							<span class="text-white">
+								{team.name}
+								<span class="text-xs text-gray-400" title="Wins">{team.region}</span>
+							</span>
+							<!-- TODO: Introduce rating -->
+							<span class="text-yellow-500" title="Wins">{team.wins}</span>
+						</a>
+					</li>
+				{/each}
+			</ul>
+			<!-- TODO: Add locale -->
+			<a href="/teams" class="mt-2 px-4 text-center text-lg font-bold">{m.view_all_teams()}</a>
+		</div>
 
-	<div class="flex flex-col gap-2">
-		<h2 class="my-5 text-2xl font-bold">{m.players()}</h2>
-		<ul>
-			{#each data.players.toSorted((a, b) => b.rating - a.rating).slice(0, 5) as player}
-				<li>
-					<a
-						href={`/players/${player.id}`}
-						class="grid grid-cols-[1fr_auto] items-center gap-2 border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl"
-					>
-						<span class="text-white">
-							{player.name}
-							{#if player.teams.length > 0}
-								<span class="text-xs text-gray-400" title="Team">
-									{player.teams[0]}
-								</span>
-							{/if}
-						</span>
-						<!-- TODO: Introduce rating -->
-						<span class="text-yellow-500" title={m.rating()}>{player.rating.toFixed(2)}</span>
-					</a>
-				</li>
-			{/each}
-		</ul>
-		<a href="/players" class="mt-2 px-4 text-center text-lg font-bold">{m.view_all_players()}</a>
+		<div class="flex flex-col gap-2">
+			<h2 class="my-5 text-2xl font-bold">{m.players()}</h2>
+			<ul>
+				{#each data.players.toSorted((a, b) => b.rating - a.rating).slice(0, 5) as player}
+					<li>
+						<a
+							href={`/players/${player.id}`}
+							class="grid grid-cols-[1fr_auto] items-center gap-2 border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl"
+						>
+							<span class="text-white">
+								{player.name}
+								{#if player.teams.length > 0}
+									<span class="text-xs text-gray-400" title="Team">
+										{player.teams[0]}
+									</span>
+								{/if}
+							</span>
+							<!-- TODO: Introduce rating -->
+							<span class="text-yellow-500" title={m.rating()}>{player.rating.toFixed(2)}</span>
+						</a>
+					</li>
+				{/each}
+			</ul>
+			<a href="/players" class="mt-2 px-4 text-center text-lg font-bold">{m.view_all_players()}</a>
+		</div>
 	</div>
 </main>
 
