@@ -39,6 +39,9 @@
 				</li>
 			{/each}
 		</ul>
+		<a href="/events" class="mt-2 block w-full px-4 text-center text-lg font-bold">
+			{m.view_all_events()}
+		</a>
 	</div>
 
 	<div class="flex flex-col gap-2">
