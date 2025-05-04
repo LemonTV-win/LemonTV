@@ -3,10 +3,12 @@
 	import { m } from '$lib/paraglide/messages';
 	import { page } from '$app/state';
 
-	let { event, live = false }: { event: Event; live?: boolean } = $props();
+	let { event }: { event: Event } = $props();
 	// TODO:
 	// const HOST = page.url.host;
 	const HOST = 'lemon.mkpo.li';
+
+	let live = $derived(event.status === 'live');
 </script>
 
 <div class="flex flex-col">

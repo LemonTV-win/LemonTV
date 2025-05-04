@@ -19,7 +19,7 @@
 		</h2>
 
 		{#each ongoingEvents as event}
-			<EventCard {event} live />
+			<EventCard {event} />
 		{/each}
 
 		{#if upcomingEvents.length > 0}
