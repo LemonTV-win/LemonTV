@@ -5,9 +5,17 @@
 
 	let { data }: PageProps = $props();
 
-	let ongoingEvents = data.events.filter((event) => event.status === 'live');
-	let upcomingEvents = data.events.filter((event) => event.status === 'upcoming');
-	let finishedEvents = data.events.filter((event) => event.status === 'finished');
+	let sortedEvents = $derived(
+		data.events.sort((a, b) => {
+			return (
+				1 * (new Date(b.date.split('/')[0]).getTime() - new Date(a.date.split('/')[0]).getTime())
+			);
+		})
+	);
+
+	let ongoingEvents = $derived(sortedEvents.filter((event) => event.status === 'live'));
+	let upcomingEvents = $derived(sortedEvents.filter((event) => event.status === 'upcoming'));
+	let finishedEvents = $derived(sortedEvents.filter((event) => event.status === 'finished'));
 </script>
 
 <main class="mx-auto max-w-screen-lg md:px-4">
@@ -16,7 +24,7 @@
 	<ul>
 		{#each ongoingEvents as event}
 			<li>
-				<EventCard {event} />
+				<EventCard {event} detailed />
 			</li>
 		{/each}
 	</ul>
@@ -25,7 +33,7 @@
 		<h2 class="my-4 text-xl font-bold">{m.upcoming()}</h2>
 		<ul class="flex flex-col gap-2">
 			{#each upcomingEvents as event}
-				<EventCard {event} />
+				<EventCard {event} detailed />
 			{/each}
 		</ul>
 	{/if}
@@ -34,7 +42,7 @@
 	<ul>
 		{#each finishedEvents as event}
 			<li>
-				<EventCard {event} />
+				<EventCard {event} detailed />
 			</li>
 		{/each}
 	</ul>
