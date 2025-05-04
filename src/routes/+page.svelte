@@ -5,9 +5,19 @@
 
 	let { data }: PageProps = $props();
 
-	let ongoingEvents = data.events.filter((event) => event.status === 'live');
-	let upcomingEvents = data.events.filter((event) => event.status === 'upcoming');
-	let finishedEvents = data.events.filter((event) => event.status === 'finished');
+	let sortedEvents = $derived(
+		data.events
+			.sort((a, b) => {
+				return (
+					1 * (new Date(b.date.split('/')[0]).getTime() - new Date(a.date.split('/')[0]).getTime())
+				);
+			})
+			.slice(0, 5)
+	);
+
+	let ongoingEvents = $derived(sortedEvents.filter((event) => event.status === 'live'));
+	let upcomingEvents = $derived(sortedEvents.filter((event) => event.status === 'upcoming'));
+	let finishedEvents = $derived(sortedEvents.filter((event) => event.status === 'finished'));
 </script>
 
 <main class="mx-auto grid max-w-screen-lg gap-6 p-4 sm:grid-cols-[1fr_auto] sm:gap-10">
