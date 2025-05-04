@@ -1,9 +1,11 @@
 <script lang="ts">
 	import type { Event } from '$lib/data/events';
 	import { m } from '$lib/paraglide/messages';
-	import { page } from '$app/state';
 
-	let { event }: { event: Event } = $props();
+	import IconParkSolidCalendar from '~icons/icon-park-solid/calendar';
+	import IconParkSolidPeoples from '~icons/icon-park-solid/peoples';
+
+	let { event, detailed = false }: { event: Event; detailed?: boolean } = $props();
 	// TODO:
 	// const HOST = page.url.host;
 	const HOST = 'lemon.mkpo.li';
@@ -17,7 +19,21 @@
 		class="relative flex min-h-32 flex-col items-center gap-2 border-b-1 border-gray-500 bg-gray-800 shadow-2xl sm:flex-row"
 	>
 		<img src={event.image} alt={event.name} class="w-full max-w-full sm:max-w-64" />
-		<span class="p-4 text-xl text-white sm:text-2xl">{event.name}</span>
+		<div class="flex flex-col p-4">
+			<span class="text-xl text-white sm:text-2xl">{event.name}</span>
+			{#if detailed}
+				<div class="flex gap-4">
+					<span class="flex items-center gap-1">
+						<IconParkSolidCalendar class="inline-block h-4 w-4" />
+						<time datetime={event.date}>{event.date.replace('/', ' - ')}</time>
+					</span>
+					<span class="flex items-center gap-1">
+						<IconParkSolidPeoples class="inline-block h-4 w-4" />
+						<span>{event.teams.length}</span>
+					</span>
+				</div>
+			{/if}
+		</div>
 		{#if live}
 			<span class="absolute top-2 right-2 bg-red-500 px-2 py-1 text-xs text-white">
 				{m.live()}
