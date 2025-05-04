@@ -12,7 +12,11 @@
 
 <main class="mx-auto grid max-w-screen-lg gap-6 p-4 sm:grid-cols-[1fr_auto] sm:gap-10">
 	<div class="row-span-2">
-		<h2 class="my-5 text-2xl font-bold">{m.events()}</h2>
+		<h2 class="my-5 text-2xl font-bold">
+			<a href="/events">
+				{m.events()}
+			</a>
+		</h2>
 
 		{#each ongoingEvents as event}
 			<EventCard {event} live />
