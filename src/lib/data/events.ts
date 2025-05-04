@@ -2546,6 +2546,146 @@ export const events: Event[] = [
 		],
 		website:
 			'https://docs.google.com/spreadsheets/d/1eL5kWIBFGlrQ4HLLAaYyFoJvAMNswvQFSFC00-A8M9M/edit'
+	},
+	{
+		id: 4,
+		slug: 'ewc-2024',
+		name: '2024 Esports World Cup',
+		official: true,
+		server: 'strinova',
+		image: 'https://upload.wikimedia.org/wikipedia/commons/b/b4/Esports_World_Cup_logo.svg',
+		status: 'finished',
+		stages: [],
+		organizer: {
+			name: 'Esports World Cup',
+			url: 'https://esportsworldcup.com/en/2024'
+		},
+		capacity: 16,
+		date: '2024-08-04/2024-08-05',
+		teams: [
+			{
+				id: 'MMR',
+				name: 'MMR',
+				region: 'CN'
+			},
+			{
+				id: 'SS',
+				name: 'Super Shuai',
+				region: 'NA'
+			},
+			{
+				id: 'NG',
+				name: 'Nova Guardians',
+				region: 'APAC'
+			},
+			{
+				name: 'Twisted Minds',
+				id: 'TM',
+				region: 'WA'
+			}
+		]
+	},
+	{
+		id: 5,
+		slug: 'wgs',
+		name: 'Waiguoren stringify invitational',
+		official: false,
+		server: 'strinova',
+		status: 'finished',
+		image: 'https://pbs.twimg.com/media/GQsFljEbYAEXWIZ?format=jpg&name=4096x4096',
+		stages: [],
+		organizer: {
+			name: 'Kariyu',
+			url: 'https://x.com/kariyu101'
+		},
+		capacity: 0,
+		date: '2024-06-22/2024-06-23',
+		teams: []
+	},
+	{
+		id: 6,
+		slug: 'sqi',
+		name: 'Strinova Quark Invitational',
+		official: false,
+		server: 'strinova',
+		status: 'finished',
+		image: 'https://picsum.photos/seed/sqi/300/200?blur',
+		stages: [],
+		organizer: {
+			name: 'Unknown',
+			url: 'https://example.com'
+		},
+		capacity: 0,
+		date: '2024-01-01',
+		teams: []
+	},
+	{
+		id: 7,
+		slug: 'ssi',
+		name: 'Strinova Superstring Invitational',
+		official: false,
+		server: 'strinova',
+		status: 'finished',
+		image: 'https://picsum.photos/seed/ssi/300/200?blur',
+		stages: [],
+		organizer: {
+			name: 'Unknown',
+			url: 'https://example.com'
+		},
+		capacity: 0,
+		date: '2024-01-02',
+		teams: []
+	},
+	{
+		id: 8,
+		slug: 'moca-s1',
+		name: '摩卡杯 S1',
+		official: false,
+		server: 'strinova',
+		status: 'finished',
+		image: 'https://picsum.photos/seed/moca-s1/300/200?blur',
+		stages: [],
+		organizer: {
+			name: 'Unknown',
+			url: 'https://example.com'
+		},
+		capacity: 0,
+		date: '2023-01-01',
+		teams: []
+	},
+	{
+		id: 9,
+		slug: 'moca-s2',
+		name: '摩卡杯 S2',
+		official: false,
+		server: 'strinova',
+		status: 'finished',
+		image: 'https://picsum.photos/seed/moca-s2/300/200?blur',
+		stages: [],
+		organizer: {
+			name: 'Unknown',
+			url: 'https://example.com'
+		},
+		capacity: 0,
+		date: '2023-01-02',
+		teams: []
+	},
+	{
+		id: 10,
+		slug: 'moca-s3',
+		name: '摩卡杯 S3',
+		official: false,
+		server: 'strinova',
+		status: 'finished',
+		image: 'https://picsum.photos/seed/moca-s3/300/200?blur',
+		stages: [],
+		organizer: {
+			name: 'Unknown',
+			url: 'https://example.com'
+		},
+		capacity: 0,
+		date: '2023-01-03',
+		teams: []
 	}
 ];
 
