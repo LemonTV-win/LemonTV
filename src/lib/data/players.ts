@@ -1807,6 +1807,11 @@ export const players: Record<string, Player> = {
 				currentName: '진주'
 			}
 		]
+	},
+	Asuaka: {
+		id: 'Asuaka',
+		name: 'Asuaka',
+		gameAccounts: []
 	}
 };
 
