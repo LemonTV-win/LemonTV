@@ -71,7 +71,7 @@ export interface Event {
 	};
 	capacity: number; // expected number of teams
 	date: string;
-	website?: string;
+	websites?: string[];
 	teams: Team[];
 	livestreams?: {
 		platform: 'twitch' | 'youtube';
@@ -1573,7 +1573,7 @@ export const events: Event[] = [
 		},
 		capacity: 16,
 		date: '2025-05-04/2025-05-05',
-		website: 'https://tonamel.com/competition/OU2cd',
+		websites: ['https://tonamel.com/competition/OU2cd', 'https://tonamel.com/competition/Vf3kx'],
 		livestreams: [
 			{
 				platform: 'twitch',
@@ -2641,8 +2641,9 @@ export const events: Event[] = [
 				}
 			}
 		],
-		website:
+		websites: [
 			'https://docs.google.com/spreadsheets/d/1eL5kWIBFGlrQ4HLLAaYyFoJvAMNswvQFSFC00-A8M9M/edit'
+		]
 	},
 	{
 		id: 4,

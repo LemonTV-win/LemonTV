@@ -67,14 +67,18 @@
 					<time datetime={data.event.date}>{data.event.date.replace('/', ' - ')}</time>
 				</span>
 			</div>
-			{#if data.event.website}
-				<a
-					href={data.event.website}
-					class="w-fit rounded-sm border-2 border-yellow-500 bg-yellow-500/10 px-2 py-1 text-yellow-500 hover:border-yellow-500 hover:bg-yellow-500 hover:text-white"
-				>
-					{m.visit_website()}
-				</a>
-			{/if}
+			<div class="flex flex-wrap gap-2">
+				{#if data.event.websites}
+					{#each data.event.websites as website}
+						<a
+							href={website}
+							class="w-fit rounded-sm border-2 border-yellow-500 bg-yellow-500/10 px-2 py-1 text-yellow-500 hover:border-yellow-500 hover:bg-yellow-500 hover:text-white"
+						>
+							{m.visit_website()}
+						</a>
+					{/each}
+				{/if}
+			</div>
 		</div>
 		<nav class="m-2 flex overflow-clip rounded-sm bg-gray-200/50">
 			<button
