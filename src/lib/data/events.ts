@@ -1,6 +1,7 @@
 import { teams, type Team } from '$lib/data/teams';
 import type { Match } from '$lib/data/matches';
 import type { LocalizedString } from '$lib/data/string';
+import type { Region } from './game';
 
 export interface Stage {
 	id: number;
@@ -53,6 +54,7 @@ export interface Event {
 	server: 'calabiyau' | 'strinova';
 	// host: string;
 	// date: string;
+	region: Region;
 	// location: string;
 	// description: string;
 	image: string;
@@ -119,6 +121,7 @@ export const events: Event[] = [
 		server: 'strinova',
 		image: 'https://i.ytimg.com/vi/j7Nt3gGzLkg/hq720.jpg',
 		status: 'finished',
+		region: 'Global',
 		organizer: {
 			name: 'BriBri',
 			logo: 'https://pbs.twimg.com/profile_images/1863502296023531520/ALjMfroI_400x400.jpg',
@@ -1558,6 +1561,7 @@ export const events: Event[] = [
 		name: 'Apac No.1 tournament KAWA cup',
 		official: false,
 		server: 'strinova',
+		region: 'APAC',
 		image:
 			'https://img.tonamel.com/c!/f=webp:auto,w=1600,h=900,a=2/upload_images/organize_competition/yROLW/fc1ed3f7ca5a35d6de5c20a8db90b617b89a063bedaaba6a205de19c1b00ad07.jpg',
 		status: 'finished',
@@ -1681,6 +1685,7 @@ export const events: Event[] = [
 		id: 3,
 		slug: 'origami',
 		name: 'Origami Cup',
+		region: 'NA',
 		official: false,
 		server: 'strinova',
 		image: 'https://panels.twitch.tv/panel-1266163234-image-05e3f805-6cda-43d1-98b1-e28a540f9003',
@@ -2645,6 +2650,7 @@ export const events: Event[] = [
 		name: '2024 Esports World Cup',
 		official: true,
 		server: 'strinova',
+		region: 'Global',
 		image: 'https://upload.wikimedia.org/wikipedia/commons/b/b4/Esports_World_Cup_logo.svg',
 		status: 'finished',
 		stages: [],
@@ -2683,6 +2689,7 @@ export const events: Event[] = [
 		name: 'Waiguoren stringify invitational',
 		official: false,
 		server: 'strinova',
+		region: 'Global',
 		status: 'finished',
 		image: 'https://pbs.twimg.com/media/GQsFljEbYAEXWIZ?format=jpg&name=4096x4096',
 		stages: [],
@@ -2700,6 +2707,7 @@ export const events: Event[] = [
 		name: 'Strinova Quark Invitational',
 		official: false,
 		server: 'strinova',
+		region: 'Global',
 		status: 'finished',
 		image: 'https://picsum.photos/seed/sqi/300/200?blur',
 		stages: [],
@@ -2717,6 +2725,7 @@ export const events: Event[] = [
 		name: 'Strinova Superstring Invitational',
 		official: false,
 		server: 'strinova',
+		region: 'Global',
 		status: 'finished',
 		image: 'https://picsum.photos/seed/ssi/300/200?blur',
 		stages: [],
@@ -2734,6 +2743,7 @@ export const events: Event[] = [
 		name: '摩卡杯 S1',
 		official: false,
 		server: 'strinova',
+		region: 'CN',
 		status: 'finished',
 		image: 'https://picsum.photos/seed/moca-s1/300/200?blur',
 		stages: [],
@@ -2751,6 +2761,7 @@ export const events: Event[] = [
 		name: '摩卡杯 S2',
 		official: false,
 		server: 'strinova',
+		region: 'CN',
 		status: 'finished',
 		image: 'https://picsum.photos/seed/moca-s2/300/200?blur',
 		stages: [],
@@ -2768,6 +2779,7 @@ export const events: Event[] = [
 		name: '摩卡杯 S3',
 		official: false,
 		server: 'strinova',
+		region: 'CN',
 		status: 'finished',
 		image: 'https://picsum.photos/seed/moca-s3/300/200?blur',
 		stages: [],

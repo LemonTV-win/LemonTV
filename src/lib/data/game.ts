@@ -4,7 +4,8 @@ export type Region =
 	| 'NA' // North America
 	| 'SA' // South America
 	| 'EU' // Europe
-	| 'WA'; // Western Asia
+	| 'WA' // Western Asia
+	| 'Global';
 
 export type GameMap =
 	| 'base_404'
