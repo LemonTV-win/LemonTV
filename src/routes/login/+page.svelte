@@ -7,8 +7,9 @@
 	import Mail from '~icons/lucide/mail';
 	import User from '~icons/lucide/user';
 	import Github from '~icons/lucide/github';
+	import type { PageServerData } from './$types';
 
-	let { form }: { form: ActionData } = $props();
+	let { form, data }: { form: ActionData; data: PageServerData } = $props();
 	let activeTab = $state('login');
 	let showPassword = $state(false);
 	let showConfirmPassword = $state(false);
@@ -42,7 +43,7 @@
 			});
 
 			if (response.ok) {
-				window.location.href = '/';
+				window.location.href = data.redirect || '/';
 			} else {
 				const data = await response.json();
 				form = { message: data.message };
@@ -69,7 +70,7 @@
 			});
 
 			if (response.ok) {
-				window.location.href = '/';
+				window.location.href = data.redirect || '/';
 			} else {
 				const data = await response.json();
 				form = { message: data.message };

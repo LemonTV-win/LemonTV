@@ -7,6 +7,7 @@
 	import MaterialSymbolsCloseRounded from '~icons/material-symbols/close-rounded';
 	import type { LayoutProps } from './$types';
 	import { enhance } from '$app/forms';
+	import { page } from '$app/state';
 
 	let { data, children }: LayoutProps = $props();
 
@@ -86,7 +87,7 @@
 		</div>
 	{:else}
 		<a
-			href="/login?register=true"
+			href="/login?redirect={page.url.pathname}"
 			class="rounded-md border-1 border-gray-500 bg-gray-800 px-4 py-1 text-white transition-colors duration-300 hover:bg-gray-700"
 			>Sign in</a
 		>

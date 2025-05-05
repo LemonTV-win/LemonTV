@@ -11,7 +11,10 @@ export const load: PageServerLoad = async (event) => {
 	if (event.locals.user) {
 		return redirect(302, '/profile');
 	}
-	return {};
+
+	return {
+		redirect: event.url.searchParams.get('redirect') || '/'
+	};
 };
 
 export const actions: Actions = {
