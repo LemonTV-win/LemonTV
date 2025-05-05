@@ -1604,8 +1604,8 @@ export const events: Event[] = [
 					{
 						id: 220003,
 						teams: [
-							{ team: teams['BP'], score: 2 },
-							{ team: teams['SDF'], score: 0 }
+							{ team: teams['BP'], score: 1 },
+							{ team: teams['SDF'], score: 2 }
 						],
 						battleOf: 'BO3',
 						maps: []
