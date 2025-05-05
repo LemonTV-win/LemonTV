@@ -1565,7 +1565,106 @@ export const events: Event[] = [
 		image:
 			'https://img.tonamel.com/c!/f=webp:auto,w=1600,h=900,a=2/upload_images/organize_competition/yROLW/fc1ed3f7ca5a35d6de5c20a8db90b617b89a063bedaaba6a205de19c1b00ad07.jpg',
 		status: 'finished',
-		stages: [],
+		stages: [
+			{
+				id: 1,
+				title: 'Qualifiers',
+				stage: 'qualifier',
+				format: 'round-robin',
+				matches: [],
+				structure: {
+					rounds: [],
+					nodes: []
+				}
+			},
+			{
+				id: 2,
+				title: 'Main Bracket',
+				stage: 'playoff',
+				format: 'single',
+				matches: [
+					{
+						id: 220001,
+						teams: [
+							{ team: teams['BP'], score: 2 },
+							{ team: teams['SKS'], score: 0 }
+						],
+						battleOf: 'BO3',
+						maps: []
+					},
+					{
+						id: 220002,
+						teams: [
+							{ team: teams['SDF'], score: 2 },
+							{ team: teams['SI'], score: 0 }
+						],
+						battleOf: 'BO3',
+						maps: []
+					},
+					{
+						id: 220003,
+						teams: [
+							{ team: teams['BP'], score: 2 },
+							{ team: teams['SDF'], score: 0 }
+						],
+						battleOf: 'BO3',
+						maps: []
+					},
+					{
+						id: 220004,
+						teams: [
+							{ team: teams['SKS'], score: 2 },
+							{ team: teams['SI'], score: 0 }
+						],
+						battleOf: 'BO3',
+						maps: []
+					}
+				],
+				structure: {
+					rounds: [
+						{
+							id: 0,
+							type: 'semifinals'
+						},
+						{
+							id: 1,
+							type: 'final'
+						},
+						{
+							id: 2,
+							type: 'thirdplace',
+							parallelGroup: 1
+						}
+					],
+					nodes: [
+						{
+							matchId: 220001,
+							round: 0
+						},
+						{
+							matchId: 220002,
+							round: 0
+						},
+						{
+							matchId: 220003,
+							round: 1,
+							dependsOn: [
+								{ matchId: 220001, outcome: 'winner' },
+								{ matchId: 220002, outcome: 'winner' }
+							]
+						},
+						{
+							matchId: 220004,
+							round: 2,
+							dependsOn: [
+								{ matchId: 220001, outcome: 'loser' },
+								{ matchId: 220002, outcome: 'loser' }
+							]
+						}
+					]
+				}
+			}
+		],
 		organizer: {
 			name: '川島宮殿',
 			logo: 'https://pbs.twimg.com/profile_images/1792733020912545792/NKEIhBSI_400x400.jpg',
