@@ -61,5 +61,6 @@
 	"no_data": "데이터가 없습니다",
 	"finished": "종료",
 	"live": "라이브",
-	"view_all_events": "모든 이벤트 보기"
+	"view_all_events": "모든 이벤트 보기",
+	"results": "결과"
 }

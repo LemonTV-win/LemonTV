@@ -40,6 +40,11 @@ export interface StageStructure {
 	nodes: StageNode[];
 }
 
+export interface EventPrize {
+	amount: number;
+	currency: string;
+}
+
 export interface Event {
 	id: number;
 	slug: string;
@@ -69,6 +74,11 @@ export interface Event {
 	livestreams?: {
 		platform: 'twitch' | 'youtube';
 		url: string;
+	}[];
+	results?: {
+		rank: number;
+		team: Team;
+		prizes: EventPrize[];
 	}[];
 }
 
@@ -1583,6 +1593,88 @@ export const events: Event[] = [
 			teams['KSQ'],
 			teams['KNO'],
 			teams['SDF']
+		],
+		results: [
+			{
+				rank: 7,
+				team: teams['KSQ'],
+				prizes: [
+					{
+						amount: 8000,
+						currency: 'Bablo'
+					}
+				]
+			},
+			{
+				rank: 7,
+				team: teams['CRCC'],
+				prizes: [
+					{
+						amount: 8000,
+						currency: 'Bablo'
+					}
+				]
+			},
+			{
+				rank: 6,
+				team: teams['AFT'],
+				prizes: [
+					{
+						amount: 8000,
+						currency: 'Bablo'
+					}
+				]
+			},
+			{
+				rank: 5,
+				team: teams['KGH'],
+				prizes: [
+					{
+						amount: 8000,
+						currency: 'Bablo'
+					}
+				]
+			},
+			{
+				rank: 4,
+				team: teams['SI'],
+				prizes: [
+					{
+						amount: 16000,
+						currency: 'Bablo'
+					}
+				]
+			},
+			{
+				rank: 3,
+				team: teams['SKS'],
+				prizes: [
+					{
+						amount: 25000,
+						currency: 'Bablo'
+					}
+				]
+			},
+			{
+				rank: 2,
+				team: teams['BP'],
+				prizes: [
+					{
+						amount: 35000,
+						currency: 'Bablo'
+					}
+				]
+			},
+			{
+				rank: 1,
+				team: teams['SDF'],
+				prizes: [
+					{
+						amount: 45000,
+						currency: 'Bablo'
+					}
+				]
+			}
 		]
 	},
 	{

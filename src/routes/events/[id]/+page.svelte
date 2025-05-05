@@ -100,6 +100,32 @@
 				<BracketGraph {stage} />
 			{/each}
 		{/if}
+		{#if data.event.results}
+			<h2 class="my-4 text-2xl font-bold text-white">{m.results()}</h2>
+			<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+				{#each data.event.results.sort((a, b) => a.rank - b.rank) as result}
+					<div class="flex flex-col items-center gap-2 rounded-sm bg-gray-200/10 p-4">
+						<div class="text-4xl font-bold text-yellow-500">#{result.rank}</div>
+						{#if result.team.logo}
+							<img src={result.team.logo} alt={result.team.name} class="h-16 w-16 rounded-full" />
+						{/if}
+						<div class="text-center">
+							<div class="font-bold">{result.team.name}</div>
+							<div class="text-gray-400">({result.team.region})</div>
+						</div>
+						<div class="flex flex-col items-center gap-1">
+							{#each result.prizes as prize}
+								<div class="text-yellow-500">
+									{prize.amount.toLocaleString()}
+									{prize.currency}
+								</div>
+							{/each}
+						</div>
+					</div>
+				{/each}
+			</div>
+		{/if}
+
 		<h2 class="my-4 text-2xl font-bold text-white">{m.attending_teams()}</h2>
 		<ul class="flex flex-wrap gap-4">
 			{#each data.event.teams as team}
