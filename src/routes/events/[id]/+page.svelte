@@ -15,6 +15,8 @@
 	import GgOrganisation from '~icons/gg/organisation';
 	import IconParkSolidPeoples from '~icons/icon-park-solid/peoples';
 	import IconParkSolidCalendar from '~icons/icon-park-solid/calendar';
+	import IconParkSolidLocalPin from '~icons/icon-park-solid/local-pin';
+	import IconParkSolidCheckOne from '~icons/icon-park-solid/check-one';
 	let activeStage = $state<Stage | null>(null);
 
 	$inspect(activeStage);
@@ -44,12 +46,26 @@
 						/>
 					{/if}
 					{data.event.organizer.name}
-				</a>
+				</a>・
+				<span class="inline-flex items-center gap-1">
+					<IconParkSolidLocalPin class="inline-block h-4 w-4" />
+					<span>{data.event.region}</span>
+				</span>
+				{#if data.event.official}
+					<span class="inlineflex items-center gap-1">
+						<IconParkSolidCheckOne class="inline-block h-4 w-4" />
+						<span>{m.official()}</span>
+					</span>
+				{/if}
 				<br />
-				<IconParkSolidPeoples class="inline-block h-4 w-4" />{m.teams_count({
-					count: data.event.capacity
-				})}・<IconParkSolidCalendar class="inline-block h-4 w-4" />
-				<time datetime={data.event.date}>{data.event.date.replace('/', ' - ')}</time>
+				<span class="inline-flex items-center gap-1">
+					<IconParkSolidPeoples class="inline-block h-4 w-4" />{m.teams_count({
+						count: data.event.capacity
+					})}</span
+				>・<span class="inline-flex items-center gap-1">
+					<IconParkSolidCalendar class="inline-block h-4 w-4" />
+					<time datetime={data.event.date}>{data.event.date.replace('/', ' - ')}</time>
+				</span>
 			</div>
 			{#if data.event.website}
 				<a
