@@ -202,7 +202,29 @@
 				{/each}
 			</div>
 		{/if}
-
+		{#if data.event.highlights}
+			<section>
+				<h2 class="my-4 text-2xl font-bold text-white">{m.highlights()}</h2>
+				<ul class="flex flex-wrap gap-4">
+					{#each data.event.highlights as highlight}
+						{#if highlight.startsWith('https://www.twitch.tv/')}
+							<li>
+								<iframe
+									src={`https://clips.twitch.tv/embed?clip=${highlight.split('/').pop()}&parent=lemon.mkpo.li`}
+									allowfullscreen
+									title={`${data.event.name} - ${highlight}`}
+									frameborder="0"
+									scrolling="no"
+									height="378"
+									width="620"
+								>
+								</iframe>
+							</li>
+						{/if}
+					{/each}
+				</ul>
+			</section>
+		{/if}
 		<h2 class="my-4 text-2xl font-bold text-white">{m.attending_teams()}</h2>
 		<ul class="flex flex-wrap gap-4">
 			{#each data.event.teams as team}

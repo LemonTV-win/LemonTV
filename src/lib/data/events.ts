@@ -82,6 +82,7 @@ export interface Event {
 		team: Team;
 		prizes: EventPrize[];
 	}[];
+	highlights?: string[];
 }
 
 // const MMC_QUALIFIERS: Stage[] = [
@@ -1778,6 +1779,15 @@ export const events: Event[] = [
 					}
 				]
 			}
+		],
+		highlights: [
+			'https://www.twitch.tv/kawashimakyuden/clip/BillowingExuberantPorcupineOSsloth-IVXXOk83_FshmXdA',
+			'https://www.twitch.tv/kawashimakyuden/clip/AntsySmilingButterflyWTRuck-lP423TgoTg6O4BSg',
+			'https://www.twitch.tv/kawashimakyuden/clip/TriangularAdorableMilkMrDestructoid-PU_ZwmTpJ4PGGDaw',
+			'https://www.twitch.tv/kawashimakyuden/clip/SillyObeseCormorantTBTacoLeft-Vc1kG7frQ1bp0czx',
+			'https://www.twitch.tv/kawashimakyuden/clip/CarefulCuteNostrilNerfRedBlaster-iolAyPlnftAVVoQs',
+			'https://www.twitch.tv/kawashimakyuden/clip/FurtiveKnottyClipzKeyboardCat-kVQxVrrA4HHvrLzN',
+			'https://www.twitch.tv/kawashimakyuden/clip/TrustworthySourAmazonStinkyCheese-q5hWAfgD9igExWBX'
 		]
 	},
 	{
