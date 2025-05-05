@@ -276,7 +276,9 @@
 							???
 						{/if}
 					{:else}
-						<li class="flex min-w-48 flex-col items-center gap-2 rounded-sm bg-gray-200/10 p-2">
+						<li
+							class="flex min-h-48 min-w-48 flex-col items-center gap-2 rounded-sm bg-gray-200/10 p-2"
+						>
 							<div class="flex h-full w-full flex-col items-center justify-center gap-2">
 								<IconParkSolidPeoples class="h-16 w-16 text-gray-700" />
 								<div class="text-2xl font-bold text-gray-700">TBD</div>
