@@ -225,34 +225,57 @@
 				</ul>
 			</section>
 		{/if}
-		<h2 class="my-4 text-2xl font-bold text-white">{m.attending_teams()}</h2>
-		<ul class="flex flex-wrap gap-4">
-			{#each data.event.teams as team}
-				<li class="flex min-w-48 flex-col items-center gap-2 rounded-sm bg-gray-200/10 p-2">
-					{#if team.logo}
-						<img src={team.logo} alt={team.name} class="h-4 w-4 rounded-full" />
+		<section>
+			<h2 class="my-4 text-2xl font-bold text-white">{m.attending_teams()}</h2>
+			<ul class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+				{#each [...data.event.teams, ...Array.from({ length: data.event.capacity - data.event.teams.length }, () => null)] as team}
+					{#if team}
+						<li
+							class="grid min-w-48 grid-cols-2 grid-rows-[auto_1fr] gap-2 rounded-sm bg-gray-200/10 p-4"
+						>
+							<h3 class="col-span-2 font-bold">
+								<a href={`/teams/${team.id}`} class="hover:text-yellow-500">{team.name}</a>
+							</h3>
+							<div class="flex flex-col items-center justify-center gap-2">
+								{#if team.logo}
+									<img src={team.logo} alt={team.name} class="h-4 w-4 rounded-full" />
+								{:else}
+									<IconParkSolidPeoples class="h-16 w-16 text-gray-300" />
+								{/if}
+								<span class="text-gray-400">({team.region})</span>
+							</div>
+							<ul class="text-sm">
+								{#each team.players?.slice(0, 5) ?? [] as player}
+									{#if player}
+										<li>
+											<a href={`/players/${player.id}`} class="hover:text-yellow-500">
+												{player.name}
+											</a>
+										</li>
+									{/if}
+								{/each}
+								{#each [...(team.substitutes ?? []), ...(team.players?.slice(5) ?? [])] as player}
+									{#if player}
+										<li class="text-white/50">
+											<a href={`/players/${player.id}`} class="hover:text-yellow-500"
+												>{player.name}</a
+											>
+										</li>
+									{/if}
+								{/each}
+							</ul>
+						</li>
+					{:else}
+						<li class="flex min-w-48 flex-col items-center gap-2 rounded-sm bg-gray-200/10 p-2">
+							<div class="flex h-full w-full flex-col items-center justify-center gap-2">
+								<IconParkSolidPeoples class="h-16 w-16 text-gray-700" />
+								<div class="text-2xl font-bold text-gray-700">TBD</div>
+							</div>
+						</li>
 					{/if}
-					{team.name}
-					<span class="text-gray-400">({team.region})</span>
-					<ul>
-						{#each team.players ?? [] as player}
-							{#if player}
-								<li>
-									<a href={`/players/${player.id}`}>{player.name}</a>
-								</li>
-							{/if}
-						{/each}
-						{#each team.substitutes ?? [] as player}
-							{#if player}
-								<li class="text-white/50">
-									<a href={`/players/${player.id}`}>{player.name}</a>
-								</li>
-							{/if}
-						{/each}
-					</ul>
-				</li>
-			{/each}
-		</ul>
+				{/each}
+			</ul>
+		</section>
 	</div>
 {/if}
 
