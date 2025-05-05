@@ -23,7 +23,7 @@
 		<div class="flex flex-col p-4">
 			<span class="text-xl text-white sm:text-2xl">{event.name}</span>
 			{#if detailed}
-				<div class="flex gap-4">
+				<div class="flex gap-4 text-gray-400">
 					<span class="flex items-center gap-1">
 						<IconParkSolidCalendar class="inline-block h-4 w-4" />
 						<time datetime={event.date}>{event.date.replace('/', ' - ')}</time>
