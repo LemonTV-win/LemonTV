@@ -65,7 +65,7 @@ export function getTeamMemberStatistics(team: Team): Record<
 	}
 > | null {
 	return Object.fromEntries(
-		team.players?.map((player) => [
+		team.players?.filter(Boolean).map((player) => [
 			player.id ?? '',
 			{
 				kd: calculatePlayerKD(player),
