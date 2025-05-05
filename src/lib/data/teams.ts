@@ -278,7 +278,10 @@ export const teams: Record<string, Team> = {
 			players['Flamesicon'],
 			players['Put'],
 			players['KanamiMyDearest'],
-			players['bululelysia']
+			players['bululelysia'],
+			players['xXBunDauSlayerXx'],
+			players['KNDxFlamescion2'],
+			players['Fumin0']
 		]
 	},
 	SI: {
@@ -318,8 +321,7 @@ export const teams: Record<string, Team> = {
 			players['myan777みゃん'],
 			players['さめじまさめみ'],
 			players['Yueee'],
-			players['Killersans'],
-			players['LOVE']
+			players['Killersans']
 		]
 	},
 	KGH: {
@@ -345,7 +347,7 @@ export const teams: Record<string, Team> = {
 			players['Karuto丶Beloved'],
 			players['Rinko'],
 			players['Actyuki丶Student'],
-			players['zKeiser']
+			players['fumiko好き']
 		]
 	},
 	OTG: {
@@ -398,10 +400,11 @@ export const teams: Record<string, Team> = {
 			players['Ken256'],
 			players['暗闇の紅茶'],
 			players['maimainoob'],
-			players['Cream6230'],
+			players['kobo1010'],
 			players['Viatorice'],
 			players['カミリウイ'],
-			players['Hiyokotte']
+			players['Hiyokotte'],
+			players['Cream6230']
 		]
 	},
 	SSE: {
@@ -456,6 +459,49 @@ export const teams: Record<string, Team> = {
 			players['陌悠理'],
 			players['bili会求风的鱼'],
 			players['Asuaka']
+		]
+	},
+	MMR: {
+		id: 'mmr',
+		name: 'MMR',
+		region: 'CN',
+		players: [players['Fan'], players['yzii'], players['Rite'], players['Xiaowu'], players['ON']]
+	},
+	SUS: {
+		id: 'ss',
+		name: 'Super Shuai',
+		region: 'NA',
+		players: [
+			players['lyr1c'],
+			players['Kariyu'],
+			players['BriBri'],
+			players['BTMC'],
+			players['Tuonto']
+		]
+	},
+	NG: {
+		id: 'ng',
+		name: 'Nova Guardians',
+		region: 'APAC',
+		players: [
+			players['Masuo'],
+			players['kept'],
+			players['SKJsa2'],
+			players['SKJShinka'],
+			players['SoVault']
+		]
+	},
+	TM: {
+		id: 'tm',
+		name: 'Twisted Minds',
+		region: 'WA',
+		players: [
+			players['Zimo'],
+			players['ExiT'],
+			players['Saint'],
+			// players['Gwzh'],
+			players['GWZH'],
+			players['Fr4nky']
 		]
 	}
 };

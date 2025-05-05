@@ -116,7 +116,9 @@ export function getPlayerTeams(id: string) {
 }
 
 export function getPlayerEvents(id: string) {
-	return getEvents().filter((event) => event.teams.some((team) => isPlayerInTeam(id, team)));
+	return getEvents().filter((event) =>
+		event.participants.some(({ team }) => isPlayerInTeam(id, team))
+	);
 }
 
 export function getPlayerMatches(

@@ -72,7 +72,12 @@ export interface Event {
 	capacity: number; // expected number of teams
 	date: string;
 	websites?: string[];
-	teams: Team[];
+	participants: {
+		team: Team;
+		main: string[];
+		reserve: string[];
+		coach: string[];
+	}[];
 	livestreams?: {
 		platform: 'twitch' | 'youtube';
 		url: string;
@@ -1544,16 +1549,44 @@ export const events: Event[] = [
 		],
 		capacity: 16,
 		date: '2025-02-01',
-		teams: [
+		participants: [
 			// TODO: Add roaster at the time
-			teams['TG'],
-			teams['GUGF'],
-			teams['KRC'],
-			teams['DRI'],
-			teams['GA'],
-			teams['TA'],
-			teams['DA'],
-			teams['BP']
+			{
+				team: teams['TG'],
+				main: ['frostyZK', 'grustleking', 'gengu', 'Ascinei', 'Blexiss'],
+				reserve: ['uno'],
+				coach: []
+			},
+			{
+				team: teams['GUGF'],
+				main: ['JY10137', '逍遥sama', '羽生翼', 'MIZU', 'BOXCAT'],
+				reserve: ['Chtho1ly', 'ChengCheng'],
+				coach: []
+			},
+			{
+				team: teams['KRC'],
+				main: ['xohfiy', 'Kariyu', 'FOX1Yukino', 'HonkWith4ks', 'numOneZKFan'],
+				reserve: [],
+				coach: []
+			},
+			{
+				team: teams['DRI'],
+				main: ['Creepz', 'Poison', 'Moozor', 'Vampire', 'GWZH'],
+				reserve: [],
+				coach: []
+			},
+			{
+				team: teams['GA'],
+				main: ['cherry', 'iYu', 'Actyuki', 'Saya', 'Jav'],
+				reserve: ['SilliestOfThreat', 'Actyuki丶Student'],
+				coach: []
+			},
+			{
+				team: teams['DA'],
+				main: ['Mansek', 'Scylla', 'sinna', 'ARGHGHGHGHGHHGHG', 'will'],
+				reserve: ['Voxy'],
+				coach: []
+			}
 		]
 	},
 	{
@@ -1680,23 +1713,103 @@ export const events: Event[] = [
 				url: 'https://www.twitch.tv/kawashimakyuden'
 			}
 		],
-		teams: [
-			teams['CRCC'],
-			teams['AFT'],
-			teams['GCSC'],
-			teams['SI'],
-			teams['BP'],
-			teams['SKS'],
-			teams['KGH'],
-			teams['CW'],
-			teams['OTG'],
-			teams['NBT'],
-			teams['KD'],
-			teams['UKZ'],
-			teams['SSE'],
-			teams['KSQ'],
-			teams['KNO'],
-			teams['SDF']
+		participants: [
+			{
+				team: teams['CRCC'],
+				main: ['Lph4m4218', 'FrostyNade', 'Fis', 'HoangTuHaDong', 'Dinaaa'],
+				reserve: ['nekocyan', 'Khanh3993'],
+				coach: []
+			},
+			{
+				team: teams['AFT'],
+				main: ['京こ', 'xelcee', 'Zacro', 'kuronory', 'rt0803'],
+				reserve: ['おっか', 'ななせ'],
+				coach: []
+			},
+			{
+				team: teams['GCSC'],
+				main: ['Fumin0', 'xXBunDauSlayerXx', 'bululelysia', 'KNDxFlamesicon2', 'Put'],
+				reserve: ['KanamiMyDearest', 'hyacinexcon'],
+				coach: []
+			},
+			{
+				team: teams['SI'],
+				main: ['ToiYeuRem', 'Unmei', 'Miaa', 'Korofunk', 'Helixu'],
+				reserve: ['Davy', 'HVO'],
+				coach: []
+			},
+			{
+				team: teams['BP'],
+				main: ['EFFECT', '마들렌', 'Y0ungEgg', 'P1ckUp', 'aewan'],
+				reserve: ['Shingwan', 'clown'],
+				coach: []
+			},
+			{
+				team: teams['SKS'],
+				main: ['時雨綺羅', 'myan777みゃん', 'さめじまさめみ', 'Yueee', 'TpT'],
+				reserve: [],
+				coach: []
+			},
+			{
+				team: teams['KGH'],
+				main: ['Saya', 'iYu', 'SilliestOfThreat', 'MemeVPND', 'ChildHelper'],
+				reserve: [],
+				coach: []
+			},
+			{
+				team: teams['CW'],
+				main: ['Katarieeku', 'belongtoyou', 'YunaLiv', 'Karuto丶Beloved', 'Rinko'],
+				reserve: ['Actyuki丶Student', 'fumiko好き'],
+				coach: []
+			},
+			{
+				team: teams['OTG'],
+				main: ['0nesyo', 'begonia', 'dore52x', 'visucuit125', 'yusia'],
+				reserve: ['iLiss', 'いよたけ'],
+				coach: []
+			},
+			{
+				team: teams['NBT'],
+				main: ['FPThahyun', '시벌', '레고', '살찐족제비', '만두도둑'],
+				reserve: ['리로', '공백'],
+				coach: []
+			},
+			{
+				team: teams['KD'],
+				main: ['RiN林', 'Papyrus', 'Koalski', 'itsChun', 'Airii'],
+				reserve: ['Naphta', 'KuroTama39'],
+				coach: []
+			},
+			{
+				team: teams['UKZ'],
+				main: ['Ken256', '暗闇の紅茶', 'maimainoob', 'kobo1010', 'Viatorice'],
+				reserve: ['カミリウイ', 'Hiyokotte'],
+				coach: []
+			},
+			{
+				team: teams['SSE'],
+				main: ['Hinako', 'Su4y', 'はーいあなた', 'RoiPaetSip', 'Artツ'],
+				reserve: ['Hik', 'EmperorHikJinwoo'],
+				coach: []
+			},
+			{
+				team: teams['KSQ'],
+				main: ['칠흑', 'Mejiro Ryan', '한월2', 'PGtexas', 'AKUKU'],
+				reserve: [],
+				coach: []
+			},
+			{
+				team: teams['KNO'],
+				main: ['swaegaepinoe', 'PrincyJK', 'Remiami', 'DinoSaurKing88', 'Titanu5'],
+				reserve: ['GreedyLuminous', 'AerixD'],
+				coach: []
+			},
+			{
+				team: teams['SDF'],
+				main: ['月神', '世間天使雨宮優子', 'twitchWenli', 'ChengCheng', '陌悠理'],
+				reserve: ['bili会求风的鱼', 'Asuaka'],
+				coach: []
+			}
 		],
 		results: [
 			{
@@ -1806,21 +1919,67 @@ export const events: Event[] = [
 		},
 		capacity: 14,
 		date: '2025-02-24',
-		teams: [
-			teams['TG'],
-			teams['WK'],
-			teams['ML'],
-			teams['OC'],
-			teams['DA'],
-			teams['YU'],
-			teams['YG'],
-			teams['HC'],
-			teams['GS'],
-			teams['DRI'],
-			teams['XKAM'],
-			teams['LDP'],
-			teams['MA'],
-			teams['SF']
+		participants: [
+			{
+				team: teams['TG'],
+				main: ['frostyZK', 'ttvBlexiss', 'grustleking', 'gengu', 'Ascinei'],
+				reserve: [],
+				coach: []
+			},
+			{
+				team: teams['WK'],
+				main: ['Jstn', 'Xaly', 'extraya', 'GloriousNico', 'DEMXN'],
+				reserve: ['Juzify', 'Vora'],
+				coach: []
+			},
+			{
+				team: teams['ML'],
+				main: ['akwa', 'BriBri', 'nine', 'HiroRune', 'Kito'],
+				reserve: ['jayeezy'],
+				coach: []
+			},
+			{
+				team: teams['OC'],
+				main: ['Skyerzz', 'whoisLexu', 'AjDemon', 'MEGATRONOFDEATH', 'Fjin'],
+				reserve: ['Stykades', 'zcz'],
+				coach: []
+			},
+			{
+				team: teams['DA'],
+				main: ['Mansek', 'Scylla', 'sinna', 'ARGHGHGHGHGHHGHG', 'will'],
+				reserve: ['Voxy'],
+				coach: []
+			},
+			{
+				team: teams['YU'],
+				main: ['aKura', 'Flausch', '00YUE00', 'GrizzlyGripper28', 'NekoNoTsuki'],
+				reserve: ['schwertfish', 'KatzenMilch'],
+				coach: []
+			},
+			{
+				team: teams['YG'],
+				main: ['nxreq', 'pookie', 'ze', 'KanamiDoggye', 'audience'],
+				reserve: ['MaddeFeetSniffer', 'SophieRain'],
+				coach: []
+			},
+			{
+				team: teams['XKAM'],
+				main: ['진주', '百荷', 'AmyamyaThe女神', 'Accellerator', 'RuleR'],
+				reserve: ['爱莉希雅丨侵蚀'],
+				coach: []
+			},
+			{
+				team: teams['MA'],
+				main: ['Ely', 'shadow', 'lachevre', 'Revali', 'BurningStar'],
+				reserve: ['PHRESHBOYSWAG'],
+				coach: []
+			},
+			{
+				team: teams['SF'],
+				main: ['GhostElectricity', 'Ria', 'FocalorsinBlue', 'JustZero', 'messup'],
+				reserve: ['supercrownnegev', 'Soulen'],
+				coach: []
+			}
 		],
 
 		stages: [
@@ -2768,28 +2927,32 @@ export const events: Event[] = [
 			name: 'Esports World Cup',
 			url: 'https://esportsworldcup.com/en/2024'
 		},
-		capacity: 16,
+		capacity: 4,
 		date: '2024-08-04/2024-08-05',
-		teams: [
+		participants: [
 			{
-				id: 'MMR',
-				name: 'MMR',
-				region: 'CN'
+				team: teams['MMR'],
+				main: ['Fan', 'yzii', 'Rite', 'Xiaowu', 'ON'],
+				reserve: [],
+				coach: []
 			},
 			{
-				id: 'SS',
-				name: 'Super Shuai',
-				region: 'NA'
+				team: teams['SUS'],
+				main: ['lyr1c', 'Kariyu', 'BriBri', 'BTMC', 'Tuonto'],
+				reserve: [],
+				coach: []
 			},
 			{
-				id: 'NG',
-				name: 'Nova Guardians',
-				region: 'APAC'
+				team: teams['NG'],
+				main: ['Masuo', 'kept', 'SKJsa2', 'SKJShinka', 'SoVault'],
+				reserve: [],
+				coach: []
 			},
 			{
-				name: 'Twisted Minds',
-				id: 'TM',
-				region: 'WA'
+				team: teams['TM'],
+				main: ['Zimo', 'ExiT', 'Saint', 'GWZH', 'Fr4nky'],
+				reserve: [],
+				coach: []
 			}
 		]
 	},
@@ -2809,7 +2972,7 @@ export const events: Event[] = [
 		},
 		capacity: 0,
 		date: '2024-06-22/2024-06-23',
-		teams: []
+		participants: []
 	},
 	{
 		id: 6,
@@ -2827,7 +2990,7 @@ export const events: Event[] = [
 		},
 		capacity: 0,
 		date: '2024-01-01',
-		teams: []
+		participants: []
 	},
 	{
 		id: 7,
@@ -2845,7 +3008,7 @@ export const events: Event[] = [
 		},
 		capacity: 0,
 		date: '2024-01-02',
-		teams: []
+		participants: []
 	},
 	{
 		id: 8,
@@ -2863,7 +3026,7 @@ export const events: Event[] = [
 		},
 		capacity: 0,
 		date: '2023-01-01',
-		teams: []
+		participants: []
 	},
 	{
 		id: 9,
@@ -2881,7 +3044,7 @@ export const events: Event[] = [
 		},
 		capacity: 0,
 		date: '2023-01-02',
-		teams: []
+		participants: []
 	},
 	{
 		id: 10,
@@ -2899,14 +3062,6 @@ export const events: Event[] = [
 		},
 		capacity: 0,
 		date: '2023-01-03',
-		teams: []
+		participants: []
 	}
 ];
-
-for (const event of events) {
-	for (const team of event.teams) {
-		if (!team) {
-			console.log(event.teams);
-		}
-	}
-}

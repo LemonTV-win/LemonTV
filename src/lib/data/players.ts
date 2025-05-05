@@ -354,7 +354,8 @@ export const players: Record<string, Player> = {
 		gameAccounts: [
 			{
 				accountId: 2116730,
-				currentName: 'MemeVPND',
+				currentName: 'MEMEVPND',
+				names: ['MemeVPND'],
 				region: 'APAC'
 			}
 		]
@@ -587,7 +588,14 @@ export const players: Record<string, Player> = {
 	Miaa: {
 		id: 'Miaa',
 		name: 'Miaa',
-		gameAccounts: []
+		nationality: 'VN',
+		gameAccounts: [
+			{
+				accountId: 5751826,
+				currentName: 'Mía丶',
+				region: 'APAC'
+			}
+		]
 	},
 	Korofunk: {
 		id: 'Korofunk',
@@ -1812,9 +1820,128 @@ export const players: Record<string, Player> = {
 		id: 'Asuaka',
 		name: 'Asuaka',
 		gameAccounts: []
+	},
+	Fumin0: {
+		id: 'Fumin0',
+		name: 'Fumin0',
+		gameAccounts: []
+	},
+	KNDxFlamescion2: {
+		id: 'KNDxFlamescion2',
+		name: 'KNDxFlamescion2',
+		gameAccounts: []
+	},
+	xXBunDauSlayerXx: {
+		id: 'xXBunDauSlayerXx',
+		name: 'xXBunDauSlayerXx',
+		gameAccounts: [
+			{
+				accountId: 3873106,
+				currentName: 'xXBunDauSlayerXx'
+			}
+		]
+	},
+	fumiko好き: {
+		id: 'fumiko好き',
+		name: 'fumiko好き',
+		gameAccounts: []
+	},
+	kobo1010: {
+		id: 'kobo1010',
+		name: 'kobo1010',
+		gameAccounts: [
+			{
+				accountId: 7695126,
+				currentName: 'kobo1010'
+			}
+		]
+	},
+	Masuo: {
+		id: 'Masuo',
+		name: 'Masuo',
+		gameAccounts: []
+	},
+	kept: {
+		id: 'kept',
+		name: 'kept',
+		gameAccounts: []
+	},
+	SKJsa2: {
+		id: 'SKJsa2',
+		name: 'SKJsa2',
+		gameAccounts: []
+	},
+	SKJShinka: {
+		id: 'SKJShinka',
+		name: 'SKJShinka',
+		gameAccounts: []
+	},
+	SoVault: {
+		id: 'SoVault',
+		name: 'SoVault',
+		gameAccounts: []
+	},
+	Zimo: {
+		id: 'Zimo',
+		name: 'Zimo',
+		gameAccounts: []
+	},
+	ExiT: {
+		id: 'ExiT',
+		name: 'ExiT',
+		gameAccounts: []
+	},
+	Saint: {
+		id: 'Saint',
+		name: 'Saint',
+		gameAccounts: []
+	},
+	Fr4nky: {
+		id: 'Fr4nky',
+		name: 'Fr4nky',
+		gameAccounts: []
+	},
+	Fan: {
+		id: 'Fan',
+		name: 'Fan',
+		gameAccounts: []
+	},
+	yzii: {
+		id: 'yzii',
+		name: 'yzii',
+		gameAccounts: []
+	},
+	Rite: {
+		id: 'Rite',
+		name: 'Rite',
+		gameAccounts: []
+	},
+	Xiaowu: {
+		id: 'Xiaowu',
+		name: 'Xiaowu',
+		gameAccounts: []
+	},
+	ON: {
+		id: 'ON',
+		name: 'ON',
+		gameAccounts: []
+	},
+	BTMC: {
+		id: 'BTMC',
+		name: 'BTMC',
+		gameAccounts: []
+	},
+	Tuonto: {
+		id: 'Tuonto',
+		name: 'Tuonto',
+		gameAccounts: []
+	},
+	lyr1c: {
+		id: 'lyr1c',
+		name: 'lyr1c',
+		gameAccounts: []
 	}
 };
-
 export function getAllNames(player: Player) {
 	return [
 		// player.name,

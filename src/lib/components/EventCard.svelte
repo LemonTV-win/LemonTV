@@ -31,7 +31,7 @@
 					</span>
 					<span class="flex items-center gap-1">
 						<IconParkSolidPeoples class="inline-block h-4 w-4" />
-						<span>{event.teams.length}</span>
+						<span>{event.participants.length}</span>
 					</span>
 					<span class="flex items-center gap-1">
 						<IconParkSolidLocalPin class="inline-block h-4 w-4" />
