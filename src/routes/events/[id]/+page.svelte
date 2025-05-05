@@ -137,7 +137,9 @@
 											? 'text-xl'
 											: 'text-lg'}"
 								>
-									{result.team.name}
+									<a href={`/teams/${result.team.id}`} class="hover:text-yellow-500">
+										{result.team.name}
+									</a>
 								</div>
 								<div class="text-gray-400">({result.team.region})</div>
 							</div>
@@ -161,7 +163,11 @@
 							<img src={result.team.logo} alt={result.team.name} class="h-16 w-16 rounded-full" />
 						{/if}
 						<div class="text-center">
-							<div class="font-bold">{result.team.name}</div>
+							<div class="font-bold">
+								<a href={`/teams/${result.team.id}`} class="hover:text-yellow-500">
+									{result.team.name}
+								</a>
+							</div>
 							<div class="text-gray-400">({result.team.region})</div>
 						</div>
 						<div class="flex flex-col items-center gap-1">
