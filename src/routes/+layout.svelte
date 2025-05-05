@@ -1,12 +1,14 @@
 <script lang="ts">
 	import '../app.css';
 
-	let { children } = $props();
-
 	import { m } from '$lib/paraglide/messages.js';
 	import { setLocale, type Locale, getLocale } from '$lib/paraglide/runtime';
 	import MaterialSymbolsMenuRounded from '~icons/material-symbols/menu-rounded';
 	import MaterialSymbolsCloseRounded from '~icons/material-symbols/close-rounded';
+	import type { LayoutProps } from './$types';
+	import { enhance } from '$app/forms';
+
+	let { data, children }: LayoutProps = $props();
 
 	const locales: Record<Locale, string> = {
 		en: 'English',
@@ -71,6 +73,24 @@
 			{/each}
 		</select>
 	</nav>
+	{#if data.user}
+		<div class="flex items-center gap-2">
+			<a href="/profile" class="text-white">{data.user.username}</a>
+			<form method="post" action="/?/logout" use:enhance>
+				<button
+					type="submit"
+					class="rounded-md border-1 border-gray-500 bg-gray-800 px-4 py-1 text-white transition-colors duration-300 hover:bg-gray-700"
+					>Sign out</button
+				>
+			</form>
+		</div>
+	{:else}
+		<a
+			href="/login?register=true"
+			class="rounded-md border-1 border-gray-500 bg-gray-800 px-4 py-1 text-white transition-colors duration-300 hover:bg-gray-700"
+			>Sign in</a
+		>
+	{/if}
 </header>
 
 <!-- Mobile navigation menu -->
