@@ -1550,7 +1550,7 @@ export const events: Event[] = [
 		server: 'strinova',
 		image:
 			'https://img.tonamel.com/c!/f=webp:auto,w=1600,h=900,a=2/upload_images/organize_competition/yROLW/fc1ed3f7ca5a35d6de5c20a8db90b617b89a063bedaaba6a205de19c1b00ad07.jpg',
-		status: 'live',
+		status: 'finished',
 		stages: [],
 		organizer: {
 			name: '川島宮殿',
