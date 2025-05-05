@@ -62,5 +62,7 @@
 	"finished": "종료",
 	"live": "라이브",
 	"view_all_events": "모든 이벤트 보기",
-	"results": "결과"
+	"results": "결과",
+	"official": "공식",
+	"unofficial": "비공식"
 }

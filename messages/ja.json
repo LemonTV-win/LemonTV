@@ -61,5 +61,7 @@
 	"no_data": "データがありません",
 	"finished": "終了",
 	"live": "ライブ",
-	"view_all_events": "すべてのイベントを見る"
+	"view_all_events": "すべてのイベントを見る",
+	"official": "公式",
+	"unofficial": "非公式"
 }

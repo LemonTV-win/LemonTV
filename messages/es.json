@@ -62,5 +62,7 @@
 	"finished": "Finalizado",
 	"live": "LIVE",
 	"view_all_events": "Ver Todos los Eventos",
-	"results": "Resultados"
+	"results": "Resultados",
+	"official": "Oficial",
+	"unofficial": "No Oficial"
 }

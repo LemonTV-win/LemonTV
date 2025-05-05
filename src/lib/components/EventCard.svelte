@@ -5,6 +5,7 @@
 	import IconParkSolidCalendar from '~icons/icon-park-solid/calendar';
 	import IconParkSolidPeoples from '~icons/icon-park-solid/peoples';
 	import IconParkSolidLocalPin from '~icons/icon-park-solid/local-pin';
+	import IconParkSolidCheckOne from '~icons/icon-park-solid/check-one';
 
 	let { event, detailed = false }: { event: Event; detailed?: boolean } = $props();
 	// TODO:
@@ -36,6 +37,12 @@
 						<IconParkSolidLocalPin class="inline-block h-4 w-4" />
 						<span>{event.region}</span>
 					</span>
+					{#if event.official}
+						<span class="flex items-center gap-1">
+							<IconParkSolidCheckOne class="inline-block h-4 w-4" />
+							<span>{m.official()}</span>
+						</span>
+					{/if}
 				</div>
 			{/if}
 		</div>

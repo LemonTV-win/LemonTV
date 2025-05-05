@@ -61,5 +61,7 @@
 	"no_data": "No data",
 	"finished": "Finished",
 	"live": "LIVE",
-	"view_all_events": "View All Events"
+	"view_all_events": "View All Events",
+	"official": "Official",
+	"unofficial": "Unofficial"
 }

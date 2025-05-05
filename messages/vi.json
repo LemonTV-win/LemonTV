@@ -62,5 +62,7 @@
 	"finished": "Đã hoàn tất",
 	"live": "LIVE",
 	"view_all_events": "Xem tất cả sự kiện",
-	"results": "Kết quả"
+	"results": "Kết quả",
+	"official": "Chính thức",
+	"unofficial": "Không chính thức"
 }

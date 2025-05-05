@@ -62,5 +62,7 @@
 	"finished": "已结束",
 	"live": "进行中",
 	"view_all_events": "查看所有赛事",
-	"results": "结果"
+	"results": "结果",
+	"official": "官方",
+	"unofficial": "非官方"
 }

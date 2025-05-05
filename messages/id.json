@@ -62,5 +62,7 @@
 	"finished": "Selesai",
 	"live": "LIVE",
 	"view_all_events": "Lihat Semua Acara",
-	"results": "Hasil"
+	"results": "Hasil",
+	"official": "Resmi",
+	"unofficial": "Tidak Resmi"
 }
