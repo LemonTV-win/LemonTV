@@ -18,6 +18,10 @@
 	let activeStage = $state<Stage | null>(null);
 
 	$inspect(activeStage);
+
+	const sortedResults = (data.event.results ?? []).slice().sort((a, b) => a.rank - b.rank);
+	const top3 = sortedResults.slice(0, 3);
+	const podiumOrder = top3.length >= 3 ? [top3[1], top3[0], top3[2]] : top3;
 </script>
 
 {#if data.event}
@@ -102,10 +106,57 @@
 		{/if}
 		{#if data.event.results}
 			<h2 class="my-4 text-2xl font-bold text-white">{m.results()}</h2>
+			<div class="flex h-72 items-end justify-center gap-6 px-4">
+				{#each podiumOrder as result}
+					<div
+						class="flex min-w-64 flex-col items-center justify-between gap-2 bg-gray-200/10 p-4 {result.rank ===
+						1
+							? 'z-10 h-[100%]'
+							: result.rank === 2
+								? 'h-[80%]'
+								: 'h-[70%]'}"
+					>
+						<div
+							class="text-4xl font-bold {result.rank === 1
+								? 'py-8 text-6xl text-yellow-400'
+								: result.rank === 2
+									? 'py-4 text-5xl text-gray-300'
+									: 'py-2 text-amber-700'}"
+						>
+							#{result.rank}
+						</div>
+						{#if result.team.logo}
+							<img src={result.team.logo} alt={result.team.name} class="h-16 w-16 rounded-full" />
+						{/if}
+						<div class="flex flex-col items-center gap-2">
+							<div class="text-center">
+								<div
+									class="font-bold {result.rank === 1
+										? 'text-2xl'
+										: result.rank === 2
+											? 'text-xl'
+											: 'text-lg'}"
+								>
+									{result.team.name}
+								</div>
+								<div class="text-gray-400">({result.team.region})</div>
+							</div>
+							<div class="flex flex-col items-center gap-1">
+								{#each result.prizes as prize}
+									<div class="text-yellow-500">
+										{prize.amount.toLocaleString()}
+										{prize.currency}
+									</div>
+								{/each}
+							</div>
+						</div>
+					</div>
+				{/each}
+			</div>
 			<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-				{#each data.event.results.sort((a, b) => a.rank - b.rank) as result}
-					<div class="flex flex-col items-center gap-2 rounded-sm bg-gray-200/10 p-4">
-						<div class="text-4xl font-bold text-yellow-500">#{result.rank}</div>
+				{#each data.event.results.sort((a, b) => a.rank - b.rank).slice(3) as result}
+					<div class="flex flex-col items-center gap-2 bg-gray-200/10 p-4">
+						<div class="text-4xl font-bold text-yellow-600">#{result.rank}</div>
 						{#if result.team.logo}
 							<img src={result.team.logo} alt={result.team.name} class="h-16 w-16 rounded-full" />
 						{/if}
