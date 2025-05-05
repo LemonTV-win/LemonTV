@@ -107,43 +107,54 @@
 	}
 
 	let tooltipID = $state<number>();
+
+	let highlightingTeam = $state<string>();
 </script>
 
 {#snippet matchContainer(match: Match, i: number)}
-	<button
+	<div
 		class="relative z-10 cursor-pointer bg-zinc-800 text-white decoration-0 shadow-md transition-shadow duration-200 hover:shadow-lg"
-		onmouseenter={() => (tooltipID = match.id)}
-		onmouseleave={() => (tooltipID = undefined)}
 		use:register={match.id}
 	>
 		<!-- your MatchCard or custom markup -->
-		<a href={`/matches/${match.id}`} class="match">
-			<div
+		<a
+			href={`/matches/${match.id}`}
+			class="match"
+			onmouseenter={() => (tooltipID = match.id)}
+			onmouseleave={() => (tooltipID = undefined)}
+		>
+			<button
 				class={[
-					'flex justify-between gap-4 border-b-1 border-l-4 border-gray-500 px-2 py-1',
+					'flex w-full justify-between gap-4 border-b-1 border-l-4 border-gray-500 px-2 py-1',
 					isWinner(match, match.teams[0].team)
 						? 'border-l-yellow-400 font-semibold'
 						: 'border-l-red-500 text-gray-300'
 				]}
+				onmouseenter={() => (highlightingTeam = match.teams[0].team.id)}
+				onmouseleave={() => (highlightingTeam = undefined)}
+				class:bg-gray-700={highlightingTeam === match.teams[0].team.id}
 			>
 				{match.teams[0].team.name}
 				{#if match.teams[0].score !== undefined}
 					<span class="score">{match.teams[0].score}</span>
 				{/if}
-			</div>
-			<div
+			</button>
+			<button
 				class={[
-					'flex justify-between gap-4 border-l-4 border-gray-500 px-2 py-1',
+					'flex w-full justify-between gap-4 border-l-4 border-gray-500 px-2 py-1',
 					isWinner(match, match.teams[1].team)
 						? 'border-l-4 border-yellow-500 font-semibold'
 						: 'border-l-4 border-red-500 text-gray-300'
 				]}
+				onmouseenter={() => (highlightingTeam = match.teams[1].team.id)}
+				onmouseleave={() => (highlightingTeam = undefined)}
+				class:bg-gray-700={highlightingTeam === match.teams[1].team.id}
 			>
 				{match.teams[1].team.name}
 				{#if match.teams[1].score !== undefined}
 					<span class="score">{match.teams[1].score}</span>
 				{/if}
-			</div>
+			</button>
 		</a>
 		{#if match.games && tooltipID === match.id}
 			{@const results = match.games.map((g) => g.result)}
@@ -170,7 +181,7 @@
 				{/each}
 			</div>
 		{/if}
-	</button>
+	</div>
 {/snippet}
 
 <div
