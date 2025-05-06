@@ -138,7 +138,7 @@
 								{/if}
 							{/each}
 						</td>
-						<td class="flex hidden flex-wrap gap-1 sm:flex">
+						<td class="hidden flex-wrap gap-1 sm:flex">
 							{#each data.playersAgents[player.id ?? ''] as superstring}
 								<CharacterIcon character={superstring[0]} />
 							{/each}
