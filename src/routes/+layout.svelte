@@ -8,6 +8,7 @@
 	import MaterialSymbolsAccountCircle from '~icons/material-symbols/account-circle';
 	import MaterialSymbolsLogoutRounded from '~icons/material-symbols/logout-rounded';
 	import MaterialSymbolsSettingsRounded from '~icons/material-symbols/settings-rounded';
+	import MaterialSymbolsTranslateRounded from '~icons/material-symbols/translate-rounded';
 	import type { LayoutProps } from './$types';
 	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
@@ -64,7 +65,7 @@
 </svelte:head>
 
 <header
-	class="flex items-center justify-between border-b-1 border-gray-500 bg-gray-800 px-3 py-4 text-white"
+	class="flex items-center justify-between border-b-1 border-gray-500 bg-gray-800 px-4 py-4 text-white"
 >
 	<a href="/" class="flex items-center gap-2 text-2xl font-bold">
 		<img src="/favicon.svg" alt="LemonTV" class="h-10 w-10" />
@@ -88,6 +89,7 @@
 		<a href="/players">{m.players()}</a>
 		<a href="/community">{m.community()}</a>
 	</nav>
+
 	{#if data.user}
 		<div class="user-menu relative hidden md:block">
 			<button
@@ -112,17 +114,20 @@
 						Profile Settings
 					</a>
 					<div class="px-4 py-2">
-						<select
-							class="w-full rounded-md bg-gray-700 px-2 py-1 text-sm text-white"
-							onchange={({ currentTarget }) => {
-								setLocale(currentTarget.value as Locale);
-							}}
-							bind:value={locale}
-						>
-							{#each Object.entries(locales) as [locale, label]}
-								<option value={locale}>{label}</option>
-							{/each}
-						</select>
+						<div class="flex items-center gap-2">
+							<MaterialSymbolsTranslateRounded class="h-6 w-6 text-gray-300" />
+							<select
+								class="w-full rounded-md bg-gray-700 px-4 py-0 text-white"
+								onchange={({ currentTarget }) => {
+									setLocale(currentTarget.value as Locale);
+								}}
+								bind:value={locale}
+							>
+								{#each Object.entries(locales) as [locale, label]}
+									<option value={locale}>{label}</option>
+								{/each}
+							</select>
+						</div>
 					</div>
 					<hr class="border-gray-700" />
 					<form method="post" action="/?/logout" use:enhance>
@@ -138,18 +143,21 @@
 			{/if}
 		</div>
 	{:else}
-		<div class="flex items-center gap-2">
-			<select
-				class="rounded-md bg-gray-800 px-4 py-1 text-white"
-				onchange={({ currentTarget }) => {
-					setLocale(currentTarget.value as Locale);
-				}}
-				bind:value={locale}
-			>
-				{#each Object.entries(locales) as [locale, label]}
-					<option value={locale}>{label}</option>
-				{/each}
-			</select>
+		<div class="hidden items-center gap-2 md:flex">
+			<div class="flex items-center gap-2">
+				<MaterialSymbolsTranslateRounded class="h-6 w-6 text-gray-300" />
+				<select
+					class="rounded-md bg-gray-700 px-3 py-1 text-white"
+					onchange={({ currentTarget }) => {
+						setLocale(currentTarget.value as Locale);
+					}}
+					bind:value={locale}
+				>
+					{#each Object.entries(locales) as [locale, label]}
+						<option value={locale}>{label}</option>
+					{/each}
+				</select>
+			</div>
 			<a
 				href="/login?redirect={page.url.pathname}"
 				class="rounded-md border-1 border-gray-500 bg-gray-800 px-4 py-1 text-white transition-colors duration-300 hover:bg-gray-700"
@@ -173,53 +181,61 @@
 					<MaterialSymbolsAccountCircle class="h-8 w-8 text-white" />
 					<span class="text-lg font-medium">{data.user.username}</span>
 				</div>
-				<a
-					href="/profile"
-					class="flex items-center gap-2 py-2 text-lg text-gray-300"
-					onclick={toggleMobileMenu}
-				>
-					<MaterialSymbolsSettingsRounded class="h-6 w-6" />
-					Profile Settings
-				</a>
-				<div class="py-2">
-					<select
-						class="w-full rounded-md bg-gray-700 px-4 py-2 text-white"
-						onchange={({ currentTarget }) => {
-							setLocale(currentTarget.value as Locale);
-						}}
-						bind:value={locale}
-					>
-						{#each Object.entries(locales) as [locale, label]}
-							<option value={locale}>{label}</option>
-						{/each}
-					</select>
-				</div>
-				<hr class="border-gray-700" />
-				<form method="post" action="/?/logout" use:enhance>
-					<button
-						type="submit"
-						class="flex w-full items-center gap-2 py-2 text-lg text-gray-300"
+				<div class="pl-4">
+					<a
+						href="/profile"
+						class="flex items-center gap-2 py-2 text-lg text-gray-300"
 						onclick={toggleMobileMenu}
 					>
-						<MaterialSymbolsLogoutRounded class="h-6 w-6" />
-						Sign out
-					</button>
-				</form>
+						<MaterialSymbolsSettingsRounded class="h-6 w-6" />
+						Profile Settings
+					</a>
+					<div class="py-2">
+						<div class="flex items-center gap-2">
+							<MaterialSymbolsTranslateRounded class="h-6 w-6 text-gray-300" />
+							<select
+								class="w-full rounded-md bg-gray-700 px-4 py-2 text-white"
+								onchange={({ currentTarget }) => {
+									setLocale(currentTarget.value as Locale);
+								}}
+								bind:value={locale}
+							>
+								{#each Object.entries(locales) as [locale, label]}
+									<option value={locale}>{label}</option>
+								{/each}
+							</select>
+						</div>
+					</div>
+					<hr class="border-gray-700" />
+					<form method="post" action="/?/logout" use:enhance>
+						<button
+							type="submit"
+							class="flex w-full items-center gap-2 py-2 text-lg text-gray-300"
+							onclick={toggleMobileMenu}
+						>
+							<MaterialSymbolsLogoutRounded class="h-6 w-6" />
+							Sign out
+						</button>
+					</form>
+				</div>
 			</div>
 		{:else}
 			<div class="mt-4 border-t border-gray-700 pt-4">
 				<div class="mb-4">
-					<select
-						class="w-full rounded-md bg-gray-700 px-4 py-2 text-white"
-						onchange={({ currentTarget }) => {
-							setLocale(currentTarget.value as Locale);
-						}}
-						bind:value={locale}
-					>
-						{#each Object.entries(locales) as [locale, label]}
-							<option value={locale}>{label}</option>
-						{/each}
-					</select>
+					<div class="flex items-center gap-2">
+						<MaterialSymbolsTranslateRounded class="h-6 w-6 text-gray-300" />
+						<select
+							class="w-full rounded-md bg-gray-700 px-4 py-2 text-white"
+							onchange={({ currentTarget }) => {
+								setLocale(currentTarget.value as Locale);
+							}}
+							bind:value={locale}
+						>
+							{#each Object.entries(locales) as [locale, label]}
+								<option value={locale}>{label}</option>
+							{/each}
+						</select>
+					</div>
 				</div>
 				<a
 					href="/login?redirect={page.url.pathname}"
