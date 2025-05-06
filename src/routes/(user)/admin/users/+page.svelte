@@ -36,8 +36,8 @@
 		const formData = new FormData(form);
 		const action = formData.get('action') as 'add' | 'remove';
 
-		enhance(form, ({ update }) => {
-			update();
+		enhance(form, () => async ({ update }) => {
+			await update();
 			successMessage = action === 'add' ? 'Role added successfully' : 'Role removed successfully';
 			setTimeout(() => {
 				successMessage = '';
@@ -50,8 +50,8 @@
 		successMessage = '';
 
 		const form = event.target as HTMLFormElement;
-		enhance(form, ({ update }) => {
-			update();
+		enhance(form, () => async ({ update }) => {
+			await update();
 			successMessage = editingRole ? 'Role updated successfully' : 'Role created successfully';
 			setTimeout(() => {
 				successMessage = '';
@@ -66,8 +66,8 @@
 		successMessage = '';
 
 		const form = event.target as HTMLFormElement;
-		enhance(form, ({ update }) => {
-			update();
+		enhance(form, () => async ({ update }) => {
+			await update();
 			successMessage = 'Role deleted successfully';
 			setTimeout(() => {
 				successMessage = '';
@@ -136,7 +136,7 @@
 											<form
 												method="POST"
 												action="?/updateRole"
-												on:submit={handleRoleUpdate}
+												onsubmit={handleRoleUpdate}
 												class="inline-flex items-center gap-1"
 											>
 												<input type="hidden" name="userId" value={user.id} />
@@ -159,7 +159,7 @@
 										<form
 											method="POST"
 											action="?/updateRole"
-											on:submit={handleRoleUpdate}
+											onsubmit={handleRoleUpdate}
 											class="inline-flex items-center gap-1"
 										>
 											<input type="hidden" name="userId" value={user.id} />
@@ -198,7 +198,7 @@
 				<form
 					method="POST"
 					action={editingRole ? '?/updateRoleName' : '?/createRole'}
-					on:submit={handleRoleForm}
+					onsubmit={handleRoleForm}
 					class="space-y-4"
 				>
 					{#if editingRole}
@@ -222,7 +222,7 @@
 							<button
 								type="button"
 								class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
-								on:click={cancelEditRole}
+								onclick={cancelEditRole}
 							>
 								Cancel
 							</button>
@@ -248,14 +248,14 @@
 									<button
 										type="button"
 										class="text-yellow-500 hover:text-yellow-400"
-										on:click={() => startEditRole(role)}
+										onclick={() => startEditRole(role)}
 									>
 										Edit
 									</button>
 									<form
 										method="POST"
 										action="?/deleteRole"
-										on:submit={handleDeleteRole}
+										onsubmit={handleDeleteRole}
 										class="inline"
 									>
 										<input type="hidden" name="id" value={role.id} />
