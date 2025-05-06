@@ -6,6 +6,7 @@
 	import EyeOff from '~icons/lucide/eye-off';
 	import Lock from '~icons/lucide/lock';
 	import { m } from '$lib/paraglide/messages';
+	import InlineAlert from '$lib/components/InlineAlert.svelte';
 
 	let { data }: { data: PageServerData } = $props();
 	let error: string | null = $state(null);
@@ -52,12 +53,10 @@
 				<div class="mb-8">
 					<h2 class="mb-4 text-xl font-semibold text-white">{m.change_password()}</h2>
 					{#if error}
-						<div class="mb-4 rounded-md bg-red-500/10 p-4 text-red-400">{error}</div>
+						<InlineAlert type="error" message={error} />
 					{/if}
 					{#if success}
-						<div class="mb-4 rounded-md bg-green-500/10 p-4 text-green-400">
-							{m.password_changed()}
-						</div>
+						<InlineAlert type="success" message={m.password_changed()} />
 					{/if}
 					<form
 						method="post"

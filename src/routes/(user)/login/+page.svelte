@@ -10,7 +10,7 @@
 	import type { PageServerData } from './$types';
 	import { m } from '$lib/paraglide/messages';
 	import { LOGIN_SCHEMA, REGISTER_SCHEMA } from '$lib/validations/auth';
-	import Alert from '$lib/components/Alert.svelte';
+	import InlineAlert from '$lib/components/InlineAlert.svelte';
 
 	type FormData = { message: string; success?: never } | { success: true; message?: never };
 	let { form, data }: { form: FormData | null; data: PageServerData } = $props();
@@ -90,14 +90,6 @@
 	});
 </script>
 
-{#if form?.message}
-	<Alert type="error" message={form.message} />
-{/if}
-
-{#if successMessage}
-	<Alert type="success" message={successMessage} dismissible={false} />
-{/if}
-
 <main class="flex min-h-[calc(100dvh-9em)] flex-1 items-center justify-center p-4">
 	<div class="w-full max-w-md">
 		<div class="rounded-lg border border-slate-800 bg-slate-900/70 shadow-lg">
@@ -129,6 +121,12 @@
 					<p class="text-slate-400">{m.enter_credentials()}</p>
 				</div>
 				<div class="p-6">
+					{#if form?.message}
+						<InlineAlert type="error" message={form.message} />
+					{/if}
+					{#if successMessage}
+						<InlineAlert type="success" message={successMessage} />
+					{/if}
 					<form method="POST" action="?/login" use:enhance={handleLoginSubmit} class="space-y-4">
 						<div class="space-y-2">
 							<label for="username" class="block text-white">{m.username()}</label>
@@ -234,6 +232,12 @@
 					<p class="text-slate-400">{m.enter_details()}</p>
 				</div>
 				<div class="p-6">
+					{#if form?.message}
+						<InlineAlert type="error" message={form.message} />
+					{/if}
+					{#if successMessage}
+						<InlineAlert type="success" message={successMessage} />
+					{/if}
 					<form
 						method="POST"
 						action="?/register"
