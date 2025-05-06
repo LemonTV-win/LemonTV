@@ -2,7 +2,8 @@ import type { Region } from '$lib/data/game';
 
 export interface Player {
 	id: string;
-	name: string;
+	name: string; // display name
+	slug?: string; // url name (https://lemon.mkpo.li/players/<slug>)
 	nationality?: 'KR' | 'JP' | 'TW' | 'US' | 'VN' | 'ID' | 'CN';
 	aliases?: string[];
 	gameAccounts: GameAccount[];
