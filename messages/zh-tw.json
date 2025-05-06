@@ -105,5 +105,11 @@
 	"cancel": "取消",
 	"create": "創建",
 	"update": "更新",
-	"add": "添加"
+	"add": "添加",
+	"role_management": "角色管理",
+	"new_role": "新角色",
+	"edit_role": "编辑角色",
+	"existing_roles": "现有角色",
+	"role_name": "角色名称",
+	"add_role": "添加角色..."
 }

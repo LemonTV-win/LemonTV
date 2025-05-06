@@ -104,5 +104,11 @@
 	"cancel": "キャンセル",
 	"create": "作成",
 	"update": "更新",
-	"add": "追加"
+	"add": "追加",
+	"role_management": "ロール管理",
+	"new_role": "新しいロール",
+	"edit_role": "ロールを編集",
+	"existing_roles": "既存のロール",
+	"role_name": "ロール名",
+	"add_role": "ロールを追加..."
 }

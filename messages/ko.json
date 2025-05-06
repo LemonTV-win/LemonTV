@@ -105,5 +105,11 @@
 	"cancel": "취소",
 	"create": "생성",
 	"update": "업데이트",
-	"add": "추가"
+	"add": "추가",
+	"role_management": "역할 관리",
+	"new_role": "새 역할",
+	"edit_role": "역할 수정",
+	"existing_roles": "기존 역할",
+	"role_name": "역할 이름",
+	"add_role": "역할 추가..."
 }

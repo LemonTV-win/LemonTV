@@ -105,5 +105,11 @@
 	"cancel": "Cancelar",
 	"create": "Criar",
 	"update": "Atualizar",
-	"add": "Adicionar"
+	"add": "Adicionar",
+	"role_management": "Gerenciamento de Papéis",
+	"new_role": "Novo Papel",
+	"edit_role": "Editar Papel",
+	"existing_roles": "Papéis Existentes",
+	"role_name": "Nome do Papel",
+	"add_role": "Adicionar Papel..."
 }

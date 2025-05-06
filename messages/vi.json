@@ -105,5 +105,11 @@
 	"cancel": "Hủy bỏ",
 	"create": "Tạo",
 	"update": "Cập nhật",
-	"add": "Thêm"
+	"add": "Thêm",
+	"role_management": "Quản lý vai trò",
+	"new_role": "Vai trò mới",
+	"edit_role": "Chỉnh sửa vai trò",
+	"existing_roles": "Vai trò tồn tại",
+	"role_name": "Tên vai trò",
+	"add_role": "Thêm vai trò..."
 }

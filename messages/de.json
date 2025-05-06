@@ -102,5 +102,12 @@
 	"cancel": "Abbrechen",
 	"create": "Erstellen",
 	"update": "Aktualisieren",
-	"add": "Hinzufügen"
+	"add": "Hinzufügen",
+	"role_management": "Rollenverwaltung",
+	"new_role": "Neue Rolle",
+	"edit_role": "Rolle bearbeiten",
+	"existing_roles": "Vorhandene Rollen",
+	"role_name": "Rollenname",
+	"add_role": "Rolle hinzufügen...",
+	"search_users": "Benutzer suchen..."
 }

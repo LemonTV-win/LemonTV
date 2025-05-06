@@ -105,5 +105,11 @@
 	"cancel": "Cancelar",
 	"create": "Crear",
 	"update": "Actualizar",
-	"add": "Agregar"
+	"add": "Agregar",
+	"role_management": "Gestión de Roles",
+	"new_role": "Nuevo Rol",
+	"edit_role": "Editar Rol",
+	"existing_roles": "Roles Existentes",
+	"role_name": "Nombre del Rol",
+	"add_role": "Agregar Rol..."
 }

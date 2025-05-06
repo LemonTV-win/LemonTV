@@ -105,5 +105,11 @@
 	"cancel": "Batal",
 	"create": "Buat",
 	"update": "Perbarui",
-	"add": "Tambah"
+	"add": "Tambah",
+	"role_management": "Pengelolaan Peran",
+	"new_role": "Peran Baru",
+	"edit_role": "Edit Peran",
+	"existing_roles": "Peran yang Ada",
+	"role_name": "Nama Peran",
+	"add_role": "Tambahkan Peran..."
 }
