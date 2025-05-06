@@ -109,5 +109,10 @@
 	"existing_roles": "Vorhandene Rollen",
 	"role_name": "Rollenname",
 	"add_role": "Rolle hinzufügen...",
-	"search_users": "Benutzer suchen..."
+	"search_users": "Benutzer suchen...",
+	"new_role_id": "Neue Rolle ID",
+	"edit_role_id": "Rolle ID bearbeiten",
+	"new_role_name": "Neuer Rolle Name",
+	"edit_role_name": "Rolle Name bearbeiten",
+	"role_id": "Rolle ID"
 }

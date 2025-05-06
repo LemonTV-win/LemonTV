@@ -110,5 +110,10 @@
 	"edit_role": "ロールを編集",
 	"existing_roles": "既存のロール",
 	"role_name": "ロール名",
-	"add_role": "ロールを追加..."
+	"add_role": "ロールを追加...",
+	"new_role_id": "新しいロールID",
+	"edit_role_id": "ロールIDを編集",
+	"new_role_name": "新しいロール名",
+	"edit_role_name": "ロール名を編集",
+	"role_id": "ロールID"
 }

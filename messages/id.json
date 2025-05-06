@@ -111,5 +111,10 @@
 	"edit_role": "Edit Peran",
 	"existing_roles": "Peran yang Ada",
 	"role_name": "Nama Peran",
-	"add_role": "Tambahkan Peran..."
+	"add_role": "Tambahkan Peran...",
+	"new_role_id": "ID Peran Baru",
+	"edit_role_id": "Edit ID Peran",
+	"new_role_name": "Nama Peran Baru",
+	"edit_role_name": "Edit Nama Peran",
+	"role_id": "ID Peran"
 }

@@ -90,5 +90,10 @@
 	"existing_roles": "Existing Roles",
 	"role_name": "Role name",
 	"add_role": "Add role...",
-	"search_users": "Search users..."
+	"search_users": "Search users...",
+	"new_role_id": "New Role ID",
+	"edit_role_id": "Edit Role ID",
+	"new_role_name": "New Role Name",
+	"edit_role_name": "Edit Role Name",
+	"role_id": "Role ID"
 }

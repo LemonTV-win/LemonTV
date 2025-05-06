@@ -111,5 +111,10 @@
 	"edit_role": "Chỉnh sửa vai trò",
 	"existing_roles": "Vai trò tồn tại",
 	"role_name": "Tên vai trò",
-	"add_role": "Thêm vai trò..."
+	"add_role": "Thêm vai trò...",
+	"new_role_id": "ID vai trò mới",
+	"edit_role_id": "Chỉnh sửa ID vai trò",
+	"new_role_name": "Tên vai trò mới",
+	"edit_role_name": "Chỉnh sửa tên vai trò",
+	"role_id": "ID vai trò"
 }

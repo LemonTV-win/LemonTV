@@ -111,5 +111,10 @@
 	"edit_role": "Editar Papel",
 	"existing_roles": "Papéis Existentes",
 	"role_name": "Nome do Papel",
-	"add_role": "Adicionar Papel..."
+	"add_role": "Adicionar Papel...",
+	"new_role_id": "Novo ID de Papel",
+	"edit_role_id": "Editar ID de Papel",
+	"new_role_name": "Novo Nome de Papel",
+	"edit_role_name": "Editar Nome de Papel",
+	"role_id": "ID de Papel"
 }

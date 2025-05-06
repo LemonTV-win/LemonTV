@@ -111,5 +111,10 @@
 	"edit_role": "역할 수정",
 	"existing_roles": "기존 역할",
 	"role_name": "역할 이름",
-	"add_role": "역할 추가..."
+	"add_role": "역할 추가...",
+	"new_role_id": "새 역할 ID",
+	"edit_role_id": "역할 ID 수정",
+	"new_role_name": "새 역할 이름",
+	"edit_role_name": "역할 이름 수정",
+	"role_id": "역할 ID"
 }

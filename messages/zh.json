@@ -111,5 +111,10 @@
 	"edit_role": "编辑角色",
 	"existing_roles": "现有角色",
 	"role_name": "角色名称",
-	"add_role": "添加角色..."
+	"add_role": "添加角色...",
+	"new_role_id": "新角色ID",
+	"edit_role_id": "编辑角色ID",
+	"new_role_name": "新角色名称",
+	"edit_role_name": "编辑角色名称",
+	"role_id": "角色ID"
 }

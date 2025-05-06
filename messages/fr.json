@@ -111,5 +111,10 @@
 	"edit_role": "Modifier le rôle",
 	"existing_roles": "Rôles existants",
 	"role_name": "Nom du rôle",
-	"add_role": "Ajouter un rôle..."
+	"add_role": "Ajouter un rôle...",
+	"new_role_id": "Nouveau ID de rôle",
+	"edit_role_id": "Modifier l'ID de rôle",
+	"new_role_name": "Nouveau nom de rôle",
+	"edit_role_name": "Modifier le nom de rôle",
+	"role_id": "ID de rôle"
 }

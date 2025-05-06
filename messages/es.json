@@ -111,5 +111,10 @@
 	"edit_role": "Editar Rol",
 	"existing_roles": "Roles Existentes",
 	"role_name": "Nombre del Rol",
-	"add_role": "Agregar Rol..."
+	"add_role": "Agregar Rol...",
+	"new_role_id": "Nuevo ID de Rol",
+	"edit_role_id": "Editar ID de Rol",
+	"new_role_name": "Nuevo Nombre de Rol",
+	"edit_role_name": "Editar Nombre de Rol",
+	"role_id": "ID de Rol"
 }

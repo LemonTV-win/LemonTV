@@ -10,6 +10,7 @@
 	let successMessage = $state('');
 	let editingRole: Role | null = $state(null);
 	let newRoleName = $state('');
+	let newRoleId = $state('');
 
 	let filteredUsers = $derived(
 		data.users.filter((user) => {
@@ -57,6 +58,7 @@
 				successMessage = '';
 				editingRole = null;
 				newRoleName = '';
+				newRoleId = '';
 			}, 3000);
 		});
 	}
@@ -78,11 +80,13 @@
 	function startEditRole(role: Role) {
 		editingRole = role;
 		newRoleName = role.name;
+		newRoleId = role.id;
 	}
 
 	function cancelEditRole() {
 		editingRole = null;
 		newRoleName = '';
+		newRoleId = '';
 	}
 </script>
 
@@ -144,6 +148,7 @@
 												<input type="hidden" name="action" value="remove" />
 												<span
 													class="rounded-full bg-yellow-500/20 px-2 py-0.5 text-sm text-yellow-300"
+													title={role.id}
 												>
 													{role.name}
 												</span>
@@ -202,11 +207,24 @@
 					class="space-y-4"
 				>
 					{#if editingRole}
-						<input type="hidden" name="id" value={editingRole.id} />
+						<input type="hidden" name="oldId" value={editingRole.id} />
 					{/if}
 					<div>
+						<label class="block text-sm font-medium text-slate-300" for="roleId">
+							{editingRole ? m.edit_role_id() : m.new_role_id()}
+						</label>
+						<input
+							type="text"
+							id="roleId"
+							name="id"
+							bind:value={newRoleId}
+							class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+							placeholder={m.role_id()}
+						/>
+					</div>
+					<div>
 						<label class="block text-sm font-medium text-slate-300" for="roleName">
-							{editingRole ? m.edit_role() : m.new_role()}
+							{editingRole ? m.edit_role_name() : m.new_role_name()}
 						</label>
 						<input
 							type="text"
@@ -243,7 +261,10 @@
 							<div
 								class="flex items-center justify-between rounded-md border border-slate-700 bg-slate-800 p-2"
 							>
-								<span class="text-white">{role.name}</span>
+								<div class="flex flex-col">
+									<span class="text-sm text-slate-400">{role.id}</span>
+									<span class="text-white">{role.name}</span>
+								</div>
 								<div class="flex gap-2">
 									<button
 										type="button"
