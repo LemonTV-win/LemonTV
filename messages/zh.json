@@ -132,5 +132,6 @@
 	"username_length": "用户名长度必须在3到31个字符之间",
 	"username_format": "用户名只能包含字母、数字、下划线和连字符",
 	"password_length": "密码长度必须至少为8个字符",
-	"email_format": "请输入有效的电子邮箱地址"
+	"email_format": "请输入有效的电子邮箱地址",
+	"search_users": "搜索用户..."
 }

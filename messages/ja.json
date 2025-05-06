@@ -131,5 +131,7 @@
 	"username_length": "ユーザー名は3〜31文字である必要があります",
 	"username_format": "ユーザー名には文字、数字、アンダースコア、ハイフンのみ使用できます",
 	"password_length": "パスワードは8文字以上である必要があります",
-	"email_format": "有効なメールアドレスを入力してください"
+	"email_format": "有効なメールアドレスを入力してください",
+	"highlights": "ハイライト",
+	"search_users": "ユーザーを検索..."
 }

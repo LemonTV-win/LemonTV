@@ -132,5 +132,6 @@
 	"username_length": "Le nom d'utilisateur doit contenir entre 3 et 31 caractères",
 	"username_format": "Le nom d'utilisateur ne peut contenir que des lettres, des chiffres, des underscores et des tirets",
 	"password_length": "Le mot de passe doit contenir au moins 8 caractères",
-	"email_format": "Veuillez entrer une adresse e-mail valide"
+	"email_format": "Veuillez entrer une adresse e-mail valide",
+	"search_users": "Rechercher des utilisateurs..."
 }
