@@ -186,31 +186,31 @@
 				class="space-y-4"
 			>
 				<div>
-					<label class="block text-sm font-medium text-slate-300" for="id">ID</label>
+					<label class="block text-sm font-medium text-slate-300" for="playerId">ID</label>
 					<input
 						type="text"
-						id="id"
+						id="playerId"
 						bind:value={newPlayer.id}
 						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 						placeholder="Player ID"
 					/>
 				</div>
 				<div>
-					<label class="block text-sm font-medium text-slate-300" for="name">Name</label>
+					<label class="block text-sm font-medium text-slate-300" for="playerName">Name</label>
 					<input
 						type="text"
-						id="name"
+						id="playerName"
 						bind:value={newPlayer.name}
 						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 						placeholder="Display Name"
 					/>
 				</div>
 				<div>
-					<label class="block text-sm font-medium text-slate-300" for="nationality">
+					<label class="block text-sm font-medium text-slate-300" for="playerNationality">
 						Nationality
 					</label>
 					<select
-						id="nationality"
+						id="playerNationality"
 						bind:value={newPlayer.nationality}
 						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 					>
