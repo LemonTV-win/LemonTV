@@ -1,18 +1,19 @@
 <script lang="ts">
 	import type { PageServerData } from './$types';
+	import { m } from '$lib/paraglide/messages';
 
 	let { data }: { data: PageServerData } = $props();
 </script>
 
 <main class="p-4">
-	<h1 class="text-2xl font-bold">Admin Dashboard</h1>
-	<h2 class="text-xl font-bold">Users</h2>
+	<h1 class="text-2xl font-bold">{m.admin_dashboard()}</h1>
+	<h2 class="text-xl font-bold">{m.users()}</h2>
 	<table class="w-full border-collapse">
 		<thead>
 			<tr class="bg-gray-900">
 				<th class="border border-gray-300 p-2 text-left">ID</th>
-				<th class="border border-gray-300 p-2 text-left">Username</th>
-				<th class="border border-gray-300 p-2 text-left">Created At</th>
+				<th class="border border-gray-300 p-2 text-left">{m.username()}</th>
+				<th class="border border-gray-300 p-2 text-left">{m.created_at()}</th>
 			</tr>
 		</thead>
 		<tbody>

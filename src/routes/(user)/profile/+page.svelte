@@ -5,6 +5,7 @@
 	import Eye from '~icons/lucide/eye';
 	import EyeOff from '~icons/lucide/eye-off';
 	import Lock from '~icons/lucide/lock';
+	import { m } from '$lib/paraglide/messages';
 
 	let { data }: { data: PageServerData } = $props();
 	let error: string | null = $state(null);
@@ -36,24 +37,26 @@
 	<div class="w-full max-w-md">
 		<div class="rounded-lg border border-slate-800 bg-slate-900/70 shadow-lg">
 			<div class="space-y-1 p-6 text-center">
-				<h1 class="text-2xl font-bold text-white">Profile Settings</h1>
-				<p class="text-slate-400">Manage your account settings and security</p>
+				<h1 class="text-2xl font-bold text-white">{m.profile_settings()}</h1>
+				<p class="text-slate-400">{m.manage_account()}</p>
 			</div>
 
 			<div class="p-6">
 				<div class="mb-8 rounded-md border border-slate-800 bg-slate-800/50 p-4">
-					<p class="mb-2 text-xl font-medium text-white">Welcome, {data.user.username}!</p>
-					<p class="text-sm text-slate-400">User ID: {data.user.id}</p>
+					<p class="mb-2 text-xl font-medium text-white">
+						{m.welcome({ username: data.user.username })}
+					</p>
+					<p class="text-sm text-slate-400">{m.user_id({ id: data.user.id })}</p>
 				</div>
 
 				<div class="mb-8">
-					<h2 class="mb-4 text-xl font-semibold text-white">Change Password</h2>
+					<h2 class="mb-4 text-xl font-semibold text-white">{m.change_password()}</h2>
 					{#if error}
 						<div class="mb-4 rounded-md bg-red-500/10 p-4 text-red-400">{error}</div>
 					{/if}
 					{#if success}
 						<div class="mb-4 rounded-md bg-green-500/10 p-4 text-green-400">
-							Password changed successfully!
+							{m.password_changed()}
 						</div>
 					{/if}
 					<form
@@ -63,7 +66,7 @@
 						class="space-y-4"
 					>
 						<div class="space-y-2">
-							<label for="currentPassword" class="block text-white">Current Password</label>
+							<label for="currentPassword" class="block text-white">{m.current_password()}</label>
 							<div class="relative">
 								<Lock
 									class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-slate-500"
@@ -89,7 +92,7 @@
 							</div>
 						</div>
 						<div class="space-y-2">
-							<label for="newPassword" class="block text-white">New Password</label>
+							<label for="newPassword" class="block text-white">{m.new_password()}</label>
 							<div class="relative">
 								<Lock
 									class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-slate-500"
@@ -115,7 +118,9 @@
 							</div>
 						</div>
 						<div class="space-y-2">
-							<label for="confirmPassword" class="block text-white">Confirm New Password</label>
+							<label for="confirmPassword" class="block text-white"
+								>{m.confirm_new_password()}</label
+							>
 							<div class="relative">
 								<Lock
 									class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-slate-500"
@@ -144,7 +149,7 @@
 							type="submit"
 							class="w-full rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600 focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:ring-offset-slate-900 focus:outline-none"
 						>
-							Change Password
+							{m.change_password()}
 						</button>
 					</form>
 				</div>
@@ -154,7 +159,7 @@
 						type="submit"
 						class="w-full rounded-md border border-slate-700 px-4 py-2 text-white hover:bg-slate-800 focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 focus:ring-offset-slate-900 focus:outline-none"
 					>
-						Sign out
+						{m.sign_out()}
 					</button>
 				</form>
 			</div>

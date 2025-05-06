@@ -8,6 +8,7 @@
 	import User from '~icons/lucide/user';
 	import Github from '~icons/lucide/github';
 	import type { PageServerData } from './$types';
+	import { m } from '$lib/paraglide/messages';
 
 	let { form, data }: { form: ActionData; data: PageServerData } = $props();
 	let activeTab = $state('login');
@@ -92,31 +93,31 @@
 					class="px-4 py-2 text-center text-sm font-medium transition-colors {activeTab === 'login'
 						? 'border-b-2 border-yellow-500 text-yellow-500'
 						: 'text-slate-400 hover:text-slate-300'}"
-					on:click={() => (activeTab = 'login')}
+					onclick={() => (activeTab = 'login')}
 				>
-					Sign In
+					{m.sign_in()}
 				</button>
 				<button
 					class="px-4 py-2 text-center text-sm font-medium transition-colors {activeTab ===
 					'register'
 						? 'border-b-2 border-yellow-500 text-yellow-500'
 						: 'text-slate-400 hover:text-slate-300'}"
-					on:click={() => (activeTab = 'register')}
+					onclick={() => (activeTab = 'register')}
 				>
-					Register
+					{m.register()}
 				</button>
 			</div>
 
 			{#if activeTab === 'login'}
 				<!-- Login Form -->
 				<div class="space-y-1 p-6 text-center">
-					<h2 class="text-2xl font-bold text-white">Sign in to your account</h2>
-					<p class="text-slate-400">Enter your username and password to access your account</p>
+					<h2 class="text-2xl font-bold text-white">{m.sign_in_to_account()}</h2>
+					<p class="text-slate-400">{m.enter_credentials()}</p>
 				</div>
 				<div class="p-6">
-					<form on:submit={handleLoginSubmit} class="space-y-4">
+					<form onsubmit={handleLoginSubmit} class="space-y-4">
 						<div class="space-y-2">
-							<label for="username" class="block text-white">Username</label>
+							<label for="username" class="block text-white">{m.username()}</label>
 							<div class="relative">
 								<User
 									class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-slate-500"
@@ -135,9 +136,9 @@
 						</div>
 						<div class="space-y-2">
 							<div class="flex items-center justify-between">
-								<label for="password" class="block text-white">Password</label>
+								<label for="password" class="block text-white">{m.password()}</label>
 								<a href="/forgot-password" class="text-xs text-yellow-400 hover:text-yellow-300">
-									Forgot password?
+									{m.forgot_password()}
 								</a>
 							</div>
 							<div class="relative">
@@ -156,7 +157,7 @@
 								/>
 								<button
 									type="button"
-									on:click={() => (showPassword = !showPassword)}
+									onclick={() => (showPassword = !showPassword)}
 									class="absolute top-1/2 right-3 -translate-y-1/2 transform text-slate-500 hover:text-slate-400"
 								>
 									{#if showPassword}
@@ -175,7 +176,7 @@
 								class="rounded border-slate-700 bg-slate-800 text-yellow-500 focus:ring-yellow-500"
 							/>
 							<label for="remember" class="text-sm leading-none font-medium text-slate-300">
-								Remember me
+								{m.remember_me()}
 							</label>
 						</div>
 						<button
@@ -183,7 +184,7 @@
 							class="w-full rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600 disabled:opacity-50"
 							disabled={isLoading}
 						>
-							{isLoading ? 'Signing in...' : 'Sign In'}
+							{isLoading ? m.signing_in() : m.sign_in()}
 						</button>
 					</form>
 
@@ -192,7 +193,7 @@
 							<div class="w-full border-t border-slate-700"></div>
 						</div>
 						<div class="relative flex justify-center text-xs uppercase">
-							<span class="bg-slate-900 px-2 text-slate-500">Or continue with</span>
+							<span class="bg-slate-900 px-2 text-slate-500">{m.or_continue_with()}</span>
 						</div>
 					</div>
 
@@ -214,13 +215,13 @@
 			{:else}
 				<!-- Register Form -->
 				<div class="space-y-1 p-6 text-center">
-					<h2 class="text-2xl font-bold text-white">Create an account</h2>
-					<p class="text-slate-400">Enter your details to create a new account</p>
+					<h2 class="text-2xl font-bold text-white">{m.create_account()}</h2>
+					<p class="text-slate-400">{m.enter_details()}</p>
 				</div>
 				<div class="p-6">
-					<form on:submit={handleRegisterSubmit} class="space-y-4">
+					<form onsubmit={handleRegisterSubmit} class="space-y-4">
 						<div class="space-y-2">
-							<label for="username" class="block text-white">Username</label>
+							<label for="username" class="block text-white">{m.username()}</label>
 							<div class="relative">
 								<User
 									class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-slate-500"
@@ -237,7 +238,7 @@
 							</div>
 						</div>
 						<div class="space-y-2">
-							<label for="register-email" class="block text-white">Email</label>
+							<label for="register-email" class="block text-white">{m.email()}</label>
 							<div class="relative">
 								<Mail
 									class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-slate-500"
@@ -254,7 +255,7 @@
 							</div>
 						</div>
 						<div class="space-y-2">
-							<label for="register-password" class="block text-white">Password</label>
+							<label for="register-password" class="block text-white">{m.password()}</label>
 							<div class="relative">
 								<Lock
 									class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-slate-500"
@@ -270,7 +271,7 @@
 								/>
 								<button
 									type="button"
-									on:click={() => (showPassword = !showPassword)}
+									onclick={() => (showPassword = !showPassword)}
 									class="absolute top-1/2 right-3 -translate-y-1/2 transform text-slate-500 hover:text-slate-400"
 								>
 									{#if showPassword}
@@ -282,7 +283,7 @@
 							</div>
 						</div>
 						<div class="space-y-2">
-							<label for="confirm-password" class="block text-white">Confirm Password</label>
+							<label for="confirm-password" class="block text-white">{m.confirm_password()}</label>
 							<div class="relative">
 								<Lock
 									class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-slate-500"
@@ -298,7 +299,7 @@
 								/>
 								<button
 									type="button"
-									on:click={() => (showConfirmPassword = !showConfirmPassword)}
+									onclick={() => (showConfirmPassword = !showConfirmPassword)}
 									class="absolute top-1/2 right-3 -translate-y-1/2 transform text-slate-500 hover:text-slate-400"
 								>
 									{#if showConfirmPassword}
@@ -309,21 +310,16 @@
 								</button>
 							</div>
 						</div>
-						<div class="flex items-start space-x-2">
+						<div class="flex items-center space-x-2">
 							<input
 								type="checkbox"
 								id="terms"
-								required
 								bind:checked={acceptTerms}
-								class="mt-1 rounded border-slate-700 bg-slate-800 text-yellow-500 focus:ring-yellow-500"
+								required
+								class="rounded border-slate-700 bg-slate-800 text-yellow-500 focus:ring-yellow-500"
 							/>
-							<label for="terms" class="text-sm leading-none text-slate-300">
-								I agree to the
-								<a href="/terms" class="text-yellow-400 hover:text-yellow-300">
-									terms of service
-								</a>
-								and
-								<a href="/privacy" class="text-yellow-400 hover:text-yellow-300"> privacy policy</a>
+							<label for="terms" class="text-sm leading-none font-medium text-slate-300">
+								{m.accept_terms()}
 							</label>
 						</div>
 						<button
@@ -331,7 +327,7 @@
 							class="w-full rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600 disabled:opacity-50"
 							disabled={isLoading}
 						>
-							{isLoading ? 'Creating account...' : 'Create Account'}
+							{isLoading ? m.registering() : m.register()}
 						</button>
 					</form>
 
@@ -340,7 +336,7 @@
 							<div class="w-full border-t border-slate-700"></div>
 						</div>
 						<div class="relative flex justify-center text-xs uppercase">
-							<span class="bg-slate-900 px-2 text-slate-500">Or continue with</span>
+							<span class="bg-slate-900 px-2 text-slate-500">{m.or_continue_with()}</span>
 						</div>
 					</div>
 
