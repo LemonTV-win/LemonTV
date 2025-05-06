@@ -11,6 +11,7 @@
 	}
 
 	import Scoreboard from '$lib/components/Scoreboard.svelte';
+	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 
 	const MAP_2_IMAGE: Record<GameMap, string> = {
 		base_404:
@@ -60,6 +61,15 @@
 </script>
 
 {#if data.match}
+	<Breadcrumbs
+		currentTitle={`${data.match.teams[0].team.name} vs. ${data.match.teams[1].team.name}`}
+		customSegments={['events', data.match.event.name, data.match.id.toString()]}
+		customUrls={[
+			'/events',
+			`/events/${data.match.event.id}`,
+			`/events/${data.match.event.id}/matches`
+		]}
+	/>
 	<div
 		class="banner flex min-h-48 flex-col gap-2 bg-cover bg-top p-4 text-white"
 		style:--banner-image={`url(${MAP_2_IMAGE[data.match.maps?.[currentMapID]?.map ?? 'base_404']})`}
