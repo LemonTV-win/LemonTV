@@ -82,12 +82,32 @@
 	</button>
 
 	<!-- Desktop navigation -->
-	<nav class="hidden items-center gap-4 md:flex">
-		<a href="/news">{m.news()}</a>
-		<a href="/events">{m.events()}</a>
-		<a href="/teams">{m.teams()}</a>
-		<a href="/players">{m.players()}</a>
-		<a href="/community">{m.community()}</a>
+	<nav class="hidden items-center gap-1 md:flex">
+		<a
+			href="/news"
+			class="rounded-md px-4 py-2 transition-all duration-200 hover:bg-gray-700 hover:text-yellow-300 focus:bg-gray-700 focus:text-yellow-300 focus:ring-2 focus:ring-yellow-300 focus:outline-none"
+			>{m.news()}</a
+		>
+		<a
+			href="/events"
+			class="rounded-md px-4 py-2 transition-all duration-200 hover:bg-gray-700 hover:text-yellow-300 focus:bg-gray-700 focus:text-yellow-300 focus:ring-2 focus:ring-yellow-300 focus:outline-none"
+			>{m.events()}</a
+		>
+		<a
+			href="/teams"
+			class="rounded-md px-4 py-2 transition-all duration-200 hover:bg-gray-700 hover:text-yellow-300 focus:bg-gray-700 focus:text-yellow-300 focus:ring-2 focus:ring-yellow-300 focus:outline-none"
+			>{m.teams()}</a
+		>
+		<a
+			href="/players"
+			class="rounded-md px-4 py-2 transition-all duration-200 hover:bg-gray-700 hover:text-yellow-300 focus:bg-gray-700 focus:text-yellow-300 focus:ring-2 focus:ring-yellow-300 focus:outline-none"
+			>{m.players()}</a
+		>
+		<a
+			href="/community"
+			class="rounded-md px-4 py-2 transition-all duration-200 hover:bg-gray-700 hover:text-yellow-300 focus:bg-gray-700 focus:text-yellow-300 focus:ring-2 focus:ring-yellow-300 focus:outline-none"
+			>{m.community()}</a
+		>
 	</nav>
 
 	{#if data.user}
@@ -170,11 +190,31 @@
 <!-- Mobile navigation menu -->
 {#if mobileMenuOpen}
 	<nav class="flex flex-col border-b-1 border-gray-500 bg-gray-800 px-3 py-4 text-white md:hidden">
-		<a href="/news" class="py-2 text-lg" onclick={toggleMobileMenu}>{m.news()}</a>
-		<a href="/events" class="py-2 text-lg" onclick={toggleMobileMenu}>{m.events()}</a>
-		<a href="/teams" class="py-2 text-lg" onclick={toggleMobileMenu}>{m.teams()}</a>
-		<a href="/players" class="py-2 text-lg" onclick={toggleMobileMenu}>{m.players()}</a>
-		<a href="/community" class="py-2 text-lg" onclick={toggleMobileMenu}>{m.community()}</a>
+		<a
+			href="/news"
+			class="rounded-md px-3 py-2 text-lg transition-all duration-200 hover:bg-gray-700 hover:text-yellow-300 focus:bg-gray-700 focus:text-yellow-300 focus:ring-2 focus:ring-yellow-300 focus:outline-none"
+			onclick={toggleMobileMenu}>{m.news()}</a
+		>
+		<a
+			href="/events"
+			class="rounded-md px-3 py-2 text-lg transition-all duration-200 hover:bg-gray-700 hover:text-yellow-300 focus:bg-gray-700 focus:text-yellow-300 focus:ring-2 focus:ring-yellow-300 focus:outline-none"
+			onclick={toggleMobileMenu}>{m.events()}</a
+		>
+		<a
+			href="/teams"
+			class="rounded-md px-3 py-2 text-lg transition-all duration-200 hover:bg-gray-700 hover:text-yellow-300 focus:bg-gray-700 focus:text-yellow-300 focus:ring-2 focus:ring-yellow-300 focus:outline-none"
+			onclick={toggleMobileMenu}>{m.teams()}</a
+		>
+		<a
+			href="/players"
+			class="rounded-md px-3 py-2 text-lg transition-all duration-200 hover:bg-gray-700 hover:text-yellow-300 focus:bg-gray-700 focus:text-yellow-300 focus:ring-2 focus:ring-yellow-300 focus:outline-none"
+			onclick={toggleMobileMenu}>{m.players()}</a
+		>
+		<a
+			href="/community"
+			class="rounded-md px-3 py-2 text-lg transition-all duration-200 hover:bg-gray-700 hover:text-yellow-300 focus:bg-gray-700 focus:text-yellow-300 focus:ring-2 focus:ring-yellow-300 focus:outline-none"
+			onclick={toggleMobileMenu}>{m.community()}</a
+		>
 		{#if data.user}
 			<div class="mt-4 border-t border-gray-700 pt-4">
 				<div class="mb-4 flex items-center gap-2">
