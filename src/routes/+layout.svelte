@@ -100,7 +100,7 @@
 		</select>
 	</nav>
 	{#if data.user}
-		<div class="user-menu relative">
+		<div class="user-menu relative hidden md:block">
 			<button
 				onclick={toggleUserMenu}
 				class="flex items-center gap-2 rounded-full bg-gray-700 p-1 hover:bg-gray-600"
@@ -164,6 +164,40 @@
 				{/each}
 			</select>
 		</div>
+		{#if data.user}
+			<div class="mt-4 border-t border-gray-700 pt-4">
+				<div class="mb-4 flex items-center gap-2">
+					<MaterialSymbolsAccountCircle class="h-8 w-8 text-white" />
+					<span class="text-lg font-medium">{data.user.username}</span>
+				</div>
+				<a
+					href="/profile"
+					class="flex items-center gap-2 py-2 text-lg text-gray-300"
+					onclick={toggleMobileMenu}
+				>
+					<MaterialSymbolsSettingsRounded class="h-6 w-6" />
+					Profile Settings
+				</a>
+				<form method="post" action="/?/logout" use:enhance>
+					<button
+						type="submit"
+						class="flex w-full items-center gap-2 py-2 text-lg text-gray-300"
+						onclick={toggleMobileMenu}
+					>
+						<MaterialSymbolsLogoutRounded class="h-6 w-6" />
+						Sign out
+					</button>
+				</form>
+			</div>
+		{:else}
+			<div class="mt-4 border-t border-gray-700 pt-4">
+				<a
+					href="/login?redirect={page.url.pathname}"
+					class="flex w-full items-center justify-center rounded-md border-1 border-gray-500 bg-gray-700 px-4 py-2 text-lg text-white transition-colors duration-300 hover:bg-gray-600"
+					onclick={toggleMobileMenu}>Sign in</a
+				>
+			</div>
+		{/if}
 	</nav>
 {/if}
 
