@@ -96,5 +96,6 @@
 	"password_changed": "Senha alterada com sucesso!",
 	"admin_dashboard": "Painel do administrador",
 	"users": "Usuários",
-	"created_at": "Criado em"
+	"created_at": "Criado em",
+	"admin_panel": "Painel de Administração"
 }

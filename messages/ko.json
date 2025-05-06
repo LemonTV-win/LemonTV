@@ -96,5 +96,6 @@
 	"password_changed": "비밀번호가 성공적으로 변경되었습니다!",
 	"admin_dashboard": "관리자 대시보드",
 	"users": "사용자",
-	"created_at": "생성일"
+	"created_at": "생성일",
+	"admin_panel": "관리자 패널"
 }

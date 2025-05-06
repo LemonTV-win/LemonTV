@@ -96,5 +96,6 @@
 	"password_changed": "Mot de passe modifié avec succès !",
 	"admin_dashboard": "Tableau de bord administrateur",
 	"users": "Utilisateurs",
-	"created_at": "Créé le"
+	"created_at": "Créé le",
+	"admin_panel": "Panneau d'Administration"
 }

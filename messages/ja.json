@@ -95,5 +95,6 @@
 	"password_changed": "パスワードが正常に変更されました！",
 	"admin_dashboard": "管理者ダッシュボード",
 	"users": "ユーザー",
-	"created_at": "作成日時"
+	"created_at": "作成日時",
+	"admin_panel": "管理者パネル"
 }

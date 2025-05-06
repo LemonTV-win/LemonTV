@@ -95,5 +95,7 @@
 	"password_changed": "Kata sandi berhasil diubah!",
 	"admin_dashboard": "Dasbor Admin",
 	"users": "Pengguna",
-	"created_at": "Dibuat pada"
+	"created_at": "Dibuat pada",
+	"language": "Bahasa",
+	"admin_panel": "Panel Admin"
 }

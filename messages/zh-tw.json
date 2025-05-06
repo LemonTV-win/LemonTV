@@ -96,5 +96,6 @@
 	"password_changed": "密碼修改成功！",
 	"admin_dashboard": "管理員儀表板",
 	"users": "用戶",
-	"created_at": "創建時間"
+	"created_at": "創建時間",
+	"admin_panel": "管理面板"
 }

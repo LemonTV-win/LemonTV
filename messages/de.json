@@ -92,5 +92,7 @@
 	"password_changed": "Passwort erfolgreich geändert!",
 	"admin_dashboard": "Admin-Dashboard",
 	"users": "Benutzer",
-	"created_at": "Erstellt am"
+	"created_at": "Erstellt am",
+	"language": "Sprache",
+	"admin_panel": "Administrationsbereich"
 }

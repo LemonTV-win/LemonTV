@@ -70,5 +70,7 @@
 	"profile_settings": "Profile Settings",
 	"sign_in": "Sign in",
 	"sign_out": "Sign out",
-	"language": "Language"
+	"language": "Language",
+	"admin_panel": "Admin Panel",
+	"users": "Users"
 }

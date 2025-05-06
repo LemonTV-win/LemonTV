@@ -93,5 +93,6 @@
 	"password_changed": "Пароль успешно изменен!",
 	"admin_dashboard": "Панель администратора",
 	"users": "Пользователи",
-	"created_at": "Создан"
+	"created_at": "Создан",
+	"admin_panel": "Панель администратора"
 }
