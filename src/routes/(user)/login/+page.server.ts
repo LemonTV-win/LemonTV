@@ -69,6 +69,22 @@ export const actions: Actions = {
 				.insert(table.user)
 				.values({ id: userId, username, passwordHash, createdAt: new Date() });
 
+			// #region Assign admin role to first user
+			const [adminRole] = await db.select().from(table.role).where(eq(table.role.id, 'admin'));
+
+			if (!adminRole) {
+				throw new Error('Admin role not found');
+			}
+
+			const [existingUser] = await db.select().from(table.user).limit(1);
+			if (!existingUser) {
+				await db.insert(table.userRole).values({
+					userId: userId,
+					roleId: adminRole.id
+				});
+			}
+			// #endregion
+
 			const sessionToken = auth.generateSessionToken();
 			const session = await auth.createSession(sessionToken, userId);
 			auth.setSessionTokenCookie(event, sessionToken, session.expiresAt);
