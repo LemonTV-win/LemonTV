@@ -5,32 +5,38 @@
 	import { m } from '$lib/paraglide/messages';
 
 	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
+	import type { PageProps } from './$types';
 
-	let searchQuery = '';
-	let selectedPlayer: Player | null = null;
-	let isAddingNew = false;
-	let isEditing = false;
-	let errorMessage = '';
-	let successMessage = '';
-	let newPlayer: Partial<Player> = {
+	let searchQuery = $state('');
+	let selectedPlayer: Player | null = $state(null);
+	let isAddingNew = $state(false);
+	let isEditing = $state(false);
+	let errorMessage = $state('');
+	let successMessage = $state('');
+	let isImporting = $state(false);
+	let newPlayer: Partial<Player> = $state({
 		id: '',
 		name: '',
 		nationality: undefined,
 		aliases: [],
 		gameAccounts: []
-	};
-
-	$: filteredPlayers = Object.values(players).filter((player) => {
-		const searchLower = searchQuery.toLowerCase();
-		return (
-			player.name.toLowerCase().includes(searchLower) ||
-			player.id.toLowerCase().includes(searchLower) ||
-			player.aliases?.some((alias) => alias.toLowerCase().includes(searchLower)) ||
-			player.gameAccounts?.some((account) =>
-				account.currentName.toLowerCase().includes(searchLower)
-			)
-		);
 	});
+
+	let { data }: PageProps = $props();
+
+	let filteredPlayers = $derived(
+		Object.values(players).filter((player) => {
+			const searchLower = searchQuery.toLowerCase();
+			return (
+				player.name.toLowerCase().includes(searchLower) ||
+				player.id.toLowerCase().includes(searchLower) ||
+				player.aliases?.some((alias) => alias.toLowerCase().includes(searchLower)) ||
+				player.gameAccounts?.some((account) =>
+					account.currentName.toLowerCase().includes(searchLower)
+				)
+			);
+		})
+	);
 
 	function handleAddPlayer() {
 		isAddingNew = true;
@@ -151,17 +157,106 @@
 	function removeAlias(index: number) {
 		newPlayer.aliases?.splice(index, 1);
 	}
+
+	async function handleImport(event: Event) {
+		errorMessage = '';
+		successMessage = '';
+		isImporting = true;
+
+		const formData = new FormData();
+		const fileInput = event.target as HTMLInputElement;
+		if (!fileInput.files?.length) {
+			isImporting = false;
+			return;
+		}
+
+		formData.append('file', fileInput.files[0]);
+
+		try {
+			const response = await fetch('?/import', {
+				method: 'POST',
+				body: formData
+			});
+
+			const result = await response.json();
+
+			if (result.error) {
+				errorMessage = result.error;
+			} else {
+				successMessage = result.message || 'Players imported successfully';
+				goto('/admin/players', { invalidateAll: true });
+			}
+		} catch (e) {
+			errorMessage = 'Failed to import players';
+			console.error('Error importing players:', e);
+		} finally {
+			isImporting = false;
+		}
+	}
+
+	async function handleExport() {
+		errorMessage = '';
+		successMessage = '';
+
+		try {
+			const response = await fetch('/admin/players/export');
+			const result = await response.json();
+
+			if (result.error) {
+				errorMessage = result.error;
+			} else {
+				// Create and download file
+				const blob = new Blob([JSON.stringify(result, null, 2)], { type: 'application/json' });
+				const url = URL.createObjectURL(blob);
+				const a = document.createElement('a');
+				a.href = url;
+				a.download = 'players.json';
+				document.body.appendChild(a);
+				a.click();
+				document.body.removeChild(a);
+				URL.revokeObjectURL(url);
+			}
+		} catch (e) {
+			errorMessage = 'Failed to export players';
+			console.error('Error exporting players:', e);
+		}
+	}
 </script>
 
 <main class="mx-auto max-w-screen-lg px-4">
 	<div class="mb-6 flex items-center justify-between">
 		<h1 class="text-2xl font-bold">{m.admin_dashboard()}</h1>
-		<button
-			class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600"
-			on:click={handleAddPlayer}
-		>
-			Add New Player
-		</button>
+		<div class="flex gap-2">
+			<label
+				class="cursor-pointer rounded-md bg-slate-700 px-4 py-2 font-medium text-white hover:bg-slate-600 disabled:cursor-not-allowed disabled:opacity-50"
+				class:opacity-50={isImporting}
+			>
+				{#if isImporting}
+					Importing...
+				{:else}
+					Import JSON
+				{/if}
+				<input
+					type="file"
+					accept=".json"
+					class="hidden"
+					onchange={handleImport}
+					disabled={isImporting}
+				/>
+			</label>
+			<button
+				class="rounded-md bg-slate-700 px-4 py-2 font-medium text-white hover:bg-slate-600"
+				onclick={handleExport}
+			>
+				Export JSON
+			</button>
+			<button
+				class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600"
+				onclick={handleAddPlayer}
+			>
+				Add New Player
+			</button>
+		</div>
 	</div>
 
 	{#if errorMessage}
@@ -182,7 +277,10 @@
 				{isAddingNew ? 'Add New Player' : 'Edit Player'}
 			</h2>
 			<form
-				on:submit|preventDefault={isAddingNew ? handleSavePlayer : handleUpdatePlayer}
+				onsubmit={(e) => {
+					e.preventDefault();
+					isAddingNew ? handleSavePlayer() : handleUpdatePlayer();
+				}}
 				class="space-y-4"
 			>
 				<div>
@@ -239,7 +337,7 @@
 							<button
 								type="button"
 								class="text-red-400 hover:text-red-300"
-								on:click={() => removeAlias(i)}
+								onclick={() => removeAlias(i)}
 							>
 								Remove
 							</button>
@@ -248,7 +346,7 @@
 					<button
 						type="button"
 						class="mt-2 text-yellow-500 hover:text-yellow-400"
-						on:click={addAlias}
+						onclick={addAlias}
 					>
 						+ Add Alias
 					</button>
@@ -301,7 +399,7 @@
 							<button
 								type="button"
 								class="mt-2 text-red-400 hover:text-red-300"
-								on:click={() => removeGameAccount(i)}
+								onclick={() => removeGameAccount(i)}
 							>
 								Remove Account
 							</button>
@@ -310,7 +408,7 @@
 					<button
 						type="button"
 						class="mt-2 text-yellow-500 hover:text-yellow-400"
-						on:click={addGameAccount}
+						onclick={addGameAccount}
 					>
 						+ Add Game Account
 					</button>
@@ -320,7 +418,7 @@
 					<button
 						type="button"
 						class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
-						on:click={handleCancel}
+						onclick={handleCancel}
 					>
 						Cancel
 					</button>
@@ -381,7 +479,7 @@
 						<td class="px-4 py-1">
 							<button
 								class="flex items-center gap-1 text-yellow-500 hover:text-yellow-400"
-								on:click={() => handleEditPlayer(player)}
+								onclick={() => handleEditPlayer(player)}
 							>
 								<IconParkSolidEdit class="h-4 w-4" /> Edit
 							</button>

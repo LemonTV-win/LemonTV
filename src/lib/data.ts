@@ -91,6 +91,8 @@ export function getPlayer(id: string) {
 export function identifyPlayer(id: string, player: Player): boolean {
 	return (
 		player.id === id ||
+		player.slug === id ||
+		player.name === id ||
 		(player.gameAccounts?.some(
 			(account) => account.currentName === id || account.names?.includes(id)
 		) ??
@@ -192,7 +194,7 @@ export function getPlayersTeams(limit: number = 3): Record<string, Team[]> {
 	);
 }
 
-function calculatePlayerRating(player: Player) {
+export function calculatePlayerRating(player: Player) {
 	if (!player.id) {
 		return 0;
 	}

@@ -123,7 +123,7 @@
 				{#each filtered as player}
 					<tr class="border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl">
 						<td class="px-4 py-1">
-							<a class="flex items-baseline gap-1" href={`/players/${player.id}`}
+							<a class="flex items-baseline gap-1" href={`/players/${player.slug ?? player.id}`}
 								>{player.name}
 								{#each getAllNames(player).filter((name) => name !== player.name) as name}
 									<span class="text-xs text-gray-400">({name})</span>

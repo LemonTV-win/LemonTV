@@ -1,8 +1,12 @@
-import { error, fail } from '@sveltejs/kit';
-import type { Actions } from './$types';
-import { db } from '$lib/server/db';
-import { player } from '$lib/server/db/schema';
-import { eq } from 'drizzle-orm';
+import { fail } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
+import { createPlayer, updatePlayer, getPlayers, deletePlayer } from '$lib/server/data/players';
+import type { Region } from '$lib/data/game';
+import type { Player } from '$lib/data/players';
+
+export const load: PageServerLoad = async () => {
+	return {};
+};
 
 export const actions = {
 	create: async ({ request }) => {
@@ -24,11 +28,14 @@ export const actions = {
 		}
 
 		try {
-			await db.insert(player).values({
-				id,
+			await createPlayer({
 				name,
-				nationality: nationality || null,
-				slug: id.toLowerCase().replace(/[^a-z0-9]/g, '-')
+				nationality: nationality as any,
+				aliases,
+				gameAccounts: gameAccounts.map((acc) => ({
+					...acc,
+					region: acc.region as Region | undefined
+				}))
 			});
 
 			return {
@@ -61,14 +68,16 @@ export const actions = {
 		}
 
 		try {
-			await db
-				.update(player)
-				.set({
-					name,
-					nationality: nationality || null,
-					slug: id.toLowerCase().replace(/[^a-z0-9]/g, '-')
-				})
-				.where(eq(player.id, id));
+			await updatePlayer({
+				id,
+				name,
+				nationality: nationality as any,
+				aliases,
+				gameAccounts: gameAccounts.map((acc) => ({
+					...acc,
+					region: acc.region as Region | undefined
+				}))
+			});
 
 			return {
 				success: true
@@ -79,5 +88,48 @@ export const actions = {
 				error: 'Failed to update player'
 			});
 		}
+	},
+
+	import: async ({ request }) => {
+		const formData = await request.formData();
+		const file = formData.get('file') as File;
+
+		if (!file) {
+			return fail(400, {
+				error: 'No file provided'
+			});
+		}
+
+		try {
+			const text = await file.text();
+			const players = JSON.parse(text) as Record<string, Player>;
+
+			// Delete all existing players first
+			const existingPlayers = await getPlayers();
+			for (const player of existingPlayers) {
+				await deletePlayer(player.id);
+			}
+
+			// Import new players
+			for (const [id, playerData] of Object.entries(players)) {
+				await createPlayer({
+					name: playerData.name,
+					nationality: playerData.nationality,
+					aliases: playerData.aliases || [],
+					gameAccounts: playerData.gameAccounts,
+					slug: playerData.slug
+				});
+			}
+
+			return {
+				success: true,
+				message: `Successfully imported ${Object.keys(players).length} players`
+			};
+		} catch (e) {
+			console.error('Error importing players:', e);
+			return fail(500, {
+				error: 'Failed to import players: ' + (e instanceof Error ? e.message : String(e))
+			});
+		}
 	}
-} satisfies Actions;
+};
