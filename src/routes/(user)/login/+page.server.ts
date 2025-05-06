@@ -9,6 +9,7 @@ import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
 	if (event.locals.user) {
+		console.log('[Login] User already authenticated, redirecting to profile');
 		return redirect(302, '/profile');
 	}
 
@@ -19,6 +20,7 @@ export const load: PageServerLoad = async (event) => {
 
 export const actions: Actions = {
 	login: async (event) => {
+		console.log('[Login] Attempting login');
 		const formData = await event.request.formData();
 		const data = {
 			username: formData.get('username'),
@@ -27,6 +29,7 @@ export const actions: Actions = {
 
 		const result = LOGIN_SCHEMA.safeParse(data);
 		if (!result.success) {
+			console.warn('[Login] Validation failed:', result.error.errors[0].message);
 			return fail(400, {
 				message: result.error.errors[0].message
 			});
@@ -39,6 +42,7 @@ export const actions: Actions = {
 
 		const existingUser = results.at(0);
 		if (!existingUser) {
+			console.warn('[Login] User not found:', result.data.username);
 			return fail(400, { message: 'Incorrect username or password' });
 		}
 
@@ -47,6 +51,7 @@ export const actions: Actions = {
 			existingUser.passwordHash
 		);
 		if (!validPassword) {
+			console.warn('[Login] Invalid password for user:', result.data.username);
 			return fail(400, { message: 'Incorrect username or password' });
 		}
 
@@ -54,9 +59,11 @@ export const actions: Actions = {
 		const session = await auth.createSession(sessionToken, existingUser.id);
 		auth.setSessionTokenCookie(event, sessionToken, session.expiresAt);
 
+		console.log('[Login] Successfully logged in user:', result.data.username);
 		return { success: true };
 	},
 	register: async (event) => {
+		console.log('[Register] ====== Attempting registration ======');
 		const formData = await event.request.formData();
 		const data = {
 			username: formData.get('username'),
@@ -68,6 +75,7 @@ export const actions: Actions = {
 
 		const result = REGISTER_SCHEMA.safeParse(data);
 		if (!result.success) {
+			console.warn('[Register] Validation failed:', result.error.errors[0].message);
 			return fail(400, {
 				message: result.error.errors[0].message
 			});
@@ -76,14 +84,19 @@ export const actions: Actions = {
 		const userId = generateUserId();
 		const passwordHash = await auth.hashPassword(result.data.password);
 
+		console.log('[Register] Generated user ID:', userId);
+
 		try {
+			const createdAt = new Date();
 			await db.insert(table.user).values({
 				id: userId,
 				username: result.data.username,
 				passwordHash,
 				email: result.data.email,
-				createdAt: new Date()
+				createdAt
 			});
+
+			console.log('[Register] Inserted user into database at:', createdAt);
 
 			// #region Assign admin role to first user
 			const users = await db.select().from(table.user).limit(1);
@@ -94,22 +107,26 @@ export const actions: Actions = {
 					userId: userId,
 					roleId: adminRole.id
 				});
+				console.log('[Register] Successfully assigned admin role to user:', userId);
 			}
 			// #endregion
 
 			const sessionToken = auth.generateSessionToken();
 			const session = await auth.createSession(sessionToken, userId);
 			auth.setSessionTokenCookie(event, sessionToken, session.expiresAt);
+
+			console.log('[Register] Successfully registered user:', result.data.username);
 		} catch (e) {
-			console.error(e);
+			console.error('[Register] Error during registration:', e);
 			return fail(500, { message: 'An error has occurred' });
+		} finally {
+			console.log('[Register] ====== Registration complete ======');
 		}
 		return { success: true };
 	}
 };
 
 function generateUserId() {
-	// ID with 120 bits of entropy, or about the same as UUID v4.
 	const bytes = crypto.getRandomValues(new Uint8Array(15));
 	const id = encodeBase32LowerCase(bytes);
 	return id;
