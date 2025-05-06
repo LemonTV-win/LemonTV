@@ -9,6 +9,7 @@
 	import MaterialSymbolsLogoutRounded from '~icons/material-symbols/logout-rounded';
 	import MaterialSymbolsSettingsRounded from '~icons/material-symbols/settings-rounded';
 	import MaterialSymbolsTranslateRounded from '~icons/material-symbols/translate-rounded';
+	import MaterialSymbolsAdminPanelSettingsRounded from '~icons/material-symbols/admin-panel-settings-rounded';
 	import type { LayoutProps } from './$types';
 	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
@@ -133,6 +134,15 @@
 						<MaterialSymbolsSettingsRounded class="h-5 w-5" />
 						{m.profile_settings()}
 					</a>
+					{#if data.isAdmin}
+						<a
+							href="/admin"
+							class="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
+						>
+							<MaterialSymbolsAdminPanelSettingsRounded class="h-5 w-5" />
+							{m.admin_panel()}
+						</a>
+					{/if}
 					<div class="px-4 py-2">
 						<div class="flex items-center gap-2">
 							<MaterialSymbolsTranslateRounded class="h-6 w-6 text-gray-300" />
@@ -230,6 +240,16 @@
 						<MaterialSymbolsSettingsRounded class="h-6 w-6" />
 						{m.profile_settings()}
 					</a>
+					{#if data.isAdmin}
+						<a
+							href="/admin"
+							class="flex items-center gap-2 rounded-md px-3 py-2 text-lg text-gray-300 transition-all duration-200 hover:bg-gray-700"
+							onclick={toggleMobileMenu}
+						>
+							<MaterialSymbolsAdminPanelSettingsRounded class="h-6 w-6" />
+							{m.admin_panel()}
+						</a>
+					{/if}
 					<div class="py-2">
 						<div
 							class="flex items-center gap-2 rounded-md px-3 py-2 transition-all duration-200 hover:bg-gray-700"
