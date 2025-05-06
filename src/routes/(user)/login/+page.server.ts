@@ -72,10 +72,6 @@ export const actions: Actions = {
 			// #region Assign admin role to first user
 			const [adminRole] = await db.select().from(table.role).where(eq(table.role.id, 'admin'));
 
-			if (!adminRole) {
-				throw new Error('Admin role not found');
-			}
-
 			const [existingUser] = await db.select().from(table.user).limit(1);
 			if (!existingUser) {
 				await db.insert(table.userRole).values({
