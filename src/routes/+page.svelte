@@ -23,7 +23,7 @@
 <main class="mx-auto grid max-w-screen-lg gap-6 p-4 sm:gap-10 md:grid-cols-[1fr_auto]">
 	<div>
 		<h2 class="my-5 text-2xl font-bold">
-			<a href="/events">
+			<a href="/events" class="transition-all duration-200 hover:opacity-80">
 				{m.events()}
 			</a>
 		</h2>
@@ -49,7 +49,10 @@
 				</li>
 			{/each}
 		</ul>
-		<a href="/events" class="mt-2 block w-full px-4 text-center text-lg font-bold">
+		<a
+			href="/events"
+			class="mt-2 block w-full px-4 text-center text-lg font-bold transition-all duration-200 hover:opacity-80"
+		>
 			{m.view_all_events()}
 		</a>
 	</div>
@@ -61,7 +64,7 @@
 				{#each data.teams.toSorted((a, b) => b.wins - a.wins).slice(0, 5) as team}
 					<li>
 						<a
-							class="grid grid-cols-[1fr_auto] items-center gap-2 border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl"
+							class="grid grid-cols-[1fr_auto] items-center gap-2 border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl transition-all duration-200 hover:bg-gray-700"
 							href={`/teams/${team.id}`}
 						>
 							<span class="text-white">
@@ -75,7 +78,11 @@
 				{/each}
 			</ul>
 			<!-- TODO: Add locale -->
-			<a href="/teams" class="mt-2 px-4 text-center text-lg font-bold">{m.view_all_teams()}</a>
+			<a
+				href="/teams"
+				class="mt-2 px-4 text-center text-lg font-bold transition-all duration-200 hover:opacity-80"
+				>{m.view_all_teams()}</a
+			>
 		</div>
 
 		<div class="flex flex-col gap-2">
@@ -85,7 +92,7 @@
 					<li>
 						<a
 							href={`/players/${player.id}`}
-							class="grid grid-cols-[1fr_auto] items-center gap-2 border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl"
+							class="grid grid-cols-[1fr_auto] items-center gap-2 border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl transition-all duration-200 hover:bg-gray-700"
 						>
 							<span class="text-white">
 								{player.name}
@@ -101,7 +108,11 @@
 					</li>
 				{/each}
 			</ul>
-			<a href="/players" class="mt-2 px-4 text-center text-lg font-bold">{m.view_all_players()}</a>
+			<a
+				href="/players"
+				class="mt-2 px-4 text-center text-lg font-bold transition-all duration-200 hover:opacity-80"
+				>{m.view_all_players()}</a
+			>
 		</div>
 	</div>
 </main>
