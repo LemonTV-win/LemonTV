@@ -10,6 +10,7 @@
 	import MatchCard from '$lib/components/MatchCard.svelte';
 	import RegionTag from '$lib/components/tags/RegionTag.svelte';
 	import { getAllNames } from '$lib/data/players';
+	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 	let { data }: PageProps = $props();
 
 	if (!data.team) {
@@ -18,6 +19,7 @@
 </script>
 
 {#if data.team}
+	<Breadcrumbs currentTitle={data.team.name} />
 	<main class="mx-auto max-w-screen-lg px-4 py-4">
 		<!-- Info -->
 

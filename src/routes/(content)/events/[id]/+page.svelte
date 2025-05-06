@@ -17,6 +17,7 @@
 	import IconParkSolidCalendar from '~icons/icon-park-solid/calendar';
 	import IconParkSolidLocalPin from '~icons/icon-park-solid/local-pin';
 	import IconParkSolidCheckOne from '~icons/icon-park-solid/check-one';
+	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 	let activeStage = $state<Stage | null>(null);
 
 	$inspect(activeStage);
@@ -27,6 +28,7 @@
 </script>
 
 {#if data.event}
+	<Breadcrumbs currentTitle={data.event.name} />
 	<div
 		class="banner flex min-h-48 flex-col gap-2 bg-cover bg-top p-4 text-white"
 		style:--banner-image={`url(${data.event.image})`}

@@ -6,6 +6,7 @@
 	import PlayerAvatar from '$lib/components/PlayerAvatar.svelte';
 	import MatchCard from '$lib/components/MatchCard.svelte';
 	import { getAllNames } from '$lib/data/players';
+	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -15,6 +16,7 @@
 </script>
 
 {#if data.player}
+	<Breadcrumbs currentTitle={data.player.name} />
 	<main class="mx-auto grid max-w-screen-lg grid-cols-1 gap-6 p-4 md:grid-cols-3">
 		<div class="flex flex-col gap-2 overflow-hidden rounded-2xl bg-gray-800 shadow-2xl">
 			<div class="bg-gradient-to-r from-blue-900 to-purple-900 p-6">
