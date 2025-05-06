@@ -53,12 +53,16 @@ export const actions: Actions = {
 		const formData = await event.request.formData();
 		const username = formData.get('username');
 		const password = formData.get('password');
+		const email = formData.get('email');
 
 		if (!validateUsername(username)) {
 			return fail(400, { message: 'Invalid username' });
 		}
 		if (!validatePassword(password)) {
 			return fail(400, { message: 'Invalid password' });
+		}
+		if (!validateEmail(email)) {
+			return fail(400, { message: 'Invalid email' });
 		}
 
 		const userId = generateUserId();
@@ -67,7 +71,7 @@ export const actions: Actions = {
 		try {
 			await db
 				.insert(table.user)
-				.values({ id: userId, username, passwordHash, createdAt: new Date() });
+				.values({ id: userId, username, passwordHash, email, createdAt: new Date() });
 
 			// #region Assign admin role to first user
 			const [adminRole] = await db.select().from(table.role).where(eq(table.role.id, 'admin'));
@@ -110,4 +114,13 @@ function validateUsername(username: unknown): username is string {
 
 function validatePassword(password: unknown): password is string {
 	return typeof password === 'string' && password.length >= 6 && password.length <= 255;
+}
+
+function validateEmail(email: unknown): email is string {
+	return (
+		typeof email === 'string' &&
+		email.length >= 3 &&
+		email.length <= 255 &&
+		/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+	);
 }
