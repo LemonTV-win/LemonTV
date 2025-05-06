@@ -40,4 +40,12 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
-export const handle: Handle = sequence(handleParaglide, handleAuth);
+const handleChromeDevTools: Handle = ({ event, resolve }) => {
+	if (event.url.pathname.startsWith('/.well-known/appspecific/com.chrome.devtools')) {
+		return new Response(null, { status: 204 });
+	}
+
+	return resolve(event);
+};
+
+export const handle: Handle = sequence(handleParaglide, handleAuth, handleChromeDevTools);
