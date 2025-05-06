@@ -99,5 +99,11 @@
 	"created_at": "Ngày tạo",
 	"admin_panel": "Bảng điều khiển quản trị",
 	"id": "ID",
-	"roles": "Vai trò"
+	"roles": "Vai trò",
+	"edit": "Chỉnh sửa",
+	"delete": "Xóa",
+	"cancel": "Hủy bỏ",
+	"create": "Tạo",
+	"update": "Cập nhật",
+	"add": "Thêm"
 }

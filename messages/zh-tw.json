@@ -99,5 +99,11 @@
 	"created_at": "創建時間",
 	"admin_panel": "管理面板",
 	"id": "ID",
-	"roles": "角色"
+	"roles": "角色",
+	"edit": "編輯",
+	"delete": "刪除",
+	"cancel": "取消",
+	"create": "創建",
+	"update": "更新",
+	"add": "添加"
 }

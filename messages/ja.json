@@ -98,5 +98,11 @@
 	"created_at": "作成日時",
 	"admin_panel": "管理者パネル",
 	"id": "ID",
-	"roles": "ロール"
+	"roles": "ロール",
+	"edit": "編集",
+	"delete": "削除",
+	"cancel": "キャンセル",
+	"create": "作成",
+	"update": "更新",
+	"add": "追加"
 }

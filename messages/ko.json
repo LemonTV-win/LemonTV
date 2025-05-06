@@ -99,5 +99,11 @@
 	"created_at": "생성일",
 	"admin_panel": "관리자 패널",
 	"id": "ID",
-	"roles": "역할"
+	"roles": "역할",
+	"edit": "수정",
+	"delete": "삭제",
+	"cancel": "취소",
+	"create": "생성",
+	"update": "업데이트",
+	"add": "추가"
 }

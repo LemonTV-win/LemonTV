@@ -99,5 +99,11 @@
 	"language": "Idioma",
 	"admin_panel": "Panel de Administración",
 	"id": "ID",
-	"roles": "Roles"
+	"roles": "Roles",
+	"edit": "Editar",
+	"delete": "Eliminar",
+	"cancel": "Cancelar",
+	"create": "Crear",
+	"update": "Actualizar",
+	"add": "Agregar"
 }

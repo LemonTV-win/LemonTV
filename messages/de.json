@@ -96,5 +96,11 @@
 	"language": "Sprache",
 	"admin_panel": "Administrationsbereich",
 	"id": "ID",
-	"roles": "Rollen"
+	"roles": "Rollen",
+	"edit": "Bearbeiten",
+	"delete": "Löschen",
+	"cancel": "Abbrechen",
+	"create": "Erstellen",
+	"update": "Aktualisieren",
+	"add": "Hinzufügen"
 }

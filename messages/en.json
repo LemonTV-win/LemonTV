@@ -73,5 +73,22 @@
 	"language": "Language",
 	"admin_panel": "Admin Panel",
 	"users": "Users",
-	"admin_dashboard": "Admin Dashboard"
+	"admin_dashboard": "Admin Dashboard",
+	"id": "ID",
+	"username": "Username",
+	"roles": "Roles",
+	"created_at": "Created At",
+	"edit": "Edit",
+	"delete": "Delete",
+	"cancel": "Cancel",
+	"create": "Create",
+	"update": "Update",
+	"add": "Add",
+	"role_management": "Role Management",
+	"new_role": "New Role",
+	"edit_role": "Edit Role",
+	"existing_roles": "Existing Roles",
+	"role_name": "Role name",
+	"add_role": "Add role...",
+	"search_users": "Search users..."
 }

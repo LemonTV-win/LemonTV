@@ -110,7 +110,7 @@
 				<input
 					type="text"
 					bind:value={searchQuery}
-					placeholder="Search users..."
+					placeholder={m.search_users()}
 					class="w-full rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 				/>
 			</div>
@@ -150,7 +150,7 @@
 												<button
 													type="submit"
 													class="text-red-400 hover:text-red-300"
-													title="Remove role"
+													title={m.delete()}
 												>
 													×
 												</button>
@@ -168,7 +168,7 @@
 												name="roleId"
 												class="rounded-md border border-slate-700 bg-slate-800 px-2 py-0.5 text-sm text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 											>
-												<option value="">Add role...</option>
+												<option value="">{m.add_role()}</option>
 												{#each data.roles.filter((role) => !getUserRoles(user.id).some((r) => r.id === role.id)) as role}
 													<option value={role.id}>{role.name}</option>
 												{/each}
@@ -177,7 +177,7 @@
 												type="submit"
 												class="rounded-md bg-yellow-500 px-2 py-0.5 text-sm font-medium text-black hover:bg-yellow-600"
 											>
-												Add
+												{m.add()}
 											</button>
 										</form>
 									</div>
@@ -194,7 +194,7 @@
 
 		<div class="col-span-1">
 			<div class="rounded-lg border border-slate-800 bg-slate-900/70 p-6 shadow-lg">
-				<h3 class="mb-4 text-xl font-semibold text-white">Role Management</h3>
+				<h3 class="mb-4 text-xl font-semibold text-white">{m.role_management()}</h3>
 				<form
 					method="POST"
 					action={editingRole ? '?/updateRoleName' : '?/createRole'}
@@ -206,7 +206,7 @@
 					{/if}
 					<div>
 						<label class="block text-sm font-medium text-slate-300" for="roleName">
-							{editingRole ? 'Edit Role' : 'New Role'}
+							{editingRole ? m.edit_role() : m.new_role()}
 						</label>
 						<input
 							type="text"
@@ -214,7 +214,7 @@
 							name="name"
 							bind:value={newRoleName}
 							class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-							placeholder="Role name"
+							placeholder={m.role_name()}
 						/>
 					</div>
 					<div class="flex justify-end gap-2">
@@ -224,20 +224,20 @@
 								class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
 								onclick={cancelEditRole}
 							>
-								Cancel
+								{m.cancel()}
 							</button>
 						{/if}
 						<button
 							type="submit"
 							class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600"
 						>
-							{editingRole ? 'Update' : 'Create'}
+							{editingRole ? m.update() : m.create()}
 						</button>
 					</div>
 				</form>
 
 				<div class="mt-6">
-					<h4 class="mb-2 text-sm font-medium text-slate-300">Existing Roles</h4>
+					<h4 class="mb-2 text-sm font-medium text-slate-300">{m.existing_roles()}</h4>
 					<div class="space-y-2">
 						{#each data.roles as role}
 							<div
@@ -250,7 +250,7 @@
 										class="text-yellow-500 hover:text-yellow-400"
 										onclick={() => startEditRole(role)}
 									>
-										Edit
+										{m.edit()}
 									</button>
 									<form
 										method="POST"
@@ -259,7 +259,9 @@
 										class="inline"
 									>
 										<input type="hidden" name="id" value={role.id} />
-										<button type="submit" class="text-red-400 hover:text-red-300"> Delete </button>
+										<button type="submit" class="text-red-400 hover:text-red-300">
+											{m.delete()}
+										</button>
 									</form>
 								</div>
 							</div>

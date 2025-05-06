@@ -99,5 +99,11 @@
 	"language": "Bahasa",
 	"admin_panel": "Panel Admin",
 	"id": "ID",
-	"roles": "Peran"
+	"roles": "Peran",
+	"edit": "Edit",
+	"delete": "Hapus",
+	"cancel": "Batal",
+	"create": "Buat",
+	"update": "Perbarui",
+	"add": "Tambah"
 }
