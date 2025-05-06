@@ -1,10 +1,31 @@
 import { encodeBase32LowerCase } from '@oslojs/encoding';
 import { fail, redirect } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
+import { z } from 'zod';
 import * as auth from '$lib/server/auth';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import type { Actions, PageServerLoad } from './$types';
+
+const USERNAME_SCHEMA = z
+	.string()
+	.min(3, 'Username must be at least 3 characters')
+	.max(31, 'Username must be at most 31 characters')
+	.regex(
+		/^[\p{L}\p{N}_\-]+$/u,
+		'Username can only contain letters, numbers, punctuation, and underscores'
+	);
+
+const PASSWORD_SCHEMA = z
+	.string()
+	.min(8, 'Password must be at least 8 characters')
+	.max(255, 'Password must be at most 255 characters');
+
+const EMAIL_SCHEMA = z
+	.string()
+	.min(3, 'Email must be at least 3 characters')
+	.max(255, 'Email must be at most 255 characters')
+	.email('Invalid email format');
 
 export const load: PageServerLoad = async (event) => {
 	if (event.locals.user) {
@@ -22,23 +43,31 @@ export const actions: Actions = {
 		const username = formData.get('username');
 		const password = formData.get('password');
 
-		if (!validateUsername(username)) {
+		const usernameResult = USERNAME_SCHEMA.safeParse(username);
+		if (!usernameResult.success) {
 			return fail(400, {
-				message: 'Invalid username (min 3, max 31 characters, alphanumeric only)'
+				message: usernameResult.error.errors[0].message
 			});
 		}
-		if (!validatePassword(password)) {
-			return fail(400, { message: 'Invalid password (min 6, max 255 characters)' });
+
+		const passwordResult = PASSWORD_SCHEMA.safeParse(password);
+		if (!passwordResult.success) {
+			return fail(400, {
+				message: passwordResult.error.errors[0].message
+			});
 		}
 
-		const results = await db.select().from(table.user).where(eq(table.user.username, username));
+		const results = await db
+			.select()
+			.from(table.user)
+			.where(eq(table.user.username, usernameResult.data));
 
 		const existingUser = results.at(0);
 		if (!existingUser) {
 			return fail(400, { message: 'Incorrect username or password' });
 		}
 
-		const validPassword = await auth.verifyPassword(password.toString(), existingUser.passwordHash);
+		const validPassword = await auth.verifyPassword(passwordResult.data, existingUser.passwordHash);
 		if (!validPassword) {
 			return fail(400, { message: 'Incorrect username or password' });
 		}
@@ -55,23 +84,38 @@ export const actions: Actions = {
 		const password = formData.get('password');
 		const email = formData.get('email');
 
-		if (!validateUsername(username)) {
-			return fail(400, { message: 'Invalid username' });
+		const usernameResult = USERNAME_SCHEMA.safeParse(username);
+		if (!usernameResult.success) {
+			return fail(400, {
+				message: usernameResult.error.errors[0].message
+			});
 		}
-		if (!validatePassword(password)) {
-			return fail(400, { message: 'Invalid password' });
+
+		const passwordResult = PASSWORD_SCHEMA.safeParse(password);
+		if (!passwordResult.success) {
+			return fail(400, {
+				message: passwordResult.error.errors[0].message
+			});
 		}
-		if (!validateEmail(email)) {
-			return fail(400, { message: 'Invalid email' });
+
+		const emailResult = EMAIL_SCHEMA.safeParse(email);
+		if (!emailResult.success) {
+			return fail(400, {
+				message: emailResult.error.errors[0].message
+			});
 		}
 
 		const userId = generateUserId();
-		const passwordHash = await auth.hashPassword(password.toString());
+		const passwordHash = await auth.hashPassword(passwordResult.data);
 
 		try {
-			await db
-				.insert(table.user)
-				.values({ id: userId, username, passwordHash, email, createdAt: new Date() });
+			await db.insert(table.user).values({
+				id: userId,
+				username: usernameResult.data,
+				passwordHash,
+				email: emailResult.data,
+				createdAt: new Date()
+			});
 
 			// #region Assign admin role to first user
 			const [adminRole] = await db.select().from(table.role).where(eq(table.role.id, 'admin'));
@@ -101,26 +145,4 @@ function generateUserId() {
 	const bytes = crypto.getRandomValues(new Uint8Array(15));
 	const id = encodeBase32LowerCase(bytes);
 	return id;
-}
-
-function validateUsername(username: unknown): username is string {
-	return (
-		typeof username === 'string' &&
-		username.length >= 3 &&
-		username.length <= 31 &&
-		/^[a-z0-9_-]+$/.test(username)
-	);
-}
-
-function validatePassword(password: unknown): password is string {
-	return typeof password === 'string' && password.length >= 6 && password.length <= 255;
-}
-
-function validateEmail(email: unknown): email is string {
-	return (
-		typeof email === 'string' &&
-		email.length >= 3 &&
-		email.length <= 255 &&
-		/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-	);
 }
