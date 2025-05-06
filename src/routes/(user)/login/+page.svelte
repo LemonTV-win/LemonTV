@@ -90,6 +90,14 @@
 	});
 </script>
 
+{#if form?.message}
+	<Alert type="error" message={form.message} />
+{/if}
+
+{#if successMessage}
+	<Alert type="success" message={successMessage} dismissible={false} />
+{/if}
+
 <main class="flex min-h-[calc(100dvh-9em)] flex-1 items-center justify-center p-4">
 	<div class="w-full max-w-md">
 		<div class="rounded-lg border border-slate-800 bg-slate-900/70 shadow-lg">
@@ -376,11 +384,3 @@
 		</div>
 	</div>
 </main>
-
-{#if form?.message}
-	<Alert type="error" message={form.message} />
-{/if}
-
-{#if successMessage}
-	<Alert type="success" message={successMessage} dismissible={false} />
-{/if}
