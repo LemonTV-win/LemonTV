@@ -224,17 +224,19 @@
 				<div class="pl-4">
 					<a
 						href="/profile"
-						class="flex items-center gap-2 py-2 text-lg text-gray-300"
+						class="flex items-center gap-2 rounded-md px-3 py-2 text-lg text-gray-300 transition-all duration-200 hover:bg-gray-700"
 						onclick={toggleMobileMenu}
 					>
 						<MaterialSymbolsSettingsRounded class="h-6 w-6" />
 						Profile Settings
 					</a>
 					<div class="py-2">
-						<div class="flex items-center gap-2">
+						<div
+							class="flex items-center gap-2 rounded-md px-3 py-2 transition-all duration-200 hover:bg-gray-700"
+						>
 							<MaterialSymbolsTranslateRounded class="h-6 w-6 text-gray-300" />
 							<select
-								class="w-full rounded-md bg-gray-700 px-4 py-2 text-white"
+								class="w-full rounded-md bg-gray-700 px-4 py-2 text-white transition-all duration-200 hover:bg-gray-600"
 								onchange={({ currentTarget }) => {
 									setLocale(currentTarget.value as Locale);
 								}}
@@ -250,7 +252,7 @@
 					<form method="post" action="/?/logout" use:enhance>
 						<button
 							type="submit"
-							class="flex w-full items-center gap-2 py-2 text-lg text-gray-300"
+							class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-lg text-gray-300 transition-all duration-200 hover:bg-gray-700"
 							onclick={toggleMobileMenu}
 						>
 							<MaterialSymbolsLogoutRounded class="h-6 w-6" />
