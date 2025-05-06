@@ -72,5 +72,6 @@
 	"sign_out": "Sign out",
 	"language": "Language",
 	"admin_panel": "Admin Panel",
-	"users": "Users"
+	"users": "Users",
+	"admin_dashboard": "Admin Dashboard"
 }
