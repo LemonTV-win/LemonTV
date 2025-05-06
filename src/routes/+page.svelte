@@ -69,10 +69,10 @@
 						>
 							<span class="text-white">
 								{team.name}
-								<span class="text-xs text-gray-400" title="Wins">{team.region}</span>
+								<span class="text-xs text-gray-400" title={m.wins()}>{team.region}</span>
 							</span>
 							<!-- TODO: Introduce rating -->
-							<span class="text-yellow-500" title="Wins">{team.wins}</span>
+							<span class="text-yellow-500" title={m.wins()}>{team.wins}</span>
 						</a>
 					</li>
 				{/each}
@@ -97,7 +97,7 @@
 							<span class="text-white">
 								{player.name}
 								{#if player.teams.length > 0}
-									<span class="text-xs text-gray-400" title="Team">
+									<span class="text-xs text-gray-400" title={m.teams()}>
 										{player.teams[0]}
 									</span>
 								{/if}
