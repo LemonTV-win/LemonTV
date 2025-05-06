@@ -47,7 +47,7 @@
 					<p class="mb-2 text-xl font-medium text-white">
 						{m.welcome({ username: data.user.username })}
 					</p>
-					<p class="text-sm text-slate-400">{m.user_id({ id: data.user.id })}</p>
+					<p class="text-sm text-slate-400">{m.user_id()}: {data.user.id}</p>
 				</div>
 
 				<div class="mb-8">

@@ -74,7 +74,6 @@
 	"admin_panel": "Admin Panel",
 	"users": "Users",
 	"admin_dashboard": "Admin Dashboard",
-	"id": "ID",
 	"username": "Username",
 	"roles": "Roles",
 	"created_at": "Created At",
@@ -125,5 +124,6 @@
 	"username_length": "Username must be between 3 and 31 characters",
 	"username_format": "Username can only contain letters, numbers, underscores, and hyphens",
 	"password_length": "Password must be at least 8 characters",
-	"email_format": "Please enter a valid email address"
+	"email_format": "Please enter a valid email address",
+	"user_id": "User ID"
 }

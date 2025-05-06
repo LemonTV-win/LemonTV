@@ -123,7 +123,7 @@
 				<table class="w-full table-auto border-collapse border-y-2 border-gray-500 bg-gray-800">
 					<thead>
 						<tr class="border-b-2 border-gray-500 text-left text-sm text-gray-400">
-							<th class="px-4 py-1">{m.id()}</th>
+							<th class="px-4 py-1">{m.user_id()}</th>
 							<th class="px-4 py-1">{m.username()}</th>
 							<th class="px-4 py-1">{m.roles()}</th>
 							<th class="px-4 py-1">{m.created_at()}</th>
