@@ -36,7 +36,7 @@
 				{/if}
 				{#if data.playerTeams}
 					<div class="grid grid-cols-1 gap-4 py-4 sm:grid-cols-2">
-						<h3 class="text-lg font-bold">Teams</h3>
+						<h3 class="text-lg font-bold">{m.teams()}</h3>
 						<ul>
 							{#each data.playerTeams as team}
 								{#if team}

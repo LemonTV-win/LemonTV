@@ -6,6 +6,7 @@
 
 	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
 	import type { PageProps } from './$types';
+	import { getLocale } from '$lib/paraglide/runtime';
 
 	let searchQuery = $state('');
 	let selectedPlayer: Player | null = $state(null);
@@ -80,7 +81,7 @@
 			if (result.error) {
 				errorMessage = result.error;
 			} else {
-				successMessage = 'Player saved successfully';
+				successMessage = m.player_saved_successfully();
 				isAddingNew = false;
 				isEditing = false;
 				selectedPlayer = null;
@@ -114,14 +115,14 @@
 			if (result.error) {
 				errorMessage = result.error;
 			} else {
-				successMessage = 'Player updated successfully';
+				successMessage = m.player_updated_successfully();
 				isAddingNew = false;
 				isEditing = false;
 				selectedPlayer = null;
 				goto('/admin/players', { invalidateAll: true });
 			}
 		} catch (e) {
-			errorMessage = 'Failed to update player';
+			errorMessage = m.failed_to_update_player();
 			console.error('Error updating player:', e);
 		}
 	}
@@ -183,11 +184,11 @@
 			if (result.error) {
 				errorMessage = result.error;
 			} else {
-				successMessage = result.message || 'Players imported successfully';
+				successMessage = result.message || m.player_imported_successfully();
 				goto('/admin/players', { invalidateAll: true });
 			}
 		} catch (e) {
-			errorMessage = 'Failed to import players';
+			errorMessage = m.failed_to_import_players();
 			console.error('Error importing players:', e);
 		} finally {
 			isImporting = false;
@@ -217,7 +218,7 @@
 				URL.revokeObjectURL(url);
 			}
 		} catch (e) {
-			errorMessage = 'Failed to export players';
+			errorMessage = m.failed_to_export_players();
 			console.error('Error exporting players:', e);
 		}
 	}
@@ -232,9 +233,9 @@
 				class:opacity-50={isImporting}
 			>
 				{#if isImporting}
-					Importing...
+					{m.importing()}
 				{:else}
-					Import JSON
+					{m.import_json()}
 				{/if}
 				<input
 					type="file"
@@ -248,13 +249,13 @@
 				class="rounded-md bg-slate-700 px-4 py-2 font-medium text-white hover:bg-slate-600"
 				onclick={handleExport}
 			>
-				Export JSON
+				{m.export_json()}
 			</button>
 			<button
 				class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600"
 				onclick={handleAddPlayer}
 			>
-				Add New Player
+				{m.add_new_player()}
 			</button>
 		</div>
 	</div>
@@ -274,7 +275,7 @@
 	{#if isAddingNew || isEditing}
 		<div class="mb-6 rounded-lg border border-slate-800 bg-slate-900/70 p-6 shadow-lg">
 			<h2 class="mb-4 text-xl font-semibold text-white">
-				{isAddingNew ? 'Add New Player' : 'Edit Player'}
+				{isAddingNew ? m.add_new_player() : m.edit_player()}
 			</h2>
 			<form
 				onsubmit={(e) => {
@@ -290,7 +291,7 @@
 						id="playerId"
 						bind:value={newPlayer.id}
 						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-						placeholder="Player ID"
+						placeholder={m.player_id()}
 					/>
 				</div>
 				<div>
@@ -300,134 +301,131 @@
 						id="playerName"
 						bind:value={newPlayer.name}
 						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-						placeholder="Display Name"
+						placeholder={m.display_name()}
 					/>
 				</div>
 				<div>
 					<label class="block text-sm font-medium text-slate-300" for="playerNationality">
-						Nationality
+						{m.nationality()}
 					</label>
 					<select
 						id="playerNationality"
 						bind:value={newPlayer.nationality}
 						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 					>
-						<option value={undefined}>Select Nationality</option>
-						<option value="KR">Korea</option>
-						<option value="JP">Japan</option>
-						<option value="TW">Taiwan</option>
-						<option value="US">United States</option>
-						<option value="VN">Vietnam</option>
-						<option value="ID">Indonesia</option>
-						<option value="CN">China</option>
+						<option value={undefined}>{m.select_nationality()}</option>
+						{#each ['KR', 'JP', 'TW', 'US', 'VN', 'ID', 'CN'] as code}
+							<option value={code}>
+								{new Intl.DisplayNames([getLocale()], { type: 'region' }).of(code)}
+							</option>
+						{/each}
 					</select>
-				</div>
-
-				<div>
-					<label class="block text-sm font-medium text-slate-300" for="aliases">Aliases</label>
-					{#each newPlayer.aliases || [] as alias, i}
-						<div class="mt-2 flex gap-2">
-							<input
-								type="text"
-								id="aliases"
-								bind:value={newPlayer.aliases![i]}
-								class="block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-								placeholder="Alias"
-							/>
-							<button
-								type="button"
-								class="text-red-400 hover:text-red-300"
-								onclick={() => removeAlias(i)}
-							>
-								Remove
-							</button>
-						</div>
-					{/each}
-					<button
-						type="button"
-						class="mt-2 text-yellow-500 hover:text-yellow-400"
-						onclick={addAlias}
-					>
-						+ Add Alias
-					</button>
-				</div>
-
-				<div>
-					<label class="block text-sm font-medium text-slate-300" for="gameAccounts">
-						Game Accounts
-					</label>
-					{#each newPlayer.gameAccounts || [] as account, i}
-						<div class="mt-2 rounded-lg border border-slate-700 bg-slate-800 p-4">
-							<div class="grid grid-cols-2 gap-4">
-								<div>
-									<label class="block text-sm font-medium text-slate-300" for="accountId">
-										Account ID
-									</label>
-									<input
-										type="number"
-										id="accountId"
-										bind:value={account.accountId}
-										class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-									/>
-								</div>
-								<div>
-									<label class="block text-sm font-medium text-slate-300" for="currentName">
-										Current Name
-									</label>
-									<input
-										type="text"
-										id="currentName"
-										bind:value={account.currentName}
-										class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-									/>
-								</div>
-								<div>
-									<label class="block text-sm font-medium text-slate-300" for="region">
-										Region
-									</label>
-									<select
-										id="region"
-										bind:value={account.region}
-										class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-									>
-										<option value={undefined}>Select Region</option>
-										<option value="NA">North America</option>
-										<option value="APAC">Asia Pacific</option>
-									</select>
-								</div>
+					<div>
+						<label class="block text-sm font-medium text-slate-300" for="aliases">Aliases</label>
+						{#each newPlayer.aliases || [] as alias, i}
+							<div class="mt-2 flex gap-2">
+								<input
+									type="text"
+									id="aliases"
+									bind:value={newPlayer.aliases![i]}
+									class="block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+									placeholder={m.alias()}
+								/>
+								<button
+									type="button"
+									class="text-red-400 hover:text-red-300"
+									onclick={() => removeAlias(i)}
+								>
+									{m.remove()}
+								</button>
 							</div>
-							<button
-								type="button"
-								class="mt-2 text-red-400 hover:text-red-300"
-								onclick={() => removeGameAccount(i)}
-							>
-								Remove Account
-							</button>
-						</div>
-					{/each}
-					<button
-						type="button"
-						class="mt-2 text-yellow-500 hover:text-yellow-400"
-						onclick={addGameAccount}
-					>
-						+ Add Game Account
-					</button>
-				</div>
+						{/each}
+						<button
+							type="button"
+							class="mt-2 text-yellow-500 hover:text-yellow-400"
+							onclick={addAlias}
+						>
+							+ {m.add_alias()}
+						</button>
+					</div>
 
-				<div class="mt-6 flex justify-end gap-4">
-					<button
-						type="button"
-						class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
-						onclick={handleCancel}
-					>
-						Cancel
-					</button>
-					<button
-						type="submit"
-						class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600"
-					>
-						{isAddingNew ? 'Create' : 'Update'}
-					</button>
+					<div>
+						<label class="block text-sm font-medium text-slate-300" for="gameAccounts">
+							{m.game_accounts()}
+						</label>
+						{#each newPlayer.gameAccounts || [] as account, i}
+							<div class="mt-2 rounded-lg border border-slate-700 bg-slate-800 p-4">
+								<div class="grid grid-cols-2 gap-4">
+									<div>
+										<label class="block text-sm font-medium text-slate-300" for="accountId">
+											{m.account_id()}
+										</label>
+										<input
+											type="number"
+											id="accountId"
+											bind:value={account.accountId}
+											class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+										/>
+									</div>
+									<div>
+										<label class="block text-sm font-medium text-slate-300" for="currentName">
+											{m.current_name()}
+										</label>
+										<input
+											type="text"
+											id="currentName"
+											bind:value={account.currentName}
+											class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+										/>
+									</div>
+									<div>
+										<label class="block text-sm font-medium text-slate-300" for="region">
+											{m.region()}
+										</label>
+										<select
+											id="region"
+											bind:value={account.region}
+											class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+										>
+											<option value={undefined}>{m.select_region()}</option>
+											<option value="NA">{m.north_america()}</option>
+											<option value="APAC">{m.asia_pacific()}</option>
+										</select>
+									</div>
+								</div>
+								<button
+									type="button"
+									class="mt-2 text-red-400 hover:text-red-300"
+									onclick={() => removeGameAccount(i)}
+								>
+									{m.remove_account()}
+								</button>
+							</div>
+						{/each}
+						<button
+							type="button"
+							class="mt-2 text-yellow-500 hover:text-yellow-400"
+							onclick={addGameAccount}
+						>
+							+ {m.add_game_account()}
+						</button>
+					</div>
+
+					<div class="mt-6 flex justify-end gap-4">
+						<button
+							type="button"
+							class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
+							onclick={handleCancel}
+						>
+							{m.cancel()}
+						</button>
+						<button
+							type="submit"
+							class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600"
+						>
+							{isAddingNew ? m.create_player() : m.update_player()}
+						</button>
+					</div>
 				</div>
 			</form>
 		</div>
@@ -437,7 +435,7 @@
 		<input
 			type="text"
 			bind:value={searchQuery}
-			placeholder="Search players..."
+			placeholder={m.search_players()}
 			class="w-full rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 		/>
 	</div>
@@ -446,11 +444,11 @@
 		<table class="w-full table-auto border-collapse border-y-2 border-gray-500 bg-gray-800">
 			<thead>
 				<tr class="border-b-2 border-gray-500 text-left text-sm text-gray-400">
-					<th class="px-4 py-1">ID</th>
-					<th class="px-4 py-1">Name</th>
-					<th class="px-4 py-1">Nationality</th>
-					<th class="px-4 py-1">Game Accounts</th>
-					<th class="px-4 py-1">Actions</th>
+					<th class="px-4 py-1">{m.player_id()}</th>
+					<th class="px-4 py-1">{m.player_name()}</th>
+					<th class="px-4 py-1">{m.nationality()}</th>
+					<th class="px-4 py-1">{m.game_accounts()}</th>
+					<th class="px-4 py-1">{m.actions()}</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -481,7 +479,8 @@
 								class="flex items-center gap-1 text-yellow-500 hover:text-yellow-400"
 								onclick={() => handleEditPlayer(player)}
 							>
-								<IconParkSolidEdit class="h-4 w-4" /> Edit
+								<IconParkSolidEdit class="h-4 w-4" />
+								{m.edit()}
 							</button>
 						</td>
 					</tr>

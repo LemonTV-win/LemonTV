@@ -12,6 +12,7 @@
 
 	import Scoreboard from '$lib/components/Scoreboard.svelte';
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
+	import { m } from '$lib/paraglide/messages';
 
 	const MAP_2_IMAGE: Record<GameMap, string> = {
 		base_404:
@@ -33,14 +34,14 @@
 	};
 
 	const MAP_2_NAME: Record<GameMap, string> = {
-		base_404: 'Base 404',
-		area_88: 'Area 88',
-		port_euler: 'Port Euler',
-		windy_town: 'Windy Town',
-		space_lab: 'Space Lab',
-		cauchy_district: 'Cauchy District',
-		cosmite: 'Cosmite',
-		orcanus: 'Orcanus'
+		base_404: m.base_404(),
+		area_88: m.area_88(),
+		port_euler: m.port_euler(),
+		windy_town: m.windy_town(),
+		space_lab: m.space_lab(),
+		cauchy_district: m.cauchy_district(),
+		cosmite: m.cosmite(),
+		orcanus: m.orcanus()
 	};
 
 	let currentMapID: number = $state(0);

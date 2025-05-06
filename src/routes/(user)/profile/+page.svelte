@@ -18,7 +18,7 @@
 	function handleSubmit() {
 		return async ({ result }: { result: ActionResult }) => {
 			if (result.type === 'error') {
-				error = result.error?.message || 'An error occurred';
+				error = result.error?.message || m.error_occurred();
 				success = false;
 				console.log('error', error);
 			} else if (result.type === 'success') {
@@ -26,7 +26,7 @@
 				success = true;
 				console.log('success', success);
 			} else if (result.type === 'failure') {
-				error = result.data?.error || 'Failed to change password';
+				error = result.data?.error || m.failed_to_change_password();
 				success = false;
 				console.log('error', error);
 			}

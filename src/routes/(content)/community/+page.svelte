@@ -32,7 +32,7 @@
 			>
 		</li>
 	</ul>
-	<h2 class="text-xl font-bold">Tools & Resources</h2>
+	<h2 class="text-xl font-bold">{m.tools_resources()}</h2>
 	<ul class="m-4 flex flex-col flex-wrap gap-4 p-2">
 		<li class="flex items-center gap-2 rounded-md bg-gray-800 p-2">
 			<a

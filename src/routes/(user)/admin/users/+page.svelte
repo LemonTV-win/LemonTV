@@ -39,7 +39,8 @@
 
 		enhance(form, () => async ({ update }) => {
 			await update();
-			successMessage = action === 'add' ? 'Role added successfully' : 'Role removed successfully';
+			successMessage =
+				action === 'add' ? m.role_added_successfully() : m.role_removed_successfully();
 			setTimeout(() => {
 				successMessage = '';
 			}, 3000);
@@ -53,7 +54,7 @@
 		const form = event.target as HTMLFormElement;
 		enhance(form, () => async ({ update }) => {
 			await update();
-			successMessage = editingRole ? 'Role updated successfully' : 'Role created successfully';
+			successMessage = editingRole ? m.role_updated_successfully() : m.role_created_successfully();
 			setTimeout(() => {
 				successMessage = '';
 				editingRole = null;
@@ -70,7 +71,7 @@
 		const form = event.target as HTMLFormElement;
 		enhance(form, () => async ({ update }) => {
 			await update();
-			successMessage = 'Role deleted successfully';
+			successMessage = m.role_deleted_successfully();
 			setTimeout(() => {
 				successMessage = '';
 			}, 3000);

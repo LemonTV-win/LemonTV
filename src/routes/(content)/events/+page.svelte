@@ -19,7 +19,7 @@
 </script>
 
 <main class="mx-auto max-w-screen-lg md:px-4">
-	<h1 class="mx-0 my-10 text-2xl font-bold md:mx-4">Events</h1>
+	<h1 class="mx-0 my-10 text-2xl font-bold md:mx-4">{m.events()}</h1>
 
 	<ul>
 		{#each ongoingEvents as event}
