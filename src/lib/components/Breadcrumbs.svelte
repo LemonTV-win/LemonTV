@@ -61,7 +61,7 @@
 
 <nav class="flex items-center gap-1 px-8 py-4 text-sm text-gray-400">
 	{#if showHome}
-		<a href="/" class="transition-all duration-200 hover:text-white">Home</a>
+		<a href="/" class="transition-all duration-200 hover:text-white">{m.home()}</a>
 		<MaterialSymbolsChevronRightRounded class="h-4 w-4" />
 	{/if}
 
