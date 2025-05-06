@@ -5,6 +5,9 @@
 	import { setLocale, type Locale, getLocale } from '$lib/paraglide/runtime';
 	import MaterialSymbolsMenuRounded from '~icons/material-symbols/menu-rounded';
 	import MaterialSymbolsCloseRounded from '~icons/material-symbols/close-rounded';
+	import MaterialSymbolsAccountCircle from '~icons/material-symbols/account-circle';
+	import MaterialSymbolsLogoutRounded from '~icons/material-symbols/logout-rounded';
+	import MaterialSymbolsSettingsRounded from '~icons/material-symbols/settings-rounded';
 	import type { LayoutProps } from './$types';
 	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
@@ -28,9 +31,31 @@
 
 	let locale = $state(getLocale());
 	let mobileMenuOpen = $state(false);
+	let userMenuOpen = $state(false);
 
 	function toggleMobileMenu() {
 		mobileMenuOpen = !mobileMenuOpen;
+	}
+
+	function toggleUserMenu() {
+		userMenuOpen = !userMenuOpen;
+	}
+
+	// Close user menu when clicking outside
+	function clickOutside(node: HTMLElement) {
+		const handleClick = (event: MouseEvent) => {
+			if (!node.contains(event.target as Node)) {
+				userMenuOpen = false;
+			}
+		};
+
+		document.addEventListener('click', handleClick, true);
+
+		return {
+			destroy() {
+				document.removeEventListener('click', handleClick, true);
+			}
+		};
 	}
 </script>
 
@@ -75,15 +100,39 @@
 		</select>
 	</nav>
 	{#if data.user}
-		<div class="flex items-center gap-2">
-			<a href="/profile" class="text-white">{data.user.username}</a>
-			<form method="post" action="/?/logout" use:enhance>
-				<button
-					type="submit"
-					class="rounded-md border-1 border-gray-500 bg-gray-800 px-4 py-1 text-white transition-colors duration-300 hover:bg-gray-700"
-					>Sign out</button
+		<div class="user-menu relative">
+			<button
+				onclick={toggleUserMenu}
+				class="flex items-center gap-2 rounded-full bg-gray-700 p-1 hover:bg-gray-600"
+			>
+				<MaterialSymbolsAccountCircle class="h-8 w-8 text-white" />
+			</button>
+			{#if userMenuOpen}
+				<div
+					class="ring-opacity-5 absolute right-0 mt-2 w-48 rounded-md bg-gray-800 py-1 shadow-lg ring-1 ring-black"
+					use:clickOutside
 				>
-			</form>
+					<div class="border-b border-gray-700 px-4 py-2">
+						<p class="text-sm font-medium text-white">{data.user.username}</p>
+					</div>
+					<a
+						href="/profile"
+						class="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
+					>
+						<MaterialSymbolsSettingsRounded class="h-5 w-5" />
+						Profile Settings
+					</a>
+					<form method="post" action="/?/logout" use:enhance>
+						<button
+							type="submit"
+							class="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
+						>
+							<MaterialSymbolsLogoutRounded class="h-5 w-5" />
+							Sign out
+						</button>
+					</form>
+				</div>
+			{/if}
 		</div>
 	{:else}
 		<a
