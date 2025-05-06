@@ -15,6 +15,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>{data.player?.name ?? m.players()} | LemonTV</title>
+</svelte:head>
+
 {#if data.player}
 	<Breadcrumbs currentTitle={data.player.name} />
 	<main class="mx-auto grid max-w-screen-lg grid-cols-1 gap-6 p-4 md:grid-cols-3">

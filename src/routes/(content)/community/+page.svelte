@@ -2,6 +2,10 @@
 	import { m } from '$lib/paraglide/messages.js';
 </script>
 
+<svelte:head>
+	<title>{m.community()} | LemonTV</title>
+</svelte:head>
+
 <main class="mx-auto max-w-screen-lg">
 	<h1 class="my-10 text-2xl font-bold">{m.community()}</h1>
 	<h2 class="text-xl font-bold">Discord</h2>

@@ -18,6 +18,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>{data.team?.name ?? m.teams()} | LemonTV</title>
+</svelte:head>
+
 {#if data.team}
 	<Breadcrumbs currentTitle={data.team.name} />
 	<main class="mx-auto max-w-screen-lg px-4 py-4">

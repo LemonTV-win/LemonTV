@@ -34,6 +34,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>{m.profile_settings()} | LemonTV</title>
+</svelte:head>
+
 <main class="flex min-h-[calc(100dvh-9em)] flex-1 items-center justify-center p-4">
 	<div class="w-full max-w-md">
 		<div class="rounded-lg border border-slate-800 bg-slate-900/70 shadow-lg">

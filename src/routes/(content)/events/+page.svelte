@@ -18,6 +18,10 @@
 	let finishedEvents = $derived(sortedEvents.filter((event) => event.status === 'finished'));
 </script>
 
+<svelte:head>
+	<title>{m.events()} | LemonTV</title>
+</svelte:head>
+
 <main class="mx-auto max-w-screen-lg md:px-4">
 	<h1 class="mx-0 my-10 text-2xl font-bold md:mx-4">{m.events()}</h1>
 
