@@ -96,7 +96,8 @@
 			<!-- Tabs -->
 			<div class="grid grid-cols-2 border-b border-slate-800">
 				<button
-					class="px-4 py-2 text-center text-sm font-medium transition-colors {activeTab === 'login'
+					class="cursor-pointer px-4 py-2 text-center text-sm font-medium transition-colors {activeTab ===
+					'login'
 						? 'border-b-2 border-yellow-500 text-yellow-500'
 						: 'text-slate-400 hover:text-slate-300'}"
 					onclick={() => (activeTab = 'login')}
@@ -104,7 +105,7 @@
 					{m.sign_in()}
 				</button>
 				<button
-					class="px-4 py-2 text-center text-sm font-medium transition-colors {activeTab ===
+					class="cursor-pointer px-4 py-2 text-center text-sm font-medium transition-colors {activeTab ===
 					'register'
 						? 'border-b-2 border-yellow-500 text-yellow-500'
 						: 'text-slate-400 hover:text-slate-300'}"
