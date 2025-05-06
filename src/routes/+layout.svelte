@@ -131,7 +131,7 @@
 						class="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
 					>
 						<MaterialSymbolsSettingsRounded class="h-5 w-5" />
-						Profile Settings
+						{m.profile_settings()}
 					</a>
 					<div class="px-4 py-2">
 						<div class="flex items-center gap-2">
@@ -156,7 +156,7 @@
 							class="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
 						>
 							<MaterialSymbolsLogoutRounded class="h-5 w-5" />
-							Sign out
+							{m.sign_out()}
 						</button>
 					</form>
 				</div>
@@ -181,7 +181,7 @@
 			<a
 				href="/login?redirect={page.url.pathname}"
 				class="rounded-md border-1 border-gray-500 bg-gray-800 px-4 py-1 text-white transition-colors duration-300 hover:bg-gray-700"
-				>Sign in</a
+				>{m.sign_in()}</a
 			>
 		</div>
 	{/if}
@@ -228,7 +228,7 @@
 						onclick={toggleMobileMenu}
 					>
 						<MaterialSymbolsSettingsRounded class="h-6 w-6" />
-						Profile Settings
+						{m.profile_settings()}
 					</a>
 					<div class="py-2">
 						<div
@@ -256,7 +256,7 @@
 							onclick={toggleMobileMenu}
 						>
 							<MaterialSymbolsLogoutRounded class="h-6 w-6" />
-							Sign out
+							{m.sign_out()}
 						</button>
 					</form>
 				</div>
@@ -282,7 +282,7 @@
 				<a
 					href="/login?redirect={page.url.pathname}"
 					class="flex w-full items-center justify-center rounded-md border-1 border-gray-500 bg-gray-700 px-4 py-2 text-lg text-white transition-colors duration-300 hover:bg-gray-600"
-					onclick={toggleMobileMenu}>Sign in</a
+					onclick={toggleMobileMenu}>{m.sign_in()}</a
 				>
 			</div>
 		{/if}

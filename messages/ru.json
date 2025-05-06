@@ -63,5 +63,9 @@
 	"results": "Результаты",
 	"official": "Официальный",
 	"unofficial": "Не официальный",
-	"home": "Главная"
+	"home": "Главная",
+	"profile_settings": "Настройки профиля",
+	"sign_in": "Войти",
+	"sign_out": "Выйти",
+	"language": "Язык"
 }

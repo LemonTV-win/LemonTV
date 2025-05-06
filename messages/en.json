@@ -1,6 +1,5 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-	"home": "Home",
 	"news": "News",
 	"events": "Events",
 	"teams": "Teams",
@@ -66,5 +65,10 @@
 	"official": "Official",
 	"unofficial": "Unofficial",
 	"results": "Results",
-	"highlights": "Highlights"
+	"highlights": "Highlights",
+	"home": "Home",
+	"profile_settings": "Profile Settings",
+	"sign_in": "Sign in",
+	"sign_out": "Sign out",
+	"language": "Language"
 }

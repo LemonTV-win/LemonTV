@@ -66,5 +66,9 @@
 	"official": "官方",
 	"unofficial": "非官方",
 	"highlights": "精彩片段",
-	"home": "首页"
+	"home": "首页",
+	"profile_settings": "个人资料设置",
+	"sign_in": "登录",
+	"sign_out": "退出",
+	"language": "语言"
 }

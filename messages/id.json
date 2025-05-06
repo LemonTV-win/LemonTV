@@ -66,5 +66,9 @@
 	"official": "Resmi",
 	"unofficial": "Tidak Resmi",
 	"highlights": "Highlight",
-	"home": "Beranda"
+	"home": "Beranda",
+	"profile_settings": "Pengaturan Profil",
+	"sign_in": "Masuk",
+	"sign_out": "Keluar",
+	"language": "Bahasa"
 }

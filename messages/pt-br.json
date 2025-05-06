@@ -66,5 +66,9 @@
 	"official": "Oficial",
 	"unofficial": "Não Oficial",
 	"highlights": "Highlights",
-	"home": "Início"
+	"home": "Início",
+	"profile_settings": "Configurações do Perfil",
+	"sign_in": "Entrar",
+	"sign_out": "Sair",
+	"language": "Idioma"
 }

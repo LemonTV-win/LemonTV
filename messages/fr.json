@@ -66,5 +66,9 @@
 	"official": "Officiel",
 	"unofficial": "Non officiel",
 	"highlights": "Hightlights",
-	"home": "Accueil"
+	"home": "Accueil",
+	"profile_settings": "Paramètres du profil",
+	"sign_in": "Se connecter",
+	"sign_out": "Se déconnecter",
+	"language": "Langue"
 }

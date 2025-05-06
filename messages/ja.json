@@ -65,5 +65,9 @@
 	"official": "公式",
 	"unofficial": "非公式",
 	"results": "結果",
-	"home": "ホーム"
+	"home": "ホーム",
+	"profile_settings": "プロフィール設定",
+	"sign_in": "サインイン",
+	"sign_out": "サインアウト",
+	"language": "言語"
 }

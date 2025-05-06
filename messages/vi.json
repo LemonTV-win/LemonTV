@@ -66,5 +66,9 @@
 	"official": "Chính thức",
 	"unofficial": "Không chính thức",
 	"highlights": "Những điểm nổi bật",
-	"home": "Trang chủ"
+	"home": "Trang chủ",
+	"profile_settings": "Cài đặt Hồ sơ",
+	"sign_in": "Đăng nhập",
+	"sign_out": "Đăng xuất",
+	"language": "Ngôn ngữ"
 }

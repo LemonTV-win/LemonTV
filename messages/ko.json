@@ -66,5 +66,9 @@
 	"official": "공식",
 	"unofficial": "비공식",
 	"highlights": "하이라이트",
-	"home": "홈"
+	"home": "홈",
+	"profile_settings": "프로필 설정",
+	"sign_in": "로그인",
+	"sign_out": "로그아웃",
+	"language": "언어"
 }
