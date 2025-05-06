@@ -2,8 +2,8 @@
 	import type { PageServerData } from './$types';
 	import { m } from '$lib/paraglide/messages';
 	import { enhance } from '$app/forms';
+	import MaterialSymbolsCloseRounded from '~icons/material-symbols/close-rounded';
 	import type { Role } from '$lib/server/db/schema';
-
 	let { data }: { data: PageServerData } = $props();
 	let searchQuery = $state('');
 	let errorMessage = $state('');
@@ -155,10 +155,10 @@
 												</span>
 												<button
 													type="submit"
-													class="text-red-400 hover:text-red-300"
+													class="cursor-pointer text-red-400 hover:text-red-300"
 													title={m.delete()}
 												>
-													×
+													<MaterialSymbolsCloseRounded class="h-4 w-4" />
 												</button>
 											</form>
 										{/each}
