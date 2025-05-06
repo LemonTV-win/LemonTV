@@ -7,6 +7,28 @@ export const user = sqliteTable('user', {
 	createdAt: integer('created_at', { mode: 'timestamp' }).notNull()
 });
 
+export const role = sqliteTable('role', {
+	id: text('id').primaryKey(),
+	name: text('name').notNull()
+});
+
+export const userRole = sqliteTable(
+	'user_role',
+	{
+		userId: text('user_id')
+			.notNull()
+			.references(() => user.id),
+		roleId: text('role_id')
+			.notNull()
+			.references(() => role.id)
+	},
+	(table) => {
+		return {
+			pk: primaryKey({ columns: [table.userId, table.roleId] })
+		};
+	}
+);
+
 export const session = sqliteTable('session', {
 	id: text('id').primaryKey(),
 	userId: text('user_id')
