@@ -97,5 +97,7 @@
 	"admin_dashboard": "管理员仪表板",
 	"users": "用户",
 	"created_at": "创建时间",
-	"admin_panel": "管理面板"
+	"admin_panel": "管理面板",
+	"id": "ID",
+	"roles": "角色"
 }

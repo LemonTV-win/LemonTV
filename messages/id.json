@@ -97,5 +97,7 @@
 	"users": "Pengguna",
 	"created_at": "Dibuat pada",
 	"language": "Bahasa",
-	"admin_panel": "Panel Admin"
+	"admin_panel": "Panel Admin",
+	"id": "ID",
+	"roles": "Peran"
 }

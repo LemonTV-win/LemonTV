@@ -97,5 +97,7 @@
 	"admin_dashboard": "Painel do administrador",
 	"users": "Usuários",
 	"created_at": "Criado em",
-	"admin_panel": "Painel de Administração"
+	"admin_panel": "Painel de Administração",
+	"id": "ID",
+	"roles": "Papéis"
 }

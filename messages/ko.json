@@ -97,5 +97,7 @@
 	"admin_dashboard": "관리자 대시보드",
 	"users": "사용자",
 	"created_at": "생성일",
-	"admin_panel": "관리자 패널"
+	"admin_panel": "관리자 패널",
+	"id": "ID",
+	"roles": "역할"
 }

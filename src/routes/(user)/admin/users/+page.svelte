@@ -119,10 +119,10 @@
 				<table class="w-full table-auto border-collapse border-y-2 border-gray-500 bg-gray-800">
 					<thead>
 						<tr class="border-b-2 border-gray-500 text-left text-sm text-gray-400">
-							<th class="px-4 py-1">ID</th>
-							<th class="px-4 py-1">Username</th>
-							<th class="px-4 py-1">Roles</th>
-							<th class="px-4 py-1">Created At</th>
+							<th class="px-4 py-1">{m.id()}</th>
+							<th class="px-4 py-1">{m.username()}</th>
+							<th class="px-4 py-1">{m.roles()}</th>
+							<th class="px-4 py-1">{m.created_at()}</th>
 						</tr>
 					</thead>
 					<tbody>

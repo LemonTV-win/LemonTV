@@ -94,5 +94,7 @@
 	"users": "Benutzer",
 	"created_at": "Erstellt am",
 	"language": "Sprache",
-	"admin_panel": "Administrationsbereich"
+	"admin_panel": "Administrationsbereich",
+	"id": "ID",
+	"roles": "Rollen"
 }

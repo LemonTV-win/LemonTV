@@ -96,5 +96,8 @@
 	"password_changed": "Đổi mật khẩu thành công!",
 	"admin_dashboard": "Bảng điều khiển quản trị",
 	"users": "Người dùng",
-	"created_at": "Ngày tạo"
+	"created_at": "Ngày tạo",
+	"admin_panel": "Bảng điều khiển quản trị",
+	"id": "ID",
+	"roles": "Vai trò"
 }

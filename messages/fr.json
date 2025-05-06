@@ -97,5 +97,7 @@
 	"admin_dashboard": "Tableau de bord administrateur",
 	"users": "Utilisateurs",
 	"created_at": "Créé le",
-	"admin_panel": "Panneau d'Administration"
+	"admin_panel": "Panneau d'Administration",
+	"id": "ID",
+	"roles": "Rôles"
 }
