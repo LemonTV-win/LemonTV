@@ -15,7 +15,7 @@
 		"db:push": "drizzle-kit push",
 		"db:migrate": "drizzle-kit migrate",
 		"db:studio": "drizzle-kit studio",
-		"i18n:check": "tsx scripts/check-messages.ts"
+		"i18n:check": "bun scripts/check-messages.ts"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.9",
