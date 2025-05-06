@@ -10,6 +10,7 @@
 	import type { PageServerData } from './$types';
 	import { m } from '$lib/paraglide/messages';
 	import { LOGIN_SCHEMA, REGISTER_SCHEMA } from '$lib/validations/auth';
+	import Alert from '$lib/components/Alert.svelte';
 
 	let { form, data }: { form: ActionData; data: PageServerData } = $props();
 	let activeTab = $state('login');
@@ -29,10 +30,13 @@
 	let acceptTerms = $state(false);
 
 	let isLoading = $state(false);
+	let successMessage = $state('');
 
 	async function handleLoginSubmit(e: SubmitEvent) {
 		e.preventDefault();
 		isLoading = true;
+		form = null;
+		successMessage = '';
 
 		const loginData = {
 			username: loginUsername,
@@ -57,13 +61,16 @@
 			});
 
 			if (response.ok) {
-				window.location.href = data.redirect || '/';
+				successMessage = m.login_success();
+				setTimeout(() => {
+					window.location.href = data.redirect || '/';
+				}, 1000);
 			} else {
 				const responseData = await response.json();
 				form = { message: responseData.message };
 			}
 		} catch (error) {
-			form = { message: 'An error occurred during login' };
+			form = { message: m.login_error() };
 		} finally {
 			isLoading = false;
 		}
@@ -72,6 +79,8 @@
 	async function handleRegisterSubmit(e: SubmitEvent) {
 		e.preventDefault();
 		isLoading = true;
+		form = null;
+		successMessage = '';
 
 		const registerData = {
 			username: registerUsername,
@@ -102,13 +111,16 @@
 			});
 
 			if (response.ok) {
-				window.location.href = data.redirect || '/';
+				successMessage = m.register_success();
+				setTimeout(() => {
+					window.location.href = data.redirect || '/';
+				}, 1000);
 			} else {
 				const responseData = await response.json();
 				form = { message: responseData.message };
 			}
 		} catch (error) {
-			form = { message: 'An error occurred during registration' };
+			form = { message: m.register_error() };
 		} finally {
 			isLoading = false;
 		}
@@ -392,5 +404,9 @@
 </main>
 
 {#if form?.message}
-	<p class="mt-4 text-center text-red-500">{form.message}</p>
+	<Alert type="error" message={form.message} />
+{/if}
+
+{#if successMessage}
+	<Alert type="success" message={successMessage} dismissible={false} />
 {/if}

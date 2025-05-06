@@ -95,5 +95,10 @@
 	"edit_role_id": "Edit Role ID",
 	"new_role_name": "New Role Name",
 	"edit_role_name": "Edit Role Name",
-	"role_id": "Role ID"
+	"role_id": "Role ID",
+	"dismiss": "Dismiss",
+	"login_success": "Login successful! Redirecting...",
+	"login_error": "An error occurred during login",
+	"register_success": "Registration successful! Redirecting...",
+	"register_error": "An error occurred during registration"
 }
