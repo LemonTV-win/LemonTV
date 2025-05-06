@@ -125,5 +125,13 @@
 	"username_format": "Username can only contain letters, numbers, underscores, and hyphens",
 	"password_length": "Password must be at least 8 characters",
 	"email_format": "Please enter a valid email address",
-	"user_id": "User ID"
+	"user_id": "User ID",
+	"register": "Register",
+	"manage_account": "Manage Account",
+	"welcome": "Welcome, {username}!",
+	"change_password": "Change Password",
+	"current_password": "Current Password",
+	"new_password": "New Password",
+	"confirm_new_password": "Confirm New Password",
+	"password_changed": "Password changed successfully!"
 }

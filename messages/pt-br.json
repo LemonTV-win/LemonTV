@@ -115,7 +115,7 @@
 	"edit_role_id": "Editar ID de Papel",
 	"new_role_name": "Novo Nome de Papel",
 	"edit_role_name": "Editar Nome de Papel",
-	"role_id": "ID de Papel",
+	"role_id": "ID da função",
 	"login_success": "Login bem-sucedido! Redirecionando...",
 	"login_error": "Ocorreu um erro durante o login",
 	"register_success": "Registro bem-sucedido! Redirecionando...",
@@ -132,5 +132,6 @@
 	"username_length": "O nome de usuário deve ter entre 3 e 31 caracteres",
 	"username_format": "O nome de usuário só pode conter letras, números, underscores e hífens",
 	"password_length": "A senha deve ter pelo menos 8 caracteres",
-	"email_format": "Por favor, insira um e-mail válido"
+	"email_format": "Por favor, insira um e-mail válido",
+	"search_users": "Pesquisar usuários..."
 }

@@ -113,7 +113,7 @@
 	"edit_role_id": "Rolle ID bearbeiten",
 	"new_role_name": "Neuer Rolle Name",
 	"edit_role_name": "Rolle Name bearbeiten",
-	"role_id": "Rolle ID",
+	"role_id": "Rollen-ID",
 	"sign_in": "Anmelden",
 	"sign_out": "Abmelden",
 	"login_success": "Anmeldung erfolgreich! Weiterleitung...",
@@ -132,5 +132,6 @@
 	"username_length": "Der Benutzername muss zwischen 3 und 31 Zeichen lang sein",
 	"username_format": "Der Benutzername darf nur Buchstaben, Zahlen, Unterstriche und Bindestriche enthalten",
 	"password_length": "Das Passwort muss mindestens 8 Zeichen lang sein",
-	"email_format": "Bitte geben Sie eine gültige E-Mail-Adresse ein"
+	"email_format": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+	"profile_settings": "Profil-Einstellungen"
 }
