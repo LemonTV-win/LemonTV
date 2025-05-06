@@ -1,7 +1,13 @@
 import { sequence } from '@sveltejs/kit/hooks';
 import * as auth from '$lib/server/auth.js';
-import type { Handle } from '@sveltejs/kit';
+import type { Handle, ServerInit } from '@sveltejs/kit';
 import { paraglideMiddleware } from '$lib/paraglide/server';
+import { syncRoles } from '$lib/server/db/sync';
+
+export const init: ServerInit = async () => {
+	console.log('[ServerInit] Syncing roles...');
+	await syncRoles();
+};
 
 const handleParaglide: Handle = ({ event, resolve }) =>
 	paraglideMiddleware(event.request, ({ request, locale }) => {
