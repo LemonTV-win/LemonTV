@@ -87,17 +87,6 @@
 		<a href="/teams">{m.teams()}</a>
 		<a href="/players">{m.players()}</a>
 		<a href="/community">{m.community()}</a>
-		<select
-			class="rounded-md bg-gray-800 px-4 py-1 text-white"
-			onchange={({ currentTarget }) => {
-				setLocale(currentTarget.value as Locale);
-			}}
-			bind:value={locale}
-		>
-			{#each Object.entries(locales) as [locale, label]}
-				<option value={locale}>{label}</option>
-			{/each}
-		</select>
 	</nav>
 	{#if data.user}
 		<div class="user-menu relative hidden md:block">
@@ -122,6 +111,20 @@
 						<MaterialSymbolsSettingsRounded class="h-5 w-5" />
 						Profile Settings
 					</a>
+					<div class="px-4 py-2">
+						<select
+							class="w-full rounded-md bg-gray-700 px-2 py-1 text-sm text-white"
+							onchange={({ currentTarget }) => {
+								setLocale(currentTarget.value as Locale);
+							}}
+							bind:value={locale}
+						>
+							{#each Object.entries(locales) as [locale, label]}
+								<option value={locale}>{label}</option>
+							{/each}
+						</select>
+					</div>
+					<hr class="border-gray-700" />
 					<form method="post" action="/?/logout" use:enhance>
 						<button
 							type="submit"
@@ -135,11 +138,24 @@
 			{/if}
 		</div>
 	{:else}
-		<a
-			href="/login?redirect={page.url.pathname}"
-			class="rounded-md border-1 border-gray-500 bg-gray-800 px-4 py-1 text-white transition-colors duration-300 hover:bg-gray-700"
-			>Sign in</a
-		>
+		<div class="flex items-center gap-2">
+			<select
+				class="rounded-md bg-gray-800 px-4 py-1 text-white"
+				onchange={({ currentTarget }) => {
+					setLocale(currentTarget.value as Locale);
+				}}
+				bind:value={locale}
+			>
+				{#each Object.entries(locales) as [locale, label]}
+					<option value={locale}>{label}</option>
+				{/each}
+			</select>
+			<a
+				href="/login?redirect={page.url.pathname}"
+				class="rounded-md border-1 border-gray-500 bg-gray-800 px-4 py-1 text-white transition-colors duration-300 hover:bg-gray-700"
+				>Sign in</a
+			>
+		</div>
 	{/if}
 </header>
 
@@ -151,19 +167,6 @@
 		<a href="/teams" class="py-2 text-lg" onclick={toggleMobileMenu}>{m.teams()}</a>
 		<a href="/players" class="py-2 text-lg" onclick={toggleMobileMenu}>{m.players()}</a>
 		<a href="/community" class="py-2 text-lg" onclick={toggleMobileMenu}>{m.community()}</a>
-		<div class="py-2">
-			<select
-				class="w-full rounded-md bg-gray-700 px-4 py-2 text-white"
-				onchange={({ currentTarget }) => {
-					setLocale(currentTarget.value as Locale);
-				}}
-				bind:value={locale}
-			>
-				{#each Object.entries(locales) as [locale, label]}
-					<option value={locale}>{label}</option>
-				{/each}
-			</select>
-		</div>
 		{#if data.user}
 			<div class="mt-4 border-t border-gray-700 pt-4">
 				<div class="mb-4 flex items-center gap-2">
@@ -178,6 +181,20 @@
 					<MaterialSymbolsSettingsRounded class="h-6 w-6" />
 					Profile Settings
 				</a>
+				<div class="py-2">
+					<select
+						class="w-full rounded-md bg-gray-700 px-4 py-2 text-white"
+						onchange={({ currentTarget }) => {
+							setLocale(currentTarget.value as Locale);
+						}}
+						bind:value={locale}
+					>
+						{#each Object.entries(locales) as [locale, label]}
+							<option value={locale}>{label}</option>
+						{/each}
+					</select>
+				</div>
+				<hr class="border-gray-700" />
 				<form method="post" action="/?/logout" use:enhance>
 					<button
 						type="submit"
@@ -191,6 +208,19 @@
 			</div>
 		{:else}
 			<div class="mt-4 border-t border-gray-700 pt-4">
+				<div class="mb-4">
+					<select
+						class="w-full rounded-md bg-gray-700 px-4 py-2 text-white"
+						onchange={({ currentTarget }) => {
+							setLocale(currentTarget.value as Locale);
+						}}
+						bind:value={locale}
+					>
+						{#each Object.entries(locales) as [locale, label]}
+							<option value={locale}>{label}</option>
+						{/each}
+					</select>
+				</div>
 				<a
 					href="/login?redirect={page.url.pathname}"
 					class="flex w-full items-center justify-center rounded-md border-1 border-gray-500 bg-gray-700 px-4 py-2 text-lg text-white transition-colors duration-300 hover:bg-gray-600"
