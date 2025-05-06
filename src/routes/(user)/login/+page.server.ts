@@ -9,7 +9,7 @@ import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
 	if (event.locals.user) {
-		console.log('[Login] User already authenticated, redirecting to profile');
+		console.info('[Login] User already authenticated, redirecting to profile');
 		return redirect(302, '/profile');
 	}
 
@@ -20,7 +20,7 @@ export const load: PageServerLoad = async (event) => {
 
 export const actions: Actions = {
 	login: async (event) => {
-		console.log('[Login] Attempting login');
+		console.info('[Login] Attempting login');
 		const formData = await event.request.formData();
 		const data = {
 			username: formData.get('username'),
@@ -59,11 +59,11 @@ export const actions: Actions = {
 		const session = await auth.createSession(sessionToken, existingUser.id);
 		auth.setSessionTokenCookie(event, sessionToken, session.expiresAt);
 
-		console.log('[Login] Successfully logged in user:', result.data.username);
+		console.info('[Login] Successfully logged in user:', result.data.username);
 		return { success: true };
 	},
 	register: async (event) => {
-		console.log('[Register] ====== Attempting registration ======');
+		console.info('[Register] ====== Attempting registration ======');
 		const formData = await event.request.formData();
 		const data = {
 			username: formData.get('username'),
@@ -84,9 +84,13 @@ export const actions: Actions = {
 		const userId = generateUserId();
 		const passwordHash = await auth.hashPassword(result.data.password);
 
-		console.log('[Register] Generated user ID:', userId);
+		console.info('[Register] Generated user ID:', userId);
 
 		try {
+			// Check for existing users before insertion
+			const existingUsers = await db.select().from(table.user).limit(1);
+			const isFirstUser = existingUsers.length === 0;
+
 			const createdAt = new Date();
 			await db.insert(table.user).values({
 				id: userId,
@@ -96,31 +100,29 @@ export const actions: Actions = {
 				createdAt
 			});
 
-			console.log('[Register] Inserted user into database at:', createdAt);
+			console.info('[Register] Inserted user into database at:', createdAt);
 
-			// #region Assign admin role to first user
-			const users = await db.select().from(table.user).limit(1);
-			if (users.length === 0) {
-				console.log('[Register] No existing user, assigning admin role');
+			// Assign admin role if this is the first user
+			if (isFirstUser) {
+				console.info('[Register] First user, assigning admin role');
 				const [adminRole] = await db.select().from(table.role).where(eq(table.role.id, 'admin'));
 				await db.insert(table.userRole).values({
 					userId: userId,
 					roleId: adminRole.id
 				});
-				console.log('[Register] Successfully assigned admin role to user:', userId);
+				console.info('[Register] Successfully assigned admin role to user:', userId);
 			}
-			// #endregion
 
 			const sessionToken = auth.generateSessionToken();
 			const session = await auth.createSession(sessionToken, userId);
 			auth.setSessionTokenCookie(event, sessionToken, session.expiresAt);
 
-			console.log('[Register] Successfully registered user:', result.data.username);
+			console.info('[Register] Successfully registered user:', result.data.username);
 		} catch (e) {
 			console.error('[Register] Error during registration:', e);
 			return fail(500, { message: 'An error has occurred' });
 		} finally {
-			console.log('[Register] ====== Registration complete ======');
+			console.info('[Register] ====== Registration complete ======');
 		}
 		return { success: true };
 	}
