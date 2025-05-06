@@ -12,7 +12,8 @@
 	import { LOGIN_SCHEMA, REGISTER_SCHEMA } from '$lib/validations/auth';
 	import Alert from '$lib/components/Alert.svelte';
 
-	let { form, data }: { form: ActionData; data: PageServerData } = $props();
+	type FormData = { message: string; success?: never } | { success: true; message?: never };
+	let { form, data }: { form: FormData | null; data: PageServerData } = $props();
 	let activeTab = $state('login');
 	let showPassword = $state(false);
 	let showConfirmPassword = $state(false);
@@ -32,8 +33,7 @@
 	let isLoading = $state(false);
 	let successMessage = $state('');
 
-	async function handleLoginSubmit(e: SubmitEvent) {
-		e.preventDefault();
+	function handleLoginSubmit({ cancel }: { cancel: () => void }) {
 		isLoading = true;
 		form = null;
 		successMessage = '';
@@ -47,37 +47,12 @@
 		if (!result.success) {
 			form = { message: result.error.errors[0].message };
 			isLoading = false;
+			cancel();
 			return;
-		}
-
-		const formData = new FormData();
-		formData.append('username', result.data.username);
-		formData.append('password', result.data.password);
-
-		try {
-			const response = await fetch('?/login', {
-				method: 'POST',
-				body: formData
-			});
-
-			if (response.ok) {
-				successMessage = m.login_success();
-				setTimeout(() => {
-					window.location.href = data.redirect || '/';
-				}, 1000);
-			} else {
-				const responseData = await response.json();
-				form = { message: responseData.message };
-			}
-		} catch (error) {
-			form = { message: m.login_error() };
-		} finally {
-			isLoading = false;
 		}
 	}
 
-	async function handleRegisterSubmit(e: SubmitEvent) {
-		e.preventDefault();
+	function handleRegisterSubmit({ cancel }: { cancel: () => void }) {
 		isLoading = true;
 		form = null;
 		successMessage = '';
@@ -94,37 +69,25 @@
 		if (!result.success) {
 			form = { message: result.error.errors[0].message };
 			isLoading = false;
+			cancel();
 			return;
 		}
+	}
 
-		const formData = new FormData();
-		formData.append('username', result.data.username);
-		formData.append('email', result.data.email);
-		formData.append('password', result.data.password);
-		formData.append('confirmPassword', result.data.confirmPassword);
-		formData.append('acceptTerms', result.data.acceptTerms ? 'on' : 'off');
-
-		try {
-			const response = await fetch('?/register', {
-				method: 'POST',
-				body: formData
-			});
-
-			if (response.ok) {
-				successMessage = m.register_success();
-				setTimeout(() => {
-					window.location.href = data.redirect || '/';
-				}, 1000);
-			} else {
-				const responseData = await response.json();
-				form = { message: responseData.message };
-			}
-		} catch (error) {
-			form = { message: m.register_error() };
-		} finally {
+	$effect(() => {
+		if (form?.message) {
 			isLoading = false;
 		}
-	}
+	});
+
+	$effect(() => {
+		if (form?.success) {
+			successMessage = activeTab === 'login' ? m.login_success() : m.register_success();
+			setTimeout(() => {
+				window.location.href = data.redirect || '/';
+			}, 1000);
+		}
+	});
 </script>
 
 <main class="flex min-h-[calc(100dvh-9em)] flex-1 items-center justify-center p-4">
@@ -158,7 +121,7 @@
 					<p class="text-slate-400">{m.enter_credentials()}</p>
 				</div>
 				<div class="p-6">
-					<form onsubmit={handleLoginSubmit} class="space-y-4">
+					<form method="POST" action="?/login" use:enhance={handleLoginSubmit} class="space-y-4">
 						<div class="space-y-2">
 							<label for="username" class="block text-white">{m.username()}</label>
 							<div class="relative">
@@ -215,6 +178,7 @@
 							<input
 								type="checkbox"
 								id="remember"
+								name="remember"
 								bind:checked={rememberMe}
 								class="rounded border-slate-700 bg-slate-800 text-yellow-500 focus:ring-yellow-500"
 							/>
@@ -262,7 +226,12 @@
 					<p class="text-slate-400">{m.enter_details()}</p>
 				</div>
 				<div class="p-6">
-					<form onsubmit={handleRegisterSubmit} class="space-y-4">
+					<form
+						method="POST"
+						action="?/register"
+						use:enhance={handleRegisterSubmit}
+						class="space-y-4"
+					>
 						<div class="space-y-2">
 							<label for="username" class="block text-white">{m.username()}</label>
 							<div class="relative">
@@ -271,6 +240,7 @@
 								/>
 								<input
 									id="username"
+									name="username"
 									type="text"
 									placeholder="username"
 									bind:value={registerUsername}
@@ -288,6 +258,7 @@
 								/>
 								<input
 									id="register-email"
+									name="email"
 									type="email"
 									placeholder="your.email@example.com"
 									bind:value={registerEmail}
@@ -305,6 +276,7 @@
 								/>
 								<input
 									id="register-password"
+									name="password"
 									type={showPassword ? 'text' : 'password'}
 									placeholder="••••••••"
 									bind:value={registerPassword}
@@ -333,6 +305,7 @@
 								/>
 								<input
 									id="confirm-password"
+									name="confirmPassword"
 									type={showConfirmPassword ? 'text' : 'password'}
 									placeholder="••••••••"
 									bind:value={confirmPassword}
@@ -357,6 +330,7 @@
 							<input
 								type="checkbox"
 								id="terms"
+								name="acceptTerms"
 								bind:checked={acceptTerms}
 								required
 								class="rounded border-slate-700 bg-slate-800 text-yellow-500 focus:ring-yellow-500"
