@@ -20,7 +20,7 @@
 	let finishedEvents = $derived(sortedEvents.filter((event) => event.status === 'finished'));
 </script>
 
-<main class="mx-auto grid max-w-screen-lg gap-6 p-4 sm:grid-cols-[1fr_auto] sm:gap-10">
+<main class="mx-auto grid max-w-screen-lg gap-6 p-4 sm:gap-10 md:grid-cols-[1fr_auto]">
 	<div>
 		<h2 class="my-5 text-2xl font-bold">
 			<a href="/events">
