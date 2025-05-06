@@ -15,5 +15,14 @@ export default defineConfig({
 		Icons({
 			compiler: 'svelte'
 		})
-	]
+	],
+	optimizeDeps: {
+		exclude: ['@node-rs/argon2']
+	},
+	build: {
+		target: 'esnext',
+		rollupOptions: {
+			external: ['@node-rs/argon2-wasm32-wasi']
+		}
+	}
 });
