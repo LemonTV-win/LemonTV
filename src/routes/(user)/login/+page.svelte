@@ -9,6 +9,7 @@
 	import Github from '~icons/lucide/github';
 	import type { PageServerData } from './$types';
 	import { m } from '$lib/paraglide/messages';
+	import { LOGIN_SCHEMA, REGISTER_SCHEMA } from '$lib/validations/auth';
 
 	let { form, data }: { form: ActionData; data: PageServerData } = $props();
 	let activeTab = $state('login');
@@ -33,9 +34,21 @@
 		e.preventDefault();
 		isLoading = true;
 
+		const loginData = {
+			username: loginUsername,
+			password: loginPassword
+		};
+
+		const result = LOGIN_SCHEMA.safeParse(loginData);
+		if (!result.success) {
+			form = { message: result.error.errors[0].message };
+			isLoading = false;
+			return;
+		}
+
 		const formData = new FormData();
-		formData.append('username', loginUsername);
-		formData.append('password', loginPassword);
+		formData.append('username', result.data.username);
+		formData.append('password', result.data.password);
 
 		try {
 			const response = await fetch('?/login', {
@@ -46,8 +59,8 @@
 			if (response.ok) {
 				window.location.href = data.redirect || '/';
 			} else {
-				const data = await response.json();
-				form = { message: data.message };
+				const responseData = await response.json();
+				form = { message: responseData.message };
 			}
 		} catch (error) {
 			form = { message: 'An error occurred during login' };
@@ -60,9 +73,27 @@
 		e.preventDefault();
 		isLoading = true;
 
+		const registerData = {
+			username: registerUsername,
+			email: registerEmail,
+			password: registerPassword,
+			confirmPassword,
+			acceptTerms
+		};
+
+		const result = REGISTER_SCHEMA.safeParse(registerData);
+		if (!result.success) {
+			form = { message: result.error.errors[0].message };
+			isLoading = false;
+			return;
+		}
+
 		const formData = new FormData();
-		formData.append('username', registerUsername);
-		formData.append('password', registerPassword);
+		formData.append('username', result.data.username);
+		formData.append('email', result.data.email);
+		formData.append('password', result.data.password);
+		formData.append('confirmPassword', result.data.confirmPassword);
+		formData.append('acceptTerms', result.data.acceptTerms ? 'on' : 'off');
 
 		try {
 			const response = await fetch('?/register', {
@@ -73,8 +104,8 @@
 			if (response.ok) {
 				window.location.href = data.redirect || '/';
 			} else {
-				const data = await response.json();
-				form = { message: data.message };
+				const responseData = await response.json();
+				form = { message: responseData.message };
 			}
 		} catch (error) {
 			form = { message: 'An error occurred during registration' };

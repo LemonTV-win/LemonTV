@@ -1,31 +1,11 @@
 import { encodeBase32LowerCase } from '@oslojs/encoding';
 import { fail, redirect } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
-import { z } from 'zod';
 import * as auth from '$lib/server/auth';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
+import { LOGIN_SCHEMA, REGISTER_SCHEMA } from '$lib/validations/auth';
 import type { Actions, PageServerLoad } from './$types';
-
-const USERNAME_SCHEMA = z
-	.string()
-	.min(3, 'Username must be at least 3 characters')
-	.max(31, 'Username must be at most 31 characters')
-	.regex(
-		/^[\p{L}\p{N}_\-]+$/u,
-		'Username can only contain letters, numbers, punctuation, and underscores'
-	);
-
-const PASSWORD_SCHEMA = z
-	.string()
-	.min(8, 'Password must be at least 8 characters')
-	.max(255, 'Password must be at most 255 characters');
-
-const EMAIL_SCHEMA = z
-	.string()
-	.min(3, 'Email must be at least 3 characters')
-	.max(255, 'Email must be at most 255 characters')
-	.email('Invalid email format');
 
 export const load: PageServerLoad = async (event) => {
 	if (event.locals.user) {
@@ -40,34 +20,32 @@ export const load: PageServerLoad = async (event) => {
 export const actions: Actions = {
 	login: async (event) => {
 		const formData = await event.request.formData();
-		const username = formData.get('username');
-		const password = formData.get('password');
+		const data = {
+			username: formData.get('username'),
+			password: formData.get('password')
+		};
 
-		const usernameResult = USERNAME_SCHEMA.safeParse(username);
-		if (!usernameResult.success) {
+		const result = LOGIN_SCHEMA.safeParse(data);
+		if (!result.success) {
 			return fail(400, {
-				message: usernameResult.error.errors[0].message
-			});
-		}
-
-		const passwordResult = PASSWORD_SCHEMA.safeParse(password);
-		if (!passwordResult.success) {
-			return fail(400, {
-				message: passwordResult.error.errors[0].message
+				message: result.error.errors[0].message
 			});
 		}
 
 		const results = await db
 			.select()
 			.from(table.user)
-			.where(eq(table.user.username, usernameResult.data));
+			.where(eq(table.user.username, result.data.username));
 
 		const existingUser = results.at(0);
 		if (!existingUser) {
 			return fail(400, { message: 'Incorrect username or password' });
 		}
 
-		const validPassword = await auth.verifyPassword(passwordResult.data, existingUser.passwordHash);
+		const validPassword = await auth.verifyPassword(
+			result.data.password,
+			existingUser.passwordHash
+		);
 		if (!validPassword) {
 			return fail(400, { message: 'Incorrect username or password' });
 		}
@@ -80,40 +58,30 @@ export const actions: Actions = {
 	},
 	register: async (event) => {
 		const formData = await event.request.formData();
-		const username = formData.get('username');
-		const password = formData.get('password');
-		const email = formData.get('email');
+		const data = {
+			username: formData.get('username'),
+			email: formData.get('email'),
+			password: formData.get('password'),
+			confirmPassword: formData.get('confirmPassword'),
+			acceptTerms: formData.get('acceptTerms') === 'on'
+		};
 
-		const usernameResult = USERNAME_SCHEMA.safeParse(username);
-		if (!usernameResult.success) {
+		const result = REGISTER_SCHEMA.safeParse(data);
+		if (!result.success) {
 			return fail(400, {
-				message: usernameResult.error.errors[0].message
-			});
-		}
-
-		const passwordResult = PASSWORD_SCHEMA.safeParse(password);
-		if (!passwordResult.success) {
-			return fail(400, {
-				message: passwordResult.error.errors[0].message
-			});
-		}
-
-		const emailResult = EMAIL_SCHEMA.safeParse(email);
-		if (!emailResult.success) {
-			return fail(400, {
-				message: emailResult.error.errors[0].message
+				message: result.error.errors[0].message
 			});
 		}
 
 		const userId = generateUserId();
-		const passwordHash = await auth.hashPassword(passwordResult.data);
+		const passwordHash = await auth.hashPassword(result.data.password);
 
 		try {
 			await db.insert(table.user).values({
 				id: userId,
-				username: usernameResult.data,
+				username: result.data.username,
 				passwordHash,
-				email: emailResult.data,
+				email: result.data.email,
 				createdAt: new Date()
 			});
 
