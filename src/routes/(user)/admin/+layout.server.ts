@@ -10,7 +10,7 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 	}
 
 	// Check if user has admin role
-	const [adminRole] = await db.select().from(table.role).where(eq(table.role.name, 'admin'));
+	const [adminRole] = await db.select().from(table.role).where(eq(table.role.id, 'admin'));
 
 	if (!adminRole) {
 		throw new Error('Admin role not found in database');
