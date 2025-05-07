@@ -48,12 +48,14 @@
 	},
 	"dependencies": {
 		"@fontsource-variable/saira": "^5.2.7",
+		"@infolektuell/noto-color-emoji": "^0.2.0",
 		"@inlang/paraglide-js": "^2.0.12",
 		"@libsql/client": "^0.15.4",
 		"@node-rs/argon2": "^2.0.2",
 		"@oslojs/crypto": "^1.0.1",
 		"@oslojs/encoding": "^1.1.0",
 		"countries-list": "^3.1.1",
+		"country-code-to-flag-emoji": "^2.0.0",
 		"dotenv": "^16.5.0",
 		"drizzle-orm": "^0.43.1",
 		"zod": "^3.24.4"

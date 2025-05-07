@@ -1,8 +1,13 @@
 @import '@fontsource-variable/saira';
+@import '@infolektuell/noto-color-emoji';
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
-
 body {
 	@apply bg-gradient-to-b from-gray-950 to-gray-900 text-white;
 	font-family: 'Saira Variable', 'Noto Sans CJK JP', sans-serif;
+}
+
+@theme {
+	--font-emoji: 'Noto Color Emoji', sans-serif;
+	--font-saira: 'Saira Variable', 'Noto Sans CJK JP', sans-serif;
 }

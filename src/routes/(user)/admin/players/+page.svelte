@@ -7,6 +7,8 @@
 	import type { PageProps } from './$types';
 	import { getLocale } from '$lib/paraglide/runtime';
 	import { countries } from 'countries-list';
+	import countryCodeToFlagEmoji from 'country-code-to-flag-emoji';
+	import { countryCodeToLocalizedName } from '$lib/utils/strings';
 
 	const countryCodes = Object.keys(countries);
 
@@ -26,6 +28,24 @@
 	});
 
 	let { data }: PageProps = $props();
+
+	let topCountries = $derived(
+		Object.entries(
+			data.players
+				.map((player) => player.nationality)
+				.reduce(
+					(acc, country) => {
+						if (country) {
+							acc[country] = (acc[country] || 0) + 1;
+						}
+						return acc;
+					},
+					{} as Record<string, number>
+				)
+		)
+			.toSorted((a, b) => b[1] - a[1])
+			.slice(0, 10)
+	);
 
 	let filteredPlayers = $derived(
 		data.players.filter((player) => {
@@ -226,6 +246,8 @@
 	}
 </script>
 
+3️⃣
+
 <main class="mx-auto max-w-screen-lg px-4">
 	<div class="mb-6 flex items-center justify-between">
 		<h1 class="text-2xl font-bold">{m.admin_dashboard()}</h1>
@@ -313,12 +335,23 @@
 					<select
 						id="playerNationality"
 						bind:value={newPlayer.nationality}
-						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+						class="font-emoji mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 					>
 						<option value={undefined}>{m.select_nationality()}</option>
+
+						{#each topCountries as [code, _]}
+							<option value={code}>
+								{code} -
+								{countryCodeToFlagEmoji(code)} -
+								{countryCodeToLocalizedName(code, getLocale())}
+							</option>
+						{/each}
+						<option disabled>―――</option>
 						{#each countryCodes as code}
 							<option value={code}>
-								{code} - {new Intl.DisplayNames([getLocale()], { type: 'region' }).of(code)}
+								{code} -
+								{countryCodeToFlagEmoji(code)} -
+								{countryCodeToLocalizedName(code, getLocale())}
 							</option>
 						{/each}
 					</select>
@@ -469,7 +502,18 @@
 							</a>
 						</td>
 						<td class="px-4 py-1 text-white">{player.name}</td>
-						<td class="px-4 py-1 text-gray-300">{player.nationality || '-'}</td>
+						<td class="px-4 py-1 text-gray-300">
+							{#if player.nationality}
+								<span
+									class="font-emoji"
+									title={`${player.nationality} - ${countryCodeToLocalizedName(player.nationality, getLocale())}`}
+								>
+									{countryCodeToFlagEmoji(player.nationality)}
+								</span>
+							{:else}
+								<span class="font-emoji">-</span>
+							{/if}
+						</td>
 						<td class="px-4 py-1 text-gray-300">
 							{#if player.gameAccounts?.length}
 								<ul class="list-inside list-disc">

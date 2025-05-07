@@ -11,11 +11,21 @@
 	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
 	import SearchInput from '$lib/components/SearchInput.svelte';
 	import { getAllNames } from '$lib/data/players';
+	import countryCodeToFlagEmoji from 'country-code-to-flag-emoji';
+	import { getLocale } from '$lib/paraglide/runtime';
+	import { countryCodeToLocalizedName } from '$lib/utils/strings';
 	let { data }: PageProps = $props();
 
 	let search = $state('');
-	let sortBy: 'name-abc' | 'name-cba' | 'wins-asc' | 'wins-desc' | 'rating-asc' | 'rating-desc' =
-		$state('name-abc');
+	let sortBy:
+		| 'name-abc'
+		| 'name-cba'
+		| 'wins-asc'
+		| 'wins-desc'
+		| 'rating-asc'
+		| 'rating-desc'
+		| 'region-asc'
+		| 'region-desc' = $state('name-abc');
 
 	let sorted = $derived(
 		data.players.toSorted((a, b) => {
@@ -31,6 +41,10 @@
 				return a.rating - b.rating;
 			} else if (sortBy === 'rating-desc') {
 				return b.rating - a.rating;
+			} else if (sortBy === 'region-asc') {
+				return a.nationality?.localeCompare(b.nationality ?? '') ?? 0;
+			} else if (sortBy === 'region-desc') {
+				return b.nationality?.localeCompare(a.nationality ?? '') ?? 0;
 			}
 			return 0;
 		})
@@ -55,7 +69,9 @@
 				urlSortBy === 'wins-asc' ||
 				urlSortBy === 'wins-desc' ||
 				urlSortBy === 'rating-asc' ||
-				urlSortBy === 'rating-desc')
+				urlSortBy === 'rating-desc' ||
+				urlSortBy === 'region-asc' ||
+				urlSortBy === 'region-desc')
 		) {
 			sortBy = urlSortBy;
 		}
@@ -90,7 +106,24 @@
 				<tr class="border-b-2 border-gray-500 text-left text-sm text-gray-400">
 					<th class="px-4 py-1">
 						<button
-							class="text-left"
+							class="flex items-center gap-1 text-left"
+							class:text-white={sortBy === 'region-asc' || sortBy === 'region-desc'}
+							onclick={() => (sortBy = sortBy === 'region-asc' ? 'region-desc' : 'region-asc')}
+						>
+							{m.region()}
+							{#if sortBy === 'region-asc'}
+								<TypcnArrowSortedUp class="inline-block" />
+							{:else if sortBy === 'region-desc'}
+								<TypcnArrowSortedDown class="inline-block" />
+							{:else}
+								<TypcnArrowUnsorted class="inline-block" />
+							{/if}</button
+						></th
+					>
+					<th class="px-4 py-1">
+						<button
+							class="flex items-center gap-1 text-left"
+							class:text-white={sortBy === 'name-abc' || sortBy === 'name-cba'}
 							onclick={() => (sortBy = sortBy === 'name-abc' ? 'name-cba' : 'name-abc')}
 							>{m.name()}
 							{#if sortBy === 'name-abc'}
@@ -106,7 +139,8 @@
 					<th class="hidden px-4 py-1 sm:table-cell">{m.superstrings()}</th>
 					<th class="px-4 py-1">
 						<button
-							class="text-left"
+							class="flex items-center gap-1 text-left"
+							class:text-white={sortBy === 'wins-asc' || sortBy === 'wins-desc'}
 							onclick={() => (sortBy = sortBy === 'wins-asc' ? 'wins-desc' : 'wins-asc')}
 							>{m.wins()}
 							{#if sortBy === 'wins-asc'}
@@ -120,7 +154,8 @@
 					</th>
 					<th class="px-4 py-1">
 						<button
-							class="text-left"
+							class="flex items-center gap-1 text-left"
+							class:text-white={sortBy === 'rating-asc' || sortBy === 'rating-desc'}
 							onclick={() => (sortBy = sortBy === 'rating-asc' ? 'rating-desc' : 'rating-asc')}
 							>{m.rating()}
 							{#if sortBy === 'rating-asc'}
@@ -137,6 +172,18 @@
 			<tbody>
 				{#each filtered as player}
 					<tr class="border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl">
+						<td class=" py-1 text-center">
+							{#if player.nationality}
+								<span
+									class="font-emoji"
+									title={`${player.nationality} - ${countryCodeToLocalizedName(player.nationality, getLocale())}`}
+								>
+									{countryCodeToFlagEmoji(player.nationality)}
+								</span>
+							{:else}
+								<span class="font-emoji">-</span>
+							{/if}
+						</td>
 						<td class="px-4 py-1">
 							<a class="flex items-baseline gap-1" href={`/players/${player.slug ?? player.id}`}
 								>{player.name}
