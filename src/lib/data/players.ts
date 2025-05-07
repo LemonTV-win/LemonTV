@@ -1,10 +1,11 @@
 import type { Region } from '$lib/data/game';
+import type { TCountryCode } from 'countries-list';
 
 export interface Player {
 	id: string;
 	name: string; // display name
 	slug?: string; // url name (https://lemon.mkpo.li/players/<slug>)
-	nationality?: 'KR' | 'JP' | 'TW' | 'US' | 'VN' | 'ID' | 'CN';
+	nationality?: TCountryCode;
 	aliases?: string[];
 	gameAccounts: GameAccount[];
 }
