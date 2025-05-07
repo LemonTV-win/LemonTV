@@ -4,6 +4,11 @@
 	import { enhance } from '$app/forms';
 	import MaterialSymbolsCloseRounded from '~icons/material-symbols/close-rounded';
 	import type { Role } from '$lib/server/db/schema';
+	import { browser } from '$app/environment';
+
+	import IconParkSolidShield from '~icons/icon-park-solid/shield';
+	import IconParkSolidDeleteFive from '~icons/icon-park-solid/delete-five';
+
 	let { data }: { data: PageServerData } = $props();
 	let searchQuery = $state('');
 	let errorMessage = $state('');
@@ -11,6 +16,8 @@
 	let editingRole: Role | null = $state(null);
 	let newRoleName = $state('');
 	let newRoleId = $state('');
+	let innerWidth = $state(browser ? window.innerWidth : 0);
+	let showRolePanel = $derived(innerWidth >= 1024);
 
 	let filteredUsers = $derived(
 		data.users.filter((user) => {
@@ -89,7 +96,13 @@
 		newRoleName = '';
 		newRoleId = '';
 	}
+
+	function toggleRolePanel() {
+		showRolePanel = !showRolePanel;
+	}
 </script>
+
+<svelte:window bind:innerWidth />
 
 <main class="mx-auto max-w-screen-lg px-4">
 	<div class="mb-6 flex items-center justify-between">
@@ -109,35 +122,69 @@
 		</div>
 	{/if}
 
-	<div class="grid grid-cols-3 gap-6">
-		<div class="col-span-2">
-			<div class="mb-4">
-				<input
-					type="text"
-					bind:value={searchQuery}
-					placeholder={m.search_users()}
-					class="w-full rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-				/>
-			</div>
+	<div class="relative">
+		<div class="grid grid-cols-3 gap-6">
+			<div class="{showRolePanel ? 'col-span-2' : 'col-span-3'} transition-all duration-300">
+				<div class="mb-4 flex items-stretch gap-4">
+					<input
+						type="text"
+						bind:value={searchQuery}
+						placeholder={m.search_users()}
+						class="h-10 w-full rounded-md border border-slate-700 bg-slate-800 px-4 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+					/>
+					{#if !showRolePanel}
+						<button
+							class="flex h-10 items-center gap-2 rounded bg-gray-800 px-3 text-sm font-semibold text-yellow-400 transition-colors hover:bg-gray-700 hover:text-yellow-300"
+							onclick={toggleRolePanel}
+						>
+							<IconParkSolidShield class="h-5 w-5" />
+							<span>{m.roles()}</span>
+						</button>
+					{/if}
+				</div>
 
-			<div class="overflow-x-auto">
-				<table class="w-full table-auto border-collapse border-y-2 border-gray-500 bg-gray-800">
-					<thead>
-						<tr class="border-b-2 border-gray-500 text-left text-sm text-gray-400">
-							<th class="px-4 py-1">{m.user_id()}</th>
-							<th class="px-4 py-1">{m.username()}</th>
-							<th class="px-4 py-1">{m.roles()}</th>
-							<th class="px-4 py-1">{m.created_at()}</th>
-						</tr>
-					</thead>
-					<tbody>
-						{#each filteredUsers as user}
-							<tr class="border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl">
-								<td class="px-4 py-1 text-white">{user.id}</td>
-								<td class="px-4 py-1 text-white">{user.username}</td>
-								<td class="px-4 py-1">
-									<div class="flex flex-wrap gap-2">
-										{#each getUserRoles(user.id) as role}
+				<div class="overflow-x-auto">
+					<table class="w-full table-auto border-collapse border-y-2 border-gray-500 bg-gray-800">
+						<thead>
+							<tr class="border-b-2 border-gray-500 text-left text-sm text-gray-400">
+								<th class="px-4 py-1">{m.user_id()}</th>
+								<th class="px-4 py-1">{m.username()}</th>
+								<th class="px-4 py-1">{m.roles()}</th>
+								<th class="px-4 py-1">{m.created_at()}</th>
+							</tr>
+						</thead>
+						<tbody>
+							{#each filteredUsers as user}
+								<tr class="border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl">
+									<td class="px-4 py-1 text-white">{user.id}</td>
+									<td class="px-4 py-1 text-white">{user.username}</td>
+									<td class="px-4 py-1">
+										<div class="flex flex-wrap gap-2">
+											{#each getUserRoles(user.id) as role}
+												<form
+													method="POST"
+													action="?/updateRole"
+													onsubmit={handleRoleUpdate}
+													class="inline-flex items-center gap-1"
+												>
+													<input type="hidden" name="userId" value={user.id} />
+													<input type="hidden" name="roleId" value={role.id} />
+													<input type="hidden" name="action" value="remove" />
+													<span
+														class="inline-flex items-center gap-1 rounded-sm bg-yellow-500/20 px-1.5 py-0.5 text-sm text-yellow-300"
+														title={role.id}
+													>
+														{role.name}
+														<button
+															type="submit"
+															class="flex h-4 w-4 items-center justify-center transition-colors hover:text-red-500"
+															title={m.delete()}
+														>
+															<IconParkSolidDeleteFive class="h-3 w-3" />
+														</button>
+													</span>
+												</form>
+											{/each}
 											<form
 												method="POST"
 												action="?/updateRole"
@@ -145,152 +192,150 @@
 												class="inline-flex items-center gap-1"
 											>
 												<input type="hidden" name="userId" value={user.id} />
-												<input type="hidden" name="roleId" value={role.id} />
-												<input type="hidden" name="action" value="remove" />
-												<span
-													class="rounded-full bg-yellow-500/20 px-2 py-0.5 text-sm text-yellow-300"
-													title={role.id}
+												<input type="hidden" name="action" value="add" />
+												<select
+													name="roleId"
+													class="rounded-md border border-slate-700 bg-slate-800 px-2 py-0.5 text-sm text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 												>
-													{role.name}
-												</span>
+													<option value="">{m.add_role()}</option>
+													{#each data.roles.filter((role) => !getUserRoles(user.id).some((r) => r.id === role.id)) as role}
+														<option value={role.id}>{role.name}</option>
+													{/each}
+												</select>
 												<button
 													type="submit"
-													class="cursor-pointer text-red-400 hover:text-red-300"
-													title={m.delete()}
+													class="rounded-md bg-yellow-500 px-2 py-0.5 text-sm font-medium text-black hover:bg-yellow-600"
 												>
-													<MaterialSymbolsCloseRounded class="h-4 w-4" />
+													{m.add()}
 												</button>
 											</form>
-										{/each}
-										<form
-											method="POST"
-											action="?/updateRole"
-											onsubmit={handleRoleUpdate}
-											class="inline-flex items-center gap-1"
-										>
-											<input type="hidden" name="userId" value={user.id} />
-											<input type="hidden" name="action" value="add" />
-											<select
-												name="roleId"
-												class="rounded-md border border-slate-700 bg-slate-800 px-2 py-0.5 text-sm text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-											>
-												<option value="">{m.add_role()}</option>
-												{#each data.roles.filter((role) => !getUserRoles(user.id).some((r) => r.id === role.id)) as role}
-													<option value={role.id}>{role.name}</option>
-												{/each}
-											</select>
-											<button
-												type="submit"
-												class="rounded-md bg-yellow-500 px-2 py-0.5 text-sm font-medium text-black hover:bg-yellow-600"
-											>
-												{m.add()}
-											</button>
-										</form>
-									</div>
-								</td>
-								<td class="px-4 py-1 text-gray-300">
-									{new Date(user.createdAt).toLocaleString()}
-								</td>
-							</tr>
-						{/each}
-					</tbody>
-				</table>
-			</div>
-		</div>
-
-		<div class="col-span-1">
-			<div class="rounded-lg border border-slate-800 bg-slate-900/70 p-6 shadow-lg">
-				<h3 class="mb-4 text-xl font-semibold text-white">{m.role_management()}</h3>
-				<form
-					method="POST"
-					action={editingRole ? '?/updateRoleName' : '?/createRole'}
-					onsubmit={handleRoleForm}
-					class="space-y-4"
-				>
-					{#if editingRole}
-						<input type="hidden" name="oldId" value={editingRole.id} />
-					{/if}
-					<div>
-						<label class="block text-sm font-medium text-slate-300" for="roleId">
-							{editingRole ? m.edit_role_id() : m.new_role_id()}
-						</label>
-						<input
-							type="text"
-							id="roleId"
-							name="id"
-							bind:value={newRoleId}
-							class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-							placeholder={m.role_id()}
-						/>
-					</div>
-					<div>
-						<label class="block text-sm font-medium text-slate-300" for="roleName">
-							{editingRole ? m.edit_role_name() : m.new_role_name()}
-						</label>
-						<input
-							type="text"
-							id="roleName"
-							name="name"
-							bind:value={newRoleName}
-							class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-							placeholder={m.role_name()}
-						/>
-					</div>
-					<div class="flex justify-end gap-2">
-						{#if editingRole}
-							<button
-								type="button"
-								class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
-								onclick={cancelEditRole}
-							>
-								{m.cancel()}
-							</button>
-						{/if}
-						<button
-							type="submit"
-							class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600"
-						>
-							{editingRole ? m.update() : m.create()}
-						</button>
-					</div>
-				</form>
-
-				<div class="mt-6">
-					<h4 class="mb-2 text-sm font-medium text-slate-300">{m.existing_roles()}</h4>
-					<div class="space-y-2">
-						{#each data.roles as role}
-							<div
-								class="flex items-center justify-between rounded-md border border-slate-700 bg-slate-800 p-2"
-							>
-								<div class="flex flex-col">
-									<span class="text-sm text-slate-400">{role.id}</span>
-									<span class="text-white">{role.name}</span>
-								</div>
-								<div class="flex gap-2">
-									<button
-										type="button"
-										class="text-yellow-500 hover:text-yellow-400"
-										onclick={() => startEditRole(role)}
-									>
-										{m.edit()}
-									</button>
-									<form
-										method="POST"
-										action="?/deleteRole"
-										onsubmit={handleDeleteRole}
-										class="inline"
-									>
-										<input type="hidden" name="id" value={role.id} />
-										<button type="submit" class="text-red-400 hover:text-red-300">
-											{m.delete()}
-										</button>
-									</form>
-								</div>
-							</div>
-						{/each}
-					</div>
+										</div>
+									</td>
+									<td class="px-4 py-1 text-gray-300">
+										{new Date(user.createdAt).toLocaleString()}
+									</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
 				</div>
 			</div>
+
+			{#if showRolePanel}
+				<div class="relative col-span-1 transition-all duration-300">
+					<div
+						class="w-80 rounded-lg border border-slate-800 bg-slate-900/70 p-6 shadow-lg transition-all duration-300"
+					>
+						<div class="mb-4 flex items-center justify-between">
+							<h3 class="text-xl font-semibold text-white">{m.role_management()}</h3>
+							<button
+								class="rounded-full bg-gray-800 p-1 text-white shadow hover:bg-gray-700"
+								onclick={toggleRolePanel}
+								aria-label="Collapse role management"
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									class="h-5 w-5"
+									viewBox="0 0 20 20"
+									fill="currentColor"
+								>
+									<path
+										fill-rule="evenodd"
+										d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+										clip-rule="evenodd"
+									/>
+								</svg>
+							</button>
+						</div>
+						<form
+							method="POST"
+							action={editingRole ? '?/updateRoleName' : '?/createRole'}
+							onsubmit={handleRoleForm}
+							class="space-y-4"
+						>
+							{#if editingRole}
+								<input type="hidden" name="oldId" value={editingRole.id} />
+							{/if}
+							<div>
+								<label class="block text-sm font-medium text-slate-300" for="roleId">
+									{editingRole ? m.edit_role_id() : m.new_role_id()}
+								</label>
+								<input
+									type="text"
+									id="roleId"
+									name="id"
+									bind:value={newRoleId}
+									class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+									placeholder={m.role_id()}
+								/>
+							</div>
+							<div>
+								<label class="block text-sm font-medium text-slate-300" for="roleName">
+									{editingRole ? m.edit_role_name() : m.new_role_name()}
+								</label>
+								<input
+									type="text"
+									id="roleName"
+									name="name"
+									bind:value={newRoleName}
+									class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+									placeholder={m.role_name()}
+								/>
+							</div>
+							<div class="flex justify-end gap-2">
+								{#if editingRole}
+									<button
+										type="button"
+										class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
+										onclick={cancelEditRole}
+									>
+										{m.cancel()}
+									</button>
+								{/if}
+								<button
+									type="submit"
+									class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600"
+								>
+									{editingRole ? m.update() : m.create()}
+								</button>
+							</div>
+						</form>
+						<div class="mt-6">
+							<h4 class="mb-2 text-sm font-medium text-slate-300">{m.existing_roles()}</h4>
+							<div class="space-y-2">
+								{#each data.roles as role}
+									<div
+										class="flex items-center justify-between rounded-md border border-slate-700 bg-slate-800 p-2"
+									>
+										<div class="flex flex-col">
+											<span class="text-sm text-slate-400">{role.id}</span>
+											<span class="text-white">{role.name}</span>
+										</div>
+										<div class="flex gap-2">
+											<button
+												type="button"
+												class="text-yellow-500 hover:text-yellow-400"
+												onclick={() => startEditRole(role)}>{m.edit()}</button
+											>
+											<form
+												method="POST"
+												action="?/deleteRole"
+												onsubmit={handleDeleteRole}
+												class="inline"
+											>
+												<input type="hidden" name="id" value={role.id} />
+												<button type="submit" class="text-red-400 hover:text-red-300"
+													>{m.delete()}</button
+												>
+											</form>
+										</div>
+									</div>
+								{/each}
+							</div>
+						</div>
+					</div>
+				</div>
+			{/if}
 		</div>
 	</div>
 </main>
