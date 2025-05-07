@@ -2,7 +2,7 @@ import * as auth from '$lib/server/auth';
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { eq } from 'drizzle-orm';
-import * as table from '$lib/server/db/schema';
+import * as table from '$lib/server/db/schemas';
 import { db } from '$lib/server/db';
 
 export const load: PageServerLoad = async (event) => {

@@ -3,7 +3,7 @@ import { fail, redirect } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 import * as auth from '$lib/server/auth';
 import { db } from '$lib/server/db';
-import * as table from '$lib/server/db/schema';
+import * as table from '$lib/server/db/schemas';
 import { LOGIN_SCHEMA, REGISTER_SCHEMA } from '$lib/validations/auth';
 import type { Actions, PageServerLoad } from './$types';
 

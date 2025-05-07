@@ -1,5 +1,5 @@
-import { db } from '../db';
-import { player, playerAlias, gameAccount } from '../db/schema';
+import { db } from '$lib/server/db';
+import { player, playerAlias, gameAccount } from '$lib/server/db/schemas';
 import { eq } from 'drizzle-orm';
 import type { Player } from '$lib/data/players';
 import { randomUUID } from 'crypto';

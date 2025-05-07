@@ -2,7 +2,7 @@ import { redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 import { eq, and } from 'drizzle-orm';
 import { db } from '$lib/server/db';
-import * as table from '$lib/server/db/schema';
+import * as table from '$lib/server/db/schemas';
 
 export const load: LayoutServerLoad = async ({ locals }) => {
 	if (!locals.user) {
