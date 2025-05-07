@@ -62,26 +62,6 @@ export interface CompiledTeam extends Omit<Team, 'players' | 'substitutes' | 'fo
 	former: Player[] | undefined;
 }
 
-export function getTeamMemberStatistics(team: CompiledTeam): Record<
-	string,
-	{
-		kd: number;
-		rating: number;
-		characters: [Character, number][];
-	}
-> | null {
-	return Object.fromEntries(
-		team.players?.filter(Boolean).map((player) => [
-			player.id ?? '',
-			{
-				kd: calculatePlayerKD(player),
-				rating: calculatePlayerRating(player),
-				characters: getPlayerAgents(player)
-			}
-		]) ?? []
-	);
-}
-
 export function identifyPlayer(id: string, player: Player | string): boolean {
 	if (typeof player === 'string') {
 		return player === id;
@@ -168,68 +148,6 @@ export function getPlayerAgents(player: Player): [Character, number][] {
 
 	// Convert to array of tuples
 	return Array.from(characterCounts.entries());
-}
-
-export function calculatePlayerRating(player: Player) {
-	if (!player.id) {
-		return 0;
-	}
-
-	const matches = getPlayerMatches(player.id);
-	if (!matches || matches.length === 0) {
-		return 0;
-	}
-
-	const scores = matches
-		.flatMap((match) => {
-			const playerTeamIndex = match.playerTeamIndex;
-
-			const playerScore = match.games?.flatMap((game) =>
-				game.scores[playerTeamIndex]
-					.filter((score) => identifyPlayer(score.player, player))
-					.map((score) => score.score)
-			);
-
-			return playerScore;
-		})
-		.filter(Boolean) as number[];
-
-	const averageScore = scores.reduce((acc, score) => acc + score, 0) / scores.length;
-
-	return isNaN(averageScore) ? 0 : averageScore / 200;
-}
-
-function calculatePlayerKD(player: Player): number {
-	const matches = getPlayerMatches(player.id ?? '');
-	return matches.reduce((acc, match) => {
-		const playerTeamIndex = match.playerTeamIndex;
-		const opponentTeamIndex = 1 - playerTeamIndex;
-
-		if (!match.games) {
-			return acc;
-		}
-
-		const kills = match.games
-			?.flatMap((game) =>
-				game.scores[playerTeamIndex]
-					.filter((score) => identifyPlayer(score.player, player))
-					.map((score) => score.kills)
-					.reduce((acc, kill) => acc + kill, 0)
-			)
-			.reduce((acc, kill) => acc + kill, 0);
-
-		const deaths = match.games
-			?.flatMap((game) =>
-				game.scores[playerTeamIndex]
-					.filter((score) => identifyPlayer(score.player, player))
-					.map((score) => score.deaths)
-			)
-			.reduce((acc, death) => acc + death, 0);
-
-		console.log('KD', kills, deaths);
-
-		return kills / deaths;
-	}, 0);
 }
 
 export function getTeamStatistics(team: CompiledTeam): {

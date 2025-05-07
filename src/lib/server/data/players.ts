@@ -153,6 +153,39 @@ export function calculatePlayerRating(player: Player) {
 	return isNaN(averageScore) ? 0 : averageScore / 200;
 }
 
+export function calculatePlayerKD(player: Player): number {
+	const matches = getPlayerMatches(player.id ?? '');
+	return matches.reduce((acc, match) => {
+		const playerTeamIndex = match.playerTeamIndex;
+		const opponentTeamIndex = 1 - playerTeamIndex;
+
+		if (!match.games) {
+			return acc;
+		}
+
+		const kills = match.games
+			?.flatMap((game) =>
+				game.scores[playerTeamIndex]
+					.filter((score) => identifyPlayer(score.player, player))
+					.map((score) => score.kills)
+					.reduce((acc, kill) => acc + kill, 0)
+			)
+			.reduce((acc, kill) => acc + kill, 0);
+
+		const deaths = match.games
+			?.flatMap((game) =>
+				game.scores[playerTeamIndex]
+					.filter((score) => identifyPlayer(score.player, player))
+					.map((score) => score.deaths)
+			)
+			.reduce((acc, death) => acc + death, 0);
+
+		console.log('KD', kills, deaths);
+
+		return kills / deaths;
+	}, 0);
+}
+
 export async function createPlayer(
 	data: Omit<Player, 'gameAccounts' | 'id'> & { gameAccounts: Player['gameAccounts'] }
 ) {

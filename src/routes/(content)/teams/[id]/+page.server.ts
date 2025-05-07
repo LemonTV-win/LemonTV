@@ -1,6 +1,7 @@
 import type { PageServerLoad } from './$types';
 
-import { getTeam, getTeamMatches, getTeamMemberStatistics, getTeamStatistics } from '$lib/data';
+import { getTeam, getTeamMatches, getTeamStatistics } from '$lib/data';
+import { getTeamMemberStatistics } from '$lib/server/data/teams';
 import { error } from '@sveltejs/kit';
 import { getPlayers } from '$lib/server/data/players';
 import type { Player } from '$lib/data/players';
