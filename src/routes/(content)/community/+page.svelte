@@ -8,27 +8,33 @@
 			additionalLink: {
 				text: '#tournament-chat',
 				url: 'https://discord.com/channels/1182952140684136470/1320683196698066954'
-			}
+			},
+			description: 'The main community hub for Strinova players worldwide'
 		},
 		{
 			title: 'Strinova EMEA Discord Server',
-			url: 'https://discord.gg/jE7U2QF7wu'
+			url: 'https://discord.gg/jE7U2QF7wu',
+			description: 'Community server for European, Middle Eastern, and African players'
 		},
 		{
 			title: 'カラビヤウの民 (Japanese)',
-			url: 'https://discord.gg/SZuKAqNMY2'
+			url: 'https://discord.gg/SZuKAqNMY2',
+			description: 'Japanese community server for Strinova players'
 		},
 		{
 			title: 'Strinova NA Discord Server',
-			url: 'https://discord.gg/jcEduEqgzB'
+			url: 'https://discord.gg/jcEduEqgzB',
+			description: 'North American community server for Strinova players'
 		},
 		{
 			title: 'NA STRINOVA SATURDAYS Discord Server',
-			url: 'https://discord.gg/WWSDkXgDdw'
+			url: 'https://discord.gg/WWSDkXgDdw',
+			description: 'Weekly tournament and community events for North American players'
 		},
 		{
 			title: 'Strinova Wiki Discord Server',
-			url: 'https://discord.gg/bmbzgKmqfD'
+			url: 'https://discord.gg/bmbzgKmqfD',
+			description: 'Community-driven wiki and resource hub for Strinova'
 		}
 	];
 
@@ -75,11 +81,16 @@
 	<ul class="m-4 flex flex-col flex-wrap gap-4 p-2">
 		{#each discordLinks as link}
 			<li class="flex items-center gap-2 rounded-md bg-gray-800 p-2">
-				<a
-					href={link.url}
-					class="text-yellow-300 hover:text-yellow-400 hover:underline"
-					target="_blank">{link.title}</a
-				>
+				<div class="flex flex-col">
+					<a
+						href={link.url}
+						class="text-yellow-300 hover:text-yellow-400 hover:underline"
+						target="_blank">{link.title}</a
+					>
+					{#if link.description}
+						<span class="text-sm text-gray-400">{link.description}</span>
+					{/if}
+				</div>
 				{#if link.additionalLink}
 					-
 					<a href={link.additionalLink.url}>{link.additionalLink.text}</a>
