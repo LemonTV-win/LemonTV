@@ -9,17 +9,21 @@ import type { Character } from '$lib/data/game';
 import { or } from 'drizzle-orm';
 
 export async function getPlayer(keyword: string): Promise<Player | null> {
+	console.info('[Players] Attempting to get player:', keyword);
 	const [playerData] = await db
 		.select()
 		.from(player)
 		.where(or(eq(player.id, keyword), eq(player.slug, keyword), eq(player.name, keyword)));
 
-	if (!playerData) return null;
+	if (!playerData) {
+		console.warn('[Players] Player not found:', keyword);
+		return null;
+	}
 
 	const aliases = await db.select().from(playerAlias).where(eq(playerAlias.playerId, keyword));
-
 	const accounts = await db.select().from(gameAccount).where(eq(gameAccount.playerId, keyword));
 
+	console.info('[Players] Successfully retrieved player:', keyword);
 	return {
 		id: playerData.id,
 		name: playerData.name,
@@ -34,6 +38,7 @@ export async function getPlayer(keyword: string): Promise<Player | null> {
 }
 
 export async function getPlayers(): Promise<Player[]> {
+	console.info('[Players] Fetching all players');
 	const players = await db.select().from(player);
 
 	const aliases = await db.select().from(playerAlias);
@@ -66,6 +71,7 @@ export async function getPlayers(): Promise<Player[]> {
 		}))
 	}));
 
+	console.info('[Players] Successfully retrieved', result.length, 'players');
 	return result;
 }
 
@@ -149,83 +155,111 @@ export function calculatePlayerRating(player: Player) {
 export async function createPlayer(
 	data: Omit<Player, 'gameAccounts' | 'id'> & { gameAccounts: Player['gameAccounts'] }
 ) {
+	console.info('[Players] ====== Attempting to create player ======');
 	const { name, nationality, aliases, gameAccounts, slug } = data;
 	const id = randomUUID();
 
-	await db.insert(player).values({
-		id,
-		name,
-		nationality: nationality || null,
-		slug: slug || id
-	});
+	try {
+		await db.insert(player).values({
+			id,
+			name,
+			nationality: nationality || null,
+			slug: slug || id
+		});
 
-	if (aliases && aliases.length > 0) {
-		await db.insert(playerAlias).values(
-			aliases.map((alias) => ({
-				playerId: id,
-				alias
-			}))
-		);
+		if (aliases && aliases.length > 0) {
+			await db.insert(playerAlias).values(
+				aliases.map((alias) => ({
+					playerId: id,
+					alias
+				}))
+			);
+		}
+
+		if (gameAccounts && gameAccounts.length > 0) {
+			await db.insert(gameAccount).values(
+				gameAccounts.map((account) => ({
+					server: 'Strinova',
+					accountId: account.accountId,
+					playerId: id,
+					currentName: account.currentName,
+					region: account.region || null
+				}))
+			);
+		}
+
+		console.info('[Players] Successfully created player:', name);
+		return id;
+	} catch (e) {
+		console.error('[Players] Error creating player:', e);
+		throw e;
+	} finally {
+		console.info('[Players] ====== Player creation complete ======');
 	}
-
-	if (gameAccounts && gameAccounts.length > 0) {
-		await db.insert(gameAccount).values(
-			gameAccounts.map((account) => ({
-				server: 'Strinova',
-				accountId: account.accountId,
-				playerId: id,
-				currentName: account.currentName,
-				region: account.region || null
-			}))
-		);
-	}
-
-	return id;
 }
 
 export async function updatePlayer(
 	data: Omit<Player, 'gameAccounts'> & { gameAccounts: Player['gameAccounts'] }
 ) {
+	console.info('[Players] ====== Attempting to update player ======');
 	const { id, name, nationality, aliases, gameAccounts, slug } = data;
 
-	await db
-		.update(player)
-		.set({
-			name,
-			nationality: nationality || null,
-			slug: slug || id
-		})
-		.where(eq(player.id, id));
+	try {
+		await db
+			.update(player)
+			.set({
+				name,
+				nationality: nationality || null,
+				slug: slug || id
+			})
+			.where(eq(player.id, id));
 
-	// Delete existing aliases and game accounts
-	await db.delete(playerAlias).where(eq(playerAlias.playerId, id));
-	await db.delete(gameAccount).where(eq(gameAccount.playerId, id));
+		// Delete existing aliases and game accounts
+		await db.delete(playerAlias).where(eq(playerAlias.playerId, id));
+		await db.delete(gameAccount).where(eq(gameAccount.playerId, id));
 
-	// Insert new aliases and game accounts
-	if (aliases && aliases.length > 0) {
-		await db.insert(playerAlias).values(
-			aliases.map((alias) => ({
-				playerId: id,
-				alias
-			}))
-		);
-	}
+		// Insert new aliases and game accounts
+		if (aliases && aliases.length > 0) {
+			await db.insert(playerAlias).values(
+				aliases.map((alias) => ({
+					playerId: id,
+					alias
+				}))
+			);
+		}
 
-	if (gameAccounts && gameAccounts.length > 0) {
-		await db.insert(gameAccount).values(
-			gameAccounts.map((account) => ({
-				server: 'Strinova',
-				accountId: account.accountId,
-				playerId: id,
-				currentName: account.currentName,
-				region: account.region || null
-			}))
-		);
+		if (gameAccounts && gameAccounts.length > 0) {
+			await db.insert(gameAccount).values(
+				gameAccounts.map((account) => ({
+					server: 'Strinova',
+					accountId: account.accountId,
+					playerId: id,
+					currentName: account.currentName,
+					region: account.region || null
+				}))
+			);
+		}
+
+		console.info('[Players] Successfully updated player:', name);
+	} catch (e) {
+		console.error('[Players] Error updating player:', e);
+		throw e;
+	} finally {
+		console.info('[Players] ====== Player update complete ======');
 	}
 }
 
 export async function deletePlayer(id: string) {
-	await db.delete(playerAlias).where(eq(playerAlias.playerId, id));
-	await db.delete(gameAccount).where(eq(gameAccount.playerId, id));
-	await db.delete(player).where(eq(player.id, id));
+	console.info('[Players] ====== Attempting to delete player ======');
+	try {
+		await db.delete(playerAlias).where(eq(playerAlias.playerId, id));
+		await db.delete(gameAccount).where(eq(gameAccount.playerId, id));
+		await db.delete(player).where(eq(player.id, id));
+		console.info('[Players] Successfully deleted player:', id);
+	} catch (e) {
+		console.error('[Players] Error deleting player:', e);
+		throw e;
+	} finally {
+		console.info('[Players] ====== Player deletion complete ======');
+	}
 }
