@@ -535,9 +535,9 @@
 							<button
 								class="flex items-center gap-1 text-yellow-500 hover:text-yellow-400"
 								onclick={() => handleEditPlayer(player)}
+								title={m.edit()}
 							>
 								<IconParkSolidEdit class="h-4 w-4" />
-								{m.edit()}
 							</button>
 						</td>
 					</tr>
