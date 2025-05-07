@@ -8,9 +8,9 @@
 	import TypcnArrowUnsorted from '~icons/typcn/arrow-unsorted';
 	import TypcnArrowSortedDown from '~icons/typcn/arrow-sorted-down';
 	import TypcnArrowSortedUp from '~icons/typcn/arrow-sorted-up';
+	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
 	import SearchInput from '$lib/components/SearchInput.svelte';
 	import { getAllNames } from '$lib/data/players';
-
 	let { data }: PageProps = $props();
 
 	let search = $state('');
@@ -67,7 +67,18 @@
 </svelte:head>
 
 <main class="mx-auto max-w-screen-lg px-4">
-	<h1 class="my-10 text-2xl font-bold">{m.players()}</h1>
+	<h1 class="my-10 flex items-center gap-4 text-2xl font-bold">
+		{m.players()}
+		{#if data.user?.roleId === 'admin'}
+			<a
+				href="/admin/players"
+				class="flex items-center gap-1 rounded-md border border-gray-700 px-2 py-1 text-sm text-gray-400 transition-all duration-200 hover:bg-gray-700"
+			>
+				<IconParkSolidEdit class="h-4 w-4" />
+				{m.edit()}
+			</a>
+		{/if}
+	</h1>
 
 	<div class="mb-4 flex flex-col items-center justify-end gap-2 sm:flex-row">
 		<SearchInput bind:search filtered={filtered.length} total={sorted.length} />
