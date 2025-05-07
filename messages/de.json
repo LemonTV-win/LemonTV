@@ -190,5 +190,11 @@
 	"windy_town": "Windstadt",
 	"cauchy_district": "Cauchy-Straße",
 	"cosmite": "Cosmite",
-	"orcanus": "Ocarnus"
+	"orcanus": "Orcanus",
+	"settings": "Einstellungen",
+	"admin_settings_desc": "Systemeinstellungen und Präferenzen konfigurieren.",
+	"admin_users_desc": "Benutzerkonten und Berechtigungen verwalten.",
+	"admin_players_desc": "Spieler und deren Spielkonten verwalten.",
+	"admin_teams_desc": "Teams und deren Spieler verwalten.",
+	"admin_events_desc": "Ereignisse und Matches verwalten."
 }

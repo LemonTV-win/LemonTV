@@ -190,5 +190,11 @@
 	"windy_town": "ウィンディタウン",
 	"cauchy_district": "コーシー街区",
 	"cosmite": "キスメット",
-	"orcanus": "オルカヌス"
+	"orcanus": "オルカヌス",
+	"settings": "設定",
+	"admin_settings_desc": "システム設定と環境設定を管理します。",
+	"admin_users_desc": "ユーザーアカウントと権限を管理します。",
+	"admin_players_desc": "プレイヤーとゲームアカウントを管理します。",
+	"admin_teams_desc": "チームとプレイヤーを管理します。",
+	"admin_events_desc": "イベントと試合を管理します。"
 }

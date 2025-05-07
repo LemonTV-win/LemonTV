@@ -190,5 +190,11 @@
 	"space_lab": "Space Lab",
 	"cauchy_district": "Cauchy District",
 	"cosmite": "Cosmite",
-	"orcanus": "Orcanus"
+	"orcanus": "Orcanus",
+	"settings": "Settings",
+	"admin_settings_desc": "Configure system settings and preferences.",
+	"admin_users_desc": "Manage user accounts and permissions.",
+	"admin_players_desc": "Manage players and their game accounts.",
+	"admin_teams_desc": "Manage teams and their players.",
+	"admin_events_desc": "Manage events and matches."
 }

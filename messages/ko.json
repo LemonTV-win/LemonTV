@@ -190,5 +190,11 @@
 	"windy_town": "윈디 타운",
 	"cauchy_district": "코시 블록",
 	"cosmite": "코스미트",
-	"orcanus": "오카누스"
+	"orcanus": "오카누스",
+	"settings": "설정",
+	"admin_settings_desc": "시스템 설정 및 환경 설정을 관리합니다.",
+	"admin_users_desc": "사용자 계정 및 권한을 관리합니다.",
+	"admin_players_desc": "플레이어 및 게임 계정을 관리합니다.",
+	"admin_teams_desc": "팀 및 플레이어를 관리합니다.",
+	"admin_events_desc": "이벤트 및 경기를 관리합니다."
 }

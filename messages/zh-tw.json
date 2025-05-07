@@ -190,5 +190,11 @@
 	"windy_town": "風曳鎮",
 	"cauchy_district": "柯西街區",
 	"cosmite": "科斯迷特",
-	"orcanus": "奧卡努斯"
+	"orcanus": "奧卡努斯",
+	"settings": "設定",
+	"admin_settings_desc": "管理系統設定和偏好。",
+	"admin_users_desc": "管理用戶帳戶和權限。",
+	"admin_players_desc": "管理玩家和遊戲帳戶。",
+	"admin_teams_desc": "管理隊伍和玩家。",
+	"admin_events_desc": "管理事件和比賽。"
 }

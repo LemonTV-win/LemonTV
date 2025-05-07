@@ -190,5 +190,11 @@
 	"windy_town": "Kota Berangin",
 	"cauchy_district": "Jalan Cauchy",
 	"cosmite": "Cosmite",
-	"orcanus": "Ocarnus"
+	"orcanus": "Ocarnus",
+	"settings": "Pengaturan",
+	"admin_settings_desc": "Konfigurasi pengaturan sistem dan preferensi.",
+	"admin_users_desc": "Mengelola akun pengguna dan izin.",
+	"admin_players_desc": "Mengelola pemain dan akun game mereka.",
+	"admin_teams_desc": "Mengelola tim dan pemain mereka.",
+	"admin_events_desc": "Mengelola acara dan pertandingan."
 }
