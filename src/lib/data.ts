@@ -1,4 +1,4 @@
-import { players, type Player } from '$lib/data/players';
+import { type Player } from '$lib/data/players';
 import { teams, type Team } from '$lib/data/teams';
 import type { Character } from '$lib/data/game';
 import type { Match } from '$lib/data/matches';
@@ -56,7 +56,13 @@ export function getTeamMatches(id: string): (Match & { event: Event; teamIndex: 
 		}));
 }
 
-export function getTeamMemberStatistics(team: Team): Record<
+export interface CompiledTeam extends Omit<Team, 'players' | 'substitutes' | 'former'> {
+	players: Player[] | undefined;
+	substitutes: Player[] | undefined;
+	former: Player[] | undefined;
+}
+
+export function getTeamMemberStatistics(team: CompiledTeam): Record<
 	string,
 	{
 		kd: number;
@@ -76,19 +82,11 @@ export function getTeamMemberStatistics(team: Team): Record<
 	);
 }
 
-export function getPlayers() {
-	return Object.values(players).map((player) => ({
-		...player,
-		wins: getPlayerWins(player.id ?? ''),
-		rating: calculatePlayerRating(player)
-	}));
-}
+export function identifyPlayer(id: string, player: Player | string): boolean {
+	if (typeof player === 'string') {
+		return player === id;
+	}
 
-export function getPlayer(id: string) {
-	return players[id];
-}
-
-export function identifyPlayer(id: string, player: Player): boolean {
 	return (
 		player.id === id ||
 		player.slug === id ||
@@ -101,20 +99,10 @@ export function identifyPlayer(id: string, player: Player): boolean {
 	);
 }
 
-export function isPlayerInTeam(id: string, team: Team) {
+export function isPlayerInTeam(id: string, team: CompiledTeam | Team) {
 	return [...(team.players ?? []), ...(team.substitutes ?? [])]?.some(
 		(player) => player && identifyPlayer(id, player) // TODO: Use more robust method
 	);
-}
-
-export function getPlayerTeams(id: string) {
-	return [
-		...new Set(
-			getTeams()
-				.filter((team) => isPlayerInTeam(id, team))
-				.map((team) => team.id)
-		)
-	].map((id) => getTeams().find((team) => team.id === id)!);
 }
 
 export function getPlayerEvents(id: string) {
@@ -182,18 +170,6 @@ export function getPlayerAgents(player: Player): [Character, number][] {
 	return Array.from(characterCounts.entries());
 }
 
-export function getPlayersAgents(limit: number = 3): Record<string, [Character, number][]> {
-	return Object.fromEntries(
-		Object.entries(players).map(([id, player]) => [id, getPlayerAgents(player).slice(0, limit)])
-	);
-}
-
-export function getPlayersTeams(limit: number = 3): Record<string, Team[]> {
-	return Object.fromEntries(
-		Object.entries(players).map(([id, _player]) => [id, getPlayerTeams(id).slice(0, limit)])
-	);
-}
-
 export function calculatePlayerRating(player: Player) {
 	if (!player.id) {
 		return 0;
@@ -256,7 +232,7 @@ function calculatePlayerKD(player: Player): number {
 	}, 0);
 }
 
-export function getTeamStatistics(team: Team): {
+export function getTeamStatistics(team: CompiledTeam): {
 	ranking: number;
 	wins: number;
 } {
