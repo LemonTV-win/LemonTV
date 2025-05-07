@@ -134,7 +134,7 @@
 						<MaterialSymbolsSettingsRounded class="h-5 w-5" />
 						{m.profile_settings()}
 					</a>
-					{#if data.isAdmin}
+					{#if data.user.roleId === 'admin'}
 						<a
 							href="/admin"
 							class="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
@@ -240,7 +240,7 @@
 						<MaterialSymbolsSettingsRounded class="h-6 w-6" />
 						{m.profile_settings()}
 					</a>
-					{#if data.isAdmin}
+					{#if data.user.roleId === 'admin'}
 						<a
 							href="/admin"
 							class="flex items-center gap-2 rounded-md px-3 py-2 text-lg text-gray-300 transition-all duration-200 hover:bg-gray-700"
