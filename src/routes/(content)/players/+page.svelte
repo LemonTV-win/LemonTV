@@ -25,7 +25,9 @@
 		| 'rating-asc'
 		| 'rating-desc'
 		| 'region-asc'
-		| 'region-desc' = $state('name-abc');
+		| 'region-desc'
+		| 'team-asc'
+		| 'team-desc' = $state('name-abc');
 
 	let sorted = $derived(
 		data.players.toSorted((a, b) => {
@@ -45,6 +47,14 @@
 				return a.nationality?.localeCompare(b.nationality ?? '') ?? 0;
 			} else if (sortBy === 'region-desc') {
 				return b.nationality?.localeCompare(a.nationality ?? '') ?? 0;
+			} else if (sortBy === 'team-asc') {
+				const aTeams = data.playersTeams[a.id ?? '']?.map((t) => t.name).join(', ') ?? '';
+				const bTeams = data.playersTeams[b.id ?? '']?.map((t) => t.name).join(', ') ?? '';
+				return aTeams.localeCompare(bTeams);
+			} else if (sortBy === 'team-desc') {
+				const aTeams = data.playersTeams[a.id ?? '']?.map((t) => t.name).join(', ') ?? '';
+				const bTeams = data.playersTeams[b.id ?? '']?.map((t) => t.name).join(', ') ?? '';
+				return bTeams.localeCompare(aTeams);
 			}
 			return 0;
 		})
@@ -71,7 +81,9 @@
 				urlSortBy === 'rating-asc' ||
 				urlSortBy === 'rating-desc' ||
 				urlSortBy === 'region-asc' ||
-				urlSortBy === 'region-desc')
+				urlSortBy === 'region-desc' ||
+				urlSortBy === 'team-asc' ||
+				urlSortBy === 'team-desc')
 		) {
 			sortBy = urlSortBy;
 		}
@@ -135,7 +147,21 @@
 							{/if}
 						</button>
 					</th>
-					<th class="px-4 py-1">{m.teams()}</th>
+					<th class="px-4 py-1">
+						<button
+							class="flex items-center gap-1 text-left"
+							class:text-white={sortBy === 'team-asc' || sortBy === 'team-desc'}
+							onclick={() => (sortBy = sortBy === 'team-asc' ? 'team-desc' : 'team-asc')}
+							>{m.teams()}
+							{#if sortBy === 'team-asc'}
+								<TypcnArrowSortedUp class="inline-block" />
+							{:else if sortBy === 'team-desc'}
+								<TypcnArrowSortedDown class="inline-block" />
+							{:else}
+								<TypcnArrowUnsorted class="inline-block" />
+							{/if}
+						</button>
+					</th>
 					<th class="hidden px-4 py-1 sm:table-cell">{m.superstrings()}</th>
 					<th class="px-4 py-1">
 						<button
