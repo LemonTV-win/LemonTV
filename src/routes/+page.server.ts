@@ -1,8 +1,8 @@
 import { fail, type Actions } from '@sveltejs/kit';
 import * as auth from '$lib/server/auth';
 import type { PageServerLoad } from './$types';
-import { getPlayers, getPlayersTeams } from '$lib/server/data/players';
-import { calculatePlayerRating, getEvents, getTeams } from '$lib/data';
+import { getPlayers, getPlayersTeams, calculatePlayerRating } from '$lib/server/data/players';
+import { getEvents, getTeams } from '$lib/data';
 
 export const load: PageServerLoad = async () => {
 	const players = await getPlayers(); // TODO: limit =5
