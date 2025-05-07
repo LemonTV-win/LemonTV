@@ -196,5 +196,6 @@
 	"admin_users_desc": "Gérez les comptes utilisateur et les permissions.",
 	"admin_players_desc": "Gérez les joueurs et leurs comptes de jeu.",
 	"admin_teams_desc": "Gérez les équipes et leurs joueurs.",
-	"admin_events_desc": "Gérez les événements et les matchs."
+	"admin_events_desc": "Gérez les événements et les matchs.",
+	"slug": "Slug"
 }

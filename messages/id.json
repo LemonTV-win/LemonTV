@@ -196,5 +196,6 @@
 	"admin_users_desc": "Mengelola akun pengguna dan izin.",
 	"admin_players_desc": "Mengelola pemain dan akun game mereka.",
 	"admin_teams_desc": "Mengelola tim dan pemain mereka.",
-	"admin_events_desc": "Mengelola acara dan pertandingan."
+	"admin_events_desc": "Mengelola acara dan pertandingan.",
+	"slug": "Slug"
 }

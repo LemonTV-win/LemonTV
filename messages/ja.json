@@ -196,5 +196,6 @@
 	"admin_users_desc": "ユーザーアカウントと権限を管理します。",
 	"admin_players_desc": "プレイヤーとゲームアカウントを管理します。",
 	"admin_teams_desc": "チームとプレイヤーを管理します。",
-	"admin_events_desc": "イベントと試合を管理します。"
+	"admin_events_desc": "イベントと試合を管理します。",
+	"slug": "スラッグ"
 }

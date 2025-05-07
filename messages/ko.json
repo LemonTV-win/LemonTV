@@ -196,5 +196,6 @@
 	"admin_users_desc": "사용자 계정 및 권한을 관리합니다.",
 	"admin_players_desc": "플레이어 및 게임 계정을 관리합니다.",
 	"admin_teams_desc": "팀 및 플레이어를 관리합니다.",
-	"admin_events_desc": "이벤트 및 경기를 관리합니다."
+	"admin_events_desc": "이벤트 및 경기를 관리합니다.",
+	"slug": "슬러그"
 }

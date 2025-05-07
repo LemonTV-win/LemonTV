@@ -196,5 +196,6 @@
 	"admin_users_desc": "管理用戶帳戶和權限。",
 	"admin_players_desc": "管理玩家和遊戲帳戶。",
 	"admin_teams_desc": "管理隊伍和玩家。",
-	"admin_events_desc": "管理事件和比賽。"
+	"admin_events_desc": "管理事件和比賽。",
+	"slug": "網址名"
 }

@@ -168,6 +168,7 @@
 	"update_player": "Update Player",
 	"player_name": "Player Name",
 	"player_id": "Player ID",
+	"slug": "Slug",
 	"actions": "Actions",
 	"search_players": "Search players...",
 	"display_name": "Display Name",

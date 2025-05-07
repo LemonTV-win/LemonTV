@@ -196,5 +196,6 @@
 	"admin_users_desc": "管理用户账户和权限。",
 	"admin_players_desc": "管理玩家和他们的游戏账户。",
 	"admin_teams_desc": "管理队伍和他们的玩家。",
-	"admin_events_desc": "管理事件和比赛。"
+	"admin_events_desc": "管理事件和比赛。",
+	"slug": "地址名"
 }

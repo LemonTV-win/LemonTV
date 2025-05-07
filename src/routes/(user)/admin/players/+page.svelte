@@ -447,6 +447,7 @@
 			<thead>
 				<tr class="border-b-2 border-gray-500 text-left text-sm text-gray-400">
 					<th class="px-4 py-1">{m.player_id()}</th>
+					<th class="px-4 py-1">{m.slug()}</th>
 					<th class="px-4 py-1">{m.player_name()}</th>
 					<th class="px-4 py-1">{m.nationality()}</th>
 					<th class="px-4 py-1">{m.game_accounts()}</th>
@@ -461,6 +462,11 @@
 							title={player.id}
 						>
 							{player.id}
+						</td>
+						<td class="px-4 py-1 text-white">
+							<a href={`/players/${player.slug}`} class="hover:text-yellow-400">
+								{player.slug}
+							</a>
 						</td>
 						<td class="px-4 py-1 text-white">{player.name}</td>
 						<td class="px-4 py-1 text-gray-300">{player.nationality || '-'}</td>

@@ -62,6 +62,7 @@ export async function getPlayers(): Promise<Player[]> {
 	const result: Player[] = players.map((p) => ({
 		id: p.id,
 		name: p.name,
+		slug: p.slug,
 		nationality: p.nationality as Player['nationality'],
 		aliases: aliasesByPlayer.get(p.id) ?? [],
 		gameAccounts: (accountsByPlayer.get(p.id) ?? []).map((acc) => ({
