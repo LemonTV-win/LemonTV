@@ -229,15 +229,18 @@ export async function updatePlayer(
 		}
 
 		if (gameAccounts && gameAccounts.length > 0) {
-			await db.insert(gameAccount).values(
-				gameAccounts.map((account) => ({
-					server: 'Strinova',
-					accountId: account.accountId,
-					playerId: id,
-					currentName: account.currentName,
-					region: account.region || null
-				}))
-			);
+			await db
+				.insert(gameAccount)
+				.values(
+					gameAccounts.map((account) => ({
+						server: 'Strinova',
+						accountId: account.accountId,
+						playerId: id,
+						currentName: account.currentName,
+						region: account.region || null
+					}))
+				)
+				.onConflictDoNothing();
 		}
 
 		console.info('[Players] Successfully updated player:', name);
