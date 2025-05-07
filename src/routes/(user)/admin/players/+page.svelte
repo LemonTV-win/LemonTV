@@ -496,12 +496,12 @@
 						>
 							{player.id}
 						</td>
-						<td class="px-4 py-1 text-white">
-							<a href={`/players/${player.slug}`} class="hover:text-yellow-400">
+						<td class="max-w-32 truncate px-4 py-1 text-white">
+							<a href={`/players/${player.slug}`} class="hover:text-yellow-400" title={player.slug}>
 								{player.slug}
 							</a>
 						</td>
-						<td class="px-4 py-1 text-white">{player.name}</td>
+						<td class="max-w-32 truncate px-4 py-1 text-white">{player.name}</td>
 						<td class="px-4 py-1 text-gray-300">
 							{#if player.nationality}
 								<span
