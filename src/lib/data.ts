@@ -127,29 +127,6 @@ export function getPlayerWins(id: string): number {
 	}).length;
 }
 
-export function getPlayerAgents(player: Player): [Character, number][] {
-	const characters = getPlayerMatches(player.id ?? '')
-		.flatMap((match) =>
-			(match.games ?? []).flatMap((game) => {
-				for (const score of game.scores[match.playerTeamIndex]) {
-					if (identifyPlayer(score.player, player)) {
-						return score.characters;
-					}
-				}
-			})
-		)
-		.filter(Boolean) as Character[];
-
-	// Count occurrences of each character
-	const characterCounts = new Map<Character, number>();
-	for (const character of characters) {
-		characterCounts.set(character, (characterCounts.get(character) ?? 0) + 1);
-	}
-
-	// Convert to array of tuples
-	return Array.from(characterCounts.entries());
-}
-
 export function getTeamStatistics(team: CompiledTeam): {
 	ranking: number;
 	wins: number;
