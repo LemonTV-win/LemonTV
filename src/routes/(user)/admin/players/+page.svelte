@@ -456,7 +456,12 @@
 			<tbody>
 				{#each filteredPlayers as player}
 					<tr class="border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl">
-						<td class="px-4 py-1 text-white">{player.id}</td>
+						<td
+							class="max-w-32 truncate px-4 py-1 font-mono text-xs text-gray-300"
+							title={player.id}
+						>
+							{player.id}
+						</td>
 						<td class="px-4 py-1 text-white">{player.name}</td>
 						<td class="px-4 py-1 text-gray-300">{player.nationality || '-'}</td>
 						<td class="px-4 py-1 text-gray-300">
