@@ -159,7 +159,7 @@
 									<td class="px-4 py-1 text-white">{user.id}</td>
 									<td class="px-4 py-1 text-white">{user.username}</td>
 									<td class="px-4 py-1">
-										<div class="flex flex-wrap gap-2">
+										<div class="flex flex-wrap gap-1.5 py-2">
 											{#each getUserRoles(user.id) as role}
 												<form
 													method="POST"
@@ -185,30 +185,32 @@
 													</span>
 												</form>
 											{/each}
-											<form
-												method="POST"
-												action="?/updateRole"
-												onsubmit={handleRoleUpdate}
-												class="inline-flex items-center gap-1"
-											>
-												<input type="hidden" name="userId" value={user.id} />
-												<input type="hidden" name="action" value="add" />
-												<select
-													name="roleId"
-													class="rounded-md border border-slate-700 bg-slate-800 px-2 py-0.5 text-sm text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+											{#if data.roles.filter((role) => !getUserRoles(user.id).some((r) => r.id === role.id)).length > 0}
+												<form
+													method="POST"
+													action="?/updateRole"
+													onsubmit={handleRoleUpdate}
+													class="grid grid-cols-[1fr_auto] items-center gap-1.5"
 												>
-													<option value="">{m.add_role()}</option>
-													{#each data.roles.filter((role) => !getUserRoles(user.id).some((r) => r.id === role.id)) as role}
-														<option value={role.id}>{role.name}</option>
-													{/each}
-												</select>
-												<button
-													type="submit"
-													class="rounded-md bg-yellow-500 px-2 py-0.5 text-sm font-medium text-black hover:bg-yellow-600"
-												>
-													{m.add()}
-												</button>
-											</form>
+													<input type="hidden" name="userId" value={user.id} />
+													<input type="hidden" name="action" value="add" />
+													<select
+														name="roleId"
+														class="w-full min-w-30 rounded-md border border-slate-700 bg-slate-800 py-0.5 pl-2 text-sm text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+													>
+														{#each data.roles.filter((role) => !getUserRoles(user.id).some((r) => r.id === role.id)) as role}
+															<option value={role.id}>{role.name}</option>
+														{/each}
+													</select>
+													<button
+														type="submit"
+														title={m.add_role()}
+														class="rounded-md bg-yellow-500 px-2 py-0.5 text-sm font-medium text-black hover:bg-yellow-600 disabled:opacity-50"
+													>
+														{m.add()}
+													</button>
+												</form>
+											{/if}
 										</div>
 									</td>
 									<td class="px-4 py-1 text-gray-300">
