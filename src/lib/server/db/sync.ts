@@ -1,5 +1,5 @@
 import { db } from '.';
-import * as schema from './schemas';
+import * as schema from './schema';
 
 export const REQUIRED_ROLES = [
 	{ id: 'admin', name: 'Administrator' }, // Has access to all features

@@ -3,7 +3,7 @@
 	import { m } from '$lib/paraglide/messages';
 	import { enhance } from '$app/forms';
 	import MaterialSymbolsCloseRounded from '~icons/material-symbols/close-rounded';
-	import type { Role } from '$lib/server/db/schemas';
+	import type { Role } from '$lib/server/db/schema';
 	import { browser } from '$app/environment';
 
 	import IconParkSolidShield from '~icons/icon-park-solid/shield';
