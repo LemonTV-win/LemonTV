@@ -1,4 +1,3 @@
-import { players, type Player } from './players';
 import { type Region } from './game';
 
 export interface Team {
@@ -6,9 +5,9 @@ export interface Team {
 	name: string;
 	logo?: string;
 	region?: Region;
-	players?: Player[]; // active roaster
-	substitutes?: Player[]; // bench
-	former?: Player[]; // former players
+	players?: string[]; // active roaster
+	substitutes?: string[]; // bench
+	former?: string[]; // former players
 }
 
 export const teams: Record<string, Team> = {
@@ -22,429 +21,240 @@ export const teams: Record<string, Team> = {
 		id: 'the-grustlers',
 		name: 'The Grustlers',
 		region: 'NA',
-		players: [
-			players['frostyZK'],
-			players['grustleking'],
-			players['gengu'],
-			players['Ascinei'],
-			players['Blexiss'],
-			players['uno']
-		]
+		players: ['frostyZK', 'grustleking', 'gengu', 'Ascinei', 'Blexiss', 'uno']
 	},
 	GUGF: {
 		id: 'gugf',
 		name: 'GUGF(give us girlfriend)',
 		region: 'APAC',
-		players: [
-			players['JY10137'],
-			players['逍遥sama'],
-			players['羽生翼'],
-			players['MIZU'],
-			players['BOXCAT'],
-			players['Chtho1ly'],
-			players['ChengCheng']
-		]
+		players: ['JY10137', '逍遥sama', '羽生翼', 'MIZU', 'BOXCAT', 'Chtho1ly', 'ChengCheng']
 	},
 	KRC: {
 		id: 'kitten-roll-call',
 		name: 'KITTEN ROLL CALL',
 		region: 'NA',
-		players: [
-			players['xohfiy'],
-			players['Kariyu'],
-			players['FOX1Yukino'],
-			players['HonkWith4ks'],
-			players['numOneZKFan']
-		]
+		players: ['xohfiy', 'Kariyu', 'FOX1Yukino', 'HonkWith4ks', 'numOneZKFan']
 	},
 	DRI: {
 		id: 'drillas',
 		name: 'Drillas',
 		region: 'NA',
-		players: [
-			players['Creepz'],
-			players['Poison'],
-			players['Moozor'],
-			players['Vampire'],
-			players['GWZH']
-		]
+		players: ['Creepz', 'Poison', 'Moozor', 'Vampire', 'GWZH']
 	},
 	GA: {
 		id: 'gacha-addicts',
 		name: 'GachaAddicts',
 		region: 'APAC',
-		players: [
-			players['cherry'],
-			players['iYu'],
-			players['Actyuki'],
-			players['Saya'],
-			players['Jav'],
-			players['SilliestOfThreat'],
-			players['Actyuki丶Student']
-		]
+		players: ['cherry', 'iYu', 'Actyuki', 'Saya', 'Jav', 'SilliestOfThreat', 'Actyuki丶Student']
 	},
 	WK: {
 		id: 'wilden-kerle',
 		name: 'Wilden Kerle',
 		region: 'NA',
-		players: [
-			players['Jstn'],
-			players['Xaly'],
-			players['extraya'],
-			players['GloriousNico'],
-			players['DEMXN']
-		],
-		substitutes: [players['Juzify'], players['Vora']]
+		players: ['Jstn', 'Xaly', 'extraya', 'GloriousNico', 'DEMXN'],
+		substitutes: ['Juzify', 'Vora']
 	},
 	ML: {
 		id: 'meowliora',
 		name: 'Meowliora',
 		region: 'NA',
-		players: [
-			players['akwa'],
-			players['BriBri'],
-			players['nine'],
-			players['HiroRune'],
-			players['Kito']
-		],
-		substitutes: [players['jayeezy']]
+		players: ['akwa', 'BriBri', 'nine', 'HiroRune', 'Kito'],
+		substitutes: ['jayeezy']
 	},
 	OC: {
 		id: 'october',
 		name: 'October',
 		region: 'NA',
-		players: [
-			players['Skyerzz'],
-			players['whoisLexu'],
-			players['AjDemon'],
-			players['MEGATRONOFDEATH'],
-			players['Fjin']
-		],
-		substitutes: [players['Stykades'], players['zcz']]
+		players: ['Skyerzz', 'whoisLexu', 'AjDemon', 'MEGATRONOFDEATH', 'Fjin'],
+		substitutes: ['Stykades', 'zcz']
 	},
 	DA: {
 		id: 'drillas-academy',
 		name: 'Drillas Academy',
 		region: 'NA',
-		players: [
-			players['Mansek'],
-			players['Scylla'],
-			players['sinna'],
-			players['ARGHGHGHGHGHHGHG'],
-			players['will']
-		],
-		substitutes: [players['Voxy']]
+		players: ['Mansek', 'Scylla', 'sinna', 'ARGHGHGHGHGHHGHG', 'will'],
+		substitutes: ['Voxy']
 	},
 	YU: {
 		id: 'yugifeetlover',
 		name: 'YugifeetLover',
 		region: 'NA',
-		players: [
-			players['aKura'],
-			players['Flausch'],
-			players['00YUE00'],
-			players['GrizzlyGripper28'],
-			players['NekoNoTsuki']
-		],
-		substitutes: [players['schwertfish'], players['KatzenMilch']]
+		players: ['aKura', 'Flausch', '00YUE00', 'GrizzlyGripper28', 'NekoNoTsuki'],
+		substitutes: ['schwertfish', 'KatzenMilch']
 	},
 	YG: {
 		id: "yuri's-gang",
 		name: "yuri's gang",
 		region: 'NA',
-		players: [
-			players['nxreq'],
-			players['pookie'],
-			players['ze'],
-			players['KanamiDoggye'],
-			players['audience']
-		],
-		substitutes: [players['MaddeFeetSniffer'], players['SophieRain']]
+		players: ['nxreq', 'pookie', 'ze', 'KanamiDoggye', 'audience'],
+		substitutes: ['MaddeFeetSniffer', 'SophieRain']
 	},
 	HC: {
 		id: 'hopecore',
 		name: 'hopecore',
 		region: 'NA',
-		players: [
-			players['Krihville'],
-			players['трагедия'],
-			players['m1sa'],
-			players['canparty'],
-			players['Stardx']
-		],
-		substitutes: [players['NikZON'], players['GigglingWill']]
+		players: ['Krihville', 'трагедия', 'm1sa', 'canparty', 'Stardx'],
+		substitutes: ['NikZON', 'GigglingWill']
 	},
 	GS: {
 		id: 'gweah-shindago',
 		name: 'GweahShindago!!',
 		region: 'NA',
-		players: [
-			players['kane'],
-			players['Unknown0Neko'],
-			players['Squall'],
-			players['WEGOINGMENTAL'],
-			players['polishcat']
-		],
-		substitutes: [players['S1nine'], players['Majime']]
+		players: ['kane', 'Unknown0Neko', 'Squall', 'WEGOINGMENTAL', 'polishcat'],
+		substitutes: ['S1nine', 'Majime']
 	},
 	XKAM: {
 		id: 'xiao-ke-ai-men',
 		name: '小可爱们',
 		region: 'NA',
-		players: [
-			players['진주'],
-			players['百荷'],
-			players['AmyamyaThe女神'],
-			players['Accellerator'],
-			players['RuleR']
-		],
-		substitutes: [players['爱莉希雅丨侵蚀']]
+		players: ['진주', '百荷', 'AmyamyaThe女神', 'Accellerator', 'RuleR'],
+		substitutes: ['爱莉希雅丨侵蚀']
 	},
 	LDP: {
 		id: 'long-distance-pals',
 		name: 'LONG DISTANCE PALS <3',
 		region: 'NA',
-		players: [
-			players['FOX1Yukino'],
-			players['HonkWith4ks'],
-			players['xohfiy'],
-			players['weeping'],
-			players['Asscinei']
-		],
-		substitutes: [players['numoneZKFan']]
+		players: ['FOX1Yukino', 'HonkWith4ks', 'xohfiy', 'weeping', 'Asscinei'],
+		substitutes: ['numoneZKFan']
 	},
 	MA: {
 		id: 'michele-armpits',
 		name: 'Michele Armpits',
 		region: 'NA',
-		players: [
-			players['Ely'],
-			players['shadow'],
-			players['lachevre'],
-			players['Revali'],
-			players['BurningStar']
-		],
-		substitutes: [players['PHRESHBOYSWAG']]
+		players: ['Ely', 'shadow', 'lachevre', 'Revali', 'BurningStar'],
+		substitutes: ['PHRESHBOYSWAG']
 	},
 	SF: {
 		id: 'stringifries',
 		name: 'Stringifries',
 		region: 'NA',
-		players: [
-			players['GhostElectricity'],
-			players['Ria'],
-			players['FocalorsinBlue'],
-			players['JustZero'],
-			players['messup']
-		],
-		substitutes: [players['supercrownnegev'], players['Soulen']]
+		players: ['GhostElectricity', 'Ria', 'FocalorsinBlue', 'JustZero', 'messup'],
+		substitutes: ['supercrownnegev', 'Soulen']
 	},
 	CRCC: {
 		id: 'com-rang-chay-chao',
 		name: 'Cơm Rang Cháy Chảo',
 		region: 'APAC',
-		players: [
-			players['Lph4m4218'],
-			players['FrostyNade'],
-			players['Fis'],
-			players['HoangTuHaDong'],
-			players['Dinaaa'],
-			players['nekocyan'],
-			players['Khanh3993']
-		]
+		players: ['Lph4m4218', 'FrostyNade', 'Fis', 'HoangTuHaDong', 'Dinaaa', 'nekocyan', 'Khanh3993']
 	},
 	AFT: {
 		id: 'all-for-tada',
 		name: 'All for tada',
 		region: 'APAC',
-		players: [
-			players['京こ'],
-			players['xelcee'],
-			players['Zacro'],
-			players['kuronory'],
-			players['rt0803'],
-			players['おっか'],
-			players['ななせ']
-		]
+		players: ['京こ', 'xelcee', 'Zacro', 'kuronory', 'rt0803', 'おっか', 'ななせ']
 	},
 	GCSC: {
 		id: 'ga-chien-so-tay',
 		name: 'Gà Chiên Sốt Cay',
 		region: 'APAC',
 		players: [
-			players['Teakomi'],
-			players['Emilinaz'],
-			players['hyacinexcon'],
-			players['Flamesicon'],
-			players['Put'],
-			players['KanamiMyDearest'],
-			players['bululelysia'],
-			players['xXBunDauSlayerXx'],
-			players['KNDxFlamescion2'],
-			players['Fumin0']
+			'Teakomi',
+			'Emilinaz',
+			'hyacinexcon',
+			'Flamesicon',
+			'Put',
+			'KanamiMyDearest',
+			'bululelysia',
+			'xXBunDauSlayerXx',
+			'KNDxFlamescion2',
+			'Fumin0'
 		]
 	},
 	SI: {
 		id: 'skill-issues',
 		name: 'Skill Issues',
 		region: 'APAC',
-		players: [
-			players['ToiYeuRem'],
-			players['Unmei'],
-			players['Miaa'],
-			players['Korofunk'],
-			players['Helixu'],
-			players['Davy'],
-			players['HVO']
-		]
+		players: ['ToiYeuRem', 'Unmei', 'Miaa', 'Korofunk', 'Helixu', 'Davy', 'HVO']
 	},
 	BP: {
 		id: 'become-paper',
 		name: 'Become Paper',
 		region: 'APAC',
-		players: [
-			players['EFFECT'],
-			players['마들렌'],
-			players['Y0ungEgg'],
-			players['P1ckUp'],
-			players['aewan'],
-			players['Shingwan'],
-			players['clown']
-		]
+		players: ['EFFECT', '마들렌', 'Y0ungEgg', 'P1ckUp', 'aewan', 'Shingwan', 'clown']
 	},
 	SKS: {
 		id: 'shigure-kira-saikyou',
 		name: 'Shigure Kira Saikyou',
 		region: 'APAC',
-		players: [
-			players['時雨綺羅'],
-			players['myan777みゃん'],
-			players['さめじまさめみ'],
-			players['Yueee'],
-			players['Killersans']
-		]
+		players: ['時雨綺羅', 'myan777みゃん', 'さめじまさめみ', 'Yueee', 'Killersans']
 	},
 	KGH: {
 		id: 'kanojo-ga-hoshi',
 		name: 'Kanojo ga hoshi',
 		region: 'APAC',
-		players: [
-			players['Saya'],
-			players['iYu'],
-			players['SilliestOfThreat'],
-			players['MemeVPND'],
-			players['ChildHelper']
-		]
+		players: ['Saya', 'iYu', 'SilliestOfThreat', 'MemeVPND', 'ChildHelper']
 	},
 	CW: {
 		id: 'crywolf',
 		name: 'CryWolf', // (new Strinoway)
 		region: 'APAC',
 		players: [
-			players['Katarieeku'],
-			players['belongtoyou'],
-			players['YunaLiv'],
-			players['Karuto丶Beloved'],
-			players['Rinko'],
-			players['Actyuki丶Student'],
-			players['fumiko好き']
+			'Katarieeku',
+			'belongtoyou',
+			'YunaLiv',
+			'Karuto丶Beloved',
+			'Rinko',
+			'Actyuki丶Student',
+			'fumiko好き'
 		]
 	},
 	OTG: {
 		id: 'otogenova',
 		name: 'おとげのぅ゙ぁ',
 		region: 'APAC',
-		players: [
-			players['0nesyo'],
-			players['begonia'],
-			players['dore52x'],
-			players['visucuit125'],
-			players['yusia'],
-			players['iLiss'],
-			players['いよたけ']
-		]
+		players: ['0nesyo', 'begonia', 'dore52x', 'visucuit125', 'yusia', 'iLiss', 'いよたけ']
 	},
 	NBT: {
 		id: 'newbie-team',
 		name: '뉴비팀',
 		region: 'APAC',
-		players: [
-			players['FPThahyun'],
-			players['시벌'],
-			players['레고'],
-			players['살찐족제비'],
-			players['만두도둑'],
-			players['리로'],
-			players['공백']
-		]
+		players: ['FPThahyun', '시벌', '레고', '살찐족제비', '만두도둑', '리로', '공백']
 	},
 	KD: {
 		id: "kokona's-drones",
 		name: "Kokona's Drones",
 		region: 'APAC',
-		players: [
-			players['RiN林'],
-			players['Papyrus'],
-			players['Koalski'],
-			players['itsChun'],
-			players['Airii'],
-			players['Naphta'],
-			players['KuroTama39']
-		]
+		players: ['RiN林', 'Papyrus', 'Koalski', 'itsChun', 'Airii', 'Naphta', 'KuroTama39']
 	},
 	UKZ: {
 		id: 'ukezara',
 		name: '受け皿',
 		region: 'APAC',
 		players: [
-			players['Ken256'],
-			players['暗闇の紅茶'],
-			players['maimainoob'],
-			players['kobo1010'],
-			players['Viatorice'],
-			players['カミリウイ'],
-			players['Hiyokotte'],
-			players['Cream6230']
+			'Ken256',
+			'暗闇の紅茶',
+			'maimainoob',
+			'kobo1010',
+			'Viatorice',
+			'カミリウイ',
+			'Hiyokotte',
+			'Cream6230'
 		]
 	},
 	SSE: {
 		id: 'supreme-shadow-emperor-hik-jinwoo',
 		name: 'Supreme Shadow Emperor Hik-Jinwoo',
 		region: 'APAC',
-		players: [
-			players['Hinako'],
-			players['Su4y'],
-			players['はーいあなた'],
-			players['RoiPaetSip'],
-			players['Artツ'],
-			players['Hik'],
-			players['EmperorHikJinwoo']
-		]
+		players: ['Hinako', 'Su4y', 'はーいあなた', 'RoiPaetSip', 'Artツ', 'Hik', 'EmperorHikJinwoo']
 	},
 	KSQ: {
 		id: 'ksq',
 		name: 'KSQ',
 		region: 'APAC',
-		players: [
-			players['칠흑'],
-			players['Mejiro Ryan'],
-			players['한월2'],
-			players['PGtexas'],
-			players['AKUKU']
-		]
+		players: ['칠흑', 'Mejiro Ryan', '한월2', 'PGtexas', 'AKUKU']
 	},
 	KNO: {
 		id: 'knotorious',
 		name: 'Knotorious',
 		region: 'APAC',
 		players: [
-			players['swaegaepinoe'],
-			players['redARA'],
-			players['whattheskibidi'],
-			players['DPTTDM'],
-			players['AerixD'],
-			players['MistaGojoooookun'],
-			players['AeriMayBee']
+			'swaegaepinoe',
+			'redARA',
+			'whattheskibidi',
+			'DPTTDM',
+			'AerixD',
+			'MistaGojoooookun',
+			'AeriMayBee'
 		]
 	},
 	SDF: {
@@ -452,56 +262,44 @@ export const teams: Record<string, Team> = {
 		name: 'しゅうどうふ',
 		region: 'APAC',
 		players: [
-			players['月神'],
-			players['世間天使雨宮優子'],
-			players['twitchWenli'],
-			players['ChengCheng'],
-			players['陌悠理'],
-			players['bili会求风的鱼'],
-			players['Asuaka']
+			'月神',
+			'世間天使雨宮優子',
+			'twitchWenli',
+			'ChengCheng',
+			'陌悠理',
+			'bili会求风的鱼',
+			'Asuaka'
 		]
 	},
 	MMR: {
 		id: 'mmr',
 		name: 'MMR',
 		region: 'CN',
-		players: [players['Fan'], players['yzii'], players['Rite'], players['Xiaowu'], players['ON']]
+		players: ['Fan', 'yzii', 'Rite', 'Xiaowu', 'ON']
 	},
 	SUS: {
 		id: 'ss',
 		name: 'Super Shuai',
 		region: 'NA',
-		players: [
-			players['lyr1c'],
-			players['Kariyu'],
-			players['BriBri'],
-			players['BTMC'],
-			players['Tuonto']
-		]
+		players: ['lyr1c', 'Kariyu', 'BriBri', 'BTMC', 'Tuonto']
 	},
 	NG: {
 		id: 'ng',
 		name: 'Nova Guardians',
 		region: 'APAC',
-		players: [
-			players['Masuo'],
-			players['kept'],
-			players['SKJsa2'],
-			players['SKJShinka'],
-			players['SoVault']
-		]
+		players: ['Masuo', 'kept', 'SKJsa2', 'SKJShinka', 'SoVault']
 	},
 	TM: {
 		id: 'tm',
 		name: 'Twisted Minds',
 		region: 'WA',
 		players: [
-			players['Zimo'],
-			players['ExiT'],
-			players['Saint'],
-			// players['Gwzh'],
-			players['GWZH'],
-			players['Fr4nky']
+			'Zimo',
+			'ExiT',
+			'Saint',
+			// 'Gwzh',
+			'GWZH',
+			'Fr4nky'
 		]
 	}
 };

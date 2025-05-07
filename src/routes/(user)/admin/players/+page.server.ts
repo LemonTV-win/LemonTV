@@ -5,7 +5,11 @@ import type { Region } from '$lib/data/game';
 import type { Player } from '$lib/data/players';
 
 export const load: PageServerLoad = async () => {
-	return {};
+	const players = await getPlayers();
+
+	return {
+		players
+	};
 };
 
 export const actions = {

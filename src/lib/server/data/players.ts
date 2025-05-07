@@ -199,51 +199,60 @@ export async function createPlayer(
 }
 
 export async function updatePlayer(
-	data: Omit<Player, 'gameAccounts'> & { gameAccounts: Player['gameAccounts'] }
+	data: { id: string } & Partial<
+		Omit<Player, 'gameAccounts'> & { gameAccounts: Player['gameAccounts'] }
+	>
 ) {
 	console.info('[Players] ====== Attempting to update player ======');
 	const { id, name, nationality, aliases, gameAccounts, slug } = data;
 
 	try {
-		await db
-			.update(player)
-			.set({
-				name,
-				nationality: nationality || null,
-				slug: slug || id
-			})
-			.where(eq(player.id, id));
+		// Only update fields that are provided
+		const updateData: Record<string, any> = {};
+		if (name !== undefined) updateData.name = name;
+		if (nationality !== undefined) updateData.nationality = nationality || null;
+		if (slug !== undefined) updateData.slug = slug || id;
 
-		// Delete existing aliases and game accounts
-		await db.delete(playerAlias).where(eq(playerAlias.playerId, id));
-		await db.delete(gameAccount).where(eq(gameAccount.playerId, id));
-
-		// Insert new aliases and game accounts
-		if (aliases && aliases.length > 0) {
-			await db.insert(playerAlias).values(
-				aliases.map((alias) => ({
-					playerId: id,
-					alias
-				}))
-			);
+		if (Object.keys(updateData).length > 0) {
+			await db.update(player).set(updateData).where(eq(player.id, id));
 		}
 
-		if (gameAccounts && gameAccounts.length > 0) {
-			await db
-				.insert(gameAccount)
-				.values(
-					gameAccounts.map((account) => ({
-						server: 'Strinova',
-						accountId: account.accountId,
-						playerId: id,
-						currentName: account.currentName,
-						region: account.region || null
-					}))
-				)
-				.onConflictDoNothing();
+		// Only update aliases if provided
+		if (aliases !== undefined) {
+			await db.delete(playerAlias).where(eq(playerAlias.playerId, id));
+			if (aliases.length > 0) {
+				await db
+					.insert(playerAlias)
+					.values(
+						aliases.map((alias) => ({
+							playerId: id,
+							alias
+						}))
+					)
+					.onConflictDoNothing();
+			}
 		}
 
-		console.info('[Players] Successfully updated player:', name);
+		// Only update game accounts if provided
+		if (gameAccounts !== undefined) {
+			await db.delete(gameAccount).where(eq(gameAccount.playerId, id));
+			if (gameAccounts.length > 0) {
+				await db
+					.insert(gameAccount)
+					.values(
+						gameAccounts.map((account) => ({
+							server: 'Strinova',
+							accountId: account.accountId,
+							playerId: id,
+							currentName: account.currentName,
+							region: account.region || null
+						}))
+					)
+					.onConflictDoNothing();
+			}
+		}
+
+		console.info('[Players] Successfully updated player:', id);
 	} catch (e) {
 		console.error('[Players] Error updating player:', e);
 		throw e;

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { players } from '$lib/data/players';
 	import type { Player } from '$lib/data/players';
 	import { goto } from '$app/navigation';
 	import { m } from '$lib/paraglide/messages';
@@ -29,7 +28,7 @@
 	let { data }: PageProps = $props();
 
 	let filteredPlayers = $derived(
-		Object.values(players).filter((player) => {
+		data.players.filter((player) => {
 			const searchLower = searchQuery.toLowerCase();
 			return (
 				player.name.toLowerCase().includes(searchLower) ||
