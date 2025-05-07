@@ -17,6 +17,18 @@
 		{
 			title: 'カラビヤウの民 (Japanese)',
 			url: 'https://discord.gg/SZuKAqNMY2'
+		},
+		{
+			title: 'Strinova NA Discord Server',
+			url: 'https://discord.gg/jcEduEqgzB'
+		},
+		{
+			title: 'NA STRINOVA SATURDAYS Discord Server',
+			url: 'https://discord.gg/WWSDkXgDdw'
+		},
+		{
+			title: 'Strinova Wiki Discord Server',
+			url: 'https://discord.gg/bmbzgKmqfD'
 		}
 	];
 
