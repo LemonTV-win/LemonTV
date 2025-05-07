@@ -15,7 +15,8 @@
 		"db:push": "drizzle-kit push",
 		"db:migrate": "drizzle-kit migrate",
 		"db:studio": "drizzle-kit studio",
-		"i18n:check": "bun scripts/check-messages.ts"
+		"i18n:check": "bun scripts/check-messages.ts",
+		"knip": "knip"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.9",
@@ -26,11 +27,13 @@
 		"@sveltejs/vite-plugin-svelte": "^5.0.3",
 		"@tailwindcss/forms": "^0.5.10",
 		"@tailwindcss/vite": "^4.1.5",
+		"@types/node": "^22.15.14",
 		"drizzle-kit": "^0.31.1",
 		"eslint": "^9.26.0",
 		"eslint-config-prettier": "^10.1.2",
 		"eslint-plugin-svelte": "^3.5.1",
 		"globals": "^16.0.0",
+		"knip": "^5.54.1",
 		"prettier": "^3.5.3",
 		"prettier-plugin-svelte": "^3.3.3",
 		"prettier-plugin-tailwindcss": "^0.6.11",
