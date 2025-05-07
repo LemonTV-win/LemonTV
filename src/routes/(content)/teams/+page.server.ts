@@ -9,6 +9,6 @@ export const load: PageServerLoad = () => {
 			players: team.players?.map((player) => getPlayer(player)),
 			substitutes: team.substitutes?.map((player) => getPlayer(player)),
 			former: team.former?.map((player) => getPlayer(player))
-		})) as CompiledTeam[]
+		})) as (CompiledTeam & { wins: number })[]
 	};
 };
