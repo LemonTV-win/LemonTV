@@ -2,6 +2,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import chalk from 'chalk';
 
 const allMessageIDs = new Set<string>();
 
@@ -16,17 +17,24 @@ for (const file of fs.readdirSync(path.join(__dirname, '../messages'))) {
 	});
 }
 
-console.log('All message IDs:', Array.from(allMessageIDs).sort());
+console.log(
+	chalk.blue('[Check Messages]'),
+	'Found',
+	chalk.yellow(allMessageIDs.size),
+	'message IDs'
+);
 
 // Check if any language is missing any translations
+let hasWarnings = false;
 for (const file of fs.readdirSync(path.join(__dirname, '../messages'))) {
 	const messages = JSON.parse(fs.readFileSync(path.join(__dirname, '../messages', file), 'utf8'));
 	const fileMessageIDs = new Set(Object.keys(messages).filter((key) => key !== '$schema'));
 
 	const missingMessages = Array.from(allMessageIDs).filter((id) => !fileMessageIDs.has(id));
 	if (missingMessages.length > 0) {
-		console.log(`\n${file} is missing translations for:`);
-		missingMessages.forEach((id) => console.log(`  - ${id}`));
+		console.warn(chalk.yellow(`[Check Messages] ${file} is missing translations for:`));
+		missingMessages.forEach((id) => console.log(chalk.white(`  - ${id}`)));
+		hasWarnings = true;
 	}
 }
 
@@ -35,6 +43,14 @@ for (const file of fs.readdirSync(path.join(__dirname, '../messages'))) {
 	const messages = JSON.parse(fs.readFileSync(path.join(__dirname, '../messages', file), 'utf8'));
 	const messageIDs = Object.keys(messages).filter((key) => key !== '$schema');
 	if (messageIDs.length !== new Set(messageIDs).size) {
-		console.log(`\n${file} has duplicated translations`);
+		console.warn(chalk.yellow(`[Check Messages] ${file} has duplicated translations`));
+		hasWarnings = true;
 	}
+}
+
+if (!hasWarnings) {
+	console.log(chalk.green('[Check Messages] All checks passed successfully!'));
+} else {
+	console.error(chalk.red('[Check Messages] Validation failed - see warnings above'));
+	process.exit(1);
 }

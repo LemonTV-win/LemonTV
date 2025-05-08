@@ -54,6 +54,7 @@
 		"@node-rs/argon2": "^2.0.2",
 		"@oslojs/crypto": "^1.0.1",
 		"@oslojs/encoding": "^1.1.0",
+		"chalk": "4",
 		"countries-list": "^3.1.1",
 		"country-code-to-flag-emoji": "^2.0.0",
 		"dotenv": "^16.5.0",
