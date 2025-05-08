@@ -217,5 +217,8 @@
 	"copy_to_clipboard": "Copiar para a área de transferência",
 	"copied_to_clipboard": "Copiado para a área de transferência",
 	"admin": "Administrador",
-	"editor": "Editor"
+	"editor": "Editor",
+	"account": "Conta",
+	"security": "Segurança",
+	"preferences": "Preferências"
 }

@@ -217,5 +217,8 @@
 	"copy_to_clipboard": "Copier dans le presse-papiers",
 	"copied_to_clipboard": "Copié dans le presse-papiers",
 	"admin": "Administrateur",
-	"editor": "Éditeur"
+	"editor": "Éditeur",
+	"account": "Compte",
+	"security": "Sécurité",
+	"preferences": "Préférences"
 }

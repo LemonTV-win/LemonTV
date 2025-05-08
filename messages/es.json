@@ -217,5 +217,8 @@
 	"copy_to_clipboard": "Copiar al portapapeles",
 	"copied_to_clipboard": "Copiado al portapapeles",
 	"admin": "Administrador",
-	"editor": "Editor"
+	"editor": "Editor",
+	"account": "Cuenta",
+	"security": "Seguridad",
+	"preferences": "Preferencias"
 }

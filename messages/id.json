@@ -217,5 +217,8 @@
 	"copy_to_clipboard": "Salin ke papan klip",
 	"copied_to_clipboard": "Disalin ke papan klip",
 	"admin": "Admin",
-	"editor": "Editor"
+	"editor": "Editor",
+	"account": "Akun",
+	"security": "Keamanan",
+	"preferences": "Preferensi"
 }

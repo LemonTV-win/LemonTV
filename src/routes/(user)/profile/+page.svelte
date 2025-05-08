@@ -38,146 +38,122 @@
 	<title>{m.profile_settings()} | LemonTV</title>
 </svelte:head>
 
-<main class="flex min-h-[calc(100dvh-9em)] flex-1 items-center justify-center p-4">
-	<div class="w-full max-w-md">
-		<div class="rounded-lg border border-slate-800 bg-slate-900/70 shadow-lg">
-			<div class="space-y-1 p-6 text-center">
-				<h1 class="text-2xl font-bold text-white">{m.profile_settings()}</h1>
-				<p class="text-slate-400">{m.manage_account()}</p>
-			</div>
-
-			<div class="p-6">
-				<div class="mb-8 rounded-md border border-slate-800 bg-slate-800/50 p-4">
-					<p class="mb-2 text-xl font-medium text-white">
-						{m.welcome({ username: data.user.username })}
-					</p>
-					<p class="text-sm text-slate-400">{m.user_id()}: {data.user.id}</p>
-					<p class="text-sm text-slate-400">{m.email()}: {data.user.email}</p>
-					<p class="text-sm text-slate-400">
-						{m.roles()}: {#each data.user.roles as role}
-							{#if role === 'admin'}
-								<span class="text-yellow-500">{m.admin()}</span>
-							{:else if role === 'editor'}
-								<span class="text-green-500">{m.editor()}</span>
-							{:else}
-								<span class="text-slate-400">{role}</span>
-							{/if}
-						{/each}
-					</p>
-				</div>
-
-				<div class="mb-8">
-					<h2 class="mb-4 text-xl font-semibold text-white">{m.change_password()}</h2>
-					{#if error}
-						<InlineAlert type="error" message={error} />
-					{/if}
-					{#if success}
-						<InlineAlert type="success" message={m.password_changed()} />
-					{/if}
-					<form
-						method="post"
-						action="?/changePassword"
-						use:enhance={handleSubmit}
-						class="space-y-4"
-					>
-						<div class="space-y-2">
-							<label for="currentPassword" class="block text-white">{m.current_password()}</label>
-							<div class="relative">
-								<Lock
-									class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-slate-500"
-								/>
-								<input
-									type={showCurrentPassword ? 'text' : 'password'}
-									id="currentPassword"
-									name="currentPassword"
-									required
-									class="w-full rounded-md border border-slate-700 bg-slate-800 py-2 pr-10 pl-10 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-								/>
-								<button
-									type="button"
-									onclick={() => (showCurrentPassword = !showCurrentPassword)}
-									class="absolute top-1/2 right-3 -translate-y-1/2 transform text-slate-500 hover:text-slate-400"
-								>
-									{#if showCurrentPassword}
-										<EyeOff class="h-4 w-4" />
-									{:else}
-										<Eye class="h-4 w-4" />
-									{/if}
-								</button>
-							</div>
-						</div>
-						<div class="space-y-2">
-							<label for="newPassword" class="block text-white">{m.new_password()}</label>
-							<div class="relative">
-								<Lock
-									class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-slate-500"
-								/>
-								<input
-									type={showNewPassword ? 'text' : 'password'}
-									id="newPassword"
-									name="newPassword"
-									required
-									class="w-full rounded-md border border-slate-700 bg-slate-800 py-2 pr-10 pl-10 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-								/>
-								<button
-									type="button"
-									onclick={() => (showNewPassword = !showNewPassword)}
-									class="absolute top-1/2 right-3 -translate-y-1/2 transform text-slate-500 hover:text-slate-400"
-								>
-									{#if showNewPassword}
-										<EyeOff class="h-4 w-4" />
-									{:else}
-										<Eye class="h-4 w-4" />
-									{/if}
-								</button>
-							</div>
-						</div>
-						<div class="space-y-2">
-							<label for="confirmPassword" class="block text-white"
-								>{m.confirm_new_password()}</label
-							>
-							<div class="relative">
-								<Lock
-									class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-slate-500"
-								/>
-								<input
-									type={showConfirmPassword ? 'text' : 'password'}
-									id="confirmPassword"
-									name="confirmPassword"
-									required
-									class="w-full rounded-md border border-slate-700 bg-slate-800 py-2 pr-10 pl-10 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-								/>
-								<button
-									type="button"
-									onclick={() => (showConfirmPassword = !showConfirmPassword)}
-									class="absolute top-1/2 right-3 -translate-y-1/2 transform text-slate-500 hover:text-slate-400"
-								>
-									{#if showConfirmPassword}
-										<EyeOff class="h-4 w-4" />
-									{:else}
-										<Eye class="h-4 w-4" />
-									{/if}
-								</button>
-							</div>
-						</div>
-						<button
-							type="submit"
-							class="w-full rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600 focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:ring-offset-slate-900 focus:outline-none"
-						>
-							{m.change_password()}
-						</button>
-					</form>
-				</div>
-
-				<form method="post" action="?/logout" use:enhance class="border-t border-slate-800 pt-6">
-					<button
-						type="submit"
-						class="w-full rounded-md border border-slate-700 px-4 py-2 text-white hover:bg-slate-800 focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 focus:ring-offset-slate-900 focus:outline-none"
-					>
-						{m.sign_out()}
-					</button>
-				</form>
-			</div>
-		</div>
+<div class="space-y-8">
+	<div class="rounded-md border border-slate-800 bg-slate-800/50 p-4">
+		<p class="mb-2 text-xl font-medium text-white">
+			{m.welcome({ username: data.user.username })}
+		</p>
+		<p class="text-sm text-slate-400">{m.user_id()}: {data.user.id}</p>
+		<p class="text-sm text-slate-400">{m.email()}: {data.user.email}</p>
+		<p class="text-sm text-slate-400">
+			{m.roles()}: {#each data.user.roles as role}
+				{#if role === 'admin'}
+					<span class="text-yellow-500">{m.admin()}</span>
+				{:else if role === 'editor'}
+					<span class="text-green-500">{m.editor()}</span>
+				{:else}
+					<span class="text-slate-400">{role}</span>
+				{/if}
+			{/each}
+		</p>
 	</div>
-</main>
+
+	<div>
+		<h2 class="mb-4 text-xl font-semibold text-white">{m.change_password()}</h2>
+		{#if error}
+			<InlineAlert type="error" message={error} />
+		{/if}
+		{#if success}
+			<InlineAlert type="success" message={m.password_changed()} />
+		{/if}
+		<form method="post" action="?/changePassword" use:enhance={handleSubmit} class="space-y-4">
+			<div class="space-y-2">
+				<label for="currentPassword" class="block text-white">{m.current_password()}</label>
+				<div class="relative">
+					<Lock class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-slate-500" />
+					<input
+						type={showCurrentPassword ? 'text' : 'password'}
+						id="currentPassword"
+						name="currentPassword"
+						required
+						class="w-full rounded-md border border-slate-700 bg-slate-800 py-2 pr-10 pl-10 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+					/>
+					<button
+						type="button"
+						onclick={() => (showCurrentPassword = !showCurrentPassword)}
+						class="absolute top-1/2 right-3 -translate-y-1/2 transform text-slate-500 hover:text-slate-400"
+					>
+						{#if showCurrentPassword}
+							<EyeOff class="h-4 w-4" />
+						{:else}
+							<Eye class="h-4 w-4" />
+						{/if}
+					</button>
+				</div>
+			</div>
+			<div class="space-y-2">
+				<label for="newPassword" class="block text-white">{m.new_password()}</label>
+				<div class="relative">
+					<Lock class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-slate-500" />
+					<input
+						type={showNewPassword ? 'text' : 'password'}
+						id="newPassword"
+						name="newPassword"
+						required
+						class="w-full rounded-md border border-slate-700 bg-slate-800 py-2 pr-10 pl-10 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+					/>
+					<button
+						type="button"
+						onclick={() => (showNewPassword = !showNewPassword)}
+						class="absolute top-1/2 right-3 -translate-y-1/2 transform text-slate-500 hover:text-slate-400"
+					>
+						{#if showNewPassword}
+							<EyeOff class="h-4 w-4" />
+						{:else}
+							<Eye class="h-4 w-4" />
+						{/if}
+					</button>
+				</div>
+			</div>
+			<div class="space-y-2">
+				<label for="confirmPassword" class="block text-white">{m.confirm_new_password()}</label>
+				<div class="relative">
+					<Lock class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-slate-500" />
+					<input
+						type={showConfirmPassword ? 'text' : 'password'}
+						id="confirmPassword"
+						name="confirmPassword"
+						required
+						class="w-full rounded-md border border-slate-700 bg-slate-800 py-2 pr-10 pl-10 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+					/>
+					<button
+						type="button"
+						onclick={() => (showConfirmPassword = !showConfirmPassword)}
+						class="absolute top-1/2 right-3 -translate-y-1/2 transform text-slate-500 hover:text-slate-400"
+					>
+						{#if showConfirmPassword}
+							<EyeOff class="h-4 w-4" />
+						{:else}
+							<Eye class="h-4 w-4" />
+						{/if}
+					</button>
+				</div>
+			</div>
+			<button
+				type="submit"
+				class="w-full rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600 focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:ring-offset-slate-900 focus:outline-none"
+			>
+				{m.change_password()}
+			</button>
+		</form>
+	</div>
+
+	<form method="post" action="?/logout" use:enhance class="border-t border-slate-800 pt-6">
+		<button
+			type="submit"
+			class="w-full rounded-md border border-slate-700 px-4 py-2 text-white hover:bg-slate-800 focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 focus:ring-offset-slate-900 focus:outline-none"
+		>
+			{m.sign_out()}
+		</button>
+	</form>
+</div>

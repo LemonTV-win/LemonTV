@@ -217,5 +217,8 @@
 	"copy_to_clipboard": "Sao chép vào bảng tạm",
 	"copied_to_clipboard": "Đã sao chép vào bảng tạm",
 	"admin": "Quản trị viên",
-	"editor": "Biên tập viên"
+	"editor": "Biên tập viên",
+	"account": "Tài khoản",
+	"security": "Bảo mật",
+	"preferences": "Cài đặt"
 }

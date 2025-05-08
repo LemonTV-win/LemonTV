@@ -217,5 +217,8 @@
 	"copy_to_clipboard": "复制到剪贴板",
 	"copied_to_clipboard": "已复制到剪贴板",
 	"admin": "管理员",
-	"editor": "编辑者"
+	"editor": "编辑者",
+	"account": "账号",
+	"security": "安全",
+	"preferences": "偏好设置"
 }

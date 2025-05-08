@@ -217,5 +217,8 @@
 	"copy_to_clipboard": "クリップボードにコピー",
 	"copied_to_clipboard": "クリップボードにコピーしました",
 	"admin": "管理者",
-	"editor": "編集者"
+	"editor": "編集者",
+	"account": "アカウント",
+	"security": "セキュリティ",
+	"preferences": "設定"
 }

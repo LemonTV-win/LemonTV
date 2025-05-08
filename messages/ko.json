@@ -217,5 +217,8 @@
 	"copy_to_clipboard": "클립보드에 복사",
 	"copied_to_clipboard": "클립보드에 복사되었습니다.",
 	"admin": "관리자",
-	"editor": "편집자"
+	"editor": "편집자",
+	"account": "계정",
+	"security": "보안",
+	"preferences": "설정"
 }

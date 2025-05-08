@@ -217,5 +217,8 @@
 	"copy_to_clipboard": "In Zwischenablage kopieren",
 	"copied_to_clipboard": "In Zwischenablage kopiert",
 	"admin": "Administrator",
-	"editor": "Editor"
+	"editor": "Editor",
+	"account": "Konto",
+	"security": "Sicherheit",
+	"preferences": "Einstellungen"
 }
