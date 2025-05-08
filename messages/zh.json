@@ -221,5 +221,20 @@
 	"account": "账号",
 	"security": "安全",
 	"preferences": "偏好设置",
-	"change_avatar": "在 Gravatar 更改您的头像"
+	"change_avatar": "在 Gravatar 更改您的头像",
+	"edit_history_overview": "编辑历史概览",
+	"total_edits": "总编辑次数",
+	"unique_editors": "独立编辑者",
+	"first_edit": "首次编辑",
+	"last_edit": "最后编辑",
+	"edit_types": "编辑类型",
+	"failed_to_load_history": "加载历史记录失败",
+	"created": "已创建",
+	"deleted": "已删除",
+	"accounts": "个账号",
+	"game_account": "游戏账号",
+	"social_account": "社交账号",
+	"player": "玩家",
+	"creation": "创建",
+	"deletion": "删除"
 }

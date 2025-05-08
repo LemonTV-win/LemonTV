@@ -221,5 +221,20 @@
 	"account": "Compte",
 	"security": "Sécurité",
 	"preferences": "Préférences",
-	"change_avatar": "Changez votre avatar sur Gravatar"
+	"change_avatar": "Changez votre avatar sur Gravatar",
+	"edit_history_overview": "Aperçu de l'Historique des Modifications",
+	"total_edits": "Total des Modifications",
+	"unique_editors": "Éditeurs Uniques",
+	"first_edit": "Première Modification",
+	"last_edit": "Dernière Modification",
+	"edit_types": "Types de Modification",
+	"failed_to_load_history": "Échec du chargement de l'historique",
+	"created": "Créé",
+	"deleted": "Supprimé",
+	"accounts": "comptes",
+	"game_account": "Compte de Jeu",
+	"social_account": "Compte Social",
+	"player": "Joueur",
+	"creation": "Création",
+	"deletion": "Suppression"
 }

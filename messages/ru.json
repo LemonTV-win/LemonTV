@@ -221,5 +221,20 @@
 	"account": "Аккаунт",
 	"security": "Безопасность",
 	"preferences": "Настройки",
-	"change_avatar": "Изменить аватар на Gravatar"
+	"change_avatar": "Изменить аватар на Gravatar",
+	"edit_history_overview": "Обзор Истории Редактирования",
+	"total_edits": "Всего Редактирований",
+	"unique_editors": "Уникальных Редакторов",
+	"first_edit": "Первое Редактирование",
+	"last_edit": "Последнее Редактирование",
+	"edit_types": "Типы Редактирования",
+	"failed_to_load_history": "Не удалось загрузить историю",
+	"created": "Создано",
+	"deleted": "Удалено",
+	"accounts": "аккаунтов",
+	"game_account": "Игровой Аккаунт",
+	"social_account": "Социальный Аккаунт",
+	"player": "Игрок",
+	"creation": "Создание",
+	"deletion": "Удаление"
 }

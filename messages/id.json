@@ -221,5 +221,20 @@
 	"account": "Akun",
 	"security": "Keamanan",
 	"preferences": "Preferensi",
-	"change_avatar": "Ubah avatar Anda di Gravatar"
+	"change_avatar": "Ubah avatar Anda di Gravatar",
+	"edit_history_overview": "Ikhtisar Riwayat Edit",
+	"total_edits": "Total Edit",
+	"unique_editors": "Editor Unik",
+	"first_edit": "Edit Pertama",
+	"last_edit": "Edit Terakhir",
+	"edit_types": "Jenis Edit",
+	"failed_to_load_history": "Gagal memuat riwayat",
+	"created": "Dibuat",
+	"deleted": "Dihapus",
+	"accounts": "akun",
+	"game_account": "Akun Game",
+	"social_account": "Akun Sosial",
+	"player": "Pemain",
+	"creation": "Pembuatan",
+	"deletion": "Penghapusan"
 }

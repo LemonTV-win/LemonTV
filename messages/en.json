@@ -221,5 +221,20 @@
 	"account": "Account",
 	"security": "Security",
 	"preferences": "Preferences",
-	"change_avatar": "Change your avatar on Gravatar"
+	"change_avatar": "Change your avatar on Gravatar",
+	"edit_history_overview": "Edit History Overview",
+	"total_edits": "Total Edits",
+	"unique_editors": "Unique Editors",
+	"first_edit": "First Edit",
+	"last_edit": "Last Edit",
+	"edit_types": "Edit Types",
+	"failed_to_load_history": "Failed to load history",
+	"created": "Created",
+	"deleted": "Deleted",
+	"accounts": "accounts",
+	"game_account": "Game Account",
+	"social_account": "Social Account",
+	"player": "Player",
+	"creation": "Creation",
+	"deletion": "Deletion"
 }

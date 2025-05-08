@@ -221,5 +221,20 @@
 	"editor": "Editor",
 	"account": "Cuenta",
 	"security": "Seguridad",
-	"preferences": "Preferencias"
+	"preferences": "Preferencias",
+	"edit_history_overview": "Resumen del Historial de Ediciones",
+	"total_edits": "Total de Ediciones",
+	"unique_editors": "Editores Únicos",
+	"first_edit": "Primera Edición",
+	"last_edit": "Última Edición",
+	"edit_types": "Tipos de Edición",
+	"failed_to_load_history": "Error al cargar el historial",
+	"created": "Creado",
+	"deleted": "Eliminado",
+	"accounts": "cuentas",
+	"game_account": "Cuenta de Juego",
+	"social_account": "Cuenta Social",
+	"player": "Jugador",
+	"creation": "Creación",
+	"deletion": "Eliminación"
 }

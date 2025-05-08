@@ -221,5 +221,20 @@
 	"account": "帳號",
 	"security": "安全",
 	"preferences": "偏好設定",
-	"change_avatar": "在 Gravatar 更改您的頭像"
+	"change_avatar": "在 Gravatar 更改您的頭像",
+	"edit_history_overview": "編輯歷史概覽",
+	"total_edits": "總編輯次數",
+	"unique_editors": "獨立編輯者",
+	"first_edit": "首次編輯",
+	"last_edit": "最後編輯",
+	"edit_types": "編輯類型",
+	"failed_to_load_history": "載入歷史失敗",
+	"created": "已創建",
+	"deleted": "已刪除",
+	"accounts": "個帳號",
+	"game_account": "遊戲帳號",
+	"social_account": "社交帳號",
+	"player": "玩家",
+	"creation": "創建",
+	"deletion": "刪除"
 }

@@ -221,5 +221,20 @@
 	"account": "계정",
 	"security": "보안",
 	"preferences": "환경설정",
-	"change_avatar": "Gravatar에서 아바타 변경"
+	"change_avatar": "Gravatar에서 아바타 변경",
+	"edit_history_overview": "편집 기록 개요",
+	"total_edits": "총 편집 횟수",
+	"unique_editors": "고유 편집자",
+	"first_edit": "첫 번째 편집",
+	"last_edit": "마지막 편집",
+	"edit_types": "편집 유형",
+	"failed_to_load_history": "기록을 불러오는데 실패했습니다",
+	"created": "생성됨",
+	"deleted": "삭제됨",
+	"accounts": "계정",
+	"game_account": "게임 계정",
+	"social_account": "소셜 계정",
+	"player": "플레이어",
+	"creation": "생성",
+	"deletion": "삭제"
 }

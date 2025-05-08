@@ -221,5 +221,20 @@
 	"account": "アカウント",
 	"security": "セキュリティ",
 	"preferences": "設定",
-	"change_avatar": "Gravatarでアバターを変更"
+	"change_avatar": "Gravatarでアバターを変更",
+	"edit_history_overview": "編集履歴の概要",
+	"total_edits": "総編集数",
+	"unique_editors": "ユニークな編集者",
+	"first_edit": "最初の編集",
+	"last_edit": "最後の編集",
+	"edit_types": "編集の種類",
+	"failed_to_load_history": "履歴の読み込みに失敗しました",
+	"created": "作成済み",
+	"deleted": "削除済み",
+	"accounts": "アカウント",
+	"game_account": "ゲームアカウント",
+	"social_account": "ソーシャルアカウント",
+	"player": "プレイヤー",
+	"creation": "作成",
+	"deletion": "削除"
 }

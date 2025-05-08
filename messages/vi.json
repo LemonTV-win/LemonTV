@@ -221,5 +221,20 @@
 	"account": "Tài khoản",
 	"security": "Bảo mật",
 	"preferences": "Tùy chọn",
-	"change_avatar": "Thay đổi ảnh đại diện của bạn trên Gravatar"
+	"change_avatar": "Thay đổi ảnh đại diện của bạn trên Gravatar",
+	"edit_history_overview": "Tổng Quan Lịch Sử Chỉnh Sửa",
+	"total_edits": "Tổng Số Lần Chỉnh Sửa",
+	"unique_editors": "Người Chỉnh Sửa",
+	"first_edit": "Lần Chỉnh Sửa Đầu Tiên",
+	"last_edit": "Lần Chỉnh Sửa Cuối Cùng",
+	"edit_types": "Loại Chỉnh Sửa",
+	"failed_to_load_history": "Không thể tải lịch sử",
+	"created": "Đã Tạo",
+	"deleted": "Đã Xóa",
+	"accounts": "tài khoản",
+	"game_account": "Tài Khoản Game",
+	"social_account": "Tài Khoản Mạng Xã Hội",
+	"player": "Người chơi",
+	"creation": "Tạo mới",
+	"deletion": "Xóa"
 }
