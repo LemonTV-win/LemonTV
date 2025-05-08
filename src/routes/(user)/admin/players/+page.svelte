@@ -28,6 +28,8 @@
 	let errorMessage = $state('');
 	let successMessage = $state('');
 	let isImporting = $state(false);
+	let isDeleting = $state(false);
+	let playerToDelete: Player | null = $state(null);
 	let sortBy:
 		| 'id-asc'
 		| 'id-desc'
@@ -312,6 +314,42 @@
 			errorMessage = m.failed_to_export_players();
 			console.error('Error exporting players:', e);
 		}
+	}
+
+	async function handleDeletePlayer() {
+		if (!playerToDelete) return;
+
+		errorMessage = '';
+		successMessage = '';
+
+		try {
+			const formData = new FormData();
+			formData.append('id', playerToDelete.id);
+
+			const response = await fetch('?/delete', {
+				method: 'POST',
+				body: formData
+			});
+
+			const result = await response.json();
+
+			if (result.error) {
+				errorMessage = result.error;
+			} else {
+				successMessage = m.player_deleted_successfully();
+				playerToDelete = null;
+				isDeleting = false;
+				goto('/admin/players', { invalidateAll: true });
+			}
+		} catch (e) {
+			errorMessage = m.failed_to_delete_player();
+			console.error('Error deleting player:', e);
+		}
+	}
+
+	function handleDeleteClick(player: Player) {
+		playerToDelete = player;
+		isDeleting = true;
 	}
 </script>
 
@@ -645,6 +683,48 @@
 		</Modal>
 	{/if}
 
+	{#if isDeleting && playerToDelete}
+		<Modal
+			show={true}
+			title={m.delete_player()}
+			onClose={() => {
+				isDeleting = false;
+				playerToDelete = null;
+			}}
+		>
+			<div class="flex flex-col gap-6">
+				<div class="space-y-2">
+					<p class="text-slate-300">
+						{m.delete_player_confirmation()}
+						<span class="font-bold text-white">{playerToDelete.name}</span>?
+					</p>
+					<p class="text-sm text-slate-400">
+						{m.delete_player_confirmation_description()}
+					</p>
+				</div>
+				<div class="flex justify-end gap-4">
+					<button
+						type="button"
+						class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
+						onclick={() => {
+							isDeleting = false;
+							playerToDelete = null;
+						}}
+					>
+						{m.cancel()}
+					</button>
+					<button
+						type="button"
+						class="rounded-md bg-red-500 px-4 py-2 font-medium text-white hover:bg-red-600 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-slate-900 focus:outline-none"
+						onclick={handleDeletePlayer}
+					>
+						{m.delete()}
+					</button>
+				</div>
+			</div>
+		</Modal>
+	{/if}
+
 	<div class="mb-4">
 		<input
 			type="text"
@@ -774,13 +854,22 @@
 							{/if}
 						</td>
 						<td class="px-4 py-1">
-							<button
-								class="flex items-center gap-1 text-yellow-500 hover:text-yellow-400"
-								onclick={() => handleEditPlayer(player)}
-								title={m.edit()}
-							>
-								<IconParkSolidEdit class="h-4 w-4" />
-							</button>
+							<div class="flex items-center gap-2">
+								<button
+									class="flex items-center gap-1 text-yellow-500 hover:text-yellow-400"
+									onclick={() => handleEditPlayer(player)}
+									title={m.edit()}
+								>
+									<IconParkSolidEdit class="h-4 w-4" />
+								</button>
+								<button
+									class="flex items-center gap-1 text-red-500 hover:text-red-400"
+									onclick={() => handleDeleteClick(player)}
+									title={m.delete()}
+								>
+									<IconParkSolidDelete class="h-4 w-4" />
+								</button>
+							</div>
 						</td>
 					</tr>
 				{/each}

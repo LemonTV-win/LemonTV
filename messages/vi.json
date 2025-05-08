@@ -208,5 +208,10 @@
 	"remove_social_account": "Xóa tài khoản mạng xã hội",
 	"select_platform": "Chọn nền tảng",
 	"view": "Xem",
-	"close": "Đóng"
+	"close": "Đóng",
+	"delete_player": "Xóa Người chơi",
+	"delete_player_confirmation": "Bạn có chắc chắn muốn xóa Người chơi",
+	"player_deleted_successfully": "Đã xóa Người chơi thành công",
+	"failed_to_delete_player": "Không thể xóa Người chơi",
+	"delete_player_confirmation_description": "Điều này không thể được hoàn tác. Tất cả dữ liệu liên quan, bao gồm tài khoản game, tài khoản mạng xã hội và thành viên đội, sẽ bị xóa vĩnh viễn."
 }

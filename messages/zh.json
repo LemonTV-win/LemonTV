@@ -208,5 +208,10 @@
 	"social_platform": "社交平台",
 	"edit_social_account": "编辑社交账号",
 	"delete_social_account": "删除社交账号",
-	"close": "关闭"
+	"close": "关闭",
+	"delete_player": "删除玩家",
+	"delete_player_confirmation": "您确定要删除玩家",
+	"player_deleted_successfully": "玩家已成功删除",
+	"failed_to_delete_player": "删除玩家失败",
+	"delete_player_confirmation_description": "此操作无法撤销。所有相关数据，包括游戏账号、社交账号和队伍成员资格，将永久删除。"
 }

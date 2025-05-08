@@ -208,5 +208,10 @@
 	"remove_social_account": "Hapus Akun Sosial",
 	"select_platform": "Pilih platform",
 	"view": "Lihat",
-	"close": "Tutup"
+	"close": "Tutup",
+	"delete_player": "Hapus Pemain",
+	"delete_player_confirmation": "Apakah Anda yakin ingin menghapus pemain",
+	"player_deleted_successfully": "Pemain berhasil dihapus",
+	"failed_to_delete_player": "Gagal menghapus pemain",
+	"delete_player_confirmation_description": "Aksi ini tidak dapat dibatalkan. Semua data terkait, termasuk akun game, akun sosial, dan keanggotaan tim, akan dihapus secara permanen."
 }

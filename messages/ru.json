@@ -208,5 +208,10 @@
 	"social_platform": "Социальная платформа",
 	"edit_social_account": "Редактировать социальный аккаунт",
 	"delete_social_account": "Удалить социальный аккаунт",
-	"close": "Закрыть"
+	"close": "Закрыть",
+	"delete_player": "Удалить игрока",
+	"delete_player_confirmation": "Вы уверены, что хотите удалить игрока",
+	"player_deleted_successfully": "Игрок успешно удален",
+	"failed_to_delete_player": "Не удалось удалить игрока",
+	"delete_player_confirmation_description": "Это действие не может быть отменено. Все связанные данные, включая игровые аккаунты, социальные аккаунты и членство в командах, будут удалены навсегда."
 }

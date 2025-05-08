@@ -208,5 +208,10 @@
 	"remove_social_account": "Remover Conta Social",
 	"select_platform": "Selecionar plataforma",
 	"view": "Ver",
-	"close": "Fechar"
+	"close": "Fechar",
+	"delete_player": "Deletar Jogador",
+	"delete_player_confirmation": "Tem certeza que deseja deletar o jogador",
+	"player_deleted_successfully": "Jogador deletado com sucesso",
+	"failed_to_delete_player": "Falha ao deletar jogador",
+	"delete_player_confirmation_description": "Esta ação não pode ser revertida. Todos os dados associados, incluindo contas de jogo, contas sociais e associações de times, serão deletados permanentemente."
 }

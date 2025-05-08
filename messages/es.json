@@ -208,5 +208,10 @@
 	"social_platform": "Plataforma social",
 	"edit_social_account": "Editar cuenta social",
 	"delete_social_account": "Eliminar cuenta social",
-	"close": "Cerrar"
+	"close": "Cerrar",
+	"delete_player": "Eliminar jugador",
+	"delete_player_confirmation": "¿Estás seguro de querer eliminar al jugador",
+	"player_deleted_successfully": "Jugador eliminado exitosamente",
+	"failed_to_delete_player": "Error al eliminar al jugador",
+	"delete_player_confirmation_description": "Esta acción no se puede deshacer. Todos los datos asociados, incluidos las cuentas de juego, las cuentas sociales y las pertenencias a equipos, serán eliminados permanentemente."
 }

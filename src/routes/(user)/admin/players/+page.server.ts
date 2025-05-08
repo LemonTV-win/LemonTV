@@ -151,5 +151,37 @@ export const actions = {
 				error: 'Failed to import players: ' + (e instanceof Error ? e.message : String(e))
 			});
 		}
+	},
+
+	delete: async ({ request }) => {
+		let id: string;
+
+		// Check content type to handle both form data and JSON
+		const contentType = request.headers.get('content-type') || '';
+		if (contentType.includes('application/json')) {
+			const data = await request.json();
+			id = data.id;
+		} else {
+			const formData = await request.formData();
+			id = formData.get('id') as string;
+		}
+
+		if (!id) {
+			return fail(400, {
+				error: 'ID is required'
+			});
+		}
+
+		try {
+			await deletePlayer(id);
+			return {
+				success: true
+			};
+		} catch (e) {
+			console.error('Error deleting player:', e);
+			return fail(500, {
+				error: 'Failed to delete player'
+			});
+		}
 	}
 };

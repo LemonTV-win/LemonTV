@@ -208,5 +208,10 @@
 	"social_platform": "Social Platform",
 	"edit_social_account": "Edit Social Account",
 	"delete_social_account": "Delete Social Account",
-	"close": "Close"
+	"close": "Close",
+	"delete_player": "Delete Player",
+	"delete_player_confirmation": "Are you sure you want to delete player",
+	"player_deleted_successfully": "Player deleted successfully",
+	"failed_to_delete_player": "Failed to delete player",
+	"delete_player_confirmation_description": "This action cannot be undone. All associated data including game accounts, social accounts, and team memberships will be permanently deleted."
 }

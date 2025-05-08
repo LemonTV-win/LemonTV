@@ -208,5 +208,10 @@
 	"social_platform": "소셜 플랫폼",
 	"edit_social_account": "소셜 계정 수정",
 	"delete_social_account": "소셜 계정 삭제",
-	"close": "닫기"
+	"close": "닫기",
+	"delete_player": "플레이어 삭제",
+	"delete_player_confirmation": "플레이어를 삭제하시겠습니까?",
+	"player_deleted_successfully": "플레이어가 성공적으로 삭제되었습니다.",
+	"failed_to_delete_player": "플레이어 삭제 실패",
+	"delete_player_confirmation_description": "이 작업은 취소할 수 없습니다. 게임 계정, 소셜 계정 및 팀 소속 데이터가 영구적으로 삭제됩니다."
 }

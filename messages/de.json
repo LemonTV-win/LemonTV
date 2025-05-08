@@ -208,5 +208,10 @@
 	"social_platform": "Social-Media-Plattform",
 	"edit_social_account": "Social-Media-Konto bearbeiten",
 	"delete_social_account": "Social-Media-Konto löschen",
-	"close": "Schließen"
+	"close": "Schließen",
+	"delete_player": "Spieler löschen",
+	"delete_player_confirmation": "Sind Sie sicher, dass Sie den Spieler",
+	"player_deleted_successfully": "Spieler erfolgreich gelöscht",
+	"failed_to_delete_player": "Spieler konnte nicht gelöscht werden",
+	"delete_player_confirmation_description": "Diese Aktion kann nicht rückgängig gemacht werden. Alle zugehörigen Daten, einschließlich Spielkonten, sozialer Konten und Teammitgliedschaften, werden dauerhaft gelöscht."
 }
