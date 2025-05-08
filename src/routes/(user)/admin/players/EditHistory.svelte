@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { EditHistory } from '$lib/server/db/schemas/edit-history';
-	import { formatDistanceToNow } from 'date-fns';
+	import { formatDistanceToNow, format } from 'date-fns';
 	import UserAvatar from '$lib/components/UserAvatar.svelte';
 
 	let { playerId, onClose } = $props<{
@@ -108,6 +108,10 @@
 				return tableName;
 		}
 	}
+
+	function formatTime(date: Date) {
+		return format(date, 'HH:mm:ss');
+	}
 </script>
 
 <div
@@ -127,6 +131,7 @@
 							<div class="flex items-center gap-2 text-sm text-slate-300">
 								<span class="font-medium">{getTableLabel(entry.tableName)}</span>
 								<span class="text-slate-400">{getFieldLabel(entry.fieldName)}</span>
+								<span class="text-xs text-slate-500">({formatTime(entry.editedAt)})</span>
 							</div>
 							{#if entry.editor}
 								<div class="flex items-center gap-2 text-sm text-slate-400" title={entry.editor.id}>
