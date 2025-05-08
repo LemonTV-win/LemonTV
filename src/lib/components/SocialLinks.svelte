@@ -18,7 +18,7 @@
 </script>
 
 {#if socialAccounts.length}
-	<div class="flex gap-2">
+	<div class="flex gap-0.5">
 		{#each socialAccounts as account}
 			{#each socialPlatforms as platform}
 				{#if platform.id === account.platformId}
