@@ -6,6 +6,8 @@
 	import IconParkSolidEveryUser from '~icons/icon-park-solid/every-user';
 	import IconParkSolidCalendar from '~icons/icon-park-solid/calendar';
 	import type { Component } from 'svelte';
+	import type { PageData } from './$types';
+	let { data }: { data: PageData } = $props();
 </script>
 
 <svelte:head>
@@ -45,13 +47,15 @@
 </div>
 
 <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-	{@render adminCard(
-		'/admin/users',
-		IconParkSolidUser,
-		m.users(),
-		m.admin_users_desc ? m.admin_users_desc() : 'Manage all users, roles, and permissions.',
-		'blue'
-	)}
+	{#if data.user?.roles.includes('admin')}
+		{@render adminCard(
+			'/admin/users',
+			IconParkSolidUser,
+			m.users(),
+			m.admin_users_desc ? m.admin_users_desc() : 'Manage all users, roles, and permissions.',
+			'blue'
+		)}
+	{/if}
 	{@render adminCard(
 		'/admin/players',
 		IconParkSolidPeople,
@@ -73,11 +77,13 @@
 		m.admin_events_desc(),
 		'purple'
 	)}
-	{@render adminCard(
-		'/admin/settings',
-		IconParkSolidSetting,
-		m.settings ? m.settings() : 'Settings',
-		m.admin_settings_desc(),
-		'yellow'
-	)}
+	{#if data.user?.roles.includes('admin')}
+		{@render adminCard(
+			'/admin/settings',
+			IconParkSolidSetting,
+			m.settings ? m.settings() : 'Settings',
+			m.admin_settings_desc(),
+			'yellow'
+		)}
+	{/if}
 </div>
