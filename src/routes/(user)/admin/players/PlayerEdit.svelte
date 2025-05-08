@@ -30,6 +30,60 @@
 
 	const countryCodes = Object.keys(countries);
 
+	function extractAccountId(url: string, platformId: string): string {
+		const platform = socialPlatforms.find((p) => p.id === platformId);
+		if (!platform?.url_template) return url;
+
+		// Remove search parameters and hash
+		url = url.split('?')[0].split('#')[0];
+
+		// Try to match the URL pattern
+		const pattern = platform.url_template.replace('{accountId}', '([^/]+)');
+		const regex = new RegExp(pattern);
+		const match = url.match(regex);
+
+		if (match && match[1]) {
+			return match[1];
+		}
+
+		return url;
+	}
+
+	function detectPlatformFromUrl(url: string): string | undefined {
+		// Remove search parameters and hash
+		url = url.split('?')[0].split('#')[0];
+
+		// Try to match each platform's URL pattern
+		for (const platform of socialPlatforms) {
+			if (!platform.url_template) continue;
+
+			const pattern = platform.url_template.replace('{accountId}', '([^/]+)');
+			const regex = new RegExp(pattern);
+			if (regex.test(url)) {
+				return platform.id;
+			}
+		}
+
+		return undefined;
+	}
+
+	function handleSocialAccountInput(account: any, value: string) {
+		// If no platform is selected, try to detect it from the URL
+		if (!account.platformId) {
+			const detectedPlatform = detectPlatformFromUrl(value);
+			if (detectedPlatform) {
+				account.platformId = detectedPlatform;
+			}
+		}
+
+		// Extract account ID if platform is selected (either manually or auto-detected)
+		if (account.platformId) {
+			account.accountId = extractAccountId(value, account.platformId);
+		} else {
+			account.accountId = value;
+		}
+	}
+
 	function addGameAccount() {
 		if (!newPlayer.gameAccounts) {
 			newPlayer.gameAccounts = [];
@@ -320,7 +374,8 @@
 							<input
 								type="text"
 								id="accountUrl"
-								bind:value={account.accountId}
+								value={account.accountId}
+								oninput={(e) => handleSocialAccountInput(account, e.currentTarget.value)}
 								class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 								placeholder={m.account_id()}
 							/>
