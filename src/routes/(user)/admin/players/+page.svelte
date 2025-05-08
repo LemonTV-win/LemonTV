@@ -14,6 +14,7 @@
 	import PlatformSelect from '$lib/components/PlatformSelect.svelte';
 	import Modal from '$lib/components/Modal.svelte';
 	import SocialLinks from '$lib/components/SocialLinks.svelte';
+	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
 
 	const countryCodes = Object.keys(countries);
 
@@ -649,16 +650,7 @@
 						</td>
 						<td class="max-w-32 truncate px-4 py-1 text-white">{player.name}</td>
 						<td class="px-4 py-1 text-gray-300">
-							{#if player.nationality}
-								<span
-									class="font-emoji"
-									title={`${player.nationality} - ${countryCodeToLocalizedName(player.nationality, getLocale())}`}
-								>
-									{countryCodeToFlagEmoji(player.nationality)}
-								</span>
-							{:else}
-								<span class="font-emoji">-</span>
-							{/if}
+							<NationalityFlag nationality={player.nationality} />
 						</td>
 						<td class="px-4 py-1 text-gray-300">
 							{#if player.gameAccounts?.length}

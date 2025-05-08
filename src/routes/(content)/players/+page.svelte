@@ -14,6 +14,7 @@
 	import countryCodeToFlagEmoji from 'country-code-to-flag-emoji';
 	import { getLocale } from '$lib/paraglide/runtime';
 	import { countryCodeToLocalizedName } from '$lib/utils/strings';
+	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
 	let { data }: PageProps = $props();
 
 	let search = $state('');
@@ -199,16 +200,7 @@
 				{#each filtered as player}
 					<tr class="border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl">
 						<td class=" py-1 text-center">
-							{#if player.nationality}
-								<span
-									class="font-emoji"
-									title={`${player.nationality} - ${countryCodeToLocalizedName(player.nationality, getLocale())}`}
-								>
-									{countryCodeToFlagEmoji(player.nationality)}
-								</span>
-							{:else}
-								<span class="font-emoji">-</span>
-							{/if}
+							<NationalityFlag nationality={player.nationality} />
 						</td>
 						<td class="px-4 py-1">
 							<a class="flex items-baseline gap-1" href={`/players/${player.slug ?? player.id}`}

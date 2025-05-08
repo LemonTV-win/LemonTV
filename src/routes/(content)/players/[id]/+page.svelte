@@ -6,6 +6,7 @@
 	import PlayerAvatar from '$lib/components/PlayerAvatar.svelte';
 	import MatchCard from '$lib/components/MatchCard.svelte';
 	import SocialLinks from '$lib/components/SocialLinks.svelte';
+	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
 	import { getAllNames } from '$lib/data/players';
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 
@@ -37,7 +38,9 @@
 					</span>
 				</h1>
 				{#if data.player.nationality}
-					<p class="text-center text-gray-400">{data.player.nationality}</p>
+					<p class="text-center text-gray-400">
+						<NationalityFlag nationality={data.player.nationality} showLabel />
+					</p>
 				{/if}
 				{#if data.player.socialAccounts?.length}
 					<div class="flex justify-center">
