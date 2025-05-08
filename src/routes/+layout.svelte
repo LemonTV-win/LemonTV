@@ -5,11 +5,11 @@
 	import { setLocale, type Locale, getLocale } from '$lib/paraglide/runtime';
 	import MaterialSymbolsMenuRounded from '~icons/material-symbols/menu-rounded';
 	import MaterialSymbolsCloseRounded from '~icons/material-symbols/close-rounded';
-	import MaterialSymbolsAccountCircle from '~icons/material-symbols/account-circle';
 	import MaterialSymbolsLogoutRounded from '~icons/material-symbols/logout-rounded';
 	import MaterialSymbolsSettingsRounded from '~icons/material-symbols/settings-rounded';
 	import MaterialSymbolsTranslateRounded from '~icons/material-symbols/translate-rounded';
 	import MaterialSymbolsAdminPanelSettingsRounded from '~icons/material-symbols/admin-panel-settings-rounded';
+	import UserAvatar from '$lib/components/UserAvatar.svelte';
 	import type { LayoutProps } from './$types';
 	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
@@ -117,7 +117,7 @@
 				onclick={toggleUserMenu}
 				class="flex items-center gap-2 rounded-full bg-gray-700 p-1 hover:bg-gray-600"
 			>
-				<MaterialSymbolsAccountCircle class="h-8 w-8 text-white" />
+				<UserAvatar email={data.user.email} class="h-8 w-8" />
 			</button>
 			{#if userMenuOpen}
 				<div
@@ -228,7 +228,7 @@
 		{#if data.user}
 			<div class="mt-4 border-t border-gray-700 pt-4">
 				<div class="mb-4 flex items-center gap-2">
-					<MaterialSymbolsAccountCircle class="h-8 w-8 text-white" />
+					<UserAvatar email={data.user.email} class="h-8 w-8" />
 					<span class="text-lg font-medium">{data.user.username}</span>
 				</div>
 				<div class="pl-4">

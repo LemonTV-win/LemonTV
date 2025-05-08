@@ -27,6 +27,7 @@
 		"@sveltejs/vite-plugin-svelte": "^5.0.3",
 		"@tailwindcss/forms": "^0.5.10",
 		"@tailwindcss/vite": "^4.1.5",
+		"@types/gravatar": "^1.8.6",
 		"@types/node": "^22.15.14",
 		"drizzle-kit": "^0.31.1",
 		"eslint": "^9.26.0",
@@ -59,6 +60,7 @@
 		"country-code-to-flag-emoji": "^2.0.0",
 		"dotenv": "^16.5.0",
 		"drizzle-orm": "^0.43.1",
+		"gravatar": "^1.8.2",
 		"zod": "^3.24.4"
 	}
 }
