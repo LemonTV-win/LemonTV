@@ -4,6 +4,10 @@
 	import { m } from '$lib/paraglide/messages';
 	import UserAvatar from '$lib/components/UserAvatar.svelte';
 	import LogosGravatarIcon from '~icons/logos/gravatar-icon';
+	import IconAccountCircle from '~icons/material-symbols/account-circle';
+	import IconId from '~icons/mdi/identifier';
+	import IconEmail from '~icons/material-symbols/mail-outline-rounded';
+	import IconRoles from '~icons/material-symbols/verified-user-rounded';
 
 	let { data }: { data: PageServerData } = $props();
 </script>
@@ -60,19 +64,33 @@
 	</div>
 
 	<div class="space-y-1 rounded-md border border-slate-800 bg-slate-800/50 p-4">
-		<p class="text-sm text-slate-400">{m.user_id()}: {data.user.id}</p>
-		<p class="text-sm text-slate-400">{m.email()}: {data.user.email}</p>
-		<p class="text-sm text-slate-400">
-			{m.roles()}: {#each data.user.roles as role}
+		<div class="mb-3 flex items-center gap-2 text-lg font-semibold text-white">
+			<IconAccountCircle class="h-8 w-8 text-white" />
+			Account Details
+		</div>
+		<div class="flex items-center gap-2 border-b border-slate-700 py-2">
+			<IconId class="h-4 w-4 text-slate-400" />
+			<span class="text-slate-400">{m.user_id()}:</span>
+			<span class="ml-1 font-mono text-slate-200">{data.user.id}</span>
+		</div>
+		<div class="flex items-center gap-2 border-b border-slate-700 py-2">
+			<IconEmail class="h-4 w-4 text-slate-400" />
+			<span class="text-slate-400">{m.email()}:</span>
+			<span class="ml-1 text-slate-200">{data.user.email}</span>
+		</div>
+		<div class="flex items-center gap-2 py-2">
+			<IconRoles class="h-4 w-4 text-slate-400" />
+			<span class="text-slate-400">{m.roles()}:</span>
+			{#each data.user.roles as role}
 				{#if role === 'admin'}
-					<span class="text-yellow-500">{m.admin()}</span>
+					<span class="ml-1 font-semibold text-yellow-400">{m.admin()}</span>
 				{:else if role === 'editor'}
-					<span class="text-green-500">{m.editor()}</span>
+					<span class="ml-1 font-semibold text-green-400">{m.editor()}</span>
 				{:else}
-					<span class="text-slate-400">{role}</span>
+					<span class="ml-1 text-slate-300">{role}</span>
 				{/if}
 			{/each}
-		</p>
+		</div>
 	</div>
 
 	<form method="post" action="?/logout" use:enhance class="border-t border-slate-800 pt-6">
