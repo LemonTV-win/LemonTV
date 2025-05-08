@@ -150,11 +150,11 @@
 			if (result.error) {
 				errorMessage = result.error;
 			} else {
-				successMessage = m.player_saved_successfully();
 				isAddingNew = false;
 				isEditing = false;
 				selectedPlayer = null;
-				goto('/admin/players', { invalidateAll: true });
+				await goto('/admin/players', { invalidateAll: true });
+				successMessage = m.player_saved_successfully();
 			}
 		} catch (e) {
 			errorMessage = 'Failed to save player';
@@ -185,11 +185,11 @@
 			if (result.error) {
 				errorMessage = result.error;
 			} else {
-				successMessage = m.player_updated_successfully();
 				isAddingNew = false;
 				isEditing = false;
 				selectedPlayer = null;
-				goto('/admin/players', { invalidateAll: true });
+				await goto('/admin/players', { invalidateAll: true });
+				successMessage = m.player_updated_successfully();
 			}
 		} catch (e) {
 			errorMessage = m.failed_to_update_player();
