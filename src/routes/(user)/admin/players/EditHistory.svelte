@@ -2,11 +2,16 @@
 	import type { EditHistory } from '$lib/server/db/schemas/edit-history';
 	import { formatDistanceToNow, format } from 'date-fns';
 	import UserAvatar from '$lib/components/UserAvatar.svelte';
+	import { m } from '$lib/paraglide/messages';
+	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
 
-	let { playerId, onClose } = $props<{
-		playerId: string;
-		onClose: () => void;
-	}>();
+	import type { Player } from '$lib/data/players';
+
+	let {
+		player
+	}: {
+		player: Player;
+	} = $props();
 
 	interface EditHistoryWithEditor extends EditHistory {
 		editor?: { id: string; name: string; email: string };
@@ -47,7 +52,7 @@
 		loading = true;
 		error = null;
 		try {
-			const response = await fetch(`/api/players/${playerId}/history`);
+			const response = await fetch(`/api/players/${player.id}/history`);
 			if (!response.ok) {
 				throw new Error('Failed to fetch history');
 			}
@@ -69,7 +74,7 @@
 	$inspect('sortedDates', sortedDates);
 
 	$effect(() => {
-		if (playerId) {
+		if (player.id) {
 			loadHistory();
 		}
 	});
@@ -142,6 +147,27 @@
 </script>
 
 <div class="space-y-6">
+	<!-- Player Summary Section -->
+	<div class="rounded-lg border border-slate-800 bg-slate-900/95 p-4 shadow-lg">
+		<div class="flex items-center gap-2">
+			<h2 class="text-xl font-medium text-slate-200">{player.name}</h2>
+			<NationalityFlag nationality={player.nationality} />
+			{#if player.aliases && player.aliases.length > 0}
+				<span class="text-slate-400">
+					({player.aliases.join(', ')})
+				</span>
+			{/if}
+			{#if player.gameAccounts && player.gameAccounts.length > 0}
+				<span class="text-slate-400">
+					({player.gameAccounts.length}
+					{player.gameAccounts.length === 1 ? 'account' : 'accounts'} : {player.gameAccounts
+						.map((account) => account.currentName)
+						.join(', ')})
+				</span>
+			{/if}
+		</div>
+	</div>
+
 	<!-- Overview Section -->
 	<div class="rounded-lg border border-slate-800 bg-slate-900/95 p-4 shadow-lg">
 		<h2 class="mb-4 text-lg font-medium text-slate-200">Edit History Overview</h2>

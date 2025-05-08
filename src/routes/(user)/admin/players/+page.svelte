@@ -114,14 +114,9 @@
 	let showHistoryModal = $state(false);
 	let selectedPlayerId = $state<string | null>(null);
 
-	function openHistoryModal(playerId: string) {
-		selectedPlayerId = playerId;
-		showHistoryModal = true;
-	}
-
 	function closeHistoryModal() {
 		showHistoryModal = false;
-		selectedPlayerId = null;
+		selectedPlayer = null;
 	}
 
 	function handleAddPlayer() {
@@ -787,8 +782,8 @@
 
 	{#if showHistoryModal}
 		<Modal show={true} title="Edit History" onClose={closeHistoryModal}>
-			{#if selectedPlayerId}
-				<EditHistory playerId={selectedPlayerId} onClose={closeHistoryModal} />
+			{#if selectedPlayer}
+				<EditHistory player={selectedPlayer} />
 			{/if}
 		</Modal>
 	{/if}
@@ -951,7 +946,7 @@
 									class="text-gray-600 hover:text-gray-800"
 									title="View edit history"
 									onclick={() => {
-										selectedPlayerId = player.id;
+										selectedPlayer = player;
 										showHistoryModal = true;
 									}}
 								>
