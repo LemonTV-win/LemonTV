@@ -220,5 +220,6 @@
 	"editor": "Редактор",
 	"account": "Аккаунт",
 	"security": "Безопасность",
-	"preferences": "Настройки"
+	"preferences": "Настройки",
+	"change_avatar": "Изменить аватар на Gravatar"
 }

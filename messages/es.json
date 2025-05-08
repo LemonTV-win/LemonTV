@@ -89,6 +89,7 @@
 	"new_password": "Nueva contraseña",
 	"confirm_new_password": "Confirmar nueva contraseña",
 	"password_changed": "¡Contraseña cambiada con éxito!",
+	"change_avatar": "Cambia tu avatar en Gravatar",
 	"admin_dashboard": "Panel de administración",
 	"users": "Usuarios",
 	"created_at": "Creado el",

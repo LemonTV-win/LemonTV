@@ -220,5 +220,6 @@
 	"editor": "편집자",
 	"account": "계정",
 	"security": "보안",
-	"preferences": "설정"
+	"preferences": "환경설정",
+	"change_avatar": "Gravatar에서 아바타 변경"
 }

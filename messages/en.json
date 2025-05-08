@@ -220,5 +220,6 @@
 	"editor": "Editor",
 	"account": "Account",
 	"security": "Security",
-	"preferences": "Preferences"
+	"preferences": "Preferences",
+	"change_avatar": "Change your avatar on Gravatar"
 }
