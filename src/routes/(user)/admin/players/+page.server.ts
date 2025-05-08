@@ -19,7 +19,6 @@ export const load: PageServerLoad = async () => {
 export const actions = {
 	create: async ({ request }) => {
 		const formData = await request.formData();
-		const id = formData.get('id') as string;
 		const name = formData.get('name') as string;
 		const nationality = formData.get('nationality') as string | null;
 		const aliases = JSON.parse(formData.get('aliases') as string) as string[];
@@ -34,9 +33,9 @@ export const actions = {
 			overridingUrl?: string;
 		}[];
 
-		if (!id || !name) {
+		if (!name) {
 			return fail(400, {
-				error: 'ID and name are required'
+				error: 'Name is required'
 			});
 		}
 

@@ -40,7 +40,6 @@
 		| 'slug-asc'
 		| 'slug-desc' = $state('name-asc');
 	let newPlayer: Partial<Player> = $state({
-		id: '',
 		name: '',
 		nationality: undefined,
 		aliases: [],
@@ -110,7 +109,6 @@
 		isEditing = false;
 		selectedPlayer = null;
 		newPlayer = {
-			id: '',
 			name: '',
 			nationality: undefined,
 			aliases: [],
@@ -418,16 +416,18 @@
 				<div
 					class="flex-1 space-y-4 overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800"
 				>
-					<div>
-						<label class="block text-sm font-medium text-slate-300" for="playerId">ID</label>
-						<input
-							type="text"
-							id="playerId"
-							bind:value={newPlayer.id}
-							class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-							placeholder={m.player_id()}
-						/>
-					</div>
+					{#if isEditing}
+						<div>
+							<label class="block text-sm font-medium text-slate-300" for="playerId">ID</label>
+							<input
+								type="text"
+								id="playerId"
+								bind:value={newPlayer.id}
+								class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+								placeholder={m.player_id()}
+							/>
+						</div>
+					{/if}
 					<div>
 						<label class="block text-sm font-medium text-slate-300" for="playerName">
 							{m.player_name()}
