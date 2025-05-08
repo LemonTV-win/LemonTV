@@ -98,7 +98,7 @@
 <main class="mx-auto max-w-screen-lg px-4">
 	<h1 class="my-10 flex items-center gap-4 text-2xl font-bold">
 		{m.players()}
-		{#if data.user?.roleId === 'admin'}
+		{#if data.user?.roles.includes('admin')}
 			<a
 				href="/admin/players"
 				class="flex items-center gap-1 rounded-md border border-gray-700 px-2 py-1 text-sm text-gray-400 transition-all duration-200 hover:bg-gray-700"

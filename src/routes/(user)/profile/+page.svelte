@@ -53,6 +53,11 @@
 					</p>
 					<p class="text-sm text-slate-400">{m.user_id()}: {data.user.id}</p>
 					<p class="text-sm text-slate-400">{m.email()}: {data.user.email}</p>
+					<p class="text-sm text-slate-400">
+						{m.roles()}: {#each data.user.roles as role}
+							{role}
+						{/each}
+					</p>
 				</div>
 
 				<div class="mb-8">

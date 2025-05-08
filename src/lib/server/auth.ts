@@ -1,5 +1,5 @@
 import type { RequestEvent } from '@sveltejs/kit';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { sha256 } from '@oslojs/crypto/sha2';
 import { encodeBase64url, encodeHexLowerCase } from '@oslojs/encoding';
 import { db } from '$lib/server/db';
@@ -29,25 +29,37 @@ export async function createSession(token: string, userId: string) {
 
 export async function validateSessionToken(token: string) {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
+
+	// First get the session and user info
 	const [result] = await db
 		.select({
 			user: {
 				id: table.user.id,
 				username: table.user.username,
-				email: table.user.email,
-				roleId: table.userRole.roleId
+				email: table.user.email
 			},
 			session: table.session
 		})
 		.from(table.session)
 		.innerJoin(table.user, eq(table.session.userId, table.user.id))
-		.where(eq(table.session.id, sessionId))
-		.leftJoin(table.userRole, eq(table.user.id, table.userRole.userId));
+		.where(eq(table.session.id, sessionId));
 
 	if (!result) {
 		return { session: null, user: null };
 	}
 	const { session, user } = result;
+
+	// Then get all roles for this user
+	const roles = await db
+		.select({ roleId: table.userRole.roleId })
+		.from(table.userRole)
+		.where(eq(table.userRole.userId, user.id));
+
+	// Add roles to user object
+	const userWithRoles = {
+		...user,
+		roles: roles.map((r) => r.roleId)
+	};
 
 	const sessionExpired = Date.now() >= session.expiresAt.getTime();
 	if (sessionExpired) {
@@ -64,7 +76,7 @@ export async function validateSessionToken(token: string) {
 			.where(eq(table.session.id, session.id));
 	}
 
-	return { session, user };
+	return { session, user: userWithRoles };
 }
 
 export type SessionValidationResult = Awaited<ReturnType<typeof validateSessionToken>>;
