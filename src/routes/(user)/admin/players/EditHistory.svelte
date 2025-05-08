@@ -1,17 +1,22 @@
 <script lang="ts">
 	import type { EditHistory } from '$lib/server/db/schemas/edit-history';
 	import { formatDistanceToNow } from 'date-fns';
+	import UserAvatar from '$lib/components/UserAvatar.svelte';
 
 	let { playerId, onClose } = $props<{
 		playerId: string;
 		onClose: () => void;
 	}>();
 
-	let history: EditHistory[] = $state([]);
+	interface EditHistoryWithEditor extends EditHistory {
+		editor?: { id: string; name: string; email: string };
+	}
+
+	let history: EditHistoryWithEditor[] = $state([]);
 	let loading = $state(true);
 	let error: string | null = $state(null);
 
-	let groupedHistory = $state<Record<string, EditHistory[]>>({});
+	let groupedHistory = $state<Record<string, EditHistoryWithEditor[]>>({});
 	let sortedDates = $derived(Object.keys(groupedHistory).sort((a, b) => b.localeCompare(a)));
 
 	async function loadHistory() {
@@ -118,9 +123,17 @@
 			<div class="space-y-2">
 				{#each groupedHistory[date] as entry}
 					<div class="rounded-lg border border-slate-800 bg-slate-900/95 p-3 shadow-lg">
-						<div class="mb-1 flex items-center gap-2 text-sm text-slate-300">
-							<span class="font-medium">{getTableLabel(entry.tableName)}</span>
-							<span class="text-slate-400">{getFieldLabel(entry.fieldName)}</span>
+						<div class="mb-1 flex items-center justify-between">
+							<div class="flex items-center gap-2 text-sm text-slate-300">
+								<span class="font-medium">{getTableLabel(entry.tableName)}</span>
+								<span class="text-slate-400">{getFieldLabel(entry.fieldName)}</span>
+							</div>
+							{#if entry.editor}
+								<div class="flex items-center gap-2 text-sm text-slate-400" title={entry.editor.id}>
+									<UserAvatar email={entry.editor.email} class="h-6 w-6" />
+									<span>{entry.editor.name}</span>
+								</div>
+							{/if}
 						</div>
 						<div class="flex items-center gap-2">
 							{#if entry.oldValue !== null}
