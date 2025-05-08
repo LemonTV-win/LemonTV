@@ -121,7 +121,7 @@
 			</button>
 			{#if userMenuOpen}
 				<div
-					class="ring-opacity-5 absolute right-0 mt-2 w-48 rounded-md bg-gray-800 py-1 shadow-lg ring-1 ring-black"
+					class="ring-opacity-5 absolute right-0 z-50 mt-2 w-48 rounded-md bg-gray-800 py-1 shadow-lg ring-1 ring-black"
 					use:clickOutside
 				>
 					<div class="border-b border-gray-700 px-4 py-2">
