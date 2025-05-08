@@ -215,5 +215,7 @@
 	"failed_to_delete_player": "플레이어 삭제 실패",
 	"delete_player_confirmation_description": "이 작업은 취소할 수 없습니다. 게임 계정, 소셜 계정 및 팀 소속 데이터가 영구적으로 삭제됩니다.",
 	"copy_to_clipboard": "클립보드에 복사",
-	"copied_to_clipboard": "클립보드에 복사되었습니다."
+	"copied_to_clipboard": "클립보드에 복사되었습니다.",
+	"admin": "관리자",
+	"editor": "편집자"
 }

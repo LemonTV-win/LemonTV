@@ -215,5 +215,7 @@
 	"failed_to_delete_player": "Gagal menghapus pemain",
 	"delete_player_confirmation_description": "Aksi ini tidak dapat dibatalkan. Semua data terkait, termasuk akun game, akun sosial, dan keanggotaan tim, akan dihapus secara permanen.",
 	"copy_to_clipboard": "Salin ke papan klip",
-	"copied_to_clipboard": "Disalin ke papan klip"
+	"copied_to_clipboard": "Disalin ke papan klip",
+	"admin": "Admin",
+	"editor": "Editor"
 }

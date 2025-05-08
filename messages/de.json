@@ -215,5 +215,7 @@
 	"failed_to_delete_player": "Spieler konnte nicht gelöscht werden",
 	"delete_player_confirmation_description": "Diese Aktion kann nicht rückgängig gemacht werden. Alle zugehörigen Daten, einschließlich Spielkonten, sozialer Konten und Teammitgliedschaften, werden dauerhaft gelöscht.",
 	"copy_to_clipboard": "In Zwischenablage kopieren",
-	"copied_to_clipboard": "In Zwischenablage kopiert"
+	"copied_to_clipboard": "In Zwischenablage kopiert",
+	"admin": "Administrator",
+	"editor": "Editor"
 }

@@ -215,5 +215,7 @@
 	"failed_to_delete_player": "刪除玩家失敗",
 	"delete_player_confirmation_description": "此操作無法撤銷。所有相關數據，包括遊戲帳號、社交帳號和隊伍成員資格，將永久刪除。",
 	"copy_to_clipboard": "複製到剪貼簿",
-	"copied_to_clipboard": "已複製到剪貼簿"
+	"copied_to_clipboard": "已複製到剪貼簿",
+	"admin": "管理員",
+	"editor": "編輯者"
 }

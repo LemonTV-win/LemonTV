@@ -215,5 +215,7 @@
 	"failed_to_delete_player": "Không thể xóa Người chơi",
 	"delete_player_confirmation_description": "Điều này không thể được hoàn tác. Tất cả dữ liệu liên quan, bao gồm tài khoản game, tài khoản mạng xã hội và thành viên đội, sẽ bị xóa vĩnh viễn.",
 	"copy_to_clipboard": "Sao chép vào bảng tạm",
-	"copied_to_clipboard": "Đã sao chép vào bảng tạm"
+	"copied_to_clipboard": "Đã sao chép vào bảng tạm",
+	"admin": "Quản trị viên",
+	"editor": "Biên tập viên"
 }

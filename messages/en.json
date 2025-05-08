@@ -215,5 +215,7 @@
 	"failed_to_delete_player": "Failed to delete player",
 	"delete_player_confirmation_description": "This action cannot be undone. All associated data including game accounts, social accounts, and team memberships will be permanently deleted.",
 	"copy_to_clipboard": "Copy to clipboard",
-	"copied_to_clipboard": "Copied to clipboard"
+	"copied_to_clipboard": "Copied to clipboard",
+	"admin": "Administrator",
+	"editor": "Editor"
 }

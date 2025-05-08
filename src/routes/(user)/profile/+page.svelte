@@ -55,7 +55,13 @@
 					<p class="text-sm text-slate-400">{m.email()}: {data.user.email}</p>
 					<p class="text-sm text-slate-400">
 						{m.roles()}: {#each data.user.roles as role}
-							{role}
+							{#if role === 'admin'}
+								<span class="text-yellow-500">{m.admin()}</span>
+							{:else if role === 'editor'}
+								<span class="text-green-500">{m.editor()}</span>
+							{:else}
+								<span class="text-slate-400">{role}</span>
+							{/if}
 						{/each}
 					</p>
 				</div>

@@ -215,5 +215,7 @@
 	"failed_to_delete_player": "プレイヤーの削除に失敗しました",
 	"delete_player_confirmation_description": "この操作は元に戻すことができません。関連するデータ（ゲームアカウント、ソーシャルアカウント、チームメンバーシップなど）は完全に削除されます。",
 	"copy_to_clipboard": "クリップボードにコピー",
-	"copied_to_clipboard": "クリップボードにコピーしました"
+	"copied_to_clipboard": "クリップボードにコピーしました",
+	"admin": "管理者",
+	"editor": "編集者"
 }
