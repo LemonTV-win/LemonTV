@@ -5,15 +5,8 @@ import * as table from '$lib/server/db/schema';
 import { and, eq } from 'drizzle-orm';
 
 export const load: PageServerLoad = async (event) => {
-	// Admin-only restriction
-	if (!event.locals.user) {
+	if (!event.locals.user || !event.locals.user.roles.includes('admin')) {
 		throw redirect(302, '/login');
-	}
-
-	// Check if user has admin role - editors should not access this page
-	const parentData = await event.parent();
-	if (parentData.role !== 'admin') {
-		throw redirect(302, '/admin');
 	}
 
 	const users = await db.select().from(table.user);

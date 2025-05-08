@@ -7,14 +7,36 @@
 	import IconParkSolidUser from '~icons/icon-park-solid/user';
 	import IconParkSolidPeople from '~icons/icon-park-solid/people';
 	import IconParkSolidShield from '~icons/icon-park-solid/shield';
+	import type { Component } from 'svelte';
 
-	let { children }: LayoutProps = $props();
+	let { children, data }: LayoutProps = $props();
 	let isExpanded = $state(true);
 
 	function togglePanel() {
 		isExpanded = !isExpanded;
 	}
 </script>
+
+{#snippet tab(href: string, Icon: Component, label: string)}
+	<a
+		class="flex items-center rounded-lg transition-all duration-300 {isExpanded
+			? 'gap-2 px-4 py-2'
+			: 'h-12 w-12 justify-center'} text-lg font-medium text-gray-300 hover:bg-gray-800 hover:text-white {page
+			.url.pathname === href
+			? 'bg-gray-800 text-white'
+			: ''} {!isExpanded ? 'text-center text-base' : ''}"
+		{href}
+	>
+		<div class="flex w-7 flex-shrink-0 justify-center">
+			<Icon class="h-7 w-7" />
+		</div>
+		<span
+			class="overflow-hidden whitespace-nowrap transition-all duration-300 {isExpanded
+				? 'ml-2 w-auto opacity-100'
+				: 'ml-0 w-0 opacity-0'}">{label}</span
+		>
+	</a>
+{/snippet}
 
 <div
 	class="grid h-screen transition-[grid-template-columns] duration-300 {isExpanded
@@ -56,60 +78,12 @@
 				/>
 			</svg>
 		</button>
-		<a
-			class="flex items-center rounded-lg transition-all duration-300 {isExpanded
-				? 'gap-2 px-4 py-2'
-				: 'h-12 w-12 justify-center'} text-lg font-medium text-gray-300 hover:bg-gray-800 hover:text-white {page
-				.url.pathname === '/admin'
-				? 'bg-gray-800 text-white'
-				: ''} {!isExpanded ? 'text-center text-base' : ''}"
-			href="/admin"
-		>
-			<div class="flex w-7 flex-shrink-0 justify-center">
-				<IconParkSolidHome class="h-7 w-7" />
-			</div>
-			<span
-				class="overflow-hidden whitespace-nowrap transition-all duration-300 {isExpanded
-					? 'ml-2 w-auto opacity-100'
-					: 'ml-0 w-0 opacity-0'}">{m.home()}</span
-			>
-		</a>
-		<a
-			class="flex items-center rounded-lg transition-all duration-300 {isExpanded
-				? 'gap-2 px-4 py-2'
-				: 'h-12 w-12 justify-center'} text-lg font-medium text-gray-300 hover:bg-gray-800 hover:text-white {page
-				.url.pathname === '/admin/users'
-				? 'bg-gray-800 text-white'
-				: ''} {!isExpanded ? 'text-center text-base' : ''}"
-			href="/admin/users"
-		>
-			<div class="flex w-7 flex-shrink-0 justify-center">
-				<IconParkSolidUser class="h-7 w-7" />
-			</div>
-			<span
-				class="overflow-hidden whitespace-nowrap transition-all duration-300 {isExpanded
-					? 'ml-2 w-auto opacity-100'
-					: 'ml-0 w-0 opacity-0'}">{m.users()}</span
-			>
-		</a>
-		<a
-			class="flex items-center rounded-lg transition-all duration-300 {isExpanded
-				? 'gap-2 px-4 py-2'
-				: 'h-12 w-12 justify-center'} text-lg font-medium text-gray-300 hover:bg-gray-800 hover:text-white {page
-				.url.pathname === '/admin/players'
-				? 'bg-gray-800 text-white'
-				: ''} {!isExpanded ? 'text-center text-base' : ''}"
-			href="/admin/players"
-		>
-			<div class="flex w-7 flex-shrink-0 justify-center">
-				<IconParkSolidPeople class="h-7 w-7" />
-			</div>
-			<span
-				class="overflow-hidden whitespace-nowrap transition-all duration-300 {isExpanded
-					? 'ml-2 w-auto opacity-100'
-					: 'ml-0 w-0 opacity-0'}">{m.players()}</span
-			>
-		</a>
+
+		{@render tab('/admin', IconParkSolidHome, m.home())}
+		{#if data.user?.roles.includes('admin')}
+			{@render tab('/admin/users', IconParkSolidUser, m.users())}
+		{/if}
+		{@render tab('/admin/players', IconParkSolidPeople, m.players())}
 	</nav>
 	<main class="overflow-auto p-8">
 		{@render children()}
