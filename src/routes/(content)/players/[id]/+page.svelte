@@ -52,9 +52,9 @@
 					</div>
 				{/if}
 				{#if data.playerTeams}
-					<div class="grid grid-cols-1 gap-4 py-4 sm:grid-cols-2">
+					<div class="grid grid-cols-1 gap-4 py-4 sm:grid-cols-[auto_1fr]">
 						<h3 class="text-lg font-bold">{m.teams()}</h3>
-						<ul>
+						<ul class="text-right">
 							{#each data.playerTeams as team}
 								{#if team}
 									<li>
