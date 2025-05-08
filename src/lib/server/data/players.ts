@@ -4,7 +4,8 @@ import {
 	playerAlias,
 	gameAccount,
 	player_social_account,
-	social_platform
+	social_platform,
+	editHistory
 } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import type { Player } from '$lib/data/players';
@@ -215,7 +216,8 @@ export function calculatePlayerKD(player: Player): number {
 }
 
 export async function createPlayer(
-	data: Omit<Player, 'id' | 'gameAccounts'> & { gameAccounts: Player['gameAccounts'] }
+	data: Omit<Player, 'id' | 'gameAccounts'> & { gameAccounts: Player['gameAccounts'] },
+	editedBy: string
 ) {
 	const id = randomUUID();
 	const slug = data.slug ?? data.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
@@ -228,6 +230,42 @@ export async function createPlayer(
 			nationality: data.nationality
 		});
 
+		// Record initial creation in edit history
+		await tx.insert(editHistory).values({
+			id: randomUUID(),
+			tableName: 'player',
+			recordId: id,
+			fieldName: 'creation',
+			oldValue: null,
+			newValue: 'created',
+			editedBy
+		});
+
+		// Record initial values
+		if (data.name) {
+			await tx.insert(editHistory).values({
+				id: randomUUID(),
+				tableName: 'player',
+				recordId: id,
+				fieldName: 'name',
+				oldValue: null,
+				newValue: data.name.toString(),
+				editedBy
+			});
+		}
+
+		if (data.nationality) {
+			await tx.insert(editHistory).values({
+				id: randomUUID(),
+				tableName: 'player',
+				recordId: id,
+				fieldName: 'nationality',
+				oldValue: null,
+				newValue: data.nationality.toString(),
+				editedBy
+			});
+		}
+
 		if (data.aliases?.length) {
 			await tx.insert(playerAlias).values(
 				data.aliases.map((alias) => ({
@@ -235,6 +273,19 @@ export async function createPlayer(
 					alias
 				}))
 			);
+
+			// Record initial aliases
+			for (const alias of data.aliases) {
+				await tx.insert(editHistory).values({
+					id: randomUUID(),
+					tableName: 'player_alias',
+					recordId: id,
+					fieldName: 'alias',
+					oldValue: null,
+					newValue: alias.toString(),
+					editedBy
+				});
+			}
 		}
 
 		if (data.gameAccounts?.length) {
@@ -247,6 +298,19 @@ export async function createPlayer(
 					region: account.region
 				}))
 			);
+
+			// Record initial game accounts
+			for (const account of data.gameAccounts) {
+				await tx.insert(editHistory).values({
+					id: randomUUID(),
+					tableName: 'game_account',
+					recordId: id,
+					fieldName: 'account',
+					oldValue: null,
+					newValue: account.accountId.toString(),
+					editedBy
+				});
+			}
 		}
 
 		if (data.socialAccounts?.length) {
@@ -259,6 +323,19 @@ export async function createPlayer(
 					overriding_url: account.overridingUrl
 				}))
 			);
+
+			// Record initial social accounts
+			for (const account of data.socialAccounts) {
+				await tx.insert(editHistory).values({
+					id: randomUUID(),
+					tableName: 'player_social_account',
+					recordId: id,
+					fieldName: 'account',
+					oldValue: null,
+					newValue: account.accountId.toString(),
+					editedBy
+				});
+			}
 		}
 	});
 
@@ -268,9 +345,14 @@ export async function createPlayer(
 export async function updatePlayer(
 	data: { id: string } & Partial<Omit<Player, 'gameAccounts'>> & {
 			gameAccounts: Player['gameAccounts'];
-		}
+		},
+	editedBy: string
 ) {
 	await db.transaction(async (tx) => {
+		// Get the current player data before update
+		const [currentPlayer] = await tx.select().from(player).where(eq(player.id, data.id));
+
+		// Update player
 		await tx
 			.update(player)
 			.set({
@@ -278,6 +360,37 @@ export async function updatePlayer(
 				nationality: data.nationality
 			})
 			.where(eq(player.id, data.id));
+
+		// Track changes in edit_history
+		if (data.name !== currentPlayer.name) {
+			await tx.insert(editHistory).values({
+				id: randomUUID(),
+				tableName: 'player',
+				recordId: data.id,
+				fieldName: 'name',
+				oldValue: currentPlayer.name?.toString() || null,
+				newValue: data.name?.toString() || null,
+				editedBy
+			});
+		}
+
+		if (data.nationality !== currentPlayer.nationality) {
+			await tx.insert(editHistory).values({
+				id: randomUUID(),
+				tableName: 'player',
+				recordId: data.id,
+				fieldName: 'nationality',
+				oldValue: currentPlayer.nationality?.toString() || null,
+				newValue: data.nationality?.toString() || null,
+				editedBy
+			});
+		}
+
+		// Get current aliases
+		const currentAliases = await tx
+			.select()
+			.from(playerAlias)
+			.where(eq(playerAlias.playerId, data.id));
 
 		// Update aliases
 		await tx.delete(playerAlias).where(eq(playerAlias.playerId, data.id));
@@ -288,7 +401,47 @@ export async function updatePlayer(
 					alias
 				}))
 			);
+
+			// Track alias changes
+			const oldAliases = currentAliases.map((a) => a.alias);
+			const newAliases = data.aliases;
+
+			// Track removed aliases
+			for (const oldAlias of oldAliases) {
+				if (!newAliases.includes(oldAlias)) {
+					await tx.insert(editHistory).values({
+						id: randomUUID(),
+						tableName: 'player_alias',
+						recordId: data.id,
+						fieldName: 'alias',
+						oldValue: oldAlias.toString(),
+						newValue: null,
+						editedBy
+					});
+				}
+			}
+
+			// Track added aliases
+			for (const newAlias of newAliases) {
+				if (!oldAliases.includes(newAlias)) {
+					await tx.insert(editHistory).values({
+						id: randomUUID(),
+						tableName: 'player_alias',
+						recordId: data.id,
+						fieldName: 'alias',
+						oldValue: null,
+						newValue: newAlias.toString(),
+						editedBy
+					});
+				}
+			}
 		}
+
+		// Get current game accounts
+		const currentGameAccounts = await tx
+			.select()
+			.from(gameAccount)
+			.where(eq(gameAccount.playerId, data.id));
 
 		// Update game accounts
 		await tx.delete(gameAccount).where(eq(gameAccount.playerId, data.id));
@@ -302,7 +455,47 @@ export async function updatePlayer(
 					region: account.region
 				}))
 			);
+
+			// Track game account changes
+			const oldAccounts = currentGameAccounts.map((acc) => acc.accountId);
+			const newAccounts = data.gameAccounts.map((acc) => acc.accountId);
+
+			// Track removed accounts
+			for (const oldAcc of oldAccounts) {
+				if (!newAccounts.includes(oldAcc)) {
+					await tx.insert(editHistory).values({
+						id: randomUUID(),
+						tableName: 'game_account',
+						recordId: data.id,
+						fieldName: 'account',
+						oldValue: oldAcc.toString(),
+						newValue: null,
+						editedBy
+					});
+				}
+			}
+
+			// Track added accounts
+			for (const newAcc of newAccounts) {
+				if (!oldAccounts.includes(newAcc)) {
+					await tx.insert(editHistory).values({
+						id: randomUUID(),
+						tableName: 'game_account',
+						recordId: data.id,
+						fieldName: 'account',
+						oldValue: null,
+						newValue: newAcc.toString(),
+						editedBy
+					});
+				}
+			}
 		}
+
+		// Get current social accounts
+		const currentSocialAccounts = await tx
+			.select()
+			.from(player_social_account)
+			.where(eq(player_social_account.playerId, data.id));
 
 		// Update social accounts
 		await tx.delete(player_social_account).where(eq(player_social_account.playerId, data.id));
@@ -316,18 +509,145 @@ export async function updatePlayer(
 					overriding_url: account.overridingUrl
 				}))
 			);
+
+			// Track social account changes
+			const oldAccounts = currentSocialAccounts.map((acc) => acc.accountId);
+			const newAccounts = data.socialAccounts.map((acc) => acc.accountId);
+
+			// Track removed accounts
+			for (const oldAcc of oldAccounts) {
+				if (!newAccounts.includes(oldAcc)) {
+					await tx.insert(editHistory).values({
+						id: randomUUID(),
+						tableName: 'player_social_account',
+						recordId: data.id,
+						fieldName: 'account',
+						oldValue: oldAcc.toString(),
+						newValue: null,
+						editedBy
+					});
+				}
+			}
+
+			// Track added accounts
+			for (const newAcc of newAccounts) {
+				if (!oldAccounts.includes(newAcc)) {
+					await tx.insert(editHistory).values({
+						id: randomUUID(),
+						tableName: 'player_social_account',
+						recordId: data.id,
+						fieldName: 'account',
+						oldValue: null,
+						newValue: newAcc.toString(),
+						editedBy
+					});
+				}
+			}
 		}
 	});
 }
 
-export async function deletePlayer(id: string) {
+export async function deletePlayer(id: string, deletedBy: string) {
 	console.info('[Players] Attempting to delete player:', id);
+
+	// Get the player data before deletion
+	const [playerData] = await db.select().from(player).where(eq(player.id, id));
+
+	if (!playerData) {
+		console.warn('[Players] Player not found:', id);
+		return;
+	}
+
 	await db.transaction(async (tx) => {
+		// Record deletion in edit history
+		await tx.insert(editHistory).values({
+			id: randomUUID(),
+			tableName: 'player',
+			recordId: id,
+			fieldName: 'deletion',
+			oldValue: 'active',
+			newValue: 'deleted',
+			editedBy: deletedBy
+		});
+
+		// Record the final state of the player
+		await tx.insert(editHistory).values({
+			id: randomUUID(),
+			tableName: 'player',
+			recordId: id,
+			fieldName: 'name',
+			oldValue: playerData.name,
+			newValue: null,
+			editedBy: deletedBy
+		});
+
+		if (playerData.nationality) {
+			await tx.insert(editHistory).values({
+				id: randomUUID(),
+				tableName: 'player',
+				recordId: id,
+				fieldName: 'nationality',
+				oldValue: playerData.nationality,
+				newValue: null,
+				editedBy: deletedBy
+			});
+		}
+
+		// Get and record aliases
+		const aliases = await tx.select().from(playerAlias).where(eq(playerAlias.playerId, id));
+
+		for (const alias of aliases) {
+			await tx.insert(editHistory).values({
+				id: randomUUID(),
+				tableName: 'player_alias',
+				recordId: id,
+				fieldName: 'alias',
+				oldValue: alias.alias,
+				newValue: null,
+				editedBy: deletedBy
+			});
+		}
+
+		// Get and record game accounts
+		const gameAccounts = await tx.select().from(gameAccount).where(eq(gameAccount.playerId, id));
+
+		for (const account of gameAccounts) {
+			await tx.insert(editHistory).values({
+				id: randomUUID(),
+				tableName: 'game_account',
+				recordId: id,
+				fieldName: 'account',
+				oldValue: account.accountId.toString(),
+				newValue: null,
+				editedBy: deletedBy
+			});
+		}
+
+		// Get and record social accounts
+		const socialAccounts = await tx
+			.select()
+			.from(player_social_account)
+			.where(eq(player_social_account.playerId, id));
+
+		for (const account of socialAccounts) {
+			await tx.insert(editHistory).values({
+				id: randomUUID(),
+				tableName: 'player_social_account',
+				recordId: id,
+				fieldName: 'account',
+				oldValue: account.accountId,
+				newValue: null,
+				editedBy: deletedBy
+			});
+		}
+
+		// Delete the records
 		await tx.delete(playerAlias).where(eq(playerAlias.playerId, id));
 		await tx.delete(gameAccount).where(eq(gameAccount.playerId, id));
 		await tx.delete(player_social_account).where(eq(player_social_account.playerId, id));
 		await tx.delete(player).where(eq(player.id, id));
 	});
+
 	console.info('[Players] Successfully deleted player:', id);
 }
 

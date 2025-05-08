@@ -12,7 +12,7 @@ import type { Player } from '$lib/data/players';
 import { social_platform, player_social_account } from '$lib/server/db/schemas/game/social';
 import { db } from '$lib/server/db';
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ locals }) => {
 	const players = await getPlayers();
 	const socialPlatforms = await db.select().from(social_platform);
 
@@ -24,7 +24,7 @@ export const load: PageServerLoad = async () => {
 };
 
 export const actions = {
-	create: async ({ request }) => {
+	create: async ({ request, locals }) => {
 		const formData = await request.formData();
 		const name = formData.get('name') as string;
 		const nationality = formData.get('nationality') as string | null;
@@ -47,18 +47,27 @@ export const actions = {
 			});
 		}
 
-		try {
-			await createPlayer({
-				name,
-				nationality: nationality as any,
-				aliases,
-				gameAccounts: gameAccounts.map((acc) => ({
-					...acc,
-					region: acc.region as Region | undefined
-				})),
-				socialAccounts,
-				slug: slug || undefined
+		if (!locals.user?.id) {
+			return fail(401, {
+				error: 'Unauthorized'
 			});
+		}
+
+		try {
+			await createPlayer(
+				{
+					name,
+					nationality: nationality as any,
+					aliases,
+					gameAccounts: gameAccounts.map((acc) => ({
+						...acc,
+						region: acc.region as Region | undefined
+					})),
+					socialAccounts,
+					slug: slug || undefined
+				},
+				locals.user.id
+			);
 
 			return {
 				success: true
@@ -71,7 +80,7 @@ export const actions = {
 		}
 	},
 
-	update: async ({ request }) => {
+	update: async ({ request, locals }) => {
 		const formData = await request.formData();
 		const id = formData.get('id') as string;
 		const name = formData.get('name') as string;
@@ -95,19 +104,28 @@ export const actions = {
 			});
 		}
 
-		try {
-			await updatePlayer({
-				id,
-				name,
-				nationality: nationality as any,
-				aliases,
-				gameAccounts: gameAccounts.map((acc) => ({
-					...acc,
-					region: acc.region as Region | undefined
-				})),
-				socialAccounts,
-				slug: slug || undefined
+		if (!locals.user?.id) {
+			return fail(401, {
+				error: 'Unauthorized'
 			});
+		}
+
+		try {
+			await updatePlayer(
+				{
+					id,
+					name,
+					nationality: nationality as any,
+					aliases,
+					gameAccounts: gameAccounts.map((acc) => ({
+						...acc,
+						region: acc.region as Region | undefined
+					})),
+					socialAccounts,
+					slug: slug || undefined
+				},
+				locals.user.id
+			);
 
 			return {
 				success: true
@@ -120,13 +138,19 @@ export const actions = {
 		}
 	},
 
-	import: async ({ request }) => {
+	import: async ({ request, locals }) => {
 		const formData = await request.formData();
 		const file = formData.get('file') as File;
 
 		if (!file) {
 			return fail(400, {
 				error: 'No file provided'
+			});
+		}
+
+		if (!locals.user?.id) {
+			return fail(401, {
+				error: 'Unauthorized'
 			});
 		}
 
@@ -137,18 +161,21 @@ export const actions = {
 			// Delete all existing players first
 			const existingPlayers = await getPlayers();
 			for (const player of existingPlayers) {
-				await deletePlayer(player.id);
+				await deletePlayer(player.id, locals.user.id);
 			}
 
 			// Import new players
 			for (const [id, playerData] of Object.entries(players)) {
-				await createPlayer({
-					name: playerData.name,
-					nationality: playerData.nationality,
-					aliases: playerData.aliases || [],
-					gameAccounts: playerData.gameAccounts,
-					slug: playerData.slug
-				});
+				await createPlayer(
+					{
+						name: playerData.name,
+						nationality: playerData.nationality,
+						aliases: playerData.aliases || [],
+						gameAccounts: playerData.gameAccounts,
+						slug: playerData.slug
+					},
+					locals.user.id
+				);
 			}
 
 			return {
@@ -163,7 +190,7 @@ export const actions = {
 		}
 	},
 
-	delete: async ({ request }) => {
+	delete: async ({ request, locals }) => {
 		let id: string;
 
 		// Check content type to handle both form data and JSON
@@ -182,8 +209,14 @@ export const actions = {
 			});
 		}
 
+		if (!locals.user?.id) {
+			return fail(401, {
+				error: 'Unauthorized'
+			});
+		}
+
 		try {
-			await deletePlayer(id);
+			await deletePlayer(id, locals.user.id);
 			return {
 				success: true
 			};
