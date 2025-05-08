@@ -52,6 +52,7 @@
 						{m.welcome({ username: data.user.username })}
 					</p>
 					<p class="text-sm text-slate-400">{m.user_id()}: {data.user.id}</p>
+					<p class="text-sm text-slate-400">{m.email()}: {data.user.email}</p>
 				</div>
 
 				<div class="mb-8">

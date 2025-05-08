@@ -149,6 +149,7 @@
 							<tr class="border-b-2 border-gray-500 text-left text-sm text-gray-400">
 								<th class="px-4 py-1">{m.user_id()}</th>
 								<th class="px-4 py-1">{m.username()}</th>
+								<th class="px-4 py-1">{m.email()}</th>
 								<th class="px-4 py-1">{m.roles()}</th>
 								<th class="px-4 py-1">{m.created_at()}</th>
 							</tr>
@@ -158,6 +159,7 @@
 								<tr class="border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl">
 									<td class="px-4 py-1 text-white">{user.id}</td>
 									<td class="px-4 py-1 text-white">{user.username}</td>
+									<td class="px-4 py-1 text-white">{user.email}</td>
 									<td class="px-4 py-1">
 										<div class="flex flex-wrap gap-1.5 py-2">
 											{#each getUserRoles(user.id) as role}
