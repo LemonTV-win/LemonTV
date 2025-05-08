@@ -203,5 +203,9 @@
 	"platform": "プラットフォーム",
 	"overriding_url": "カスタムURL",
 	"select_platform": "プラットフォームを選択",
-	"view": "表示"
+	"view": "表示",
+	"remove_social_account": "ソーシャルアカウントを削除",
+	"social_platform": "ソーシャルプラットフォーム",
+	"edit_social_account": "ソーシャルアカウントを編集",
+	"delete_social_account": "ソーシャルアカウントを削除"
 }

@@ -203,5 +203,9 @@
 	"platform": "Платформа",
 	"overriding_url": "Пользовательский URL",
 	"select_platform": "Выбрать платформу",
-	"view": "Просмотр"
+	"view": "Просмотр",
+	"remove_social_account": "Удалить социальный аккаунт",
+	"social_platform": "Социальная платформа",
+	"edit_social_account": "Редактировать социальный аккаунт",
+	"delete_social_account": "Удалить социальный аккаунт"
 }

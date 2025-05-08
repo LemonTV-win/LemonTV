@@ -203,5 +203,9 @@
 	"platform": "Plattform",
 	"overriding_url": "Überschreibende URL",
 	"select_platform": "Plattform auswählen",
-	"view": "Ansehen"
+	"view": "Ansehen",
+	"remove_social_account": "Social-Media-Konto entfernen",
+	"social_platform": "Social-Media-Plattform",
+	"edit_social_account": "Social-Media-Konto bearbeiten",
+	"delete_social_account": "Social-Media-Konto löschen"
 }

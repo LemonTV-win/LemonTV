@@ -204,5 +204,8 @@
 	"overriding_url": "自定义链接",
 	"select_platform": "选择平台",
 	"view": "查看",
-	"remove_social_account": "删除社交账号"
+	"remove_social_account": "删除社交账号",
+	"social_platform": "社交平台",
+	"edit_social_account": "编辑社交账号",
+	"delete_social_account": "删除社交账号"
 }

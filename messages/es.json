@@ -203,5 +203,9 @@
 	"platform": "Plataforma",
 	"overriding_url": "URL personalizada",
 	"select_platform": "Seleccionar plataforma",
-	"view": "Ver"
+	"view": "Ver",
+	"remove_social_account": "Eliminar cuenta social",
+	"social_platform": "Plataforma social",
+	"edit_social_account": "Editar cuenta social",
+	"delete_social_account": "Eliminar cuenta social"
 }

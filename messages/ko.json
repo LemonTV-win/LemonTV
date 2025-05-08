@@ -203,5 +203,9 @@
 	"platform": "플랫폼",
 	"overriding_url": "사용자 지정 URL",
 	"select_platform": "플랫폼 선택",
-	"view": "보기"
+	"view": "보기",
+	"remove_social_account": "소셜 계정 제거",
+	"social_platform": "소셜 플랫폼",
+	"edit_social_account": "소셜 계정 수정",
+	"delete_social_account": "소셜 계정 삭제"
 }
