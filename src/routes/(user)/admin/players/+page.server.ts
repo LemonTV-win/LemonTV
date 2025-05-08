@@ -32,6 +32,7 @@ export const actions = {
 			accountId: string;
 			overridingUrl?: string;
 		}[];
+		const slug = formData.get('slug') as string | null;
 
 		if (!name) {
 			return fail(400, {
@@ -48,7 +49,8 @@ export const actions = {
 					...acc,
 					region: acc.region as Region | undefined
 				})),
-				socialAccounts
+				socialAccounts,
+				slug: slug || undefined
 			});
 
 			return {
@@ -78,6 +80,7 @@ export const actions = {
 			accountId: string;
 			overridingUrl?: string;
 		}[];
+		const slug = formData.get('slug') as string | null;
 
 		if (!id || !name) {
 			return fail(400, {
@@ -95,7 +98,8 @@ export const actions = {
 					...acc,
 					region: acc.region as Region | undefined
 				})),
-				socialAccounts
+				socialAccounts,
+				slug: slug || undefined
 			});
 
 			return {

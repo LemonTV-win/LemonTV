@@ -138,6 +138,7 @@
 		formData.append('aliases', JSON.stringify(newPlayer.aliases || []));
 		formData.append('gameAccounts', JSON.stringify(newPlayer.gameAccounts || []));
 		formData.append('socialAccounts', JSON.stringify(newPlayer.socialAccounts || []));
+		formData.append('slug', newPlayer.slug || '');
 
 		try {
 			const response = await fetch('?/create', {
@@ -173,6 +174,7 @@
 		formData.append('aliases', JSON.stringify(newPlayer.aliases || []));
 		formData.append('gameAccounts', JSON.stringify(newPlayer.gameAccounts || []));
 		formData.append('socialAccounts', JSON.stringify(newPlayer.socialAccounts || []));
+		formData.append('slug', newPlayer.slug || '');
 
 		try {
 			const response = await fetch('?/update', {
@@ -456,6 +458,18 @@
 							</div>
 						</div>
 					{/if}
+					<div>
+						<label class="block text-sm font-medium text-slate-300" for="playerSlug">
+							{m.slug()}
+						</label>
+						<input
+							type="text"
+							id="playerSlug"
+							bind:value={newPlayer.slug}
+							class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+							placeholder={m.slug()}
+						/>
+					</div>
 					<div>
 						<label class="block text-sm font-medium text-slate-300" for="playerName">
 							{m.player_name()}
