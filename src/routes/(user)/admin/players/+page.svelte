@@ -849,7 +849,7 @@
 					<th class="px-4 py-1">{m.game_accounts()}</th>
 					<th class="px-4 py-1">{m.social_accounts()}</th>
 					<th class="px-4 py-1">{m.teams()}</th>
-					<th class="px-4 py-1">{m.actions()}</th>
+					<th class="sticky right-0 z-10 h-12 bg-gray-800 px-4 py-1">{m.actions()}</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -912,8 +912,8 @@
 								-
 							{/if}
 						</td>
-						<td class="px-4 py-1">
-							<div class="flex items-center gap-2">
+						<td class="sticky right-0 z-10 h-12 bg-gray-800">
+							<div class="flex h-full items-center gap-2 border-l border-gray-700 px-4 py-1">
 								<button
 									class="flex items-center gap-1 text-yellow-500 hover:text-yellow-400"
 									onclick={() => handleEditPlayer(player)}
