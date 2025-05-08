@@ -213,5 +213,7 @@
 	"delete_player_confirmation": "您确定要删除玩家",
 	"player_deleted_successfully": "玩家已成功删除",
 	"failed_to_delete_player": "删除玩家失败",
-	"delete_player_confirmation_description": "此操作无法撤销。所有相关数据，包括游戏账号、社交账号和队伍成员资格，将永久删除。"
+	"delete_player_confirmation_description": "此操作无法撤销。所有相关数据，包括游戏账号、社交账号和队伍成员资格，将永久删除。",
+	"copy_to_clipboard": "复制到剪贴板",
+	"copied_to_clipboard": "已复制到剪贴板"
 }

@@ -213,5 +213,7 @@
 	"delete_player_confirmation": "Tem certeza que deseja deletar o jogador",
 	"player_deleted_successfully": "Jogador deletado com sucesso",
 	"failed_to_delete_player": "Falha ao deletar jogador",
-	"delete_player_confirmation_description": "Esta ação não pode ser revertida. Todos os dados associados, incluindo contas de jogo, contas sociais e associações de times, serão deletados permanentemente."
+	"delete_player_confirmation_description": "Esta ação não pode ser revertida. Todos os dados associados, incluindo contas de jogo, contas sociais e associações de times, serão deletados permanentemente.",
+	"copy_to_clipboard": "Copiar para a área de transferência",
+	"copied_to_clipboard": "Copiado para a área de transferência"
 }

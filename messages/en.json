@@ -213,5 +213,7 @@
 	"delete_player_confirmation": "Are you sure you want to delete player",
 	"player_deleted_successfully": "Player deleted successfully",
 	"failed_to_delete_player": "Failed to delete player",
-	"delete_player_confirmation_description": "This action cannot be undone. All associated data including game accounts, social accounts, and team memberships will be permanently deleted."
+	"delete_player_confirmation_description": "This action cannot be undone. All associated data including game accounts, social accounts, and team memberships will be permanently deleted.",
+	"copy_to_clipboard": "Copy to clipboard",
+	"copied_to_clipboard": "Copied to clipboard"
 }

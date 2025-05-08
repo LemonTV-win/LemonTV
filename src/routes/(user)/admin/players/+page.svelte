@@ -6,6 +6,8 @@
 	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import IconParkSolidAdd from '~icons/icon-park-solid/add';
+	import IconParkSolidCopy from '~icons/icon-park-solid/copy';
+	import IconParkSolidCheckOne from '~icons/icon-park-solid/check-one';
 	import type { PageProps } from './$types';
 	import { getLocale } from '$lib/paraglide/runtime';
 	import { countries } from 'countries-list';
@@ -103,6 +105,7 @@
 	);
 
 	let isPlatformSelectOpen = $state(false);
+	let copySuccess = $state(false);
 
 	function handleAddPlayer() {
 		isAddingNew = true;
@@ -349,6 +352,16 @@
 		playerToDelete = player;
 		isDeleting = true;
 	}
+
+	function handleCopyId() {
+		if (newPlayer.id) {
+			navigator.clipboard.writeText(newPlayer.id);
+			copySuccess = true;
+			setTimeout(() => {
+				copySuccess = false;
+			}, 2000);
+		}
+	}
 </script>
 
 <main class="mx-auto max-w-screen-lg px-4">
@@ -419,13 +432,28 @@
 					{#if isEditing}
 						<div>
 							<label class="block text-sm font-medium text-slate-300" for="playerId">ID</label>
-							<input
-								type="text"
-								id="playerId"
-								bind:value={newPlayer.id}
-								class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-								placeholder={m.player_id()}
-							/>
+							<div class="relative mt-1">
+								<input
+									type="text"
+									id="playerId"
+									bind:value={newPlayer.id}
+									readonly
+									class="block w-full rounded-md border border-slate-700 bg-slate-800/50 px-3 py-2 text-slate-400 placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none [&:read-only]:cursor-default [&:read-only]:opacity-75 [&:read-only]:select-none"
+									placeholder={m.player_id()}
+								/>
+								<button
+									type="button"
+									onclick={handleCopyId}
+									class="absolute top-1/2 right-2 -translate-y-1/2 text-slate-400 hover:text-yellow-500"
+									title={m.copy_to_clipboard()}
+								>
+									{#if copySuccess}
+										<IconParkSolidCheckOne class="h-5 w-5" />
+									{:else}
+										<IconParkSolidCopy class="h-5 w-5" />
+									{/if}
+								</button>
+							</div>
 						</div>
 					{/if}
 					<div>

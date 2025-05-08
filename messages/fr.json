@@ -213,5 +213,7 @@
 	"delete_player_confirmation": "Êtes-vous sûr de vouloir supprimer le joueur",
 	"player_deleted_successfully": "Joueur supprimé avec succès",
 	"failed_to_delete_player": "Échec de la suppression du joueur",
-	"delete_player_confirmation_description": "Cette action ne peut pas être annulée. Tous les données associées, y compris les comptes de jeu, les comptes sociaux et les appartenances aux équipes, seront définitivement supprimées."
+	"delete_player_confirmation_description": "Cette action ne peut pas être annulée. Tous les données associées, y compris les comptes de jeu, les comptes sociaux et les appartenances aux équipes, seront définitivement supprimées.",
+	"copy_to_clipboard": "Copier dans le presse-papiers",
+	"copied_to_clipboard": "Copié dans le presse-papiers"
 }
