@@ -12,7 +12,7 @@ import type { Player } from '$lib/data/players';
 import { social_platform, player_social_account } from '$lib/server/db/schemas/game/social';
 import { db } from '$lib/server/db';
 
-export const load: PageServerLoad = async ({ locals }) => {
+export const load: PageServerLoad = async () => {
 	const players = await getPlayers();
 	const socialPlatforms = await db.select().from(social_platform);
 

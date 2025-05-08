@@ -8,18 +8,22 @@
 	import IconParkSolidAdd from '~icons/icon-park-solid/add';
 	import IconParkSolidCopy from '~icons/icon-park-solid/copy';
 	import IconParkSolidCheckOne from '~icons/icon-park-solid/check-one';
+	import IconParkSolidHistory from '~icons/icon-park-solid/history-query';
+	import TypcnArrowUnsorted from '~icons/typcn/arrow-unsorted';
+	import TypcnArrowSortedDown from '~icons/typcn/arrow-sorted-down';
+	import TypcnArrowSortedUp from '~icons/typcn/arrow-sorted-up';
+
+	import SocialLinks from '$lib/components/SocialLinks.svelte';
+	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
+	import Modal from '$lib/components/Modal.svelte';
+	import EditHistory from './EditHistory.svelte';
+
 	import type { PageProps } from './$types';
 	import { getLocale } from '$lib/paraglide/runtime';
 	import { countries } from 'countries-list';
 	import countryCodeToFlagEmoji from 'country-code-to-flag-emoji';
 	import { countryCodeToLocalizedName } from '$lib/utils/strings';
 	import PlatformSelect from '$lib/components/PlatformSelect.svelte';
-	import Modal from '$lib/components/Modal.svelte';
-	import SocialLinks from '$lib/components/SocialLinks.svelte';
-	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
-	import TypcnArrowUnsorted from '~icons/typcn/arrow-unsorted';
-	import TypcnArrowSortedDown from '~icons/typcn/arrow-sorted-down';
-	import TypcnArrowSortedUp from '~icons/typcn/arrow-sorted-up';
 
 	const countryCodes = Object.keys(countries);
 
@@ -106,6 +110,19 @@
 
 	let isPlatformSelectOpen = $state(false);
 	let copySuccess = $state(false);
+
+	let showHistoryModal = $state(false);
+	let selectedPlayerId = $state<string | null>(null);
+
+	function openHistoryModal(playerId: string) {
+		selectedPlayerId = playerId;
+		showHistoryModal = true;
+	}
+
+	function closeHistoryModal() {
+		showHistoryModal = false;
+		selectedPlayerId = null;
+	}
 
 	function handleAddPlayer() {
 		isAddingNew = true;
@@ -768,6 +785,14 @@
 		</Modal>
 	{/if}
 
+	{#if showHistoryModal}
+		<Modal show={true} title="Edit History" onClose={closeHistoryModal}>
+			{#if selectedPlayerId}
+				<EditHistory playerId={selectedPlayerId} onClose={closeHistoryModal} />
+			{/if}
+		</Modal>
+	{/if}
+
 	<div class="mb-4">
 		<input
 			type="text"
@@ -922,8 +947,22 @@
 									<IconParkSolidEdit class="h-4 w-4" />
 								</button>
 								<button
+									type="button"
+									class="text-gray-600 hover:text-gray-800"
+									title="View edit history"
+									onclick={() => {
+										selectedPlayerId = player.id;
+										showHistoryModal = true;
+									}}
+								>
+									<IconParkSolidHistory class="h-4 w-4" />
+								</button>
+								<button
 									class="flex items-center gap-1 text-red-500 hover:text-red-400"
-									onclick={() => handleDeleteClick(player)}
+									onclick={() => {
+										playerToDelete = player;
+										isDeleting = true;
+									}}
 									title={m.delete()}
 								>
 									<IconParkSolidDelete class="h-4 w-4" />

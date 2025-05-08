@@ -659,3 +659,13 @@ export async function getSocialPlatforms() {
 		url_template: platform.url_template
 	}));
 }
+
+export async function getPlayerEditHistory(playerId: string) {
+	const history = await db
+		.select()
+		.from(editHistory)
+		.where(eq(editHistory.recordId, playerId))
+		.orderBy(editHistory.editedAt);
+
+	return history;
+}
