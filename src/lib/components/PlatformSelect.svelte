@@ -4,6 +4,7 @@
 	import LogosYoutube from '~icons/logos/youtube-icon';
 	import LogosBilibili from '~icons/ant-design/bilibili-outlined';
 	import LogosInstagram from '~icons/skill-icons/instagram';
+	import LogosTiktokIcon from '~icons/logos/tiktok-icon';
 	import { m } from '$lib/paraglide/messages';
 
 	let {
@@ -63,6 +64,8 @@
 					<LogosBilibili class="h-4 w-4 text-gray-400" />
 				{:else if value === 'instagram'}
 					<LogosInstagram class="h-4 w-4 text-gray-400" />
+				{:else if value === 'tiktok'}
+					<LogosTiktokIcon class="h-4 w-4 text-gray-400" />
 				{/if}
 				{#each platforms as platform}
 					{#if platform.id === value}
@@ -113,6 +116,8 @@
 						<LogosBilibili class="h-4 w-4 text-gray-400" />
 					{:else if platform.id === 'instagram'}
 						<LogosInstagram class="h-4 w-4 text-gray-400" />
+					{:else if platform.id === 'tiktok'}
+						<LogosTiktokIcon class="h-4 w-4 text-gray-400" />
 					{/if}
 					<span>{platform.name}</span>
 				</button>

@@ -4,6 +4,7 @@
 	import LogosYoutube from '~icons/logos/youtube-icon';
 	import LogosBilibili from '~icons/ant-design/bilibili-outlined';
 	import LogosInstagram from '~icons/skill-icons/instagram';
+	import LogosTiktokIcon from '~icons/logos/tiktok-icon';
 
 	let {
 		socialAccounts = [],
@@ -42,6 +43,8 @@
 							<LogosBilibili class={iconSize} />
 						{:else if platform.id === 'instagram'}
 							<LogosInstagram class={iconSize} />
+						{:else if platform.id === 'tiktok'}
+							<LogosTiktokIcon class={iconSize} />
 						{:else}
 							<span class="text-sm">{platform.name}</span>
 						{/if}
