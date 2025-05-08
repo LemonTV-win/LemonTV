@@ -5,9 +5,9 @@ import { paraglideMiddleware } from '$lib/paraglide/server';
 import { syncRoles, syncSocialPlatforms } from '$lib/server/db/sync';
 
 export const init: ServerInit = async () => {
-	console.log('[ServerInit] Syncing roles...');
+	console.info('[ServerInit] Syncing roles...');
 	await syncRoles();
-	console.log('[ServerInit] Syncing social platforms...');
+	console.info('[ServerInit] Syncing social platforms...');
 	await syncSocialPlatforms();
 };
 
