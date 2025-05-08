@@ -174,9 +174,18 @@
 		}
 		newPlayer.gameAccounts.push({
 			accountId: 0,
-			currentName: '',
+			currentName: newPlayer.name || '',
 			region: undefined
 		});
+		// Focus on the newly added current name input
+		setTimeout(() => {
+			const inputs = document.querySelectorAll('input[id="currentName"]');
+			const lastInput = inputs[inputs.length - 1];
+			if (lastInput instanceof HTMLInputElement) {
+				lastInput.focus();
+				lastInput.select();
+			}
+		}, 0);
 	}
 
 	function removeGameAccount(index: number) {
