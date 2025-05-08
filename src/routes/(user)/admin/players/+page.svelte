@@ -797,7 +797,9 @@
 		/>
 	</div>
 
-	<div class="overflow-x-auto">
+	<div
+		class="overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-800"
+	>
 		<table class="w-full table-auto border-collapse border-y-2 border-gray-500 bg-gray-800">
 			<thead>
 				<tr class="border-b-2 border-gray-500 text-left text-sm text-gray-400">
