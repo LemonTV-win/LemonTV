@@ -6,10 +6,6 @@
 	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import IconParkSolidAdd from '~icons/icon-park-solid/add';
-	import LogosTwitch from '~icons/logos/twitch';
-	import LogosTwitter from '~icons/devicon/twitter';
-	import LogosYoutube from '~icons/logos/youtube-icon';
-	import LogosBilibili from '~icons/ant-design/bilibili-outlined';
 	import type { PageProps } from './$types';
 	import { getLocale } from '$lib/paraglide/runtime';
 	import { countries } from 'countries-list';
@@ -17,6 +13,7 @@
 	import { countryCodeToLocalizedName } from '$lib/utils/strings';
 	import PlatformSelect from '$lib/components/PlatformSelect.svelte';
 	import Modal from '$lib/components/Modal.svelte';
+	import SocialLinks from '$lib/components/SocialLinks.svelte';
 
 	const countryCodes = Object.keys(countries);
 
@@ -682,37 +679,10 @@
 						</td>
 						<td class="px-4 py-1 text-gray-300">
 							{#if player.socialAccounts?.length}
-								<div class="flex gap-2">
-									{#each player.socialAccounts as account}
-										{#each data.socialPlatforms as platform}
-											{#if platform.id === account.platformId}
-												<a
-													href={platform.url_template
-														? platform.url_template.replace('{accountId}', account.accountId)
-														: account.overridingUrl}
-													target="_blank"
-													rel="noopener noreferrer"
-													class="inline-flex items-center justify-center rounded-full p-1.5 transition-all duration-200 hover:bg-slate-700 hover:brightness-125"
-													title={platform.url_template
-														? platform.url_template.replace('{accountId}', account.accountId)
-														: account.overridingUrl}
-												>
-													{#if platform.id === 'twitch'}
-														<LogosTwitch class="h-4 w-4" />
-													{:else if platform.id === 'twitter'}
-														<LogosTwitter class="h-4 w-4" />
-													{:else if platform.id === 'youtube'}
-														<LogosYoutube class="h-4 w-4" />
-													{:else if platform.id === 'bilibili'}
-														<LogosBilibili class="h-4 w-4" />
-													{:else}
-														<span class="text-sm">{platform.name}</span>
-													{/if}
-												</a>
-											{/if}
-										{/each}
-									{/each}
-								</div>
+								<SocialLinks
+									socialAccounts={player.socialAccounts}
+									socialPlatforms={data.socialPlatforms}
+								/>
 							{:else}
 								-
 							{/if}

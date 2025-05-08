@@ -1,5 +1,11 @@
 import { db } from '$lib/server/db';
-import { player, playerAlias, gameAccount, player_social_account } from '$lib/server/db/schema';
+import {
+	player,
+	playerAlias,
+	gameAccount,
+	player_social_account,
+	social_platform
+} from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import type { Player } from '$lib/data/players';
 import { randomUUID } from 'crypto';
@@ -7,7 +13,6 @@ import { getPlayerMatches, getTeams, identifyPlayer, isPlayerInTeam } from '$lib
 import type { Team } from '$lib/data/teams';
 import type { Character } from '$lib/data/game';
 import { or } from 'drizzle-orm';
-
 export async function getPlayer(keyword: string): Promise<Player | null> {
 	console.info('[Players] Attempting to get player:', keyword);
 	const [playerData] = await db
@@ -25,7 +30,7 @@ export async function getPlayer(keyword: string): Promise<Player | null> {
 	const socialAccounts = await db
 		.select()
 		.from(player_social_account)
-		.where(eq(player_social_account.playerId, keyword));
+		.where(eq(player_social_account.playerId, playerData.id));
 
 	console.info('[Players] Successfully retrieved player:', keyword);
 	return {
@@ -324,4 +329,13 @@ export async function deletePlayer(id: string) {
 		await tx.delete(player).where(eq(player.id, id));
 	});
 	console.info('[Players] Successfully deleted player:', id);
+}
+
+export async function getSocialPlatforms() {
+	const platforms = await db.select().from(social_platform);
+	return platforms.map((platform) => ({
+		id: platform.id,
+		name: platform.name,
+		url_template: platform.url_template
+	}));
 }

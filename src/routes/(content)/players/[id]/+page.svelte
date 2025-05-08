@@ -5,6 +5,7 @@
 	import CharacterIcon from '$lib/components/CharacterIcon.svelte';
 	import PlayerAvatar from '$lib/components/PlayerAvatar.svelte';
 	import MatchCard from '$lib/components/MatchCard.svelte';
+	import SocialLinks from '$lib/components/SocialLinks.svelte';
 	import { getAllNames } from '$lib/data/players';
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 
@@ -37,6 +38,15 @@
 				</h1>
 				{#if data.player.nationality}
 					<p class="text-center text-gray-400">{data.player.nationality}</p>
+				{/if}
+				{#if data.player.socialAccounts?.length}
+					<div class="flex justify-center">
+						<SocialLinks
+							socialAccounts={data.player.socialAccounts}
+							socialPlatforms={data.socialPlatforms}
+							iconSize="h-5 w-5"
+						/>
+					</div>
 				{/if}
 				{#if data.playerTeams}
 					<div class="grid grid-cols-1 gap-4 py-4 sm:grid-cols-2">
