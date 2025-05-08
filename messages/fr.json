@@ -207,5 +207,6 @@
 	"remove_social_account": "Supprimer le compte social",
 	"social_platform": "Plateforme sociale",
 	"edit_social_account": "Modifier le compte social",
-	"delete_social_account": "Supprimer le compte social"
+	"delete_social_account": "Supprimer le compte social",
+	"close": "Fermer"
 }

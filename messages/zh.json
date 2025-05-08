@@ -207,5 +207,6 @@
 	"remove_social_account": "删除社交账号",
 	"social_platform": "社交平台",
 	"edit_social_account": "编辑社交账号",
-	"delete_social_account": "删除社交账号"
+	"delete_social_account": "删除社交账号",
+	"close": "关闭"
 }

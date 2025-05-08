@@ -207,5 +207,6 @@
 	"remove_social_account": "Social-Media-Konto entfernen",
 	"social_platform": "Social-Media-Plattform",
 	"edit_social_account": "Social-Media-Konto bearbeiten",
-	"delete_social_account": "Social-Media-Konto löschen"
+	"delete_social_account": "Social-Media-Konto löschen",
+	"close": "Schließen"
 }

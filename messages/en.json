@@ -207,5 +207,6 @@
 	"remove_social_account": "Remove Social Account",
 	"social_platform": "Social Platform",
 	"edit_social_account": "Edit Social Account",
-	"delete_social_account": "Delete Social Account"
+	"delete_social_account": "Delete Social Account",
+	"close": "Close"
 }

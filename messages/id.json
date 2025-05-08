@@ -207,5 +207,6 @@
 	"platform": "Platform",
 	"remove_social_account": "Hapus Akun Sosial",
 	"select_platform": "Pilih platform",
-	"view": "Lihat"
+	"view": "Lihat",
+	"close": "Tutup"
 }

@@ -207,5 +207,6 @@
 	"platform": "平台",
 	"remove_social_account": "刪除社交帳號",
 	"select_platform": "選擇平台",
-	"view": "查看"
+	"view": "查看",
+	"close": "關閉"
 }

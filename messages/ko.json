@@ -207,5 +207,6 @@
 	"remove_social_account": "소셜 계정 제거",
 	"social_platform": "소셜 플랫폼",
 	"edit_social_account": "소셜 계정 수정",
-	"delete_social_account": "소셜 계정 삭제"
+	"delete_social_account": "소셜 계정 삭제",
+	"close": "닫기"
 }

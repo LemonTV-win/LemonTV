@@ -207,5 +207,6 @@
 	"platform": "Plataforma",
 	"remove_social_account": "Remover Conta Social",
 	"select_platform": "Selecionar plataforma",
-	"view": "Ver"
+	"view": "Ver",
+	"close": "Fechar"
 }
