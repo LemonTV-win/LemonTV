@@ -7,22 +7,24 @@
 		show = false,
 		title = '',
 		onClose = () => {},
-		children
+		children,
+		dismissible = true
 	} = $props<{
 		show: boolean;
 		title: string;
 		onClose: () => void;
 		children: Snippet;
+		dismissible?: boolean;
 	}>();
 
 	function handleBackdropClick(event: MouseEvent) {
-		if (event.target === event.currentTarget) {
+		if (dismissible && event.target === event.currentTarget) {
 			onClose();
 		}
 	}
 
 	function handleEscape(event: KeyboardEvent) {
-		if (event.key === 'Escape') {
+		if (dismissible && event.key === 'Escape') {
 			onClose();
 		}
 	}
@@ -44,7 +46,7 @@
 	<div
 		class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
 		onclick={handleBackdropClick}
-		onkeydown={(e) => e.key === 'Escape' && onClose()}
+		onkeydown={(e) => dismissible && e.key === 'Escape' && onClose()}
 		role="presentation"
 		tabindex="0"
 	>
@@ -56,15 +58,17 @@
 		>
 			<div class="mb-4 flex items-center justify-between">
 				<h2 id="modal-title" class="text-xl font-semibold text-white">{title}</h2>
-				<button
-					type="button"
-					class="rounded-full p-1 text-slate-400 hover:bg-slate-800 hover:text-slate-300"
-					onclick={onClose}
-					aria-label={m.close()}
-					title={m.close()}
-				>
-					<MaterialSymbolsCloseRounded class="h-6 w-6" />
-				</button>
+				{#if dismissible}
+					<button
+						type="button"
+						class="rounded-full p-1 text-slate-400 hover:bg-slate-800 hover:text-slate-300"
+						onclick={onClose}
+						aria-label={m.close()}
+						title={m.close()}
+					>
+						<MaterialSymbolsCloseRounded class="h-6 w-6" />
+					</button>
+				{/if}
 			</div>
 			<div class="modal-content h-[calc(90vh-8rem)] overflow-y-auto">
 				{@render children()}

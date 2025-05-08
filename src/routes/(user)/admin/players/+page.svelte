@@ -406,6 +406,7 @@
 			show={true}
 			title={isAddingNew ? m.add_new_player() : m.edit_player()}
 			onClose={handleCancel}
+			dismissible={false}
 		>
 			<form
 				onsubmit={(e) => {
