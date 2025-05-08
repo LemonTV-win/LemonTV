@@ -197,5 +197,15 @@
 	"admin_players_desc": "Mengelola pemain dan akun game mereka.",
 	"admin_teams_desc": "Mengelola tim dan pemain mereka.",
 	"admin_events_desc": "Mengelola acara dan pertandingan.",
-	"slug": "Slug"
+	"slug": "Slug",
+	"social_accounts": "Akun sosial",
+	"social_platform": "Platform Sosial",
+	"overriding_url": "URL khusus",
+	"add_social_account": "Tambah akun sosial",
+	"edit_social_account": "Edit Akun Sosial",
+	"delete_social_account": "Hapus Akun Sosial",
+	"platform": "Platform",
+	"remove_social_account": "Hapus Akun Sosial",
+	"select_platform": "Pilih platform",
+	"view": "Lihat"
 }

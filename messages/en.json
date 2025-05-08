@@ -197,5 +197,15 @@
 	"admin_users_desc": "Manage user accounts and permissions.",
 	"admin_players_desc": "Manage players and their game accounts.",
 	"admin_teams_desc": "Manage teams and their players.",
-	"admin_events_desc": "Manage events and matches."
+	"admin_events_desc": "Manage events and matches.",
+	"social_accounts": "Social Accounts",
+	"add_social_account": "Add Social Account",
+	"platform": "Platform",
+	"overriding_url": "Overriding URL",
+	"select_platform": "Select Platform",
+	"view": "View",
+	"remove_social_account": "Remove Social Account",
+	"social_platform": "Social Platform",
+	"edit_social_account": "Edit Social Account",
+	"delete_social_account": "Delete Social Account"
 }

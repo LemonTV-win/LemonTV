@@ -197,5 +197,11 @@
 	"admin_players_desc": "Spieler und deren Spielkonten verwalten.",
 	"admin_teams_desc": "Teams und deren Spieler verwalten.",
 	"admin_events_desc": "Ereignisse und Matches verwalten.",
-	"slug": "Slug"
+	"slug": "Slug",
+	"social_accounts": "Soziale Konten",
+	"add_social_account": "Soziales Konto hinzufügen",
+	"platform": "Plattform",
+	"overriding_url": "Überschreibende URL",
+	"select_platform": "Plattform auswählen",
+	"view": "Ansehen"
 }

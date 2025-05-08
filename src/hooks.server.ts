@@ -2,11 +2,13 @@ import { sequence } from '@sveltejs/kit/hooks';
 import * as auth from '$lib/server/auth.js';
 import type { Handle, ServerInit } from '@sveltejs/kit';
 import { paraglideMiddleware } from '$lib/paraglide/server';
-import { syncRoles } from '$lib/server/db/sync';
+import { syncRoles, syncSocialPlatforms } from '$lib/server/db/sync';
 
 export const init: ServerInit = async () => {
 	console.log('[ServerInit] Syncing roles...');
 	await syncRoles();
+	console.log('[ServerInit] Syncing social platforms...');
+	await syncSocialPlatforms();
 };
 
 const handleParaglide: Handle = ({ event, resolve }) =>

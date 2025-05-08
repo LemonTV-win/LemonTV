@@ -197,5 +197,15 @@
 	"admin_players_desc": "Gerencie os jogadores e suas contas de jogo.",
 	"admin_teams_desc": "Gerencie os times e seus jogadores.",
 	"admin_events_desc": "Gerencie os eventos e partidas.",
-	"slug": "Slug"
+	"slug": "Slug",
+	"social_accounts": "Contas sociais",
+	"social_platform": "Plataforma Social",
+	"overriding_url": "URL personalizada",
+	"add_social_account": "Adicionar conta social",
+	"edit_social_account": "Editar Conta Social",
+	"delete_social_account": "Deletar Conta Social",
+	"platform": "Plataforma",
+	"remove_social_account": "Remover Conta Social",
+	"select_platform": "Selecionar plataforma",
+	"view": "Ver"
 }

@@ -8,6 +8,7 @@ export interface Player {
 	nationality?: TCountryCode;
 	aliases?: string[];
 	gameAccounts: GameAccount[];
+	socialAccounts?: SocialAccount[];
 }
 
 export interface GameAccount {
@@ -15,6 +16,12 @@ export interface GameAccount {
 	currentName: string;
 	region?: Region;
 	names?: string[];
+}
+
+export interface SocialAccount {
+	platformId: string;
+	accountId: string;
+	overridingUrl?: string;
 }
 
 export function getAllNames(player: Player) {

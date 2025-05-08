@@ -197,5 +197,12 @@
 	"admin_players_desc": "管理玩家和他们的游戏账户。",
 	"admin_teams_desc": "管理队伍和他们的玩家。",
 	"admin_events_desc": "管理事件和比赛。",
-	"slug": "地址名"
+	"slug": "地址名",
+	"social_accounts": "社交账号",
+	"add_social_account": "添加社交账号",
+	"platform": "平台",
+	"overriding_url": "自定义链接",
+	"select_platform": "选择平台",
+	"view": "查看",
+	"remove_social_account": "删除社交账号"
 }

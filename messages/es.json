@@ -197,5 +197,11 @@
 	"admin_players_desc": "Administra los jugadores y sus cuentas de juego.",
 	"admin_teams_desc": "Administra los equipos y sus jugadores.",
 	"admin_events_desc": "Administra los eventos y partidos.",
-	"slug": "Slug"
+	"slug": "Slug",
+	"social_accounts": "Cuentas sociales",
+	"add_social_account": "Añadir cuenta social",
+	"platform": "Plataforma",
+	"overriding_url": "URL personalizada",
+	"select_platform": "Seleccionar plataforma",
+	"view": "Ver"
 }

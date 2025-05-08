@@ -197,5 +197,11 @@
 	"admin_players_desc": "プレイヤーとゲームアカウントを管理します。",
 	"admin_teams_desc": "チームとプレイヤーを管理します。",
 	"admin_events_desc": "イベントと試合を管理します。",
-	"slug": "スラッグ"
+	"slug": "スラッグ",
+	"social_accounts": "ソーシャルアカウント",
+	"add_social_account": "ソーシャルアカウントを追加",
+	"platform": "プラットフォーム",
+	"overriding_url": "カスタムURL",
+	"select_platform": "プラットフォームを選択",
+	"view": "表示"
 }

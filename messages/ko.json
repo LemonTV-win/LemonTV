@@ -197,5 +197,11 @@
 	"admin_players_desc": "플레이어 및 게임 계정을 관리합니다.",
 	"admin_teams_desc": "팀 및 플레이어를 관리합니다.",
 	"admin_events_desc": "이벤트 및 경기를 관리합니다.",
-	"slug": "슬러그"
+	"slug": "슬러그",
+	"social_accounts": "소셜 계정",
+	"add_social_account": "소셜 계정 추가",
+	"platform": "플랫폼",
+	"overriding_url": "사용자 지정 URL",
+	"select_platform": "플랫폼 선택",
+	"view": "보기"
 }

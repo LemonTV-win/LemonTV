@@ -197,5 +197,11 @@
 	"admin_players_desc": "Gérez les joueurs et leurs comptes de jeu.",
 	"admin_teams_desc": "Gérez les équipes et leurs joueurs.",
 	"admin_events_desc": "Gérez les événements et les matchs.",
-	"slug": "Slug"
+	"slug": "Slug",
+	"social_accounts": "Comptes sociaux",
+	"add_social_account": "Ajouter un compte social",
+	"platform": "Plateforme",
+	"overriding_url": "URL personnalisée",
+	"select_platform": "Sélectionner une plateforme",
+	"view": "Voir"
 }

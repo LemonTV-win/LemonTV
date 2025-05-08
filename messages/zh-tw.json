@@ -197,5 +197,15 @@
 	"admin_players_desc": "管理玩家和遊戲帳戶。",
 	"admin_teams_desc": "管理隊伍和玩家。",
 	"admin_events_desc": "管理事件和比賽。",
-	"slug": "網址名"
+	"slug": "網址名",
+	"social_accounts": "社群帳號",
+	"social_platform": "社交平台",
+	"overriding_url": "自訂連結",
+	"add_social_account": "新增社群帳號",
+	"edit_social_account": "編輯社交帳號",
+	"delete_social_account": "刪除社交帳號",
+	"platform": "平台",
+	"remove_social_account": "刪除社交帳號",
+	"select_platform": "選擇平台",
+	"view": "查看"
 }

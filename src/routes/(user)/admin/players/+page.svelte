@@ -4,11 +4,15 @@
 	import { m } from '$lib/paraglide/messages';
 
 	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
+	import LogosTwitch from '~icons/logos/twitch';
+	import LogosTwitter from '~icons/devicon/twitter';
+	import LogosYoutube from '~icons/logos/youtube-icon';
 	import type { PageProps } from './$types';
 	import { getLocale } from '$lib/paraglide/runtime';
 	import { countries } from 'countries-list';
 	import countryCodeToFlagEmoji from 'country-code-to-flag-emoji';
 	import { countryCodeToLocalizedName } from '$lib/utils/strings';
+	import PlatformSelect from '$lib/components/PlatformSelect.svelte';
 
 	const countryCodes = Object.keys(countries);
 
@@ -24,7 +28,8 @@
 		name: '',
 		nationality: undefined,
 		aliases: [],
-		gameAccounts: []
+		gameAccounts: [],
+		socialAccounts: []
 	});
 
 	let { data }: PageProps = $props();
@@ -61,6 +66,8 @@
 		})
 	);
 
+	let isPlatformSelectOpen = $state(false);
+
 	function handleAddPlayer() {
 		isAddingNew = true;
 		isEditing = false;
@@ -70,7 +77,8 @@
 			name: '',
 			nationality: undefined,
 			aliases: [],
-			gameAccounts: []
+			gameAccounts: [],
+			socialAccounts: []
 		};
 	}
 
@@ -91,6 +99,7 @@
 		formData.append('nationality', newPlayer.nationality || '');
 		formData.append('aliases', JSON.stringify(newPlayer.aliases || []));
 		formData.append('gameAccounts', JSON.stringify(newPlayer.gameAccounts || []));
+		formData.append('socialAccounts', JSON.stringify(newPlayer.socialAccounts || []));
 
 		try {
 			const response = await fetch('?/create', {
@@ -125,6 +134,7 @@
 		formData.append('nationality', newPlayer.nationality || '');
 		formData.append('aliases', JSON.stringify(newPlayer.aliases || []));
 		formData.append('gameAccounts', JSON.stringify(newPlayer.gameAccounts || []));
+		formData.append('socialAccounts', JSON.stringify(newPlayer.socialAccounts || []));
 
 		try {
 			const response = await fetch('?/update', {
@@ -179,6 +189,21 @@
 
 	function removeAlias(index: number) {
 		newPlayer.aliases?.splice(index, 1);
+	}
+
+	function addSocialAccount() {
+		if (!newPlayer.socialAccounts) {
+			newPlayer.socialAccounts = [];
+		}
+		newPlayer.socialAccounts.push({
+			platformId: '',
+			accountId: '',
+			overridingUrl: undefined
+		});
+	}
+
+	function removeSocialAccount(index: number) {
+		newPlayer.socialAccounts?.splice(index, 1);
 	}
 
 	async function handleImport(event: Event) {
@@ -446,6 +471,69 @@
 						</button>
 					</div>
 
+					<div>
+						<label class="block text-sm font-medium text-slate-300" for="socialAccounts">
+							{m.social_accounts()}
+						</label>
+						{#each newPlayer.socialAccounts || [] as account, i}
+							<div class="mt-2 rounded-lg border border-slate-700 bg-slate-800 p-4">
+								<div class="grid grid-cols-2 gap-4">
+									<div>
+										<label class="block text-sm font-medium text-slate-300" for="platformId">
+											{m.platform()}
+										</label>
+										<PlatformSelect
+											value={account.platformId}
+											platforms={data.socialPlatforms}
+											onChange={(platformId) => (account.platformId = platformId)}
+										/>
+									</div>
+									<div>
+										<label class="block text-sm font-medium text-slate-300" for="accountUrl">
+											{m.account_id()}
+										</label>
+										<input
+											type="text"
+											id="accountUrl"
+											bind:value={account.accountId}
+											class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+											placeholder={m.account_id()}
+										/>
+										{#if account.platformId}
+											{#each data.socialPlatforms as platform}
+												{#if platform.id === account.platformId && platform.url_template && account.accountId}
+													<a
+														href={platform.url_template.replace('{accountId}', account.accountId)}
+														target="_blank"
+														rel="noopener noreferrer"
+														class="mt-1 block text-sm text-yellow-500 hover:text-yellow-400"
+														title={platform.url_template.replace('{accountId}', account.accountId)}
+													>
+														{platform.url_template.replace('{accountId}', account.accountId)}
+													</a>
+												{/if}
+											{/each}
+										{/if}
+									</div>
+								</div>
+								<button
+									type="button"
+									class="mt-2 text-red-400 hover:text-red-300"
+									onclick={() => removeSocialAccount(i)}
+								>
+									{m.remove_account()}
+								</button>
+							</div>
+						{/each}
+						<button
+							type="button"
+							class="mt-2 text-yellow-500 hover:text-yellow-400"
+							onclick={addSocialAccount}
+						>
+							+ {m.add_social_account()}
+						</button>
+					</div>
+
 					<div class="mt-6 flex justify-end gap-4">
 						<button
 							type="button"
@@ -484,6 +572,7 @@
 					<th class="px-4 py-1">{m.player_name()}</th>
 					<th class="px-4 py-1">{m.nationality()}</th>
 					<th class="px-4 py-1">{m.game_accounts()}</th>
+					<th class="px-4 py-1">{m.social_accounts()}</th>
 					<th class="px-4 py-1">{m.actions()}</th>
 				</tr>
 			</thead>
@@ -527,6 +616,41 @@
 										</li>
 									{/each}
 								</ul>
+							{:else}
+								-
+							{/if}
+						</td>
+						<td class="px-4 py-1 text-gray-300">
+							{#if player.socialAccounts?.length}
+								<div class="flex gap-2">
+									{#each player.socialAccounts as account}
+										{#each data.socialPlatforms as platform}
+											{#if platform.id === account.platformId}
+												<a
+													href={platform.url_template
+														? platform.url_template.replace('{accountId}', account.accountId)
+														: account.overridingUrl}
+													target="_blank"
+													rel="noopener noreferrer"
+													class="inline-flex items-center justify-center rounded-full p-1.5 transition-all duration-200 hover:bg-slate-700 hover:brightness-125"
+													title={platform.url_template
+														? platform.url_template.replace('{accountId}', account.accountId)
+														: account.overridingUrl}
+												>
+													{#if platform.id === 'twitch'}
+														<LogosTwitch class="h-4 w-4" />
+													{:else if platform.id === 'twitter'}
+														<LogosTwitter class="h-4 w-4" />
+													{:else if platform.id === 'youtube'}
+														<LogosYoutube class="h-4 w-4" />
+													{:else}
+														<span class="text-sm">{platform.name}</span>
+													{/if}
+												</a>
+											{/if}
+										{/each}
+									{/each}
+								</div>
 							{:else}
 								-
 							{/if}

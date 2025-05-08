@@ -3,12 +3,16 @@ import type { PageServerLoad } from './$types';
 import { createPlayer, updatePlayer, getPlayers, deletePlayer } from '$lib/server/data/players';
 import type { Region } from '$lib/data/game';
 import type { Player } from '$lib/data/players';
+import { social_platform, player_social_account } from '$lib/server/db/schemas/game/social';
+import { db } from '$lib/server/db';
 
 export const load: PageServerLoad = async () => {
 	const players = await getPlayers();
+	const socialPlatforms = await db.select().from(social_platform);
 
 	return {
-		players
+		players,
+		socialPlatforms
 	};
 };
 
@@ -23,6 +27,11 @@ export const actions = {
 			accountId: number;
 			currentName: string;
 			region?: string;
+		}[];
+		const socialAccounts = JSON.parse(formData.get('socialAccounts') as string) as {
+			platformId: string;
+			accountId: string;
+			overridingUrl?: string;
 		}[];
 
 		if (!id || !name) {
@@ -39,7 +48,8 @@ export const actions = {
 				gameAccounts: gameAccounts.map((acc) => ({
 					...acc,
 					region: acc.region as Region | undefined
-				}))
+				})),
+				socialAccounts
 			});
 
 			return {
@@ -64,6 +74,11 @@ export const actions = {
 			currentName: string;
 			region?: string;
 		}[];
+		const socialAccounts = JSON.parse(formData.get('socialAccounts') as string) as {
+			platformId: string;
+			accountId: string;
+			overridingUrl?: string;
+		}[];
 
 		if (!id || !name) {
 			return fail(400, {
@@ -80,7 +95,8 @@ export const actions = {
 				gameAccounts: gameAccounts.map((acc) => ({
 					...acc,
 					region: acc.region as Region | undefined
-				}))
+				})),
+				socialAccounts
 			});
 
 			return {

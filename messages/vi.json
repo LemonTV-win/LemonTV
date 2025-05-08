@@ -197,5 +197,15 @@
 	"admin_players_desc": "Quản lý người chơi và tài khoản game của họ.",
 	"admin_teams_desc": "Quản lý đội và thành viên của họ.",
 	"admin_events_desc": "Quản lý sự kiện và trận đấu.",
-	"slug": "Slug"
+	"slug": "Slug",
+	"social_accounts": "Tài khoản mạng xã hội",
+	"social_platform": "Nền tảng mạng xã hội",
+	"overriding_url": "URL tùy chỉnh",
+	"add_social_account": "Thêm tài khoản mạng xã hội",
+	"edit_social_account": "Chỉnh sửa tài khoản mạng xã hội",
+	"delete_social_account": "Xóa tài khoản mạng xã hội",
+	"platform": "Nền tảng",
+	"remove_social_account": "Xóa tài khoản mạng xã hội",
+	"select_platform": "Chọn nền tảng",
+	"view": "Xem"
 }
