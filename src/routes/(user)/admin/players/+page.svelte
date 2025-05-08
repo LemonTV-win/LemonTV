@@ -9,6 +9,7 @@
 	import LogosTwitch from '~icons/logos/twitch';
 	import LogosTwitter from '~icons/devicon/twitter';
 	import LogosYoutube from '~icons/logos/youtube-icon';
+	import LogosBilibili from '~icons/ant-design/bilibili-outlined';
 	import type { PageProps } from './$types';
 	import { getLocale } from '$lib/paraglide/runtime';
 	import { countries } from 'countries-list';
@@ -702,6 +703,8 @@
 														<LogosTwitter class="h-4 w-4" />
 													{:else if platform.id === 'youtube'}
 														<LogosYoutube class="h-4 w-4" />
+													{:else if platform.id === 'bilibili'}
+														<LogosBilibili class="h-4 w-4" />
 													{:else}
 														<span class="text-sm">{platform.name}</span>
 													{/if}

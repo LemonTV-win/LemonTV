@@ -66,6 +66,15 @@
 				</iframe>
 			{:else if livestream.platform === 'youtube'}
 				<!-- TODO: YouTube -->
+			{:else if livestream.platform === 'bilibili'}
+				<iframe
+					src={`https://player.bilibili.com/player.html?bvid=${livestream.url.split('/').pop()}&page=1&high_quality=1&danmaku=0`}
+					height="100%"
+					width="100%"
+					allowfullscreen
+					title={`${event.name} - ${livestream.platform}`}
+				>
+				</iframe>
 			{/if}
 		{/each}
 	{/if}

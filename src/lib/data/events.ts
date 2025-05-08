@@ -79,7 +79,7 @@ export interface Event {
 		coach: string[];
 	}[];
 	livestreams?: {
-		platform: 'twitch' | 'youtube';
+		platform: 'twitch' | 'youtube' | 'bilibili';
 		url: string;
 	}[];
 	results?: {
