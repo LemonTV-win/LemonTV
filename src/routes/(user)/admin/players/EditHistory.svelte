@@ -115,32 +115,40 @@
 </script>
 
 <div
-	class="space-y-4 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800"
+	class="space-y-6 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800"
 >
 	{#each sortedDates as date}
-		<div class="space-y-2">
-			<h3 class="text-sm font-medium text-slate-400">
+		<div class="space-y-3">
+			<h3 class="sticky top-0 z-10 bg-slate-900/95 py-2 text-sm font-medium text-slate-400">
 				{new Date(date).toLocaleDateString()} ({formatDistanceToNow(new Date(date), {
 					addSuffix: true
 				})})
 			</h3>
-			<div class="space-y-2">
+			<div class="space-y-3">
 				{#each groupedHistory[date] as entry}
-					<div class="rounded-lg border border-slate-800 bg-slate-900/95 p-3 shadow-lg">
-						<div class="mb-1 flex items-center justify-between">
-							<div class="flex items-center gap-2 text-sm text-slate-300">
-								<span class="font-medium">{getTableLabel(entry.tableName)}</span>
-								<span class="text-slate-400">{getFieldLabel(entry.fieldName)}</span>
-								<span class="text-xs text-slate-500">({formatTime(entry.editedAt)})</span>
+					<div class="rounded-lg border border-slate-800 bg-slate-900/95 p-4 shadow-lg">
+						<div class="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+							<div class="flex flex-col gap-1">
+								<div class="flex items-center gap-2">
+									<span class="font-medium text-slate-300">{getTableLabel(entry.tableName)}</span>
+									<span class="text-slate-400">•</span>
+									<span class="text-slate-400">{getFieldLabel(entry.fieldName)}</span>
+								</div>
+								<div class="flex items-center gap-2 text-xs text-slate-500">
+									<span>{formatTime(entry.editedAt)}</span>
+									{#if entry.editor}
+										<span>•</span>
+										<span>by {entry.editor.name}</span>
+									{/if}
+								</div>
 							</div>
 							{#if entry.editor}
 								<div class="flex items-center gap-2 text-sm text-slate-400" title={entry.editor.id}>
-									<UserAvatar email={entry.editor.email} class="h-6 w-6" />
-									<span>{entry.editor.name}</span>
+									<UserAvatar email={entry.editor.email} class="h-8 w-8" />
 								</div>
 							{/if}
 						</div>
-						<div class="flex items-center gap-2">
+						<div class="flex items-center gap-3 rounded-md bg-slate-800/50 p-3">
 							{#if entry.oldValue !== null}
 								<span class="text-slate-400 line-through">{formatValue(entry.oldValue)}</span>
 							{:else}
