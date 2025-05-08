@@ -70,7 +70,9 @@
 					</button>
 				{/if}
 			</div>
-			<div class="modal-content h-[calc(90vh-8rem)] overflow-y-auto">
+			<div
+				class="modal-content h-[calc(90vh-8rem)] overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-800"
+			>
 				{@render children()}
 			</div>
 		</div>

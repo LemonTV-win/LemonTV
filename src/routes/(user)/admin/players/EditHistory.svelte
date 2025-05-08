@@ -146,7 +146,7 @@
 	}
 </script>
 
-<div class="space-y-6">
+<div class="space-y-6 pr-2">
 	<!-- Player Summary Section -->
 	<div class="rounded-lg border border-slate-800 bg-slate-900/95 p-4 shadow-lg">
 		<div class="flex items-center gap-2">
@@ -219,12 +219,10 @@
 	</div>
 
 	<!-- Edit History Records -->
-	<div
-		class="space-y-6 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800"
-	>
+	<div class="space-y-6">
 		{#each sortedDates as date}
 			<div class="space-y-3">
-				<h3 class="sticky top-0 z-10 bg-slate-900/95 py-2 text-sm font-medium text-slate-400">
+				<h3 class="text sticky top-0 z-10 bg-slate-900/95 py-2 font-medium text-slate-300">
 					{new Date(date).toLocaleDateString()}
 				</h3>
 				<div class="space-y-3">
@@ -239,10 +237,7 @@
 									</div>
 									<div class="flex items-center gap-2 text-xs text-slate-500">
 										<span>{formatTime(entry.editedAt)}</span>
-										{#if entry.editor}
-											<span>•</span>
-											<span>by {entry.editor.name}</span>
-										{/if}
+										<span>({formatDistanceToNow(entry.editedAt, { addSuffix: true })})</span>
 									</div>
 								</div>
 								{#if entry.editor}
@@ -251,6 +246,7 @@
 										title={entry.editor.id}
 									>
 										<UserAvatar email={entry.editor.email} class="h-8 w-8" />
+										<span>{entry.editor.name}</span>
 									</div>
 								{/if}
 							</div>
