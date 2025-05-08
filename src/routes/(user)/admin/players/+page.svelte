@@ -15,6 +15,9 @@
 	import Modal from '$lib/components/Modal.svelte';
 	import SocialLinks from '$lib/components/SocialLinks.svelte';
 	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
+	import TypcnArrowUnsorted from '~icons/typcn/arrow-unsorted';
+	import TypcnArrowSortedDown from '~icons/typcn/arrow-sorted-down';
+	import TypcnArrowSortedUp from '~icons/typcn/arrow-sorted-up';
 
 	const countryCodes = Object.keys(countries);
 
@@ -25,6 +28,15 @@
 	let errorMessage = $state('');
 	let successMessage = $state('');
 	let isImporting = $state(false);
+	let sortBy:
+		| 'id-asc'
+		| 'id-desc'
+		| 'name-asc'
+		| 'name-desc'
+		| 'nationality-asc'
+		| 'nationality-desc'
+		| 'slug-asc'
+		| 'slug-desc' = $state('name-asc');
 	let newPlayer: Partial<Player> = $state({
 		id: '',
 		name: '',
@@ -55,17 +67,38 @@
 	);
 
 	let filteredPlayers = $derived(
-		data.players.filter((player) => {
-			const searchLower = searchQuery.toLowerCase();
-			return (
-				player.name.toLowerCase().includes(searchLower) ||
-				player.id.toLowerCase().includes(searchLower) ||
-				player.aliases?.some((alias) => alias.toLowerCase().includes(searchLower)) ||
-				player.gameAccounts?.some((account) =>
-					account.currentName.toLowerCase().includes(searchLower)
-				)
-			);
-		})
+		data.players
+			.filter((player) => {
+				const searchLower = searchQuery.toLowerCase();
+				return (
+					player.name.toLowerCase().includes(searchLower) ||
+					player.id.toLowerCase().includes(searchLower) ||
+					player.aliases?.some((alias) => alias.toLowerCase().includes(searchLower)) ||
+					player.gameAccounts?.some((account) =>
+						account.currentName.toLowerCase().includes(searchLower)
+					)
+				);
+			})
+			.toSorted((a, b) => {
+				if (sortBy === 'id-asc') {
+					return a.id.localeCompare(b.id);
+				} else if (sortBy === 'id-desc') {
+					return b.id.localeCompare(a.id);
+				} else if (sortBy === 'name-asc') {
+					return a.name.localeCompare(b.name);
+				} else if (sortBy === 'name-desc') {
+					return b.name.localeCompare(a.name);
+				} else if (sortBy === 'nationality-asc') {
+					return (a.nationality ?? '').localeCompare(b.nationality ?? '');
+				} else if (sortBy === 'nationality-desc') {
+					return (b.nationality ?? '').localeCompare(a.nationality ?? '');
+				} else if (sortBy === 'slug-asc') {
+					return (a.slug ?? a.id).localeCompare(b.slug ?? b.id);
+				} else if (sortBy === 'slug-desc') {
+					return (b.slug ?? b.id).localeCompare(a.slug ?? a.id);
+				}
+				return 0;
+			})
 	);
 
 	let isPlatformSelectOpen = $state(false);
@@ -625,10 +658,71 @@
 		<table class="w-full table-auto border-collapse border-y-2 border-gray-500 bg-gray-800">
 			<thead>
 				<tr class="border-b-2 border-gray-500 text-left text-sm text-gray-400">
-					<th class="px-4 py-1">{m.player_id()}</th>
-					<th class="px-4 py-1">{m.slug()}</th>
-					<th class="px-4 py-1">{m.player_name()}</th>
-					<th class="px-4 py-1">{m.nationality()}</th>
+					<th class="px-4 py-1">
+						<button
+							class="flex items-center gap-1 text-left"
+							class:text-white={sortBy === 'id-asc' || sortBy === 'id-desc'}
+							onclick={() => (sortBy = sortBy === 'id-asc' ? 'id-desc' : 'id-asc')}
+						>
+							{m.player_id()}
+							{#if sortBy === 'id-asc'}
+								<TypcnArrowSortedUp class="inline-block" />
+							{:else if sortBy === 'id-desc'}
+								<TypcnArrowSortedDown class="inline-block" />
+							{:else}
+								<TypcnArrowUnsorted class="inline-block" />
+							{/if}
+						</button>
+					</th>
+					<th class="px-4 py-1">
+						<button
+							class="flex items-center gap-1 text-left"
+							class:text-white={sortBy === 'slug-asc' || sortBy === 'slug-desc'}
+							onclick={() => (sortBy = sortBy === 'slug-asc' ? 'slug-desc' : 'slug-asc')}
+						>
+							{m.slug()}
+							{#if sortBy === 'slug-asc'}
+								<TypcnArrowSortedUp class="inline-block" />
+							{:else if sortBy === 'slug-desc'}
+								<TypcnArrowSortedDown class="inline-block" />
+							{:else}
+								<TypcnArrowUnsorted class="inline-block" />
+							{/if}
+						</button>
+					</th>
+					<th class="px-4 py-1">
+						<button
+							class="flex items-center gap-1 text-left"
+							class:text-white={sortBy === 'name-asc' || sortBy === 'name-desc'}
+							onclick={() => (sortBy = sortBy === 'name-asc' ? 'name-desc' : 'name-asc')}
+						>
+							{m.player_name()}
+							{#if sortBy === 'name-asc'}
+								<TypcnArrowSortedUp class="inline-block" />
+							{:else if sortBy === 'name-desc'}
+								<TypcnArrowSortedDown class="inline-block" />
+							{:else}
+								<TypcnArrowUnsorted class="inline-block" />
+							{/if}
+						</button>
+					</th>
+					<th class="px-4 py-1">
+						<button
+							class="flex items-center gap-1 text-left"
+							class:text-white={sortBy === 'nationality-asc' || sortBy === 'nationality-desc'}
+							onclick={() =>
+								(sortBy = sortBy === 'nationality-asc' ? 'nationality-desc' : 'nationality-asc')}
+						>
+							{m.nationality()}
+							{#if sortBy === 'nationality-asc'}
+								<TypcnArrowSortedUp class="inline-block" />
+							{:else if sortBy === 'nationality-desc'}
+								<TypcnArrowSortedDown class="inline-block" />
+							{:else}
+								<TypcnArrowUnsorted class="inline-block" />
+							{/if}
+						</button>
+					</th>
 					<th class="px-4 py-1">{m.game_accounts()}</th>
 					<th class="px-4 py-1">{m.social_accounts()}</th>
 					<th class="px-4 py-1">{m.actions()}</th>
