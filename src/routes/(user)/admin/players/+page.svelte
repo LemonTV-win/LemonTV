@@ -848,6 +848,7 @@
 					</th>
 					<th class="px-4 py-1">{m.game_accounts()}</th>
 					<th class="px-4 py-1">{m.social_accounts()}</th>
+					<th class="px-4 py-1">{m.teams()}</th>
 					<th class="px-4 py-1">{m.actions()}</th>
 				</tr>
 			</thead>
@@ -892,6 +893,21 @@
 									socialAccounts={player.socialAccounts}
 									socialPlatforms={data.socialPlatforms}
 								/>
+							{:else}
+								-
+							{/if}
+						</td>
+						<td class="px-4 py-1 text-gray-300">
+							{#if data.playersTeams[player.id ?? '']?.length}
+								<ul class="list-inside list-disc">
+									{#each data.playersTeams[player.id ?? ''] as team}
+										<li>
+											<a href={`/teams/${team.name}`} class="text-yellow-500 hover:text-yellow-400">
+												{team.name}
+											</a>
+										</li>
+									{/each}
+								</ul>
 							{:else}
 								-
 							{/if}

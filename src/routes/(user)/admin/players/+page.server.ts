@@ -1,6 +1,12 @@
 import { fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { createPlayer, updatePlayer, getPlayers, deletePlayer } from '$lib/server/data/players';
+import {
+	createPlayer,
+	updatePlayer,
+	getPlayers,
+	deletePlayer,
+	getPlayersTeams
+} from '$lib/server/data/players';
 import type { Region } from '$lib/data/game';
 import type { Player } from '$lib/data/players';
 import { social_platform, player_social_account } from '$lib/server/db/schemas/game/social';
@@ -12,7 +18,8 @@ export const load: PageServerLoad = async () => {
 
 	return {
 		players,
-		socialPlatforms
+		socialPlatforms,
+		playersTeams: getPlayersTeams(players)
 	};
 };
 
