@@ -344,7 +344,9 @@
 					/>
 				</div>
 				<div>
-					<label class="block text-sm font-medium text-slate-300" for="playerName">Name</label>
+					<label class="block text-sm font-medium text-slate-300" for="playerName">
+						{m.player_name()}
+					</label>
 					<input
 						type="text"
 						id="playerName"
@@ -382,7 +384,8 @@
 					</select>
 				</div>
 				<div>
-					<label class="block text-sm font-medium text-slate-300" for="aliases">Aliases</label>
+					<label class="block text-sm font-medium text-slate-300" for="aliases">{m.aliases()}</label
+					>
 					<div class="mt-2 rounded-lg border border-slate-700 bg-slate-800 p-4">
 						{#each newPlayer.aliases || [] as alias, i}
 							<div
