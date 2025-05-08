@@ -15,7 +15,8 @@ const SOCIAL_PLATFORMS = [
 	{ id: 'twitter', name: 'Twitter', url_template: 'https://x.com/{accountId}' },
 	{ id: 'twitch', name: 'Twitch', url_template: 'https://twitch.tv/{accountId}' },
 	{ id: 'youtube', name: 'YouTube', url_template: 'https://youtube.com/{accountId}' },
-	{ id: 'bilibili', name: 'Bilibili', url_template: 'https://space.bilibili.com/{accountId}' }
+	{ id: 'bilibili', name: 'Bilibili', url_template: 'https://space.bilibili.com/{accountId}' },
+	{ id: 'instagram', name: 'Instagram', url_template: 'https://instagram.com/{accountId}' }
 ];
 
 export async function syncSocialPlatforms() {

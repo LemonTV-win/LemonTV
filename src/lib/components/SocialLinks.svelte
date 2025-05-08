@@ -3,6 +3,7 @@
 	import LogosTwitter from '~icons/devicon/twitter';
 	import LogosYoutube from '~icons/logos/youtube-icon';
 	import LogosBilibili from '~icons/ant-design/bilibili-outlined';
+	import LogosInstagram from '~icons/skill-icons/instagram';
 
 	let {
 		socialAccounts = [],
@@ -39,6 +40,8 @@
 							<LogosYoutube class={iconSize} />
 						{:else if platform.id === 'bilibili'}
 							<LogosBilibili class={iconSize} />
+						{:else if platform.id === 'instagram'}
+							<LogosInstagram class={iconSize} />
 						{:else}
 							<span class="text-sm">{platform.name}</span>
 						{/if}

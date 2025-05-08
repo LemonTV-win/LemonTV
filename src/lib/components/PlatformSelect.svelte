@@ -3,6 +3,7 @@
 	import LogosTwitter from '~icons/devicon/twitter';
 	import LogosYoutube from '~icons/logos/youtube-icon';
 	import LogosBilibili from '~icons/ant-design/bilibili-outlined';
+	import LogosInstagram from '~icons/skill-icons/instagram';
 	import { m } from '$lib/paraglide/messages';
 
 	let {
@@ -60,6 +61,8 @@
 					<LogosYoutube class="h-4 w-4 text-gray-400" />
 				{:else if value === 'bilibili'}
 					<LogosBilibili class="h-4 w-4 text-gray-400" />
+				{:else if value === 'instagram'}
+					<LogosInstagram class="h-4 w-4 text-gray-400" />
 				{/if}
 				{#each platforms as platform}
 					{#if platform.id === value}
@@ -108,6 +111,8 @@
 						<LogosYoutube class="h-4 w-4 text-gray-400" />
 					{:else if platform.id === 'bilibili'}
 						<LogosBilibili class="h-4 w-4 text-gray-400" />
+					{:else if platform.id === 'instagram'}
+						<LogosInstagram class="h-4 w-4 text-gray-400" />
 					{/if}
 					<span>{platform.name}</span>
 				</button>
