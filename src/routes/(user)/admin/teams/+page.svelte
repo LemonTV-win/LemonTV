@@ -38,6 +38,8 @@
 					team.name.toLowerCase().includes(searchLower) ||
 					team.id.toLowerCase().includes(searchLower) ||
 					team.region?.toLowerCase().includes(searchLower) ||
+					team.slug?.toLowerCase().includes(searchLower) ||
+					team.abbr?.toLowerCase().includes(searchLower) ||
 					data.teamAliases
 						.filter((ta: TeamAlias) => ta.teamId === team.id)
 						.some((ta: TeamAlias) => ta.alias.toLowerCase().includes(searchLower))
