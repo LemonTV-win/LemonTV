@@ -10,7 +10,12 @@ export const load: PageServerLoad = async () => {
 	const playersTeams = await getPlayersTeams();
 	return {
 		events: getEvents(), // TODO: limit = 5
-		teams: await getTeams(), // TODO: limit = 5
+		teams: (await getTeams())
+			.toSorted((a, b) => (b.wins ?? 0) - (a.wins ?? 0))
+			.map((team, index) => ({
+				...team,
+				rank: index + 1
+			})),
 		players: players
 			.map((player) => ({
 				...player,
@@ -20,6 +25,10 @@ export const load: PageServerLoad = async () => {
 				rating: calculatePlayerRating(player)
 			}))
 			.toSorted((a, b) => b.rating - a.rating)
+			.map((player, index) => ({
+				...player,
+				rank: index + 1
+			}))
 	};
 };
 

@@ -97,7 +97,17 @@
 							class="grid grid-cols-[1fr_auto] items-center gap-2 border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl transition-all duration-200 hover:bg-gray-700"
 							href={`/teams/${team.slug}`}
 						>
-							<span class="text-white">
+							<span class="flex items-center gap-1 text-white">
+								<span
+									class={[
+										'flex h-6 w-6 items-center justify-center bg-gray-700 text-sm text-gray-400',
+										team.rank === 1 && 'bg-yellow-500 text-white',
+										team.rank === 2 && 'bg-neutral-500 text-white',
+										team.rank === 3 && 'bg-red-500 text-white'
+									]}
+								>
+									{team.rank}</span
+								>
 								{team.name}
 								<span class="text-xs text-gray-400" title={m.wins()}>{team.region}</span>
 							</span>
