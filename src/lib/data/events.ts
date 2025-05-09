@@ -1926,8 +1926,8 @@ export const events: Event[] = [
 		participants: [
 			{
 				team: teams['TG'],
-				main: ['frostyZK', 'ttvBlexiss', 'grustleking', 'gengu', 'Ascinei'],
-				reserve: [],
+				main: ['gengu', 'Ascinei', 'grustleking', 'Blexiss', 'frostyZK'],
+				reserve: ['uno'],
 				coach: []
 			},
 			{
@@ -1967,9 +1967,33 @@ export const events: Event[] = [
 				coach: []
 			},
 			{
+				team: teams['HC'],
+				main: ['Krihville', 'трагедия', 'm1sa', 'canparty', 'Stardx'],
+				reserve: ['NikZON', 'GigglingWill'],
+				coach: []
+			},
+			{
+				team: teams['GS'],
+				main: ['kane', 'Unknown0Neko', 'Squall', 'WEGOINGMENTAL', 'polishcat'],
+				reserve: ['S1nine', 'Majime'],
+				coach: []
+			},
+			{
+				team: teams['DRI'],
+				main: ['Poison', 'Vampire', 'Creepz', 'Moozor', 'GWZH'],
+				reserve: [],
+				coach: []
+			},
+			{
 				team: teams['XKAM'],
 				main: ['진주', '百荷', 'AmyamyaThe女神', 'Accellerator', 'RuleR'],
 				reserve: ['爱莉希雅丨侵蚀'],
+				coach: []
+			},
+			{
+				team: teams['LDP'],
+				main: ['FOX1Yukino', 'HonkWith4ks', 'weeping', 'Asscinei', 'numoneZKFan'],
+				reserve: [],
 				coach: []
 			},
 			{
