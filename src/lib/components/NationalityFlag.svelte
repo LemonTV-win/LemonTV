@@ -6,11 +6,11 @@
 	let {
 		nationality,
 		showLabel = false,
-		className = ''
+		class: className = ''
 	} = $props<{
 		nationality?: string;
 		showLabel?: boolean;
-		className?: string;
+		class?: string;
 	}>();
 </script>
 
