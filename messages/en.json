@@ -289,5 +289,10 @@
 	"error_generic_title": "Something Went Wrong",
 	"error_generic_message": "Looks like we hit a glitch in the matrix! Our team of digital ninjas is already on the case.",
 	"error_return_home": "Return to Base",
-	"error_go_back": "Go Back"
+	"error_go_back": "Go Back",
+	"welcome_to_lemon_tv": "Welcome to LemonTV",
+	"hero_description": "Watch the latest matches and highlights from the world of Superstrings.",
+	"watch_live": "Watch Live",
+	"sign_up": "Sign Up",
+	"sign_up_description": "Create an account to join the community!"
 }

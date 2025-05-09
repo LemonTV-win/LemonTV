@@ -289,5 +289,10 @@
 	"error_generic_title": "Algo salió mal",
 	"error_generic_message": "¡Parece que encontramos un error en la matrix! Nuestro equipo de ninjas digitales ya está en el caso.",
 	"error_return_home": "Volver a Base",
-	"error_go_back": "Volver atrás"
+	"error_go_back": "Volver atrás",
+	"welcome_to_lemon_tv": "Bienvenido a LemonTV",
+	"hero_description": "Mira los últimos partidos y resúmenes de los eventos de Superstrings.",
+	"watch_live": "Ver en vivo",
+	"sign_up": "Registrarse",
+	"sign_up_description": "Crea una cuenta para unirte a la comunidad!"
 }

@@ -289,5 +289,10 @@
 	"error_generic_title": "Algo deu errado",
 	"error_generic_message": "Parece que encontramos um bug na matrix! Nossa equipe de ninjas digitais já está trabalhando nisso.",
 	"error_return_home": "Voltar para Base",
-	"error_go_back": "Voltar"
+	"error_go_back": "Voltar",
+	"welcome_to_lemon_tv": "Bem-vindo ao LemonTV",
+	"hero_description": "Assista aos últimos jogos e highlights dos eventos de Superstrings.",
+	"watch_live": "Assistir ao vivo",
+	"sign_up": "Inscreva-se",
+	"sign_up_description": "Crie uma conta para se conectar com a comunidade!"
 }

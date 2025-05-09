@@ -289,5 +289,10 @@
 	"error_generic_title": "出错了",
 	"error_generic_message": "看来我们遇到了矩阵中的故障！我们的数字忍者团队已经在处理了。",
 	"error_return_home": "返回基地",
-	"error_go_back": "返回"
+	"error_go_back": "返回",
+	"welcome_to_lemon_tv": "欢迎来到 LemonTV",
+	"hero_description": "查看 Superstrings 的最新比赛和精彩片段。",
+	"watch_live": "观看直播",
+	"sign_up": "注册",
+	"sign_up_description": "建立帐户以加入社群！"
 }

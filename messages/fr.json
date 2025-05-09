@@ -289,5 +289,10 @@
 	"error_generic_title": "Une erreur est survenue",
 	"error_generic_message": "Il semble que nous ayons trouvé un bug dans la matrice ! Notre équipe de ninjas numériques est déjà sur le coup.",
 	"error_return_home": "Retour à la Base",
-	"error_go_back": "Retour"
+	"error_go_back": "Retour",
+	"welcome_to_lemon_tv": "Bienvenue à LemonTV",
+	"hero_description": "Regarde les derniers matchs et les highlights des événements de Superstrings.",
+	"watch_live": "Regarder en direct",
+	"sign_up": "S'inscrire",
+	"sign_up_description": "Créez un compte pour rejoindre la communauté !"
 }

@@ -289,5 +289,10 @@
 	"error_generic_title": "문제가 발생했습니다",
 	"error_generic_message": "매트릭스에 버그가 발생한 것 같습니다! 디지털 닌자 팀이 이미 조사를 시작했습니다.",
 	"error_return_home": "기지로 돌아가기",
-	"error_go_back": "뒤로 가기"
+	"error_go_back": "뒤로 가기",
+	"welcome_to_lemon_tv": "레몬 TV에 오신 것을 환영합니다",
+	"hero_description": "슈퍼스트링의 최신 경기와 하이라이트를 확인하세요.",
+	"watch_live": "라이브 보기",
+	"sign_up": "가입하기",
+	"sign_up_description": "커뮤니티에 참여하려면 계정을 만들어야 합니다!"
 }

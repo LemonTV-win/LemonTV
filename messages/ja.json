@@ -289,5 +289,10 @@
 	"error_generic_title": "エラーが発生しました",
 	"error_generic_message": "マトリックスにバグが発生したようです！デジタル忍者チームがすでに調査を開始しています。",
 	"error_return_home": "ホームに戻る",
-	"error_go_back": "戻る"
+	"error_go_back": "戻る",
+	"welcome_to_lemon_tv": "LemonTVへようこそ",
+	"hero_description": "Superstringsの最新の試合とハイライトを見てください。",
+	"watch_live": "ライブを見る",
+	"sign_up": "登録する",
+	"sign_up_description": "コミュニティに参加するにはアカウントを作成してください！"
 }

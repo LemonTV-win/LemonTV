@@ -289,5 +289,10 @@
 	"error_generic_title": "Đã xảy ra lỗi",
 	"error_generic_message": "Có vẻ như chúng ta đã tìm thấy một lỗi trong ma trận! Đội ninja kỹ thuật số của chúng tôi đã bắt đầu xử lý.",
 	"error_return_home": "Trở về Căn cứ",
-	"error_go_back": "Quay lại"
+	"error_go_back": "Quay lại",
+	"welcome_to_lemon_tv": "Chào mừng đến với LemonTV",
+	"hero_description": "Xem các trận đấu và highlights sự kiện Superstrings gần đây nhất.",
+	"watch_live": "Xem trực tiếp",
+	"sign_up": "Đăng ký",
+	"sign_up_description": "Tạo tài khoản để tham gia cộng đồng!"
 }

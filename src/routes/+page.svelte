@@ -20,6 +20,35 @@
 	let finishedEvents = $derived(sortedEvents.filter((event) => event.status === 'finished'));
 </script>
 
+{#if !data.user}
+	<section class="relative flex min-h-[60vh] items-center justify-center px-4 text-center">
+		<div class="absolute inset-0 z-0 bg-gradient-to-b from-black/80 to-transparent"></div>
+		<div class="relative z-10 max-w-3xl">
+			<h1 class="mb-4 text-4xl font-bold text-white md:text-6xl">
+				{m.welcome_to_lemon_tv()}
+			</h1>
+			<p class="mb-8 text-xl text-gray-200 md:text-2xl">
+				{m.hero_description()}
+			</p>
+			<div class="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+				<a
+					href="/events"
+					class="inline-block rounded-lg bg-yellow-500 px-8 py-3 text-lg font-bold text-black transition-all duration-200 hover:bg-yellow-600"
+				>
+					{m.watch_live()}
+				</a>
+				<a
+					href="/login?tab=register"
+					class="inline-block rounded-lg border-2 border-white px-8 py-3 text-lg font-bold text-white transition-all duration-200 hover:bg-white/10"
+					title={m.sign_up_description()}
+				>
+					{m.sign_up()}
+				</a>
+			</div>
+		</div>
+	</section>
+{/if}
+
 <main class="mx-auto grid max-w-screen-lg gap-6 p-4 sm:gap-10 md:grid-cols-[1fr_auto]">
 	<div>
 		<h2 class="my-5 text-2xl font-bold">

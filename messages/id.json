@@ -289,5 +289,10 @@
 	"error_generic_title": "Terjadi Kesalahan",
 	"error_generic_message": "Sepertinya kita menemukan bug dalam matriks! Tim ninja digital kami sudah mulai menanganinya.",
 	"error_return_home": "Kembali ke Pangkalan",
-	"error_go_back": "Kembali"
+	"error_go_back": "Kembali",
+	"welcome_to_lemon_tv": "Selamat Datang di LemonTV",
+	"hero_description": "Tonton pertandingan dan highlight acara Superstring terbaru.",
+	"watch_live": "Tonton Langsung",
+	"sign_up": "Daftar",
+	"sign_up_description": "Buat akun untuk bergabung dengan komunitas!"
 }

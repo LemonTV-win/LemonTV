@@ -287,5 +287,12 @@
 	"error_500_title": "伺服器錯誤",
 	"error_500_message": "我們的伺服器今天心情不太好！它們正在休息充電呢。",
 	"error_generic_title": "發生錯誤",
-	"error_generic_message": "看起來我們在矩陣中遇到了故障！我們的數位忍者團隊已經開始處理了。"
+	"error_generic_message": "看起來我們在矩陣中遇到了故障！我們的數位忍者團隊已經開始處理了。",
+	"error_return_home": "返回基地",
+	"error_go_back": "返回",
+	"welcome_to_lemon_tv": "歡迎來到 LemonTV",
+	"hero_description": "查看 Superstrings 的最新比賽和精彩片段。",
+	"watch_live": "觀看直播",
+	"sign_up": "註冊",
+	"sign_up_description": "建立帳戶以加入社群！"
 }
