@@ -3,12 +3,19 @@ import type { GameMap } from './game';
 import type { Team } from './teams';
 
 export interface EventParticipant {
-	team: Team;
+	team: string;
 	roaster?: string[];
 	substitutes?: string[];
 }
 
 export interface Participant {
+	team: string;
+	score: number;
+	roaster?: string[];
+	substitutes?: string[];
+}
+
+export interface CompiledParticipant {
 	team: Team;
 	score: number;
 	roaster?: string[];
@@ -28,6 +35,10 @@ export interface Match {
 	vod?: string; // url to the vod
 }
 
+export interface CompiledMatch extends Omit<Match, 'teams'> {
+	teams: [CompiledParticipant, CompiledParticipant];
+}
+
 export interface PlayerScore {
 	player: string;
 	characters: [firstHalf: Character | null, secondHalf: Character | null];
@@ -44,7 +55,7 @@ export interface Game {
 	id: number;
 	map: GameMap;
 	duration: number;
-	teams: [A: Team, B: Team];
+	teams: [A: string, B: string];
 	result: [A: number, B: number];
 	scores: [
 		A: [PlayerScore, PlayerScore, PlayerScore, PlayerScore, PlayerScore],

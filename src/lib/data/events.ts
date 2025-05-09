@@ -1,4 +1,3 @@
-import { teams, type Team } from '$lib/data/teams';
 import type { Match } from '$lib/data/matches';
 import type { LocalizedString } from '$lib/data/string';
 import type { Region } from './game';
@@ -74,7 +73,7 @@ export interface Event {
 	date: string;
 	websites?: string[];
 	participants: {
-		team: Team;
+		team: string; // team abbr
 		main: string[];
 		reserve: string[];
 		coach: string[];
@@ -85,7 +84,7 @@ export interface Event {
 	}[];
 	results?: {
 		rank: number;
-		team: Team;
+		team: string;
 		prizes: EventPrize[];
 	}[];
 	highlights?: string[];
@@ -147,11 +146,11 @@ export const events: Event[] = [
 						id: 1001,
 						teams: [
 							{
-								team: teams['GUGF'],
+								team: 'GUGF',
 								score: 2
 							},
 							{
-								team: teams['GA'],
+								team: 'GA',
 								score: 0
 							}
 						],
@@ -166,7 +165,7 @@ export const events: Event[] = [
 							{
 								id: 1,
 								map: 'cauchy_district',
-								teams: [teams['GUGF'], teams['GA']],
+								teams: ['GUGF', 'GA'],
 								duration: 1830,
 								result: [9, 5],
 								winner: 1,
@@ -290,7 +289,7 @@ export const events: Event[] = [
 							{
 								id: 2,
 								map: 'area_88',
-								teams: [teams['GUGF'], teams['GA']],
+								teams: ['GUGF', 'GA'],
 								duration: 1830,
 								result: [9, 4],
 								winner: 1,
@@ -419,11 +418,11 @@ export const events: Event[] = [
 						id: 1,
 						teams: [
 							{
-								team: teams['TA'],
+								team: 'TA',
 								score: 0
 							},
 							{
-								team: teams['DA'],
+								team: 'DA',
 								score: 999
 							}
 						],
@@ -436,11 +435,11 @@ export const events: Event[] = [
 						id: 2,
 						teams: [
 							{
-								team: teams['TG'],
+								team: 'TG',
 								score: 999
 							},
 							{
-								team: teams['GA'],
+								team: 'GA',
 								score: 0
 							}
 						],
@@ -453,11 +452,11 @@ export const events: Event[] = [
 						id: 3,
 						teams: [
 							{
-								team: teams['BP'],
+								team: 'BP',
 								score: 0
 							},
 							{
-								team: teams['DRI'],
+								team: 'DRI',
 								score: 999
 							}
 						],
@@ -470,11 +469,11 @@ export const events: Event[] = [
 						id: 4,
 						teams: [
 							{
-								team: teams['GUGF'],
+								team: 'GUGF',
 								score: 999
 							},
 							{
-								team: teams['KRC'],
+								team: 'KRC',
 								score: 0
 							}
 						],
@@ -487,11 +486,11 @@ export const events: Event[] = [
 						id: 5,
 						teams: [
 							{
-								team: teams['DA'],
+								team: 'DA',
 								score: 0
 							},
 							{
-								team: teams['TG'],
+								team: 'TG',
 								score: 999
 							}
 						],
@@ -504,11 +503,11 @@ export const events: Event[] = [
 						id: 6,
 						teams: [
 							{
-								team: teams['DRI'],
+								team: 'DRI',
 								score: 0
 							},
 							{
-								team: teams['GUGF'],
+								team: 'GUGF',
 								score: 999
 							}
 						],
@@ -521,11 +520,11 @@ export const events: Event[] = [
 						id: 7,
 						teams: [
 							{
-								team: teams['TA'],
+								team: 'TA',
 								score: 0
 							},
 							{
-								team: teams['GA'],
+								team: 'GA',
 								score: 999
 							}
 						],
@@ -538,11 +537,11 @@ export const events: Event[] = [
 						id: 8,
 						teams: [
 							{
-								team: teams['BP'],
+								team: 'BP',
 								score: 0
 							},
 							{
-								team: teams['KRC'],
+								team: 'KRC',
 								score: 999
 							}
 						],
@@ -555,11 +554,11 @@ export const events: Event[] = [
 						id: 9,
 						teams: [
 							{
-								team: teams['TG'],
+								team: 'TG',
 								score: 999
 							},
 							{
-								team: teams['GUGF'],
+								team: 'GUGF',
 								score: 0
 							}
 						],
@@ -575,11 +574,11 @@ export const events: Event[] = [
 						id: 11,
 						teams: [
 							{
-								team: teams['DA'],
+								team: 'DA',
 								score: 0
 							},
 							{
-								team: teams['KRC'],
+								team: 'KRC',
 								score: 999
 							}
 						],
@@ -592,11 +591,11 @@ export const events: Event[] = [
 						id: 12,
 						teams: [
 							{
-								team: teams['DRI'],
+								team: 'DRI',
 								score: 2
 							},
 							{
-								team: teams['KRC'],
+								team: 'KRC',
 								score: 0
 							}
 						],
@@ -611,7 +610,7 @@ export const events: Event[] = [
 							{
 								id: 1,
 								map: 'space_lab',
-								teams: [teams['DRI'], teams['KRC']],
+								teams: ['DRI', 'KRC'],
 								duration: 1353,
 								result: [3, 9],
 								winner: 2,
@@ -735,7 +734,7 @@ export const events: Event[] = [
 							{
 								id: 4,
 								map: 'cosmite',
-								teams: [teams['DRI'], teams['KRC']],
+								teams: ['DRI', 'KRC'],
 								duration: 1604,
 								result: [5, 9],
 								winner: 2,
@@ -864,11 +863,11 @@ export const events: Event[] = [
 						id: 13,
 						teams: [
 							{
-								team: teams['GUGF'],
+								team: 'GUGF',
 								score: 2
 							},
 							{
-								team: teams['KRC'],
+								team: 'KRC',
 								score: 0
 							}
 						],
@@ -883,7 +882,7 @@ export const events: Event[] = [
 							{
 								id: 1,
 								map: 'space_lab',
-								teams: [teams['GUGF'], teams['KRC']],
+								teams: ['GUGF', 'KRC'],
 								duration: 1518,
 								result: [9, 6],
 								winner: 1,
@@ -1007,7 +1006,7 @@ export const events: Event[] = [
 							{
 								id: 2,
 								map: 'windy_town',
-								teams: [teams['GUGF'], teams['KRC']],
+								teams: ['GUGF', 'KRC'],
 								duration: 1396,
 								result: [9, 5],
 								winner: 1,
@@ -1138,12 +1137,12 @@ export const events: Event[] = [
 						id: 15,
 						teams: [
 							{
-								team: teams['TG'],
+								team: 'TG',
 								score: 2,
 								roaster: ['Ascinei', 'Ascinei', 'Ascinei', 'Ascinei', 'Ascinei']
 							},
 							{
-								team: teams['GUGF'],
+								team: 'GUGF',
 								score: 0,
 								roaster: ['瑾玥', '逍遥sama', '羽生翼', 'ぺこどん', 'BOXCAT']
 							}
@@ -1158,7 +1157,7 @@ export const events: Event[] = [
 							{
 								id: 1,
 								map: 'base_404',
-								teams: [teams['TG'], teams['GUGF']],
+								teams: ['TG', 'GUGF'],
 								duration: 1830,
 								result: [11, 9],
 								winner: 1,
@@ -1283,7 +1282,7 @@ export const events: Event[] = [
 							{
 								id: 2,
 								map: 'space_lab',
-								teams: [teams['TG'], teams['GUGF']],
+								teams: ['TG', 'GUGF'],
 								duration: 1830,
 								result: [9, 7],
 								scores: [
@@ -1554,37 +1553,37 @@ export const events: Event[] = [
 		participants: [
 			// TODO: Add roaster at the time
 			{
-				team: teams['TG'],
+				team: 'TG',
 				main: ['frostyZK', 'grustleking', 'gengu', 'Ascinei', 'Blexiss'],
 				reserve: ['uno'],
 				coach: []
 			},
 			{
-				team: teams['GUGF'],
+				team: 'GUGF',
 				main: ['JY10137', '逍遥sama', '羽生翼', 'MIZU', 'BOXCAT'],
 				reserve: ['Chtho1ly', 'ChengCheng'],
 				coach: []
 			},
 			{
-				team: teams['KRC'],
+				team: 'KRC',
 				main: ['xohfiy', 'Kariyu', 'FOX1Yukino', 'HonkWith4ks', 'numOneZKFan'],
 				reserve: [],
 				coach: []
 			},
 			{
-				team: teams['DRI'],
+				team: 'DRI',
 				main: ['Creepz', 'Poison', 'Moozor', 'Vampire', 'GWZH'],
 				reserve: [],
 				coach: []
 			},
 			{
-				team: teams['GA'],
+				team: 'GA',
 				main: ['cherry', 'iYu', 'Actyuki', 'Saya', 'Jav'],
 				reserve: ['SilliestOfThreat', 'Actyuki丶Student'],
 				coach: []
 			},
 			{
-				team: teams['DA'],
+				team: 'DA',
 				main: ['Mansek', 'Scylla', 'sinna', 'ARGHGHGHGHGHHGHG', 'will'],
 				reserve: ['Voxy'],
 				coach: []
@@ -1623,8 +1622,8 @@ export const events: Event[] = [
 					{
 						id: 220001,
 						teams: [
-							{ team: teams['BP'], score: 2 },
-							{ team: teams['SKS'], score: 0 }
+							{ team: 'BP', score: 2 },
+							{ team: 'SKS', score: 0 }
 						],
 						battleOf: 'BO3',
 						maps: []
@@ -1632,8 +1631,8 @@ export const events: Event[] = [
 					{
 						id: 220002,
 						teams: [
-							{ team: teams['SDF'], score: 2 },
-							{ team: teams['SI'], score: 0 }
+							{ team: 'SDF', score: 2 },
+							{ team: 'SI', score: 0 }
 						],
 						battleOf: 'BO3',
 						maps: []
@@ -1641,8 +1640,8 @@ export const events: Event[] = [
 					{
 						id: 220003,
 						teams: [
-							{ team: teams['BP'], score: 1 },
-							{ team: teams['SDF'], score: 2 }
+							{ team: 'BP', score: 1 },
+							{ team: 'SDF', score: 2 }
 						],
 						battleOf: 'BO3',
 						maps: []
@@ -1650,8 +1649,8 @@ export const events: Event[] = [
 					{
 						id: 220004,
 						teams: [
-							{ team: teams['SKS'], score: 2 },
-							{ team: teams['SI'], score: 0 }
+							{ team: 'SKS', score: 2 },
+							{ team: 'SI', score: 0 }
 						],
 						battleOf: 'BO3',
 						maps: []
@@ -1718,97 +1717,97 @@ export const events: Event[] = [
 		],
 		participants: [
 			{
-				team: teams['CRCC'],
+				team: 'CRCC',
 				main: ['Lph4m4218', 'FrostyNade', 'Fis', 'HoangTuHaDong', 'Dinaaa'],
 				reserve: ['nekocyan', 'Khanh3993'],
 				coach: []
 			},
 			{
-				team: teams['AFT'],
+				team: 'AFT',
 				main: ['京こ', 'xelcee', 'Zacro', 'kuronory', 'rt0803'],
 				reserve: ['おっか', 'ななせ'],
 				coach: []
 			},
 			{
-				team: teams['GCSC'],
+				team: 'GCSC',
 				main: ['Fumin0', 'xXBunDauSlayerXx', 'bululelysia', 'KNDxFlamesicon2', 'Put'],
 				reserve: ['KanamiMyDearest', 'hyacinexcon'],
 				coach: []
 			},
 			{
-				team: teams['SI'],
+				team: 'SI',
 				main: ['ToiYeuRem', 'Unmei', 'Miaa', 'Korofunk', 'Helixu'],
 				reserve: ['Davy', 'HVO'],
 				coach: []
 			},
 			{
-				team: teams['BP'],
+				team: 'BP',
 				main: ['EFFECT', '마들렌', 'Y0ungEgg', 'P1ckUp', 'aewan'],
 				reserve: ['Shingwan', 'clown'],
 				coach: []
 			},
 			{
-				team: teams['SKS'],
+				team: 'SKS',
 				main: ['時雨綺羅', 'myan777みゃん', 'さめじまさめみ', 'Yueee', 'TpT'],
 				reserve: [],
 				coach: []
 			},
 			{
-				team: teams['KGH'],
+				team: 'KGH',
 				main: ['Saya', 'iYu', 'SilliestOfThreat', 'MemeVPND', 'ChildHelper'],
 				reserve: [],
 				coach: []
 			},
 			{
-				team: teams['CW'],
+				team: 'CW',
 				main: ['Katarieeku', 'belongtoyou', 'YunaLiv', 'Karuto丶Beloved', 'Rinko'],
 				reserve: ['Actyuki丶Student', 'fumiko好き'],
 				coach: []
 			},
 			{
-				team: teams['OTG'],
+				team: 'OTG',
 				main: ['0nesyo', 'begonia', 'dore52x', 'visucuit125', 'yusia'],
 				reserve: ['iLiss', 'いよたけ'],
 				coach: []
 			},
 			{
-				team: teams['NBT'],
+				team: 'NBT',
 				main: ['FPThahyun', '시벌', '레고', '살찐족제비', '만두도둑'],
 				reserve: ['리로', '공백'],
 				coach: []
 			},
 			{
-				team: teams['KD'],
+				team: 'KD',
 				main: ['RiN林', 'Papyrus', 'Koalski', 'itsChun', 'Airii'],
 				reserve: ['Naphta', 'KuroTama39'],
 				coach: []
 			},
 			{
-				team: teams['UKZ'],
+				team: 'UKZ',
 				main: ['Ken256', '暗闇の紅茶', 'maimainoob', 'kobo1010', 'Viatorice'],
 				reserve: ['カミリウイ', 'Hiyokotte'],
 				coach: []
 			},
 			{
-				team: teams['SSE'],
+				team: 'SSE',
 				main: ['Hinako', 'Su4y', 'はーいあなた', 'RoiPaetSip', 'Artツ'],
 				reserve: ['Hik', 'EmperorHikJinwoo'],
 				coach: []
 			},
 			{
-				team: teams['KSQ'],
+				team: 'KSQ',
 				main: ['칠흑', 'Mejiro Ryan', '한월2', 'PGtexas', 'AKUKU'],
 				reserve: [],
 				coach: []
 			},
 			{
-				team: teams['KNO'],
+				team: 'KNO',
 				main: ['swaegaepinoe', 'PrincyJK', 'Remiami', 'DinoSaurKing88', 'Titanu5'],
 				reserve: ['GreedyLuminous', 'AerixD'],
 				coach: []
 			},
 			{
-				team: teams['SDF'],
+				team: 'SDF',
 				main: ['月神', '世間天使雨宮優子', 'twitchWenli', 'ChengCheng', '陌悠理'],
 				reserve: ['bili会求风的鱼', 'Asuaka'],
 				coach: []
@@ -1817,7 +1816,7 @@ export const events: Event[] = [
 		results: [
 			{
 				rank: 7,
-				team: teams['KSQ'],
+				team: 'KSQ',
 				prizes: [
 					{
 						amount: 8000,
@@ -1827,7 +1826,7 @@ export const events: Event[] = [
 			},
 			{
 				rank: 7,
-				team: teams['CRCC'],
+				team: 'CRCC',
 				prizes: [
 					{
 						amount: 8000,
@@ -1837,7 +1836,7 @@ export const events: Event[] = [
 			},
 			{
 				rank: 6,
-				team: teams['AFT'],
+				team: 'AFT',
 				prizes: [
 					{
 						amount: 8000,
@@ -1847,7 +1846,7 @@ export const events: Event[] = [
 			},
 			{
 				rank: 5,
-				team: teams['KGH'],
+				team: 'KGH',
 				prizes: [
 					{
 						amount: 8000,
@@ -1857,7 +1856,7 @@ export const events: Event[] = [
 			},
 			{
 				rank: 4,
-				team: teams['SI'],
+				team: 'SI',
 				prizes: [
 					{
 						amount: 16000,
@@ -1867,7 +1866,7 @@ export const events: Event[] = [
 			},
 			{
 				rank: 3,
-				team: teams['SKS'],
+				team: 'SKS',
 				prizes: [
 					{
 						amount: 25000,
@@ -1877,7 +1876,7 @@ export const events: Event[] = [
 			},
 			{
 				rank: 2,
-				team: teams['BP'],
+				team: 'BP',
 				prizes: [
 					{
 						amount: 35000,
@@ -1887,7 +1886,7 @@ export const events: Event[] = [
 			},
 			{
 				rank: 1,
-				team: teams['SDF'],
+				team: 'SDF',
 				prizes: [
 					{
 						amount: 45000,
@@ -1925,85 +1924,85 @@ export const events: Event[] = [
 		date: '2025-02-24',
 		participants: [
 			{
-				team: teams['TG'],
+				team: 'TG',
 				main: ['gengu', 'Ascinei', 'grustleking', 'Blexiss', 'frostyZK'],
 				reserve: ['uno'],
 				coach: []
 			},
 			{
-				team: teams['WK'],
+				team: 'WK',
 				main: ['Jstn', 'Xaly', 'extraya', 'GloriousNico', 'DEMXN'],
 				reserve: ['Juzify', 'Vora'],
 				coach: []
 			},
 			{
-				team: teams['ML'],
+				team: 'ML',
 				main: ['akwa', 'BriBri', 'nine', 'HiroRune', 'Kito'],
 				reserve: ['jayeezy'],
 				coach: []
 			},
 			{
-				team: teams['OC'],
+				team: 'OC',
 				main: ['Skyerzz', 'whoisLexu', 'AjDemon', 'MEGATRONOFDEATH', 'Fjin'],
 				reserve: ['Stykades', 'zcz'],
 				coach: []
 			},
 			{
-				team: teams['DA'],
+				team: 'DA',
 				main: ['Mansek', 'Scylla', 'sinna', 'ARGHGHGHGHGHHGHG', 'will'],
 				reserve: ['Voxy'],
 				coach: []
 			},
 			{
-				team: teams['YU'],
+				team: 'YU',
 				main: ['aKura', 'Flausch', '00YUE00', 'GrizzlyGripper28', 'NekoNoTsuki'],
 				reserve: ['schwertfish', 'KatzenMilch'],
 				coach: []
 			},
 			{
-				team: teams['YG'],
+				team: 'YG',
 				main: ['nxreq', 'pookie', 'ze', 'KanamiDoggye', 'audience'],
 				reserve: ['MaddeFeetSniffer', 'SophieRain'],
 				coach: []
 			},
 			{
-				team: teams['HC'],
+				team: 'HC',
 				main: ['Krihville', 'трагедия', 'm1sa', 'canparty', 'Stardx'],
 				reserve: ['NikZON', 'GigglingWill'],
 				coach: []
 			},
 			{
-				team: teams['GS'],
+				team: 'GS',
 				main: ['kane', 'Unknown0Neko', 'Squall', 'WEGOINGMENTAL', 'polishcat'],
 				reserve: ['S1nine', 'Majime'],
 				coach: []
 			},
 			{
-				team: teams['DRI'],
+				team: 'DRI',
 				main: ['Poison', 'Vampire', 'Creepz', 'Moozor', 'GWZH'],
 				reserve: [],
 				coach: []
 			},
 			{
-				team: teams['XKAM'],
+				team: 'XKAM',
 				main: ['진주', '百荷', 'AmyamyaThe女神', 'Accellerator', 'RuleR'],
 				reserve: ['爱莉希雅丨侵蚀'],
 				coach: []
 			},
 			{
-				team: teams['LDP'],
+				team: 'LDP',
 				main: ['FOX1Yukino', 'HonkWith4ks', 'weeping', 'Asscinei', 'numoneZKFan'],
 				reserve: [],
 				coach: []
 			},
 			{
-				team: teams['MA'],
+				team: 'MA',
 				main: ['Ely', 'shadow', 'lachevre', 'Revali', 'BurningStar'],
 				reserve: ['PHRESHBOYSWAG'],
 				coach: []
 			},
 			{
-				team: teams['SF'],
+				team: 'SF',
 				main: ['GhostElectricity', 'Ria', 'FocalorsinBlue', 'JustZero', 'messup'],
 				reserve: ['supercrownnegev', 'Soulen'],
 				coach: []
@@ -2027,8 +2026,8 @@ export const events: Event[] = [
 					{
 						id: 10001,
 						teams: [
-							{ team: teams['TG'], score: 2 },
-							{ team: teams['MA'], score: 0 }
+							{ team: 'TG', score: 2 },
+							{ team: 'MA', score: 0 }
 						],
 						battleOf: 'BO3',
 						maps: []
@@ -2036,8 +2035,8 @@ export const events: Event[] = [
 					{
 						id: 10002,
 						teams: [
-							{ team: teams['HC'], score: 1 },
-							{ team: teams['DRI'], score: 2 }
+							{ team: 'HC', score: 1 },
+							{ team: 'DRI', score: 2 }
 						],
 						battleOf: 'BO3',
 						maps: []
@@ -2045,8 +2044,8 @@ export const events: Event[] = [
 					{
 						id: 10003,
 						teams: [
-							{ team: teams['ML'], score: 2 },
-							{ team: teams['OC'], score: 1 }
+							{ team: 'ML', score: 2 },
+							{ team: 'OC', score: 1 }
 						],
 						battleOf: 'BO3',
 						maps: []
@@ -2054,8 +2053,8 @@ export const events: Event[] = [
 					{
 						id: 10004,
 						teams: [
-							{ team: teams['XKAM'], score: 0 },
-							{ team: teams['DA'], score: 2 }
+							{ team: 'XKAM', score: 0 },
+							{ team: 'DA', score: 2 }
 						],
 						battleOf: 'BO3',
 						maps: []
@@ -2063,8 +2062,8 @@ export const events: Event[] = [
 					{
 						id: 10005,
 						teams: [
-							{ team: teams['TG'], score: 2 },
-							{ team: teams['DRI'], score: 0 }
+							{ team: 'TG', score: 2 },
+							{ team: 'DRI', score: 0 }
 						],
 						battleOf: 'BO3',
 						maps: [
@@ -2080,7 +2079,7 @@ export const events: Event[] = [
 								id: 1,
 								map: 'windy_town',
 								duration: 16 * 60 + 32,
-								teams: [teams['TG'], teams['DRI']],
+								teams: ['TG', 'DRI'],
 								result: [9, 0],
 								winner: 1,
 								scores: [
@@ -2204,7 +2203,7 @@ export const events: Event[] = [
 								id: 2,
 								map: 'space_lab',
 								duration: 16 * 60 + 31,
-								teams: [teams['TG'], teams['DRI']],
+								teams: ['TG', 'DRI'],
 								result: [9, 1],
 								winner: 2,
 								scores: [
@@ -2329,8 +2328,8 @@ export const events: Event[] = [
 					{
 						id: 10006,
 						teams: [
-							{ team: teams['ML'], score: 2 },
-							{ team: teams['DA'], score: 0 }
+							{ team: 'ML', score: 2 },
+							{ team: 'DA', score: 0 }
 						],
 						battleOf: 'BO3',
 						maps: [
@@ -2347,7 +2346,7 @@ export const events: Event[] = [
 								map: 'cauchy_district',
 								duration: 25 * 60 + 17,
 								result: [9, 7],
-								teams: [teams['ML'], teams['DA']],
+								teams: ['ML', 'DA'],
 								winner: 1,
 								scores: [
 									[
@@ -2470,7 +2469,7 @@ export const events: Event[] = [
 								id: 2,
 								map: 'base_404',
 								duration: 28 * 60 + 43,
-								teams: [teams['ML'], teams['DA']],
+								teams: ['ML', 'DA'],
 								result: [9, 7],
 								winner: 1,
 								scores: [
@@ -2595,8 +2594,8 @@ export const events: Event[] = [
 					{
 						id: 10007,
 						teams: [
-							{ team: teams['TG'], score: 2 },
-							{ team: teams['ML'], score: 0 }
+							{ team: 'TG', score: 2 },
+							{ team: 'ML', score: 0 }
 						],
 						battleOf: 'BO3',
 						maps: [
@@ -2613,7 +2612,7 @@ export const events: Event[] = [
 								id: 1,
 								map: 'space_lab',
 								duration: 26 * 60 + 46,
-								teams: [teams['TG'], teams['ML']],
+								teams: ['TG', 'ML'],
 								result: [9, 4],
 								winner: 1,
 								scores: [
@@ -2737,7 +2736,7 @@ export const events: Event[] = [
 								id: 2,
 								map: 'windy_town',
 								duration: 29 * 60 + 45,
-								teams: [teams['TG'], teams['ML']],
+								teams: ['TG', 'ML'],
 								result: [9, 6],
 								winner: 1,
 								scores: [
@@ -2862,8 +2861,8 @@ export const events: Event[] = [
 					{
 						id: 10008,
 						teams: [
-							{ team: teams['DRI'], score: 0 },
-							{ team: teams['DA'], score: 2 }
+							{ team: 'DRI', score: 0 },
+							{ team: 'DA', score: 2 }
 						],
 						battleOf: 'BO3',
 						maps: []
@@ -2960,25 +2959,25 @@ export const events: Event[] = [
 		date: '2024-08-04/2024-08-05',
 		participants: [
 			{
-				team: teams['MMR'],
+				team: 'MMR',
 				main: ['Fan', 'yzii', 'Rite', 'Xiaowu', 'ON'],
 				reserve: [],
 				coach: []
 			},
 			{
-				team: teams['SUS'],
+				team: 'SUS',
 				main: ['lyr1c', 'Kariyu', 'BriBri', 'BTMC', 'Tuonto'],
 				reserve: [],
 				coach: []
 			},
 			{
-				team: teams['NG'],
+				team: 'NG',
 				main: ['Masuo', 'kept', 'SKJsa2', 'SKJShinka', 'SoVault'],
 				reserve: [],
 				coach: []
 			},
 			{
-				team: teams['TM'],
+				team: 'TM',
 				main: ['Zimo', 'ExiT', 'Saint', 'GWZH', 'Fr4nky'],
 				reserve: [],
 				coach: []

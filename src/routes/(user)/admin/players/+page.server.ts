@@ -15,11 +15,12 @@ import { db } from '$lib/server/db';
 export const load: PageServerLoad = async () => {
 	const players = await getPlayers();
 	const socialPlatforms = await db.select().from(social_platform);
+	const playersTeams = await getPlayersTeams();
 
 	return {
 		players,
 		socialPlatforms,
-		playersTeams: getPlayersTeams(players)
+		playersTeams
 	};
 };
 

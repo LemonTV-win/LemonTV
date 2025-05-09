@@ -4,7 +4,6 @@
 	import type { Stage } from '$lib/data/events';
 
 	import { m } from '$lib/paraglide/messages';
-	import { format_lan, format_online, format_hybrid } from '$lib/paraglide/messages';
 
 	let { data }: PageProps = $props();
 
@@ -131,13 +130,13 @@
 			<h2 class="text-2xl font-bold text-white">
 				{activeStage.title === 'Main Bracket' ? m.main_bracket() : activeStage.title}
 			</h2>
-			<BracketGraph stage={activeStage} />
+			<BracketGraph stage={activeStage} teams={data.teams} />
 		{:else}
 			{#each data.event.stages as stage}
 				<h2 class="text-2xl font-bold text-white">
 					{stage.title === 'Main Bracket' ? m.main_bracket() : stage.title}
 				</h2>
-				<BracketGraph {stage} />
+				<BracketGraph {stage} teams={data.teams} />
 			{/each}
 		{/if}
 		{#if data.event.results}
@@ -161,8 +160,12 @@
 						>
 							#{result.rank}
 						</div>
-						{#if result.team.logo}
-							<img src={result.team.logo} alt={result.team.name} class="h-16 w-16 rounded-full" />
+						{#if data.teams.get(result.team)?.logo}
+							<img
+								src={data.teams.get(result.team)?.logo}
+								alt={data.teams.get(result.team)?.name}
+								class="h-16 w-16 rounded-full"
+							/>
 						{/if}
 						<div class="flex flex-col items-center gap-2">
 							<div class="text-center">
@@ -173,11 +176,14 @@
 											? 'text-xl'
 											: 'text-lg'}"
 								>
-									<a href={`/teams/${result.team.id}`} class="hover:text-yellow-500">
-										{result.team.name}
+									<a
+										href={`/teams/${data.teams.get(result.team)?.id}`}
+										class="hover:text-yellow-500"
+									>
+										{data.teams.get(result.team)?.name}
 									</a>
 								</div>
-								<div class="text-gray-400">({result.team.region})</div>
+								<div class="text-gray-400">({data.teams.get(result.team)?.region})</div>
 							</div>
 							<div class="flex flex-col items-center gap-1">
 								{#each result.prizes as prize}
@@ -195,16 +201,20 @@
 				{#each data.event.results.sort((a, b) => a.rank - b.rank).slice(3) as result}
 					<div class="flex flex-col items-center gap-2 bg-gray-200/10 p-4">
 						<div class="text-4xl font-bold text-yellow-600">#{result.rank}</div>
-						{#if result.team.logo}
-							<img src={result.team.logo} alt={result.team.name} class="h-16 w-16 rounded-full" />
+						{#if data.teams.get(result.team)?.logo}
+							<img
+								src={data.teams.get(result.team)?.logo}
+								alt={data.teams.get(result.team)?.name}
+								class="h-16 w-16 rounded-full"
+							/>
 						{/if}
 						<div class="text-center">
 							<div class="font-bold">
-								<a href={`/teams/${result.team.id}`} class="hover:text-yellow-500">
-									{result.team.name}
+								<a href={`/teams/${data.teams.get(result.team)?.id}`} class="hover:text-yellow-500">
+									{data.teams.get(result.team)?.name}
 								</a>
 							</div>
-							<div class="text-gray-400">({result.team.region})</div>
+							<div class="text-gray-400">({data.teams.get(result.team)?.region})</div>
 						</div>
 						<div class="flex flex-col items-center gap-1">
 							{#each result.prizes as prize}
@@ -252,15 +262,21 @@
 								class="grid min-w-48 grid-cols-2 grid-rows-[auto_1fr] gap-2 rounded-sm bg-gray-200/10 p-4"
 							>
 								<h3 class="col-span-2 font-bold">
-									<a href={`/teams/${team.id}`} class="hover:text-yellow-500">{team.name}</a>
+									<a href={`/teams/${data.teams.get(team)?.id}`} class="hover:text-yellow-500">
+										{data.teams.get(team)?.name}
+									</a>
 								</h3>
 								<div class="flex flex-col items-center justify-center gap-2">
-									{#if team.logo}
-										<img src={team.logo} alt={team.name} class="h-4 w-4 rounded-full" />
+									{#if data.teams.get(team)?.logo}
+										<img
+											src={data.teams.get(team)?.logo}
+											alt={data.teams.get(team)?.name}
+											class="h-4 w-4 rounded-full"
+										/>
 									{:else}
 										<IconParkSolidPeoples class="h-16 w-16 text-gray-300" />
 									{/if}
-									<span class="text-gray-400">({team.region})</span>
+									<span class="text-gray-400">({data.teams.get(team)?.region})</span>
 								</div>
 								<ul class="text-sm">
 									{#each main as player}

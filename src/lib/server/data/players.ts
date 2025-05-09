@@ -10,10 +10,15 @@ import {
 import { eq } from 'drizzle-orm';
 import type { Player } from '$lib/data/players';
 import { randomUUID } from 'crypto';
-import { getPlayerMatches, getTeams, identifyPlayer, isPlayerInTeam } from '$lib/data';
+import { calculateWinnerIndex, getEvents, getMatches, identifyPlayer } from '$lib/data';
 import type { Team } from '$lib/data/teams';
-import type { Character } from '$lib/data/game';
+import type { Character, Region } from '$lib/data/game';
 import { or } from 'drizzle-orm';
+
+import * as schema from '$lib/server/db/schema';
+import type { Match } from '$lib/data/matches';
+import type { Event } from '$lib/data/events';
+
 export async function getPlayer(keyword: string): Promise<Player | null> {
 	console.info('[Players] Attempting to get player:', keyword);
 	const [playerData] = await db
@@ -107,19 +112,58 @@ export async function getPlayers(): Promise<Player[]> {
 	return result;
 }
 
-export function getPlayerTeams(slug: string) {
-	return [
-		...new Set(
-			getTeams()
-				.filter((team) => isPlayerInTeam(slug, team))
-				.map((team) => team.id)
-		)
-	].map((id) => getTeams().find((team) => team.id === id)!);
+export async function getPlayerTeams(slug: string) {
+	const teams = await db
+		.select()
+		.from(schema.player)
+		.where(eq(schema.player.slug, slug))
+		.innerJoin(schema.teamPlayer, eq(schema.teamPlayer.playerId, schema.player.id))
+		.innerJoin(schema.teams, eq(schema.teamPlayer.teamId, schema.teams.id));
+
+	return teams;
 }
 
-export function getPlayersTeams(players: Player[], limit: number = 3): Record<string, Team[]> {
-	return Object.fromEntries(
-		players.map((player) => [player.id, getPlayerTeams(player.slug ?? player.name).slice(0, limit)])
+export async function getPlayersTeams(): Promise<Record<string, Team[]>> {
+	const rows = await db
+		.select()
+		.from(schema.player)
+		.innerJoin(schema.teamPlayer, eq(schema.teamPlayer.playerId, schema.player.id))
+		.innerJoin(schema.teams, eq(schema.teamPlayer.teamId, schema.teams.id));
+
+	const result: Record<string, Team[]> = {};
+	for (const row of rows) {
+		if (!result[row.player.id]) {
+			result[row.player.id] = [];
+		}
+		result[row.player.id].push({
+			id: row.teams.id,
+			name: row.teams.name,
+			slug: row.teams.slug,
+			abbr: row.teams.abbr ?? undefined,
+			logo: row.teams.logo ?? undefined,
+			region: row.teams.region as Region | undefined
+		});
+	}
+	return result;
+}
+
+export function getPlayerMatches(
+	slug: string
+): (Match & { playerTeamIndex: number; event: Event })[] {
+	return (
+		getMatches()
+			// .filter((match) => match.teams.some((team) => isPlayerInTeam(id, team.team)))
+			.filter((match) =>
+				match.teams.some((participant) =>
+					[...(participant.roaster ?? []), ...(participant.substitutes ?? [])].includes(slug)
+				)
+			)
+			.map((match) => ({
+				...match,
+				playerTeamIndex: match.teams.findIndex((team) =>
+					[...(team.roaster ?? []), ...(team.substitutes ?? [])].includes(slug)
+				)
+			}))
 	);
 }
 
@@ -152,6 +196,20 @@ export function getPlayersAgents(
 ): Record<string, [Character, number][]> {
 	return Object.fromEntries(
 		players.map((player) => [player.id, getPlayerAgents(player).slice(0, limit)])
+	);
+}
+
+export function getPlayerWins(id: string): number {
+	return getPlayerMatches(id).filter((match) => {
+		return calculateWinnerIndex(match) === match.playerTeamIndex + 1;
+	}).length;
+}
+
+export function getPlayerEvents(id: string) {
+	return getEvents().filter((event) =>
+		event.participants.some(({ main, reserve, coach }) =>
+			[...main, ...reserve, ...coach].some((player) => identifyPlayer(id, player))
+		)
 	);
 }
 

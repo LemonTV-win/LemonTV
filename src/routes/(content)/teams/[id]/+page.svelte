@@ -12,10 +12,6 @@
 	import { getAllNames } from '$lib/data/players';
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 	let { data }: PageProps = $props();
-
-	if (!data.team) {
-		throw error(404, 'Team not found');
-	}
 </script>
 
 <svelte:head>
@@ -120,7 +116,7 @@
 			<ul class="grid grid-cols-1 gap-3">
 				{#each data.teamMatches as match}
 					{#if match}
-						<MatchCard {match} event={match.event} teamIndex={match.teamIndex} />
+						<MatchCard {match} event={match.event} teamIndex={match.teamIndex} teams={data.teams} />
 					{/if}
 				{/each}
 			</ul>

@@ -58,7 +58,7 @@
 							{#each data.playerTeams as team}
 								{#if team}
 									<li>
-										<a href={`/teams/${team.id}`}>{team.name}</a>
+										<a href={`/teams/${team.teams.slug}`}>{team.teams.name}</a>
 									</li>
 								{/if}
 							{/each}
@@ -137,7 +137,12 @@
 				{#if data.playerMatches.length > 0}
 					{#each data.playerMatches as match}
 						{#if match}
-							<MatchCard {match} teamIndex={match.playerTeamIndex} event={match.event} />
+							<MatchCard
+								{match}
+								teamIndex={match.playerTeamIndex}
+								event={match.event}
+								teams={data.teams}
+							/>
 						{/if}
 					{/each}
 				{:else}

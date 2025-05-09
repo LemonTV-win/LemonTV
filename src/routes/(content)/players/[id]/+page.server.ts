@@ -4,22 +4,29 @@ import {
 	getPlayer,
 	getPlayerTeams,
 	getPlayerAgents,
-	getSocialPlatforms
+	getSocialPlatforms,
+	getPlayerMatches,
+	getPlayerWins,
+	getPlayerEvents
 } from '$lib/server/data/players';
-import { getPlayerEvents, getPlayerMatches, getPlayerWins } from '$lib/data';
+import { getTeams } from '$lib/server/data/teams';
+
 export const load: PageServerLoad = async ({ params }) => {
 	const player = await getPlayer(params.id);
 	if (!player) {
 		throw error(404, 'Player not found');
 	}
 
+	const teams = await getTeams();
+
 	return {
 		player,
-		playerTeams: getPlayerTeams(params.id),
+		playerTeams: await getPlayerTeams(params.id),
 		playerEvents: getPlayerEvents(params.id) || getPlayerEvents(player.slug ?? player.name),
 		playerMatches: getPlayerMatches(params.id) || getPlayerMatches(player.slug ?? player.name),
 		playerWins: getPlayerWins(params.id) || getPlayerWins(player.slug ?? player.name),
 		playerAgents: getPlayerAgents(player),
-		socialPlatforms: await getSocialPlatforms()
+		socialPlatforms: await getSocialPlatforms(),
+		teams: new Map(teams.map((team) => [team.abbr ?? team.id ?? team.name ?? team.slug, team])) // TODO: remove this
 	};
 };

@@ -3,14 +3,14 @@ import {
 	getPlayers,
 	getPlayersTeams,
 	getPlayersAgents,
-	calculatePlayerRating
+	calculatePlayerRating,
+	getPlayerWins
 } from '$lib/server/data/players';
-import { getPlayerWins } from '$lib/data';
 
 export const load: PageServerLoad = async ({ locals: { user } }) => {
 	const players = await getPlayers();
 
-	const playersTeams = getPlayersTeams(players);
+	const playersTeams = await getPlayersTeams();
 	const playersAgents = getPlayersAgents(players);
 
 	return {

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Match } from '$lib/data/matches';
 	import type { Event } from '$lib/data/events';
+	import type { Team } from '$lib/data/teams';
 	import { calculateWinnerIndex } from '$lib/data';
 
 	import { getLocale } from '$lib/paraglide/runtime';
@@ -9,7 +10,12 @@
 		day: 'numeric',
 		year: 'numeric'
 	});
-	let { match, teamIndex, event }: { match: Match; teamIndex: number; event: Event } = $props();
+	let {
+		match,
+		teamIndex,
+		event,
+		teams
+	}: { match: Match; teamIndex: number; event: Event; teams: Map<string, Team> } = $props();
 </script>
 
 <li
@@ -28,7 +34,8 @@
 		<span
 			class="text-center sm:text-right"
 			class:text-gray-200={teamIndex === 0}
-			class:text-gray-400={teamIndex === 1}>{match.teams[0].team.name}</span
+			class:text-gray-400={teamIndex === 1}
+			>{teams.get(match.teams[0].team)?.name || match.teams[0].team}</span
 		>
 		<span
 			class="mx-auto grid w-18 grid-cols-[1fr_auto_1fr] items-center justify-center gap-1 p-4 text-center text-white"
@@ -44,7 +51,8 @@
 		<span
 			class="pb-2 text-center sm:pb-0 sm:text-left"
 			class:text-gray-200={teamIndex === 1}
-			class:text-gray-400={teamIndex === 0}>{match.teams[1].team.name}</span
+			class:text-gray-400={teamIndex === 0}
+			>{teams.get(match.teams[1].team)?.name || match.teams[1].team}</span
 		>
 	</a>
 </li>

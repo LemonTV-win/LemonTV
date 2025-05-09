@@ -1,15 +1,13 @@
 import type { PageServerLoad } from './$types';
-import { getTeams, type CompiledTeam } from '$lib/data';
-import { getPlayer, getPlayers } from '$lib/server/data/players';
+import type { Team } from '$lib/data/teams';
+import { getTeams, getTeamWins } from '$lib/server/data/teams';
 
 export const load: PageServerLoad = async () => {
-	const players = await getPlayers();
+	const teams = await getTeams();
 	return {
-		teams: getTeams().map((team) => ({
+		teams: teams.map((team) => ({
 			...team,
-			players: team.players?.map((player) => players.find((p) => p.slug === player)),
-			substitutes: team.substitutes?.map((player) => players.find((p) => p.slug === player)),
-			former: team.former?.map((player) => players.find((p) => p.slug === player))
-		})) as (CompiledTeam & { wins: number })[]
+			wins: getTeamWins(team)
+		})) as (Team & { wins: number })[]
 	};
 };

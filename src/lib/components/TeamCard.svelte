@@ -1,12 +1,12 @@
 <script lang="ts">
 	import RegionTag from '$lib/components/tags/RegionTag.svelte';
-	import type { CompiledTeam } from '$lib/data';
+	import type { Team } from '$lib/data/teams';
 	let {
 		team,
 		wins,
 		rank,
 		expanded = false
-	}: { team: CompiledTeam; wins: number; rank: number; expanded: boolean } = $props();
+	}: { team: Team; wins: number; rank: number; expanded: boolean } = $props();
 </script>
 
 <li class="flex flex-col gap-4 border-b-1 border-gray-500 bg-gray-800 p-4 shadow-2xl">

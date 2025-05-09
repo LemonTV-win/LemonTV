@@ -61,7 +61,7 @@
 		<div class="flex flex-col gap-2">
 			<h2 class="my-5 text-2xl font-bold">{m.teams()}</h2>
 			<ul>
-				{#each data.teams.toSorted((a, b) => b.wins - a.wins).slice(0, 5) as team}
+				{#each data.teams.toSorted((a, b) => (b.wins ?? 0) - (a.wins ?? 0)).slice(0, 5) as team}
 					<li>
 						<a
 							class="grid grid-cols-[1fr_auto] items-center gap-2 border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl transition-all duration-200 hover:bg-gray-700"

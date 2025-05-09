@@ -63,7 +63,7 @@
 
 {#if data.match}
 	<Breadcrumbs
-		currentTitle={`${data.match.teams[0].team.name} vs. ${data.match.teams[1].team.name}`}
+		currentTitle={`${data.match.teams[0]?.team?.name} vs. ${data.match.teams[1]?.team?.name}`}
 		customSegments={['events', data.match.event.name, data.match.id.toString()]}
 		customUrls={[
 			'/events',
@@ -93,7 +93,7 @@
 			{/each}
 		</nav>
 		<!-- Scoreboard -->
-		{#if data.match.games?.[currentMapID]}
+		{#if data.match.games?.[currentMapID] && data.match.teams[0]?.team && data.match.teams[1]?.team}
 			<Scoreboard
 				scores={data.match.games?.[currentMapID].scores}
 				winner={data.match.games?.[currentMapID].winner}

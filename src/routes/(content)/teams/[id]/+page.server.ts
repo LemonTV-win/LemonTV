@@ -1,35 +1,27 @@
 import type { PageServerLoad } from './$types';
 
-import { getTeam, getTeamMatches, getTeamStatistics } from '$lib/data';
-import { getTeamMemberStatistics } from '$lib/server/data/teams';
+import {
+	getTeam,
+	getTeamMemberStatistics,
+	getTeamStatistics,
+	getTeamMatches,
+	getTeams
+} from '$lib/server/data/teams';
 import { error } from '@sveltejs/kit';
-import { getPlayers } from '$lib/server/data/players';
-import type { Player } from '$lib/data/players';
 
 export const load: PageServerLoad = async ({ params }) => {
-	const players = await getPlayers();
-	const rawTeam = getTeam(params.id);
-	if (!rawTeam) {
+	const team = await getTeam(params.id);
+
+	if (!team) {
 		throw error(404, 'Team not found');
 	}
 
-	const team = {
-		...rawTeam,
-		players: rawTeam.players
-			?.map((player) => players.find((p) => p.slug === player))
-			.filter(Boolean) as Player[] | undefined,
-		substitutes: rawTeam.substitutes
-			?.map((player) => players.find((p) => p.slug === player))
-			.filter(Boolean) as Player[] | undefined,
-		former: rawTeam.former
-			?.map((player) => players.find((p) => p.slug === player))
-			.filter(Boolean) as Player[] | undefined
-	};
-
+	const teams = await getTeams();
 	return {
 		team,
-		teamMatches: getTeamMatches(params.id),
+		teams: new Map(teams.map((team) => [team.abbr ?? team.id ?? team.name ?? team.slug, team])), // TODO: remove this
+		teamMatches: getTeamMatches(team),
 		teamMemberStatistics: getTeamMemberStatistics(team),
-		teamStatistics: getTeamStatistics(team)
+		teamStatistics: await getTeamStatistics(team)
 	};
 };
