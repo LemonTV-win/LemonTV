@@ -276,7 +276,8 @@ export function getTeamWins(team: Pick<Team, 'id' | 'name' | 'slug' | 'abbr'>): 
 			match.teams.findIndex(
 				(t) =>
 					t.team === team.id || t.team === team.slug || t.team === team.abbr || t.team === team.name
-			)
+			) +
+				1
 	).length;
 }
 

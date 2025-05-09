@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { error } from '@sveltejs/kit';
 	import type { PageProps } from './$types';
 	import PlayerAvatar from '$lib/components/PlayerAvatar.svelte';
 	import CharacterIcon from '$lib/components/CharacterIcon.svelte';
