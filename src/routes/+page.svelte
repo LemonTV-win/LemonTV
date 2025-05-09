@@ -65,7 +65,7 @@
 					<li>
 						<a
 							class="grid grid-cols-[1fr_auto] items-center gap-2 border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl transition-all duration-200 hover:bg-gray-700"
-							href={`/teams/${team.id}`}
+							href={`/teams/${team.slug}`}
 						>
 							<span class="text-white">
 								{team.name}

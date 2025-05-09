@@ -25,7 +25,7 @@
 			{rank}</span
 		>
 		<div class="flex w-full flex-col md:flex-row md:justify-between">
-			<a href={`/teams/${team.id}`} class="flex items-center gap-2 text-xl font-bold md:text-2xl">
+			<a href={`/teams/${team.slug}`} class="flex items-center gap-2 text-xl font-bold md:text-2xl">
 				{team.name}
 				{#if team.region}
 					<RegionTag region={team.region} class="text-sm" />

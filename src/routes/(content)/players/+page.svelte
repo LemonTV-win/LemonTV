@@ -214,7 +214,7 @@
 						</td>
 						<td class="px-4 py-1 text-sm">
 							{#each data.playersTeams[player.id ?? ''] as team, i}
-								<a href={`/teams/${team.name}`}>{team.name}</a
+								<a href={`/teams/${team.slug}`}>{team.name}</a
 								>{#if i < data.playersTeams[player.id ?? ''].length - 1}
 									<span class="mx-1 text-gray-400">|</span>
 								{/if}
