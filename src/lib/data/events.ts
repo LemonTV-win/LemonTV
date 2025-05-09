@@ -147,11 +147,13 @@ export const events: Event[] = [
 						teams: [
 							{
 								team: 'GUGF',
-								score: 2
+								score: 2,
+								roaster: ['JY10137', 'BOXCAT', '羽生翼', 'MIZU', 'ChengCheng'] // TODO: Fix this
 							},
 							{
 								team: 'GA',
-								score: 0
+								score: 0,
+								roaster: ['iYu', 'cherry', 'Saya', 'Actyuki', 'Jav']
 							}
 						],
 						battleOf: 'BO3',
@@ -864,11 +866,13 @@ export const events: Event[] = [
 						teams: [
 							{
 								team: 'GUGF',
-								score: 2
+								score: 2,
+								roaster: ['JY10137', 'BOXCAT', '羽生翼', 'MIZU', 'ChengCheng', '逍遥sama'] // TODO: Fix this
 							},
 							{
 								team: 'KRC',
-								score: 0
+								score: 0,
+								roaster: ['xohfiy', 'HonkWith4ks', 'FOXY1Yukino', 'numOneZKFan', 'Kariyu'] // TODO: Fix this
 							}
 						],
 						battleOf: 'BO3',
@@ -1139,7 +1143,7 @@ export const events: Event[] = [
 							{
 								team: 'TG',
 								score: 2,
-								roaster: ['Ascinei', 'Ascinei', 'Ascinei', 'Ascinei', 'Ascinei']
+								roaster: ['Ascinei', 'Blexiss', 'gengu', 'grustleking', 'frostyZK']
 							},
 							{
 								team: 'GUGF',
@@ -2062,8 +2066,12 @@ export const events: Event[] = [
 					{
 						id: 10005,
 						teams: [
-							{ team: 'TG', score: 2 },
-							{ team: 'DRI', score: 0 }
+							{
+								team: 'TG',
+								score: 2,
+								roaster: ['gengu', 'Ascinei', 'grustleking', 'Blexiss', 'frostyZK']
+							},
+							{ team: 'DRI', score: 0, roaster: ['Creepz', 'Poison', 'Moozor', 'Vampire', 'GWZH'] }
 						],
 						battleOf: 'BO3',
 						maps: [
@@ -2328,8 +2336,12 @@ export const events: Event[] = [
 					{
 						id: 10006,
 						teams: [
-							{ team: 'ML', score: 2 },
-							{ team: 'DA', score: 0 }
+							{
+								team: 'ML',
+								score: 2,
+								roaster: ['minecraftsteve', 'akwa', 'nine', 'HiroRune', 'BriBri']
+							},
+							{ team: 'DA', score: 0, roaster: ['Mansek', 'will', 'Scylla', 'Voxy', 'Voxy'] }
 						],
 						battleOf: 'BO3',
 						maps: [
@@ -2594,8 +2606,16 @@ export const events: Event[] = [
 					{
 						id: 10007,
 						teams: [
-							{ team: 'TG', score: 2 },
-							{ team: 'ML', score: 0 }
+							{
+								team: 'TG',
+								score: 2,
+								roaster: ['gengu', 'Ascinei', 'grustleking', 'Blexiss', 'frostyZK']
+							},
+							{
+								team: 'ML',
+								score: 0,
+								roaster: ['minecraftsteve', 'akwa', 'nine', 'HiroRune', 'BriBri']
+							}
 						],
 						battleOf: 'BO3',
 						maps: [
