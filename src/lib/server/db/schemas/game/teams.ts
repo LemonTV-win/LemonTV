@@ -5,6 +5,7 @@ export const teams = sqliteTable('teams', {
 	id: text('id').primaryKey(),
 	name: text('name').notNull(),
 	slug: text('slug').notNull(),
+	abbr: text('abbr'),
 	logo: text('logo'),
 	region: text('region'),
 	createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`),
