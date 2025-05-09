@@ -40,7 +40,7 @@
 				</a>
 				<a
 					href="/login?tab=register"
-					class="inline-block rounded-lg border-2 border-white px-8 py-3 text-lg font-bold text-white transition-all duration-200 hover:bg-white/10"
+					class="inline-block rounded-lg border-2 border-white px-8 py-3 text-lg font-bold text-white backdrop-blur-sm transition-all duration-200 hover:bg-white/10"
 					title={m.sign_up_description()}
 				>
 					{m.sign_up()}
