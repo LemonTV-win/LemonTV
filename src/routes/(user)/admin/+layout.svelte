@@ -6,6 +6,7 @@
 	import IconParkSolidHome from '~icons/icon-park-solid/home';
 	import IconParkSolidUser from '~icons/icon-park-solid/user';
 	import IconParkSolidPeople from '~icons/icon-park-solid/people';
+	import IconParkSolidEveryUser from '~icons/icon-park-solid/every-user';
 	import IconParkSolidShield from '~icons/icon-park-solid/shield';
 	import type { Component } from 'svelte';
 
@@ -84,6 +85,7 @@
 			{@render tab('/admin/users', IconParkSolidUser, m.users())}
 		{/if}
 		{@render tab('/admin/players', IconParkSolidPeople, m.players())}
+		{@render tab('/admin/teams', IconParkSolidEveryUser, m.teams())}
 	</nav>
 	<main class="overflow-auto p-8">
 		{@render children()}
