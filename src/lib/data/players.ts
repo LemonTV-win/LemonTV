@@ -12,6 +12,7 @@ export interface Player {
 }
 
 export interface GameAccount {
+	server: 'Strinova' | 'CalabiYau';
 	accountId: number;
 	currentName: string;
 	region?: Region;

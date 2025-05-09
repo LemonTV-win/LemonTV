@@ -61,7 +61,8 @@ export const actions = {
 					aliases,
 					gameAccounts: gameAccounts.map((acc) => ({
 						...acc,
-						region: acc.region as Region | undefined
+						region: acc.region as Region | undefined,
+						server: 'Strinova' // TODO: Make editable
 					})),
 					socialAccounts,
 					slug: slug || undefined
@@ -119,7 +120,8 @@ export const actions = {
 					aliases,
 					gameAccounts: gameAccounts.map((acc) => ({
 						...acc,
-						region: acc.region as Region | undefined
+						region: acc.region as Region | undefined,
+						server: 'Strinova' // TODO: Make editable
 					})),
 					socialAccounts,
 					slug: slug || undefined

@@ -42,7 +42,8 @@ export async function getPlayer(keyword: string): Promise<Player | null> {
 		gameAccounts: accounts.map((acc) => ({
 			accountId: acc.accountId,
 			currentName: acc.currentName,
-			region: acc.region as Player['gameAccounts'][0]['region']
+			region: acc.region as Player['gameAccounts'][0]['region'],
+			server: acc.server as 'Strinova' | 'CalabiYau' // TODO: Add validation
 		})),
 		socialAccounts: socialAccounts.map((acc) => ({
 			platformId: acc.platformId,
@@ -92,7 +93,8 @@ export async function getPlayers(): Promise<Player[]> {
 		gameAccounts: (accountsByPlayer.get(p.id) ?? []).map((acc) => ({
 			accountId: acc.accountId,
 			currentName: acc.currentName,
-			region: acc.region as Player['gameAccounts'][0]['region']
+			region: acc.region as Player['gameAccounts'][0]['region'],
+			server: acc.server as 'Strinova' | 'CalabiYau' // TODO: Add validation
 		})),
 		socialAccounts: (socialAccountsByPlayer.get(p.id) ?? []).map((acc) => ({
 			platformId: acc.platformId,

@@ -91,7 +91,8 @@
 		newPlayer.gameAccounts.push({
 			accountId: 0,
 			currentName: newPlayer.name || '',
-			region: undefined
+			region: undefined,
+			server: 'Strinova' // TODO: Make editable
 		});
 		// Focus on the newly added current name input
 		setTimeout(() => {
