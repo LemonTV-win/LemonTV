@@ -139,6 +139,12 @@ export const actions = {
 	},
 
 	import: async ({ request, locals }) => {
+		if (!locals.user?.roles.includes('admin')) {
+			return fail(403, {
+				error: 'Insufficient permissions'
+			});
+		}
+
 		const formData = await request.formData();
 		const file = formData.get('file') as File;
 

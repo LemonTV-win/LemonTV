@@ -299,23 +299,25 @@
 	<div class="mb-6 flex items-center justify-between">
 		<h1 class="text-2xl font-bold">{m.admin_dashboard()}</h1>
 		<div class="flex gap-2">
-			<label
-				class="cursor-pointer rounded-md bg-slate-700 px-4 py-2 font-medium text-white hover:bg-slate-600 disabled:cursor-not-allowed disabled:opacity-50"
-				class:opacity-50={isImporting}
-			>
-				{#if isImporting}
-					{m.importing()}
-				{:else}
-					{m.import_json()}
-				{/if}
-				<input
-					type="file"
-					accept=".json"
-					class="hidden"
-					onchange={handleImport}
-					disabled={isImporting}
-				/>
-			</label>
+			{#if data.user?.roles.includes('admin')}
+				<label
+					class="cursor-pointer rounded-md bg-slate-700 px-4 py-2 font-medium text-white hover:bg-slate-600 disabled:cursor-not-allowed disabled:opacity-50"
+					class:opacity-50={isImporting}
+				>
+					{#if isImporting}
+						{m.importing()}
+					{:else}
+						{m.import_json()}
+					{/if}
+					<input
+						type="file"
+						accept=".json"
+						class="hidden"
+						onchange={handleImport}
+						disabled={isImporting}
+					/>
+				</label>
+			{/if}
 			<button
 				class="rounded-md bg-slate-700 px-4 py-2 font-medium text-white hover:bg-slate-600"
 				onclick={handleExport}
