@@ -36,7 +36,9 @@
 		| 'nationality-asc'
 		| 'nationality-desc'
 		| 'slug-asc'
-		| 'slug-desc' = $state('name-asc');
+		| 'slug-desc'
+		| 'gameAccount-asc'
+		| 'gameAccount-desc' = $state('name-asc');
 	let newPlayer: Partial<Player> = $state({
 		name: '',
 		nationality: undefined,
@@ -95,6 +97,14 @@
 					return (a.slug ?? a.id).localeCompare(b.slug ?? b.id);
 				} else if (sortBy === 'slug-desc') {
 					return (b.slug ?? b.id).localeCompare(a.slug ?? a.id);
+				} else if (sortBy === 'gameAccount-asc') {
+					const aAccountId = a.gameAccounts?.[0]?.accountId ?? '';
+					const bAccountId = b.gameAccounts?.[0]?.accountId ?? '';
+					return Number(aAccountId) - Number(bAccountId);
+				} else if (sortBy === 'gameAccount-desc') {
+					const aAccountId = a.gameAccounts?.[0]?.accountId ?? '';
+					const bAccountId = b.gameAccounts?.[0]?.accountId ?? '';
+					return Number(bAccountId) - Number(aAccountId);
 				}
 				return 0;
 			})
@@ -491,7 +501,23 @@
 							{/if}
 						</button>
 					</th>
-					<th class="px-4 py-1">{m.game_accounts()}</th>
+					<th class="px-4 py-1">
+						<button
+							class="flex items-center gap-1 text-left"
+							class:text-white={sortBy === 'gameAccount-asc' || sortBy === 'gameAccount-desc'}
+							onclick={() =>
+								(sortBy = sortBy === 'gameAccount-asc' ? 'gameAccount-desc' : 'gameAccount-asc')}
+						>
+							{m.game_accounts()}
+							{#if sortBy === 'gameAccount-asc'}
+								<TypcnArrowSortedUp class="inline-block" />
+							{:else if sortBy === 'gameAccount-desc'}
+								<TypcnArrowSortedDown class="inline-block" />
+							{:else}
+								<TypcnArrowUnsorted class="inline-block" />
+							{/if}
+						</button>
+					</th>
 					<th class="px-4 py-1">{m.social_accounts()}</th>
 					<th class="px-4 py-1">{m.teams()}</th>
 					<th class="sticky right-0 z-10 h-12 bg-gray-800 px-4 py-1">{m.actions()}</th>
