@@ -281,5 +281,13 @@
 	"aliases_url": "URL dos Apelidos",
 	"players_url": "URL dos Jogadores",
 	"team_id_url": "URL do ID da Equipe",
-	"team_name_url": "URL do Nome da Equipe"
+	"team_name_url": "URL do Nome da Equipe",
+	"error_404_title": "Ops! Página não encontrada",
+	"error_404_message": "Parece que esta página se perdeu no jogo! A página que você está procurando pode ter renascido em outro lugar.",
+	"error_500_title": "Erro no servidor",
+	"error_500_message": "Nossos servidores estão tendo um dia ruim! Eles estão fazendo uma pausa rápida para recarregar as energias.",
+	"error_generic_title": "Algo deu errado",
+	"error_generic_message": "Parece que encontramos um bug na matrix! Nossa equipe de ninjas digitais já está trabalhando nisso.",
+	"error_return_home": "Voltar para Base",
+	"error_go_back": "Voltar"
 }

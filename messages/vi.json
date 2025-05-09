@@ -281,5 +281,13 @@
 	"aliases_url": "URL biệt danh",
 	"players_url": "URL cầu thủ",
 	"team_id_url": "URL ID đội",
-	"team_name_url": "URL tên đội"
+	"team_name_url": "URL tên đội",
+	"error_404_title": "Rất tiếc! Không tìm thấy trang",
+	"error_404_message": "Có vẻ như trang này đã đi lạc trong trò chơi! Trang bạn đang tìm có thể đã hồi sinh ở nơi khác.",
+	"error_500_title": "Lỗi máy chủ",
+	"error_500_message": "Máy chủ của chúng tôi đang có một ngày không vui! Họ đang nghỉ ngơi một chút để nạp lại năng lượng.",
+	"error_generic_title": "Đã xảy ra lỗi",
+	"error_generic_message": "Có vẻ như chúng ta đã tìm thấy một lỗi trong ma trận! Đội ninja kỹ thuật số của chúng tôi đã bắt đầu xử lý.",
+	"error_return_home": "Trở về Căn cứ",
+	"error_go_back": "Quay lại"
 }

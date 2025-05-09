@@ -281,5 +281,13 @@
 	"aliases_url": "URL Alias",
 	"players_url": "URL Pemain",
 	"team_id_url": "URL ID Tim",
-	"team_name_url": "URL Nama Tim"
+	"team_name_url": "URL Nama Tim",
+	"error_404_title": "Ups! Halaman Tidak Ditemukan",
+	"error_404_message": "Sepertinya halaman ini tersesat dalam permainan! Halaman yang Anda cari mungkin telah muncul kembali di tempat lain.",
+	"error_500_title": "Kesalahan Server",
+	"error_500_message": "Server kami sedang mengalami hari yang buruk! Mereka sedang beristirahat sebentar untuk mengisi ulang energi.",
+	"error_generic_title": "Terjadi Kesalahan",
+	"error_generic_message": "Sepertinya kita menemukan bug dalam matriks! Tim ninja digital kami sudah mulai menanganinya.",
+	"error_return_home": "Kembali ke Pangkalan",
+	"error_go_back": "Kembali"
 }

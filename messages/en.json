@@ -281,5 +281,13 @@
 	"players_url": "Players URL",
 	"team_id_url": "Team ID URL",
 	"team_name_url": "Team Name URL",
-	"abbr": "Abbreviation"
+	"abbr": "Abbreviation",
+	"error_404_title": "Oops! Page Not Found",
+	"error_404_message": "Looks like this page took a wrong turn in the game! The page you're looking for seems to have respawned somewhere else.",
+	"error_500_title": "Server Error",
+	"error_500_message": "Our servers are having a bad day! They're taking a quick break to recharge their energy.",
+	"error_generic_title": "Something Went Wrong",
+	"error_generic_message": "Looks like we hit a glitch in the matrix! Our team of digital ninjas is already on the case.",
+	"error_return_home": "Return to Base",
+	"error_go_back": "Go Back"
 }

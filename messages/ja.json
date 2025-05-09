@@ -281,5 +281,13 @@
 	"aliases_url": "別名URL",
 	"players_url": "プレイヤーURL",
 	"team_id_url": "チームID URL",
-	"team_name_url": "チーム名URL"
+	"team_name_url": "チーム名URL",
+	"error_404_title": "ページが見つかりません",
+	"error_404_message": "このページはゲーム中に迷子になってしまったようです！探しているページは別の場所でリスポーンしたかもしれません。",
+	"error_500_title": "サーバーエラー",
+	"error_500_message": "サーバーがちょっと休憩中です！エネルギーを充電するために少し休んでいます。",
+	"error_generic_title": "エラーが発生しました",
+	"error_generic_message": "マトリックスにバグが発生したようです！デジタル忍者チームがすでに調査を開始しています。",
+	"error_return_home": "ホームに戻る",
+	"error_go_back": "戻る"
 }

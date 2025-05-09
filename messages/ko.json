@@ -281,5 +281,13 @@
 	"aliases_url": "별칭 URL",
 	"players_url": "선수 URL",
 	"team_id_url": "팀 ID URL",
-	"team_name_url": "팀 이름 URL"
+	"team_name_url": "팀 이름 URL",
+	"error_404_title": "앗! 페이지를 찾을 수 없습니다",
+	"error_404_message": "이 페이지가 게임 중에 길을 잃은 것 같네요! 찾으시는 페이지가 다른 곳에서 리스폰되었을지도 모릅니다.",
+	"error_500_title": "서버 오류",
+	"error_500_message": "서버가 오늘 기분이 좋지 않네요! 에너지를 충전하기 위해 잠시 휴식을 취하고 있습니다.",
+	"error_generic_title": "문제가 발생했습니다",
+	"error_generic_message": "매트릭스에 버그가 발생한 것 같습니다! 디지털 닌자 팀이 이미 조사를 시작했습니다.",
+	"error_return_home": "기지로 돌아가기",
+	"error_go_back": "뒤로 가기"
 }

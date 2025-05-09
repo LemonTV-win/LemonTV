@@ -281,5 +281,13 @@
 	"aliases_url": "Aliase-URL",
 	"players_url": "Spieler-URL",
 	"team_id_url": "Team-ID-URL",
-	"team_name_url": "Teamname-URL"
+	"team_name_url": "Teamname-URL",
+	"error_404_title": "Hoppla! Seite nicht gefunden",
+	"error_404_message": "Diese Seite scheint sich im Spiel verlaufen zu haben! Die gesuchte Seite ist möglicherweise an einem anderen Ort wieder aufgetaucht.",
+	"error_500_title": "Serverfehler",
+	"error_500_message": "Unsere Server haben einen schlechten Tag! Sie machen eine kurze Pause, um Energie zu tanken.",
+	"error_generic_title": "Etwas ist schiefgelaufen",
+	"error_generic_message": "Es scheint, wir haben einen Fehler in der Matrix gefunden! Unser Team digitaler Ninjas ist bereits dabei, das Problem zu lösen.",
+	"error_return_home": "Zurück zur Basis",
+	"error_go_back": "Zurück"
 }

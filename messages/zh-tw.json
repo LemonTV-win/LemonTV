@@ -281,5 +281,11 @@
 	"aliases_url": "別名URL",
 	"players_url": "選手URL",
 	"team_id_url": "隊伍ID URL",
-	"team_name_url": "隊伍名稱URL"
+	"team_name_url": "隊伍名稱URL",
+	"error_404_title": "哎呀！找不到頁面",
+	"error_404_message": "看起來這個頁面在遊戲中迷路了！您要找的頁面可能在其他地方重新出現了。",
+	"error_500_title": "伺服器錯誤",
+	"error_500_message": "我們的伺服器今天心情不太好！它們正在休息充電呢。",
+	"error_generic_title": "發生錯誤",
+	"error_generic_message": "看起來我們在矩陣中遇到了故障！我們的數位忍者團隊已經開始處理了。"
 }
