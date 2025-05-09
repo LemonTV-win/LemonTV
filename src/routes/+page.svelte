@@ -112,7 +112,7 @@
 								<span class="text-xs text-gray-400" title={m.wins()}>{team.region}</span>
 							</span>
 							<!-- TODO: Introduce rating -->
-							<span class="text-yellow-500" title={m.wins()}>{team.wins}</span>
+							<span class="font-semibold text-yellow-300" title={m.wins()}>{team.wins}</span>
 						</a>
 					</li>
 				{/each}
@@ -144,7 +144,9 @@
 								{/if}
 							</span>
 							<span class="flex items-center gap-2">
-								<span class="text-yellow-500" title={m.rating()}>{player.rating.toFixed(2)}</span>
+								<span class="font-semibold text-yellow-300" title={m.rating()}>
+									{player.rating.toFixed(2)}
+								</span>
 							</span>
 						</a>
 					</li>
