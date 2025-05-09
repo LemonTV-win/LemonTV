@@ -19,7 +19,7 @@
 <div class="flex flex-col">
 	<a
 		href="/events/{event.id}"
-		class="relative flex min-h-32 flex-col items-center gap-2 border-b-1 border-gray-500 bg-gray-800 shadow-2xl transition-all duration-200 hover:bg-gray-700 sm:flex-row"
+		class={['relative flex min-h-32 flex-col items-center gap-2  sm:flex-row', 'glass-card']}
 	>
 		<img src={event.image} alt={event.name} class="w-full max-w-full sm:max-w-64" />
 		<div class="flex flex-col p-4">

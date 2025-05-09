@@ -72,7 +72,7 @@
 		{/if}
 
 		<h3 class="my-4 text-xl font-bold">{m.finished()}</h3>
-		<ul>
+		<ul class="glass-card-container">
 			{#each finishedEvents as event}
 				<li>
 					<EventCard {event} />
@@ -90,17 +90,17 @@
 	<div class="flex flex-col gap-2">
 		<div class="flex flex-col gap-2">
 			<h2 class="my-5 text-2xl font-bold">{m.teams()}</h2>
-			<ul>
+			<ul class="glass-card-container">
 				{#each data.teams.toSorted((a, b) => (b.wins ?? 0) - (a.wins ?? 0)).slice(0, 5) as team}
 					<li>
 						<a
-							class="grid grid-cols-[1fr_auto] items-center gap-2 border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl transition-all duration-200 hover:bg-gray-700"
+							class={['grid grid-cols-[1fr_auto] items-center gap-2 px-4 py-2', 'glass-card']}
 							href={`/teams/${team.slug}`}
 						>
 							<span class="flex items-baseline gap-2 text-white">
 								<span
 									class={[
-										'flex h-5 w-5 items-center justify-center bg-gray-700/50 text-sm text-gray-400',
+										'flex h-5 w-5 items-center justify-center bg-gray-700 text-sm text-gray-400',
 										team.rank === 1 && 'bg-yellow-500 text-white',
 										team.rank === 2 && 'bg-neutral-500 text-white',
 										team.rank === 3 && 'bg-red-500 text-white'
@@ -127,12 +127,12 @@
 
 		<div class="flex flex-col gap-2">
 			<h2 class="my-5 text-2xl font-bold">{m.players()}</h2>
-			<ul>
+			<ul class="glass-card-container">
 				{#each data.players.toSorted((a, b) => b.rating - a.rating).slice(0, 5) as player}
 					<li>
 						<a
 							href={`/players/${player.id}`}
-							class="grid grid-cols-[1fr_auto] items-center gap-2 border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl transition-all duration-200 hover:bg-gray-700"
+							class={['grid grid-cols-[1fr_auto] items-center gap-2 px-4 py-2', 'glass-card']}
 						>
 							<span class="flex items-baseline gap-2 text-white">
 								<NationalityFlag nationality={player.nationality} />

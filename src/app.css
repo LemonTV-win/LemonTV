@@ -11,3 +11,18 @@ body {
 	--font-emoji: 'Noto Color Emoji', sans-serif;
 	--font-saira: 'Saira Variable', 'Noto Sans CJK JP', sans-serif;
 }
+
+@layer components {
+	.glass-card-container {
+		@apply shadow-[0_0_25px_rgba(255,255,255,0.08)];
+	}
+
+	.glass-card {
+		@apply relative;
+		@apply border-white/30 bg-gradient-to-br from-slate-600/60 to-slate-800 backdrop-blur-lg;
+		@apply hover:z-10 hover:scale-105 hover:bg-white/60 hover:shadow-2xl;
+		@apply shadow-2xl;
+		@apply ring-1 ring-white/30;
+		@apply transition-all duration-200;
+	}
+}
