@@ -325,7 +325,7 @@
 <style>
 	:global(body) {
 		background-image:
-			linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 1)), url('/strinova-background.jpg');
+			linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 1)), url('/strinova-background.jpg');
 		background-size: cover;
 		background-position: center;
 		background-repeat: no-repeat;
