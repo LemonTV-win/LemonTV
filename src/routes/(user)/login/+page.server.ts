@@ -14,7 +14,8 @@ export const load: PageServerLoad = async (event) => {
 	}
 
 	return {
-		redirect: event.url.searchParams.get('redirect') || '/'
+		redirect: event.url.searchParams.get('redirect') || '/',
+		tab: event.url.searchParams.get('tab') === 'register' ? 'register' : 'login'
 	};
 };
 

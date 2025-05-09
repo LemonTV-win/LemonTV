@@ -14,7 +14,7 @@
 
 	type FormData = { message: string; success?: never } | { success: true; message?: never };
 	let { form, data }: { form: FormData | null; data: PageServerData } = $props();
-	let activeTab = $state('login');
+	let activeTab = $state(data.tab || 'login');
 	let showPassword = $state(false);
 	let showConfirmPassword = $state(false);
 
