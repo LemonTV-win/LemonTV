@@ -321,3 +321,15 @@
 		Strinova or iDreamSky.
 	</p>
 </footer>
+
+<style>
+	:global(body) {
+		background-image:
+			linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 1)), url('/strinova-background.jpg');
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+		background-attachment: fixed;
+		min-height: 100dvh;
+	}
+</style>
