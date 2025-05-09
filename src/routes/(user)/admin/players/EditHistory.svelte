@@ -98,6 +98,11 @@
 			},
 			{} as Record<string, EditHistory[]>
 		);
+
+		// Sort entries within each date group by time in descending order
+		Object.keys(groupedHistory).forEach((dateKey) => {
+			groupedHistory[dateKey].sort((a, b) => b.editedAt.getTime() - a.editedAt.getTime());
+		});
 	});
 
 	function formatValue(value: string | null) {
