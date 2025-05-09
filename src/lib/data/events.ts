@@ -1913,7 +1913,7 @@ export const events: Event[] = [
 		id: 3,
 		slug: 'origami',
 		name: 'Origami Cup',
-		region: 'NA',
+		region: 'EU',
 		official: false,
 		format: 'online',
 		server: 'strinova',
