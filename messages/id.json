@@ -236,5 +236,8 @@
 	"social_account": "Akun Sosial",
 	"player": "Pemain",
 	"creation": "Pembuatan",
-	"deletion": "Penghapusan"
+	"deletion": "Penghapusan",
+	"format_lan": "LAN",
+	"format_online": "Daring",
+	"format_hybrid": "Hibrida"
 }

@@ -236,5 +236,8 @@
 	"new_name": "Neuer Name",
 	"player": "Spieler",
 	"creation": "Erstellung",
-	"deletion": "Löschung"
+	"deletion": "Löschung",
+	"format_lan": "LAN",
+	"format_online": "Online",
+	"format_hybrid": "Hybrid"
 }

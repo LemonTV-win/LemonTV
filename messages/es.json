@@ -236,5 +236,8 @@
 	"social_account": "Cuenta Social",
 	"player": "Jugador",
 	"creation": "Creación",
-	"deletion": "Eliminación"
+	"deletion": "Eliminación",
+	"format_lan": "LAN",
+	"format_online": "En línea",
+	"format_hybrid": "Híbrido"
 }

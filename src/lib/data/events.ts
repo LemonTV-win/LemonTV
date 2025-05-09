@@ -52,6 +52,7 @@ export interface Event {
 	name: string;
 	official: boolean;
 	server: 'calabiyau' | 'strinova';
+	format: 'lan' | 'online' | 'hybrid';
 	// host: string;
 	// date: string;
 	region: Region;
@@ -125,6 +126,7 @@ export const events: Event[] = [
 		name: 'Mighty Meow Cup Season 1',
 		official: false,
 		server: 'strinova',
+		format: 'online',
 		image: 'https://i.ytimg.com/vi/j7Nt3gGzLkg/hq720.jpg',
 		status: 'finished',
 		region: 'Global',
@@ -1596,6 +1598,7 @@ export const events: Event[] = [
 		official: false,
 		server: 'strinova',
 		region: 'APAC',
+		format: 'online',
 		image:
 			'https://img.tonamel.com/c!/f=webp:auto,w=1600,h=900,a=2/upload_images/organize_competition/yROLW/fc1ed3f7ca5a35d6de5c20a8db90b617b89a063bedaaba6a205de19c1b00ad07.jpg',
 		status: 'finished',
@@ -1909,6 +1912,7 @@ export const events: Event[] = [
 		name: 'Origami Cup',
 		region: 'NA',
 		official: false,
+		format: 'online',
 		server: 'strinova',
 		image: 'https://panels.twitch.tv/panel-1266163234-image-05e3f805-6cda-43d1-98b1-e28a540f9003',
 		status: 'finished',
@@ -2919,6 +2923,7 @@ export const events: Event[] = [
 		name: '2024 Esports World Cup',
 		official: true,
 		server: 'strinova',
+		format: 'lan',
 		region: 'Global',
 		image: 'https://upload.wikimedia.org/wikipedia/commons/b/b4/Esports_World_Cup_logo.svg',
 		status: 'finished',
@@ -2962,6 +2967,7 @@ export const events: Event[] = [
 		name: 'Waiguoren stringify invitational',
 		official: false,
 		server: 'strinova',
+		format: 'online',
 		region: 'Global',
 		status: 'finished',
 		image: 'https://pbs.twimg.com/media/GQsFljEbYAEXWIZ?format=jpg&name=4096x4096',
@@ -2980,6 +2986,7 @@ export const events: Event[] = [
 		name: 'Strinova Quark Invitational',
 		official: false,
 		server: 'strinova',
+		format: 'online',
 		region: 'Global',
 		status: 'finished',
 		image: 'https://picsum.photos/seed/sqi/300/200?blur',
@@ -2998,6 +3005,8 @@ export const events: Event[] = [
 		name: 'Strinova Superstring Invitational',
 		official: false,
 		server: 'strinova',
+
+		format: 'online',
 		region: 'Global',
 		status: 'finished',
 		image: 'https://picsum.photos/seed/ssi/300/200?blur',
@@ -3018,6 +3027,8 @@ export const events: Event[] = [
 		server: 'strinova',
 		region: 'CN',
 		status: 'finished',
+
+		format: 'online',
 		image: 'https://picsum.photos/seed/moca-s1/300/200?blur',
 		stages: [],
 		organizer: {
@@ -3036,6 +3047,8 @@ export const events: Event[] = [
 		server: 'strinova',
 		region: 'CN',
 		status: 'finished',
+
+		format: 'online',
 		image: 'https://picsum.photos/seed/moca-s2/300/200?blur',
 		stages: [],
 		organizer: {
@@ -3054,6 +3067,7 @@ export const events: Event[] = [
 		server: 'strinova',
 		region: 'CN',
 		status: 'finished',
+		format: 'online',
 		image: 'https://picsum.photos/seed/moca-s3/300/200?blur',
 		stages: [],
 		organizer: {

@@ -6,6 +6,7 @@
 	import IconParkSolidPeoples from '~icons/icon-park-solid/peoples';
 	import IconParkSolidLocalPin from '~icons/icon-park-solid/local-pin';
 	import IconParkSolidCheckOne from '~icons/icon-park-solid/check-one';
+	import IconParkSolidComputer from '~icons/icon-park-solid/computer';
 
 	let { event, detailed = false }: { event: Event; detailed?: boolean } = $props();
 	// TODO:
@@ -36,6 +37,18 @@
 					<span class="flex items-center gap-1">
 						<IconParkSolidLocalPin class="inline-block h-4 w-4" />
 						<span>{event.region}</span>
+					</span>
+					<span class="flex items-center gap-1">
+						<IconParkSolidComputer class="inline-block h-4 w-4" />
+						<span>
+							{#if event.format === 'lan'}
+								{m.format_lan()}
+							{:else if event.format === 'online'}
+								{m.format_online()}
+							{:else if event.format === 'hybrid'}
+								{m.format_hybrid()}
+							{/if}
+						</span>
 					</span>
 					{#if event.official}
 						<span class="flex items-center gap-1">

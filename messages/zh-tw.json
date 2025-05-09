@@ -236,5 +236,8 @@
 	"social_account": "社交帳號",
 	"player": "玩家",
 	"creation": "創建",
-	"deletion": "刪除"
+	"deletion": "刪除",
+	"format_lan": "線下",
+	"format_online": "線上",
+	"format_hybrid": "混合"
 }

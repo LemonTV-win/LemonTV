@@ -236,5 +236,8 @@
 	"social_account": "Социальный Аккаунт",
 	"player": "Игрок",
 	"creation": "Создание",
-	"deletion": "Удаление"
+	"deletion": "Удаление",
+	"format_lan": "LAN",
+	"format_online": "Онлайн",
+	"format_hybrid": "Гибридный"
 }

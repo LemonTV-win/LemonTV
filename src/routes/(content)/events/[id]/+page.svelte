@@ -4,6 +4,7 @@
 	import type { Stage } from '$lib/data/events';
 
 	import { m } from '$lib/paraglide/messages';
+	import { format_lan, format_online, format_hybrid } from '$lib/paraglide/messages';
 
 	let { data }: PageProps = $props();
 
@@ -17,6 +18,7 @@
 	import IconParkSolidCalendar from '~icons/icon-park-solid/calendar';
 	import IconParkSolidLocalPin from '~icons/icon-park-solid/local-pin';
 	import IconParkSolidCheckOne from '~icons/icon-park-solid/check-one';
+	import IconParkSolidComputer from '~icons/icon-park-solid/computer';
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 	let activeStage = $state<Stage | null>(null);
 
@@ -52,6 +54,18 @@
 				<span class="inline-flex items-center gap-1">
 					<IconParkSolidLocalPin class="inline-block h-4 w-4" />
 					<span>{data.event.region}</span>
+				</span>
+				<span class="inline-flex items-center gap-1">
+					<IconParkSolidComputer class="inline-block h-4 w-4" />
+					<span>
+						{#if data.event.format === 'lan'}
+							{m.format_lan()}
+						{:else if data.event.format === 'online'}
+							{m.format_online()}
+						{:else if data.event.format === 'hybrid'}
+							{m.format_hybrid()}
+						{/if}
+					</span>
 				</span>
 				{#if data.event.official}
 					<span class="inlineflex items-center gap-1">

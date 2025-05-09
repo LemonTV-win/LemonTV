@@ -236,5 +236,8 @@
 	"social_account": "Tài Khoản Mạng Xã Hội",
 	"player": "Người chơi",
 	"creation": "Tạo mới",
-	"deletion": "Xóa"
+	"deletion": "Xóa",
+	"format_lan": "LAN",
+	"format_online": "Trực tuyến",
+	"format_hybrid": "Kết hợp"
 }

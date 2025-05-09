@@ -236,5 +236,8 @@
 	"social_account": "ソーシャルアカウント",
 	"player": "プレイヤー",
 	"creation": "作成",
-	"deletion": "削除"
+	"deletion": "削除",
+	"format_lan": "LAN",
+	"format_online": "オンライン",
+	"format_hybrid": "ハイブリッド"
 }

@@ -236,5 +236,8 @@
 	"social_account": "Social Account",
 	"player": "Player",
 	"creation": "Creation",
-	"deletion": "Deletion"
+	"deletion": "Deletion",
+	"format_lan": "LAN",
+	"format_online": "Online",
+	"format_hybrid": "Hybrid"
 }
