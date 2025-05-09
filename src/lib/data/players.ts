@@ -1,5 +1,6 @@
 import type { Region } from '$lib/data/game';
 import type { TCountryCode } from 'countries-list';
+import type { User } from './user';
 
 export interface Player {
 	id: string;
@@ -9,6 +10,7 @@ export interface Player {
 	aliases?: string[];
 	gameAccounts: GameAccount[];
 	socialAccounts?: SocialAccount[];
+	user?: User;
 }
 
 export interface GameAccount {
