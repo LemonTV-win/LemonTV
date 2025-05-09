@@ -547,7 +547,7 @@
 								<ul class="list-inside list-disc">
 									{#each data.playersTeams[player.id ?? ''] as team}
 										<li>
-											<a href={`/teams/${team.name}`} class="text-yellow-500 hover:text-yellow-400">
+											<a href={`/teams/${team.slug}`} class="text-yellow-500 hover:text-yellow-400">
 												{team.name}
 											</a>
 										</li>
