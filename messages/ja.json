@@ -301,5 +301,8 @@
 	"total_events": "総イベント数",
 	"total_teams": "総チーム数",
 	"total_players": "総プレイヤー数",
-	"live_events": "ライブイベント"
+	"live_events": "ライブイベント",
+	"news_and_announcements": "ニュースとお知らせ",
+	"news_coming_soon": "近日公開",
+	"news_placeholder_description": "トーナメント、チーム、プレイヤーに関する最新の更新、お知らせ、ニュースをお届けします。"
 }

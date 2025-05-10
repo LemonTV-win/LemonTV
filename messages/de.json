@@ -301,5 +301,8 @@
 	"total_events": "Gesamtveranstaltungen",
 	"total_teams": "Gesamtteams",
 	"total_players": "Gesamtspieler",
-	"live_events": "Live-Veranstaltungen"
+	"live_events": "Live-Veranstaltungen",
+	"news_and_announcements": "Nachrichten & Ankündigungen",
+	"news_coming_soon": "Bald verfügbar",
+	"news_placeholder_description": "Bleiben Sie für die neuesten Updates, Ankündigungen und News über Turniere, Teams und Spieler informiert."
 }

@@ -301,5 +301,8 @@
 	"total_events": "Total de Eventos",
 	"total_teams": "Total de Equipos",
 	"total_players": "Total de Jugadores",
-	"live_events": "Eventos en Vivo"
+	"live_events": "Eventos en Vivo",
+	"news_and_announcements": "Noticias y Anuncios",
+	"news_coming_soon": "Próximamente",
+	"news_placeholder_description": "Mantente informado sobre los últimos actualizaciones, anuncios y noticias sobre torneos, equipos y jugadores."
 }

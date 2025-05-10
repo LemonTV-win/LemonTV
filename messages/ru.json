@@ -301,5 +301,8 @@
 	"total_events": "Всего Событий",
 	"total_teams": "Всего Команд",
 	"total_players": "Всего Игроков",
-	"live_events": "Текущие События"
+	"live_events": "Текущие События",
+	"news_and_announcements": "Новости и Объявления",
+	"news_coming_soon": "Скоро",
+	"news_placeholder_description": "Оставайтесь в курсе последних новостей, объявлений и событий о турнирах, командах и игроках."
 }

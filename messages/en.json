@@ -301,5 +301,8 @@
 	"total_teams": "Total Teams",
 	"total_players": "Total Players",
 	"live_events": "Live Events",
-	"platform_statistics": "Platform Statistics"
+	"platform_statistics": "Platform Statistics",
+	"news_and_announcements": "News & Announcements",
+	"news_coming_soon": "Coming Soon",
+	"news_placeholder_description": "Stay tuned for the latest updates, announcements, and news about tournaments, teams, and players."
 }

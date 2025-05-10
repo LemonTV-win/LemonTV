@@ -301,5 +301,8 @@
 	"total_events": "Tổng Số Sự Kiện",
 	"total_teams": "Tổng Số Đội",
 	"total_players": "Tổng Số Người Chơi",
-	"live_events": "Sự Kiện Trực Tiếp"
+	"live_events": "Sự Kiện Trực Tiếp",
+	"news_and_announcements": "Tin tức và Thông báo",
+	"news_coming_soon": "Sắp ra mắt",
+	"news_placeholder_description": "Giữ cập nhật với tin tức, thông báo và sự kiện mới nhất từ thế giới Strinova."
 }

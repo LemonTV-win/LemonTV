@@ -301,5 +301,8 @@
 	"total_events": "Total Acara",
 	"total_teams": "Total Tim",
 	"total_players": "Total Pemain",
-	"live_events": "Acara Langsung"
+	"live_events": "Acara Langsung",
+	"news_and_announcements": "Berita dan Pengumuman",
+	"news_coming_soon": "Segera Hadir",
+	"news_placeholder_description": "Tetap informasi terbaru tentang turnamen, tim, dan pemain."
 }
