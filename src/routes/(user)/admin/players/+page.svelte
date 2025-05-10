@@ -17,7 +17,6 @@
 	import PlayerEdit from './PlayerEdit.svelte';
 
 	import type { PageProps } from './$types';
-	import { countries } from 'countries-list';
 
 	let searchQuery = $state('');
 	let selectedPlayer: Player | null = $state(null);
@@ -39,13 +38,6 @@
 		| 'slug-desc'
 		| 'gameAccount-asc'
 		| 'gameAccount-desc' = $state('name-asc');
-	let newPlayer: Partial<Player> = $state({
-		name: '',
-		nationality: undefined,
-		aliases: [],
-		gameAccounts: [],
-		socialAccounts: []
-	});
 
 	let { data }: PageProps = $props();
 
@@ -119,8 +111,6 @@
 				return 0;
 			})
 	);
-
-	let copySuccess = $state(false);
 
 	let showHistoryModal = $state(false);
 
