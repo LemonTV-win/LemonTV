@@ -16,13 +16,15 @@ export const load: PageServerLoad = async ({ url }) => {
 	const players = await getPlayers();
 	const socialPlatforms = await db.select().from(social_platform);
 	const playersTeams = await getPlayersTeams();
-	const editId = url.searchParams.get('edit');
+	const action = url.searchParams.get('action');
+	const id = url.searchParams.get('id');
 
 	return {
 		players,
 		socialPlatforms,
 		playersTeams,
-		editId
+		action,
+		id
 	};
 };
 

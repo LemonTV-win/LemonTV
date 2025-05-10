@@ -153,6 +153,10 @@
 		successMessage = '';
 		await onSave(newPlayer);
 	}
+
+	function handleCancel() {
+		onCancel();
+	}
 </script>
 
 <form onsubmit={handleSubmit} class="flex h-full flex-col">
@@ -437,7 +441,7 @@
 		<button
 			type="button"
 			class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
-			onclick={onCancel}
+			onclick={handleCancel}
 		>
 			{m.cancel()}
 		</button>

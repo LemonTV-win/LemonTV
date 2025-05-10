@@ -41,10 +41,12 @@
 
 	let { data }: PageProps = $props();
 
-	// Handle editId from URL
+	// Handle URL parameters
 	$effect(() => {
-		if (data.editId) {
-			const playerToEdit = data.players.find((p) => p.id === data.editId);
+		if (data.action === 'new') {
+			handleAddPlayer();
+		} else if (data.action === 'edit' && data.id) {
+			const playerToEdit = data.players.find((p) => p.id === data.id);
 			if (playerToEdit) {
 				handleEditPlayer(playerToEdit);
 			}
@@ -123,12 +125,14 @@
 		isAddingNew = true;
 		isEditing = false;
 		selectedPlayer = null;
+		goto('/admin/players?action=new', { replaceState: true });
 	}
 
 	function handleEditPlayer(player: Player) {
 		selectedPlayer = player;
 		isEditing = true;
 		isAddingNew = false;
+		goto(`/admin/players?action=edit&id=${player.id}`, { replaceState: true });
 	}
 
 	async function handleSavePlayer(player: Partial<Player>) {
@@ -207,6 +211,7 @@
 		isAddingNew = false;
 		isEditing = false;
 		selectedPlayer = null;
+		goto('/admin/players', { replaceState: true });
 	}
 
 	async function handleImport(event: Event) {
