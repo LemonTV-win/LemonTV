@@ -66,7 +66,7 @@
 </svelte:head>
 
 <header
-	class="flex items-center justify-between border-b-1 border-gray-500 bg-gray-800 px-4 py-4 text-white"
+	class="flex items-center justify-between border-b-1 border-white/30 bg-gradient-to-br from-slate-600/60 to-slate-800 px-4 py-4 text-white backdrop-blur-lg"
 >
 	<a href="/" class="flex items-center gap-2 text-2xl font-bold">
 		<img src="/favicon.svg" alt="LemonTV" class="h-10 w-10" />
@@ -199,7 +199,9 @@
 
 <!-- Mobile navigation menu -->
 {#if mobileMenuOpen}
-	<nav class="flex flex-col border-b-1 border-gray-500 bg-gray-800 px-3 py-4 text-white md:hidden">
+	<nav
+		class="flex flex-col border-b-1 border-white/30 bg-gradient-to-br from-slate-600/60 to-slate-800 px-3 py-4 text-white backdrop-blur-lg md:hidden"
+	>
 		<a
 			href="/news"
 			class="rounded-md px-3 py-2 text-lg transition-all duration-200 hover:bg-gray-700 hover:text-yellow-300 focus:bg-gray-700 focus:text-yellow-300 focus:ring-2 focus:ring-yellow-300 focus:outline-none"
@@ -311,7 +313,9 @@
 
 {@render children()}
 
-<footer class="mt-4 border-t-1 border-gray-500 bg-gray-800 px-3 py-8 text-center text-white">
+<footer
+	class="mt-4 border-t-1 border-white/30 bg-gradient-to-br from-slate-600/60 to-slate-800 px-3 py-8 text-center text-white backdrop-blur-lg"
+>
 	<div class="mx-auto max-w-4xl">
 		<p class="mb-4 text-lg">
 			© 2025 <a
