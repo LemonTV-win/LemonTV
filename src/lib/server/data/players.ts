@@ -16,7 +16,7 @@ import type { Character, Region } from '$lib/data/game';
 import { or } from 'drizzle-orm';
 
 import * as schema from '$lib/server/db/schema';
-import type { Match } from '$lib/data/matches';
+import type { Match, PlayerScore } from '$lib/data/matches';
 import type { Event } from '$lib/data/events';
 
 export async function getPlayer(keyword: string): Promise<Player | null> {
@@ -173,7 +173,7 @@ export function getPlayerAgents(player: Player): [Character, number][] {
 		.flatMap((match) =>
 			(match.games ?? []).flatMap((game) => {
 				for (const score of game.scores[match.playerTeamIndex]) {
-					if (identifyPlayer(score.player, player)) {
+					if (identifyPlayerFromScore(score, player)) {
 						return score.characters;
 					}
 				}
@@ -230,7 +230,7 @@ export function calculatePlayerRating(player: Player) {
 
 			const playerScore = match.games?.flatMap((game) =>
 				game.scores[playerTeamIndex]
-					.filter((score) => identifyPlayer(score.player, player))
+					.filter((score) => identifyPlayerFromScore(score, player))
 					.map((score) => score.score)
 			);
 
@@ -243,8 +243,17 @@ export function calculatePlayerRating(player: Player) {
 	return isNaN(averageScore) ? 0 : averageScore / 200;
 }
 
+export function identifyPlayerFromScore(score: PlayerScore, player: Player): boolean {
+	return (
+		(player.gameAccounts.some((acc) => acc.accountId === score.accountId) ||
+			player.aliases?.some((alias) => alias === score.player)) ??
+		false
+	);
+}
+
 export function calculatePlayerKD(player: Player): number {
-	const matches = getPlayerMatches(player.id ?? '');
+	const matches = getPlayerMatches(player.slug ?? player.name);
+
 	return matches.reduce((acc, match) => {
 		const playerTeamIndex = match.playerTeamIndex;
 		const opponentTeamIndex = 1 - playerTeamIndex;
@@ -256,7 +265,7 @@ export function calculatePlayerKD(player: Player): number {
 		const kills = match.games
 			?.flatMap((game) =>
 				game.scores[playerTeamIndex]
-					.filter((score) => identifyPlayer(score.player, player))
+					.filter((score) => identifyPlayerFromScore(score, player))
 					.map((score) => score.kills)
 					.reduce((acc, kill) => acc + kill, 0)
 			)
@@ -265,7 +274,7 @@ export function calculatePlayerKD(player: Player): number {
 		const deaths = match.games
 			?.flatMap((game) =>
 				game.scores[playerTeamIndex]
-					.filter((score) => identifyPlayer(score.player, player))
+					.filter((score) => identifyPlayerFromScore(score, player))
 					.map((score) => score.deaths)
 			)
 			.reduce((acc, death) => acc + death, 0);
