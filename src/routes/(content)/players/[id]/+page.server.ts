@@ -11,7 +11,7 @@ import {
 } from '$lib/server/data/players';
 import { getTeams } from '$lib/server/data/teams';
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 	const player = await getPlayer(params.id);
 	if (!player) {
 		throw error(404, 'Player not found');
@@ -27,6 +27,7 @@ export const load: PageServerLoad = async ({ params }) => {
 		playerWins: getPlayerWins(params.id) || getPlayerWins(player.slug ?? player.name),
 		playerAgents: getPlayerAgents(player),
 		socialPlatforms: await getSocialPlatforms(),
-		teams: new Map(teams.map((team) => [team.abbr ?? team.id ?? team.name ?? team.slug, team])) // TODO: remove this
+		teams: new Map(teams.map((team) => [team.abbr ?? team.id ?? team.name ?? team.slug, team])), // TODO: remove this
+		user
 	};
 };

@@ -9,6 +9,7 @@
 	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
 	import { getAllNames } from '$lib/data/players';
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
+	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
 
 	let { data }: PageProps = $props();
 
@@ -29,14 +30,25 @@
 				<PlayerAvatar player={data.player} class="mx-auto h-32 w-32" />
 			</div>
 			<div class="flex flex-col gap-4 p-6">
-				<h1 class="flex flex-col items-center gap-2 text-center text-2xl font-bold">
-					<span class="text-white">{data.player.name}</span>
-					<span class="inline-flex flex-col gap-2">
-						{#each getAllNames(data.player).filter((name) => name !== data.player.name) as name}
-							<span class="text-gray-400">({name})</span>
-						{/each}
-					</span>
-				</h1>
+				<div class="flex flex-col items-center gap-2">
+					<h1 class="flex flex-col items-center gap-2 text-center text-2xl font-bold">
+						<span class="text-white">{data.player.name}</span>
+						<span class="inline-flex flex-col gap-2">
+							{#each getAllNames(data.player).filter((name) => name !== data.player.name) as name}
+								<span class="text-gray-400">({name})</span>
+							{/each}
+						</span>
+					</h1>
+					{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
+						<a
+							href={`/admin/players?action=edit&id=${data.player.id}`}
+							class="flex items-center gap-1 rounded-md border border-gray-700 px-2 py-1 text-sm text-gray-400 transition-all duration-200 hover:bg-gray-700"
+						>
+							<IconParkSolidEdit class="h-4 w-4" />
+							{m.edit()}
+						</a>
+					{/if}
+				</div>
 				{#if data.player.nationality}
 					<p class="text-center text-gray-400">
 						<NationalityFlag nationality={data.player.nationality} showLabel />
