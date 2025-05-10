@@ -296,5 +296,10 @@
 	"sign_up": "註冊",
 	"sign_up_description": "創建帳號加入社群！",
 	"footer_fan_made": "一個由熱情的Strinova玩家創建和維護的電子競技媒體平台。我們致力於為您帶來Strinova世界的最新新聞、賽事和社群內容。",
-	"footer_trademark": "{strinova}是{idreamsky}的商標。本網站與Strinova或iDreamSky無關，也不受其認可。"
+	"footer_trademark": "{strinova}是{idreamsky}的商標。本網站與Strinova或iDreamSky無關，也不受其認可。",
+	"platform_statistics": "平台統計",
+	"total_events": "總賽事數",
+	"total_teams": "總隊伍數",
+	"total_players": "總選手數",
+	"live_events": "進行中賽事"
 }

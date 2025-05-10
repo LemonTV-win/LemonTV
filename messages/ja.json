@@ -296,5 +296,10 @@
 	"sign_up": "登録",
 	"sign_up_description": "アカウントを作成してコミュニティに参加しましょう！",
 	"footer_fan_made": "Strinovaの熱心なプレイヤーによって作成・運営されているeスポーツメディアプラットフォームです。Strinovaの世界からの最新ニュース、イベント、コミュニティコンテンツをお届けします。",
-	"footer_trademark": "{strinova}は{idreamsky}の商標です。このサイトはStrinovaまたはiDreamSkyとは関係なく、承認も受けていません。"
+	"footer_trademark": "{strinova}は{idreamsky}の商標です。このサイトはStrinovaまたはiDreamSkyとは関係なく、承認も受けていません。",
+	"platform_statistics": "プラットフォーム統計",
+	"total_events": "総イベント数",
+	"total_teams": "総チーム数",
+	"total_players": "総プレイヤー数",
+	"live_events": "ライブイベント"
 }

@@ -19,6 +19,9 @@
 	let ongoingEvents = $derived(sortedEvents.filter((event) => event.status === 'live'));
 	let upcomingEvents = $derived(sortedEvents.filter((event) => event.status === 'upcoming'));
 	let finishedEvents = $derived(sortedEvents.filter((event) => event.status === 'finished'));
+
+	// Get featured event (first ongoing event or first upcoming event)
+	let featuredEvent = $derived(ongoingEvents[0] || upcomingEvents[0]);
 </script>
 
 {#if !data.user}
@@ -155,3 +158,57 @@
 		</div>
 	</div>
 </main>
+
+<section class="mx-auto max-w-screen-lg px-4 pb-8">
+	<h2 class="mb-4 text-2xl font-bold">{m.platform_statistics()}</h2>
+	<div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
+		<a
+			href="/events?status=live"
+			class="glass-card group relative overflow-hidden p-4 transition-all duration-300 hover:bg-white/5"
+		>
+			<div
+				class="absolute inset-0 bg-gradient-to-br from-yellow-500/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+			></div>
+			<div class="relative">
+				<span class="block text-3xl font-bold text-yellow-400">{ongoingEvents.length}</span>
+				<span class="text-sm text-gray-400">{m.live_events()}</span>
+			</div>
+		</a>
+		<a
+			href="/events"
+			class="glass-card group relative overflow-hidden p-4 transition-all duration-300 hover:bg-white/5"
+		>
+			<div
+				class="absolute inset-0 bg-gradient-to-br from-yellow-500/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+			></div>
+			<div class="relative">
+				<span class="block text-3xl font-bold text-yellow-400">{data.events.length}</span>
+				<span class="text-sm text-gray-400">{m.total_events()}</span>
+			</div>
+		</a>
+		<a
+			href="/teams"
+			class="glass-card group relative overflow-hidden p-4 transition-all duration-300 hover:bg-white/5"
+		>
+			<div
+				class="absolute inset-0 bg-gradient-to-br from-yellow-500/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+			></div>
+			<div class="relative">
+				<span class="block text-3xl font-bold text-yellow-400">{data.teams.length}</span>
+				<span class="text-sm text-gray-400">{m.total_teams()}</span>
+			</div>
+		</a>
+		<a
+			href="/players"
+			class="glass-card group relative overflow-hidden p-4 transition-all duration-300 hover:bg-white/5"
+		>
+			<div
+				class="absolute inset-0 bg-gradient-to-br from-yellow-500/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+			></div>
+			<div class="relative">
+				<span class="block text-3xl font-bold text-yellow-400">{data.players.length}</span>
+				<span class="text-sm text-gray-400">{m.total_players()}</span>
+			</div>
+		</a>
+	</div>
+</section>

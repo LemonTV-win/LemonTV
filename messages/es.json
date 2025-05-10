@@ -296,5 +296,10 @@
 	"sign_up": "Registrarse",
 	"sign_up_description": "¡Crea una cuenta para unirte a la comunidad!",
 	"footer_fan_made": "Una plataforma de medios de e-sports creada y mantenida por apasionados jugadores de Strinova. Nos dedicamos a brindarte las últimas noticias, eventos y contenido comunitario del mundo de Strinova.",
-	"footer_trademark": "{strinova} es una marca registrada de {idreamsky}. Este sitio no está afiliado ni respaldado por Strinova ni iDreamSky."
+	"footer_trademark": "{strinova} es una marca registrada de {idreamsky}. Este sitio no está afiliado ni respaldado por Strinova ni iDreamSky.",
+	"platform_statistics": "Estadísticas de la Plataforma",
+	"total_events": "Total de Eventos",
+	"total_teams": "Total de Equipos",
+	"total_players": "Total de Jugadores",
+	"live_events": "Eventos en Vivo"
 }

@@ -296,5 +296,10 @@
 	"sign_up": "Sign Up",
 	"sign_up_description": "Create an account to join the community!",
 	"footer_fan_made": "A fan-made e-sports media platform created and maintained by passionate Strinova players. We're dedicated to bringing you the latest news, events, and community content from the world of Strinova.",
-	"footer_trademark": "{strinova} is a trademark of {idreamsky}. This site is not affiliated with or endorsed by Strinova nor iDreamSky."
+	"footer_trademark": "{strinova} is a trademark of {idreamsky}. This site is not affiliated with or endorsed by Strinova nor iDreamSky.",
+	"total_events": "Total Events",
+	"total_teams": "Total Teams",
+	"total_players": "Total Players",
+	"live_events": "Live Events",
+	"platform_statistics": "Platform Statistics"
 }
