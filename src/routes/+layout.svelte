@@ -311,15 +311,30 @@
 
 {@render children()}
 
-<footer class="mt-4 border-t-1 border-gray-500 bg-gray-800 px-3 py-4 text-center text-white">
-	<p>
-		© 2025 <a
-			href="https://github.com/mkpoli/LemonTV"
-			class="text-yellow-300 hover:text-yellow-400 hover:underline"
-			target="_blank">LemonTV</a
-		>. Strinova is a trademark of iDreamSky. This site is not affiliated with or endorsed by
-		Strinova or iDreamSky.
-	</p>
+<footer class="mt-4 border-t-1 border-gray-500 bg-gray-800 px-3 py-8 text-center text-white">
+	<div class="mx-auto max-w-4xl">
+		<p class="mb-4 text-lg">
+			© 2025 <a
+				href="https://github.com/mkpoli/LemonTV"
+				class="text-yellow-300 hover:text-yellow-400 hover:underline"
+				target="_blank">LemonTV</a
+			>
+		</p>
+		<p class="mb-4 text-sm text-gray-300">
+			A fan-made e-sports media platform created and maintained by passionate Strinova players.
+			We're dedicated to bringing you the latest news, events, and community content from the world
+			of Strinova.
+		</p>
+		<p class="text-xs text-gray-400">
+			<a href="https://www.strinova.com/" class="underline hover:text-gray-300" target="_blank"
+				>Strinova</a
+			>
+			is a trademark of
+			<a href="https://en.idreamsky.com/" class="underline hover:text-gray-300" target="_blank"
+				>iDreamSky</a
+			>. This site is not affiliated with or endorsed by Strinova nor iDreamSky.
+		</p>
+	</div>
 </footer>
 
 <style>
