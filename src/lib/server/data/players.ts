@@ -41,6 +41,7 @@ export async function getPlayer(keyword: string): Promise<Player | null> {
 	console.info('[Players] Successfully retrieved player:', keyword);
 	return {
 		id: playerData.id,
+		slug: playerData.slug,
 		name: playerData.name,
 		nationality: playerData.nationality as Player['nationality'],
 		aliases: aliases.map((a) => a.alias),
