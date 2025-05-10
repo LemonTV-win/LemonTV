@@ -44,7 +44,7 @@ export const actions = {
 			accountId: string;
 			overridingUrl?: string;
 		}[];
-		const slug = formData.get('slug') as string | null;
+		const slug = formData.get('slug') as string;
 
 		if (!name) {
 			return fail(400, {
@@ -70,7 +70,7 @@ export const actions = {
 						server: 'Strinova' // TODO: Make editable
 					})),
 					socialAccounts,
-					slug: slug || undefined
+					slug: slug
 				},
 				locals.user.id
 			);
