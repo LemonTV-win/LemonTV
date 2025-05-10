@@ -49,6 +49,16 @@
 
 	let { data }: PageProps = $props();
 
+	// Handle editId from URL
+	$effect(() => {
+		if (data.editId) {
+			const playerToEdit = data.players.find((p) => p.id === data.editId);
+			if (playerToEdit) {
+				handleEditPlayer(playerToEdit);
+			}
+		}
+	});
+
 	let topCountries = $derived(
 		Object.entries(
 			data.players

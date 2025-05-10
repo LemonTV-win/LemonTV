@@ -12,15 +12,17 @@ import type { Player } from '$lib/data/players';
 import { social_platform, player_social_account } from '$lib/server/db/schemas/game/social';
 import { db } from '$lib/server/db';
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ url }) => {
 	const players = await getPlayers();
 	const socialPlatforms = await db.select().from(social_platform);
 	const playersTeams = await getPlayersTeams();
+	const editId = url.searchParams.get('edit');
 
 	return {
 		players,
 		socialPlatforms,
-		playersTeams
+		playersTeams,
+		editId
 	};
 };
 
