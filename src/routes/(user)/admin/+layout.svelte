@@ -87,7 +87,9 @@
 		{@render tab('/admin/players', IconParkSolidPeople, m.players())}
 		{@render tab('/admin/teams', IconParkSolidEveryUser, m.teams())}
 	</nav>
-	<main class="overflow-auto p-8">
+	<main
+		class="overflow-auto p-8 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-800"
+	>
 		{@render children()}
 	</main>
 </div>
