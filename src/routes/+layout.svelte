@@ -321,18 +321,13 @@
 			>
 		</p>
 		<p class="mb-4 text-sm text-gray-300">
-			A fan-made e-sports media platform created and maintained by passionate Strinova players.
-			We're dedicated to bringing you the latest news, events, and community content from the world
-			of Strinova.
+			{m.footer_fan_made()}
 		</p>
 		<p class="text-xs text-gray-400">
-			<a href="https://www.strinova.com/" class="underline hover:text-gray-300" target="_blank"
-				>Strinova</a
-			>
-			is a trademark of
-			<a href="https://en.idreamsky.com/" class="underline hover:text-gray-300" target="_blank"
-				>iDreamSky</a
-			>. This site is not affiliated with or endorsed by Strinova nor iDreamSky.
+			{@html m.footer_trademark({
+				strinova: `<a href="https://www.strinova.com/" class="underline hover:text-gray-300" target="_blank">Strinova</a>`,
+				idreamsky: `<a href="https://en.idreamsky.com/" class="underline hover:text-gray-300" target="_blank">iDreamSky</a>`
+			})}
 		</p>
 	</div>
 </footer>

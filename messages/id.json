@@ -294,5 +294,7 @@
 	"hero_description": "Tonton pertandingan dan highlight acara Superstring terbaru.",
 	"watch_live": "Tonton Langsung",
 	"sign_up": "Daftar",
-	"sign_up_description": "Buat akun untuk bergabung dengan komunitas!"
+	"sign_up_description": "Buat akun untuk bergabung dengan komunitas!",
+	"footer_fan_made": "Platform media e-sports yang dibuat dan dikelola oleh pemain Strinova yang bersemangat. Kami berdedikasi untuk membawakan Anda berita terbaru, acara, dan konten komunitas dari dunia Strinova.",
+	"footer_trademark": "{strinova} adalah merek dagang dari {idreamsky}. Situs ini tidak berafiliasi dengan atau didukung oleh Strinova maupun iDreamSky."
 }

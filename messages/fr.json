@@ -294,5 +294,7 @@
 	"hero_description": "Regarde les derniers matchs et les highlights des événements de Superstrings.",
 	"watch_live": "Regarder en direct",
 	"sign_up": "S'inscrire",
-	"sign_up_description": "Créez un compte pour rejoindre la communauté !"
+	"sign_up_description": "Créez un compte pour rejoindre la communauté !",
+	"footer_fan_made": "Une plateforme de médias e-sport créée et maintenue par des joueurs passionnés de Strinova. Nous nous engageons à vous apporter les dernières actualités, événements et contenus communautaires du monde de Strinova.",
+	"footer_trademark": "{strinova} est une marque déposée de {idreamsky}. Ce site n'est pas affilié à Strinova ou iDreamSky et n'est pas approuvé par eux."
 }

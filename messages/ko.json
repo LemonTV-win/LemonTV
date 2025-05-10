@@ -294,5 +294,7 @@
 	"hero_description": "슈퍼스트링의 최신 경기와 하이라이트를 확인하세요.",
 	"watch_live": "라이브 보기",
 	"sign_up": "가입하기",
-	"sign_up_description": "커뮤니티에 참여하려면 계정을 만들어야 합니다!"
+	"sign_up_description": "커뮤니티에 참여하려면 계정을 만드세요!",
+	"footer_fan_made": "Strinova의 열정적인 플레이어들이 만들고 운영하는 e스포츠 미디어 플랫폼입니다. Strinova 세계의 최신 뉴스, 이벤트, 커뮤니티 콘텐츠를 제공합니다.",
+	"footer_trademark": "{strinova}는 {idreamsky}의 상표입니다. 이 사이트는 Strinova 또는 iDreamSky와 제휴하지 않으며 승인을 받지 않았습니다."
 }
