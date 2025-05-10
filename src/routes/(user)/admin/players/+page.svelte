@@ -543,7 +543,16 @@
 								{player.slug}
 							</a>
 						</td>
-						<td class="max-w-32 truncate px-4 py-1 text-white">{player.name}</td>
+						<td class="max-w-32 truncate px-4 py-1 text-white">
+							{player.name}
+							{#if player.aliases?.length}
+								<div class="flex flex-col text-sm text-gray-400" title={m.aliases()}>
+									{#each player.aliases as alias}
+										<span>{alias}</span>
+									{/each}
+								</div>
+							{/if}
+						</td>
 						<td class="px-4 py-1 text-gray-300">
 							<NationalityFlag nationality={player.nationality} />
 						</td>
