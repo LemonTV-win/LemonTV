@@ -174,6 +174,7 @@ export const events: Event[] = [
 								scores: [
 									[
 										{
+											accountId: 2017921,
 											player: 'iYu',
 											characters: ['Fuschia', 'Ming'],
 											score: 204,
@@ -185,6 +186,7 @@ export const events: Event[] = [
 											damage: 3812
 										},
 										{
+											accountId: 372165,
 											player: 'cherry',
 											characters: ['Audrey', 'Reiichi'],
 											score: 180,
@@ -196,6 +198,7 @@ export const events: Event[] = [
 											damage: 4309
 										},
 										{
+											accountId: 2035970,
 											player: 'Jav',
 											characters: ['Flavia', 'Celestia'],
 											score: 153,
@@ -207,6 +210,7 @@ export const events: Event[] = [
 											damage: 2746
 										},
 										{
+											accountId: 2002930,
 											player: 'Actyuki',
 											characters: ['Bai Mo', 'Eika'],
 											score: 139,
@@ -218,6 +222,7 @@ export const events: Event[] = [
 											damage: 3291
 										},
 										{
+											accountId: 2001148,
 											player: 'Saya',
 											characters: ['Michele', 'Lawine'],
 											score: 115,
@@ -231,6 +236,7 @@ export const events: Event[] = [
 									],
 									[
 										{
+											accountId: 2340207,
 											player: 'JY10137',
 											characters: ['Ming', 'Bai Mo'], // Not provided
 											score: 244,
@@ -242,6 +248,7 @@ export const events: Event[] = [
 											damage: 5371
 										},
 										{
+											accountId: 2988260,
 											player: '箱子箱',
 											characters: ['Lawine', 'Fuschia'],
 											score: 232,
@@ -253,6 +260,7 @@ export const events: Event[] = [
 											damage: 3462
 										},
 										{
+											accountId: 2352901,
 											player: 'twitch一77427',
 											characters: ['Kanami', 'Kokona'],
 											score: 217,
@@ -264,6 +272,7 @@ export const events: Event[] = [
 											damage: 3700
 										},
 										{
+											accountId: 2108435,
 											player: 'ChengCheng',
 											characters: ['Eika', 'Flavia'],
 											score: 153,
@@ -275,6 +284,7 @@ export const events: Event[] = [
 											damage: 2428
 										},
 										{
+											accountId: 2047299,
 											player: 'ぺこどん',
 											characters: ['Celestia', 'Michele'],
 											score: 172,
@@ -298,6 +308,7 @@ export const events: Event[] = [
 								scores: [
 									[
 										{
+											accountId: 2047299,
 											player: 'ChengCheng',
 											characters: ['Lawine', 'Audrey'],
 											score: 273,
@@ -309,6 +320,7 @@ export const events: Event[] = [
 											damage: 4082
 										},
 										{
+											accountId: 2988260,
 											player: '箱子箱',
 											characters: ['Fuschia', 'Michele'],
 											score: 252,
@@ -320,6 +332,7 @@ export const events: Event[] = [
 											damage: 3793
 										},
 										{
+											accountId: 2352901,
 											player: 'twitch一77427',
 											characters: ['Kanami', 'Kokona'],
 											score: 240,
@@ -331,6 +344,7 @@ export const events: Event[] = [
 											damage: 3648
 										},
 										{
+											accountId: 2047299,
 											player: 'ぺこどん',
 											characters: ['Ming', 'Flavia'],
 											score: 222,
@@ -342,6 +356,7 @@ export const events: Event[] = [
 											damage: 3834
 										},
 										{
+											accountId: 2001148,
 											player: 'JY10137',
 											characters: ['Reiichi', 'Nobunaga'],
 											score: 130,
@@ -355,6 +370,7 @@ export const events: Event[] = [
 									],
 									[
 										{
+											accountId: 372165,
 											player: 'cherry',
 											characters: ['Kokona', 'Kanami'],
 											score: 187,
@@ -366,6 +382,7 @@ export const events: Event[] = [
 											damage: 3461
 										},
 										{
+											accountId: 2002930,
 											player: 'Saya',
 											characters: ['Celestia', 'Lawine'],
 											score: 184,
@@ -377,6 +394,7 @@ export const events: Event[] = [
 											damage: 2904
 										},
 										{
+											accountId: 2035970,
 											player: 'Jav',
 											characters: ['Michele', 'Celestia'],
 											score: 165,
@@ -388,6 +406,7 @@ export const events: Event[] = [
 											damage: 2769
 										},
 										{
+											accountId: 2017921,
 											player: 'iYu',
 											characters: ['Flavia', 'Ming'],
 											score: 125,
@@ -399,6 +418,7 @@ export const events: Event[] = [
 											damage: 2213
 										},
 										{
+											accountId: 2001148,
 											player: 'Actyuki',
 											characters: ['Bai Mo', 'Meredith'],
 											score: 122,
@@ -619,6 +639,7 @@ export const events: Event[] = [
 								scores: [
 									[
 										{
+											accountId: 2007805,
 											player: 'xohfiy',
 											characters: ['Michele', 'Lawine'],
 											score: 230,
@@ -630,6 +651,7 @@ export const events: Event[] = [
 											damage: 2948
 										},
 										{
+											accountId: 2024432,
 											player: 'HonkWith4ks',
 											characters: ['Yugiri', 'Reiichi'],
 											score: 228,
@@ -641,6 +663,7 @@ export const events: Event[] = [
 											damage: 3535
 										},
 										{
+											accountId: 2000837,
 											player: 'Kariyu',
 											characters: ['Audrey', 'Celestia'],
 											score: 202,
@@ -652,7 +675,8 @@ export const events: Event[] = [
 											damage: 3342
 										},
 										{
-											player: 'FOXY1Yukino',
+											accountId: 2153306,
+											player: 'FOX1Yukino',
 											characters: ['Nobunaga', 'Ming'],
 											score: 169,
 											damageScore: 123,
@@ -663,6 +687,7 @@ export const events: Event[] = [
 											damage: 2318
 										},
 										{
+											accountId: 2014735,
 											player: 'numOneZKFan',
 											characters: ['Flavia', 'Eika'],
 											score: 129,
@@ -676,6 +701,7 @@ export const events: Event[] = [
 									],
 									[
 										{
+											accountId: 2003112,
 											player: 'Poison',
 											characters: ['Lawine', 'Nobunaga'],
 											score: 191,
@@ -687,6 +713,7 @@ export const events: Event[] = [
 											damage: 2948
 										},
 										{
+											accountId: 2002886,
 											player: 'Creepz',
 											characters: ['Galatea', 'Michele'],
 											score: 149,
@@ -698,6 +725,7 @@ export const events: Event[] = [
 											damage: 2798
 										},
 										{
+											accountId: 2003583,
 											player: 'Moozor',
 											characters: ['Meredith', 'Audrey'],
 											score: 140,
@@ -709,6 +737,7 @@ export const events: Event[] = [
 											damage: 2399
 										},
 										{
+											accountId: 2027849,
 											player: 'GWZH',
 											characters: ['Ming', 'Flavia'],
 											score: 118,
@@ -720,6 +749,7 @@ export const events: Event[] = [
 											damage: 2001
 										},
 										{
+											accountId: 2088110,
 											player: 'Vampire',
 											characters: ['Reiichi', 'Fuschia'],
 											score: 79,
@@ -743,6 +773,7 @@ export const events: Event[] = [
 								scores: [
 									[
 										{
+											accountId: 2002886,
 											player: 'Creepz',
 											characters: ['Kanami', 'Galatea'],
 											score: 254,
@@ -754,6 +785,7 @@ export const events: Event[] = [
 											damage: 4583
 										},
 										{
+											accountId: 2003583,
 											player: 'Moozor',
 											characters: ['Meredith', 'Audrey'],
 											score: 184,
@@ -765,6 +797,7 @@ export const events: Event[] = [
 											damage: 3430
 										},
 										{
+											accountId: 2088110,
 											player: 'Vampire',
 											characters: ['Reiichi', 'Fuschia'],
 											score: 109,
@@ -776,6 +809,7 @@ export const events: Event[] = [
 											damage: 1691
 										},
 										{
+											accountId: 2003112,
 											player: 'GWZH',
 											characters: ['Ming', 'Flavia'],
 											score: 80,
@@ -787,6 +821,7 @@ export const events: Event[] = [
 											damage: 1437
 										},
 										{
+											accountId: 2002886,
 											player: 'Poison',
 											characters: ['Lawine', 'Nobunaga'],
 											score: 216,
@@ -800,6 +835,7 @@ export const events: Event[] = [
 									],
 									[
 										{
+											accountId: 2007805,
 											player: 'xohfiy',
 											characters: ['Michele', 'Lawine'],
 											score: 239,
@@ -811,6 +847,7 @@ export const events: Event[] = [
 											damage: 3403
 										},
 										{
+											accountId: 2024432,
 											player: 'HonkWith4ks',
 											characters: ['Yugiri', 'Reiichi'],
 											score: 208,
@@ -822,6 +859,7 @@ export const events: Event[] = [
 											damage: 3414
 										},
 										{
+											accountId: 2000837,
 											player: 'Kariyu',
 											characters: ['Audrey', 'Audrey'],
 											score: 169,
@@ -833,7 +871,8 @@ export const events: Event[] = [
 											damage: 3320
 										},
 										{
-											player: 'FOXY1Yukino',
+											accountId: 2153306,
+											player: 'FOX1Yukino',
 											characters: ['Nobunaga', 'Ming'],
 											score: 161,
 											damageScore: 123,
@@ -844,6 +883,7 @@ export const events: Event[] = [
 											damage: 2749
 										},
 										{
+											accountId: 2014735,
 											player: 'numOneZKFan',
 											characters: ['Flavia', 'Eika'],
 											score: 117,
@@ -872,7 +912,7 @@ export const events: Event[] = [
 							{
 								team: 'KRC',
 								score: 0,
-								roaster: ['xohfiy', 'HonkWith4ks', 'FOXY1Yukino', 'numOneZKFan', 'Kariyu'] // TODO: Fix this
+								roaster: ['xohfiy', 'HonkWith4ks', 'FOX1Yukino', 'numOneZKFan', 'Kariyu'] // TODO: Fix this
 							}
 						],
 						battleOf: 'BO3',
@@ -893,6 +933,7 @@ export const events: Event[] = [
 								scores: [
 									[
 										{
+											accountId: 2413674,
 											player: '丨結城さくな丨',
 											characters: ['Ming', 'Flavia'],
 											score: 244,
@@ -904,6 +945,7 @@ export const events: Event[] = [
 											damage: 4737
 										},
 										{
+											accountId: 2340207,
 											player: 'JY10137',
 											characters: ['Meredith', 'Celestia'],
 											score: 206,
@@ -915,6 +957,7 @@ export const events: Event[] = [
 											damage: 3615
 										},
 										{
+											accountId: 2047299,
 											player: 'ぺこどん',
 											characters: ['Celestia', 'Michele'],
 											score: 194,
@@ -926,6 +969,7 @@ export const events: Event[] = [
 											damage: 3368
 										},
 										{
+											accountId: 2988260,
 											player: '箱子箱',
 											characters: ['Lawine', 'Fuschia'],
 											score: 188,
@@ -937,6 +981,7 @@ export const events: Event[] = [
 											damage: 3190
 										},
 										{
+											accountId: 2352901,
 											player: 'twitch一77427',
 											characters: ['Kanami', 'Kokona'],
 											score: 160,
@@ -950,6 +995,7 @@ export const events: Event[] = [
 									],
 									[
 										{
+											accountId: 2007805,
 											player: 'xohfiy',
 											characters: ['Michele', 'Lawine'],
 											score: 207,
@@ -961,6 +1007,7 @@ export const events: Event[] = [
 											damage: 4094
 										},
 										{
+											accountId: 2024432,
 											player: 'HonkWith4ks',
 											characters: ['Yugiri', 'Reiichi'],
 											score: 145,
@@ -972,7 +1019,8 @@ export const events: Event[] = [
 											damage: 3131
 										},
 										{
-											player: 'FOXY1Yukino',
+											accountId: 2003112,
+											player: 'FOX1Yukino',
 											characters: ['Nobunaga', 'Ming'],
 											score: 135,
 											damageScore: 120,
@@ -983,6 +1031,7 @@ export const events: Event[] = [
 											damage: 2999
 										},
 										{
+											accountId: 2000837,
 											player: 'Kariyu',
 											characters: ['Audrey', 'Celestia'],
 											score: 126,
@@ -994,6 +1043,7 @@ export const events: Event[] = [
 											damage: 2553
 										},
 										{
+											accountId: 2014735,
 											player: 'numOneZKFan',
 											characters: ['Flavia', 'Eika'],
 											score: 120,
@@ -1017,6 +1067,7 @@ export const events: Event[] = [
 								scores: [
 									[
 										{
+											accountId: 2340207,
 											player: '丨結城さくな丨',
 											characters: ['Flavia', 'Ming'],
 											score: 225,
@@ -1028,6 +1079,7 @@ export const events: Event[] = [
 											damage: 4322
 										},
 										{
+											accountId: 2352901,
 											player: 'twitch一77427',
 											characters: ['Kokona', 'Kanami'],
 											score: 221,
@@ -1039,6 +1091,7 @@ export const events: Event[] = [
 											damage: 3222
 										},
 										{
+											accountId: 2988260,
 											player: '箱子箱',
 											characters: ['Fuschia', 'Celestia'],
 											score: 203,
@@ -1050,6 +1103,7 @@ export const events: Event[] = [
 											damage: 3185
 										},
 										{
+											accountId: 2047299,
 											player: 'ぺこどん',
 											characters: ['Michele', 'Lawine'],
 											score: 180,
@@ -1061,6 +1115,7 @@ export const events: Event[] = [
 											damage: 3035
 										},
 										{
+											accountId: 2340207,
 											player: 'JY10137',
 											characters: ['Celestia', 'Reiichi'],
 											score: 175,
@@ -1074,6 +1129,7 @@ export const events: Event[] = [
 									],
 									[
 										{
+											accountId: 2007805,
 											player: 'xohfiy',
 											characters: ['Lawine', 'Bai Mo'],
 											score: 215,
@@ -1085,6 +1141,7 @@ export const events: Event[] = [
 											damage: 3742
 										},
 										{
+											accountId: 2000837,
 											player: 'Kariyu',
 											characters: ['Meredith', 'Michele'],
 											score: 164,
@@ -1096,7 +1153,8 @@ export const events: Event[] = [
 											damage: 2833
 										},
 										{
-											player: 'FOXY1Yukino',
+											accountId: 2003112,
+											player: 'FOX1Yukino',
 											characters: ['Ming', 'Fuschia'],
 											score: 160,
 											damageScore: 135,
@@ -1107,6 +1165,7 @@ export const events: Event[] = [
 											damage: 3335
 										},
 										{
+											accountId: 2024432,
 											player: 'HonkWith4ks',
 											characters: ['Reiichi', 'Yugiri'],
 											score: 144,
@@ -1118,6 +1177,7 @@ export const events: Event[] = [
 											damage: 2567
 										},
 										{
+											accountId: 2014735,
 											player: 'numOneZKFan',
 											characters: ['Eika', 'Flavia'],
 											score: 142,
@@ -1168,6 +1228,7 @@ export const events: Event[] = [
 								scores: [
 									[
 										{
+											accountId: 2003513,
 											player: 'Ascinei',
 											characters: ['Kokona', 'Kanami'],
 											score: 271,
@@ -1179,6 +1240,7 @@ export const events: Event[] = [
 											damage: 6242
 										},
 										{
+											accountId: 2001148,
 											player: 'ttvBlexiss',
 											characters: ['Flavia', 'Lawine'],
 											score: 245,
@@ -1190,6 +1252,7 @@ export const events: Event[] = [
 											damage: 5967
 										},
 										{
+											accountId: 2005346,
 											player: 'gengu',
 											characters: ['Celestia', 'Ming'],
 											score: 227,
@@ -1201,6 +1264,7 @@ export const events: Event[] = [
 											damage: 6125
 										},
 										{
+											accountId: 2003944,
 											player: 'grustleking',
 											characters: ['Michele', 'Celestia'],
 											score: 186,
@@ -1212,6 +1276,7 @@ export const events: Event[] = [
 											damage: 4254
 										},
 										{
+											accountId: 2947836,
 											player: 'frostyZK',
 											characters: ['Yugiri', 'Meredith'],
 											score: 178,
@@ -1225,6 +1290,7 @@ export const events: Event[] = [
 									],
 									[
 										{
+											accountId: 2413674,
 											player: '丨結城さくな丨',
 											characters: ['Ming', 'Flavia'],
 											score: 263,
@@ -1236,6 +1302,7 @@ export const events: Event[] = [
 											damage: 7446
 										},
 										{
+											accountId: 2047299,
 											player: 'ぺこどん',
 											characters: ['Lawine', 'Michele'],
 											score: 203,
@@ -1247,6 +1314,7 @@ export const events: Event[] = [
 											damage: 4763
 										},
 										{
+											accountId: 2340207,
 											player: 'JY10137',
 											characters: ['Meredith', 'Bai Mo'],
 											score: 197,
@@ -1258,6 +1326,7 @@ export const events: Event[] = [
 											damage: 4627
 										},
 										{
+											accountId: 2352901,
 											player: 'twitch一77427',
 											characters: ['Kanami', 'Kokona'],
 											score: 193,
@@ -1269,6 +1338,7 @@ export const events: Event[] = [
 											damage: 4276
 										},
 										{
+											accountId: 2988260,
 											player: '箱子箱',
 											characters: ['Celestia', 'Celestia'],
 											score: 157,
@@ -1292,6 +1362,7 @@ export const events: Event[] = [
 								scores: [
 									[
 										{
+											accountId: 2003513,
 											player: 'Ascinei',
 											characters: ['Kanami', 'Kokona'],
 											score: 223,
@@ -1303,6 +1374,7 @@ export const events: Event[] = [
 											damage: 3730
 										},
 										{
+											accountId: 2947836,
 											player: 'frostyZK',
 											characters: ['Meredith', 'Yugiri'],
 											score: 217,
@@ -1314,6 +1386,7 @@ export const events: Event[] = [
 											damage: 4259
 										},
 										{
+											accountId: 2005346,
 											player: 'gengu',
 											characters: ['Ming', 'Michele'],
 											score: 199,
@@ -1325,6 +1398,7 @@ export const events: Event[] = [
 											damage: 4528
 										},
 										{
+											accountId: 2001148,
 											player: 'ttvBlexiss',
 											characters: ['Lawine', 'Flavia'],
 											score: 186,
@@ -1336,6 +1410,7 @@ export const events: Event[] = [
 											damage: 3348
 										},
 										{
+											accountId: 2003944,
 											player: 'grustleking',
 											characters: ['Celestia', 'Fuschia'],
 											score: 172,
@@ -1349,6 +1424,7 @@ export const events: Event[] = [
 									],
 									[
 										{
+											accountId: 2352901,
 											player: 'twitch一77427',
 											characters: ['Kokona', 'Kanami'],
 											score: 205,
@@ -1360,6 +1436,7 @@ export const events: Event[] = [
 											damage: 3917
 										},
 										{
+											accountId: 2413674,
 											player: '丨結城さくな丨',
 											characters: ['Flavia', 'Ming'],
 											score: 203,
@@ -1371,6 +1448,7 @@ export const events: Event[] = [
 											damage: 4314
 										},
 										{
+											accountId: 2988260,
 											player: '箱子箱',
 											characters: ['Fuschia', 'Lawine'],
 											score: 182,
@@ -1382,6 +1460,7 @@ export const events: Event[] = [
 											damage: 3709
 										},
 										{
+											accountId: 2340207,
 											player: 'JY10137',
 											characters: ['Celestia', 'Reiichi'],
 											score: 134,
@@ -1393,6 +1472,7 @@ export const events: Event[] = [
 											damage: 2809
 										},
 										{
+											accountId: 2047299,
 											player: 'ぺこどん',
 											characters: ['Michele', 'Celestia'],
 											score: 124,
@@ -2093,6 +2173,7 @@ export const events: Event[] = [
 								scores: [
 									[
 										{
+											accountId: 2947836,
 											player: 'frostyZK',
 											characters: [null, 'Meredith'],
 											score: 282,
@@ -2104,6 +2185,7 @@ export const events: Event[] = [
 											damage: 2649
 										},
 										{
+											accountId: 2003592,
 											player: 'ttvBlexiss',
 											characters: [null, 'Lawine'],
 											score: 270,
@@ -2115,6 +2197,7 @@ export const events: Event[] = [
 											damage: 2649
 										},
 										{
+											accountId: 2003944,
 											player: 'grustleking',
 											characters: [null, 'Celestia'],
 											score: 196,
@@ -2126,6 +2209,7 @@ export const events: Event[] = [
 											damage: 1977
 										},
 										{
+											accountId: 2005346,
 											player: 'gengu',
 											characters: [null, 'Ming'],
 											score: 193,
@@ -2137,6 +2221,7 @@ export const events: Event[] = [
 											damage: 1902
 										},
 										{
+											accountId: 2003513,
 											player: 'Ascinei',
 											characters: [null, 'Reiichi'],
 											score: 180,
@@ -2150,6 +2235,7 @@ export const events: Event[] = [
 									],
 									[
 										{
+											accountId: 2002886,
 											player: 'Creepz',
 											characters: [null, 'Michele'],
 											score: 127,
@@ -2161,6 +2247,7 @@ export const events: Event[] = [
 											damage: 1667
 										},
 										{
+											accountId: 2003112,
 											player: 'Poison',
 											characters: [null, 'Nobunaga'],
 											score: 111,
@@ -2172,6 +2259,7 @@ export const events: Event[] = [
 											damage: 1181
 										},
 										{
+											accountId: 2003112,
 											player: 'GWZH',
 											characters: [null, 'Yvette'],
 											score: 108,
@@ -2183,6 +2271,7 @@ export const events: Event[] = [
 											damage: 1535
 										},
 										{
+											accountId: 2003583,
 											player: 'Moozor',
 											characters: [null, 'Audrey'],
 											score: 89,
@@ -2194,6 +2283,7 @@ export const events: Event[] = [
 											damage: 1113
 										},
 										{
+											accountId: 2088110,
 											player: 'Vampire',
 											characters: [null, 'Flavia'],
 											score: 53,
@@ -2217,6 +2307,7 @@ export const events: Event[] = [
 								scores: [
 									[
 										{
+											accountId: 2002886,
 											player: 'Creepz',
 											characters: [null, 'Michele'],
 											score: 110,
@@ -2228,6 +2319,7 @@ export const events: Event[] = [
 											damage: 1508
 										},
 										{
+											accountId: 2003583,
 											player: 'Moozor',
 											characters: [null, 'Audrey'],
 											score: 92,
@@ -2239,6 +2331,7 @@ export const events: Event[] = [
 											damage: 1409
 										},
 										{
+											accountId: 2027849,
 											player: 'GWZH',
 											characters: [null, 'Yvette'],
 											score: 71,
@@ -2250,6 +2343,7 @@ export const events: Event[] = [
 											damage: 1254
 										},
 										{
+											accountId: 2003112,
 											player: 'Poison',
 											characters: [null, 'Nobunaga'],
 											score: 67,
@@ -2261,6 +2355,7 @@ export const events: Event[] = [
 											damage: 831
 										},
 										{
+											accountId: 2088110,
 											player: 'Vampire',
 											characters: [null, 'Flavia'],
 											score: 34,
@@ -2274,6 +2369,7 @@ export const events: Event[] = [
 									],
 									[
 										{
+											accountId: 2003592,
 											player: 'ttvBlexiss',
 											characters: [null, 'Lawine'],
 											score: 247,
@@ -2285,6 +2381,7 @@ export const events: Event[] = [
 											damage: 2491
 										},
 										{
+											accountId: 2003944,
 											player: 'grustleking',
 											characters: [null, 'Celestia'],
 											score: 222,
@@ -2296,6 +2393,7 @@ export const events: Event[] = [
 											damage: 2195
 										},
 										{
+											accountId: 2005346,
 											player: 'gengu',
 											characters: [null, 'Ming'],
 											score: 205,
@@ -2307,6 +2405,7 @@ export const events: Event[] = [
 											damage: 2601
 										},
 										{
+											accountId: 2947836,
 											player: 'frostyZK',
 											characters: [null, 'Meredith'],
 											score: 198,
@@ -2318,6 +2417,7 @@ export const events: Event[] = [
 											damage: 2315
 										},
 										{
+											accountId: 2003513,
 											player: 'Ascinei',
 											characters: [null, 'Kanami'],
 											score: 191,
@@ -2363,6 +2463,7 @@ export const events: Event[] = [
 								scores: [
 									[
 										{
+											accountId: 2003596,
 											player: 'minecraftsteve',
 											characters: [null, 'Reiichi'],
 											score: 269,
@@ -2374,6 +2475,7 @@ export const events: Event[] = [
 											damage: 4644
 										},
 										{
+											accountId: 2003027,
 											player: 'akwa',
 											characters: [null, 'Lawine'],
 											score: 229,
@@ -2385,6 +2487,7 @@ export const events: Event[] = [
 											damage: 3248
 										},
 										{
+											accountId: 2003285,
 											player: 'nine',
 											characters: [null, 'Ming'],
 											score: 199,
@@ -2396,6 +2499,7 @@ export const events: Event[] = [
 											damage: 3219
 										},
 										{
+											accountId: 2003207,
 											player: 'HiroRune',
 											characters: [null, 'Celestia'],
 											score: 174,
@@ -2407,6 +2511,7 @@ export const events: Event[] = [
 											damage: 2969
 										},
 										{
+											accountId: 2007650,
 											player: 'BriBri',
 											characters: [null, 'Eika'],
 											score: 157,
@@ -2420,6 +2525,7 @@ export const events: Event[] = [
 									],
 									[
 										{
+											accountId: 2012280,
 											player: 'Mansek',
 											characters: [null, 'Michele'],
 											score: 190,
@@ -2431,6 +2537,7 @@ export const events: Event[] = [
 											damage: 3609
 										},
 										{
+											accountId: 2002667,
 											player: 'will',
 											characters: [null, 'Maddelena'],
 											score: 178,
@@ -2442,6 +2549,7 @@ export const events: Event[] = [
 											damage: 2870
 										},
 										{
+											accountId: 2002698,
 											player: 'Scylla',
 											characters: [null, 'Flavia'],
 											score: 158,
@@ -2453,6 +2561,7 @@ export const events: Event[] = [
 											damage: 2686
 										},
 										{
+											accountId: 2004030,
 											player: 'Voxy',
 											characters: [null, 'Fuschia'],
 											score: 137,
@@ -2464,6 +2573,7 @@ export const events: Event[] = [
 											damage: 1743
 										},
 										{
+											accountId: 2007660,
 											player: 'ARGHGHGHGHGHGHG',
 											characters: [null, 'Nobunaga'],
 											score: 132,
@@ -2487,6 +2597,7 @@ export const events: Event[] = [
 								scores: [
 									[
 										{
+											accountId: 2003596,
 											player: 'minecraftsteve',
 											characters: [null, 'Kanami'],
 											score: 270,
@@ -2498,6 +2609,7 @@ export const events: Event[] = [
 											damage: 5011
 										},
 										{
+											accountId: 2003285,
 											player: 'nine',
 											characters: [null, 'Ming'],
 											score: 264,
@@ -2509,6 +2621,7 @@ export const events: Event[] = [
 											damage: 5905
 										},
 										{
+											accountId: 2003207,
 											player: 'HiroRune',
 											characters: [null, 'Celestia'],
 											score: 172,
@@ -2520,6 +2633,7 @@ export const events: Event[] = [
 											damage: 3085
 										},
 										{
+											accountId: 2003027,
 											player: 'akwa',
 											characters: [null, 'Lawine'],
 											score: 128,
@@ -2531,6 +2645,7 @@ export const events: Event[] = [
 											damage: 1891
 										},
 										{
+											accountId: 2007650,
 											player: 'BriBri',
 											characters: [null, 'Eika'],
 											score: 122,
@@ -2544,6 +2659,7 @@ export const events: Event[] = [
 									],
 									[
 										{
+											accountId: 2002667,
 											player: 'will',
 											characters: [null, 'Maddelena'],
 											score: 215,
@@ -2555,6 +2671,7 @@ export const events: Event[] = [
 											damage: 3828
 										},
 										{
+											accountId: 2002698,
 											player: 'Scylla',
 											characters: [null, 'Flavia'],
 											score: 208,
@@ -2566,6 +2683,7 @@ export const events: Event[] = [
 											damage: 4203
 										},
 										{
+											accountId: 2007660,
 											player: 'ARGHGHGHGHGHGHG',
 											characters: [null, 'Yvette'],
 											score: 186,
@@ -2577,6 +2695,7 @@ export const events: Event[] = [
 											damage: 3618
 										},
 										{
+											accountId: 2012280,
 											player: 'Mansek',
 											characters: [null, 'Michele'],
 											score: 167,
@@ -2588,6 +2707,7 @@ export const events: Event[] = [
 											damage: 3855
 										},
 										{
+											accountId: 2233623,
 											player: 'sinna',
 											characters: [null, 'Fuschia'],
 											score: 128,
@@ -2638,6 +2758,7 @@ export const events: Event[] = [
 								scores: [
 									[
 										{
+											accountId: 2005346,
 											player: 'gengu',
 											characters: [null, 'Michele'],
 											score: 273,
@@ -2649,6 +2770,7 @@ export const events: Event[] = [
 											damage: 4829
 										},
 										{
+											accountId: 2947836,
 											player: 'frostyZK',
 											characters: [null, 'Yugiri'],
 											score: 257,
@@ -2660,6 +2782,7 @@ export const events: Event[] = [
 											damage: 3609
 										},
 										{
+											accountId: 2003513,
 											player: 'Ascinei',
 											characters: [null, 'Kokona'],
 											score: 230,
@@ -2671,6 +2794,7 @@ export const events: Event[] = [
 											damage: 3524
 										},
 										{
+											accountId: 2003592,
 											player: 'ttvBlexiss',
 											characters: [null, 'Flavia'],
 											score: 215,
@@ -2682,6 +2806,7 @@ export const events: Event[] = [
 											damage: 3479
 										},
 										{
+											accountId: 2003944,
 											player: 'grustleking',
 											characters: [null, 'Fuschia'],
 											score: 163,
@@ -2695,6 +2820,7 @@ export const events: Event[] = [
 									],
 									[
 										{
+											accountId: 2003596,
 											player: 'minecraftsteve',
 											characters: [null, 'Kanami'],
 											score: 269,
@@ -2706,6 +2832,7 @@ export const events: Event[] = [
 											damage: 4655
 										},
 										{
+											accountId: 2003027,
 											player: 'akwa',
 											characters: [null, 'Lawine'],
 											score: 167,
@@ -2717,6 +2844,7 @@ export const events: Event[] = [
 											damage: 2679
 										},
 										{
+											accountId: 2003285,
 											player: 'nine',
 											characters: [null, 'Ming'],
 											score: 154,
@@ -2728,6 +2856,7 @@ export const events: Event[] = [
 											damage: 2982
 										},
 										{
+											accountId: 2003207,
 											player: 'HiroRune',
 											characters: [null, 'Celestia'],
 											score: 153,
@@ -2739,6 +2868,7 @@ export const events: Event[] = [
 											damage: 2311
 										},
 										{
+											accountId: 2007650,
 											player: 'BriBri',
 											characters: [null, 'Eika'],
 											score: 151,
@@ -2762,6 +2892,7 @@ export const events: Event[] = [
 								scores: [
 									[
 										{
+											accountId: 2003592,
 											player: 'ttvBlexiss',
 											characters: [null, 'Lawine'],
 											score: 282,
@@ -2773,6 +2904,7 @@ export const events: Event[] = [
 											damage: 5227
 										},
 										{
+											accountId: 2005346,
 											player: 'gengu',
 											characters: [null, 'Ming'],
 											score: 224,
@@ -2784,6 +2916,7 @@ export const events: Event[] = [
 											damage: 4636
 										},
 										{
+											accountId: 2003944,
 											player: 'grustleking',
 											characters: [null, 'Celestia'],
 											score: 204,
@@ -2795,6 +2928,7 @@ export const events: Event[] = [
 											damage: 3542
 										},
 										{
+											accountId: 2947836,
 											player: 'frostyZK',
 											characters: [null, 'Meredith'],
 											score: 197,
@@ -2806,6 +2940,7 @@ export const events: Event[] = [
 											damage: 3217
 										},
 										{
+											accountId: 2003513,
 											player: 'Ascinei',
 											characters: [null, 'Reiichi'],
 											score: 162,
@@ -2819,6 +2954,7 @@ export const events: Event[] = [
 									],
 									[
 										{
+											accountId: 2003596,
 											player: 'minecraftsteve',
 											characters: [null, 'Kokona'],
 											score: 256,
@@ -2830,6 +2966,7 @@ export const events: Event[] = [
 											damage: 5331
 										},
 										{
+											accountId: 2003207,
 											player: 'HiroRune',
 											characters: [null, 'Fuschia'],
 											score: 236,
@@ -2841,6 +2978,7 @@ export const events: Event[] = [
 											damage: 4417
 										},
 										{
+											accountId: 2007650,
 											player: 'BriBri',
 											characters: [null, 'Yvette'],
 											score: 178,
@@ -2852,6 +2990,7 @@ export const events: Event[] = [
 											damage: 3272
 										},
 										{
+											accountId: 2003285,
 											player: 'nine',
 											characters: [null, 'Flavia'],
 											score: 176,
@@ -2863,6 +3002,7 @@ export const events: Event[] = [
 											damage: 2935
 										},
 										{
+											accountId: 2003027,
 											player: 'akwa',
 											characters: [null, 'Michele'],
 											score: 140,
