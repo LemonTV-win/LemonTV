@@ -375,6 +375,7 @@
 			<PlayerEdit
 				player={selectedPlayer || {}}
 				socialPlatforms={data.socialPlatforms}
+				{topCountries}
 				onSave={isAddingNew ? handleSavePlayer : handleUpdatePlayer}
 				onCancel={handleCancel}
 			/>

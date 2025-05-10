@@ -14,11 +14,13 @@
 	let {
 		player,
 		socialPlatforms,
+		topCountries,
 		onSave,
 		onCancel
 	}: {
 		player: Partial<Player>;
 		socialPlatforms: any[];
+		topCountries: [string, number][];
 		onSave: (player: Partial<Player>) => Promise<void>;
 		onCancel: () => void;
 	} = $props();
@@ -218,6 +220,14 @@
 				class="font-emoji mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 			>
 				<option value={undefined}>{m.select_nationality()}</option>
+				{#each topCountries as [code, _]}
+					<option value={code}>
+						{code} -
+						{countryCodeToFlagEmoji(code)} -
+						{countryCodeToLocalizedName(code, getLocale())}
+					</option>
+				{/each}
+				<option disabled>―――</option>
 				{#each countryCodes as code}
 					<option value={code}>
 						{code} -
