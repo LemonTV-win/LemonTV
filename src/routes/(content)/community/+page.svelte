@@ -80,7 +80,7 @@
 	<h2 class="text-xl font-bold">Discord</h2>
 	<ul class="m-4 flex flex-col flex-wrap gap-4 p-2">
 		{#each discordLinks as link}
-			<li class="flex items-center gap-2 rounded-md bg-gray-800 p-2">
+			<li class="glass-card rounded-lg p-4">
 				<div class="flex flex-col">
 					<a
 						href={link.url}
@@ -102,7 +102,7 @@
 	<h2 class="text-xl font-bold">{m.tools_resources()}</h2>
 	<ul class="m-4 flex flex-col flex-wrap gap-4 p-2">
 		{#each toolsAndResources as resource}
-			<li class="flex items-center gap-2 rounded-md bg-gray-800 p-2">
+			<li class="glass-card rounded-lg p-4">
 				<a
 					href={resource.url}
 					class="text-yellow-300 hover:text-yellow-400 hover:underline"
@@ -118,7 +118,7 @@
 	<h2 class="text-xl font-bold">Speedrun</h2>
 	<ul class="m-4 flex flex-col flex-wrap gap-4 p-2">
 		{#each speedrunLinks as link}
-			<li class="flex items-center gap-2 rounded-md bg-gray-800 p-2">
+			<li class="glass-card rounded-lg p-4">
 				<a
 					href={link.url}
 					class="text-yellow-300 hover:text-yellow-400 hover:underline"
