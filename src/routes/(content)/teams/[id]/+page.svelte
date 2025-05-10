@@ -10,6 +10,7 @@
 	import RegionTag from '$lib/components/tags/RegionTag.svelte';
 	import { getAllNames } from '$lib/data/players';
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
+	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
 	let { data }: PageProps = $props();
 </script>
 
@@ -24,7 +25,10 @@
 
 		<section>
 			<div class="flex flex-col gap-4 sm:flex-row sm:items-center">
-				<h1 class="my-6 text-3xl font-bold">{data.team.name}</h1>
+				<h1 class="my-6 text-3xl font-bold">
+					{data.team.name}
+				</h1>
+
 				<div class="flex flex-wrap gap-2">
 					{#if data.team.region}
 						<RegionTag region={data.team.region} />
@@ -43,6 +47,16 @@
 						</p>
 					</div>
 				</div>
+
+				{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
+					<a
+						href={`/admin/teams?action=edit&id=${data.team.id}`}
+						class="flex items-center gap-1 rounded-md border border-gray-700 px-2 py-1 text-sm text-gray-400 transition-all duration-200 hover:bg-gray-700"
+					>
+						<IconParkSolidEdit class="h-4 w-4" />
+						{m.edit()}
+					</a>
+				{/if}
 			</div>
 			{#if data.team.logo}
 				<img src={data.team.logo} alt={data.team.name} />

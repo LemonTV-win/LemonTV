@@ -2,14 +2,14 @@ import type { PageServerLoad } from './$types';
 
 import {
 	getTeam,
-	getTeamMemberStatistics,
 	getTeamStatistics,
 	getTeamMatches,
-	getTeams
+	getTeams,
+	getTeamMemberStatistics
 } from '$lib/server/data/teams';
 import { error } from '@sveltejs/kit';
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 	const team = await getTeam(params.id);
 
 	if (!team) {
@@ -22,6 +22,7 @@ export const load: PageServerLoad = async ({ params }) => {
 		teams: new Map(teams.map((team) => [team.abbr ?? team.id ?? team.name ?? team.slug, team])), // TODO: remove this
 		teamMatches: getTeamMatches(team),
 		teamMemberStatistics: getTeamMemberStatistics(team),
-		teamStatistics: await getTeamStatistics(team)
+		teamStatistics: await getTeamStatistics(team),
+		user
 	};
 };

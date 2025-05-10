@@ -5,17 +5,22 @@ import * as table from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 // import { importTeams } from '$lib/server/data/teams';
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ url }) => {
 	const teamsList = await db.select().from(table.teams);
 	const teamPlayers = await db.select().from(table.teamPlayer);
 	const teamAliases = await db.select().from(table.teamAlias);
 	const players = await db.select().from(table.player);
 
+	const action = url.searchParams.get('action');
+	const id = url.searchParams.get('id');
+
 	return {
 		teams: teamsList,
 		teamPlayers,
 		teamAliases,
-		players
+		players,
+		action,
+		id
 	};
 };
 

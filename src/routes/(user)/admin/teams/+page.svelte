@@ -67,12 +67,14 @@
 		isAddingNew = true;
 		isEditing = false;
 		selectedTeam = null;
+		goto('/admin/teams?action=new', { replaceState: true });
 	}
 
 	function handleEditTeam(team: Team) {
 		selectedTeam = team;
 		isEditing = true;
 		isAddingNew = false;
+		goto(`/admin/teams?action=edit&id=${team.id}`, { replaceState: true });
 	}
 
 	async function handleSaveTeam(team: Partial<Team> & { aliases?: string[]; players?: any[] }) {
@@ -116,6 +118,7 @@
 		isAddingNew = false;
 		isEditing = false;
 		selectedTeam = null;
+		goto('/admin/teams', { replaceState: true });
 	}
 
 	async function handleDeleteTeam(team: Team) {
@@ -227,6 +230,18 @@
 			console.error('Error exporting teams:', e);
 		}
 	}
+
+	// Handle URL parameters
+	$effect(() => {
+		if (data.action === 'new') {
+			handleAddTeam();
+		} else if (data.action === 'edit' && data.id) {
+			const teamToEdit = data.teams.find((t) => t.id === data.id);
+			if (teamToEdit) {
+				handleEditTeam(teamToEdit);
+			}
+		}
+	});
 </script>
 
 <main class="mx-auto max-w-screen-lg px-4">
