@@ -116,9 +116,9 @@
 	<div
 		class="overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-800"
 	>
-		<table class="w-full table-auto border-collapse border-y-2 border-gray-500 bg-gray-800">
+		<table class="glass-table w-full table-auto">
 			<thead>
-				<tr class="border-b-2 border-gray-500 text-left text-sm text-gray-400">
+				<tr>
 					<th class="px-4 py-1">
 						<button
 							class="flex items-center gap-1 text-left"
@@ -200,7 +200,7 @@
 			</thead>
 			<tbody>
 				{#each filtered as player}
-					<tr class="border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl">
+					<tr>
 						<td class=" py-1 text-center">
 							<NationalityFlag nationality={player.nationality} />
 						</td>

@@ -26,6 +26,27 @@ body {
 		@apply transition-all duration-200;
 	}
 
+	.glass-table {
+		@apply relative;
+		@apply border-white/30 bg-gradient-to-br from-slate-600/60 to-slate-800 backdrop-blur-lg;
+		@apply hover:z-10;
+		@apply shadow-2xl;
+		@apply transition-all duration-200;
+		@apply border-collapse;
+	}
+
+	.glass-table > thead > tr {
+		@apply border-y-2 border-gray-400 text-left text-sm text-gray-400 backdrop-blur-lg;
+	}
+
+	.glass-table > thead > tr > th {
+		@apply hover:bg-white/10;
+	}
+
+	.glass-table > tbody > tr {
+		@apply border-y border-gray-500 px-4 py-2 transition-all duration-200 hover:bg-white/10;
+	}
+
 	.glass-card-bottom-button {
 		@apply block w-full rounded-b-lg border border-white/20 px-4 py-2 text-center text-lg text-white ring-1 ring-white/20 backdrop-blur-sm transition-all duration-200 hover:scale-105 hover:border-white/30 hover:bg-white/5 hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.2)];
 	}
