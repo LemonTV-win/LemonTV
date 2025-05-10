@@ -533,7 +533,7 @@
 				{#each filteredPlayers as player}
 					<tr class="border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl">
 						<td
-							class="max-w-32 truncate px-4 py-1 font-mono text-xs text-gray-300"
+							class="max-w-16 truncate px-4 py-1 font-mono text-xs text-gray-300"
 							title={player.id}
 						>
 							{player.id}
@@ -543,28 +543,31 @@
 								{player.slug}
 							</a>
 						</td>
-						<td class="max-w-32 truncate px-4 py-1 text-white">
+						<td class="px-4 py-1 text-white">
 							{player.name}
 							{#if player.aliases?.length}
-								<div class="flex flex-col text-sm text-gray-400" title={m.aliases()}>
+								<div
+									class="flex flex-col text-sm whitespace-nowrap text-gray-400"
+									title={m.aliases()}
+								>
 									{#each player.aliases as alias}
 										<span>{alias}</span>
 									{/each}
 								</div>
 							{/if}
 						</td>
-						<td class="px-4 py-1 text-gray-300">
+						<td class="max-w-6 px-4 py-1 text-gray-300">
 							<NationalityFlag nationality={player.nationality} />
 						</td>
 						<td class="px-4 py-1 text-gray-300">
 							{#if player.gameAccounts?.length}
-								<ul class="list-inside list-disc">
+								<ul>
 									{#each player.gameAccounts as account}
-										<li>
-											<span class="text-sm text-gray-400">{account.accountId}</span>
+										<li class="break-keep whitespace-nowrap">
+											<span class="text-xs text-gray-400">{account.accountId}</span>
 											{account.currentName}
 											{#if account.region}
-												<span class="text-gray-400">({account.region})</span>
+												<span class="text-xs text-gray-400">({account.region})</span>
 											{/if}
 										</li>
 									{/each}
@@ -585,9 +588,9 @@
 						</td>
 						<td class="px-4 py-1 text-gray-300">
 							{#if data.playersTeams[player.id ?? '']?.length}
-								<ul class="list-inside list-disc">
+								<ul>
 									{#each data.playersTeams[player.id ?? ''] as team}
-										<li>
+										<li class="break-keep whitespace-nowrap">
 											<a href={`/teams/${team.slug}`} class="text-yellow-500 hover:text-yellow-400">
 												{team.name}
 											</a>
