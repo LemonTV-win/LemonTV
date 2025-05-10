@@ -11,6 +11,7 @@
 	let filtered = $derived(
 		data.teams
 			.toSorted((a, b) => b.wins - a.wins)
+			.map((team, index) => ({ ...team, ranking: index + 1 }))
 			.filter((team) => team.name.toLowerCase().includes(search.toLowerCase()))
 	);
 
@@ -40,9 +41,9 @@
 	</div>
 
 	<ul class="glass-card-container">
-		{#each filtered as team, i}
+		{#each filtered as team}
 			{#if team}
-				<TeamCard {team} wins={team.wins} rank={i + 1} expanded={i === 0} />
+				<TeamCard {team} wins={team.wins} rank={team.ranking} expanded={team.ranking === 1} />
 			{/if}
 		{/each}
 	</ul>
