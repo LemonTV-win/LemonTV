@@ -7,7 +7,8 @@ import {
 	getSocialPlatforms,
 	getPlayerMatches,
 	getPlayerWins,
-	getPlayerEvents
+	getPlayerEvents,
+	calculatePlayerKD
 } from '$lib/server/data/players';
 import { getTeams } from '$lib/server/data/teams';
 
@@ -26,6 +27,7 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 		playerMatches: getPlayerMatches(params.id) || getPlayerMatches(player.slug ?? player.name),
 		playerWins: getPlayerWins(params.id) || getPlayerWins(player.slug ?? player.name),
 		playerAgents: getPlayerAgents(player),
+		playerKD: calculatePlayerKD(player),
 		socialPlatforms: await getSocialPlatforms(),
 		teams: new Map(teams.map((team) => [team.abbr ?? team.id ?? team.name ?? team.slug, team])), // TODO: remove this
 		user

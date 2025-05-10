@@ -88,6 +88,11 @@
 							<td>{m.wins()}</td>
 							<td>{data.playerWins}</td>
 						</tr>
+						<tr>
+							<!-- TODO: Localize -->
+							<td>KD</td>
+							<td>{data.playerKD.toFixed(2)}</td>
+						</tr>
 					</tbody>
 				</table>
 			</div>

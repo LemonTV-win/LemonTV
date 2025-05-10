@@ -4,7 +4,8 @@ import {
 	getPlayersTeams,
 	getPlayersAgents,
 	calculatePlayerRating,
-	getPlayerWins
+	getPlayerWins,
+	calculatePlayerKD
 } from '$lib/server/data/players';
 
 export const load: PageServerLoad = async ({ locals: { user } }) => {
@@ -17,7 +18,8 @@ export const load: PageServerLoad = async ({ locals: { user } }) => {
 		players: players.map((player) => ({
 			...player,
 			wins: getPlayerWins(player.slug ?? player.name),
-			rating: calculatePlayerRating(player)
+			rating: calculatePlayerRating(player),
+			kd: calculatePlayerKD(player)
 		})),
 		playersAgents,
 		playersTeams,

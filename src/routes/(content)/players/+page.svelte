@@ -28,7 +28,9 @@
 		| 'region-asc'
 		| 'region-desc'
 		| 'team-asc'
-		| 'team-desc' = $state('name-abc');
+		| 'team-desc'
+		| 'kd-asc'
+		| 'kd-desc' = $state('name-abc');
 
 	let sorted = $derived(
 		data.players.toSorted((a, b) => {
@@ -56,6 +58,10 @@
 				const aTeams = data.playersTeams[a.id ?? '']?.map((t) => t.name).join(', ') ?? '';
 				const bTeams = data.playersTeams[b.id ?? '']?.map((t) => t.name).join(', ') ?? '';
 				return bTeams.localeCompare(aTeams);
+			} else if (sortBy === 'kd-asc') {
+				return a.kd - b.kd;
+			} else if (sortBy === 'kd-desc') {
+				return b.kd - a.kd;
 			}
 			return 0;
 		})
@@ -84,7 +90,9 @@
 				urlSortBy === 'region-asc' ||
 				urlSortBy === 'region-desc' ||
 				urlSortBy === 'team-asc' ||
-				urlSortBy === 'team-desc')
+				urlSortBy === 'team-desc' ||
+				urlSortBy === 'kd-asc' ||
+				urlSortBy === 'kd-desc')
 		) {
 			sortBy = urlSortBy;
 		}
@@ -196,6 +204,21 @@
 							{/if}
 						</button>
 					</th>
+					<th class="px-4 py-1">
+						<button
+							class="flex items-center gap-1 text-left"
+							class:text-white={sortBy === 'kd-asc' || sortBy === 'kd-desc'}
+							onclick={() => (sortBy = sortBy === 'kd-asc' ? 'kd-desc' : 'kd-asc')}
+							>K/D
+							{#if sortBy === 'kd-asc'}
+								<TypcnArrowSortedUp class="inline-block" />
+							{:else if sortBy === 'kd-desc'}
+								<TypcnArrowSortedDown class="inline-block" />
+							{:else}
+								<TypcnArrowUnsorted class="inline-block" />
+							{/if}
+						</button>
+					</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -228,6 +251,9 @@
 						<td class="px-4 py-1 text-gray-300">{player.wins}</td>
 						<td class="px-4 py-1 text-gray-300" title={m.rating() + ' ' + player.rating}>
 							{player.rating.toFixed(2)}
+						</td>
+						<td class="px-4 py-1 text-gray-300" title="Kill/Death Ratio">
+							{player.kd.toFixed(2)}
 						</td>
 					</tr>
 				{/each}
