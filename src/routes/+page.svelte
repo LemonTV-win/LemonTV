@@ -75,24 +75,23 @@
 			</ul>
 		{/if}
 
-		<h3 class="my-4 text-xl font-bold">{m.finished()}</h3>
-		<ul class="glass-card-container">
-			{#each finishedEvents as event}
-				<li>
-					<EventCard {event} />
-				</li>
-			{/each}
-		</ul>
-		<a
-			href="/events"
-			class="mt-2 block w-full px-4 text-center text-lg font-bold transition-all duration-200 hover:opacity-80"
-		>
-			{m.view_all_events()}
-		</a>
+		<section>
+			<h3 class="my-4 text-xl font-bold">{m.finished()}</h3>
+			<ul class="glass-card-container">
+				{#each finishedEvents as event}
+					<li>
+						<EventCard {event} />
+					</li>
+				{/each}
+			</ul>
+			<a href="/events" class="glass-card-bottom-button">
+				{m.view_all_events()}
+			</a>
+		</section>
 	</div>
 
 	<div class="flex flex-col gap-2">
-		<div class="flex flex-col gap-2">
+		<div class="flex flex-col">
 			<h2 class="my-5 text-2xl font-bold">{m.teams()}</h2>
 			<ul class="glass-card-container">
 				{#each data.teams.toSorted((a, b) => (b.wins ?? 0) - (a.wins ?? 0)).slice(0, 5) as team}
@@ -122,14 +121,10 @@
 				{/each}
 			</ul>
 			<!-- TODO: Add locale -->
-			<a
-				href="/teams"
-				class="mt-2 px-4 text-center text-lg font-bold transition-all duration-200 hover:opacity-80"
-				>{m.view_all_teams()}</a
-			>
+			<a href="/teams" class="glass-card-bottom-button text-sm">{m.view_all_teams()}</a>
 		</div>
 
-		<div class="flex flex-col gap-2">
+		<div class="flex flex-col">
 			<h2 class="my-5 text-2xl font-bold">{m.players()}</h2>
 			<ul class="glass-card-container">
 				{#each data.players.toSorted((a, b) => b.rating - a.rating).slice(0, 5) as player}
@@ -156,11 +151,7 @@
 					</li>
 				{/each}
 			</ul>
-			<a
-				href="/players"
-				class="mt-2 px-4 text-center text-lg font-bold transition-all duration-200 hover:opacity-80"
-				>{m.view_all_players()}</a
-			>
+			<a href="/players" class="glass-card-bottom-button text-sm">{m.view_all_players()}</a>
 		</div>
 	</div>
 </main>
