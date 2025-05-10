@@ -17,7 +17,7 @@
 	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
 	let { data }: PageProps = $props();
 
-	let search = $state('');
+	let search = $state(data.search || '');
 	let sortBy:
 		| 'name-abc'
 		| 'name-cba'
@@ -73,12 +73,16 @@
 	);
 
 	$effect(() => {
-		goto(`/players?sortBy=${sortBy}`);
+		goto(`/players?sortBy=${sortBy}${search ? `&search=${encodeURIComponent(search)}` : ''}`);
 	});
 
 	onMount(() => {
 		const url = new URL(window.location.href);
 		const urlSortBy = url.searchParams.get('sortBy');
+		const urlSearch = url.searchParams.get('search');
+		if (urlSearch) {
+			search = urlSearch;
+		}
 		if (
 			urlSortBy &&
 			(urlSortBy === 'name-abc' ||

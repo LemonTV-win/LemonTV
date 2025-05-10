@@ -4,8 +4,10 @@ import type { Player } from '$lib/data/players';
 import { getTeams, getTeamWins } from '$lib/server/data/teams';
 import { calculatePlayerRating } from '$lib/server/data/players';
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ url }) => {
 	const teams = await getTeams();
+	const search = url.searchParams.get('search') || '';
+
 	return {
 		teams: teams.map((team) => ({
 			...team,
@@ -14,6 +16,7 @@ export const load: PageServerLoad = async () => {
 				...player,
 				rating: calculatePlayerRating(player)
 			}))
-		})) as (Team & { wins: number; players: (Player & { rating: number })[] })[]
+		})) as (Team & { wins: number; players: (Player & { rating: number })[] })[],
+		search
 	};
 };

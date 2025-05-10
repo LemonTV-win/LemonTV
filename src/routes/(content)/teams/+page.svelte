@@ -2,12 +2,14 @@
 	import type { PageProps } from './$types';
 
 	import { m } from '$lib/paraglide/messages.js';
+	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 	import SearchInput from '$lib/components/SearchInput.svelte';
 	import TeamCard from '$lib/components/TeamCard.svelte';
 	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
 	let { data }: PageProps = $props();
 
-	let search = $state('');
+	let search = $state(data.search || '');
 	let filtered = $derived(
 		data.teams
 			.toSorted((a, b) => b.wins - a.wins)
@@ -16,6 +18,18 @@
 	);
 
 	let expanded = $state(false);
+
+	$effect(() => {
+		goto(`/teams${search ? `?search=${encodeURIComponent(search)}` : ''}`);
+	});
+
+	onMount(() => {
+		const url = new URL(window.location.href);
+		const urlSearch = url.searchParams.get('search');
+		if (urlSearch) {
+			search = urlSearch;
+		}
+	});
 </script>
 
 <svelte:head>
