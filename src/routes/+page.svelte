@@ -58,7 +58,7 @@
 {/if}
 
 <main class="mx-auto grid max-w-screen-lg gap-6 p-4 sm:gap-10 md:grid-cols-[1fr_auto]">
-	<div>
+	<div class="flex flex-col">
 		<h2 class="my-5 text-2xl font-bold">
 			<a href="/events" class="transition-all duration-200 hover:opacity-80">
 				{m.events()}
@@ -79,7 +79,7 @@
 		{/if}
 
 		<section>
-			<h3 class="my-4 text-xl font-bold">{m.finished()}</h3>
+			<h3 class="mb-4 text-xl font-bold">{m.finished()}</h3>
 			<ul class="glass-card-container">
 				{#each finishedEvents as event}
 					<li>
@@ -93,9 +93,10 @@
 		</section>
 	</div>
 
-	<div class="flex flex-col gap-2">
-		<div class="flex flex-col">
-			<h2 class="my-5 text-2xl font-bold">{m.teams()}</h2>
+	<div class="flex flex-col">
+		<h2 class="my-5 text-2xl font-bold">{m.rankings()}</h2>
+		<section class="flex flex-col">
+			<h3 class="mb-4 text-xl font-bold">{m.teams()}</h3>
 			<ul class="glass-card-container">
 				{#each data.teams.toSorted((a, b) => (b.wins ?? 0) - (a.wins ?? 0)).slice(0, 5) as team}
 					<li>
@@ -125,10 +126,10 @@
 			</ul>
 			<!-- TODO: Add locale -->
 			<a href="/teams" class="glass-card-bottom-button text-sm">{m.view_all_teams()}</a>
-		</div>
+		</section>
 
-		<div class="flex flex-col">
-			<h2 class="my-5 text-2xl font-bold">{m.players()}</h2>
+		<div class="mt-4 flex flex-col">
+			<h3 class="my-4 text-xl font-bold">{m.players()}</h3>
 			<ul class="glass-card-container">
 				{#each data.players.toSorted((a, b) => b.rating - a.rating).slice(0, 5) as player}
 					<li>

@@ -301,5 +301,6 @@
 	"total_events": "총 이벤트",
 	"total_teams": "총 팀",
 	"total_players": "총 선수",
-	"live_events": "라이브 이벤트"
+	"live_events": "라이브 이벤트",
+	"rankings": "랭킹"
 }
