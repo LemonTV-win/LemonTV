@@ -163,11 +163,11 @@
 <section class="mx-auto max-w-screen-lg px-4 py-8">
 	<h2 class="mb-4 text-2xl font-bold">{m.news_and_announcements()}</h2>
 	<div class="glass-card-container">
-		<div class="glass-card p-6 text-center">
+		<a href="/news" class="glass-card flex flex-col items-center p-6 text-center">
 			<div class="mb-4 text-4xl">📰</div>
 			<h3 class="mb-2 text-xl font-semibold text-yellow-400">{m.news_coming_soon()}</h3>
 			<p class="text-gray-400">{m.news_placeholder_description()}</p>
-		</div>
+		</a>
 	</div>
 </section>
 
