@@ -18,6 +18,14 @@
 
 	let { data, children }: LayoutProps = $props();
 
+	const navigation = [
+		{ href: '/news', label: () => m.news() },
+		{ href: '/events', label: () => m.events() },
+		{ href: '/teams', label: () => m.teams() },
+		{ href: '/players', label: () => m.players() },
+		{ href: '/community', label: () => m.community() }
+	] as const;
+
 	const locales: Record<Locale, string> = {
 		en: 'English',
 		ja: '日本語',
@@ -61,6 +69,10 @@
 			}
 		};
 	}
+
+	function isActive(href: string) {
+		return page.url.pathname === href;
+	}
 </script>
 
 <svelte:head>
@@ -86,31 +98,18 @@
 
 	<!-- Desktop navigation -->
 	<nav class="hidden items-center gap-1 md:flex">
-		<a
-			href="/news"
-			class="rounded-md px-4 py-2 transition-all duration-200 hover:bg-gray-700 hover:text-yellow-300 focus:bg-gray-700 focus:text-yellow-300 focus:ring-2 focus:ring-yellow-300 focus:outline-none"
-			>{m.news()}</a
-		>
-		<a
-			href="/events"
-			class="rounded-md px-4 py-2 transition-all duration-200 hover:bg-gray-700 hover:text-yellow-300 focus:bg-gray-700 focus:text-yellow-300 focus:ring-2 focus:ring-yellow-300 focus:outline-none"
-			>{m.events()}</a
-		>
-		<a
-			href="/teams"
-			class="rounded-md px-4 py-2 transition-all duration-200 hover:bg-gray-700 hover:text-yellow-300 focus:bg-gray-700 focus:text-yellow-300 focus:ring-2 focus:ring-yellow-300 focus:outline-none"
-			>{m.teams()}</a
-		>
-		<a
-			href="/players"
-			class="rounded-md px-4 py-2 transition-all duration-200 hover:bg-gray-700 hover:text-yellow-300 focus:bg-gray-700 focus:text-yellow-300 focus:ring-2 focus:ring-yellow-300 focus:outline-none"
-			>{m.players()}</a
-		>
-		<a
-			href="/community"
-			class="rounded-md px-4 py-2 transition-all duration-200 hover:bg-gray-700 hover:text-yellow-300 focus:bg-gray-700 focus:text-yellow-300 focus:ring-2 focus:ring-yellow-300 focus:outline-none"
-			>{m.community()}</a
-		>
+		{#each navigation as { href, label }}
+			<a
+				{href}
+				class={[
+					'rounded-md px-4 py-2 transition-all duration-200',
+					isActive(href)
+						? 'bg-gray-700/40 font-semibold shadow-[inset_0_0_0_2px_rgba(255,255,255,0.1)]'
+						: 'hover:bg-gray-700/60 hover:text-yellow-300',
+					'focus:bg-gray-700 focus:text-yellow-300 focus:ring-2 focus:ring-yellow-300 focus:outline-none'
+				]}>{label()}</a
+			>
+		{/each}
 	</nav>
 
 	{#if data.user}
@@ -204,31 +203,19 @@
 	<nav
 		class="flex flex-col border-b-1 border-white/30 bg-gradient-to-br from-slate-600/60 to-slate-800 px-3 py-4 text-white backdrop-blur-lg md:hidden"
 	>
-		<a
-			href="/news"
-			class="rounded-md px-3 py-2 text-lg transition-all duration-200 hover:bg-gray-700 hover:text-yellow-300 focus:bg-gray-700 focus:text-yellow-300 focus:ring-2 focus:ring-yellow-300 focus:outline-none"
-			onclick={toggleMobileMenu}>{m.news()}</a
-		>
-		<a
-			href="/events"
-			class="rounded-md px-3 py-2 text-lg transition-all duration-200 hover:bg-gray-700 hover:text-yellow-300 focus:bg-gray-700 focus:text-yellow-300 focus:ring-2 focus:ring-yellow-300 focus:outline-none"
-			onclick={toggleMobileMenu}>{m.events()}</a
-		>
-		<a
-			href="/teams"
-			class="rounded-md px-3 py-2 text-lg transition-all duration-200 hover:bg-gray-700 hover:text-yellow-300 focus:bg-gray-700 focus:text-yellow-300 focus:ring-2 focus:ring-yellow-300 focus:outline-none"
-			onclick={toggleMobileMenu}>{m.teams()}</a
-		>
-		<a
-			href="/players"
-			class="rounded-md px-3 py-2 text-lg transition-all duration-200 hover:bg-gray-700 hover:text-yellow-300 focus:bg-gray-700 focus:text-yellow-300 focus:ring-2 focus:ring-yellow-300 focus:outline-none"
-			onclick={toggleMobileMenu}>{m.players()}</a
-		>
-		<a
-			href="/community"
-			class="rounded-md px-3 py-2 text-lg transition-all duration-200 hover:bg-gray-700 hover:text-yellow-300 focus:bg-gray-700 focus:text-yellow-300 focus:ring-2 focus:ring-yellow-300 focus:outline-none"
-			onclick={toggleMobileMenu}>{m.community()}</a
-		>
+		{#each navigation as { href, label }}
+			<a
+				{href}
+				class={[
+					'rounded-md px-3 py-2 text-lg transition-all duration-200',
+					isActive(href)
+						? 'bg-gray-700/40 text-yellow-300 shadow-[inset_0_0_0_2px_rgba(255,255,255,0.1)]'
+						: 'hover:bg-gray-700/60 hover:text-yellow-300',
+					'focus:bg-gray-700 focus:text-yellow-300 focus:ring-2 focus:ring-yellow-300 focus:outline-none'
+				]}
+				onclick={toggleMobileMenu}>{label()}</a
+			>
+		{/each}
 		{#if data.user}
 			<div class="mt-4 border-t border-gray-700 pt-4">
 				<div class="mb-4 flex items-center gap-2">
