@@ -37,15 +37,32 @@ export const load: PageServerLoad = async ({ url }) => {
 	};
 };
 
+type PermissionResult =
+	| { status: 'success' }
+	| { status: 'error'; error: string; statusCode: 401 | 403 };
+
+function checkPermissions(locals: App.Locals, requiredRoles: string[]): PermissionResult {
+	if (!locals.user?.id) {
+		console.error('[Admin][Players] Unauthorized: user is not authenticated');
+		return { status: 'error', error: 'Unauthorized', statusCode: 401 };
+	}
+
+	if (!requiredRoles.some((role) => locals.user?.roles.includes(role))) {
+		console.error(
+			`[Admin][Players] Forbidden: user "${locals.user.username}" (${locals.user.id}) lacks required roles (${requiredRoles.join(', ')}). Current roles: ${locals.user.roles.join(', ')}`
+		);
+		return { status: 'error', error: 'Insufficient permissions', statusCode: 403 };
+	}
+
+	return { status: 'success' };
+}
+
 export const actions = {
 	create: async ({ request, locals }) => {
-		const REQUIRED_ROLES_FOR_CREATION = ['admin', 'editor'];
-		if (!REQUIRED_ROLES_FOR_CREATION.some((role) => locals.user?.roles.includes(role))) {
-			console.error(
-				`[Admin][Players][Create] Insufficient permissions: user "${locals.user?.username}" (${locals.user?.id}) does not have the required roles (${REQUIRED_ROLES_FOR_CREATION.join(', ')}). Current roles: ${locals.user?.roles.join(', ')}`
-			);
-			return fail(403, {
-				error: 'Insufficient permissions'
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
 			});
 		}
 
@@ -100,13 +117,10 @@ export const actions = {
 	},
 
 	update: async ({ request, locals }) => {
-		const REQUIRED_ROLES_FOR_UPDATE = ['admin', 'editor'];
-		if (!REQUIRED_ROLES_FOR_UPDATE.some((role) => locals.user?.roles.includes(role))) {
-			console.error(
-				`[Admin][Players][Update] Insufficient permissions: user "${locals.user?.username}" (${locals.user?.id}) does not have the required roles (${REQUIRED_ROLES_FOR_UPDATE.join(', ')}). Current roles: ${locals.user?.roles.join(', ')}`
-			);
-			return fail(403, {
-				error: 'Insufficient permissions'
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
 			});
 		}
 
@@ -163,13 +177,10 @@ export const actions = {
 	},
 
 	import: async ({ request, locals }) => {
-		const REQUIRED_ROLES_FOR_IMPORT = ['admin'];
-		if (!REQUIRED_ROLES_FOR_IMPORT.some((role) => locals.user?.roles.includes(role))) {
-			console.error(
-				`[Admin][Players][Import] Insufficient permissions: user "${locals.user?.username}" (${locals.user?.id}) does not have the required roles (${REQUIRED_ROLES_FOR_IMPORT.join(', ')}). Current roles: ${locals.user?.roles.join(', ')}`
-			);
-			return fail(403, {
-				error: 'Insufficient permissions'
+		const result = checkPermissions(locals, ['admin']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
 			});
 		}
 
@@ -225,6 +236,13 @@ export const actions = {
 	},
 
 	delete: async ({ request, locals }) => {
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
+			});
+		}
+
 		let id: string;
 
 		// Check content type to handle both form data and JSON
