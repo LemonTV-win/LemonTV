@@ -7,7 +7,7 @@
 			url: 'https://discord.gg/mY8DMatXM4',
 			icon: 'https://cdn.discordapp.com/icons/1371077914723881010/17d112c45f5dbeac98c746c158605696.webp',
 			description:
-				'A community hub for Strinova esports, where LemonTV and other content creators come together to discuss the game and plan events.'
+				'Community server focused on competitive play, resources, and media for Strinova Esports.'
 		},
 		{
 			title: 'Official Strinova Discord Server',
