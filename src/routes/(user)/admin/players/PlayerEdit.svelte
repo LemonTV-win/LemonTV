@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import type { Player } from '$lib/data/players';
 	import { m } from '$lib/paraglide/messages';
 	import { getLocale } from '$lib/paraglide/runtime';
@@ -10,21 +11,22 @@
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import IconParkSolidCopy from '~icons/icon-park-solid/copy';
 	import IconParkSolidCheckOne from '~icons/icon-park-solid/check-one';
+	import type { ActionResult } from '@sveltejs/kit';
 
 	let {
 		player,
 		socialPlatforms,
 		topCountries,
 		users,
-		onSave,
-		onCancel
+		onCancel,
+		onSuccess: onsuccess
 	}: {
 		player: Partial<Player>;
 		socialPlatforms: any[];
 		topCountries: [string, number][];
 		users: { id: string; username: string }[];
-		onSave: (player: Partial<Player>) => Promise<void>;
 		onCancel: () => void;
+		onSuccess: () => void;
 	} = $props();
 
 	let newPlayer = $state({ ...player });
@@ -32,7 +34,7 @@
 	let successMessage = $state('');
 	let copySuccess = $state(false);
 	let userId = $state(player.user?.id || '');
-	let userSearch = $state('');
+	let userSearch = $state(users.find((user) => user.id === userId)?.username || '');
 	let showUserDropdown = $state(false);
 
 	const filteredUsers = $derived(
@@ -163,19 +165,42 @@
 		}
 	}
 
-	async function handleSubmit(e: Event) {
-		e.preventDefault();
+	function handleSubmit(e: Event) {
 		errorMessage = '';
 		successMessage = '';
-		await onSave(newPlayer);
 	}
 
-	function handleCancel() {
-		onCancel();
+	function handleResult({ result, update }: { result: { error?: string }; update: () => void }) {
+		if (result.error) {
+			errorMessage = result.error;
+		} else {
+			update();
+			onCancel();
+		}
 	}
 </script>
 
-<form onsubmit={handleSubmit} class="flex h-full flex-col">
+<form
+	method="POST"
+	action={player.id ? '?/update' : '?/create'}
+	use:enhance={() => {
+		return ({ result }: { result: ActionResult }) => {
+			if (result.type === 'success') {
+				onsuccess();
+			} else if (result.type === 'failure') {
+				errorMessage = result.data?.error || m.failed_to_change_password();
+			} else if (result.type === 'error') {
+				errorMessage = result.error?.message || m.error_occurred();
+			}
+		};
+	}}
+	class="flex h-full flex-col"
+>
+	{#if errorMessage}
+		<div class="mb-4 rounded-md bg-red-900/50 p-4 text-red-200" role="alert">
+			<span class="block sm:inline">{errorMessage}</span>
+		</div>
+	{/if}
 	<div
 		class="flex-1 space-y-4 overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800"
 	>
@@ -186,7 +211,8 @@
 					<input
 						type="text"
 						id="playerId"
-						bind:value={newPlayer.id}
+						name="id"
+						value={player.id}
 						readonly
 						class="block w-full rounded-md border border-slate-700 bg-slate-800/50 px-3 py-2 text-slate-400 placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none [&:read-only]:cursor-default [&:read-only]:opacity-75 [&:read-only]:select-none"
 						placeholder={m.player_id()}
@@ -213,6 +239,7 @@
 			<input
 				type="text"
 				id="playerSlug"
+				name="slug"
 				bind:value={newPlayer.slug}
 				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 				placeholder={m.slug()}
@@ -226,6 +253,7 @@
 			<input
 				type="text"
 				id="playerName"
+				name="name"
 				bind:value={newPlayer.name}
 				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 				placeholder={m.display_name()}
@@ -237,10 +265,10 @@
 				{m.user_id()}
 			</label>
 			<div class="relative">
+				<input type="hidden" name="userId" value={userId} />
 				<input
 					type="text"
 					id="playerUser"
-					name="user"
 					bind:value={userSearch}
 					onfocus={() => (showUserDropdown = true)}
 					oninput={() => (showUserDropdown = true)}
@@ -271,6 +299,7 @@
 			</label>
 			<select
 				id="playerNationality"
+				name="nationality"
 				bind:value={newPlayer.nationality}
 				class="font-emoji mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 			>
@@ -292,6 +321,13 @@
 				{/each}
 			</select>
 		</div>
+		<input type="hidden" name="aliases" value={JSON.stringify(newPlayer.aliases || [])} />
+		<input type="hidden" name="gameAccounts" value={JSON.stringify(newPlayer.gameAccounts || [])} />
+		<input
+			type="hidden"
+			name="socialAccounts"
+			value={JSON.stringify(newPlayer.socialAccounts || [])}
+		/>
 		<div>
 			<label class="block text-sm font-medium text-slate-300" for="aliases">{m.aliases()}</label>
 			<div class="mt-2 rounded-lg border border-slate-700 bg-slate-800 p-4">
@@ -492,7 +528,7 @@
 		<button
 			type="button"
 			class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
-			onclick={handleCancel}
+			onclick={onCancel}
 		>
 			{m.cancel()}
 		</button>

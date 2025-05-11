@@ -67,8 +67,11 @@ export const actions = {
 		}
 
 		const formData = await request.formData();
+
+		const slug = formData.get('slug') as string;
 		const name = formData.get('name') as string;
-		const nationality = formData.get('nationality') as TCountryCode | null;
+		const userId = (formData.get('userId') || null) as string | null;
+		const nationality = (formData.get('nationality') || null) as TCountryCode | null;
 		const aliases = JSON.parse(formData.get('aliases') as string) as string[];
 		const gameAccounts = JSON.parse(
 			formData.get('gameAccounts') as string
@@ -76,8 +79,6 @@ export const actions = {
 		const socialAccounts = JSON.parse(
 			formData.get('socialAccounts') as string
 		) as Player['socialAccounts'];
-		const slug = formData.get('slug') as string;
-		const userId = formData.get('user') as string | null;
 
 		if (!name || !slug) {
 			return fail(400, {
@@ -88,12 +89,12 @@ export const actions = {
 		try {
 			await createPlayer(
 				{
+					slug,
 					name,
-					nationality: nationality || undefined,
+					nationality: nationality ?? undefined,
 					aliases,
 					gameAccounts,
 					socialAccounts,
-					slug,
 					user: userId ? { id: userId, email: '', username: '', roles: [] } : undefined
 				},
 				result.userId
@@ -129,9 +130,12 @@ export const actions = {
 		}
 
 		const formData = await request.formData();
+
 		const id = formData.get('id') as string;
+		const slug = formData.get('slug') as string;
 		const name = formData.get('name') as string;
-		const nationality = formData.get('nationality') as TCountryCode | null;
+		const userId = (formData.get('userId') || null) as string | null;
+		const nationality = (formData.get('nationality') || null) as TCountryCode | null;
 		const aliases = JSON.parse(formData.get('aliases') as string) as string[];
 		const gameAccounts = JSON.parse(
 			formData.get('gameAccounts') as string
@@ -139,8 +143,6 @@ export const actions = {
 		const socialAccounts = JSON.parse(
 			formData.get('socialAccounts') as string
 		) as Player['socialAccounts'];
-		const slug = formData.get('slug') as string;
-		const userId = formData.get('user') as string | null;
 
 		if (!id || !name || !slug) {
 			return fail(400, {
@@ -152,12 +154,12 @@ export const actions = {
 			await updatePlayer(
 				{
 					id,
+					slug,
 					name,
-					nationality: nationality || undefined,
+					nationality: nationality ?? undefined,
 					aliases,
 					gameAccounts,
 					socialAccounts,
-					slug,
 					user: userId ? { id: userId, email: '', username: '', roles: [] } : undefined
 				},
 				result.userId

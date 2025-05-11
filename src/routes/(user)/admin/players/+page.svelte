@@ -135,80 +135,6 @@
 		goto(`/admin/players?action=edit&id=${player.id}`, { replaceState: true });
 	}
 
-	async function handleSavePlayer(player: Partial<Player>) {
-		errorMessage = '';
-		successMessage = '';
-
-		const formData = new FormData();
-		formData.append('id', player.id || '');
-		formData.append('name', player.name || '');
-		formData.append('nationality', player.nationality || '');
-		formData.append('aliases', JSON.stringify(player.aliases || []));
-		formData.append('gameAccounts', JSON.stringify(player.gameAccounts || []));
-		formData.append('socialAccounts', JSON.stringify(player.socialAccounts || []));
-		formData.append('slug', player.slug || '');
-		formData.append('user', player.user?.id || '');
-
-		try {
-			const response = await fetch('?/create', {
-				method: 'POST',
-				body: formData
-			});
-
-			const result = await response.json();
-
-			if (result.error) {
-				errorMessage = result.error;
-			} else {
-				isAddingNew = false;
-				isEditing = false;
-				selectedPlayer = null;
-				await goto('/admin/players', { invalidateAll: true });
-				successMessage = m.player_saved_successfully();
-			}
-		} catch (e) {
-			errorMessage = 'Failed to save player';
-			console.error('Error saving player:', e);
-		}
-	}
-
-	async function handleUpdatePlayer(player: Partial<Player>) {
-		errorMessage = '';
-		successMessage = '';
-
-		const formData = new FormData();
-		formData.append('id', player.id || '');
-		formData.append('name', player.name || '');
-		formData.append('nationality', player.nationality || '');
-		formData.append('aliases', JSON.stringify(player.aliases || []));
-		formData.append('gameAccounts', JSON.stringify(player.gameAccounts || []));
-		formData.append('socialAccounts', JSON.stringify(player.socialAccounts || []));
-		formData.append('slug', player.slug || '');
-		formData.append('user', player.user?.id || '');
-
-		try {
-			const response = await fetch('?/update', {
-				method: 'POST',
-				body: formData
-			});
-
-			const result = await response.json();
-
-			if (result.error) {
-				errorMessage = result.error;
-			} else {
-				isAddingNew = false;
-				isEditing = false;
-				selectedPlayer = null;
-				await goto('/admin/players', { invalidateAll: true });
-				successMessage = m.player_updated_successfully();
-			}
-		} catch (e) {
-			errorMessage = m.failed_to_update_player();
-			console.error('Error updating player:', e);
-		}
-	}
-
 	function handleCancel() {
 		isAddingNew = false;
 		isEditing = false;
@@ -374,7 +300,12 @@
 				socialPlatforms={data.socialPlatforms}
 				{topCountries}
 				users={data.users}
-				onSave={isAddingNew ? handleSavePlayer : handleUpdatePlayer}
+				onSuccess={() => {
+					handleCancel();
+					successMessage = isAddingNew
+						? m.player_saved_successfully()
+						: m.player_updated_successfully();
+				}}
 				onCancel={handleCancel}
 			/>
 		</Modal>
