@@ -262,7 +262,7 @@
 		</div>
 		<div>
 			<label class="block text-sm font-medium text-slate-300" for="playerUser">
-				{m.user_id()}
+				{m.associated_user_id()}
 			</label>
 			<div class="relative">
 				<input type="hidden" name="userId" value={userId} />

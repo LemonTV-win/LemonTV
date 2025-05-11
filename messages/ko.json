@@ -343,5 +343,6 @@
 	"about_links_github": "GitHub 저장소",
 	"about_links_discord": "Discord 커뮤니티",
 	"europe": "유럽 (EU)",
-	"china": "중국 대륙 (CN)"
+	"china": "중국 대륙 (CN)",
+	"associated_user_id": "연결된 사용자 ID"
 }
