@@ -295,7 +295,7 @@
 	"watch_live": "Xem trực tiếp",
 	"sign_up": "Đăng ký",
 	"sign_up_description": "Tạo tài khoản để tham gia cộng đồng!",
-	"footer_fan_made": "Một nền tảng truyền thông e-sports được tạo ra và duy trì bởi những người chơi Strinova đam mê. Chúng tôi cam kết mang đến cho bạn tin tức, sự kiện và nội dung cộng đồng mới nhất từ thế giới Strinova.",
+	"footer_fan_made": "Một nền tảng truyền thông e-sports được tạo ra và duy trì bởi {linkStart}những người chơi Strinova đam mê{linkEnd}. Chúng tôi cam kết mang đến cho bạn tin tức, sự kiện và nội dung cộng đồng mới nhất từ thế giới Strinova.",
 	"footer_trademark": "{strinova} là thương hiệu của {idreamsky}. Trang web này không liên kết hoặc được chứng thực bởi Strinova hay iDreamSky.",
 	"platform_statistics": "Thống Kê Nền Tảng",
 	"total_events": "Tổng Số Sự Kiện",

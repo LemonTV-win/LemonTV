@@ -295,7 +295,7 @@
 	"watch_live": "观看直播",
 	"sign_up": "注册",
 	"sign_up_description": "创建账号加入社区！",
-	"footer_fan_made": "一个由热情的Strinova玩家创建和维护的电子竞技媒体平台。我们致力于为您带来Strinova世界的最新新闻、赛事和社区内容。",
+	"footer_fan_made": "一个由{linkStart}热情的Strinova玩家{linkEnd}创建和维护的电子竞技媒体平台。我们致力于为您带来Strinova世界的最新新闻、赛事和社区内容。",
 	"footer_trademark": "{strinova}是{idreamsky}的商标。本网站与Strinova或iDreamSky无关，也不受其认可。",
 	"platform_statistics": "平台统计",
 	"total_events": "总赛事数",

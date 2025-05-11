@@ -325,7 +325,10 @@
 			>
 		</p>
 		<p class="mb-4 text-sm text-gray-300">
-			{m.footer_fan_made()}
+			{@html m.footer_fan_made({
+				linkStart: `<a href="/about#team" class="underline hover:text-gray-300" target="_blank">`,
+				linkEnd: `</a>`
+			})}
 		</p>
 		<p class="text-xs text-gray-400">
 			{@html m.footer_trademark({
