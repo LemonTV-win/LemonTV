@@ -3,6 +3,12 @@
 
 	const discordLinks = [
 		{
+			title: 'Strinova Esports Hub',
+			url: 'https://discord.gg/mY8DMatXM4',
+			description:
+				'A community hub for Strinova esports, where LemonTV and other content creators come together to discuss the game and plan events.'
+		},
+		{
 			title: 'Official Strinova Discord Server',
 			url: 'https://discord.com/invite/strinova',
 			additionalLink: {
