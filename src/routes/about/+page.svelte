@@ -49,7 +49,7 @@
 			</div>
 		</section>
 
-		<section class="mb-12 text-center">
+		<section class="mb-12 text-center" id="team">
 			<h2 class="mb-6 text-3xl font-semibold">Our Team</h2>
 			<div class="grid grid-cols-1 gap-8 md:grid-cols-2">
 				<div class="glass-card p-6">
