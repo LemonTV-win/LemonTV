@@ -39,7 +39,11 @@ export const load: PageServerLoad = async ({ url }) => {
 
 export const actions = {
 	create: async ({ request, locals }) => {
-		if (!locals.user?.roles.includes('admin')) {
+		const REQUIRED_ROLES_FOR_CREATION = ['admin', 'editor'];
+		if (!REQUIRED_ROLES_FOR_CREATION.some((role) => locals.user?.roles.includes(role))) {
+			console.error(
+				`[Admin][Players][Create] Insufficient permissions: user "${locals.user?.username}" (${locals.user?.id}) does not have the required roles (${REQUIRED_ROLES_FOR_CREATION.join(', ')}). Current roles: ${locals.user?.roles.join(', ')}`
+			);
 			return fail(403, {
 				error: 'Insufficient permissions'
 			});
@@ -96,7 +100,11 @@ export const actions = {
 	},
 
 	update: async ({ request, locals }) => {
-		if (!locals.user?.roles.includes('admin')) {
+		const REQUIRED_ROLES_FOR_UPDATE = ['admin', 'editor'];
+		if (!REQUIRED_ROLES_FOR_UPDATE.some((role) => locals.user?.roles.includes(role))) {
+			console.error(
+				`[Admin][Players][Update] Insufficient permissions: user "${locals.user?.username}" (${locals.user?.id}) does not have the required roles (${REQUIRED_ROLES_FOR_UPDATE.join(', ')}). Current roles: ${locals.user?.roles.join(', ')}`
+			);
 			return fail(403, {
 				error: 'Insufficient permissions'
 			});
@@ -155,7 +163,11 @@ export const actions = {
 	},
 
 	import: async ({ request, locals }) => {
-		if (!locals.user?.roles.includes('admin')) {
+		const REQUIRED_ROLES_FOR_IMPORT = ['admin'];
+		if (!REQUIRED_ROLES_FOR_IMPORT.some((role) => locals.user?.roles.includes(role))) {
+			console.error(
+				`[Admin][Players][Import] Insufficient permissions: user "${locals.user?.username}" (${locals.user?.id}) does not have the required roles (${REQUIRED_ROLES_FOR_IMPORT.join(', ')}). Current roles: ${locals.user?.roles.join(', ')}`
+			);
 			return fail(403, {
 				error: 'Insufficient permissions'
 			});
