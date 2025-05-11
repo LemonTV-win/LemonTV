@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const USERNAME_SCHEMA = z
+const USERNAME_SCHEMA = z
 	.string()
 	.min(3, 'Username must be at least 3 characters')
 	.max(31, 'Username must be at most 31 characters')
@@ -9,12 +9,12 @@ export const USERNAME_SCHEMA = z
 		'Username can only contain letters, numbers, punctuation, and underscores'
 	);
 
-export const PASSWORD_SCHEMA = z
+const PASSWORD_SCHEMA = z
 	.string()
 	.min(8, 'Password must be at least 8 characters')
 	.max(255, 'Password must be at most 255 characters');
 
-export const EMAIL_SCHEMA = z
+const EMAIL_SCHEMA = z
 	.string()
 	.min(3, 'Email must be at least 3 characters')
 	.max(255, 'Email must be at most 255 characters')

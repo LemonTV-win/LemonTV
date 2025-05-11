@@ -243,7 +243,7 @@ export function calculatePlayerRating(player: Player) {
 	return isNaN(averageScore) ? 0 : averageScore / 200;
 }
 
-export function identifyPlayerFromScore(score: PlayerScore, player: Player): boolean {
+function identifyPlayerFromScore(score: PlayerScore, player: Player): boolean {
 	return (
 		(player.gameAccounts.some((acc) => acc.accountId === score.accountId) ||
 			player.aliases?.some((alias) => alias === score.player)) ??

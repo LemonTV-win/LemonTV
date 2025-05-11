@@ -45,10 +45,6 @@ export function identifyPlayer(id: string, player: Player | string): boolean {
 	);
 }
 
-export function isPlayerInTeam(id: string, team: Team) {
-	return team.players?.some((player) => identifyPlayer(id, player)) ?? false;
-}
-
 export function calculateWinnerIndex(match: Match): number {
 	if (match.teams.length !== 2) {
 		throw new Error('Match must have 2 and only 2 teams');
