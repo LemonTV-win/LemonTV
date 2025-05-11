@@ -110,8 +110,19 @@ export const actions = {
 			);
 
 			if (e instanceof Error && 'code' in e && e.code === 'SQLITE_CONSTRAINT') {
+				const errorMessage = e instanceof Error ? e.message : String(e);
+				let userMessage = 'Operation failed due to a duplicate entry.';
+
+				if (errorMessage.includes('player.slug')) {
+					userMessage = 'A player with the same `slug` already exists.';
+				} else if (errorMessage.includes('player.user_id')) {
+					userMessage = 'This user is already linked to another player.';
+				} else if (errorMessage.includes('player_social_account')) {
+					userMessage = 'This social account is already linked to another player.';
+				}
+
 				return fail(409, {
-					error: 'Failed to create player: ' + (e instanceof Error ? e.message : String(e))
+					error: userMessage
 				});
 			} else {
 				return fail(500, {
@@ -172,8 +183,19 @@ export const actions = {
 			console.error('[Admin][Players][Update] Failed to update player:', e);
 
 			if (e instanceof Error && 'code' in e && e.code === 'SQLITE_CONSTRAINT') {
+				const errorMessage = e instanceof Error ? e.message : String(e);
+				let userMessage = 'Operation failed due to a duplicate entry.';
+
+				if (errorMessage.includes('player.slug')) {
+					userMessage = 'A player with the same `slug` already exists.';
+				} else if (errorMessage.includes('player.user_id')) {
+					userMessage = 'This user is already linked to another player.';
+				} else if (errorMessage.includes('player_social_account')) {
+					userMessage = 'This social account is already linked to another player.';
+				}
+
 				return fail(409, {
-					error: 'Failed to update player: ' + (e instanceof Error ? e.message : String(e))
+					error: userMessage
 				});
 			} else {
 				return fail(500, {
