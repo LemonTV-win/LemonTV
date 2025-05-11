@@ -9,6 +9,8 @@
 	import MaterialSymbolsSettingsRounded from '~icons/material-symbols/settings-rounded';
 	import MaterialSymbolsTranslateRounded from '~icons/material-symbols/translate-rounded';
 	import MaterialSymbolsAdminPanelSettingsRounded from '~icons/material-symbols/admin-panel-settings-rounded';
+	import IconDiscord from '~icons/simple-icons/discord';
+	import IconGithub from '~icons/simple-icons/github';
 	import UserAvatar from '$lib/components/UserAvatar.svelte';
 	import type { LayoutProps } from './$types';
 	import { enhance } from '$app/forms';
@@ -316,7 +318,7 @@
 <footer
 	class="mt-4 border-t-1 border-white/30 bg-gradient-to-br from-slate-600/60 to-slate-800 px-3 py-8 text-center text-white backdrop-blur-lg"
 >
-	<div class="mx-auto max-w-4xl">
+	<div class="mx-auto max-w-2xl">
 		<p class="mb-4 text-lg">
 			© 2025 <a href="/about" class="text-yellow-300 hover:text-yellow-400 hover:underline"
 				>LemonTV</a
@@ -328,6 +330,24 @@
 				linkEnd: `</a>`
 			})}
 		</p>
+		<div class="mb-4 flex justify-center gap-4">
+			<a
+				href="https://discord.gg/mY8DMatXM4"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="text-yellow-300 hover:text-yellow-400"
+			>
+				<IconDiscord class="h-6 w-6" />
+			</a>
+			<a
+				href="https://github.com/mkpoli/LemonTV"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="text-yellow-300 hover:text-yellow-400"
+			>
+				<IconGithub class="h-6 w-6" />
+			</a>
+		</div>
 		<p class="text-xs text-gray-400">
 			{@html m.footer_trademark({
 				strinova: `<a href="https://www.strinova.com/" class="underline hover:text-gray-300" target="_blank">Strinova</a>`,
