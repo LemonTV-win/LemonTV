@@ -287,8 +287,6 @@ export function calculatePlayerKD(player: Player): number {
 			)
 			.reduce((acc, death) => acc + death, 0);
 
-		console.log('KD', kills, deaths);
-
 		return kills / deaths;
 	}, 0);
 }
