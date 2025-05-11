@@ -9,7 +9,7 @@
 </script>
 
 <div
-	class="flex w-full max-w-64 items-center gap-2 rounded-md border-2 border-gray-500 bg-gray-800 px-4 text-gray-400 focus-within:border-gray-400 hover:border-gray-400"
+	class="relative flex w-full max-w-64 items-center gap-2 rounded-md border-white/30 bg-gradient-to-br from-slate-600/60 to-slate-800 px-4 text-gray-400 shadow-2xl ring-1 ring-white/30 backdrop-blur-lg transition-all duration-200"
 >
 	<MaterialSymbolsSearchRounded class="h-6 w-6" />
 	<input
