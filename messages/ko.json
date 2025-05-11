@@ -302,5 +302,21 @@
 	"total_teams": "총 팀",
 	"total_players": "총 선수",
 	"live_events": "라이브 이벤트",
-	"rankings": "랭킹"
+	"rankings": "랭킹",
+	"edit_history": "편집 기록",
+	"edit_history_desc": "편집 기록 보기 및 필터링.",
+	"table_name": "테이블 이름",
+	"table_name_placeholder": "테이블 이름 입력...",
+	"record_id": "레코드 ID",
+	"record_id_placeholder": "레코드 ID 입력...",
+	"field_name": "필드 이름",
+	"field_name_placeholder": "필드 이름 입력...",
+	"edited_by": "편집자",
+	"edited_by_placeholder": "편집자 이름 입력...",
+	"old_value": "이전 값",
+	"new_value": "새 값",
+	"edited_at": "편집 시간",
+	"clear_filters": "필터 지우기",
+	"apply_filters": "필터 적용",
+	"no_records_found": "레코드를 찾을 수 없습니다"
 }

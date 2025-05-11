@@ -305,5 +305,21 @@
 	"news_and_announcements": "News & Announcements",
 	"news_coming_soon": "Coming Soon",
 	"news_placeholder_description": "Stay tuned for the latest updates, announcements, and news about tournaments, teams, and players.",
-	"rankings": "Rankings"
+	"rankings": "Rankings",
+	"edit_history": "Edit History",
+	"edit_history_desc": "View and filter edit history records.",
+	"table_name": "Table Name",
+	"table_name_placeholder": "Enter table name...",
+	"record_id": "Record ID",
+	"record_id_placeholder": "Enter record ID...",
+	"field_name": "Field Name",
+	"field_name_placeholder": "Enter field name...",
+	"edited_by": "Edited By",
+	"edited_by_placeholder": "Enter editor name...",
+	"old_value": "Old Value",
+	"new_value": "New Value",
+	"edited_at": "Edited At",
+	"clear_filters": "Clear Filters",
+	"apply_filters": "Apply Filters",
+	"no_records_found": "No records found"
 }

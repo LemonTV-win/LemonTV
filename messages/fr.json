@@ -305,5 +305,21 @@
 	"news_and_announcements": "Actualités et Annonces",
 	"news_coming_soon": "Bientôt disponible",
 	"news_placeholder_description": "Restez informé sur les dernières actualités, annonces et nouvelles sur les tournois, équipes et joueurs.",
-	"rankings": "Classements"
+	"rankings": "Classements",
+	"edit_history": "Historique des modifications",
+	"edit_history_desc": "Afficher et filtrer l'historique des modifications.",
+	"table_name": "Nom de la table",
+	"table_name_placeholder": "Entrez le nom de la table...",
+	"record_id": "ID de l'enregistrement",
+	"record_id_placeholder": "Entrez l'ID de l'enregistrement...",
+	"field_name": "Nom du champ",
+	"field_name_placeholder": "Entrez le nom du champ...",
+	"edited_by": "Modifié par",
+	"edited_by_placeholder": "Entrez le nom du modificateur...",
+	"old_value": "Ancienne valeur",
+	"new_value": "Nouvelle valeur",
+	"edited_at": "Modifié le",
+	"clear_filters": "Effacer les filtres",
+	"apply_filters": "Appliquer les filtres",
+	"no_records_found": "Aucun enregistrement trouvé"
 }

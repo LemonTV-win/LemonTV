@@ -305,5 +305,21 @@
 	"news_and_announcements": "Berita dan Pengumuman",
 	"news_coming_soon": "Segera Hadir",
 	"news_placeholder_description": "Tetap informasi terbaru tentang turnamen, tim, dan pemain.",
-	"rankings": "Peringkat"
+	"rankings": "Peringkat",
+	"edit_history": "Riwayat Edit",
+	"edit_history_desc": "Lihat dan filter riwayat edit.",
+	"table_name": "Nama Tabel",
+	"table_name_placeholder": "Masukkan nama tabel...",
+	"record_id": "ID Record",
+	"record_id_placeholder": "Masukkan ID record...",
+	"field_name": "Nama Field",
+	"field_name_placeholder": "Masukkan nama field...",
+	"edited_by": "Diedit oleh",
+	"edited_by_placeholder": "Masukkan nama editor...",
+	"old_value": "Nilai Lama",
+	"new_value": "Nilai Baru",
+	"edited_at": "Diedit pada",
+	"clear_filters": "Hapus Filter",
+	"apply_filters": "Terapkan Filter",
+	"no_records_found": "Tidak ada record ditemukan"
 }

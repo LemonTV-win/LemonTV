@@ -8,6 +8,8 @@
 	import IconParkSolidPeople from '~icons/icon-park-solid/people';
 	import IconParkSolidEveryUser from '~icons/icon-park-solid/every-user';
 	import IconParkSolidShield from '~icons/icon-park-solid/shield';
+	import IconParkSolidHistory from '~icons/icon-park-solid/history-query';
+
 	import type { Component } from 'svelte';
 
 	let { children, data }: LayoutProps = $props();
@@ -86,6 +88,7 @@
 		{/if}
 		{@render tab('/admin/players', IconParkSolidPeople, m.players())}
 		{@render tab('/admin/teams', IconParkSolidEveryUser, m.teams())}
+		{@render tab('/admin/edit-history', IconParkSolidHistory, m.edit_history())}
 	</nav>
 	<main
 		class="overflow-auto p-8 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-800"

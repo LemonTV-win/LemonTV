@@ -305,5 +305,21 @@
 	"news_and_announcements": "Новости и Объявления",
 	"news_coming_soon": "Скоро",
 	"news_placeholder_description": "Оставайтесь в курсе последних новостей, объявлений и событий о турнирах, командах и игроках.",
-	"rankings": "Рейтинги"
+	"rankings": "Рейтинги",
+	"edit_history": "История изменений",
+	"edit_history_desc": "Просмотр и фильтрация истории изменений.",
+	"table_name": "Имя таблицы",
+	"table_name_placeholder": "Введите имя таблицы...",
+	"record_id": "ID записи",
+	"record_id_placeholder": "Введите ID записи...",
+	"field_name": "Имя поля",
+	"field_name_placeholder": "Введите имя поля...",
+	"edited_by": "Изменено пользователем",
+	"edited_by_placeholder": "Введите имя пользователя...",
+	"old_value": "Старое значение",
+	"new_value": "Новое значение",
+	"edited_at": "Дата изменения",
+	"clear_filters": "Очистить фильтры",
+	"apply_filters": "Применить фильтры",
+	"no_records_found": "Записи не найдены"
 }

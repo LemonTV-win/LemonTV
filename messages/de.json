@@ -305,5 +305,21 @@
 	"news_and_announcements": "Nachrichten & Ankündigungen",
 	"news_coming_soon": "Bald verfügbar",
 	"news_placeholder_description": "Bleiben Sie für die neuesten Updates, Ankündigungen und News über Turniere, Teams und Spieler informiert.",
-	"rankings": "Ranglisten"
+	"rankings": "Ranglisten",
+	"edit_history": "Bearbeitungsverlauf",
+	"edit_history_desc": "Bearbeitungsverlauf anzeigen und filtern.",
+	"table_name": "Tabellenname",
+	"table_name_placeholder": "Tabellenname eingeben...",
+	"record_id": "Datensatz-ID",
+	"record_id_placeholder": "Datensatz-ID eingeben...",
+	"field_name": "Feldname",
+	"field_name_placeholder": "Feldname eingeben...",
+	"edited_by": "Bearbeitet von",
+	"edited_by_placeholder": "Bearbeiter eingeben...",
+	"old_value": "Alter Wert",
+	"new_value": "Neuer Wert",
+	"edited_at": "Bearbeitet am",
+	"clear_filters": "Filter löschen",
+	"apply_filters": "Filter anwenden",
+	"no_records_found": "Keine Datensätze gefunden"
 }

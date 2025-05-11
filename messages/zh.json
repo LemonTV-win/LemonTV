@@ -305,5 +305,21 @@
 	"news_and_announcements": "新闻和公告",
 	"news_coming_soon": "即将推出",
 	"news_placeholder_description": "保持更新最新的新闻、公告和Strinova的赛事、队伍和选手。",
-	"rankings": "排行榜"
+	"rankings": "排行榜",
+	"edit_history": "编辑历史",
+	"edit_history_desc": "查看和筛选编辑历史记录。",
+	"table_name": "表名",
+	"table_name_placeholder": "输入表名...",
+	"record_id": "记录ID",
+	"record_id_placeholder": "输入记录ID...",
+	"field_name": "字段名",
+	"field_name_placeholder": "输入字段名...",
+	"edited_by": "编辑者",
+	"edited_by_placeholder": "输入编辑者名称...",
+	"old_value": "原值",
+	"new_value": "新值",
+	"edited_at": "编辑时间",
+	"clear_filters": "清除筛选",
+	"apply_filters": "应用筛选",
+	"no_records_found": "未找到记录"
 }

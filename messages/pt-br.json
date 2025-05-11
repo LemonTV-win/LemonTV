@@ -305,5 +305,21 @@
 	"news_and_announcements": "Notícias e Anúncios",
 	"news_coming_soon": "Em breve",
 	"news_placeholder_description": "Mantenha-se informado sobre as últimas notícias, anúncios e notícias sobre torneios, times e jogadores.",
-	"rankings": "Classificações"
+	"rankings": "Classificações",
+	"edit_history": "Histórico de edições",
+	"edit_history_desc": "Visualizar e filtrar registros do histórico de edições.",
+	"table_name": "Nome da tabela",
+	"table_name_placeholder": "Digite o nome da tabela...",
+	"record_id": "ID do registro",
+	"record_id_placeholder": "Digite o ID do registro...",
+	"field_name": "Nome do campo",
+	"field_name_placeholder": "Digite o nome do campo...",
+	"edited_by": "Editado por",
+	"edited_by_placeholder": "Digite o nome do editor...",
+	"old_value": "Valor anterior",
+	"new_value": "Novo valor",
+	"edited_at": "Editado em",
+	"clear_filters": "Limpar filtros",
+	"apply_filters": "Aplicar filtros",
+	"no_records_found": "Nenhum registro encontrado"
 }
