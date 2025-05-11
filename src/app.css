@@ -17,6 +17,13 @@ body {
 		@apply shadow-[0_0_25px_rgba(255,255,255,0.08)];
 	}
 
+	.glass {
+		@apply relative;
+		@apply border-white/30 bg-gradient-to-br from-slate-600/60 to-slate-800 backdrop-blur-lg;
+		@apply shadow-2xl;
+		@apply ring-1 ring-white/30;
+	}
+
 	.glass-card {
 		@apply relative;
 		@apply border-white/30 bg-gradient-to-br from-slate-600/60 to-slate-800 backdrop-blur-lg;

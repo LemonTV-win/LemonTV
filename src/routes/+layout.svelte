@@ -318,10 +318,8 @@
 >
 	<div class="mx-auto max-w-4xl">
 		<p class="mb-4 text-lg">
-			© 2025 <a
-				href="https://github.com/mkpoli/LemonTV"
-				class="text-yellow-300 hover:text-yellow-400 hover:underline"
-				target="_blank">LemonTV</a
+			© 2025 <a href="/about" class="text-yellow-300 hover:text-yellow-400 hover:underline"
+				>LemonTV</a
 			>
 		</p>
 		<p class="mb-4 text-sm text-gray-300">
