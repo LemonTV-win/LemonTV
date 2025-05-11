@@ -420,6 +420,9 @@
 								<option value={undefined}>{m.select_region()}</option>
 								<option value="NA">{m.north_america()}</option>
 								<option value="APAC">{m.asia_pacific()}</option>
+								<option value="EU">{m.europe()}</option>
+								<option disabled>―――</option>
+								<option value="CN">{m.china()}</option>
 							</select>
 						</div>
 						<div class="flex items-center">
