@@ -38,7 +38,7 @@ export const load: PageServerLoad = async ({ url }) => {
 };
 
 type PermissionResult =
-	| { status: 'success' }
+	| { status: 'success'; userId: string }
 	| { status: 'error'; error: string; statusCode: 401 | 403 };
 
 function checkPermissions(locals: App.Locals, requiredRoles: string[]): PermissionResult {
@@ -54,7 +54,7 @@ function checkPermissions(locals: App.Locals, requiredRoles: string[]): Permissi
 		return { status: 'error', error: 'Insufficient permissions', statusCode: 403 };
 	}
 
-	return { status: 'success' };
+	return { status: 'success', userId: locals.user.id };
 }
 
 export const actions = {
@@ -85,12 +85,6 @@ export const actions = {
 			});
 		}
 
-		if (!locals.user?.id) {
-			return fail(401, {
-				error: 'Unauthorized'
-			});
-		}
-
 		try {
 			await createPlayer(
 				{
@@ -102,7 +96,7 @@ export const actions = {
 					slug,
 					user: userId ? { id: userId, email: '', username: '', roles: [] } : undefined
 				},
-				locals.user.id
+				result.userId
 			);
 
 			return {
@@ -154,12 +148,6 @@ export const actions = {
 			});
 		}
 
-		if (!locals.user?.id) {
-			return fail(401, {
-				error: 'Unauthorized'
-			});
-		}
-
 		try {
 			await updatePlayer(
 				{
@@ -172,7 +160,7 @@ export const actions = {
 					slug,
 					user: userId ? { id: userId, email: '', username: '', roles: [] } : undefined
 				},
-				locals.user.id
+				result.userId
 			);
 
 			return {
