@@ -9,20 +9,29 @@ import {
 } from '$lib/server/data/players';
 import type { Region } from '$lib/data/game';
 import type { Player } from '$lib/data/players';
+import type { TCountryCode } from 'countries-list';
 import { social_platform, player_social_account } from '$lib/server/db/schemas/game/social';
 import { db } from '$lib/server/db';
+import { user } from '$lib/server/db/schemas/auth';
+import { getUsers } from '$lib/server/data/users';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const players = await getPlayers();
 	const socialPlatforms = await db.select().from(social_platform);
 	const playersTeams = await getPlayersTeams();
+	const users = await getUsers();
+
 	const action = url.searchParams.get('action');
 	const id = url.searchParams.get('id');
 
 	return {
-		players,
+		players: players.map((player) => ({
+			...player,
+			user: users.find((u) => u.id === player.user?.id)
+		})),
 		socialPlatforms,
 		playersTeams,
+		users,
 		action,
 		id
 	};
@@ -30,25 +39,28 @@ export const load: PageServerLoad = async ({ url }) => {
 
 export const actions = {
 	create: async ({ request, locals }) => {
+		if (!locals.user?.roles.includes('admin')) {
+			return fail(403, {
+				error: 'Insufficient permissions'
+			});
+		}
+
 		const formData = await request.formData();
 		const name = formData.get('name') as string;
-		const nationality = formData.get('nationality') as string | null;
+		const nationality = formData.get('nationality') as TCountryCode | null;
 		const aliases = JSON.parse(formData.get('aliases') as string) as string[];
-		const gameAccounts = JSON.parse(formData.get('gameAccounts') as string) as {
-			accountId: number;
-			currentName: string;
-			region?: string;
-		}[];
-		const socialAccounts = JSON.parse(formData.get('socialAccounts') as string) as {
-			platformId: string;
-			accountId: string;
-			overridingUrl?: string;
-		}[];
+		const gameAccounts = JSON.parse(
+			formData.get('gameAccounts') as string
+		) as Player['gameAccounts'];
+		const socialAccounts = JSON.parse(
+			formData.get('socialAccounts') as string
+		) as Player['socialAccounts'];
 		const slug = formData.get('slug') as string;
+		const userId = formData.get('user') as string | null;
 
-		if (!name) {
+		if (!name || !slug) {
 			return fail(400, {
-				error: 'Name is required'
+				error: 'Name and slug are required'
 			});
 		}
 
@@ -62,15 +74,12 @@ export const actions = {
 			await createPlayer(
 				{
 					name,
-					nationality: nationality as any,
+					nationality: nationality || undefined,
 					aliases,
-					gameAccounts: gameAccounts.map((acc) => ({
-						...acc,
-						region: acc.region as Region | undefined,
-						server: 'Strinova' // TODO: Make editable
-					})),
+					gameAccounts,
 					socialAccounts,
-					slug: slug
+					slug,
+					user: userId ? { id: userId, email: '', username: '', roles: [] } : undefined
 				},
 				locals.user.id
 			);
@@ -81,32 +90,35 @@ export const actions = {
 		} catch (e) {
 			console.error('Error creating player:', e);
 			return fail(500, {
-				error: 'Failed to create player'
+				error: 'Failed to create player: ' + (e instanceof Error ? e.message : String(e))
 			});
 		}
 	},
 
 	update: async ({ request, locals }) => {
+		if (!locals.user?.roles.includes('admin')) {
+			return fail(403, {
+				error: 'Insufficient permissions'
+			});
+		}
+
 		const formData = await request.formData();
 		const id = formData.get('id') as string;
 		const name = formData.get('name') as string;
-		const nationality = formData.get('nationality') as string | null;
+		const nationality = formData.get('nationality') as TCountryCode | null;
 		const aliases = JSON.parse(formData.get('aliases') as string) as string[];
-		const gameAccounts = JSON.parse(formData.get('gameAccounts') as string) as {
-			accountId: number;
-			currentName: string;
-			region?: string;
-		}[];
-		const socialAccounts = JSON.parse(formData.get('socialAccounts') as string) as {
-			platformId: string;
-			accountId: string;
-			overridingUrl?: string;
-		}[];
-		const slug = formData.get('slug') as string | null;
+		const gameAccounts = JSON.parse(
+			formData.get('gameAccounts') as string
+		) as Player['gameAccounts'];
+		const socialAccounts = JSON.parse(
+			formData.get('socialAccounts') as string
+		) as Player['socialAccounts'];
+		const slug = formData.get('slug') as string;
+		const userId = formData.get('user') as string | null;
 
-		if (!id || !name) {
+		if (!id || !name || !slug) {
 			return fail(400, {
-				error: 'ID and name are required'
+				error: 'ID, name and slug are required'
 			});
 		}
 
@@ -121,15 +133,12 @@ export const actions = {
 				{
 					id,
 					name,
-					nationality: nationality as any,
+					nationality: nationality || undefined,
 					aliases,
-					gameAccounts: gameAccounts.map((acc) => ({
-						...acc,
-						region: acc.region as Region | undefined,
-						server: 'Strinova' // TODO: Make editable
-					})),
+					gameAccounts,
 					socialAccounts,
-					slug: slug || undefined
+					slug,
+					user: userId ? { id: userId, email: '', username: '', roles: [] } : undefined
 				},
 				locals.user.id
 			);
@@ -140,7 +149,7 @@ export const actions = {
 		} catch (e) {
 			console.error('Error updating player:', e);
 			return fail(500, {
-				error: 'Failed to update player'
+				error: 'Failed to update player: ' + (e instanceof Error ? e.message : String(e))
 			});
 		}
 	},

@@ -147,6 +147,7 @@
 		formData.append('gameAccounts', JSON.stringify(player.gameAccounts || []));
 		formData.append('socialAccounts', JSON.stringify(player.socialAccounts || []));
 		formData.append('slug', player.slug || '');
+		formData.append('user', player.user?.id || '');
 
 		try {
 			const response = await fetch('?/create', {
@@ -183,6 +184,7 @@
 		formData.append('gameAccounts', JSON.stringify(player.gameAccounts || []));
 		formData.append('socialAccounts', JSON.stringify(player.socialAccounts || []));
 		formData.append('slug', player.slug || '');
+		formData.append('user', player.user?.id || '');
 
 		try {
 			const response = await fetch('?/update', {
@@ -371,6 +373,7 @@
 				player={selectedPlayer || {}}
 				socialPlatforms={data.socialPlatforms}
 				{topCountries}
+				users={data.users}
 				onSave={isAddingNew ? handleSavePlayer : handleUpdatePlayer}
 				onCancel={handleCancel}
 			/>
@@ -526,6 +529,7 @@
 					</th>
 					<th class="px-4 py-1">{m.social_accounts()}</th>
 					<th class="px-4 py-1">{m.teams()}</th>
+					<th class="px-4 py-1">{m.user_id()}</th>
 					<th class="sticky right-0 z-10 h-12 bg-gray-800 px-4 py-1">{m.actions()}</th>
 				</tr>
 			</thead>
@@ -597,6 +601,16 @@
 										</li>
 									{/each}
 								</ul>
+							{:else}
+								-
+							{/if}
+						</td>
+						<td class="px-4 py-1 text-gray-300">
+							{#if player.user}
+								<div class="flex flex-col">
+									<span class="text-xs text-gray-400">{player.user.id}</span>
+									<span>{player.user.username}</span>
+								</div>
 							{:else}
 								-
 							{/if}

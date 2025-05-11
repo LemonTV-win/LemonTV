@@ -106,7 +106,15 @@ export async function getPlayers(): Promise<Player[]> {
 			platformId: acc.platformId,
 			accountId: acc.accountId,
 			overridingUrl: acc.overriding_url || undefined
-		}))
+		})),
+		user: p.userId
+			? {
+					id: p.userId,
+					username: '',
+					email: '',
+					roles: []
+				}
+			: undefined
 	}));
 
 	console.info('[Players] Successfully retrieved', result.length, 'players');
@@ -291,13 +299,15 @@ export async function createPlayer(
 ) {
 	const id = randomUUID();
 	const slug = data.slug ?? data.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+	const userId = data.user?.id;
 
 	await db.transaction(async (tx) => {
 		await tx.insert(player).values({
 			id,
 			name: data.name,
 			slug,
-			nationality: data.nationality
+			nationality: data.nationality,
+			userId
 		});
 
 		// Record initial creation in edit history
@@ -332,6 +342,18 @@ export async function createPlayer(
 				fieldName: 'nationality',
 				oldValue: null,
 				newValue: data.nationality.toString(),
+				editedBy
+			});
+		}
+
+		if (userId) {
+			await tx.insert(editHistory).values({
+				id: randomUUID(),
+				tableName: 'player',
+				recordId: id,
+				fieldName: 'user',
+				oldValue: null,
+				newValue: userId,
 				editedBy
 			});
 		}
@@ -422,12 +444,16 @@ export async function updatePlayer(
 		// Get the current player data before update
 		const [currentPlayer] = await tx.select().from(player).where(eq(player.id, data.id));
 
+		console.log('currentPlayer', currentPlayer);
+		console.log('data', data);
+
 		// Update player
 		await tx
 			.update(player)
 			.set({
 				name: data.name,
-				nationality: data.nationality
+				nationality: data.nationality,
+				userId: data.user?.id
 			})
 			.where(eq(player.id, data.id));
 
@@ -452,6 +478,18 @@ export async function updatePlayer(
 				fieldName: 'nationality',
 				oldValue: currentPlayer.nationality?.toString() || null,
 				newValue: data.nationality?.toString() || null,
+				editedBy
+			});
+		}
+
+		if (data.user?.id !== currentPlayer.userId) {
+			await tx.insert(editHistory).values({
+				id: randomUUID(),
+				tableName: 'player',
+				recordId: data.id,
+				fieldName: 'user',
+				oldValue: currentPlayer.userId?.toString() || null,
+				newValue: data.user?.id?.toString() || null,
 				editedBy
 			});
 		}

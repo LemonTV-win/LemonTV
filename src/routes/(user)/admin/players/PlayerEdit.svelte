@@ -15,12 +15,14 @@
 		player,
 		socialPlatforms,
 		topCountries,
+		users,
 		onSave,
 		onCancel
 	}: {
 		player: Partial<Player>;
 		socialPlatforms: any[];
 		topCountries: [string, number][];
+		users: { id: string; username: string }[];
 		onSave: (player: Partial<Player>) => Promise<void>;
 		onCancel: () => void;
 	} = $props();
@@ -29,6 +31,20 @@
 	let errorMessage = $state('');
 	let successMessage = $state('');
 	let copySuccess = $state(false);
+	let userId = $state(player.user?.id || '');
+	let userSearch = $state('');
+	let showUserDropdown = $state(false);
+
+	const filteredUsers = $derived(
+		users.filter((user) => user.username.toLowerCase().includes(userSearch.toLowerCase()))
+	);
+
+	function selectUser(user: { id: string; username: string }) {
+		userId = user.id;
+		newPlayer.user = { id: user.id, email: '', username: user.username, roles: [] };
+		userSearch = user.username;
+		showUserDropdown = false;
+	}
 
 	const countryCodes = Object.keys(countries);
 
@@ -215,6 +231,39 @@
 				placeholder={m.display_name()}
 				required
 			/>
+		</div>
+		<div>
+			<label class="block text-sm font-medium text-slate-300" for="playerUser">
+				{m.user_id()}
+			</label>
+			<div class="relative">
+				<input
+					type="text"
+					id="playerUser"
+					name="user"
+					bind:value={userSearch}
+					onfocus={() => (showUserDropdown = true)}
+					oninput={() => (showUserDropdown = true)}
+					onblur={() => setTimeout(() => (showUserDropdown = false), 200)}
+					class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+					placeholder={m.search_users()}
+				/>
+				{#if showUserDropdown && filteredUsers.length > 0}
+					<div
+						class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-slate-700 bg-slate-800 py-1 shadow-lg"
+					>
+						{#each filteredUsers as user}
+							<button
+								type="button"
+								class="w-full px-4 py-2 text-left text-white hover:bg-slate-700"
+								onmousedown={() => selectUser(user)}
+							>
+								{user.username}
+							</button>
+						{/each}
+					</div>
+				{/if}
+			</div>
 		</div>
 		<div>
 			<label class="block text-sm font-medium text-slate-300" for="playerNationality">
