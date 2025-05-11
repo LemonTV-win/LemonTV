@@ -109,10 +109,20 @@ export const actions = {
 				success: true
 			};
 		} catch (e) {
-			console.error('Error creating player:', e);
-			return fail(500, {
-				error: 'Failed to create player: ' + (e instanceof Error ? e.message : String(e))
-			});
+			console.error(
+				'[Admin][Players][Create] Failed to create player:',
+				e instanceof Error ? e.message : String(e)
+			);
+
+			if (e instanceof Error && 'code' in e && e.code === 'SQLITE_CONSTRAINT') {
+				return fail(409, {
+					error: 'Failed to create player: ' + (e instanceof Error ? e.message : String(e))
+				});
+			} else {
+				return fail(500, {
+					error: 'Failed to create player: ' + (e instanceof Error ? e.message : String(e))
+				});
+			}
 		}
 	},
 
@@ -168,11 +178,18 @@ export const actions = {
 			return {
 				success: true
 			};
-		} catch (e) {
-			console.error('Error updating player:', e);
-			return fail(500, {
-				error: 'Failed to update player: ' + (e instanceof Error ? e.message : String(e))
-			});
+		} catch (e: unknown) {
+			console.error('[Admin][Players][Update] Failed to update player:', e);
+
+			if (e instanceof Error && 'code' in e && e.code === 'SQLITE_CONSTRAINT') {
+				return fail(409, {
+					error: 'Failed to update player: ' + (e instanceof Error ? e.message : String(e))
+				});
+			} else {
+				return fail(500, {
+					error: 'Failed to update player: ' + (e instanceof Error ? e.message : String(e))
+				});
+			}
 		}
 	},
 
