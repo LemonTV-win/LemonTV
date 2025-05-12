@@ -13,3 +13,9 @@ LemonTV – Comprehensive esports coverage, live scores, rankings, and news for 
 bun i
 bun dev
 ```
+
+### Prepare the local database
+
+```bash
+bun run db:dev:push
+```
