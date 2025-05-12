@@ -14,6 +14,8 @@
 		onCancel: () => void;
 	}>();
 
+	let newTeam = $state<Team>(team);
+
 	let aliases = $state<string[]>(teamAliases.map((a: TeamAlias) => a.alias));
 	let selectedPlayers = $state<
 		{
@@ -77,7 +79,7 @@
 
 	function handleSubmit() {
 		onSave({
-			...team,
+			...newTeam,
 			aliases,
 			players: selectedPlayers
 		});
@@ -96,7 +98,7 @@
 				<input
 					type="text"
 					id="teamName"
-					bind:value={team.name}
+					bind:value={newTeam.name}
 					class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 					placeholder={m.team_name()}
 					required
@@ -108,7 +110,7 @@
 				</label>
 				<select
 					id="teamRegion"
-					bind:value={team.region}
+					bind:value={newTeam.region}
 					class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 				>
 					<option value="">{m.select_region()}</option>
@@ -124,7 +126,7 @@
 				<input
 					type="text"
 					id="teamSlug"
-					bind:value={team.slug}
+					bind:value={newTeam.slug}
 					class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 					placeholder={m.slug()}
 				/>
@@ -136,7 +138,7 @@
 				<input
 					type="text"
 					id="teamAbbr"
-					bind:value={team.abbr}
+					bind:value={newTeam.abbr}
 					class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 					placeholder={m.abbr()}
 				/>
@@ -150,7 +152,7 @@
 			<input
 				type="text"
 				id="teamLogo"
-				bind:value={team.logo}
+				bind:value={newTeam.logo}
 				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 				placeholder={m.logo_url()}
 			/>
@@ -323,7 +325,7 @@
 			type="submit"
 			class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600"
 		>
-			{team.id ? m.update_team() : m.create_team()}
+			{newTeam.id ? m.update_team() : m.create_team()}
 		</button>
 	</div>
 </form>
