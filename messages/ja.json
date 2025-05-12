@@ -346,5 +346,19 @@
 	"china": "中国大陸 (CN)",
 	"associated_user_id": "関連ユーザーID",
 	"filters": "フィルター",
-	"team": "チーム"
+	"team": "チーム",
+	"server": "サーバー",
+	"format": "形式",
+	"status": "状態",
+	"capacity": "定員",
+	"date": "日付",
+	"image": "画像",
+	"delete_event_confirmation": "このイベントを削除してもよろしいですか？",
+	"search": "検索",
+	"add_new": "新規追加",
+	"history": "履歴",
+	"update_event": "イベントを更新",
+	"create_event": "イベントを作成",
+	"official_event": "公式イベント",
+	"unofficial_event": "非公式イベント"
 }

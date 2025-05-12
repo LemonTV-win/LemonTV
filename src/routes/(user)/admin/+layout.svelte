@@ -9,6 +9,7 @@
 	import IconParkSolidEveryUser from '~icons/icon-park-solid/every-user';
 	import IconParkSolidShield from '~icons/icon-park-solid/shield';
 	import IconParkSolidHistory from '~icons/icon-park-solid/history-query';
+	import IconParkSolidCalendar from '~icons/icon-park-solid/calendar';
 
 	import type { Component } from 'svelte';
 
@@ -88,6 +89,7 @@
 		{/if}
 		{@render tab('/admin/players', IconParkSolidPeople, m.players())}
 		{@render tab('/admin/teams', IconParkSolidEveryUser, m.teams())}
+		{@render tab('/admin/events', IconParkSolidCalendar, m.events())}
 		{@render tab('/admin/edit-history', IconParkSolidHistory, m.edit_history())}
 	</nav>
 	<main

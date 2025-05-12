@@ -346,5 +346,19 @@
 	"china": "中国 (CN)",
 	"associated_user_id": "关联用户ID",
 	"filters": "筛选",
-	"team": "队伍"
+	"team": "队伍",
+	"server": "服务器",
+	"format": "形式",
+	"status": "状态",
+	"capacity": "容量",
+	"date": "日期",
+	"image": "图片",
+	"delete_event_confirmation": "您确定要删除此赛事吗？",
+	"search": "搜索",
+	"add_new": "添加新",
+	"history": "历史",
+	"update_event": "更新赛事",
+	"create_event": "创建赛事",
+	"official_event": "官方赛事",
+	"unofficial_event": "非官方赛事"
 }

@@ -346,5 +346,19 @@
 	"china": "Chine (CN)",
 	"associated_user_id": "ID Utilisateur Associé",
 	"filters": "Filtres",
-	"team": "Équipe"
+	"team": "Équipe",
+	"server": "Serveur",
+	"format": "Format",
+	"status": "Statut",
+	"capacity": "Capacité",
+	"date": "Date",
+	"image": "Image",
+	"delete_event_confirmation": "Êtes-vous sûr de vouloir supprimer cet événement ?",
+	"search": "Rechercher",
+	"add_new": "Ajouter nouveau",
+	"history": "Historique",
+	"update_event": "Mettre à jour l'événement",
+	"create_event": "Créer un événement",
+	"official_event": "Événement officiel",
+	"unofficial_event": "Événement non officiel"
 }

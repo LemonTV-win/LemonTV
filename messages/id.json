@@ -346,5 +346,19 @@
 	"china": "Tiongkok (CN)",
 	"associated_user_id": "ID Pengguna Terkait",
 	"filters": "Filter",
-	"team": "Tim"
+	"team": "Tim",
+	"server": "Server",
+	"format": "Format",
+	"status": "Status",
+	"capacity": "Kapasitas",
+	"date": "Tanggal",
+	"image": "Gambar",
+	"delete_event_confirmation": "Apakah Anda yakin ingin menghapus acara ini?",
+	"search": "Cari",
+	"add_new": "Tambah Baru",
+	"history": "Riwayat",
+	"update_event": "Perbarui Acara",
+	"create_event": "Buat Acara",
+	"official_event": "Acara Resmi",
+	"unofficial_event": "Acara Tidak Resmi"
 }

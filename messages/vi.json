@@ -346,5 +346,19 @@
 	"china": "Trung Quốc (CN)",
 	"associated_user_id": "ID Người dùng liên kết",
 	"filters": "Bộ lọc",
-	"team": "Đội"
+	"team": "Đội",
+	"server": "Máy chủ",
+	"format": "Định dạng",
+	"status": "Trạng thái",
+	"capacity": "Sức chứa",
+	"date": "Ngày",
+	"image": "Hình ảnh",
+	"delete_event_confirmation": "Bạn có chắc chắn muốn xóa sự kiện này không?",
+	"search": "Tìm kiếm",
+	"add_new": "Thêm mới",
+	"history": "Lịch sử",
+	"update_event": "Cập nhật sự kiện",
+	"create_event": "Tạo sự kiện",
+	"official_event": "Sự kiện chính thức",
+	"unofficial_event": "Sự kiện không chính thức"
 }

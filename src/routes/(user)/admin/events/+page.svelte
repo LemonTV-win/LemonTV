@@ -1,0 +1,282 @@
+<!-- src/routes/(user)/admin/events/+page.svelte -->
+<script lang="ts">
+	import { enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
+	import type { PageData } from './$types';
+	import EventEdit from './EventEdit.svelte';
+	import EditHistory from './EditHistory.svelte';
+	import Modal from '$lib/components/Modal.svelte';
+	import { m } from '$lib/paraglide/messages';
+	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
+	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
+	import IconParkSolidHistory from '~icons/icon-park-solid/history-query';
+	import TypcnArrowUnsorted from '~icons/typcn/arrow-unsorted';
+	import TypcnArrowSortedDown from '~icons/typcn/arrow-sorted-down';
+	import TypcnArrowSortedUp from '~icons/typcn/arrow-sorted-up';
+
+	let { data }: { data: PageData } = $props();
+	let { events, action, id } = $derived(data);
+	let selectedEvent: (typeof events)[0] | undefined = $state(undefined);
+	let searchQuery = $state('');
+	let sortBy: 'name-asc' | 'name-desc' | 'date-asc' | 'date-desc' | 'status-asc' | 'status-desc' =
+		$state('date-desc');
+	let isAddingNew = $state(false);
+	let isEditing = $state(false);
+	let showHistoryModal = $state(false);
+
+	let filteredEvents = $derived(
+		events
+			.filter((event) => {
+				const searchLower = searchQuery.toLowerCase();
+				return (
+					event.name.toLowerCase().includes(searchLower) ||
+					event.slug.toLowerCase().includes(searchLower) ||
+					event.server.toLowerCase().includes(searchLower)
+				);
+			})
+			.toSorted((a, b) => {
+				if (sortBy === 'name-asc') {
+					return a.name.localeCompare(b.name);
+				} else if (sortBy === 'name-desc') {
+					return b.name.localeCompare(a.name);
+				} else if (sortBy === 'date-asc') {
+					return new Date(a.date).getTime() - new Date(b.date).getTime();
+				} else if (sortBy === 'date-desc') {
+					return new Date(b.date).getTime() - new Date(a.date).getTime();
+				} else if (sortBy === 'status-asc') {
+					return a.status.localeCompare(b.status);
+				} else if (sortBy === 'status-desc') {
+					return b.status.localeCompare(a.status);
+				}
+				return 0;
+			})
+	);
+
+	// Handle URL parameters
+	$effect(() => {
+		if (action === 'create') {
+			handleAddEvent();
+		} else if (action === 'edit' && id) {
+			const eventToEdit = events.find((e) => e.id === id);
+			if (eventToEdit) {
+				handleEditEvent(eventToEdit);
+			}
+		}
+	});
+
+	function handleAddEvent() {
+		isAddingNew = true;
+		isEditing = false;
+		selectedEvent = undefined;
+	}
+
+	function handleEditEvent(event: any) {
+		selectedEvent = event;
+		isEditing = true;
+		isAddingNew = false;
+	}
+
+	function handleCancel() {
+		isAddingNew = false;
+		isEditing = false;
+		selectedEvent = undefined;
+		goto('/admin/events', { replaceState: true });
+	}
+
+	function handleSuccess() {
+		isAddingNew = false;
+		isEditing = false;
+		selectedEvent = undefined;
+		goto('/admin/events', { invalidateAll: true });
+	}
+
+	function handleDelete(event: Event) {
+		if (!confirm(m.delete_event_confirmation())) {
+			event.preventDefault();
+		}
+	}
+
+	function closeHistoryModal() {
+		showHistoryModal = false;
+		selectedEvent = undefined;
+	}
+</script>
+
+<main class="mx-auto max-w-screen-lg px-4">
+	<div class="mb-6 flex items-center justify-between">
+		<h1 class="text-2xl font-bold">{m.events()}</h1>
+		<button
+			class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600"
+			onclick={handleAddEvent}
+		>
+			{m.add_new()}
+		</button>
+	</div>
+
+	{#if isAddingNew || isEditing}
+		<Modal
+			show={true}
+			title={isAddingNew ? m.add_new() : m.edit()}
+			onClose={handleCancel}
+			dismissible={false}
+		>
+			<EventEdit event={selectedEvent ?? {}} onCancel={handleCancel} onSuccess={handleSuccess} />
+		</Modal>
+	{/if}
+
+	{#if showHistoryModal}
+		<Modal show={true} title={m.history()} onClose={closeHistoryModal}>
+			{#if selectedEvent}
+				<EditHistory recordId={selectedEvent.id} />
+			{/if}
+		</Modal>
+	{/if}
+
+	<div class="mb-4">
+		<input
+			type="text"
+			bind:value={searchQuery}
+			placeholder={m.search()}
+			class="w-full rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+		/>
+	</div>
+
+	<div
+		class="overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-800"
+	>
+		<table class="w-full table-auto border-collapse border-y-2 border-gray-500 bg-gray-800">
+			<thead>
+				<tr class="border-b-2 border-gray-500 text-left text-sm text-gray-400">
+					<th class="px-4 py-1">
+						<button
+							class="flex items-center gap-1 text-left"
+							class:text-white={sortBy === 'name-asc' || sortBy === 'name-desc'}
+							onclick={() => (sortBy = sortBy === 'name-asc' ? 'name-desc' : 'name-asc')}
+						>
+							{m.name()}
+							{#if sortBy === 'name-asc'}
+								<TypcnArrowSortedUp class="inline-block" />
+							{:else if sortBy === 'name-desc'}
+								<TypcnArrowSortedDown class="inline-block" />
+							{:else}
+								<TypcnArrowUnsorted class="inline-block" />
+							{/if}
+						</button>
+					</th>
+					<th class="px-4 py-1">{m.server()}</th>
+					<th class="px-4 py-1">{m.format()}</th>
+					<th class="px-4 py-1">{m.region()}</th>
+					<th class="px-4 py-1">
+						<button
+							class="flex items-center gap-1 text-left"
+							class:text-white={sortBy === 'status-asc' || sortBy === 'status-desc'}
+							onclick={() => (sortBy = sortBy === 'status-asc' ? 'status-desc' : 'status-asc')}
+						>
+							{m.status()}
+							{#if sortBy === 'status-asc'}
+								<TypcnArrowSortedUp class="inline-block" />
+							{:else if sortBy === 'status-desc'}
+								<TypcnArrowSortedDown class="inline-block" />
+							{:else}
+								<TypcnArrowUnsorted class="inline-block" />
+							{/if}
+						</button>
+					</th>
+					<th class="px-4 py-1">
+						<button
+							class="flex items-center gap-1 text-left"
+							class:text-white={sortBy === 'date-asc' || sortBy === 'date-desc'}
+							onclick={() => (sortBy = sortBy === 'date-asc' ? 'date-desc' : 'date-asc')}
+						>
+							{m.date()}
+							{#if sortBy === 'date-asc'}
+								<TypcnArrowSortedUp class="inline-block" />
+							{:else if sortBy === 'date-desc'}
+								<TypcnArrowSortedDown class="inline-block" />
+							{:else}
+								<TypcnArrowUnsorted class="inline-block" />
+							{/if}
+						</button>
+					</th>
+					<th class="sticky right-0 z-10 h-12 bg-gray-800 px-4 py-1">{m.actions()}</th>
+				</tr>
+			</thead>
+			<tbody>
+				{#each filteredEvents as event}
+					<tr class="border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl">
+						<td class="px-4 py-1">
+							<div class="flex items-center">
+								{#if event.image}
+									<img class="mr-3 h-10 w-10 rounded-full" src={event.image} alt={event.name} />
+								{/if}
+								<div>
+									<div class="text-white">{event.name}</div>
+									<div class="text-sm text-gray-400">{event.slug}</div>
+								</div>
+							</div>
+						</td>
+						<td class="px-4 py-1 text-gray-300">{event.server}</td>
+						<td class="px-4 py-1 text-gray-300">{event.format}</td>
+						<td class="px-4 py-1 text-gray-300">{event.region}</td>
+						<td class="px-4 py-1">
+							<span
+								class="inline-flex rounded-full px-2 text-xs leading-5 font-semibold {event.status ===
+								'live'
+									? 'bg-green-900/50 text-green-200'
+									: event.status === 'upcoming'
+										? 'bg-blue-900/50 text-blue-200'
+										: event.status === 'cancelled'
+											? 'bg-red-900/50 text-red-200'
+											: event.status === 'postponed'
+												? 'bg-yellow-900/50 text-yellow-200'
+												: 'bg-gray-900/50 text-gray-200'}"
+							>
+								{event.status}
+							</span>
+						</td>
+						<td class="px-4 py-1 text-gray-300">
+							{new Date(event.date).toLocaleDateString()}
+						</td>
+						<td class="sticky right-0 z-10 h-12 bg-gray-800">
+							<div class="flex h-full items-center gap-2 border-l border-gray-700 px-4 py-1">
+								<button
+									class="flex items-center gap-1 text-yellow-500 hover:text-yellow-400"
+									onclick={() => handleEditEvent(event)}
+									title={m.edit()}
+								>
+									<IconParkSolidEdit class="h-4 w-4" />
+								</button>
+								<button
+									class="text-gray-400 hover:text-gray-300"
+									onclick={() => {
+										selectedEvent = event;
+										showHistoryModal = true;
+									}}
+									title={m.history()}
+								>
+									<IconParkSolidHistory class="h-4 w-4" />
+								</button>
+								<form
+									method="POST"
+									action="?/delete"
+									use:enhance
+									class="inline"
+									onsubmit={handleDelete}
+								>
+									<input type="hidden" name="id" value={event.id} />
+									<button
+										type="submit"
+										class="flex items-center gap-1 text-red-500 hover:text-red-400"
+										title={m.delete()}
+									>
+										<IconParkSolidDelete class="h-4 w-4" />
+									</button>
+								</form>
+							</div>
+						</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+	</div>
+</main>

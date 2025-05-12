@@ -346,5 +346,19 @@
 	"china": "Китай (CN)",
 	"associated_user_id": "ID Пользователя",
 	"filters": "Фильтры",
-	"team": "Команда"
+	"team": "Команда",
+	"server": "Сервер",
+	"format": "Формат",
+	"status": "Статус",
+	"capacity": "Вместимость",
+	"date": "Дата",
+	"image": "Изображение",
+	"delete_event_confirmation": "Вы уверены, что хотите удалить это мероприятие?",
+	"search": "Поиск",
+	"add_new": "Добавить новое",
+	"history": "История",
+	"update_event": "Обновить мероприятие",
+	"create_event": "Создать мероприятие",
+	"official_event": "Официальное мероприятие",
+	"unofficial_event": "Неофициальное мероприятие"
 }
