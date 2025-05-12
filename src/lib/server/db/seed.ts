@@ -19,7 +19,7 @@ export async function seed() {
 	const firstUser = await db.select().from(schema.user).limit(1);
 
 	console.log('[SEED] Seeding players...');
-	await db.insert(schema.player).values([
+	const PLAYERS = [
 		{
 			id: randomUUID(),
 			name: 'Player 1',
@@ -38,6 +38,36 @@ export async function seed() {
 			name: 'Player 3',
 			slug: 'player-3',
 			nationality: 'US'
+		}
+	];
+	await db.insert(schema.player).values(PLAYERS);
+
+	console.log('[SEED] Seeding teams...');
+	const team1_id = randomUUID();
+	await db.insert(schema.teams).values([
+		{
+			id: team1_id,
+			name: 'Team 1',
+			slug: 'team-1',
+			abbr: 'T1',
+			logo: 'https://picsum.photos/seed/team-1/256/256?blur',
+			region: 'NA',
+			createdAt: new Date().toISOString(),
+			updatedAt: new Date().toISOString()
+		}
+	]);
+	await db.insert(schema.teamPlayer).values([
+		{
+			id: 2,
+			teamId: team1_id,
+			playerId: PLAYERS[0].id,
+			role: 'active'
+		},
+		{
+			id: 3,
+			teamId: team1_id,
+			playerId: PLAYERS[1].id,
+			role: 'active'
 		}
 	]);
 
