@@ -4,7 +4,7 @@
 	import UserAvatar from '$lib/components/UserAvatar.svelte';
 	import { m } from '$lib/paraglide/messages';
 
-	import type { Team } from '$lib/server/db/schemas/game/teams';
+	import type { Team } from '$lib/server/db/schemas/game/team';
 
 	let {
 		team,

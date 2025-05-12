@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { db } from '$lib/server/db';
-import { teams, teamPlayer, teamAlias } from '$lib/server/db/schemas/game/teams';
+import { teams, teamPlayer, teamAlias } from '$lib/server/db/schemas/game/team';
 
 export const GET: RequestHandler = async ({ locals }) => {
 	if (!locals.user?.roles.includes('admin')) {

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Team, TeamPlayer, TeamAlias } from '$lib/server/db/schemas/game/teams';
+	import type { Team, TeamPlayer, TeamAlias } from '$lib/server/db/schemas/game/team';
 	import type { Player } from '$lib/data/players';
 	import { goto } from '$app/navigation';
 	import { m } from '$lib/paraglide/messages';

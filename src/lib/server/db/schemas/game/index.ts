@@ -1,4 +1,4 @@
 export * from './player';
-export * from './teams';
+export * from './team';
 export * from './game-account';
 export * from './social';
