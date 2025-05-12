@@ -25,7 +25,7 @@ export async function seed() {
 			name: 'Player 1',
 			slug: 'player-1',
 			nationality: 'US',
-			userId: firstUser ? firstUser[0].id : null
+			userId: firstUser.length > 0 ? firstUser[0].id : null
 		},
 		{
 			id: randomUUID(),
