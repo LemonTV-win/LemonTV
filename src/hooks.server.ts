@@ -3,8 +3,17 @@ import * as auth from '$lib/server/auth.js';
 import type { Handle, ServerInit } from '@sveltejs/kit';
 import { paraglideMiddleware } from '$lib/paraglide/server';
 import { syncRoles, syncSocialPlatforms } from '$lib/server/db/sync';
+import { db } from '$lib/server/db';
+import { dev } from '$app/environment';
+import { seed } from '$lib/server/db/seed';
+import * as schema from '$lib/server/db/schema';
 
 export const init: ServerInit = async () => {
+	if (dev) {
+		console.info('[ServerInit] Development environment detected');
+		await seed();
+	}
+
 	console.info('[ServerInit] Syncing roles...');
 	await syncRoles();
 	console.info('[ServerInit] Syncing social platforms...');
