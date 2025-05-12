@@ -2,7 +2,7 @@
 	import IconDiscord from '~icons/simple-icons/discord';
 	import IconGithub from '~icons/simple-icons/github';
 	import IconTwitch from '~icons/simple-icons/twitch';
-
+	import IconX from '~icons/simple-icons/x';
 	import * as m from '$lib/paraglide/messages';
 </script>
 
@@ -54,6 +54,14 @@
 								class="text-blue-400 hover:underline"
 							>
 								<IconGithub class="h-6 w-6" />
+							</a>
+							<a
+								href="https://x.com/mkpoli"
+								target="_blank"
+								rel="noopener noreferrer"
+								class="text-blue-400 hover:underline"
+							>
+								<IconX class="h-6 w-6" />
 							</a>
 						</div>
 					</div>
