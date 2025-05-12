@@ -16,6 +16,19 @@
 
 	let newTeam = $state<Team>(team);
 
+	function formatSlug(name: string): string {
+		return name
+			.toLowerCase()
+			.replace(/[^a-z0-9]+/g, '-')
+			.replace(/^-+|-+$/g, '');
+	}
+
+	$effect(() => {
+		if (newTeam.name) {
+			newTeam.slug = formatSlug(newTeam.name);
+		}
+	});
+
 	let aliases = $state<string[]>(teamAliases.map((a: TeamAlias) => a.alias));
 	let selectedPlayers = $state<
 		{
