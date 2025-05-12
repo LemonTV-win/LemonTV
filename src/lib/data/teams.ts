@@ -10,4 +10,5 @@ export interface Team {
 	region?: Region;
 	players?: Player[];
 	wins?: number;
+	createdAt?: string;
 }

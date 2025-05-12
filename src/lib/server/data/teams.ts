@@ -135,7 +135,8 @@ export async function getTeam(slug: string): Promise<Team | null> {
 			name: teamRow.name,
 			slug: teamRow.slug,
 			abbr: teamRow.abbr ?? undefined
-		})
+		}),
+		createdAt: teamRow.createdAt ?? undefined
 	};
 
 	return fullTeam;
@@ -174,7 +175,8 @@ export async function getTeams(): Promise<Team[]> {
 					name: t.name,
 					slug: t.slug,
 					abbr: t.abbr ?? undefined
-				})
+				}),
+				createdAt: t.createdAt ?? undefined
 			});
 		}
 

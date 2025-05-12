@@ -27,7 +27,14 @@
 	let isDeleting = $state(false);
 	let teamToDelete = $state<Team | null>(null);
 	let sortBy = $state<
-		'id-asc' | 'id-desc' | 'name-asc' | 'name-desc' | 'region-asc' | 'region-desc'
+		| 'id-asc'
+		| 'id-desc'
+		| 'name-asc'
+		| 'name-desc'
+		| 'region-asc'
+		| 'region-desc'
+		| 'created-asc'
+		| 'created-desc'
 	>('name-asc');
 
 	let filteredTeams = $derived(
@@ -58,6 +65,10 @@
 					return (a.region ?? '').localeCompare(b.region ?? '');
 				} else if (sortBy === 'region-desc') {
 					return (b.region ?? '').localeCompare(a.region ?? '');
+				} else if (sortBy === 'created-asc') {
+					return (a.createdAt ?? '').localeCompare(b.createdAt ?? '');
+				} else if (sortBy === 'created-desc') {
+					return (b.createdAt ?? '').localeCompare(a.createdAt ?? '');
 				}
 				return 0;
 			})
@@ -357,6 +368,22 @@
 							{/if}
 						</button>
 					</th>
+					<th class="px-4 py-1">
+						<button
+							class="flex items-center gap-1 text-left"
+							class:text-white={sortBy === 'created-asc' || sortBy === 'created-desc'}
+							onclick={() => (sortBy = sortBy === 'created-asc' ? 'created-desc' : 'created-asc')}
+						>
+							{m.created()}
+							{#if sortBy === 'created-asc'}
+								<TypcnArrowSortedUp class="inline-block" />
+							{:else if sortBy === 'created-desc'}
+								<TypcnArrowSortedDown class="inline-block" />
+							{:else}
+								<TypcnArrowUnsorted class="inline-block" />
+							{/if}
+						</button>
+					</th>
 					<th class="px-4 py-1">{m.players()}</th>
 					<th class="px-4 py-1">{m.aliases()}</th>
 					<th class="sticky right-0 z-10 h-12 bg-gray-800 px-4 py-1">{m.actions()}</th>
@@ -383,6 +410,9 @@
 							</div>
 						</td>
 						<td class="px-4 py-1 text-gray-300">{team.region || '-'}</td>
+						<td class="px-4 py-1 text-xs text-gray-400" title={team.createdAt || '-'}>
+							{team.createdAt ? new Date(team.createdAt).toLocaleDateString() : '-'}
+						</td>
 						<td class="px-4 py-1 text-gray-300">
 							{#if getTeamPlayers(team.id)?.length}
 								<ul class="list-inside list-disc">
