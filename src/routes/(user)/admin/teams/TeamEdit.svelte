@@ -106,13 +106,16 @@
 				<label for="teamRegion" class="block text-sm font-medium text-slate-300">
 					{m.region()}
 				</label>
-				<input
-					type="text"
+				<select
 					id="teamRegion"
 					bind:value={team.region}
-					class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-					placeholder={m.region()}
-				/>
+					class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+				>
+					<option value="">{m.select_region()}</option>
+					{#each Object.entries( { NA: m.north_america(), EU: m.europe(), APAC: m.asia_pacific(), CN: m.china() } ) as [region, label]}
+						<option value={region}>{label}</option>
+					{/each}
+				</select>
 			</div>
 			<div>
 				<label for="teamSlug" class="block text-sm font-medium text-slate-300">
