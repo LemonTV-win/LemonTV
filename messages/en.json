@@ -344,5 +344,6 @@
 	"about_links_discord": "Discord Community",
 	"europe": "Europe (EU)",
 	"china": "China (CN)",
-	"associated_user_id": "Associated User ID"
+	"associated_user_id": "Associated User ID",
+	"filters": "Filters"
 }

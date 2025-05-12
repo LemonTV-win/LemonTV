@@ -344,5 +344,6 @@
 	"about_links_discord": "Discord 社區",
 	"europe": "歐洲 (EU)",
 	"china": "中國大陸 (CN)",
-	"associated_user_id": "關聯用戶ID"
+	"associated_user_id": "關聯用戶ID",
+	"filters": "篩選"
 }
