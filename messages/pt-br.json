@@ -345,5 +345,6 @@
 	"europe": "Europa (EU)",
 	"china": "China (CN)",
 	"associated_user_id": "ID do Usuário Associado",
-	"filters": "Filtros"
+	"filters": "Filtros",
+	"team": "Equipe"
 }

@@ -345,5 +345,6 @@
 	"europe": "유럽 (EU)",
 	"china": "중국 대륙 (CN)",
 	"associated_user_id": "연결된 사용자 ID",
-	"filters": "필터"
+	"filters": "필터",
+	"team": "팀"
 }

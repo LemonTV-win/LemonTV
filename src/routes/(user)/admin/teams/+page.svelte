@@ -6,11 +6,13 @@
 
 	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
+	import IconParkSolidHistory from '~icons/icon-park-solid/history-query';
 	import TypcnArrowUnsorted from '~icons/typcn/arrow-unsorted';
 	import TypcnArrowSortedDown from '~icons/typcn/arrow-sorted-down';
 	import TypcnArrowSortedUp from '~icons/typcn/arrow-sorted-up';
 
 	import Modal from '$lib/components/Modal.svelte';
+	import EditHistory from './EditHistory.svelte';
 	import TeamEdit from './TeamEdit.svelte';
 
 	import type { PageProps } from './$types';
@@ -18,15 +20,15 @@
 	let { data }: PageProps = $props();
 
 	let searchQuery = $state('');
-	let selectedTeam = $state<Team | null>(null);
+	let selectedTeam: Team | null = $state(null);
 	let isAddingNew = $state(false);
 	let isEditing = $state(false);
 	let errorMessage = $state('');
 	let successMessage = $state('');
 	let isImporting = $state(false);
 	let isDeleting = $state(false);
-	let teamToDelete = $state<Team | null>(null);
-	let sortBy = $state<
+	let teamToDelete: Team | null = $state(null);
+	let sortBy:
 		| 'id-asc'
 		| 'id-desc'
 		| 'name-asc'
@@ -35,21 +37,21 @@
 		| 'region-desc'
 		| 'created-asc'
 		| 'created-desc'
-	>('name-asc');
+		| 'slug-asc'
+		| 'slug-desc' = $state('name-asc');
 
 	let filteredTeams = $derived(
 		data.teams
-			.filter((team: Team) => {
-				const searchLower = searchQuery.toLowerCase();
+			.filter((team) => {
+				if (!searchQuery) return true;
+				const query = searchQuery.toLowerCase();
 				return (
-					team.name.toLowerCase().includes(searchLower) ||
-					team.id.toLowerCase().includes(searchLower) ||
-					team.region?.toLowerCase().includes(searchLower) ||
-					team.slug?.toLowerCase().includes(searchLower) ||
-					team.abbr?.toLowerCase().includes(searchLower) ||
-					data.teamAliases
-						.filter((ta: TeamAlias) => ta.teamId === team.id)
-						.some((ta: TeamAlias) => ta.alias.toLowerCase().includes(searchLower))
+					team.name.toLowerCase().includes(query) ||
+					team.slug.toLowerCase().includes(query) ||
+					(team.abbr?.toLowerCase().includes(query) ?? false) ||
+					(team.region?.toLowerCase().includes(query) ?? false) ||
+					(data.teamAliases?.some((alias) => alias.alias.toLowerCase().includes(query)) ?? false) ||
+					false
 				);
 			})
 			.toSorted((a: Team, b: Team) => {
@@ -69,10 +71,16 @@
 					return (a.createdAt ?? '').localeCompare(b.createdAt ?? '');
 				} else if (sortBy === 'created-desc') {
 					return (b.createdAt ?? '').localeCompare(a.createdAt ?? '');
+				} else if (sortBy === 'slug-asc') {
+					return (a.slug ?? a.id).localeCompare(b.slug ?? b.id);
+				} else if (sortBy === 'slug-desc') {
+					return (b.slug ?? b.id).localeCompare(a.slug ?? a.id);
 				}
 				return 0;
 			})
 	);
+
+	let showHistoryModal = $state(false);
 
 	function handleAddTeam() {
 		isAddingNew = true;
@@ -240,6 +248,11 @@
 			errorMessage = 'Failed to export teams';
 			console.error('Error exporting teams:', e);
 		}
+	}
+
+	function closeHistoryModal() {
+		showHistoryModal = false;
+		selectedTeam = null;
 	}
 
 	// Handle URL parameters
@@ -461,6 +474,17 @@
 									<IconParkSolidEdit class="h-4 w-4" />
 								</button>
 								<button
+									type="button"
+									class="text-gray-600 hover:text-gray-800"
+									title="View edit history"
+									onclick={() => {
+										selectedTeam = team;
+										showHistoryModal = true;
+									}}
+								>
+									<IconParkSolidHistory class="h-4 w-4" />
+								</button>
+								<button
 									class="flex items-center gap-1 text-red-500 hover:text-red-400"
 									onclick={() => {
 										teamToDelete = team;
@@ -529,5 +553,13 @@
 				</button>
 			</div>
 		</div>
+	</Modal>
+{/if}
+
+{#if showHistoryModal}
+	<Modal show={true} title="Edit History" onClose={closeHistoryModal}>
+		{#if selectedTeam}
+			<EditHistory team={selectedTeam} aliases={getTeamAliases(selectedTeam.id)} />
+		{/if}
 	</Modal>
 {/if}

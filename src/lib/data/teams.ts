@@ -11,4 +11,5 @@ export interface Team {
 	players?: Player[];
 	wins?: number;
 	createdAt?: string;
+	aliases?: string[];
 }

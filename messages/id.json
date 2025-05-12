@@ -345,5 +345,6 @@
 	"europe": "Eropa (EU)",
 	"china": "Tiongkok (CN)",
 	"associated_user_id": "ID Pengguna Terkait",
-	"filters": "Filter"
+	"filters": "Filter",
+	"team": "Tim"
 }
