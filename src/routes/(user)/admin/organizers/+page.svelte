@@ -319,23 +319,25 @@
 			<tbody>
 				{#each filteredOrganizers as organizer}
 					<tr class="border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl">
-						<td class="px-4 py-1">
-							<div class="flex items-center">
+						<td class="min-w-max overflow-hidden px-4 py-1">
+							<div class="flex min-w-max items-center">
 								{#if organizer.logo}
 									<img
-										class="mr-3 h-10 w-10 rounded-full"
+										class="mr-3 h-10 w-10 flex-shrink-0 rounded-full"
 										src={organizer.logo}
 										alt={organizer.name}
 									/>
 								{/if}
-								<div>
-									<div class="text-white">{organizer.name}</div>
-									<div class="text-sm text-gray-400">{organizer.slug}</div>
+								<div class="flex min-w-max flex-shrink-0 flex-col">
+									<div class="flex-shrink-0 whitespace-nowrap text-white">{organizer.name}</div>
+									<div class="flex-shrink-0 text-sm text-gray-400">{organizer.slug}</div>
 								</div>
 							</div>
 						</td>
-						<td class="px-4 py-1 text-gray-300">{organizer.description}</td>
-						<td class="px-4 py-1 text-gray-300">
+						<td class="min-w-max overflow-hidden px-4 py-1 text-gray-300"
+							>{organizer.description}</td
+						>
+						<td class="min-w-max overflow-hidden px-4 py-1 text-gray-300">
 							<a
 								href={organizer.url}
 								target="_blank"
@@ -345,10 +347,10 @@
 								{organizer.url}
 							</a>
 						</td>
-						<td class="px-4 py-1 text-gray-300">
+						<td class="min-w-max overflow-hidden px-4 py-1 text-gray-300">
 							{new Date(organizer.createdAt).toLocaleDateString()}
 						</td>
-						<td class="sticky right-0 z-10 h-12 bg-gray-800">
+						<td class="sticky right-0 z-10 h-12 min-w-max overflow-hidden bg-gray-800">
 							<div class="flex h-full items-center gap-2 border-l border-gray-700 px-4 py-1">
 								<button
 									class="flex items-center gap-1 text-yellow-500 hover:text-yellow-400"

@@ -223,21 +223,27 @@
 			<tbody>
 				{#each filteredEvents as event}
 					<tr class="border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl">
-						<td class="px-4 py-1">
-							<div class="flex items-center">
+						<td class="min-w-max overflow-hidden px-4 py-1">
+							<div class="flex min-w-max items-center">
 								{#if event.image}
-									<img class="mr-3 h-10 w-10 rounded-full" src={event.image} alt={event.name} />
+									<img
+										class="mr-3 h-10 w-10 flex-shrink-0 rounded-full"
+										src={event.image}
+										alt={event.name}
+									/>
 								{/if}
-								<div>
-									<div class="text-white">{event.name}</div>
-									<div class="text-sm text-gray-400">{event.slug}</div>
+								<div class="flex min-w-max flex-shrink-0 flex-col">
+									<div class="flex-shrink-0 whitespace-nowrap text-white">{event.name}</div>
+									<div class="flex-shrink-0 text-sm whitespace-nowrap text-gray-400">
+										{event.slug}
+									</div>
 								</div>
 							</div>
 						</td>
-						<td class="px-4 py-1 text-gray-300">{event.server}</td>
-						<td class="px-4 py-1 text-gray-300">{event.format}</td>
-						<td class="px-4 py-1 text-gray-300">{event.region}</td>
-						<td class="px-4 py-1">
+						<td class="min-w-max px-4 py-1 whitespace-nowrap text-gray-300">{event.server}</td>
+						<td class="min-w-max px-4 py-1 whitespace-nowrap text-gray-300">{event.format}</td>
+						<td class="min-w-max px-4 py-1 whitespace-nowrap text-gray-300">{event.region}</td>
+						<td class="min-w-max px-4 py-1 whitespace-nowrap">
 							<span
 								class="inline-flex rounded-full px-2 text-xs leading-5 font-semibold {event.status ===
 								'live'
@@ -253,32 +259,32 @@
 								{event.status}
 							</span>
 						</td>
-						<td class="px-4 py-1 text-gray-300">
+						<td class="min-w-max px-4 py-1 whitespace-nowrap text-gray-300">
 							{new Date(event.date).toLocaleDateString()}
 						</td>
-						<td class="px-4 py-1">
-							<div class="flex flex-wrap gap-2">
+						<td class="min-w-max px-4 py-1">
+							<div class="flex min-w-max flex-wrap gap-2">
 								{#if event.organizers.length}
 									{#each event.organizers as organizer}
 										<span
-											class="inline-flex items-center gap-1.5 rounded-full bg-slate-700/50 px-2 py-1 text-xs text-slate-300"
+											class="inline-flex flex-shrink-0 items-center gap-1.5 rounded-full bg-slate-700/50 px-2 py-1 text-xs text-slate-300"
 										>
 											{#if organizer.logo}
 												<img
 													src={organizer.logo}
 													alt={organizer.name}
-													class="h-4 w-4 rounded-full object-cover"
+													class="h-4 w-4 flex-shrink-0 rounded-full object-cover"
 												/>
 											{/if}
-											{organizer.name}
+											<span class="whitespace-nowrap">{organizer.name}</span>
 										</span>
 									{/each}
 								{:else}
-									<span class="text-sm text-slate-500">No organizers</span>
+									<span class="text-sm whitespace-nowrap text-slate-500">No organizers</span>
 								{/if}
 							</div>
 						</td>
-						<td class="sticky right-0 z-10 h-12 bg-gray-800">
+						<td class="sticky right-0 z-10 h-12 min-w-max bg-gray-800 whitespace-nowrap">
 							<div class="flex h-full items-center gap-2 border-l border-gray-700 px-4 py-1">
 								<button
 									class="flex items-center gap-1 text-yellow-500 hover:text-yellow-400"
