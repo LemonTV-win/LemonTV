@@ -39,17 +39,15 @@
 			<div class="text-gray-400">
 				<GgOrganisation class="inline-block h-4 w-4" />
 				{m.organized_by({ name: '' })}
-				<!-- TODO: Add appropriate locale insertion	 -->
-				<a href={data.event.organizer.url} class="ml-1 inline-flex items-baseline gap-1 text-white">
-					{#if data.event.organizer.logo}
-						<img
-							src={data.event.organizer.logo}
-							class="h-4 w-4 rounded-full"
-							alt={data.event.organizer.name}
-						/>
-					{/if}
-					{data.event.organizer.name}
-				</a>・
+				<!-- TODO: Add appropriate locale insertion -->
+				{#each data.event.organizers as organizer}
+					<a href={organizer.url} class="ml-1 inline-flex items-baseline gap-1 text-white">
+						{#if organizer.logo}
+							<img src={organizer.logo} class="h-4 w-4 rounded-full" alt={organizer.name} />
+						{/if}
+						{organizer.name}
+					</a>
+				{/each}
 				<span class="inline-flex items-center gap-1">
 					<IconParkSolidLocalPin class="inline-block h-4 w-4" />
 					<span>{data.event.region}</span>

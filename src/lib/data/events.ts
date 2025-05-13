@@ -52,8 +52,6 @@ export interface Event {
 	official: boolean;
 	server: 'calabiyau' | 'strinova';
 	format: 'lan' | 'online' | 'hybrid';
-	// host: string;
-	// date: string;
 	region: Region;
 	// location: string;
 	// description: string;
@@ -61,14 +59,13 @@ export interface Event {
 	status: 'upcoming' | 'live' | 'finished' | 'cancelled' | 'postponed';
 	stages: Stage[];
 
-	//// matches: Match[];
 	// prizePool: number;
 	// teams: Team[];
-	organizer: {
+	organizers: {
 		name: string;
 		logo?: string;
 		url: string;
-	};
+	}[];
 	capacity: number; // expected number of teams
 	date: string;
 	websites?: string[];
@@ -129,11 +126,13 @@ export const events: Event[] = [
 		image: 'https://i.ytimg.com/vi/j7Nt3gGzLkg/hq720.jpg',
 		status: 'finished',
 		region: 'Global',
-		organizer: {
-			name: 'BriBri',
-			logo: 'https://pbs.twimg.com/profile_images/1863502296023531520/ALjMfroI_400x400.jpg',
-			url: 'https://x.com/BriBri_TSG'
-		},
+		organizers: [
+			{
+				name: 'BriBri',
+				logo: 'https://pbs.twimg.com/profile_images/1863502296023531520/ALjMfroI_400x400.jpg',
+				url: 'https://x.com/BriBri_TSG'
+			}
+		],
 		stages: [
 			{
 				id: 3,
@@ -1685,6 +1684,13 @@ export const events: Event[] = [
 		image:
 			'https://img.tonamel.com/c!/f=webp:auto,w=1600,h=900,a=2/upload_images/organize_competition/yROLW/fc1ed3f7ca5a35d6de5c20a8db90b617b89a063bedaaba6a205de19c1b00ad07.jpg',
 		status: 'finished',
+		organizers: [
+			{
+				name: '川島宮殿',
+				logo: 'https://pbs.twimg.com/profile_images/1792733020912545792/NKEIhBSI_400x400.jpg',
+				url: 'https://x.com/kawakyuden'
+			}
+		],
 		stages: [
 			{
 				id: 1,
@@ -1785,11 +1791,6 @@ export const events: Event[] = [
 				}
 			}
 		],
-		organizer: {
-			name: '川島宮殿',
-			logo: 'https://pbs.twimg.com/profile_images/1792733020912545792/NKEIhBSI_400x400.jpg',
-			url: 'https://x.com/kawakyuden'
-		},
 		capacity: 16,
 		date: '2025-05-04/2025-05-05',
 		websites: ['https://tonamel.com/competition/OU2cd', 'https://tonamel.com/competition/Vf3kx'],
@@ -1999,11 +2000,13 @@ export const events: Event[] = [
 		server: 'strinova',
 		image: 'https://panels.twitch.tv/panel-1266163234-image-05e3f805-6cda-43d1-98b1-e28a540f9003',
 		status: 'finished',
-		organizer: {
-			name: 'OrigamiCup',
-			logo: 'https://static-cdn.jtvnw.net/jtv_user_pictures/ba65e84b-8314-46e2-8b9a-becd794fcd48-profile_image-70x70.png',
-			url: 'https://www.twitch.tv/origamicup'
-		},
+		organizers: [
+			{
+				name: 'OrigamiCup',
+				logo: 'https://static-cdn.jtvnw.net/jtv_user_pictures/ba65e84b-8314-46e2-8b9a-becd794fcd48-profile_image-70x70.png',
+				url: 'https://www.twitch.tv/origamicup'
+			}
+		],
 		capacity: 14,
 		date: '2025-02-24',
 		participants: [
@@ -3111,10 +3114,12 @@ export const events: Event[] = [
 		image: 'https://upload.wikimedia.org/wikipedia/commons/b/b4/Esports_World_Cup_logo.svg',
 		status: 'finished',
 		stages: [],
-		organizer: {
-			name: 'Esports World Cup',
-			url: 'https://esportsworldcup.com/en/2024'
-		},
+		organizers: [
+			{
+				name: 'Esports World Cup',
+				url: 'https://esportsworldcup.com/en/2024'
+			}
+		],
 		capacity: 4,
 		date: '2024-08-04/2024-08-05',
 		participants: [
@@ -3155,10 +3160,12 @@ export const events: Event[] = [
 		status: 'finished',
 		image: 'https://pbs.twimg.com/media/GQsFljEbYAEXWIZ?format=jpg&name=4096x4096',
 		stages: [],
-		organizer: {
-			name: 'Kariyu',
-			url: 'https://x.com/kariyu101'
-		},
+		organizers: [
+			{
+				name: 'Kariyu',
+				url: 'https://x.com/kariyu101'
+			}
+		],
 		capacity: 0,
 		date: '2024-06-22/2024-06-23',
 		participants: []
@@ -3174,10 +3181,12 @@ export const events: Event[] = [
 		status: 'finished',
 		image: 'https://picsum.photos/seed/sqi/300/200?blur',
 		stages: [],
-		organizer: {
-			name: 'Unknown',
-			url: 'https://example.com'
-		},
+		organizers: [
+			{
+				name: 'Unknown',
+				url: 'https://example.com'
+			}
+		],
 		capacity: 0,
 		date: '2024-01-01',
 		participants: []
@@ -3188,16 +3197,17 @@ export const events: Event[] = [
 		name: 'Strinova Superstring Invitational',
 		official: false,
 		server: 'strinova',
-
 		format: 'online',
 		region: 'Global',
 		status: 'finished',
 		image: 'https://picsum.photos/seed/ssi/300/200?blur',
 		stages: [],
-		organizer: {
-			name: 'Unknown',
-			url: 'https://example.com'
-		},
+		organizers: [
+			{
+				name: 'Unknown',
+				url: 'https://example.com'
+			}
+		],
 		capacity: 0,
 		date: '2024-01-02',
 		participants: []
@@ -3210,14 +3220,15 @@ export const events: Event[] = [
 		server: 'strinova',
 		region: 'CN',
 		status: 'finished',
-
 		format: 'online',
 		image: 'https://picsum.photos/seed/moca-s1/300/200?blur',
 		stages: [],
-		organizer: {
-			name: 'Unknown',
-			url: 'https://example.com'
-		},
+		organizers: [
+			{
+				name: 'Unknown',
+				url: 'https://example.com'
+			}
+		],
 		capacity: 0,
 		date: '2023-01-01',
 		participants: []
@@ -3230,14 +3241,15 @@ export const events: Event[] = [
 		server: 'strinova',
 		region: 'CN',
 		status: 'finished',
-
 		format: 'online',
 		image: 'https://picsum.photos/seed/moca-s2/300/200?blur',
 		stages: [],
-		organizer: {
-			name: 'Unknown',
-			url: 'https://example.com'
-		},
+		organizers: [
+			{
+				name: 'Unknown',
+				url: 'https://example.com'
+			}
+		],
 		capacity: 0,
 		date: '2023-01-02',
 		participants: []
@@ -3253,10 +3265,12 @@ export const events: Event[] = [
 		format: 'online',
 		image: 'https://picsum.photos/seed/moca-s3/300/200?blur',
 		stages: [],
-		organizer: {
-			name: 'Unknown',
-			url: 'https://example.com'
-		},
+		organizers: [
+			{
+				name: 'Unknown',
+				url: 'https://example.com'
+			}
+		],
 		capacity: 0,
 		date: '2023-01-03',
 		participants: []
