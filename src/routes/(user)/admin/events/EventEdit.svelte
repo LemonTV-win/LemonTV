@@ -34,6 +34,39 @@
 	});
 	let errorMessage = $state('');
 	let successMessage = $state('');
+	let dateRange = $state({ start: '', end: '' });
+
+	// Initialize date range from event.date
+	$effect(() => {
+		if (event.date?.includes('/')) {
+			const [start, end] = event.date.split('/');
+			dateRange.start = start;
+			dateRange.end = end;
+		} else {
+			dateRange.start = event.date || new Date().toISOString().split('T')[0];
+			dateRange.end = event.date || new Date().toISOString().split('T')[0];
+		}
+	});
+
+	// Update newEvent.date when dateRange changes
+	$effect(() => {
+		if (dateRange.start && dateRange.end) {
+			newEvent.date =
+				dateRange.start === dateRange.end ? dateRange.start : `${dateRange.start}/${dateRange.end}`;
+		}
+	});
+
+	function validateDateRange() {
+		if (!dateRange.start || !dateRange.end) {
+			errorMessage = 'Both start and end dates are required';
+			return false;
+		}
+		if (new Date(dateRange.start) > new Date(dateRange.end)) {
+			errorMessage = 'Start date must be before or equal to end date';
+			return false;
+		}
+		return true;
+	}
 
 	const statusOptions = ['upcoming', 'live', 'finished', 'cancelled', 'postponed'];
 	const serverOptions = {
@@ -49,6 +82,9 @@
 	action={event.id ? '?/update' : '?/create'}
 	use:enhance={() => {
 		return async ({ result }) => {
+			if (!validateDateRange()) {
+				return;
+			}
 			if (result.type === 'success') {
 				onsuccess();
 				onCancel();
@@ -184,14 +220,29 @@
 
 		<div>
 			<label class="block text-sm font-medium text-slate-300" for="date">{m.date()}</label>
-			<input
-				type="date"
-				id="date"
-				name="date"
-				bind:value={newEvent.date}
-				required
-				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-			/>
+			<div class="mt-1 grid grid-cols-2 gap-4">
+				<div>
+					<label class="block text-sm text-slate-400" for="dateStart">Start Date</label>
+					<input
+						type="date"
+						id="dateStart"
+						bind:value={dateRange.start}
+						required
+						class="block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+					/>
+				</div>
+				<div>
+					<label class="block text-sm text-slate-400" for="dateEnd">End Date</label>
+					<input
+						type="date"
+						id="dateEnd"
+						bind:value={dateRange.end}
+						required
+						class="block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+					/>
+				</div>
+			</div>
+			<input type="hidden" name="date" value={newEvent.date} />
 		</div>
 
 		<div>

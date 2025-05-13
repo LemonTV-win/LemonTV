@@ -260,7 +260,14 @@
 							</span>
 						</td>
 						<td class="min-w-max px-4 py-1 whitespace-nowrap text-gray-300">
-							{new Date(event.date).toLocaleDateString()}
+							{#if event.date.includes('/')}
+								{(() => {
+									const [start, end] = event.date.split('/');
+									return `${new Date(start).toLocaleDateString()} - ${new Date(end).toLocaleDateString()}`;
+								})()}
+							{:else}
+								{new Date(event.date).toLocaleDateString()}
+							{/if}
 						</td>
 						<td class="min-w-max px-4 py-1">
 							<div class="flex min-w-max flex-wrap gap-2">
