@@ -36,21 +36,28 @@
 	>
 		<h1 class="my-2 text-3xl font-bold">{data.event.name}</h1>
 		<div class="flex flex-col gap-2 py-2">
-			<div class="text-gray-400">
-				<GgOrganisation class="inline-block h-4 w-4" />
-				{m.organized_by({ name: '' })}
-				<!-- TODO: Add appropriate locale insertion -->
-				{#each data.event.organizers as organizer}
-					<a
-						href={`/organizers/${organizer.slug}`}
-						class="ml-1 inline-flex items-baseline gap-1 text-white"
-					>
-						{#if organizer.logo}
-							<img src={organizer.logo} class="h-4 w-4 rounded-full" alt={organizer.name} />
-						{/if}
-						{organizer.name}
-					</a>
-				{/each}
+			<div class="gap-2 text-gray-400">
+				<span class="inline-flex items-center gap-1">
+					<GgOrganisation class="inline-block h-4 w-4" />
+					{m.organized_by({ name: '' })}
+					<!-- TODO: Add appropriate locale insertion -->
+
+					{#each data.event.organizers as organizer}
+						<a
+							href={`/organizers/${organizer.slug}`}
+							class="ml-1 inline-flex items-center gap-1 rounded-full bg-slate-700/50 px-2 py-1 text-xs text-slate-300"
+						>
+							{#if organizer.logo}
+								<img
+									src={organizer.logo}
+									alt={organizer.name}
+									class="h-4 w-4 flex-shrink-0 rounded-full object-cover"
+								/>
+							{/if}
+							{organizer.name}
+						</a>
+					{/each}
+				</span>
 				<span class="inline-flex items-center gap-1">
 					<IconParkSolidLocalPin class="inline-block h-4 w-4" />
 					<span>{data.event.region}</span>
@@ -68,7 +75,7 @@
 					</span>
 				</span>
 				{#if data.event.official}
-					<span class="inlineflex items-center gap-1">
+					<span class="inline-flex items-center gap-1">
 						<IconParkSolidCheckOne class="inline-block h-4 w-4" />
 						<span>{m.official()}</span>
 					</span>
