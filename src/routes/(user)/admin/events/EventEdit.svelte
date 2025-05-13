@@ -3,6 +3,7 @@
 	import { enhance } from '$app/forms';
 	import type { Event, Organizer, EventOrganizer } from '$lib/server/db/schema';
 	import { m } from '$lib/paraglide/messages';
+	import ImageUpload from '$lib/components/ImageUpload.svelte';
 
 	let {
 		event,
@@ -35,9 +36,6 @@
 	let errorMessage = $state('');
 	let successMessage = $state('');
 	let dateRange = $state({ start: '', end: '' });
-	let isUploading = $state(false);
-	let selectedFile = $state<File | null>(null);
-	let imageInputMode = $state<'upload' | 'url'>('upload');
 
 	// Initialize date range from event.date
 	$effect(() => {
@@ -256,120 +254,8 @@
 
 		<div>
 			<label class="block text-sm font-medium text-slate-300" for="image">{m.image()}</label>
-			<div class="mt-1 space-y-4">
-				<div class="border-b border-slate-700">
-					<nav class="-mb-px flex space-x-8" aria-label={m.image_upload()}>
-						<button
-							type="button"
-							class="border-b-2 px-1 py-4 text-sm font-medium {imageInputMode === 'upload'
-								? 'border-yellow-500 text-yellow-500'
-								: 'border-transparent text-slate-400 hover:border-slate-600 hover:text-slate-300'}"
-							onclick={() => (imageInputMode = 'upload')}
-						>
-							{m.upload_image()}
-						</button>
-						<button
-							type="button"
-							class="border-b-2 px-1 py-4 text-sm font-medium {imageInputMode === 'url'
-								? 'border-yellow-500 text-yellow-500'
-								: 'border-transparent text-slate-400 hover:border-slate-600 hover:text-slate-300'}"
-							onclick={() => (imageInputMode = 'url')}
-						>
-							{m.enter_url()}
-						</button>
-					</nav>
-				</div>
-
-				{#if imageInputMode === 'upload'}
-					<div class="flex flex-col gap-4">
-						<div class="flex items-center gap-4">
-							<input
-								type="file"
-								id="imageFile"
-								accept="image/*"
-								onchange={(event) => {
-									const input = event.currentTarget;
-									if (input.files && input.files[0]) {
-										selectedFile = input.files[0];
-									}
-								}}
-								class="block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-							/>
-							<button
-								type="button"
-								onclick={async () => {
-									if (!selectedFile) {
-										errorMessage = m.select_file();
-										return;
-									}
-
-									isUploading = true;
-									errorMessage = '';
-									successMessage = '';
-
-									const formData = new FormData();
-									formData.append('file', selectedFile);
-									formData.append('prefix', 'events');
-
-									try {
-										const response = await fetch('/api/upload', {
-											method: 'POST',
-											body: formData
-										});
-
-										const result = await response.json();
-
-										if (response.ok) {
-											newEvent = {
-												...newEvent,
-												image: result.key
-											};
-											successMessage = m.image_uploaded();
-											// Clear the file input
-											const fileInput = document.getElementById('imageFile') as HTMLInputElement;
-											if (fileInput) {
-												fileInput.value = '';
-											}
-											selectedFile = null;
-										} else {
-											errorMessage = result.error || m.failed_to_upload();
-										}
-									} catch (e) {
-										errorMessage = m.failed_to_upload();
-										console.error('Upload error:', e);
-									} finally {
-										isUploading = false;
-									}
-								}}
-								disabled={isUploading || !selectedFile}
-								class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600 disabled:cursor-not-allowed disabled:opacity-50"
-							>
-								{isUploading ? m.uploading() : m.upload()}
-							</button>
-						</div>
-						{#if newEvent.image}
-							<input
-								type="text"
-								value={newEvent.image}
-								readonly
-								class="block w-full rounded-md border border-slate-700 bg-slate-800/50 px-3 py-2 font-mono text-sm text-slate-400 placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none [&:read-only]:cursor-default [&:read-only]:opacity-75 [&:read-only]:select-none"
-							/>
-						{/if}
-					</div>
-				{:else}
-					<div class="rounded-md border border-slate-700 bg-slate-800/50 p-4">
-						<input
-							type="url"
-							id="imageUrl"
-							placeholder={m.enter_image_url()}
-							bind:value={newEvent.image}
-							class="block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-						/>
-					</div>
-				{/if}
-
-				<input type="hidden" id="image" name="image" bind:value={newEvent.image} />
-			</div>
+			<ImageUpload bind:value={newEvent.image} prefix="events" />
+			<input type="hidden" name="image" value={newEvent.image} />
 		</div>
 
 		<div>
