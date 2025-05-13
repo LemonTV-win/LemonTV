@@ -257,12 +257,19 @@
 							{new Date(event.date).toLocaleDateString()}
 						</td>
 						<td class="px-4 py-1">
-							<div class="flex flex-wrap gap-1">
+							<div class="flex flex-wrap gap-2">
 								{#if event.organizers.length}
 									{#each event.organizers as organizer}
 										<span
-											class="inline-flex items-center rounded-full bg-slate-700/50 px-2 py-1 text-xs text-slate-300"
+											class="inline-flex items-center gap-1.5 rounded-full bg-slate-700/50 px-2 py-1 text-xs text-slate-300"
 										>
+											{#if organizer.logo}
+												<img
+													src={organizer.logo}
+													alt={organizer.name}
+													class="h-4 w-4 rounded-full object-cover"
+												/>
+											{/if}
 											{organizer.name}
 										</span>
 									{/each}
