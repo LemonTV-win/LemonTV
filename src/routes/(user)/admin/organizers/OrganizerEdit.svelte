@@ -3,6 +3,7 @@
 	import { enhance } from '$app/forms';
 	import type { Organizer } from '$lib/server/db/schemas/game/organizer';
 	import { m } from '$lib/paraglide/messages';
+	import ImageUpload from '$lib/components/ImageUpload.svelte';
 
 	let {
 		organizer,
@@ -80,13 +81,8 @@
 
 	<div class="mb-4">
 		<label class="block text-sm font-medium text-slate-300" for="logo">{m.logo()}</label>
-		<input
-			type="url"
-			id="logo"
-			name="logo"
-			bind:value={newOrganizer.logo}
-			class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-		/>
+		<ImageUpload bind:value={newOrganizer.logo} prefix="organizers" />
+		<input type="hidden" name="logo" value={newOrganizer.logo} />
 	</div>
 
 	<div class="mb-4">
