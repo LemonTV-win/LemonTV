@@ -4,10 +4,13 @@
 	import IconParkSolidLocalPin from '~icons/icon-park-solid/local-pin';
 	import IconParkSolidComputer from '~icons/icon-park-solid/computer';
 	import { m } from '$lib/paraglide/messages';
+	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 
 	export let data: PageData;
 	const { organizer, events } = data;
 </script>
+
+<Breadcrumbs currentTitle={organizer.name} />
 
 <div class="mx-auto max-w-4xl px-4 py-8">
 	<div class="rounded-lg bg-white p-6 shadow-lg dark:bg-gray-800">

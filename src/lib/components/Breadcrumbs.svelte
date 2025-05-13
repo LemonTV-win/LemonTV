@@ -32,6 +32,8 @@
 				return m.community();
 			case 'matches':
 				return m.matches();
+			case 'organizers':
+				return m.organizers();
 			default:
 				return segment;
 		}
