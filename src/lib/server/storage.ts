@@ -42,7 +42,11 @@ export async function getSignedImageUrl(key: string): Promise<string> {
 	return getSignedUrl(s3Client, command, { expiresIn: 3600 }); // URL expires in 1 hour
 }
 
-export async function processImageURL(url: string): Promise<string> {
+export async function processImageURL(url: string | null): Promise<string | null> {
+	if (!url) {
+		return null;
+	}
+
 	if (url.startsWith('http')) {
 		return url;
 	}

@@ -52,7 +52,7 @@ export const load: PageServerLoad = async ({ url }) => {
 		events: await Promise.all(
 			eventsWithOrganizers.map(async (event) => ({
 				...event,
-				image: await processImageURL(event.image)
+				imageURL: await processImageURL(event.image)
 			}))
 		),
 		organizers: organizersList,
