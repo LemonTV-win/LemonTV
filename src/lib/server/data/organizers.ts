@@ -4,7 +4,7 @@ import { eq, or } from 'drizzle-orm';
 import { processImageURL } from '$lib/server/storage';
 import type { Organizer as AppOrganizer } from '$lib/data/organizer';
 
-async function convertOrganizer(organizer: table.Organizer): Promise<AppOrganizer> {
+export async function convertOrganizer(organizer: table.Organizer): Promise<AppOrganizer> {
 	return {
 		...organizer,
 		logo: await processImageURL(organizer.logo)

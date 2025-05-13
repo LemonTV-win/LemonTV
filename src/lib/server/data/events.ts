@@ -6,6 +6,7 @@ import * as table from '$lib/server/db/schema';
 import { processImageURL } from '$lib/server/storage';
 import type { Region } from '$lib/data/game';
 import { inArray, eq } from 'drizzle-orm';
+import { convertOrganizer } from './organizers';
 
 // Types for the application layer
 export interface EventWithOrganizers extends Event {
@@ -152,17 +153,22 @@ export async function getEvents(conditions: { organizerIds?: string[] } = {}): P
 		return hash;
 	}
 
-	return events.map((event) => ({
-		...event,
-		stages: [],
-		organizer: event.organizers[0],
-		participants: [],
-		id: uuidToNumber(event.id),
-		server: event.server as 'calabiyau' | 'strinova',
-		format: event.format as 'lan' | 'online' | 'hybrid',
-		region: event.region as Region,
-		status: event.status as 'upcoming' | 'live' | 'finished' | 'cancelled' | 'postponed'
-	}));
+	return await Promise.all(
+		events.map(async (event) => ({
+			...event,
+			stages: [],
+			organizers:
+				event.organizers.length > 0
+					? await Promise.all(event.organizers.map(convertOrganizer))
+					: [],
+			participants: [],
+			id: uuidToNumber(event.id),
+			server: event.server as 'calabiyau' | 'strinova',
+			format: event.format as 'lan' | 'online' | 'hybrid',
+			region: event.region as Region,
+			status: event.status as 'upcoming' | 'live' | 'finished' | 'cancelled' | 'postponed'
+		}))
+	);
 }
 
 // export interface Event {
