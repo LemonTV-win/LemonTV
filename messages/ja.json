@@ -360,5 +360,18 @@
 	"update_event": "イベントを更新",
 	"create_event": "イベントを作成",
 	"official_event": "公式イベント",
-	"unofficial_event": "非公式イベント"
+	"unofficial_event": "非公式イベント",
+	"description": "説明",
+	"logo": "ロゴ",
+	"save": "保存",
+	"organizers": "主催者",
+	"create_organizer": "主催者を作成",
+	"delete_organizer_confirmation": "この主催者を削除してもよろしいですか？",
+	"admin_organizers_desc": "トーナメント主催者とその詳細を管理します。",
+	"url": "URL",
+	"edit_organizer": "主催者を編集",
+	"delete_organizer": "主催者を削除",
+	"organizer_id": "主催者ID",
+	"organizer_name": "主催者名",
+	"organizer_description": "主催者説明"
 }

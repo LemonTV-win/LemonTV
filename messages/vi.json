@@ -222,7 +222,7 @@
 	"security": "Bảo mật",
 	"preferences": "Tùy chọn",
 	"change_avatar": "Thay đổi ảnh đại diện của bạn trên Gravatar",
-	"edit_history_overview": "Tổng Quan Lịch Sử Chỉnh Sửa",
+	"edit_history_overview": "Tổng quan lịch sử chỉnh sửa",
 	"total_edits": "Tổng Số Lần Chỉnh Sửa",
 	"unique_editors": "Người Chỉnh Sửa",
 	"first_edit": "Lần Chỉnh Sửa Đầu Tiên",
@@ -360,5 +360,18 @@
 	"update_event": "Cập nhật sự kiện",
 	"create_event": "Tạo sự kiện",
 	"official_event": "Sự kiện chính thức",
-	"unofficial_event": "Sự kiện không chính thức"
+	"unofficial_event": "Sự kiện không chính thức",
+	"description": "Mô tả",
+	"logo": "Logo",
+	"save": "Lưu",
+	"organizers": "Ban tổ chức",
+	"create_organizer": "Tạo ban tổ chức",
+	"delete_organizer_confirmation": "Bạn có chắc chắn muốn xóa ban tổ chức này không?",
+	"admin_organizers_desc": "Quản lý ban tổ chức giải đấu và chi tiết của họ.",
+	"url": "URL",
+	"edit_organizer": "Chỉnh sửa ban tổ chức",
+	"delete_organizer": "Xóa ban tổ chức",
+	"organizer_id": "ID ban tổ chức",
+	"organizer_name": "Tên ban tổ chức",
+	"organizer_description": "Mô tả ban tổ chức"
 }

@@ -222,7 +222,7 @@
 	"security": "Безопасность",
 	"preferences": "Настройки",
 	"change_avatar": "Изменить аватар на Gravatar",
-	"edit_history_overview": "Обзор Истории Редактирования",
+	"edit_history_overview": "Обзор истории редактирования",
 	"total_edits": "Всего Редактирований",
 	"unique_editors": "Уникальных Редакторов",
 	"first_edit": "Первое Редактирование",
@@ -360,5 +360,18 @@
 	"update_event": "Обновить мероприятие",
 	"create_event": "Создать мероприятие",
 	"official_event": "Официальное мероприятие",
-	"unofficial_event": "Неофициальное мероприятие"
+	"unofficial_event": "Неофициальное мероприятие",
+	"description": "Описание",
+	"logo": "Логотип",
+	"save": "Сохранить",
+	"organizers": "Организаторы",
+	"create_organizer": "Создать организатора",
+	"delete_organizer_confirmation": "Вы уверены, что хотите удалить этого организатора?",
+	"admin_organizers_desc": "Управление организаторами турниров и их деталями.",
+	"url": "URL",
+	"edit_organizer": "Редактировать организатора",
+	"delete_organizer": "Удалить организатора",
+	"organizer_id": "ID организатора",
+	"organizer_name": "Имя организатора",
+	"organizer_description": "Описание организатора"
 }

@@ -360,5 +360,18 @@
 	"update_event": "Event aktualisieren",
 	"create_event": "Event erstellen",
 	"official_event": "Offizielles Event",
-	"unofficial_event": "Inoffizielles Event"
+	"unofficial_event": "Inoffizielles Event",
+	"description": "Beschreibung",
+	"logo": "Logo",
+	"save": "Speichern",
+	"organizers": "Organisatoren",
+	"create_organizer": "Organisator erstellen",
+	"delete_organizer_confirmation": "Sind Sie sicher, dass Sie diesen Organisator löschen möchten?",
+	"admin_organizers_desc": "Turnierorganisatoren und deren Details verwalten.",
+	"url": "URL",
+	"edit_organizer": "Organisator bearbeiten",
+	"delete_organizer": "Organisator löschen",
+	"organizer_id": "Organisator-ID",
+	"organizer_name": "Organisatorname",
+	"organizer_description": "Organisatorbeschreibung"
 }

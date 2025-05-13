@@ -360,5 +360,18 @@
 	"update_event": "更新赛事",
 	"create_event": "创建赛事",
 	"official_event": "官方赛事",
-	"unofficial_event": "非官方赛事"
+	"unofficial_event": "非官方赛事",
+	"description": "描述",
+	"logo": "标志",
+	"save": "保存",
+	"organizers": "主办方",
+	"create_organizer": "创建主办方",
+	"delete_organizer_confirmation": "您确定要删除此主办方吗？",
+	"admin_organizers_desc": "管理赛事主办方及其详细信息。",
+	"url": "网址",
+	"edit_organizer": "编辑主办方",
+	"delete_organizer": "删除主办方",
+	"organizer_id": "主办方ID",
+	"organizer_name": "主办方名称",
+	"organizer_description": "主办方描述"
 }

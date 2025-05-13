@@ -222,7 +222,7 @@
 	"account": "Cuenta",
 	"security": "Seguridad",
 	"preferences": "Preferencias",
-	"edit_history_overview": "Resumen del Historial de Ediciones",
+	"edit_history_overview": "Resumen del historial de ediciones",
 	"total_edits": "Total de Ediciones",
 	"unique_editors": "Editores Únicos",
 	"first_edit": "Primera Edición",
@@ -360,5 +360,18 @@
 	"update_event": "Actualizar evento",
 	"create_event": "Crear evento",
 	"official_event": "Evento oficial",
-	"unofficial_event": "Evento no oficial"
+	"unofficial_event": "Evento no oficial",
+	"description": "Descripción",
+	"logo": "Logo",
+	"save": "Guardar",
+	"organizers": "Organizadores",
+	"create_organizer": "Crear organizador",
+	"delete_organizer_confirmation": "¿Está seguro de que desea eliminar este organizador?",
+	"admin_organizers_desc": "Administrar organizadores de torneos y sus detalles.",
+	"url": "URL",
+	"edit_organizer": "Editar organizador",
+	"delete_organizer": "Eliminar organizador",
+	"organizer_id": "ID del organizador",
+	"organizer_name": "Nombre del organizador",
+	"organizer_description": "Descripción del organizador"
 }

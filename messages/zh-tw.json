@@ -360,5 +360,18 @@
 	"update_event": "更新賽事",
 	"create_event": "建立賽事",
 	"official_event": "官方賽事",
-	"unofficial_event": "非官方賽事"
+	"unofficial_event": "非官方賽事",
+	"description": "描述",
+	"logo": "標誌",
+	"save": "儲存",
+	"organizers": "主辦方",
+	"create_organizer": "創建主辦方",
+	"delete_organizer_confirmation": "您確定要刪除此主辦方嗎？",
+	"admin_organizers_desc": "管理賽事主辦方及其詳細資訊。",
+	"url": "網址",
+	"edit_organizer": "編輯主辦方",
+	"delete_organizer": "刪除主辦方",
+	"organizer_id": "主辦方ID",
+	"organizer_name": "主辦方名稱",
+	"organizer_description": "主辦方描述"
 }

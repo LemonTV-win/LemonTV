@@ -1,0 +1,262 @@
+import { fail } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
+import { db } from '$lib/server/db';
+import * as table from '$lib/server/db/schema';
+import { eq } from 'drizzle-orm';
+
+type PermissionResult =
+	| { status: 'success'; userId: string }
+	| { status: 'error'; error: string; statusCode: 401 | 403 };
+
+function checkPermissions(locals: App.Locals, requiredRoles: string[]): PermissionResult {
+	if (!locals.user) {
+		return {
+			status: 'error',
+			error: 'You must be logged in to perform this action',
+			statusCode: 401
+		};
+	}
+
+	if (!locals.user.roles.some((role) => requiredRoles.includes(role))) {
+		return {
+			status: 'error',
+			error: 'You do not have permission to perform this action',
+			statusCode: 403
+		};
+	}
+
+	return {
+		status: 'success',
+		userId: locals.user.id
+	};
+}
+
+export const load: PageServerLoad = async ({ url }) => {
+	const organizersList = await db.select().from(table.organizer);
+
+	const action = url.searchParams.get('action');
+	const id = url.searchParams.get('id');
+
+	return {
+		organizers: organizersList,
+		action,
+		id
+	};
+};
+
+export const actions = {
+	create: async ({ request, locals }) => {
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
+			});
+		}
+
+		const formData = await request.formData();
+		const organizerData = {
+			name: formData.get('name') as string,
+			slug: formData.get('slug') as string,
+			logo: formData.get('logo') as string,
+			description: formData.get('description') as string,
+			url: formData.get('url') as string
+		};
+
+		if (
+			!organizerData.name ||
+			!organizerData.slug ||
+			!organizerData.description ||
+			!organizerData.url
+		) {
+			return fail(400, {
+				error: 'All fields are required'
+			});
+		}
+
+		try {
+			const organizerId = crypto.randomUUID();
+			await db.insert(table.organizer).values({
+				id: organizerId,
+				...organizerData
+			});
+
+			// Add edit history
+			await db.insert(table.editHistory).values({
+				id: crypto.randomUUID(),
+				tableName: 'organizer',
+				recordId: organizerId,
+				fieldName: 'creation',
+				oldValue: null,
+				newValue: 'created',
+				editedBy: result.userId,
+				editedAt: new Date()
+			});
+
+			return {
+				success: true
+			};
+		} catch (e) {
+			console.error('[Admin][Organizers][Create] Failed to create organizer:', e);
+			return fail(500, {
+				error: 'Failed to create organizer'
+			});
+		}
+	},
+
+	update: async ({ request, locals }) => {
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
+			});
+		}
+
+		const formData = await request.formData();
+		const organizerData = {
+			id: formData.get('id') as string,
+			name: formData.get('name') as string,
+			slug: formData.get('slug') as string,
+			logo: formData.get('logo') as string,
+			description: formData.get('description') as string,
+			url: formData.get('url') as string
+		};
+
+		if (
+			!organizerData.id ||
+			!organizerData.name ||
+			!organizerData.slug ||
+			!organizerData.description ||
+			!organizerData.url
+		) {
+			return fail(400, {
+				error: 'All fields are required'
+			});
+		}
+
+		try {
+			// Get the current organizer data for comparison
+			const currentOrganizer = await db
+				.select()
+				.from(table.organizer)
+				.where(eq(table.organizer.id, organizerData.id))
+				.limit(1);
+
+			if (!currentOrganizer.length) {
+				return fail(404, {
+					error: 'Organizer not found'
+				});
+			}
+
+			// Update the organizer
+			await db
+				.update(table.organizer)
+				.set({
+					name: organizerData.name,
+					slug: organizerData.slug,
+					logo: organizerData.logo,
+					description: organizerData.description,
+					url: organizerData.url,
+					updatedAt: new Date()
+				})
+				.where(eq(table.organizer.id, organizerData.id));
+
+			// Add edit history for each changed field
+			const changes: Record<string, { from: any; to: any }> = {};
+			Object.entries(organizerData).forEach(([key, value]) => {
+				if (
+					key !== 'id' &&
+					JSON.stringify(currentOrganizer[0][key as keyof (typeof currentOrganizer)[0]]) !==
+						JSON.stringify(value)
+				) {
+					changes[key] = {
+						from: currentOrganizer[0][key as keyof (typeof currentOrganizer)[0]],
+						to: value
+					};
+				}
+			});
+
+			if (Object.keys(changes).length > 0) {
+				await Promise.all(
+					Object.entries(changes).map(([fieldName, { from, to }]) =>
+						db.insert(table.editHistory).values({
+							id: crypto.randomUUID(),
+							tableName: 'organizer',
+							recordId: organizerData.id,
+							fieldName,
+							oldValue: JSON.stringify(from),
+							newValue: JSON.stringify(to),
+							editedBy: result.userId,
+							editedAt: new Date()
+						})
+					)
+				);
+			}
+
+			return {
+				success: true
+			};
+		} catch (e) {
+			console.error('[Admin][Organizers][Update] Failed to update organizer:', e);
+			return fail(500, {
+				error: 'Failed to update organizer'
+			});
+		}
+	},
+
+	delete: async ({ request, locals }) => {
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
+			});
+		}
+
+		const formData = await request.formData();
+		const id = formData.get('id') as string;
+
+		if (!id) {
+			return fail(400, {
+				error: 'Organizer ID is required'
+			});
+		}
+
+		try {
+			// Get the current organizer data for history
+			const currentOrganizer = await db
+				.select()
+				.from(table.organizer)
+				.where(eq(table.organizer.id, id))
+				.limit(1);
+
+			if (!currentOrganizer.length) {
+				return fail(404, {
+					error: 'Organizer not found'
+				});
+			}
+
+			// Delete the organizer
+			await db.delete(table.organizer).where(eq(table.organizer.id, id));
+
+			// Add edit history
+			await db.insert(table.editHistory).values({
+				id: crypto.randomUUID(),
+				tableName: 'organizer',
+				recordId: id,
+				fieldName: 'deletion',
+				oldValue: JSON.stringify(currentOrganizer[0]),
+				newValue: 'deleted',
+				editedBy: result.userId,
+				editedAt: new Date()
+			});
+
+			return {
+				success: true
+			};
+		} catch (e) {
+			console.error('[Admin][Organizers][Delete] Failed to delete organizer:', e);
+			return fail(500, {
+				error: 'Failed to delete organizer'
+			});
+		}
+	}
+};

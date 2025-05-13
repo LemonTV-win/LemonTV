@@ -360,5 +360,18 @@
 	"update_event": "Perbarui Acara",
 	"create_event": "Buat Acara",
 	"official_event": "Acara Resmi",
-	"unofficial_event": "Acara Tidak Resmi"
+	"unofficial_event": "Acara Tidak Resmi",
+	"description": "Deskripsi",
+	"logo": "Logo",
+	"save": "Simpan",
+	"organizers": "Penyelenggara",
+	"create_organizer": "Buat Penyelenggara",
+	"delete_organizer_confirmation": "Apakah Anda yakin ingin menghapus penyelenggara ini?",
+	"admin_organizers_desc": "Kelola penyelenggara turnamen dan detailnya.",
+	"url": "URL",
+	"edit_organizer": "Edit Penyelenggara",
+	"delete_organizer": "Hapus Penyelenggara",
+	"organizer_id": "ID Penyelenggara",
+	"organizer_name": "Nama Penyelenggara",
+	"organizer_description": "Deskripsi Penyelenggara"
 }

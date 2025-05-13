@@ -222,7 +222,7 @@
 	"security": "Sécurité",
 	"preferences": "Préférences",
 	"change_avatar": "Changez votre avatar sur Gravatar",
-	"edit_history_overview": "Aperçu de l'Historique des Modifications",
+	"edit_history_overview": "Aperçu de l'historique des modifications",
 	"total_edits": "Total des Modifications",
 	"unique_editors": "Éditeurs Uniques",
 	"first_edit": "Première Modification",
@@ -360,5 +360,18 @@
 	"update_event": "Mettre à jour l'événement",
 	"create_event": "Créer un événement",
 	"official_event": "Événement officiel",
-	"unofficial_event": "Événement non officiel"
+	"unofficial_event": "Événement non officiel",
+	"description": "Description",
+	"logo": "Logo",
+	"save": "Enregistrer",
+	"organizers": "Organisateurs",
+	"create_organizer": "Créer un organisateur",
+	"delete_organizer_confirmation": "Êtes-vous sûr de vouloir supprimer cet organisateur ?",
+	"admin_organizers_desc": "Gérer les organisateurs de tournois et leurs détails.",
+	"url": "URL",
+	"edit_organizer": "Modifier l'organisateur",
+	"delete_organizer": "Supprimer l'organisateur",
+	"organizer_id": "ID de l'organisateur",
+	"organizer_name": "Nom de l'organisateur",
+	"organizer_description": "Description de l'organisateur"
 }
