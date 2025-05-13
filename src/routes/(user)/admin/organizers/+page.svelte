@@ -328,10 +328,13 @@
 										alt={organizer.name}
 									/>
 								{/if}
-								<div class="flex min-w-max flex-shrink-0 flex-col">
+								<a
+									class="flex min-w-max flex-shrink-0 flex-col"
+									href={`/organizers/${organizer.slug}`}
+								>
 									<div class="flex-shrink-0 whitespace-nowrap text-white">{organizer.name}</div>
 									<div class="flex-shrink-0 text-sm text-gray-400">{organizer.slug}</div>
-								</div>
+								</a>
 							</div>
 						</td>
 						<td class="min-w-max overflow-hidden px-4 py-1 text-gray-300"

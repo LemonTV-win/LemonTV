@@ -41,7 +41,10 @@
 				{m.organized_by({ name: '' })}
 				<!-- TODO: Add appropriate locale insertion -->
 				{#each data.event.organizers as organizer}
-					<a href={organizer.url} class="ml-1 inline-flex items-baseline gap-1 text-white">
+					<a
+						href={`/organizers/${organizer.slug}`}
+						class="ml-1 inline-flex items-baseline gap-1 text-white"
+					>
 						{#if organizer.logo}
 							<img src={organizer.logo} class="h-4 w-4 rounded-full" alt={organizer.name} />
 						{/if}

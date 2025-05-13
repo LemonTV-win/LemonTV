@@ -5,6 +5,7 @@ import { db } from '../db';
 import * as table from '$lib/server/db/schema';
 import { processImageURL } from '$lib/server/storage';
 import type { Region } from '$lib/data/game';
+import { inArray, eq } from 'drizzle-orm';
 
 // Types for the application layer
 export interface EventWithOrganizers extends Event {
@@ -108,19 +109,37 @@ export function getOrganizerChanges(
 	};
 }
 
-export async function getEvents(): Promise<AppEvent[]> {
-	const eventsList = await db.select().from(table.event);
-	const organizersList = await db.select().from(table.organizer);
-	const eventOrganizersList = await db.select().from(table.eventOrganizer);
+export async function getEvents(conditions: { organizerIds?: string[] } = {}): Promise<AppEvent[]> {
+	const eventsWithOrganizers = await db
+		.select({
+			event: table.event,
+			organizer: table.organizer
+		})
+		.from(table.event)
+		.leftJoin(table.eventOrganizer, eq(table.eventOrganizer.eventId, table.event.id))
+		.leftJoin(table.organizer, eq(table.organizer.id, table.eventOrganizer.organizerId))
+		.where(
+			conditions.organizerIds
+				? inArray(table.eventOrganizer.organizerId, conditions.organizerIds)
+				: undefined
+		);
 
-	// Transform events to include organizers
-	const eventsWithOrganizers: EventWithOrganizers[] = eventsList.map((event) =>
-		toEventWithOrganizers(event, eventOrganizersList, organizersList)
-	);
+	// Group organizers by event
+	const eventsMap = new Map<string, { event: Event; organizers: Organizer[] }>();
+
+	eventsWithOrganizers.forEach(({ event, organizer }) => {
+		if (!eventsMap.has(event.id)) {
+			eventsMap.set(event.id, { event, organizers: [] });
+		}
+		if (organizer) {
+			eventsMap.get(event.id)?.organizers.push(organizer);
+		}
+	});
 
 	const events = await Promise.all(
-		eventsWithOrganizers.map(async (event) => ({
+		Array.from(eventsMap.values()).map(async ({ event, organizers }) => ({
 			...event,
+			organizers,
 			image: await processImageURL(event.image)
 		}))
 	);
