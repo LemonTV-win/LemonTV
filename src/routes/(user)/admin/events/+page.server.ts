@@ -3,6 +3,7 @@ import type { PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { eq, inArray } from 'drizzle-orm';
+import { processImageURL, uploadImage } from '$lib/server/storage';
 import {
 	type CreateEventData,
 	type UpdateEventData,
@@ -48,7 +49,12 @@ export const load: PageServerLoad = async ({ url }) => {
 	);
 
 	return {
-		events: eventsWithOrganizers,
+		events: await Promise.all(
+			eventsWithOrganizers.map(async (event) => ({
+				...event,
+				image: await processImageURL(event.image)
+			}))
+		),
 		organizers: organizersList,
 		eventOrganizers: eventOrganizersList,
 		action,
@@ -312,6 +318,41 @@ export const actions = {
 			console.error('[Admin][Events][Delete] Failed to delete event:', e);
 			return fail(500, {
 				error: 'Failed to delete event'
+			});
+		}
+	},
+
+	uploadImage: async ({ request, locals }) => {
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
+			});
+		}
+
+		const formData = await request.formData();
+		const file = formData.get('image') as File;
+
+		if (!file) {
+			return fail(400, {
+				error: 'No file provided'
+			});
+		}
+
+		try {
+			const key = `events/${crypto.randomUUID()}-${file.name}`;
+			await uploadImage(file, key);
+
+			return {
+				type: 'success',
+				data: {
+					key
+				}
+			};
+		} catch (e) {
+			console.error('[Admin][Events][Upload] Failed to upload image:', e);
+			return fail(500, {
+				error: 'Failed to upload image'
 			});
 		}
 	}

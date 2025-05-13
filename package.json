@@ -52,6 +52,8 @@
 		"vite": "^6.3.5"
 	},
 	"dependencies": {
+		"@aws-sdk/client-s3": "^3.808.0",
+		"@aws-sdk/s3-request-presigner": "^3.808.0",
 		"@fontsource-variable/saira": "^5.2.7",
 		"@infolektuell/noto-color-emoji": "^0.2.0",
 		"@inlang/paraglide-js": "^2.0.12",

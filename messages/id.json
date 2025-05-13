@@ -376,5 +376,15 @@
 	"organizer_description": "Deskripsi Penyelenggara",
 	"delete_organizer_warning": "Tindakan ini juga akan menghapus semua catatan terkait:",
 	"delete_organizer_manual_warning": "Anda juga dapat menghapus masing-masing catatan ini secara manual terlebih dahulu untuk menghindari peringatan ini.",
-	"events_affected": "{count} acara akan terpengaruh"
+	"events_affected": "{count} acara akan terpengaruh",
+	"image_upload": "Unggah Gambar",
+	"image_url": "URL Gambar",
+	"upload_image": "Unggah Gambar",
+	"enter_url": "Masukkan URL",
+	"select_file": "Pilih file terlebih dahulu",
+	"uploading": "Mengunggah...",
+	"upload": "Unggah",
+	"image_uploaded": "Gambar berhasil diunggah",
+	"failed_to_upload": "Gagal mengunggah gambar",
+	"enter_image_url": "Masukkan URL gambar"
 }

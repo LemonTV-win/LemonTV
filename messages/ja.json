@@ -376,5 +376,15 @@
 	"organizer_description": "主催者説明",
 	"delete_organizer_warning": "このアクションは関連するすべてのレコードも削除します：",
 	"delete_organizer_manual_warning": "この警告を避けるために、これらのレコードを事前に手動で削除することもできます。",
-	"events_affected": "{count}件のイベントが影響を受けます"
+	"events_affected": "{count}件のイベントが影響を受けます",
+	"image_upload": "画像アップロード",
+	"image_url": "画像URL",
+	"upload_image": "画像をアップロード",
+	"enter_url": "URLを入力",
+	"select_file": "ファイルを選択してください",
+	"uploading": "アップロード中...",
+	"upload": "アップロード",
+	"image_uploaded": "画像のアップロードに成功しました",
+	"failed_to_upload": "画像のアップロードに失敗しました",
+	"enter_image_url": "画像URLを入力"
 }

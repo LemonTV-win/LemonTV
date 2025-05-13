@@ -376,5 +376,15 @@
 	"organizer_description": "Descripción del organizador",
 	"delete_organizer_warning": "Esta acción también eliminará todos los registros asociados:",
 	"delete_organizer_manual_warning": "También puede eliminar cada uno de estos registros manualmente primero para evitar esta advertencia.",
-	"events_affected": "{count} evento(s) se verán afectados"
+	"events_affected": "{count} evento(s) se verán afectados",
+	"image_upload": "Subir imagen",
+	"image_url": "URL de la imagen",
+	"upload_image": "Subir imagen",
+	"enter_url": "Ingresar URL",
+	"select_file": "Seleccione un archivo primero",
+	"uploading": "Subiendo...",
+	"upload": "Subir",
+	"image_uploaded": "Imagen subida exitosamente",
+	"failed_to_upload": "Error al subir la imagen",
+	"enter_image_url": "Ingrese la URL de la imagen"
 }

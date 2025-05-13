@@ -372,9 +372,19 @@
 	"edit_organizer": "Organisator bearbeiten",
 	"delete_organizer": "Organisator löschen",
 	"organizer_id": "Organisator-ID",
-	"organizer_name": "Organisatorname",
-	"organizer_description": "Organisatorbeschreibung",
+	"organizer_name": "Organisator-Name",
+	"organizer_description": "Organisator-Beschreibung",
 	"delete_organizer_warning": "Diese Aktion löscht auch alle zugehörigen Datensätze:",
 	"delete_organizer_manual_warning": "Sie können auch jeden dieser Datensätze manuell zuerst löschen, um diese Warnung zu vermeiden.",
-	"events_affected": "{count} Ereignis(se) werden betroffen sein"
+	"events_affected": "{count} Ereignis(se) werden betroffen sein",
+	"image_upload": "Bild-Upload",
+	"image_url": "Bild-URL",
+	"upload_image": "Bild hochladen",
+	"enter_url": "URL eingeben",
+	"select_file": "Bitte wählen Sie zuerst eine Datei aus",
+	"uploading": "Wird hochgeladen...",
+	"upload": "Hochladen",
+	"image_uploaded": "Bild erfolgreich hochgeladen",
+	"failed_to_upload": "Bild-Upload fehlgeschlagen",
+	"enter_image_url": "Bild-URL eingeben"
 }

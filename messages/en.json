@@ -379,5 +379,15 @@
 	"delete_organizer": "Delete Organizer",
 	"organizer_id": "Organizer ID",
 	"organizer_name": "Organizer Name",
-	"organizer_description": "Organizer Description"
+	"organizer_description": "Organizer Description",
+	"image_upload": "Image Upload",
+	"image_url": "Image URL",
+	"upload_image": "Upload Image",
+	"enter_url": "Enter URL",
+	"select_file": "Select a file first",
+	"uploading": "Uploading...",
+	"upload": "Upload",
+	"image_uploaded": "Image uploaded successfully",
+	"failed_to_upload": "Failed to upload image",
+	"enter_image_url": "Enter image URL"
 }
