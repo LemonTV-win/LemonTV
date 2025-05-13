@@ -321,10 +321,10 @@
 					<tr class="border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl">
 						<td class="min-w-max overflow-hidden px-4 py-1">
 							<div class="flex min-w-max items-center">
-								{#if organizer.logo}
+								{#if organizer.logoURL}
 									<img
 										class="mr-3 h-10 w-10 flex-shrink-0 rounded-full"
-										src={organizer.logo}
+										src={organizer.logoURL}
 										alt={organizer.name}
 									/>
 								{/if}

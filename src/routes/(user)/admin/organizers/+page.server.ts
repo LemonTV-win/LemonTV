@@ -3,6 +3,7 @@ import type { PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { eq, sql } from 'drizzle-orm';
+import { processImageURL } from '$lib/server/storage';
 
 type PermissionResult =
 	| { status: 'success'; userId: string }
@@ -38,7 +39,12 @@ export const load: PageServerLoad = async ({ url }) => {
 	const id = url.searchParams.get('id');
 
 	return {
-		organizers: organizersList,
+		organizers: await Promise.all(
+			organizersList.map(async (organizer) => ({
+				...organizer,
+				logoURL: await processImageURL(organizer.logo)
+			}))
+		),
 		action,
 		id
 	};
