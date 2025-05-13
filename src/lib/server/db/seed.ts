@@ -7,14 +7,18 @@ export async function seed() {
 
 	// Clear only game-related tables, preserving user data
 	console.log('[SEED] Clearing existing game data...');
+	// Delete child records first
 	await db.delete(schema.player_social_account);
 	await db.delete(schema.gameAccount);
 	await db.delete(schema.teamPlayer);
 	await db.delete(schema.teamAlias);
-	await db.delete(schema.teams);
 	await db.delete(schema.playerAlias);
+	await db.delete(schema.eventOrganizer);
+	// Then delete parent records
+	await db.delete(schema.teams);
 	await db.delete(schema.player);
 	await db.delete(schema.event);
+	await db.delete(schema.organizer);
 	// Preserve user-related tables: user, role, userRole, session, editHistory
 
 	const firstUser = await db.select().from(schema.user).limit(1);
@@ -72,8 +76,33 @@ export async function seed() {
 		}
 	]);
 
+	console.log('[SEED] Seeding organizers...');
+	const ORGANIZERS = [
+		{
+			id: randomUUID(),
+			slug: 'organizer-1',
+			name: 'Organizer 1',
+			logo: 'https://picsum.photos/seed/organizer-1/256/256?blur',
+			description: 'Organizer 1 description',
+			url: 'https://organizer-1.com',
+			createdAt: new Date(),
+			updatedAt: new Date()
+		},
+		{
+			id: randomUUID(),
+			slug: 'organizer-2',
+			name: 'Organizer 2',
+			logo: 'https://picsum.photos/seed/organizer-2/256/256?blur',
+			description: 'Organizer 2 description',
+			url: 'https://organizer-2.com',
+			createdAt: new Date(),
+			updatedAt: new Date()
+		}
+	];
+	await db.insert(schema.organizer).values(ORGANIZERS);
+
 	console.log('[SEED] Seeding events...');
-	await db.insert(schema.event).values([
+	const EVENTS = [
 		{
 			id: randomUUID(),
 			slug: 'imaginary-cup-1',
@@ -178,8 +207,28 @@ export async function seed() {
 			capacity: 24,
 			date: '2024-09-01'
 		}
-	]);
+	];
+	await db.insert(schema.event).values(EVENTS);
 
+	console.log('[SEED] Seeding event organizers...');
+	await db.insert(schema.eventOrganizer).values([
+		{
+			eventId: EVENTS[0].id,
+			organizerId: ORGANIZERS[0].id
+		},
+		{
+			eventId: EVENTS[1].id,
+			organizerId: ORGANIZERS[0].id
+		},
+		{
+			eventId: EVENTS[1].id,
+			organizerId: ORGANIZERS[1].id
+		},
+		{
+			eventId: EVENTS[2].id,
+			organizerId: ORGANIZERS[1].id
+		}
+	]);
 	console.log('[SEED] Seeding sources...');
 	// const sources = await db.query.source.findMany();
 	// console.log(sources);

@@ -13,10 +13,14 @@
 	import TypcnArrowUnsorted from '~icons/typcn/arrow-unsorted';
 	import TypcnArrowSortedDown from '~icons/typcn/arrow-sorted-down';
 	import TypcnArrowSortedUp from '~icons/typcn/arrow-sorted-up';
+	import type { EventWithOrganizers } from '$lib/server/data/events';
 
 	let { data }: { data: PageData } = $props();
-	let { events, action, id } = $derived(data);
-	let selectedEvent: (typeof events)[0] | undefined = $state(undefined);
+	let { events, action, id, organizers, eventOrganizers } = $derived(data);
+
+	$inspect('data', data);
+
+	let selectedEvent: EventWithOrganizers | null = $state(null);
 	let searchQuery = $state('');
 	let sortBy: 'name-asc' | 'name-desc' | 'date-asc' | 'date-desc' | 'status-asc' | 'status-desc' =
 		$state('date-desc');
@@ -67,10 +71,10 @@
 	function handleAddEvent() {
 		isAddingNew = true;
 		isEditing = false;
-		selectedEvent = undefined;
+		selectedEvent = null;
 	}
 
-	function handleEditEvent(event: any) {
+	function handleEditEvent(event: EventWithOrganizers) {
 		selectedEvent = event;
 		isEditing = true;
 		isAddingNew = false;
@@ -79,18 +83,18 @@
 	function handleCancel() {
 		isAddingNew = false;
 		isEditing = false;
-		selectedEvent = undefined;
+		selectedEvent = null;
 		goto('/admin/events', { replaceState: true });
 	}
 
 	function handleSuccess() {
 		isAddingNew = false;
 		isEditing = false;
-		selectedEvent = undefined;
+		selectedEvent = null;
 		goto('/admin/events', { invalidateAll: true });
 	}
 
-	function handleDelete(event: Event) {
+	function handleDelete(event: SubmitEvent) {
 		if (!confirm(m.delete_event_confirmation())) {
 			event.preventDefault();
 		}
@@ -98,7 +102,7 @@
 
 	function closeHistoryModal() {
 		showHistoryModal = false;
-		selectedEvent = undefined;
+		selectedEvent = null;
 	}
 </script>
 
@@ -107,9 +111,13 @@
 		<h1 class="text-2xl font-bold">{m.events()}</h1>
 		<button
 			class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600"
-			onclick={handleAddEvent}
+			onclick={() => {
+				selectedEvent = null;
+				isAddingNew = true;
+				isEditing = false;
+			}}
 		>
-			{m.add_new()}
+			{m.create_event()}
 		</button>
 	</div>
 
@@ -120,7 +128,17 @@
 			onClose={handleCancel}
 			dismissible={false}
 		>
-			<EventEdit event={selectedEvent ?? {}} onCancel={handleCancel} onSuccess={handleSuccess} />
+			<EventEdit
+				event={selectedEvent ?? {}}
+				{organizers}
+				eventOrganizers={(() => {
+					if (!selectedEvent) return [];
+					const event = selectedEvent as EventWithOrganizers;
+					return eventOrganizers.filter((eo) => eo.eventId === event.id);
+				})()}
+				onCancel={handleCancel}
+				onSuccess={handleSuccess}
+			/>
 		</Modal>
 	{/if}
 
@@ -198,6 +216,7 @@
 							{/if}
 						</button>
 					</th>
+					<th class="px-4 py-1">Organizers</th>
 					<th class="sticky right-0 z-10 h-12 bg-gray-800 px-4 py-1">{m.actions()}</th>
 				</tr>
 			</thead>
@@ -237,11 +256,30 @@
 						<td class="px-4 py-1 text-gray-300">
 							{new Date(event.date).toLocaleDateString()}
 						</td>
+						<td class="px-4 py-1">
+							<div class="flex flex-wrap gap-1">
+								{#if event.organizers.length}
+									{#each event.organizers as organizer}
+										<span
+											class="inline-flex items-center rounded-full bg-slate-700/50 px-2 py-1 text-xs text-slate-300"
+										>
+											{organizer.name}
+										</span>
+									{/each}
+								{:else}
+									<span class="text-sm text-slate-500">No organizers</span>
+								{/if}
+							</div>
+						</td>
 						<td class="sticky right-0 z-10 h-12 bg-gray-800">
 							<div class="flex h-full items-center gap-2 border-l border-gray-700 px-4 py-1">
 								<button
 									class="flex items-center gap-1 text-yellow-500 hover:text-yellow-400"
-									onclick={() => handleEditEvent(event)}
+									onclick={() => {
+										selectedEvent = event;
+										isAddingNew = false;
+										isEditing = true;
+									}}
 									title={m.edit()}
 								>
 									<IconParkSolidEdit class="h-4 w-4" />

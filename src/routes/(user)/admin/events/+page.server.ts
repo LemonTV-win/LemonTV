@@ -2,7 +2,17 @@ import { fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
+import {
+	type CreateEventData,
+	type UpdateEventData,
+	type EventWithOrganizers,
+	toDatabaseEvent,
+	toDatabaseEventOrganizers,
+	getEventChanges,
+	getOrganizerChanges,
+	toEventWithOrganizers
+} from '$lib/server/data/events';
 
 type PermissionResult =
 	| { status: 'success'; userId: string }
@@ -26,12 +36,21 @@ function checkPermissions(locals: App.Locals, requiredRoles: string[]): Permissi
 
 export const load: PageServerLoad = async ({ url }) => {
 	const eventsList = await db.select().from(table.event);
+	const organizersList = await db.select().from(table.organizer);
+	const eventOrganizersList = await db.select().from(table.eventOrganizer);
 
 	const action = url.searchParams.get('action');
 	const id = url.searchParams.get('id');
 
+	// Transform events to include organizers
+	const eventsWithOrganizers: EventWithOrganizers[] = eventsList.map((event) =>
+		toEventWithOrganizers(event, eventOrganizersList, organizersList)
+	);
+
 	return {
-		events: eventsList,
+		events: eventsWithOrganizers,
+		organizers: organizersList,
+		eventOrganizers: eventOrganizersList,
 		action,
 		id
 	};
@@ -47,27 +66,30 @@ export const actions = {
 		}
 
 		const formData = await request.formData();
-		const name = formData.get('name') as string;
-		const slug = formData.get('slug') as string;
-		const official = formData.get('official') === 'true';
-		const server = formData.get('server') as string;
-		const format = formData.get('format') as string;
-		const region = formData.get('region') as string;
-		const image = formData.get('image') as string;
-		const status = formData.get('status') as string;
-		const capacity = parseInt(formData.get('capacity') as string);
-		const date = formData.get('date') as string;
+		const eventData: CreateEventData = {
+			name: formData.get('name') as string,
+			slug: formData.get('slug') as string,
+			official: formData.get('official') === 'true',
+			server: formData.get('server') as string,
+			format: formData.get('format') as string,
+			region: formData.get('region') as string,
+			image: formData.get('image') as string,
+			status: formData.get('status') as string,
+			capacity: parseInt(formData.get('capacity') as string),
+			date: formData.get('date') as string,
+			organizerIds: formData.getAll('organizers') as string[]
+		};
 
 		if (
-			!name ||
-			!slug ||
-			!server ||
-			!format ||
-			!region ||
-			!image ||
-			!status ||
-			!capacity ||
-			!date
+			!eventData.name ||
+			!eventData.slug ||
+			!eventData.server ||
+			!eventData.format ||
+			!eventData.region ||
+			!eventData.image ||
+			!eventData.status ||
+			!eventData.capacity ||
+			!eventData.date
 		) {
 			return fail(400, {
 				error: 'All fields are required'
@@ -76,19 +98,17 @@ export const actions = {
 
 		try {
 			const eventId = crypto.randomUUID();
+			const dbEvent = toDatabaseEvent(eventData);
 			await db.insert(table.event).values({
 				id: eventId,
-				name,
-				slug,
-				official,
-				server,
-				format,
-				region,
-				image,
-				status,
-				capacity,
-				date
+				...dbEvent
 			});
+
+			// Add event organizers
+			if (eventData.organizerIds.length > 0) {
+				const dbEventOrganizers = toDatabaseEventOrganizers(eventId, eventData.organizerIds);
+				await db.insert(table.eventOrganizer).values(dbEventOrganizers);
+			}
 
 			// Add edit history
 			await db.insert(table.editHistory).values({
@@ -122,29 +142,32 @@ export const actions = {
 		}
 
 		const formData = await request.formData();
-		const id = formData.get('id') as string;
-		const name = formData.get('name') as string;
-		const slug = formData.get('slug') as string;
-		const official = formData.get('official') === 'true';
-		const server = formData.get('server') as string;
-		const format = formData.get('format') as string;
-		const region = formData.get('region') as string;
-		const image = formData.get('image') as string;
-		const status = formData.get('status') as string;
-		const capacity = parseInt(formData.get('capacity') as string);
-		const date = formData.get('date') as string;
+		const eventData: UpdateEventData = {
+			id: formData.get('id') as string,
+			name: formData.get('name') as string,
+			slug: formData.get('slug') as string,
+			official: formData.get('official') === 'true',
+			server: formData.get('server') as string,
+			format: formData.get('format') as string,
+			region: formData.get('region') as string,
+			image: formData.get('image') as string,
+			status: formData.get('status') as string,
+			capacity: parseInt(formData.get('capacity') as string),
+			date: formData.get('date') as string,
+			organizerIds: formData.getAll('organizers') as string[]
+		};
 
 		if (
-			!id ||
-			!name ||
-			!slug ||
-			!server ||
-			!format ||
-			!region ||
-			!image ||
-			!status ||
-			!capacity ||
-			!date
+			!eventData.id ||
+			!eventData.name ||
+			!eventData.slug ||
+			!eventData.server ||
+			!eventData.format ||
+			!eventData.region ||
+			!eventData.image ||
+			!eventData.status ||
+			!eventData.capacity ||
+			!eventData.date
 		) {
 			return fail(400, {
 				error: 'All fields are required'
@@ -156,7 +179,7 @@ export const actions = {
 			const currentEvent = await db
 				.select()
 				.from(table.event)
-				.where(eq(table.event.id, id))
+				.where(eq(table.event.id, eventData.id))
 				.limit(1);
 
 			if (!currentEvent.length) {
@@ -165,35 +188,37 @@ export const actions = {
 				});
 			}
 
-			const changes: Record<string, { from: any; to: any }> = {};
-			const newData = {
-				name,
-				slug,
-				official,
-				server,
-				format,
-				region,
-				image,
-				status,
-				capacity,
-				date
-			};
-
-			// Compare and record changes
-			Object.entries(newData).forEach(([key, value]) => {
-				if (
-					JSON.stringify(currentEvent[0][key as keyof (typeof currentEvent)[0]]) !==
-					JSON.stringify(value)
-				) {
-					changes[key] = {
-						from: currentEvent[0][key as keyof (typeof currentEvent)[0]],
-						to: value
-					};
-				}
-			});
+			const changes = getEventChanges(currentEvent[0], eventData);
 
 			// Update the event
-			await db.update(table.event).set(newData).where(eq(table.event.id, id));
+			const dbEvent = toDatabaseEvent(eventData as CreateEventData);
+			await db.update(table.event).set(dbEvent).where(eq(table.event.id, eventData.id));
+
+			// Update event organizers
+			const currentOrganizers = await db
+				.select()
+				.from(table.eventOrganizer)
+				.where(eq(table.eventOrganizer.eventId, eventData.id));
+
+			const currentOrganizerIds = currentOrganizers.map((eo) => eo.organizerId);
+			const { toAdd, toRemove } = getOrganizerChanges(
+				currentOrganizerIds,
+				eventData.organizerIds ?? []
+			);
+
+			if (toAdd.length > 0) {
+				const dbEventOrganizers = toDatabaseEventOrganizers(eventData.id, toAdd);
+				await db.insert(table.eventOrganizer).values(dbEventOrganizers);
+			}
+
+			if (toRemove.length > 0) {
+				await db
+					.delete(table.eventOrganizer)
+					.where(
+						eq(table.eventOrganizer.eventId, eventData.id) &&
+							inArray(table.eventOrganizer.organizerId, toRemove)
+					);
+			}
 
 			// Add edit history if there are changes
 			if (Object.keys(changes).length > 0) {
@@ -202,7 +227,7 @@ export const actions = {
 						db.insert(table.editHistory).values({
 							id: crypto.randomUUID(),
 							tableName: 'event',
-							recordId: id,
+							recordId: eventData.id,
 							fieldName,
 							oldValue: JSON.stringify(from),
 							newValue: JSON.stringify(to),
@@ -211,6 +236,20 @@ export const actions = {
 						})
 					)
 				);
+			}
+
+			// Add edit history for organizer changes
+			if (toAdd.length > 0 || toRemove.length > 0) {
+				await db.insert(table.editHistory).values({
+					id: crypto.randomUUID(),
+					tableName: 'event',
+					recordId: eventData.id,
+					fieldName: 'organizers',
+					oldValue: JSON.stringify(currentOrganizerIds),
+					newValue: JSON.stringify(eventData.organizerIds),
+					editedBy: result.userId,
+					editedAt: new Date()
+				});
 			}
 
 			return {

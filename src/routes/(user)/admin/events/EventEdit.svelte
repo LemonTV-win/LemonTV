@@ -1,16 +1,19 @@
 <!-- src/routes/(user)/admin/events/EventEdit.svelte -->
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import type { Event } from '$lib/server/db/schema';
-	import type { ActionResult } from '@sveltejs/kit';
+	import type { Event, Organizer, EventOrganizer } from '$lib/server/db/schema';
 	import { m } from '$lib/paraglide/messages';
 
 	let {
 		event,
+		organizers,
+		eventOrganizers,
 		onCancel,
 		onSuccess: onsuccess
 	}: {
 		event: Partial<Event>;
+		organizers: Organizer[];
+		eventOrganizers: EventOrganizer[];
 		onCancel: () => void;
 		onSuccess: () => void;
 	} = $props();
@@ -26,7 +29,8 @@
 		capacity: event.capacity || 0,
 		date: event.date || new Date().toISOString().split('T')[0],
 		image: event.image || '',
-		official: event.official || false
+		official: event.official || false,
+		organizers: eventOrganizers.map((eo) => eo.organizerId)
 	});
 	let errorMessage = $state('');
 	let successMessage = $state('');
@@ -38,20 +42,6 @@
 	};
 	const formatOptions = ['online', 'lan', 'hybrid'];
 	const regionOptions = ['Global', 'APAC', 'EU', 'CN', 'NA', 'SA', 'AF', 'OC'];
-
-	function handleSubmit(e: Event) {
-		errorMessage = '';
-		successMessage = '';
-	}
-
-	function handleResult({ result, update }: { result: { error?: string }; update: () => void }) {
-		if (result.error) {
-			errorMessage = result.error;
-		} else {
-			update();
-			onCancel();
-		}
-	}
 </script>
 
 <form
@@ -214,6 +204,22 @@
 				required
 				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 			/>
+		</div>
+
+		<div>
+			<label class="block text-sm font-medium text-slate-300" for="organizers">Organizers</label>
+			<select
+				id="organizers"
+				name="organizers"
+				bind:value={newEvent.organizers}
+				multiple
+				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+			>
+				{#each organizers as organizer}
+					<option value={organizer.id}>{organizer.name}</option>
+				{/each}
+			</select>
+			<p class="mt-1 text-sm text-slate-400">Hold Ctrl/Cmd to select multiple organizers</p>
 		</div>
 
 		<div class="flex items-center">
