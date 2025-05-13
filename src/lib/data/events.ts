@@ -1,6 +1,7 @@
 import type { Match } from '$lib/data/matches';
 import type { LocalizedString } from '$lib/data/string';
 import type { Region } from './game';
+import type { Organizer } from './organizer';
 
 export interface Stage {
 	id: number;
@@ -61,11 +62,7 @@ export interface Event {
 
 	// prizePool: number;
 	// teams: Team[];
-	organizers: {
-		name: string;
-		logo?: string;
-		url: string;
-	}[];
+	organizers: Organizer[];
 	capacity: number; // expected number of teams
 	date: string;
 	websites?: string[];
@@ -128,9 +125,11 @@ export const events: Event[] = [
 		region: 'Global',
 		organizers: [
 			{
+				id: crypto.randomUUID(),
 				name: 'BriBri',
 				logo: 'https://pbs.twimg.com/profile_images/1863502296023531520/ALjMfroI_400x400.jpg',
-				url: 'https://x.com/BriBri_TSG'
+				url: 'https://x.com/BriBri_TSG',
+				slug: 'bribri'
 			}
 		],
 		stages: [
@@ -1686,9 +1685,11 @@ export const events: Event[] = [
 		status: 'finished',
 		organizers: [
 			{
+				id: crypto.randomUUID(),
 				name: '川島宮殿',
 				logo: 'https://pbs.twimg.com/profile_images/1792733020912545792/NKEIhBSI_400x400.jpg',
-				url: 'https://x.com/kawakyuden'
+				url: 'https://x.com/kawakyuden',
+				slug: 'kawashimakyuden'
 			}
 		],
 		stages: [
@@ -2002,9 +2003,11 @@ export const events: Event[] = [
 		status: 'finished',
 		organizers: [
 			{
+				id: crypto.randomUUID(),
 				name: 'OrigamiCup',
 				logo: 'https://static-cdn.jtvnw.net/jtv_user_pictures/ba65e84b-8314-46e2-8b9a-becd794fcd48-profile_image-70x70.png',
-				url: 'https://www.twitch.tv/origamicup'
+				url: 'https://www.twitch.tv/origamicup',
+				slug: 'origamicup'
 			}
 		],
 		capacity: 14,
@@ -3116,8 +3119,11 @@ export const events: Event[] = [
 		stages: [],
 		organizers: [
 			{
+				id: crypto.randomUUID(),
 				name: 'Esports World Cup',
-				url: 'https://esportsworldcup.com/en/2024'
+				url: 'https://esportsworldcup.com/en/2024',
+				slug: 'esportsworldcup',
+				logo: 'https://upload.wikimedia.org/wikipedia/commons/b/b4/Esports_World_Cup_logo.svg'
 			}
 		],
 		capacity: 4,
@@ -3162,8 +3168,11 @@ export const events: Event[] = [
 		stages: [],
 		organizers: [
 			{
+				id: crypto.randomUUID(),
 				name: 'Kariyu',
-				url: 'https://x.com/kariyu101'
+				url: 'https://x.com/kariyu101',
+				slug: 'kariyu',
+				logo: 'https://pbs.twimg.com/profile_images/1919093995692761088/vennsCtk_400x400.jpg'
 			}
 		],
 		capacity: 0,
@@ -3183,8 +3192,11 @@ export const events: Event[] = [
 		stages: [],
 		organizers: [
 			{
+				id: crypto.randomUUID(),
 				name: 'Unknown',
-				url: 'https://example.com'
+				url: 'https://example.com',
+				slug: 'unknown',
+				logo: 'https://picsum.photos/seed/unknown/300/200?blur'
 			}
 		],
 		capacity: 0,
@@ -3204,8 +3216,11 @@ export const events: Event[] = [
 		stages: [],
 		organizers: [
 			{
+				id: crypto.randomUUID(),
 				name: 'Unknown',
-				url: 'https://example.com'
+				url: 'https://example.com',
+				slug: 'unknown',
+				logo: 'https://picsum.photos/seed/unknown/300/200?blur'
 			}
 		],
 		capacity: 0,
@@ -3225,8 +3240,11 @@ export const events: Event[] = [
 		stages: [],
 		organizers: [
 			{
+				id: crypto.randomUUID(),
 				name: 'Unknown',
-				url: 'https://example.com'
+				url: 'https://example.com',
+				slug: 'unknown',
+				logo: 'https://picsum.photos/seed/unknown/300/200?blur'
 			}
 		],
 		capacity: 0,
@@ -3246,8 +3264,11 @@ export const events: Event[] = [
 		stages: [],
 		organizers: [
 			{
+				id: crypto.randomUUID(),
 				name: 'Unknown',
-				url: 'https://example.com'
+				url: 'https://example.com',
+				slug: 'unknown',
+				logo: 'https://picsum.photos/seed/unknown/300/200?blur'
 			}
 		],
 		capacity: 0,
@@ -3267,8 +3288,11 @@ export const events: Event[] = [
 		stages: [],
 		organizers: [
 			{
+				id: crypto.randomUUID(),
 				name: 'Unknown',
-				url: 'https://example.com'
+				url: 'https://example.com',
+				slug: 'unknown',
+				logo: 'https://picsum.photos/seed/unknown/300/200?blur'
 			}
 		],
 		capacity: 0,
