@@ -39,7 +39,7 @@
 				return (
 					organizer.name.toLowerCase().includes(searchLower) ||
 					organizer.slug.toLowerCase().includes(searchLower) ||
-					organizer.description.toLowerCase().includes(searchLower)
+					organizer.description?.toLowerCase().includes(searchLower)
 				);
 			})
 			.toSorted((a, b) => {

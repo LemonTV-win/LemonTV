@@ -7,7 +7,9 @@ import type { Organizer as AppOrganizer } from '$lib/data/organizer';
 export async function convertOrganizer(organizer: table.Organizer): Promise<AppOrganizer> {
 	return {
 		...organizer,
-		logo: await processImageURL(organizer.logo)
+		logo: await processImageURL(organizer.logo),
+		description: organizer.description ?? undefined,
+		url: organizer.url ?? undefined
 	};
 }
 

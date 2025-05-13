@@ -7,8 +7,8 @@ export const organizer = sqliteTable('organizer', {
 	slug: text('slug').notNull().unique(),
 	name: text('name').notNull(),
 	logo: text('logo').notNull(),
-	description: text('description').notNull(),
-	url: text('url').notNull(),
+	description: text('description'),
+	url: text('url'),
 	createdAt: integer('created_at', { mode: 'timestamp_ms' })
 		.notNull()
 		.default(sql`(unixepoch() * 1000)`),
