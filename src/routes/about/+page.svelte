@@ -3,6 +3,7 @@
 	import IconGithub from '~icons/simple-icons/github';
 	import IconTwitch from '~icons/simple-icons/twitch';
 	import IconX from '~icons/simple-icons/x';
+	import IconYoutube from '~icons/simple-icons/youtube';
 	import * as m from '$lib/paraglide/messages';
 </script>
 
@@ -71,6 +72,28 @@
 						<div class="flex justify-center gap-4">
 							<a
 								href="https://twitch.tv/swaegaepinoe"
+								target="_blank"
+								rel="noopener noreferrer"
+								class="text-blue-400 hover:underline"
+							>
+								<IconTwitch class="h-6 w-6" />
+							</a>
+						</div>
+					</div>
+					<div class="glass-card p-6">
+						<h3 class="mb-2 text-xl font-semibold">XinghuiEnjoyer</h3>
+						<p class="mb-4 text-slate-300">Consultant</p>
+						<div class="flex justify-center gap-4">
+							<a
+								href="https://www.youtube.com/@XinghuiEnjoyer"
+								target="_blank"
+								rel="noopener noreferrer"
+								class="text-blue-400 hover:underline"
+							>
+								<IconYoutube class="h-6 w-6" />
+							</a>
+							<a
+								href="https://twitch.tv/xinghuienjoyer"
 								target="_blank"
 								rel="noopener noreferrer"
 								class="text-blue-400 hover:underline"
