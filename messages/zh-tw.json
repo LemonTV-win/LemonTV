@@ -373,5 +373,8 @@
 	"delete_organizer": "刪除主辦方",
 	"organizer_id": "主辦方ID",
 	"organizer_name": "主辦方名稱",
-	"organizer_description": "主辦方描述"
+	"organizer_description": "主辦方描述",
+	"delete_organizer_warning": "此操作還將刪除所有相關記錄：",
+	"delete_organizer_manual_warning": "您也可以先手動刪除這些記錄中的每一個，以避免此警告。",
+	"events_affected": "{count}個賽事將受到影響"
 }

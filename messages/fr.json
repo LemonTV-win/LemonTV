@@ -373,5 +373,8 @@
 	"delete_organizer": "Supprimer l'organisateur",
 	"organizer_id": "ID de l'organisateur",
 	"organizer_name": "Nom de l'organisateur",
-	"organizer_description": "Description de l'organisateur"
+	"organizer_description": "Description de l'organisateur",
+	"delete_organizer_warning": "Cette action supprimera également tous les enregistrements associés :",
+	"delete_organizer_manual_warning": "Vous pouvez également supprimer manuellement chacun de ces enregistrements au préalable pour éviter cet avertissement.",
+	"events_affected": "{count} événement(s) seront affectés"
 }

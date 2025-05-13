@@ -373,5 +373,8 @@
 	"delete_organizer": "Удалить организатора",
 	"organizer_id": "ID организатора",
 	"organizer_name": "Имя организатора",
-	"organizer_description": "Описание организатора"
+	"organizer_description": "Описание организатора",
+	"delete_organizer_warning": "Это действие также удалит все связанные записи:",
+	"delete_organizer_manual_warning": "Вы также можете сначала вручную удалить каждую из этих записей, чтобы избежать этого предупреждения.",
+	"events_affected": "{count} мероприятие(й) будет затронуто"
 }

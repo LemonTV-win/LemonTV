@@ -373,5 +373,8 @@
 	"delete_organizer": "Organisator löschen",
 	"organizer_id": "Organisator-ID",
 	"organizer_name": "Organisatorname",
-	"organizer_description": "Organisatorbeschreibung"
+	"organizer_description": "Organisatorbeschreibung",
+	"delete_organizer_warning": "Diese Aktion löscht auch alle zugehörigen Datensätze:",
+	"delete_organizer_manual_warning": "Sie können auch jeden dieser Datensätze manuell zuerst löschen, um diese Warnung zu vermeiden.",
+	"events_affected": "{count} Ereignis(se) werden betroffen sein"
 }

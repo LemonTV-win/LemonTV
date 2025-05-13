@@ -373,5 +373,8 @@
 	"delete_organizer": "주최자 삭제",
 	"organizer_id": "주최자 ID",
 	"organizer_name": "주최자 이름",
-	"organizer_description": "주최자 설명"
+	"organizer_description": "주최자 설명",
+	"delete_organizer_warning": "이 작업은 관련된 모든 레코드도 삭제합니다:",
+	"delete_organizer_manual_warning": "이 경고를 피하기 위해 각 레코드를 먼저 수동으로 삭제할 수도 있습니다.",
+	"events_affected": "{count}개의 이벤트가 영향을 받습니다"
 }

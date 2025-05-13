@@ -14,6 +14,7 @@
 	import TypcnArrowSortedDown from '~icons/typcn/arrow-sorted-down';
 	import TypcnArrowSortedUp from '~icons/typcn/arrow-sorted-up';
 	import type { Organizer } from '$lib/server/db/schemas/game/organizer';
+	import type { ActionResult } from '@sveltejs/kit';
 
 	let { data }: { data: PageData } = $props();
 	let { organizers, action, id } = $derived(data);
@@ -24,6 +25,12 @@
 	let isAddingNew = $state(false);
 	let isEditing = $state(false);
 	let showHistoryModal = $state(false);
+	let showDeleteModal = $state(false);
+	let deleteDependencies: {
+		events: { count: number; events: string };
+		users: { count: number; users: string };
+	} | null = $state(null);
+	let isDeleting = $state(false);
 
 	let filteredOrganizers = $derived(
 		organizers
@@ -87,10 +94,64 @@
 		goto('/admin/organizers', { invalidateAll: true });
 	}
 
-	function handleDelete(event: SubmitEvent) {
-		if (!confirm(m.delete_organizer_confirmation())) {
-			event.preventDefault();
+	function handleDeleteSubmit() {
+		return async ({ update }: { update: () => Promise<void> }) => {
+			await update();
+			closeDeleteModal();
+			goto('/admin/organizers', { invalidateAll: true });
+		};
+	}
+
+	function handleCheckDependenciesSubmit() {
+		return async ({ result }: { result: ActionResult }) => {
+			isDeleting = true;
+			if (result.type === 'success') {
+				deleteDependencies = result.data?.dependencies ?? null;
+				showDeleteModal = true;
+			} else if (result.type === 'failure') {
+				alert(result.data?.error || 'Failed to check dependencies');
+			} else if (result.type === 'error') {
+				alert(result.error?.message || 'An error occurred');
+			}
+			isDeleting = false;
+		};
+	}
+
+	$inspect('deleteDependencies', deleteDependencies);
+
+	async function handleDeleteClick(organizer: Organizer) {
+		selectedOrganizer = organizer;
+		isDeleting = true;
+
+		try {
+			const formData = new FormData();
+			formData.append('id', organizer.id);
+
+			const response = await fetch('?/checkDependencies', {
+				method: 'POST',
+				body: formData
+			});
+
+			const result = await response.json();
+
+			if (result.success) {
+				deleteDependencies = result.dependencies;
+				showDeleteModal = true;
+			} else {
+				alert(result.error || 'Failed to check dependencies');
+			}
+		} catch (e) {
+			console.error('Failed to check dependencies:', e);
+			alert('Failed to check dependencies');
+		} finally {
+			isDeleting = false;
 		}
+	}
+
+	function closeDeleteModal() {
+		showDeleteModal = false;
+		selectedOrganizer = null;
+		deleteDependencies = null;
 	}
 
 	function closeHistoryModal() {
@@ -134,6 +195,72 @@
 			{#if selectedOrganizer}
 				<EditHistory recordId={selectedOrganizer.id} />
 			{/if}
+		</Modal>
+	{/if}
+
+	{#if showDeleteModal && selectedOrganizer && deleteDependencies}
+		<Modal show={true} title={m.delete_organizer()} onClose={closeDeleteModal}>
+			<div class="space-y-4">
+				<p class="text-gray-300">
+					{m.delete_organizer_confirmation({ name: selectedOrganizer.name })}
+				</p>
+
+				{#if deleteDependencies.events.count > 0 || deleteDependencies.users.count > 0}
+					<div class="rounded-md bg-yellow-900/50 p-4 text-yellow-200">
+						<h3 class="mb-2 font-semibold">{m.warning()}</h3>
+						<p class="mb-2">{m.delete_organizer_warning()}</p>
+						<p class="mb-4 text-sm text-yellow-100">
+							{m.delete_organizer_manual_warning()}
+						</p>
+
+						{#if deleteDependencies.events.count > 0}
+							<div class="mb-2">
+								<p class="font-medium">
+									{m.events_affected({ count: deleteDependencies.events.count })}
+								</p>
+								{#if deleteDependencies.events.events}
+									<p class="text-sm text-yellow-100">
+										{deleteDependencies.events.events.split(',').join(', ')}
+									</p>
+								{/if}
+							</div>
+						{/if}
+
+						{#if deleteDependencies.users.count > 0}
+							<div>
+								<p class="font-medium">
+									{m.users_affected({ count: deleteDependencies.users.count })}
+								</p>
+								{#if deleteDependencies.users.users}
+									<p class="text-sm text-yellow-100">
+										{deleteDependencies.users.users.split(',').join(', ')}
+									</p>
+								{/if}
+							</div>
+						{/if}
+					</div>
+				{/if}
+
+				<div class="flex justify-end gap-2">
+					<button
+						class="rounded-md bg-gray-700 px-4 py-2 font-medium text-white hover:bg-gray-600"
+						onclick={closeDeleteModal}
+					>
+						{m.cancel()}
+					</button>
+					<form method="POST" action="?/delete" use:enhance={handleDeleteSubmit} class="inline">
+						<input type="hidden" name="id" value={selectedOrganizer.id} />
+						<input type="hidden" name="confirmed" value="true" />
+						<button
+							type="submit"
+							class="rounded-md bg-red-600 px-4 py-2 font-medium text-white hover:bg-red-500"
+							disabled={isDeleting}
+						>
+							{isDeleting ? m.deleting() : m.delete()}
+						</button>
+					</form>
+				</div>
+			</div>
 		</Modal>
 	{/if}
 
@@ -246,16 +373,20 @@
 								</button>
 								<form
 									method="POST"
-									action="?/delete"
-									use:enhance
+									action="?/checkDependencies"
+									use:enhance={() => {
+										selectedOrganizer = organizer;
+										isDeleting = true;
+										return handleCheckDependenciesSubmit();
+									}}
 									class="inline"
-									onsubmit={handleDelete}
 								>
 									<input type="hidden" name="id" value={organizer.id} />
 									<button
 										type="submit"
 										class="flex items-center gap-1 text-red-500 hover:text-red-400"
 										title={m.delete()}
+										disabled={isDeleting}
 									>
 										<IconParkSolidDelete class="h-4 w-4" />
 									</button>

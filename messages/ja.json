@@ -373,5 +373,8 @@
 	"delete_organizer": "主催者を削除",
 	"organizer_id": "主催者ID",
 	"organizer_name": "主催者名",
-	"organizer_description": "主催者説明"
+	"organizer_description": "主催者説明",
+	"delete_organizer_warning": "このアクションは関連するすべてのレコードも削除します：",
+	"delete_organizer_manual_warning": "この警告を避けるために、これらのレコードを事前に手動で削除することもできます。",
+	"events_affected": "{count}件のイベントが影響を受けます"
 }

@@ -373,5 +373,8 @@
 	"delete_organizer": "删除主办方",
 	"organizer_id": "主办方ID",
 	"organizer_name": "主办方名称",
-	"organizer_description": "主办方描述"
+	"organizer_description": "主办方描述",
+	"delete_organizer_warning": "此操作还将删除所有相关记录：",
+	"delete_organizer_manual_warning": "您也可以先手动删除这些记录中的每一个，以避免此警告。",
+	"events_affected": "{count}个赛事将受到影响"
 }

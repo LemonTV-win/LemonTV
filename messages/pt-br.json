@@ -373,5 +373,8 @@
 	"delete_organizer": "Excluir Organizador",
 	"organizer_id": "ID do Organizador",
 	"organizer_name": "Nome do Organizador",
-	"organizer_description": "Descrição do Organizador"
+	"organizer_description": "Descrição do Organizador",
+	"delete_organizer_warning": "Esta ação também excluirá todos os registros associados:",
+	"delete_organizer_manual_warning": "Você também pode excluir cada um desses registros manualmente primeiro para evitar este aviso.",
+	"events_affected": "{count} evento(s) serão afetados"
 }

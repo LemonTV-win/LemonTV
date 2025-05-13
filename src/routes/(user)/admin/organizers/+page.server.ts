@@ -2,7 +2,7 @@ import { fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 
 type PermissionResult =
 	| { status: 'success'; userId: string }
@@ -203,7 +203,7 @@ export const actions = {
 		}
 	},
 
-	delete: async ({ request, locals }) => {
+	checkDependencies: async ({ request, locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
 		if (result.status === 'error') {
 			return fail(result.statusCode, {
@@ -221,6 +221,84 @@ export const actions = {
 		}
 
 		try {
+			// Get the current organizer data
+			const currentOrganizer = await db
+				.select()
+				.from(table.organizer)
+				.where(eq(table.organizer.id, id))
+				.limit(1);
+
+			if (!currentOrganizer.length) {
+				return fail(404, {
+					error: 'Organizer not found'
+				});
+			}
+
+			// Get all dependencies
+			const [eventOrganizers, organizerUsers] = await Promise.all([
+				db
+					.select({
+						count: sql<number>`count(*)`,
+						events: sql<string>`group_concat(distinct ${table.event.name})`
+					})
+					.from(table.eventOrganizer)
+					.leftJoin(table.event, eq(table.eventOrganizer.eventId, table.event.id))
+					.where(eq(table.eventOrganizer.organizerId, id))
+					.groupBy(table.eventOrganizer.organizerId),
+				db
+					.select({
+						count: sql<number>`count(*)`,
+						users: sql<string>`group_concat(distinct ${table.user.username})`
+					})
+					.from(table.organizerUser)
+					.leftJoin(table.user, eq(table.organizerUser.userId, table.user.id))
+					.where(eq(table.organizerUser.organizerId, id))
+					.groupBy(table.organizerUser.organizerId)
+			]);
+
+			const dependencies = {
+				events: eventOrganizers[0] || { count: 0, events: '' },
+				users: organizerUsers[0] || { count: 0, users: '' }
+			};
+
+			return {
+				success: true,
+				organizer: currentOrganizer[0],
+				dependencies
+			};
+		} catch (e) {
+			console.error('[Admin][Organizers][CheckDependencies] Failed to check dependencies:', e);
+			return fail(500, {
+				error: 'Failed to check dependencies'
+			});
+		}
+	},
+
+	delete: async ({ request, locals }) => {
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
+			});
+		}
+
+		const formData = await request.formData();
+		const id = formData.get('id') as string;
+		const confirmed = formData.get('confirmed') === 'true';
+
+		if (!id) {
+			return fail(400, {
+				error: 'Organizer ID is required'
+			});
+		}
+
+		if (!confirmed) {
+			return fail(400, {
+				error: 'Deletion must be confirmed'
+			});
+		}
+
+		try {
 			// Get the current organizer data for history
 			const currentOrganizer = await db
 				.select()
@@ -234,19 +312,28 @@ export const actions = {
 				});
 			}
 
-			// Delete the organizer
-			await db.delete(table.organizer).where(eq(table.organizer.id, id));
+			// Start a transaction to handle all deletions
+			await db.transaction(async (tx) => {
+				// Delete all related records first
+				await Promise.all([
+					tx.delete(table.eventOrganizer).where(eq(table.eventOrganizer.organizerId, id)),
+					tx.delete(table.organizerUser).where(eq(table.organizerUser.organizerId, id))
+				]);
 
-			// Add edit history
-			await db.insert(table.editHistory).values({
-				id: crypto.randomUUID(),
-				tableName: 'organizer',
-				recordId: id,
-				fieldName: 'deletion',
-				oldValue: JSON.stringify(currentOrganizer[0]),
-				newValue: 'deleted',
-				editedBy: result.userId,
-				editedAt: new Date()
+				// Delete the organizer
+				await tx.delete(table.organizer).where(eq(table.organizer.id, id));
+
+				// Add edit history
+				await tx.insert(table.editHistory).values({
+					id: crypto.randomUUID(),
+					tableName: 'organizer',
+					recordId: id,
+					fieldName: 'deletion',
+					oldValue: JSON.stringify(currentOrganizer[0]),
+					newValue: 'deleted',
+					editedBy: result.userId,
+					editedAt: new Date()
+				});
 			});
 
 			return {
