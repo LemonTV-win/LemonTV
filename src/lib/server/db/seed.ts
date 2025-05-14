@@ -97,6 +97,16 @@ export async function seed() {
 			url: 'https://organizer-2.com',
 			createdAt: new Date(),
 			updatedAt: new Date()
+		},
+		{
+			id: randomUUID(),
+			slug: 'organizer-3',
+			name: 'Organizer 3',
+			logo: 'https://picsum.photos/seed/organizer-3/256/256?blur',
+			description: 'Organizer 3 description',
+			url: 'https://organizer-3.com',
+			createdAt: new Date(),
+			updatedAt: new Date()
 		}
 	];
 	await db.insert(schema.organizer).values(ORGANIZERS);
