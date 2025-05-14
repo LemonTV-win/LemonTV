@@ -10,7 +10,7 @@
 	import LogosLinkedin from '~icons/logos/linkedin-icon';
 	import LogosGithub from '~icons/logos/github-icon';
 	import LogosReddit from '~icons/logos/reddit-icon';
-	import LogosGlobe from '~icons/logos/globe';
+	import IconGlobe from '~icons/pepicons-pencil/internet';
 
 	let {
 		socialAccounts = [],
@@ -65,7 +65,7 @@
 						{:else if platform.id === 'reddit'}
 							<LogosReddit class={iconSize} />
 						{:else if platform.id === 'homepage'}
-							<LogosGlobe class={iconSize} />
+							<IconGlobe class={iconSize} />
 						{:else}
 							<span class="text-sm">{platform.name}</span>
 						{/if}

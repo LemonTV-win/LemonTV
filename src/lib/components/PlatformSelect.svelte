@@ -10,7 +10,7 @@
 	import LogosLinkedin from '~icons/logos/linkedin-icon';
 	import LogosGithub from '~icons/logos/github-icon';
 	import LogosReddit from '~icons/logos/reddit-icon';
-	import LogosGlobe from '~icons/logos/globe';
+	import IconGlobe from '~icons/pepicons-pencil/internet';
 	import { m } from '$lib/paraglide/messages';
 
 	let {
@@ -84,7 +84,7 @@
 				{:else if value === 'reddit'}
 					<LogosReddit class="h-4 w-4 text-gray-400" />
 				{:else if value === 'homepage'}
-					<LogosGlobe class="h-4 w-4 text-gray-400" />
+					<IconGlobe class="h-4 w-4 text-gray-400" />
 				{/if}
 				{#each visiblePlatforms as platform}
 					{#if platform.id === value}
@@ -146,7 +146,7 @@
 					{:else if platform.id === 'reddit'}
 						<LogosReddit class="h-4 w-4 text-gray-400" />
 					{:else if platform.id === 'homepage'}
-						<LogosGlobe class="h-4 w-4 text-gray-400" />
+						<IconGlobe class="h-4 w-4 text-gray-400" />
 					{/if}
 					<span>{platform.name}</span>
 				</button>
