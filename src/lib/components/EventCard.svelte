@@ -20,7 +20,7 @@
 
 <div class="flex flex-col">
 	<a
-		href="/events/{event.id}"
+		href="/events/{event.slug}"
 		class={['relative flex min-h-32 flex-col items-center gap-2 sm:flex-row', 'glass-card']}
 		onmouseenter={() => {
 			if (!detailed) showPopup = true;

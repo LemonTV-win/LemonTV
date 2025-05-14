@@ -133,7 +133,7 @@
 								<li
 									class="grid grid-rows-[auto] gap-2 overflow-hidden rounded-sm bg-gray-800 shadow-2xl"
 								>
-									<a href="/events/{event.id}" class="contents">
+									<a href="/events/{event.slug}" class="contents">
 										<div class="flex h-full w-full items-center justify-center bg-gray-700">
 											<img src={event.image} alt={event.name} class="w-full object-cover" />
 										</div>
