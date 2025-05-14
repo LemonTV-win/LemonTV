@@ -7,6 +7,7 @@
 	import IconParkSolidLocalPin from '~icons/icon-park-solid/local-pin';
 	import IconParkSolidCheckOne from '~icons/icon-park-solid/check-one';
 	import IconParkSolidComputer from '~icons/icon-park-solid/computer';
+	import OrganizerChip from '$lib/components/OrganizerChip.svelte';
 
 	let { event, detailed = false }: { event: Event; detailed?: boolean } = $props();
 	// TODO:
@@ -57,6 +58,13 @@
 						</span>
 					{/if}
 				</div>
+				{#if event.organizers?.length}
+					<div class="mt-2 flex flex-wrap gap-2">
+						{#each event.organizers as organizer}
+							<OrganizerChip {organizer} />
+						{/each}
+					</div>
+				{/if}
 			{/if}
 		</div>
 		{#if live}
