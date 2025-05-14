@@ -10,6 +10,8 @@
 	import TypcnArrowSortedDown from '~icons/typcn/arrow-sorted-down';
 	import TypcnArrowSortedUp from '~icons/typcn/arrow-sorted-up';
 
+	import IconParkSolidFilter from '~icons/icon-park-solid/filter';
+
 	import SocialLinks from '$lib/components/SocialLinks.svelte';
 	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
 	import Modal from '$lib/components/Modal.svelte';
@@ -17,6 +19,8 @@
 	import PlayerEdit from './PlayerEdit.svelte';
 
 	import type { PageProps } from './$types';
+	import { countryCodeToLocalizedName } from '$lib/utils/strings';
+	import { getLocale } from '$lib/paraglide/runtime';
 
 	let searchQuery = $state('');
 	let selectedPlayer: Player | null = $state(null);
@@ -27,6 +31,11 @@
 	let isImporting = $state(false);
 	let isDeleting = $state(false);
 	let playerToDelete: Player | null = $state(null);
+	let selectedNationalities = $state<string[]>([]);
+	let filtersExpanded = $state(false);
+	let selectedTeam = $state('');
+	let isTeamComboboxOpen = $state(false);
+	let teamInputRect = $state<DOMRect | null>(null);
 	let sortBy:
 		| 'id-asc'
 		| 'id-desc'
@@ -75,14 +84,21 @@
 		data.players
 			.filter((player) => {
 				const searchLower = searchQuery.toLowerCase();
-				return (
+				const matchesSearch =
 					player.name.toLowerCase().includes(searchLower) ||
 					player.id.toLowerCase().includes(searchLower) ||
 					player.aliases?.some((alias) => alias.toLowerCase().includes(searchLower)) ||
 					player.gameAccounts?.some((account) =>
 						account.currentName.toLowerCase().includes(searchLower)
-					)
-				);
+					);
+				const matchesNationality =
+					selectedNationalities.length === 0 ||
+					(player.nationality && selectedNationalities.includes(player.nationality));
+				const matchesTeam =
+					!selectedTeam ||
+					data.playersTeams[player.id ?? '']?.some((team) => team.name === selectedTeam);
+
+				return matchesSearch && matchesNationality && matchesTeam;
 			})
 			.toSorted((a, b) => {
 				if (sortBy === 'id-asc') {
@@ -115,6 +131,24 @@
 	);
 
 	let showHistoryModal = $state(false);
+
+	// Get unique nationalities for filter options
+	let uniqueNationalities = $derived([
+		...new Set(data.players.map((p) => p.nationality).filter(Boolean))
+	]);
+
+	// Get unique teams for combobox
+	let uniqueTeams = $derived([
+		...new Set(
+			Object.values(data.playersTeams)
+				.flat()
+				.map((team) => team.name)
+		)
+	]);
+
+	let filteredTeams = $derived(
+		uniqueTeams.filter((team) => team.toLowerCase().includes(selectedTeam.toLowerCase()))
+	);
 
 	function closeHistoryModal() {
 		showHistoryModal = false;
@@ -369,6 +403,104 @@
 			class="w-full rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 		/>
 	</div>
+
+	<div class="mb-4 flex flex-col">
+		<button
+			class="flex items-center justify-between rounded-t-lg border border-white/30 bg-gradient-to-br from-slate-600/60 to-slate-800 px-4 py-2 text-left text-sm font-medium text-gray-300 backdrop-blur-lg transition-colors hover:bg-white/10"
+			onclick={() => (filtersExpanded = !filtersExpanded)}
+		>
+			<span>{m.filters()}</span>
+			<IconParkSolidFilter
+				class="h-4 w-4 transition-transform duration-200 {filtersExpanded ? 'rotate-180' : ''}"
+			/>
+		</button>
+		<div
+			class="grid transition-all duration-200"
+			class:grid-rows-[1fr]={filtersExpanded}
+			class:grid-rows-[0fr]={!filtersExpanded}
+		>
+			<div class="overflow-hidden">
+				<div
+					class="flex flex-col gap-4 rounded-b-lg border border-t-0 border-white/30 bg-gradient-to-br from-slate-600/60 to-slate-800 p-4 shadow-2xl ring-1 ring-white/30 backdrop-blur-lg"
+				>
+					<div class="flex flex-col gap-2">
+						<label for="nationality-filters" class="text-sm font-medium text-gray-300"
+							>{m.region()}</label
+						>
+						<div id="nationality-filters" class="flex flex-wrap gap-2">
+							{#each uniqueNationalities as nationality}
+								{#if nationality}
+									<button
+										class={[
+											'flex items-center gap-1 rounded-full border-1 px-2 py-1 text-sm transition-colors',
+											selectedNationalities.includes(nationality)
+												? 'border-blue-500 bg-blue-500 text-white'
+												: 'border-white/30 bg-transparent text-gray-400'
+										]}
+										onclick={() => {
+											selectedNationalities = selectedNationalities.includes(nationality)
+												? selectedNationalities.filter((n) => n !== nationality)
+												: [...selectedNationalities, nationality];
+										}}
+									>
+										<NationalityFlag {nationality} />
+										<span
+											class:text-white={selectedNationalities.includes(nationality)}
+											class:text-gray-400={!selectedNationalities.includes(nationality)}
+										>
+											{countryCodeToLocalizedName(nationality, getLocale())}
+										</span>
+									</button>
+								{/if}
+							{/each}
+						</div>
+					</div>
+
+					<div class="flex flex-col gap-2">
+						<label for="team-filter" class="text-sm font-medium text-gray-300">{m.teams()}</label>
+						<div class="relative">
+							<input
+								type="text"
+								id="team-filter"
+								bind:value={selectedTeam}
+								onfocus={(e) => {
+									isTeamComboboxOpen = true;
+									teamInputRect = e.currentTarget.getBoundingClientRect();
+								}}
+								onblur={() => setTimeout(() => (isTeamComboboxOpen = false), 200)}
+								placeholder={m.search()}
+								class="w-full rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+							/>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{#if isTeamComboboxOpen && filteredTeams.length > 0 && teamInputRect}
+		<div
+			class="fixed z-50 overflow-auto rounded-md border border-slate-700 bg-slate-800 py-1 shadow-lg"
+			style="
+				top: {teamInputRect.bottom + window.scrollY}px;
+				left: {teamInputRect.left + window.scrollX}px;
+				width: {teamInputRect.width}px;
+				max-height: 240px;
+			"
+		>
+			{#each filteredTeams as team}
+				<button
+					class="w-full px-4 py-2 text-left text-sm text-gray-300 hover:bg-slate-700"
+					onmousedown={() => {
+						selectedTeam = team;
+						isTeamComboboxOpen = false;
+					}}
+				>
+					{team}
+				</button>
+			{/each}
+		</div>
+	{/if}
 
 	<div
 		class="overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-800"
