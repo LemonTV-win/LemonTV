@@ -12,6 +12,7 @@
 	}
 
 	import BracketGraph from '$lib/components/Brackets.svelte';
+	import OrganizerChip from '$lib/components/OrganizerChip.svelte';
 	import GgOrganisation from '~icons/gg/organisation';
 	import IconParkSolidPeoples from '~icons/icon-park-solid/peoples';
 	import IconParkSolidCalendar from '~icons/icon-park-solid/calendar';
@@ -43,19 +44,7 @@
 					<!-- TODO: Add appropriate locale insertion -->
 
 					{#each data.event.organizers as organizer}
-						<a
-							href={`/organizers/${organizer.slug}`}
-							class="ml-1 inline-flex items-center gap-1 rounded-full bg-slate-700/50 px-2 py-1 text-xs text-slate-300"
-						>
-							{#if organizer.logo}
-								<img
-									src={organizer.logo}
-									alt={organizer.name}
-									class="h-4 w-4 flex-shrink-0 rounded-full object-cover"
-								/>
-							{/if}
-							{organizer.name}
-						</a>
+						<OrganizerChip {organizer} />
 					{/each}
 				</span>
 				<span class="inline-flex items-center gap-1">

@@ -14,6 +14,7 @@
 	import TypcnArrowSortedDown from '~icons/typcn/arrow-sorted-down';
 	import TypcnArrowSortedUp from '~icons/typcn/arrow-sorted-up';
 	import type { EventWithOrganizers } from '$lib/server/data/events';
+	import OrganizerChip from '$lib/components/OrganizerChip.svelte';
 
 	let { data }: { data: PageData } = $props();
 	let { events, action, id, organizers, eventOrganizers } = $derived(data);
@@ -273,18 +274,7 @@
 							<div class="flex min-w-max flex-wrap gap-2">
 								{#if event.organizers.length}
 									{#each event.organizers as organizer}
-										<span
-											class="inline-flex flex-shrink-0 items-center gap-1.5 rounded-full bg-slate-700/50 px-2 py-1 text-xs text-slate-300"
-										>
-											{#if organizer.logo}
-												<img
-													src={organizer.logo}
-													alt={organizer.name}
-													class="h-4 w-4 flex-shrink-0 rounded-full object-cover"
-												/>
-											{/if}
-											<span class="whitespace-nowrap">{organizer.name}</span>
-										</span>
+										<OrganizerChip {organizer} />
 									{/each}
 								{:else}
 									<span class="text-sm whitespace-nowrap text-slate-500">No organizers</span>
