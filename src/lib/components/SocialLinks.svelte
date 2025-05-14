@@ -5,6 +5,12 @@
 	import LogosBilibili from '~icons/ant-design/bilibili-outlined';
 	import LogosInstagram from '~icons/skill-icons/instagram';
 	import LogosTiktokIcon from '~icons/logos/tiktok-icon';
+	import LogosDiscord from '~icons/logos/discord-icon';
+	import LogosFacebook from '~icons/logos/facebook';
+	import LogosLinkedin from '~icons/logos/linkedin-icon';
+	import LogosGithub from '~icons/logos/github-icon';
+	import LogosReddit from '~icons/logos/reddit-icon';
+	import LogosGlobe from '~icons/logos/globe';
 
 	let {
 		socialAccounts = [],
@@ -45,6 +51,18 @@
 							<LogosInstagram class={iconSize} />
 						{:else if platform.id === 'tiktok'}
 							<LogosTiktokIcon class={iconSize} />
+						{:else if platform.id === 'discord'}
+							<LogosDiscord class={iconSize} />
+						{:else if platform.id === 'facebook'}
+							<LogosFacebook class={iconSize} />
+						{:else if platform.id === 'linkedin'}
+							<LogosLinkedin class={iconSize} />
+						{:else if platform.id === 'github'}
+							<LogosGithub class={iconSize} />
+						{:else if platform.id === 'reddit'}
+							<LogosReddit class={iconSize} />
+						{:else if platform.id === 'homepage'}
+							<LogosGlobe class={iconSize} />
 						{:else}
 							<span class="text-sm">{platform.name}</span>
 						{/if}

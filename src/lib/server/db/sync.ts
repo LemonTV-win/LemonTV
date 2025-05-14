@@ -17,7 +17,13 @@ const SOCIAL_PLATFORMS = [
 	{ id: 'youtube', name: 'YouTube', url_template: 'https://youtube.com/{accountId}' },
 	{ id: 'bilibili', name: 'Bilibili', url_template: 'https://space.bilibili.com/{accountId}' },
 	{ id: 'instagram', name: 'Instagram', url_template: 'https://instagram.com/{accountId}' },
-	{ id: 'tiktok', name: 'TikTok', url_template: 'https://tiktok.com/@{accountId}' }
+	{ id: 'tiktok', name: 'TikTok', url_template: 'https://tiktok.com/@{accountId}' },
+	{ id: 'discord', name: 'Discord', url_template: 'https://discord.gg/{accountId}' },
+	{ id: 'homepage', name: 'Homepage', url_template: null },
+	{ id: 'facebook', name: 'Facebook', url_template: 'https://facebook.com/{accountId}' },
+	{ id: 'linkedin', name: 'LinkedIn', url_template: 'https://linkedin.com/in/{accountId}' },
+	{ id: 'github', name: 'GitHub', url_template: 'https://github.com/{accountId}' },
+	{ id: 'reddit', name: 'Reddit', url_template: 'https://reddit.com/u/{accountId}' }
 ];
 
 export async function syncSocialPlatforms() {

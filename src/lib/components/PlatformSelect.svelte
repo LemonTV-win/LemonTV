@@ -5,6 +5,12 @@
 	import LogosBilibili from '~icons/ant-design/bilibili-outlined';
 	import LogosInstagram from '~icons/skill-icons/instagram';
 	import LogosTiktokIcon from '~icons/logos/tiktok-icon';
+	import LogosDiscord from '~icons/logos/discord-icon';
+	import LogosFacebook from '~icons/logos/facebook';
+	import LogosLinkedin from '~icons/logos/linkedin-icon';
+	import LogosGithub from '~icons/logos/github-icon';
+	import LogosReddit from '~icons/logos/reddit-icon';
+	import LogosGlobe from '~icons/logos/globe';
 	import { m } from '$lib/paraglide/messages';
 
 	let {
@@ -66,6 +72,18 @@
 					<LogosInstagram class="h-4 w-4 text-gray-400" />
 				{:else if value === 'tiktok'}
 					<LogosTiktokIcon class="h-4 w-4 text-gray-400" />
+				{:else if value === 'discord'}
+					<LogosDiscord class="h-4 w-4 text-gray-400" />
+				{:else if value === 'facebook'}
+					<LogosFacebook class="h-4 w-4 text-gray-400" />
+				{:else if value === 'linkedin'}
+					<LogosLinkedin class="h-4 w-4 text-gray-400" />
+				{:else if value === 'github'}
+					<LogosGithub class="h-4 w-4 text-gray-400" />
+				{:else if value === 'reddit'}
+					<LogosReddit class="h-4 w-4 text-gray-400" />
+				{:else if value === 'homepage'}
+					<LogosGlobe class="h-4 w-4 text-gray-400" />
 				{/if}
 				{#each platforms as platform}
 					{#if platform.id === value}
@@ -118,6 +136,18 @@
 						<LogosInstagram class="h-4 w-4 text-gray-400" />
 					{:else if platform.id === 'tiktok'}
 						<LogosTiktokIcon class="h-4 w-4 text-gray-400" />
+					{:else if platform.id === 'discord'}
+						<LogosDiscord class="h-4 w-4 text-gray-400" />
+					{:else if platform.id === 'facebook'}
+						<LogosFacebook class="h-4 w-4 text-gray-400" />
+					{:else if platform.id === 'linkedin'}
+						<LogosLinkedin class="h-4 w-4 text-gray-400" />
+					{:else if platform.id === 'github'}
+						<LogosGithub class="h-4 w-4 text-gray-400" />
+					{:else if platform.id === 'reddit'}
+						<LogosReddit class="h-4 w-4 text-gray-400" />
+					{:else if platform.id === 'homepage'}
+						<LogosGlobe class="h-4 w-4 text-gray-400" />
 					{/if}
 					<span>{platform.name}</span>
 				</button>
