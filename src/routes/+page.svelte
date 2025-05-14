@@ -7,18 +7,20 @@
 	let { data }: PageProps = $props();
 
 	let sortedEvents = $derived(
-		data.events
-			.sort((a, b) => {
-				return (
-					1 * (new Date(b.date.split('/')[0]).getTime() - new Date(a.date.split('/')[0]).getTime())
-				);
-			})
-			.slice(0, 5)
+		data.events.sort((a, b) => {
+			return (
+				1 * (new Date(b.date.split('/')[0]).getTime() - new Date(a.date.split('/')[0]).getTime())
+			);
+		})
 	);
 
-	let ongoingEvents = $derived(sortedEvents.filter((event) => event.status === 'live'));
-	let upcomingEvents = $derived(sortedEvents.filter((event) => event.status === 'upcoming'));
-	let finishedEvents = $derived(sortedEvents.filter((event) => event.status === 'finished'));
+	let ongoingEvents = $derived(sortedEvents.filter((event) => event.status === 'live').slice(0, 3));
+	let upcomingEvents = $derived(
+		sortedEvents.filter((event) => event.status === 'upcoming').slice(0, 3)
+	);
+	let finishedEvents = $derived(
+		sortedEvents.filter((event) => event.status === 'finished').slice(0, 2)
+	);
 
 	// Get featured event (first ongoing event or first upcoming event)
 	let featuredEvent = $derived(ongoingEvents[0] || upcomingEvents[0]);
