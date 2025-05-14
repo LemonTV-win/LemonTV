@@ -65,31 +65,37 @@
 			</a>
 		</h2>
 
-		{#each ongoingEvents as event}
-			<EventCard {event} />
-		{/each}
-
-		{#if upcomingEvents.length > 0}
-			<h3 class="my-4 text-xl font-bold">{m.upcoming()}</h3>
-			<ul class="flex flex-col gap-2">
-				{#each upcomingEvents as event}
-					<EventCard {event} />
-				{/each}
-			</ul>
-		{/if}
-
-		<section>
-			<h3 class="mb-4 text-xl font-bold">{m.finished()}</h3>
-			<ul class="glass-card-container">
-				{#each finishedEvents as event}
-					<li>
+		<section class="flex flex-col gap-4">
+			{#if ongoingEvents.length > 0}
+				<ul class="flex flex-col gap-2">
+					{#each ongoingEvents as event}
 						<EventCard {event} />
-					</li>
-				{/each}
-			</ul>
-			<a href="/events" class="glass-card-bottom-button">
-				{m.view_all_events()}
-			</a>
+					{/each}
+				</ul>
+			{/if}
+
+			{#if upcomingEvents.length > 0}
+				<h3 class="mb-4 text-xl font-bold">{m.upcoming()}</h3>
+				<ul class="flex flex-col gap-2">
+					{#each upcomingEvents as event}
+						<EventCard {event} />
+					{/each}
+				</ul>
+			{/if}
+
+			<section>
+				<h3 class="mb-4 text-xl font-bold">{m.finished()}</h3>
+				<ul class="glass-card-container">
+					{#each finishedEvents as event}
+						<li>
+							<EventCard {event} />
+						</li>
+					{/each}
+				</ul>
+				<a href="/events" class="glass-card-bottom-button">
+					{m.view_all_events()}
+				</a>
+			</section>
 		</section>
 	</div>
 
