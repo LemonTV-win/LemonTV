@@ -19,7 +19,8 @@
 		"db:dev:migrate": "drizzle-kit migrate --config drizzle-dev.config.ts",
 		"db:dev:studio": "drizzle-kit studio --config drizzle-dev.config.ts",
 		"i18n:check": "bun scripts/check-messages.ts",
-		"knip": "knip"
+		"knip": "knip",
+		"changelog": "bun scripts/generate-changelog.ts"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.9",
