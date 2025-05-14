@@ -3,13 +3,14 @@ import * as auth from '$lib/server/auth';
 import type { PageServerLoad } from './$types';
 import { getPlayers, getPlayersTeams, calculatePlayerRating } from '$lib/server/data/players';
 import { getEvents } from '$lib/data';
+import { getEvents as getServerEvents } from '$lib/server/data/events';
 import { getTeams } from '$lib/server/data/teams';
 
 export const load: PageServerLoad = async () => {
 	const players = await getPlayers(); // TODO: limit =5
 	const playersTeams = await getPlayersTeams();
 	return {
-		events: getEvents(), // TODO: limit = 5
+		events: [...getEvents(), ...(await getServerEvents())], // TODO: limit = 5
 		teams: (await getTeams())
 			.toSorted((a, b) => (b.wins ?? 0) - (a.wins ?? 0))
 			.map((team, index) => ({
