@@ -40,7 +40,13 @@
 					</span>
 					<span class="flex items-center gap-1">
 						<IconParkSolidPeoples class="inline-block h-4 w-4" />
-						<span>{event.participants.length}</span>
+						<span>
+							{#if event.participants.length === event.capacity}
+								{event.participants.length}
+							{:else}
+								{event.participants.length}/{event.capacity}
+							{/if}
+						</span>
 					</span>
 					<span class="flex items-center gap-1">
 						<IconParkSolidLocalPin class="inline-block h-4 w-4" />
@@ -92,7 +98,13 @@
 						</span>
 						<span class="flex items-center gap-1">
 							<IconParkSolidPeoples class="inline-block h-4 w-4" />
-							<span>{event.participants.length}</span>
+							<span>
+								{#if event.participants.length === event.capacity}
+									{event.participants.length}
+								{:else}
+									{event.participants.length}/{event.capacity}
+								{/if}
+							</span>
 						</span>
 						<span class="flex items-center gap-1">
 							<IconParkSolidLocalPin class="inline-block h-4 w-4" />

@@ -72,7 +72,10 @@
 				<br />
 				<span class="inline-flex items-center gap-1">
 					<IconParkSolidPeoples class="inline-block h-4 w-4" />{m.teams_count({
-						count: data.event.capacity
+						count:
+							data.event.participants.length === data.event.capacity
+								? data.event.participants.length
+								: data.event.participants.length + '/' + data.event.capacity
 					})}</span
 				>・<span class="inline-flex items-center gap-1">
 					<IconParkSolidCalendar class="inline-block h-4 w-4" />
