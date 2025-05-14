@@ -17,11 +17,14 @@
 		value = '',
 		platforms = [],
 		onChange
-	} = $props<{
+	}: {
 		value?: string;
 		platforms?: Array<{ id: string; name: string }>;
 		onChange: (platformId: string) => void;
-	}>();
+	} = $props();
+
+	// Filter out Discord from platforms
+	let visiblePlatforms = $derived(platforms.filter((p) => p.id !== 'discord'));
 
 	let isOpen = $state(false);
 
@@ -72,8 +75,6 @@
 					<LogosInstagram class="h-4 w-4 text-gray-400" />
 				{:else if value === 'tiktok'}
 					<LogosTiktokIcon class="h-4 w-4 text-gray-400" />
-				{:else if value === 'discord'}
-					<LogosDiscord class="h-4 w-4 text-gray-400" />
 				{:else if value === 'facebook'}
 					<LogosFacebook class="h-4 w-4 text-gray-400" />
 				{:else if value === 'linkedin'}
@@ -85,7 +86,7 @@
 				{:else if value === 'homepage'}
 					<LogosGlobe class="h-4 w-4 text-gray-400" />
 				{/if}
-				{#each platforms as platform}
+				{#each visiblePlatforms as platform}
 					{#if platform.id === value}
 						<span>{platform.name}</span>
 					{/if}
@@ -118,7 +119,7 @@
 			>
 				<span class="text-gray-400">{m.select_platform()}</span>
 			</button>
-			{#each platforms as platform}
+			{#each visiblePlatforms as platform}
 				<button
 					type="button"
 					class="flex w-full items-center gap-2 px-3 py-2 text-left text-white hover:bg-slate-700"
@@ -136,8 +137,6 @@
 						<LogosInstagram class="h-4 w-4 text-gray-400" />
 					{:else if platform.id === 'tiktok'}
 						<LogosTiktokIcon class="h-4 w-4 text-gray-400" />
-					{:else if platform.id === 'discord'}
-						<LogosDiscord class="h-4 w-4 text-gray-400" />
 					{:else if platform.id === 'facebook'}
 						<LogosFacebook class="h-4 w-4 text-gray-400" />
 					{:else if platform.id === 'linkedin'}

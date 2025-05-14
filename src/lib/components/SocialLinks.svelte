@@ -16,16 +16,21 @@
 		socialAccounts = [],
 		socialPlatforms = [],
 		iconSize = 'h-4 w-4'
-	} = $props<{
+	}: {
 		socialAccounts: Array<{ platformId: string; accountId: string; overridingUrl?: string }>;
 		socialPlatforms: Array<{ id: string; name: string; url_template: string | null }>;
 		iconSize?: string;
-	}>();
+	} = $props();
+
+	// Filter out Discord from social accounts
+	let visibleSocialAccounts = $derived(
+		socialAccounts.filter((account) => account.platformId !== 'discord')
+	);
 </script>
 
-{#if socialAccounts.length}
+{#if visibleSocialAccounts.length}
 	<div class="flex gap-0.5">
-		{#each socialAccounts as account}
+		{#each visibleSocialAccounts as account}
 			{#each socialPlatforms as platform}
 				{#if platform.id === account.platformId}
 					<a
@@ -51,8 +56,6 @@
 							<LogosInstagram class={iconSize} />
 						{:else if platform.id === 'tiktok'}
 							<LogosTiktokIcon class={iconSize} />
-						{:else if platform.id === 'discord'}
-							<LogosDiscord class={iconSize} />
 						{:else if platform.id === 'facebook'}
 							<LogosFacebook class={iconSize} />
 						{:else if platform.id === 'linkedin'}
