@@ -54,7 +54,7 @@
 		</ul>
 	{/if}
 
-	<h3 class="my-4 text-xl font-bold">{m.finished()}</h3>
+	<h2 class="my-4 text-xl font-bold">{m.finished()}</h2>
 	<ul class="glass-card-container">
 		{#each finishedEvents as event}
 			<li>
