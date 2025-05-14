@@ -54,11 +54,12 @@
 		const platform = socialPlatforms.find((p) => p.id === platformId);
 		if (!platform?.url_template) return url;
 
-		// Remove search parameters and hash
-		url = url.split('?')[0].split('#')[0];
+		// Remove protocol and www. from the URL if present
+		url = url.replace(/^https?:\/\/(www\.)?/, '');
 
 		// Try to match the URL pattern
-		const pattern = platform.url_template.replace('{accountId}', '([^/]+)');
+		const template = platform.url_template.replace(/^https?:\/\/(www\.)?/, '');
+		const pattern = template.replace('{accountId}', '([^/]+)');
 		const regex = new RegExp(pattern);
 		const match = url.match(regex);
 
@@ -70,14 +71,16 @@
 	}
 
 	function detectPlatformFromUrl(url: string): string | undefined {
-		// Remove search parameters and hash
-		url = url.split('?')[0].split('#')[0];
+		// Remove protocol and www. from the URL if present
+		url = url.replace(/^https?:\/\/(www\.)?/, '');
 
 		// Try to match each platform's URL pattern
 		for (const platform of socialPlatforms) {
 			if (!platform.url_template) continue;
 
-			const pattern = platform.url_template.replace('{accountId}', '([^/]+)');
+			// Remove protocol and www. from the template for comparison
+			const template = platform.url_template.replace(/^https?:\/\/(www\.)?/, '');
+			const pattern = template.replace('{accountId}', '([^/]+)');
 			const regex = new RegExp(pattern);
 			if (regex.test(url)) {
 				return platform.id;
@@ -88,6 +91,9 @@
 	}
 
 	function handleSocialAccountInput(account: any, value: string) {
+		// Remove protocol and www. from the URL if present
+		value = value.replace(/^https?:\/\/(www\.)?/, '');
+
 		// If no platform is selected, try to detect it from the URL
 		if (!account.platformId) {
 			const detectedPlatform = detectPlatformFromUrl(value);
