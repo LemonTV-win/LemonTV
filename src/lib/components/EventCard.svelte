@@ -15,67 +15,24 @@
 	const HOST = 'lemon.mkpo.li';
 
 	let live = $derived(event.status === 'live');
+	let showPopup = $state(false);
 </script>
 
 <div class="flex flex-col">
 	<a
 		href="/events/{event.id}"
-		class={[
-			'relative flex min-h-32 flex-col items-center gap-2 sm:flex-row',
-			'glass-card',
-			'group'
-		]}
+		class={['relative flex min-h-32 flex-col items-center gap-2 sm:flex-row', 'glass-card']}
+		onmouseenter={() => {
+			if (!detailed) showPopup = true;
+		}}
+		onmouseleave={() => {
+			showPopup = false;
+		}}
 	>
 		<img src={event.image} alt={event.name} class="w-full max-w-full sm:max-w-64" />
 		<div class="flex flex-col p-4">
 			<span class="text-xl text-white sm:text-2xl">{event.name}</span>
-			{#if !detailed}
-				<div
-					class="absolute top-full z-20 mt-2 w-80 rounded-lg bg-gray-900 p-4 opacity-0 shadow-lg transition-all duration-200 group-hover:opacity-100"
-				>
-					<div class="flex flex-col gap-4">
-						<div class="flex flex-wrap gap-4 text-gray-300">
-							<span class="flex items-center gap-1">
-								<IconParkSolidCalendar class="inline-block h-4 w-4" />
-								<time datetime={event.date}>{event.date.replace('/', ' - ')}</time>
-							</span>
-							<span class="flex items-center gap-1">
-								<IconParkSolidPeoples class="inline-block h-4 w-4" />
-								<span>{event.participants.length}</span>
-							</span>
-							<span class="flex items-center gap-1">
-								<IconParkSolidLocalPin class="inline-block h-4 w-4" />
-								<span>{event.region}</span>
-							</span>
-							<span class="flex items-center gap-1">
-								<IconParkSolidComputer class="inline-block h-4 w-4" />
-								<span>
-									{#if event.format === 'lan'}
-										{m.format_lan()}
-									{:else if event.format === 'online'}
-										{m.format_online()}
-									{:else if event.format === 'hybrid'}
-										{m.format_hybrid()}
-									{/if}
-								</span>
-							</span>
-							{#if event.official}
-								<span class="flex items-center gap-1">
-									<IconParkSolidCheckOne class="inline-block h-4 w-4" />
-									<span>{m.official()}</span>
-								</span>
-							{/if}
-						</div>
-						{#if event.organizers?.length}
-							<div class="flex flex-wrap gap-2">
-								{#each event.organizers as organizer}
-									<OrganizerChip {organizer} />
-								{/each}
-							</div>
-						{/if}
-					</div>
-				</div>
-			{:else}
+			{#if detailed}
 				<div class="flex gap-4 text-gray-400">
 					<span class="flex items-center gap-1">
 						<IconParkSolidCalendar class="inline-block h-4 w-4" />
@@ -121,6 +78,54 @@
 			<span class="absolute top-2 right-2 bg-red-500 px-2 py-1 text-xs text-white">
 				{m.live()}
 			</span>
+		{/if}
+
+		{#if !detailed && showPopup}
+			<div
+				class="absolute top-[calc(100%_-_2.5rem)] left-[calc(64px_+_13.5rem)] z-20 w-80 bg-gray-900 p-4 shadow-lg"
+			>
+				<div class="flex flex-col gap-4">
+					<div class="flex flex-wrap gap-4 text-gray-300">
+						<span class="flex items-center gap-1">
+							<IconParkSolidCalendar class="inline-block h-4 w-4" />
+							<time datetime={event.date}>{event.date.replace('/', ' - ')}</time>
+						</span>
+						<span class="flex items-center gap-1">
+							<IconParkSolidPeoples class="inline-block h-4 w-4" />
+							<span>{event.participants.length}</span>
+						</span>
+						<span class="flex items-center gap-1">
+							<IconParkSolidLocalPin class="inline-block h-4 w-4" />
+							<span>{event.region}</span>
+						</span>
+						<span class="flex items-center gap-1">
+							<IconParkSolidComputer class="inline-block h-4 w-4" />
+							<span>
+								{#if event.format === 'lan'}
+									{m.format_lan()}
+								{:else if event.format === 'online'}
+									{m.format_online()}
+								{:else if event.format === 'hybrid'}
+									{m.format_hybrid()}
+								{/if}
+							</span>
+						</span>
+						{#if event.official}
+							<span class="flex items-center gap-1">
+								<IconParkSolidCheckOne class="inline-block h-4 w-4" />
+								<span>{m.official()}</span>
+							</span>
+						{/if}
+					</div>
+					{#if event.organizers?.length}
+						<div class="flex flex-wrap gap-2">
+							{#each event.organizers as organizer}
+								<OrganizerChip {organizer} />
+							{/each}
+						</div>
+					{/if}
+				</div>
+			</div>
 		{/if}
 	</a>
 
