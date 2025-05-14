@@ -94,7 +94,7 @@
 		if (search) params.set('search', search);
 		if (selectedNationalities.length) params.set('nationalities', selectedNationalities.join(','));
 		if (selectedSuperstrings.length) params.set('superstrings', selectedSuperstrings.join(','));
-		goto(`/players?${params.toString()}`);
+		window.history.replaceState({}, '', `/players?${params.toString()}`);
 	});
 
 	onMount(() => {

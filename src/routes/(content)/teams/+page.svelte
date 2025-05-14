@@ -20,7 +20,11 @@
 	let expanded = $state(false);
 
 	$effect(() => {
-		goto(`/teams${search ? `?search=${encodeURIComponent(search)}` : ''}`);
+		window.history.replaceState(
+			{},
+			'',
+			`/teams${search ? `?search=${encodeURIComponent(search)}` : ''}`
+		);
 	});
 
 	onMount(() => {
