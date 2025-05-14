@@ -4,3 +4,4 @@ export * from './game-account';
 export * from './social';
 export * from './event';
 export * from './organizer';
+export * from './game';

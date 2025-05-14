@@ -35,3 +35,18 @@ export async function syncSocialPlatforms() {
 			set: { name: sql`excluded.name`, url_template: sql`excluded.url_template` }
 		});
 }
+
+const MAPS = [
+	{ id: 'base_404' },
+	{ id: 'area_88' },
+	{ id: 'port_euler' },
+	{ id: 'windy_town' },
+	{ id: 'space_lab' },
+	{ id: 'cauchy_district' },
+	{ id: 'cosmite' },
+	{ id: 'orcanus' }
+];
+
+export async function syncMaps() {
+	await db.insert(schema.map).values(MAPS).onConflictDoNothing();
+}
