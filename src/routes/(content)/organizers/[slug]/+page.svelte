@@ -13,22 +13,24 @@
 <Breadcrumbs currentTitle={organizer.name} />
 
 <div class="mx-auto max-w-4xl px-4 py-8">
-	<div class="rounded-lg bg-white p-6 shadow-lg dark:bg-gray-800">
+	<div class="glass glass-card-container p-6">
 		<div class="flex flex-col items-start gap-6 md:flex-row">
-			<div class="relative h-32 w-32 overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-700">
+			<div class="relative h-32 w-32 overflow-hidden bg-gray-100/10">
 				<img src={organizer.logo} alt={organizer.name} class="h-full w-full object-cover" />
 			</div>
 
-			<div class="flex-1">
-				<h1 class="mb-2 text-3xl font-bold text-gray-900 dark:text-white">
+			<div class="flex flex-1 flex-col gap-4">
+				<h1 class="text-3xl font-bold text-white">
 					{organizer.name}
 				</h1>
+
+				<p class="text-gray-400">{organizer.description}</p>
 
 				<a
 					href={organizer.url}
 					target="_blank"
 					rel="noopener noreferrer"
-					class="w-fit rounded-sm border-2 border-yellow-500 bg-yellow-500/10 px-2 py-1 text-yellow-500 hover:border-yellow-500 hover:bg-yellow-500 hover:text-white"
+					class="w-fit border-2 border-yellow-500 bg-yellow-500/10 px-2 py-1 text-yellow-500 hover:border-yellow-500 hover:bg-yellow-500 hover:text-white"
 				>
 					{m.visit_website()}
 				</a>
@@ -38,12 +40,12 @@
 
 	{#if events.length > 0}
 		<div class="mt-8">
-			<h2 class="mb-4 text-2xl font-bold text-gray-900 dark:text-white">{m.organized_events()}</h2>
+			<h2 class="mb-4 text-2xl font-bold text-white">{m.organized_events()}</h2>
 			<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 				{#each events as event}
 					<a
 						href={`/events/${event.id}`}
-						class="group block overflow-hidden rounded-lg bg-white shadow-lg transition-transform hover:scale-[1.02] dark:bg-gray-800"
+						class="glass-card group block overflow-hidden transition-transform hover:scale-[1.02]"
 					>
 						<div class="relative h-48">
 							<img src={event.image} alt={event.name} class="h-full w-full object-cover" />
