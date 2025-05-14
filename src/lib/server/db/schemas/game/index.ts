@@ -5,3 +5,5 @@ export * from './social';
 export * from './event';
 export * from './organizer';
 export * from './game';
+export * from './match';
+export * from './stage';
