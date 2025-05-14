@@ -12,9 +12,7 @@ export const load: PageServerLoad = async ({ params }) => {
 	// If not found locally, try to get from database
 	if (!event) {
 		const serverEvents = await getServerEvents();
-		const serverEvent = serverEvents.find(
-			(e) => e.id === Number(params.id) || e.slug === params.id
-		);
+		const serverEvent = serverEvents.find((e) => e.id === params.id || e.slug === params.id);
 		if (serverEvent) {
 			event = serverEvent;
 		}

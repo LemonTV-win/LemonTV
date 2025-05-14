@@ -1,5 +1,4 @@
 import { type Player } from '$lib/data/players';
-import { type Team } from '$lib/data/teams';
 import type { Match } from '$lib/data/matches';
 import { events, type Event } from '$lib/data/events';
 export function getEvents() {
@@ -7,10 +6,7 @@ export function getEvents() {
 }
 
 export function getEvent(id: string) {
-	if (!isNaN(Number(id))) {
-		return events.find((event) => event.id === Number(id));
-	}
-	return events.find((event) => event.slug === id);
+	return events.find((event) => event.slug === id || event.id === id);
 }
 
 export function getMatches(): (Match & { event: Event })[] {

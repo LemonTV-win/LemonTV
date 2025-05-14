@@ -145,14 +145,6 @@ export async function getEvents(conditions: { organizerIds?: string[] } = {}): P
 		}))
 	);
 
-	function uuidToNumber(uuid: string): number {
-		let hash = 0;
-		for (const char of uuid) {
-			hash = (hash * 31 + char.charCodeAt(0)) >>> 0; // 32-bit unsigned
-		}
-		return hash;
-	}
-
 	return await Promise.all(
 		events.map(async (event) => ({
 			...event,
@@ -162,7 +154,6 @@ export async function getEvents(conditions: { organizerIds?: string[] } = {}): P
 					? await Promise.all(event.organizers.map(convertOrganizer))
 					: [],
 			participants: [],
-			id: uuidToNumber(event.id),
 			server: event.server as 'calabiyau' | 'strinova',
 			format: event.format as 'lan' | 'online' | 'hybrid',
 			region: event.region as Region,

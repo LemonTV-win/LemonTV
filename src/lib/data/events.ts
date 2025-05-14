@@ -47,7 +47,7 @@ export interface EventPrize {
 }
 
 export interface Event {
-	id: number;
+	id: string;
 	slug: string;
 	name: string;
 	official: boolean;
@@ -114,7 +114,7 @@ export interface Event {
 
 export const events: Event[] = [
 	{
-		id: 1,
+		id: crypto.randomUUID(),
 		slug: 'mmcs1',
 		name: 'Mighty Meow Cup Season 1',
 		official: false,
@@ -1673,7 +1673,7 @@ export const events: Event[] = [
 		]
 	},
 	{
-		id: 2,
+		id: crypto.randomUUID(),
 		slug: 'kawacup',
 		name: 'Apac No.1 tournament KAWA cup',
 		official: false,
@@ -1992,7 +1992,7 @@ export const events: Event[] = [
 		]
 	},
 	{
-		id: 3,
+		id: crypto.randomUUID(),
 		slug: 'origami',
 		name: 'Origami Cup',
 		region: 'EU',
@@ -3107,7 +3107,7 @@ export const events: Event[] = [
 		]
 	},
 	{
-		id: 4,
+		id: crypto.randomUUID(),
 		slug: 'ewc-2024',
 		name: '2024 Esports World Cup',
 		official: true,
@@ -3156,7 +3156,7 @@ export const events: Event[] = [
 		]
 	},
 	{
-		id: 5,
+		id: crypto.randomUUID(),
 		slug: 'wgs',
 		name: 'Waiguoren stringify invitational',
 		official: false,
@@ -3180,7 +3180,7 @@ export const events: Event[] = [
 		participants: []
 	},
 	{
-		id: 6,
+		id: crypto.randomUUID(),
 		slug: 'sqi',
 		name: 'Strinova Quark Invitational',
 		official: false,
@@ -3204,7 +3204,7 @@ export const events: Event[] = [
 		participants: []
 	},
 	{
-		id: 7,
+		id: crypto.randomUUID(),
 		slug: 'ssi',
 		name: 'Strinova Superstring Invitational',
 		official: false,
@@ -3228,7 +3228,7 @@ export const events: Event[] = [
 		participants: []
 	},
 	{
-		id: 8,
+		id: crypto.randomUUID(),
 		slug: 'moca-s1',
 		name: '摩卡杯 S1',
 		official: false,
@@ -3252,7 +3252,7 @@ export const events: Event[] = [
 		participants: []
 	},
 	{
-		id: 9,
+		id: crypto.randomUUID(),
 		slug: 'moca-s2',
 		name: '摩卡杯 S2',
 		official: false,
@@ -3276,7 +3276,7 @@ export const events: Event[] = [
 		participants: []
 	},
 	{
-		id: 10,
+		id: crypto.randomUUID(),
 		slug: 'moca-s3',
 		name: '摩卡杯 S3',
 		official: false,
