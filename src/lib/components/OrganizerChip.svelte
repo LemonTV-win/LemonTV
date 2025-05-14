@@ -6,7 +6,7 @@
 
 <a
 	href={`/organizers/${organizer.slug}`}
-	class="ml-1 inline-flex items-center gap-1 rounded-full bg-slate-700/50 px-2 py-1 text-xs text-slate-300"
+	class="ml-1 inline-flex items-center gap-1 rounded-full bg-slate-700/50 px-1.5 py-1 text-xs text-slate-300"
 >
 	{#if organizer.logo}
 		<img
