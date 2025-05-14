@@ -5,6 +5,7 @@
 	import IconParkSolidComputer from '~icons/icon-park-solid/computer';
 	import { m } from '$lib/paraglide/messages';
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
+	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
 
 	export let data: PageData;
 	const { organizer, events } = data;
@@ -20,8 +21,17 @@
 			</div>
 
 			<div class="flex flex-1 flex-col gap-4">
-				<h1 class="text-3xl font-bold text-white">
+				<h1 class="flex items-center gap-2 text-3xl font-bold text-white">
 					{organizer.name}
+					{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
+						<a
+							href={`/admin/organizers?action=edit&id=${organizer.id}`}
+							class="flex items-center gap-1 rounded-md border border-gray-700 px-2 py-1 text-sm text-gray-400 transition-all duration-200 hover:bg-gray-700"
+						>
+							<IconParkSolidEdit class="h-4 w-4" />
+							{m.edit()}
+						</a>
+					{/if}
 				</h1>
 
 				<p class="text-gray-400">{organizer.description}</p>

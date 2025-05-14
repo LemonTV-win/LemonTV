@@ -20,6 +20,7 @@
 	import IconParkSolidCheckOne from '~icons/icon-park-solid/check-one';
 	import IconParkSolidComputer from '~icons/icon-park-solid/computer';
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
+	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
 	let activeStage = $state<Stage | null>(null);
 
 	$inspect(activeStage);
@@ -35,7 +36,18 @@
 		class="banner flex min-h-48 flex-col gap-2 bg-cover bg-top p-4 text-white"
 		style:--banner-image={`url(${data.event.image})`}
 	>
-		<h1 class="my-2 text-3xl font-bold">{data.event.name}</h1>
+		<h1 class="my-2 flex items-center gap-2 text-3xl font-bold">
+			{data.event.name}
+			{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
+				<a
+					href={`/admin/events?action=edit&id=${data.event.id}`}
+					class="flex items-center gap-1 rounded-md border border-gray-700 px-2 py-1 text-sm text-gray-400 transition-all duration-200 hover:bg-gray-700"
+				>
+					<IconParkSolidEdit class="h-4 w-4" />
+					{m.edit()}
+				</a>
+			{/if}
+		</h1>
 		<div class="flex flex-col gap-2 py-2">
 			<div class="gap-2 text-gray-400">
 				<span class="inline-flex items-center gap-1">
