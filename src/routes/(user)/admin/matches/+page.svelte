@@ -611,15 +611,7 @@
 					...map,
 					action: map.action as 'ban' | 'pick' | 'decider' | null
 				}))}
-				teams={Object.values(data.events)
-					.flatMap((eventData) =>
-						Object.values(eventData.stages).flatMap((stageData) =>
-							stageData.matches.flatMap((match) =>
-								match.teams.map((t) => t.team).filter((t): t is NonNullable<typeof t> => t !== null)
-							)
-						)
-					)
-					.filter((team, index, self) => index === self.findIndex((t) => t.id === team.id))}
+				teams={data.teams}
 				maps={Object.values(data.events)
 					.flatMap((eventData) =>
 						Object.values(eventData.stages).flatMap((stageData) =>
