@@ -331,7 +331,8 @@ export async function load({ locals, url }) {
 	return {
 		events: serializedEvents,
 		event: eventId,
-		teams: await db.select().from(table.teams)
+		teams: await db.select().from(table.teams),
+		maps: await db.select().from(table.map)
 	};
 }
 
