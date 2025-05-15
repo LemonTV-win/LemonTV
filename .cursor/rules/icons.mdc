@@ -1,0 +1,18 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Unplugin-Icons
+
+We use https://github.com/unplugin/unplugin-icons, to use an Icon we need to import.
+
+```svelte
+<script lang="ts">
+import IconAccessibility from '~icons/carbon/accessibility';
+import IconAccountBox from '~icons/mdi/account-box';
+</script>
+
+<IconAccesibility />
+<IconAccountBox class="w-6 h-6 text-green-500" />
+```
