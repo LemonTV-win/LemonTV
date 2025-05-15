@@ -64,6 +64,7 @@
 						map: {
 							id: string;
 						};
+						action?: string;
 					}>;
 				}>;
 			}
@@ -127,6 +128,7 @@
 				map: {
 					id: string;
 				};
+				action?: string;
 			}>;
 		}>
 	) {
@@ -160,6 +162,36 @@
 	function getSideText(side: number) {
 		return side === 0 ? 'Attack' : 'Defense';
 	}
+
+	const MAP_2_IMAGE: Record<string, string> = {
+		base_404:
+			'https://klbq-web-cms.strinova.com/prod/strinova_web/images/202411/830d991d-24ce-4c00-92e9-2b4eb5ff703c.jpg',
+		area_88:
+			'https://klbq-web-cms.strinova.com/prod/strinova_web/images/202411/24c1ac4e-40d0-4383-a060-15bb59db183e.jpg',
+		port_euler:
+			'https://klbq-web-cms.strinova.com/prod/strinova_web/images/202411/e46ea826-5ff4-465a-b575-fe5f29e02cd5.jpg',
+		windy_town:
+			'https://klbq-web-cms.strinova.com/prod/strinova_web/images/202411/47755586-4bf9-465d-9e88-566c70fab0bc.jpg',
+		space_lab:
+			'https://klbq-web-cms.strinova.com/prod/strinova_web/images/202411/be6f044e-0ace-4b85-89f5-0c8710b9c1fd.jpg',
+		cauchy_district:
+			'https://klbq-web-cms.strinova.com/prod/strinova_web/images/202411/f704a413-6e0b-476b-bec5-a442a890079e.jpg',
+		cosmite:
+			'https://klbq-web-cms.strinova.com/prod/strinova_web/images/202411/c0951e88-691f-4698-8c27-e65ab25ff166.jpg',
+		orcanus:
+			'https://static.wikitide.net/strinovawiki/thumb/9/9d/Intro_Ocarnus.png/450px-Intro_Ocarnus.png'
+	};
+
+	const MAP_2_NAME: Record<string, string> = {
+		base_404: m.base_404(),
+		area_88: m.area_88(),
+		port_euler: m.port_euler(),
+		windy_town: m.windy_town(),
+		space_lab: m.space_lab(),
+		cauchy_district: m.cauchy_district(),
+		cosmite: m.cosmite(),
+		orcanus: m.orcanus()
+	};
 </script>
 
 <div class="mx-auto max-w-7xl p-4">
@@ -355,12 +387,58 @@
 										</div>
 									</td>
 									<td class="px-4 py-2">
-										<div class="flex flex-col gap-2">
+										<div class="flex flex-col gap-1.5">
 											{#each match.maps.sort((a, b) => a.order - b.order) as map}
-												<div class="flex items-center gap-2">
-													<span class="text-gray-400">Map {map.order + 1}:</span>
-													<span>{map.map.id}</span>
-													<span class="text-gray-400">({getSideText(map.side)})</span>
+												<div class="flex items-center gap-2 whitespace-nowrap">
+													<div class="relative">
+														<img
+															src={MAP_2_IMAGE[map.map.id]}
+															alt={MAP_2_NAME[map.map.id]}
+															class="h-6 w-10 rounded object-cover"
+														/>
+														{#if map.action === 'ban' || map.action === 'pick'}
+															<span
+																class="absolute -top-1 -right-1 rounded px-1 text-[10px] font-medium {map.action ===
+																'ban'
+																	? 'border border-red-700/50 bg-red-900 text-red-200'
+																	: map.action === 'pick'
+																		? 'border border-green-700/50 bg-green-900 text-green-200'
+																		: 'border border-yellow-700/50 bg-yellow-900 text-yellow-200'}"
+															>
+																{map.action.charAt(0).toUpperCase() + map.action.slice(1)}
+															</span>
+														{/if}
+													</div>
+													<div class="flex items-center gap-1.5">
+														{#if map.map_picker_position !== null}
+															<div class="group/map relative">
+																<span class="cursor-help text-sm text-gray-300"
+																	>{MAP_2_NAME[map.map.id]}</span
+																>
+																<div
+																	class="invisible absolute top-4 -right-1 z-10 rounded bg-gray-800 px-2 py-1 text-xs text-gray-300 opacity-0 transition-all group-hover/map:visible group-hover/map:opacity-100"
+																>
+																	{match.teams[map.map_picker_position]?.team.name}
+																</div>
+															</div>
+														{:else}
+															<span class="text-sm text-gray-300">{MAP_2_NAME[map.map.id]}</span>
+														{/if}
+														{#if map.side_picker_position !== null}
+															<div class="group/side relative">
+																<span class="cursor-help text-xs text-gray-400"
+																	>{getSideText(map.side)}</span
+																>
+																<div
+																	class="invisible absolute -bottom-4 -left-1 z-10 rounded bg-gray-800 px-2 py-1 text-xs text-gray-300 opacity-0 transition-all group-hover/side:visible group-hover/side:opacity-100"
+																>
+																	{match.teams[map.side_picker_position]?.team.name}
+																</div>
+															</div>
+														{:else}
+															<span class="text-xs text-gray-400">{getSideText(map.side)}</span>
+														{/if}
+													</div>
 												</div>
 											{/each}
 										</div>

@@ -118,6 +118,7 @@ export async function load({ locals, url }) {
 										mapId: matchMap.mapId,
 										order: matchMap.order ?? 0,
 										side: matchMap.side ?? 0,
+										action: matchMap.action ?? null,
 										map_picker_position: matchMap.map_picker_position ?? 0,
 										side_picker_position: matchMap.side_picker_position ?? 0,
 										map: row.map
@@ -175,6 +176,7 @@ export async function load({ locals, url }) {
 								mapId: map.mapId,
 								order: map.order ?? 0,
 								side: map.side ?? 0,
+								action: map.action ?? null,
 								map_picker_position: map.map_picker_position ?? 0,
 								side_picker_position: map.side_picker_position ?? 0,
 								map: map.map
@@ -222,6 +224,7 @@ export async function load({ locals, url }) {
 								mapId: string;
 								order: number;
 								side: number;
+								action: string | null;
 								map_picker_position: number;
 								side_picker_position: number;
 								map: (typeof events)[number]['map'];
