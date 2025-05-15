@@ -387,5 +387,11 @@
 	"upload": "Enviar",
 	"image_uploaded": "Imagem enviada com sucesso",
 	"failed_to_upload": "Falha ao enviar imagem",
-	"enter_image_url": "Digite a URL da imagem"
+	"enter_image_url": "Digite a URL da imagem",
+	"match_format": "Formato de partida",
+	"stage": "Etapa",
+	"select_stage": "Selecionar etapa",
+	"select_team": "Selecionar equipe",
+	"score": "Pontuação",
+	"remove_team": "Remover equipe"
 }

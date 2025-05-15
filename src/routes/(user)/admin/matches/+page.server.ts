@@ -1,7 +1,80 @@
-import { error } from '@sveltejs/kit';
+import { error, fail } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { desc, eq } from 'drizzle-orm';
+
+type PermissionResult =
+	| { status: 'success'; userId: string }
+	| { status: 'error'; error: string; statusCode: 401 | 403 };
+
+type MapAction = 'ban' | 'pick' | 'decider' | null;
+
+function checkPermissions(locals: App.Locals, requiredRoles: string[]): PermissionResult {
+	if (!locals.user?.id) {
+		console.error('[Admin][Matches] Unauthorized: user is not authenticated');
+		return { status: 'error', error: 'Unauthorized', statusCode: 401 };
+	}
+
+	if (!requiredRoles.some((role) => locals.user?.roles.includes(role))) {
+		console.error(
+			`[Admin][Matches] Forbidden: user "${locals.user.username}" (${locals.user.id}) lacks required roles (${requiredRoles.join(', ')}). Current roles: ${locals.user.roles.join(', ')}`
+		);
+		return { status: 'error', error: 'Insufficient permissions', statusCode: 403 };
+	}
+
+	return { status: 'success', userId: locals.user.id };
+}
+
+function parseFormData(formData: FormData) {
+	const format = formData.get('format') as string;
+	const stageId = formData.get('stageId') ? parseInt(formData.get('stageId') as string) : null;
+
+	// Parse teams
+	const teams: Array<{ teamId: string; position: number; score: number }> = [];
+	for (const [key, value] of formData.entries()) {
+		if (key.startsWith('teams[') && key.endsWith('].teamId')) {
+			const index = parseInt(key.match(/\[(\d+)\]/)?.[1] || '0');
+			const score = parseInt((formData.get(`teams[${index}].score`) as string) || '0');
+			teams[index] = {
+				teamId: value as string,
+				position: index,
+				score
+			};
+		}
+	}
+
+	// Parse maps
+	const maps: Array<{
+		mapId: string;
+		order: number;
+		side: number;
+		action: MapAction;
+		map_picker_position: number | null;
+		side_picker_position: number | null;
+	}> = [];
+	for (const [key, value] of formData.entries()) {
+		if (key.startsWith('maps[') && key.endsWith('].mapId')) {
+			const index = parseInt(key.match(/\[(\d+)\]/)?.[1] || '0');
+			const action = formData.get(`maps[${index}].action`) as MapAction;
+			const side = parseInt((formData.get(`maps[${index}].side`) as string) || '0');
+			maps[index] = {
+				mapId: value as string,
+				order: index,
+				side,
+				action,
+				map_picker_position: null,
+				side_picker_position: null
+			};
+		}
+	}
+
+	return {
+		format,
+		stageId,
+		teams,
+		maps
+	};
+}
 
 export async function load({ locals, url }) {
 	if (!locals.user?.roles.includes('admin')) {
@@ -241,3 +314,242 @@ export async function load({ locals, url }) {
 		event: eventId
 	};
 }
+
+export const actions = {
+	create: async ({ request, locals }) => {
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
+			});
+		}
+
+		const formData = await request.formData();
+		const matchData = {
+			id: crypto.randomUUID(),
+			...parseFormData(formData)
+		};
+
+		if (!matchData.format || !matchData.stageId) {
+			return fail(400, {
+				error: 'Format and stage are required'
+			});
+		}
+
+		try {
+			// Create the match
+			await db.insert(table.match).values({
+				id: matchData.id,
+				format: matchData.format,
+				stageId: matchData.stageId
+			});
+
+			// Add match teams if any
+			const validTeams = matchData.teams.filter((team) => team.teamId);
+			if (validTeams.length > 0) {
+				await db.insert(table.matchTeam).values(
+					validTeams.map((team) => ({
+						matchId: matchData.id,
+						teamId: team.teamId,
+						position: team.position,
+						score: team.score
+					}))
+				);
+			}
+
+			// Add match maps if any
+			if (matchData.maps.length > 0) {
+				await db.insert(table.matchMap).values(
+					matchData.maps.map((map) => ({
+						matchId: matchData.id,
+						mapId: map.mapId,
+						order: map.order,
+						side: map.side,
+						action: map.action,
+						map_picker_position: map.map_picker_position,
+						side_picker_position: map.side_picker_position
+					}))
+				);
+			}
+
+			// Add edit history
+			await db.insert(table.editHistory).values({
+				id: crypto.randomUUID(),
+				tableName: 'match',
+				recordId: matchData.id,
+				fieldName: 'creation',
+				oldValue: null,
+				newValue: 'created',
+				editedBy: result.userId,
+				editedAt: new Date()
+			});
+
+			return {
+				success: true
+			};
+		} catch (e) {
+			console.error('[Admin][Matches][Create] Failed to create match:', e);
+			return fail(500, {
+				error: 'Failed to create match'
+			});
+		}
+	},
+
+	update: async ({ request, locals }) => {
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
+			});
+		}
+
+		const formData = await request.formData();
+		const matchData = {
+			id: formData.get('id') as string,
+			...parseFormData(formData)
+		};
+
+		if (!matchData.id || !matchData.format || !matchData.stageId) {
+			return fail(400, {
+				error: 'ID, format, and stage are required'
+			});
+		}
+
+		try {
+			// Get the current match data for comparison
+			const currentMatch = await db
+				.select()
+				.from(table.match)
+				.where(eq(table.match.id, matchData.id))
+				.limit(1);
+
+			if (!currentMatch.length) {
+				return fail(404, {
+					error: 'Match not found'
+				});
+			}
+
+			// Update the match
+			await db
+				.update(table.match)
+				.set({
+					format: matchData.format,
+					stageId: matchData.stageId
+				})
+				.where(eq(table.match.id, matchData.id));
+
+			// Update match teams
+			await db.delete(table.matchTeam).where(eq(table.matchTeam.matchId, matchData.id));
+			const validTeams = matchData.teams.filter((team) => team.teamId);
+			if (validTeams.length > 0) {
+				await db.insert(table.matchTeam).values(
+					validTeams.map((team) => ({
+						matchId: matchData.id,
+						teamId: team.teamId,
+						position: team.position,
+						score: team.score
+					}))
+				);
+			}
+
+			// Update match maps
+			await db.delete(table.matchMap).where(eq(table.matchMap.matchId, matchData.id));
+			if (matchData.maps.length > 0) {
+				await db.insert(table.matchMap).values(
+					matchData.maps.map((map) => ({
+						matchId: matchData.id,
+						mapId: map.mapId,
+						order: map.order,
+						side: map.side,
+						action: map.action,
+						map_picker_position: map.map_picker_position,
+						side_picker_position: map.side_picker_position
+					}))
+				);
+			}
+
+			// Add edit history
+			await db.insert(table.editHistory).values({
+				id: crypto.randomUUID(),
+				tableName: 'match',
+				recordId: matchData.id,
+				fieldName: 'update',
+				oldValue: JSON.stringify(currentMatch[0]),
+				newValue: JSON.stringify({
+					format: matchData.format,
+					stageId: matchData.stageId,
+					teams: matchData.teams,
+					maps: matchData.maps
+				}),
+				editedBy: result.userId,
+				editedAt: new Date()
+			});
+
+			return {
+				success: true
+			};
+		} catch (e) {
+			console.error('[Admin][Matches][Update] Failed to update match:', e);
+			return fail(500, {
+				error: 'Failed to update match'
+			});
+		}
+	},
+
+	delete: async ({ request, locals }) => {
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
+			});
+		}
+
+		const formData = await request.formData();
+		const id = formData.get('id') as string;
+
+		if (!id) {
+			return fail(400, {
+				error: 'ID is required'
+			});
+		}
+
+		try {
+			// Get the match data before deletion for history
+			const match = await db.select().from(table.match).where(eq(table.match.id, id)).limit(1);
+
+			if (!match.length) {
+				return fail(404, {
+					error: 'Match not found'
+				});
+			}
+
+			// Delete related records first
+			await db.delete(table.matchTeam).where(eq(table.matchTeam.matchId, id));
+			await db.delete(table.matchMap).where(eq(table.matchMap.matchId, id));
+
+			// Delete the match
+			await db.delete(table.match).where(eq(table.match.id, id));
+
+			// Add edit history
+			await db.insert(table.editHistory).values({
+				id: crypto.randomUUID(),
+				tableName: 'match',
+				recordId: id,
+				fieldName: 'deletion',
+				oldValue: JSON.stringify(match[0]),
+				newValue: 'deleted',
+				editedBy: result.userId,
+				editedAt: new Date()
+			});
+
+			return {
+				success: true
+			};
+		} catch (e) {
+			console.error('[Admin][Matches][Delete] Failed to delete match:', e);
+			return fail(500, {
+				error: 'Failed to delete match'
+			});
+		}
+	}
+};

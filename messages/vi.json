@@ -387,5 +387,11 @@
 	"upload": "Tải lên",
 	"image_uploaded": "Tải lên hình ảnh thành công",
 	"failed_to_upload": "Tải lên hình ảnh thất bại",
-	"enter_image_url": "Nhập URL hình ảnh"
+	"enter_image_url": "Nhập URL hình ảnh",
+	"match_format": "Định dạng trận đấu",
+	"stage": "Bảng",
+	"select_stage": "Chọn bảng",
+	"select_team": "Chọn đội",
+	"score": "Điểm",
+	"remove_team": "Xóa đội"
 }

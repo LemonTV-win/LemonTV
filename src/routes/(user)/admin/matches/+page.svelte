@@ -8,6 +8,8 @@
 	import TypcnArrowSortedDown from '~icons/typcn/arrow-sorted-down';
 	import TypcnArrowSortedUp from '~icons/typcn/arrow-sorted-up';
 	import { goto } from '$app/navigation';
+	import MatchEdit from './MatchEdit.svelte';
+	import type { Match, MatchTeam, MatchMap, Team, Map } from '$lib/server/db/schema';
 
 	let { data }: PageProps = $props();
 
@@ -74,6 +76,11 @@
 	let searchQuery = $state('');
 	let selectedEventId = $state<string | null>(null);
 	let sortBy: 'id-asc' | 'id-desc' | 'format-asc' | 'format-desc' = $state('id-asc');
+	let editingMatch = $state<{
+		match: Partial<Match>;
+		matchTeams: MatchTeam[];
+		matchMaps: MatchMap[];
+	} | null>(null);
 
 	// Convert eventsByEvent to array and filter based on search query
 	let filteredEvents = $derived(
@@ -299,8 +306,25 @@
 	{#if selectedEventData}
 		<div class="mb-4 flex items-center justify-between">
 			<h2 class="text-xl font-semibold">Matches for {selectedEventData.event.name}</h2>
-			<div class="text-sm text-gray-400">
-				Total matches: {totalMatches}
+			<div class="flex items-center gap-4">
+				<div class="text-sm text-gray-400">
+					Total matches: {totalMatches}
+				</div>
+				<button
+					onclick={() => {
+						editingMatch = {
+							match: {
+								format: 'bo1',
+								stageId: null
+							},
+							matchTeams: [],
+							matchMaps: []
+						};
+					}}
+					class="rounded-md bg-yellow-500 px-4 py-2 text-sm font-medium text-black hover:bg-yellow-400 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+				>
+					Add Match
+				</button>
 			</div>
 		</div>
 		{#each Object.entries(selectedEventData.stages) as [stageId, { stage, matches }]}
@@ -471,13 +495,27 @@
 									</td>
 									<td class="sticky right-0 z-10 h-12 min-w-max bg-gray-800 whitespace-nowrap">
 										<div class="flex h-full items-center gap-2 border-l border-gray-700 px-4 py-1">
-											<a
-												href="/admin/matches/{match.id}"
+											<button
+												onclick={() => {
+													editingMatch = {
+														match,
+														matchTeams: match.teams.map((t) => ({
+															matchId: match.id,
+															teamId: t.teamId,
+															position: t.position,
+															score: t.score
+														})),
+														matchMaps: match.maps.map((m) => ({
+															...m,
+															action: m.action as 'ban' | 'pick' | 'decider' | null
+														}))
+													};
+												}}
 												class="flex items-center gap-1 text-yellow-500 hover:text-yellow-400"
 												title="Edit Match"
 											>
 												<IconParkSolidEdit class="h-4 w-4" />
-											</a>
+											</button>
 										</div>
 									</td>
 								</tr>
@@ -493,3 +531,53 @@
 		</div>
 	{/if}
 </div>
+
+{#if editingMatch}
+	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+		<div
+			class="mx-auto flex h-[90vh] w-full max-w-3xl flex-col rounded-lg border border-slate-700 bg-slate-800 p-6"
+		>
+			<MatchEdit
+				match={editingMatch.match}
+				matchTeams={editingMatch.matchTeams}
+				matchMaps={editingMatch.matchMaps.map((map) => ({
+					...map,
+					action: map.action as 'ban' | 'pick' | 'decider' | null
+				}))}
+				teams={Object.values(data.events)
+					.flatMap((eventData) =>
+						Object.values(eventData.stages).flatMap((stageData) =>
+							stageData.matches.flatMap((match) =>
+								match.teams.map((t) => t.team).filter((t): t is NonNullable<typeof t> => t !== null)
+							)
+						)
+					)
+					.filter((team, index, self) => index === self.findIndex((t) => t.id === team.id))}
+				maps={Object.values(data.events)
+					.flatMap((eventData) =>
+						Object.values(eventData.stages).flatMap((stageData) =>
+							stageData.matches.flatMap((match) =>
+								match.maps.map((m) => m.map).filter((m): m is NonNullable<typeof m> => m !== null)
+							)
+						)
+					)
+					.filter((map, index, self) => index === self.findIndex((m) => m.id === map.id))}
+				stages={Object.values(data.events)
+					.flatMap((eventData) =>
+						Object.values(eventData.stages).map((stageData) => ({
+							id: stageData.stage.id.toString(),
+							name: stageData.stage.title,
+							eventName: eventData.event.name
+						}))
+					)
+					.filter((stage, index, self) => index === self.findIndex((s) => s.id === stage.id))}
+				onCancel={() => (editingMatch = null)}
+				onSuccess={() => {
+					editingMatch = null;
+					// Refresh the page to show updated data
+					window.location.reload();
+				}}
+			/>
+		</div>
+	</div>
+{/if}
