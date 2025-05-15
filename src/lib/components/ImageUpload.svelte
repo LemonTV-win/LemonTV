@@ -130,7 +130,7 @@
 	{:else}
 		<div class="rounded-md border border-slate-700 bg-slate-800/50 p-4">
 			<input
-				type="url"
+				type="text"
 				id="imageUrl"
 				placeholder={m.enter_image_url()}
 				bind:value
