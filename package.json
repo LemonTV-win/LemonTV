@@ -15,6 +15,7 @@
 		"db:prod:push": "drizzle-kit push",
 		"db:prod:migrate": "drizzle-kit migrate",
 		"db:prod:studio": "drizzle-kit studio",
+		"db:prod:dump": "turso db shell lemon-tv .dump > dumps/prod-$(date +%Y-%m-%d).sql",
 		"db:dev:push": "drizzle-kit push --config drizzle-dev.config.ts",
 		"db:dev:migrate": "drizzle-kit migrate --config drizzle-dev.config.ts",
 		"db:dev:studio": "drizzle-kit studio --config drizzle-dev.config.ts",
