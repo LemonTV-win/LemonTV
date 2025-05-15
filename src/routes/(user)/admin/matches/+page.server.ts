@@ -11,14 +11,24 @@ export async function load({ locals, url }) {
 	// Get event ID from URL if present
 	const eventId = url.searchParams.get('event');
 
-	// Load all events with their stages, matches, and match teams
+	// Load all events with their stages, matches, match teams, and match maps
 	const events = await db
-		.select()
+		.select({
+			event: table.event,
+			event_stage: table.stage,
+			match: table.match,
+			match_team: table.matchTeam,
+			teams: table.teams,
+			match_map: table.matchMap,
+			map: table.map
+		})
 		.from(table.event)
 		.leftJoin(table.stage, eq(table.event.id, table.stage.eventId))
 		.leftJoin(table.match, eq(table.stage.id, table.match.stageId))
 		.leftJoin(table.matchTeam, eq(table.match.id, table.matchTeam.matchId))
 		.leftJoin(table.teams, eq(table.matchTeam.teamId, table.teams.id))
+		.leftJoin(table.matchMap, eq(table.match.id, table.matchMap.matchId))
+		.leftJoin(table.map, eq(table.matchMap.mapId, table.map.id))
 		.orderBy(desc(table.event.createdAt));
 
 	type MatchWithTeams = (typeof events)[number]['match'] & {
@@ -27,9 +37,14 @@ export async function load({ locals, url }) {
 				team: (typeof events)[number]['teams'];
 			}
 		>;
+		maps: Array<
+			(typeof events)[number]['match_map'] & {
+				map: (typeof events)[number]['map'];
+			}
+		>;
 	};
 
-	// Group events by event ID and collect all stages, matches, and match teams
+	// Group events by event ID and collect all stages, matches, match teams, and match maps
 	const eventsByEvent = events.reduce(
 		(acc, row) => {
 			const eventId = row.event.id;
@@ -65,21 +80,49 @@ export async function load({ locals, url }) {
 								id: row.match.id,
 								format: row.match.format,
 								stageId: row.match.stageId,
-								teams: []
+								teams: [],
+								maps: []
 							});
 						}
 
 						// If there's a match team, add it to the match's teams
 						if (row.match_team && row.teams) {
 							const matchData = stageData.matches.get(matchId);
-							if (matchData) {
-								matchData.teams.push({
-									matchId: row.match_team.matchId,
-									teamId: row.match_team.teamId,
-									position: row.match_team.position,
-									score: row.match_team.score,
-									team: row.teams
-								});
+							const matchTeam = row.match_team;
+							if (matchData && matchTeam.matchId && matchTeam.teamId) {
+								// Check if team already exists to avoid duplicates
+								const teamExists = matchData.teams.some((t) => t.teamId === matchTeam.teamId);
+								if (!teamExists) {
+									matchData.teams.push({
+										matchId: matchTeam.matchId,
+										teamId: matchTeam.teamId,
+										position: matchTeam.position,
+										score: matchTeam.score,
+										team: row.teams
+									});
+								}
+							}
+						}
+
+						// If there's a match map, add it to the match's maps
+						if (row.match_map && row.map) {
+							const matchData = stageData.matches.get(matchId);
+							const matchMap = row.match_map;
+							if (matchData && matchMap.id && matchMap.matchId) {
+								// Check if map already exists to avoid duplicates
+								const mapExists = matchData.maps.some((m) => m.id === matchMap.id);
+								if (!mapExists) {
+									matchData.maps.push({
+										id: matchMap.id,
+										matchId: matchMap.matchId,
+										mapId: matchMap.mapId,
+										order: matchMap.order ?? 0,
+										side: matchMap.side ?? 0,
+										map_picker_position: matchMap.map_picker_position ?? 0,
+										side_picker_position: matchMap.side_picker_position ?? 0,
+										map: row.map
+									});
+								}
 							}
 						}
 					}
@@ -115,9 +158,30 @@ export async function load({ locals, url }) {
 				event: eventData.event,
 				stages: Object.fromEntries(
 					Array.from(eventData.stages.entries()).map(([stageId, stageData]) => {
-						const matches = Array.from(stageData.matches.values());
+						const matches = Array.from(stageData.matches.values()).map((match) => ({
+							id: match.id,
+							format: match.format,
+							stageId: match.stageId,
+							teams: match.teams.map((team) => ({
+								matchId: team.matchId,
+								teamId: team.teamId,
+								position: team.position ?? 0,
+								score: team.score ?? 0,
+								team: team.team
+							})),
+							maps: match.maps.map((map) => ({
+								id: map.id,
+								matchId: map.matchId,
+								mapId: map.mapId,
+								order: map.order ?? 0,
+								side: map.side ?? 0,
+								map_picker_position: map.map_picker_position ?? 0,
+								side_picker_position: map.side_picker_position ?? 0,
+								map: map.map
+							}))
+						}));
 						return [
-							stageId,
+							Number(stageId),
 							{
 								stage: stageData.stage,
 								matches
@@ -148,9 +212,19 @@ export async function load({ locals, url }) {
 							teams: Array<{
 								matchId: string | null;
 								teamId: string | null;
-								position: number | null;
-								score: number | null;
+								position: number;
+								score: number;
 								team: (typeof events)[number]['teams'];
+							}>;
+							maps: Array<{
+								id: number;
+								matchId: string;
+								mapId: string;
+								order: number;
+								side: number;
+								map_picker_position: number;
+								side_picker_position: number;
+								map: (typeof events)[number]['map'];
 							}>;
 						}>;
 					}

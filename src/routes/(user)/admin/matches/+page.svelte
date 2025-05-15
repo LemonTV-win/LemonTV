@@ -53,6 +53,18 @@
 							region: string;
 						};
 					}>;
+					maps: Array<{
+						id: number;
+						matchId: string;
+						mapId: string;
+						order: number;
+						side: number;
+						map_picker_position: number;
+						side_picker_position: number;
+						map: {
+							id: string;
+						};
+					}>;
 				}>;
 			}
 		>;
@@ -104,6 +116,18 @@
 					region: string;
 				};
 			}>;
+			maps: Array<{
+				id: number;
+				matchId: string;
+				mapId: string;
+				order: number;
+				side: number;
+				map_picker_position: number;
+				side_picker_position: number;
+				map: {
+					id: string;
+				};
+			}>;
 		}>
 	) {
 		return matches.toSorted((a, b) => {
@@ -131,6 +155,11 @@
 			selectedEventId = data.event;
 		}
 	});
+
+	// Helper function to get side text
+	function getSideText(side: number) {
+		return side === 0 ? 'Attack' : 'Defense';
+	}
 </script>
 
 <div class="mx-auto max-w-7xl p-4">
@@ -272,6 +301,7 @@
 									</button>
 								</th>
 								<th class="px-4 py-1 text-center">Matchup</th>
+								<th class="px-4 py-1">Maps</th>
 								<th class="sticky right-0 z-10 h-12 bg-gray-800 px-4 py-1">Actions</th>
 							</tr>
 						</thead>
@@ -322,6 +352,17 @@
 													<span class="text-gray-500">TBD</span>
 												{/if}
 											</div>
+										</div>
+									</td>
+									<td class="px-4 py-2">
+										<div class="flex flex-col gap-2">
+											{#each match.maps.sort((a, b) => a.order - b.order) as map}
+												<div class="flex items-center gap-2">
+													<span class="text-gray-400">Map {map.order + 1}:</span>
+													<span>{map.map.id}</span>
+													<span class="text-gray-400">({getSideText(map.side)})</span>
+												</div>
+											{/each}
 										</div>
 									</td>
 									<td class="sticky right-0 z-10 h-12 min-w-max bg-gray-800 whitespace-nowrap">
