@@ -163,6 +163,24 @@
 		return side === 0 ? 'Attack' : 'Defense';
 	}
 
+	// Helper function to determine score color
+	function getScoreColor(score1: number | null, score2: number | null, position: number): string {
+		if (score1 === null || score2 === null) return 'text-gray-500';
+		if (position === 0) {
+			return score1 > score2
+				? 'text-yellow-500'
+				: score1 < score2
+					? 'text-red-500'
+					: 'text-gray-500';
+		} else {
+			return score2 > score1
+				? 'text-yellow-500'
+				: score2 < score1
+					? 'text-red-500'
+					: 'text-gray-500';
+		}
+	}
+
 	const MAP_2_IMAGE: Record<string, string> = {
 		base_404:
 			'https://klbq-web-cms.strinova.com/prod/strinova_web/images/202411/830d991d-24ce-4c00-92e9-2b4eb5ff703c.jpg',
@@ -362,12 +380,20 @@
 												{/if}
 											</div>
 											<div class="flex items-center gap-2">
-												<span class="font-semibold text-yellow-500"
-													>{match.teams[0]?.score ?? '-'}</span
+												<span
+													class="font-semibold {getScoreColor(
+														match.teams[0]?.score ?? null,
+														match.teams[1]?.score ?? null,
+														0
+													)}">{match.teams[0]?.score ?? '-'}</span
 												>
 												<span class="text-gray-500">vs.</span>
-												<span class="font-semibold text-yellow-500"
-													>{match.teams[1]?.score ?? '-'}</span
+												<span
+													class="font-semibold {getScoreColor(
+														match.teams[0]?.score ?? null,
+														match.teams[1]?.score ?? null,
+														1
+													)}">{match.teams[1]?.score ?? '-'}</span
 												>
 											</div>
 											<div class="flex items-center gap-2 rounded-lg bg-gray-700/50 px-3 py-1">
