@@ -566,5 +566,202 @@ export const actions = {
 				error: 'Failed to delete match'
 			});
 		}
+	},
+
+	createStage: async ({ request, locals }) => {
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
+			});
+		}
+
+		const formData = await request.formData();
+		const stageData = {
+			eventId: formData.get('eventId') as string,
+			title: formData.get('title') as string,
+			stage: formData.get('stage') as string,
+			format: formData.get('format') as string
+		};
+
+		if (!stageData.eventId || !stageData.title || !stageData.stage || !stageData.format) {
+			return fail(400, {
+				error: 'All fields are required'
+			});
+		}
+
+		try {
+			// Create the stage
+			const [newStage] = await db
+				.insert(table.stage)
+				.values({
+					eventId: stageData.eventId,
+					title: stageData.title,
+					stage: stageData.stage,
+					format: stageData.format
+				})
+				.returning();
+
+			// Add edit history
+			await db.insert(table.editHistory).values({
+				id: crypto.randomUUID(),
+				tableName: 'stage',
+				recordId: newStage.id.toString(),
+				fieldName: 'creation',
+				oldValue: null,
+				newValue: 'created',
+				editedBy: result.userId,
+				editedAt: new Date()
+			});
+
+			return {
+				success: true
+			};
+		} catch (e) {
+			console.error('[Admin][Stages][Create] Failed to create stage:', e);
+			return fail(500, {
+				error: 'Failed to create stage'
+			});
+		}
+	},
+
+	updateStage: async ({ request, locals }) => {
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
+			});
+		}
+
+		const formData = await request.formData();
+		const stageData = {
+			id: parseInt(formData.get('id') as string),
+			eventId: formData.get('eventId') as string,
+			title: formData.get('title') as string,
+			stage: formData.get('stage') as string,
+			format: formData.get('format') as string
+		};
+
+		if (
+			!stageData.id ||
+			!stageData.eventId ||
+			!stageData.title ||
+			!stageData.stage ||
+			!stageData.format
+		) {
+			return fail(400, {
+				error: 'All fields are required'
+			});
+		}
+
+		try {
+			// Get the current stage data for comparison
+			const currentStage = await db
+				.select()
+				.from(table.stage)
+				.where(eq(table.stage.id, stageData.id))
+				.limit(1);
+
+			if (!currentStage.length) {
+				return fail(404, {
+					error: 'Stage not found'
+				});
+			}
+
+			// Update the stage
+			await db
+				.update(table.stage)
+				.set({
+					title: stageData.title,
+					stage: stageData.stage,
+					format: stageData.format
+				})
+				.where(eq(table.stage.id, stageData.id));
+
+			// Add edit history
+			await db.insert(table.editHistory).values({
+				id: crypto.randomUUID(),
+				tableName: 'stage',
+				recordId: stageData.id.toString(),
+				fieldName: 'update',
+				oldValue: JSON.stringify(currentStage[0]),
+				newValue: JSON.stringify({
+					title: stageData.title,
+					stage: stageData.stage,
+					format: stageData.format
+				}),
+				editedBy: result.userId,
+				editedAt: new Date()
+			});
+
+			return {
+				success: true
+			};
+		} catch (e) {
+			console.error('[Admin][Stages][Update] Failed to update stage:', e);
+			return fail(500, {
+				error: 'Failed to update stage'
+			});
+		}
+	},
+
+	deleteStage: async ({ request, locals }) => {
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
+			});
+		}
+
+		const formData = await request.formData();
+		const id = parseInt(formData.get('id') as string);
+
+		if (!id) {
+			return fail(400, {
+				error: 'ID is required'
+			});
+		}
+
+		try {
+			// Get the current stage data for history
+			const currentStage = await db
+				.select()
+				.from(table.stage)
+				.where(eq(table.stage.id, id))
+				.limit(1);
+
+			if (!currentStage.length) {
+				return fail(404, {
+					error: 'Stage not found'
+				});
+			}
+
+			// Delete all matches in this stage first
+			await db.delete(table.match).where(eq(table.match.stageId, id));
+
+			// Delete the stage
+			await db.delete(table.stage).where(eq(table.stage.id, id));
+
+			// Add edit history
+			await db.insert(table.editHistory).values({
+				id: crypto.randomUUID(),
+				tableName: 'stage',
+				recordId: id.toString(),
+				fieldName: 'deletion',
+				oldValue: JSON.stringify(currentStage[0]),
+				newValue: 'deleted',
+				editedBy: result.userId,
+				editedAt: new Date()
+			});
+
+			return {
+				success: true
+			};
+		} catch (e) {
+			console.error('[Admin][Stages][Delete] Failed to delete stage:', e);
+			return fail(500, {
+				error: 'Failed to delete stage'
+			});
+		}
 	}
 };

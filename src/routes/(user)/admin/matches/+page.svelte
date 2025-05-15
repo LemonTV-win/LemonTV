@@ -7,9 +7,11 @@
 	import TypcnArrowUnsorted from '~icons/typcn/arrow-unsorted';
 	import TypcnArrowSortedDown from '~icons/typcn/arrow-sorted-down';
 	import TypcnArrowSortedUp from '~icons/typcn/arrow-sorted-up';
+	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import { goto } from '$app/navigation';
 	import MatchEdit from './MatchEdit.svelte';
 	import type { Match, MatchTeam, MatchMap, Team, Map } from '$lib/server/db/schema';
+	import StageEdit from './StageEdit.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -80,6 +82,14 @@
 		match: Partial<Match>;
 		matchTeams: MatchTeam[];
 		matchMaps: MatchMap[];
+	} | null>(null);
+	let editingStage = $state<{
+		stage?: {
+			id: number;
+			title: string;
+			stage: string;
+			format: string;
+		};
 	} | null>(null);
 
 	// Convert eventsByEvent to array and filter based on search query
@@ -312,6 +322,14 @@
 				</div>
 				<button
 					onclick={() => {
+						editingStage = {};
+					}}
+					class="rounded-md bg-yellow-500 px-4 py-2 text-sm font-medium text-black hover:bg-yellow-400 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+				>
+					Add Stage
+				</button>
+				<button
+					onclick={() => {
 						editingMatch = {
 							match: {
 								format: 'bo1',
@@ -333,7 +351,37 @@
 					<h3 class="text-lg font-semibold">
 						{stage.title} ({stage.stage} - {stage.format})
 					</h3>
-					<span class="text-sm text-gray-400">{matches.length} matches</span>
+					<div class="flex items-center gap-4">
+						<span class="text-sm text-gray-400">{matches.length} matches</span>
+						<button
+							onclick={() => {
+								editingStage = { stage };
+							}}
+							class="text-yellow-500 hover:text-yellow-400"
+							title="Edit Stage"
+						>
+							<IconParkSolidEdit class="h-4 w-4" />
+						</button>
+						<form
+							method="POST"
+							action="?/deleteStage"
+							onsubmit={(e) => {
+								if (
+									!confirm(
+										'Are you sure you want to delete this stage? This will also delete all matches in this stage.'
+									)
+								) {
+									e.preventDefault();
+								}
+							}}
+							class="inline"
+						>
+							<input type="hidden" name="id" value={stage.id} />
+							<button type="submit" class="text-red-400 hover:text-red-300" title="Delete Stage">
+								<IconParkSolidDelete class="h-4 w-4" />
+							</button>
+						</form>
+					</div>
 				</div>
 				<div
 					class="overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-800"
@@ -531,6 +579,25 @@
 		</div>
 	{/if}
 </div>
+
+{#if editingStage}
+	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+		<div
+			class="mx-auto flex h-[90vh] w-full max-w-3xl flex-col rounded-lg border border-slate-700 bg-slate-800 p-6"
+		>
+			<StageEdit
+				stage={editingStage.stage}
+				eventId={selectedEventId!}
+				onCancel={() => (editingStage = null)}
+				onSuccess={() => {
+					editingStage = null;
+					// Refresh the page to show updated data
+					window.location.reload();
+				}}
+			/>
+		</div>
+	</div>
+{/if}
 
 {#if editingMatch}
 	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
