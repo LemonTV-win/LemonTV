@@ -35,11 +35,25 @@
 					stage: string;
 					format: string;
 				};
-				matches: {
+				matches: Array<{
 					id: string;
 					format: string | null;
 					stageId: number | null;
-				}[];
+					teams: Array<{
+						matchId: string | null;
+						teamId: string | null;
+						position: number | null;
+						score: number | null;
+						team: {
+							id: string;
+							name: string;
+							slug: string;
+							abbr: string;
+							logo: string;
+							region: string;
+						};
+					}>;
+				}>;
 			}
 		>;
 	};
@@ -72,7 +86,25 @@
 
 	// Get sorted matches for a stage
 	function getSortedMatches(
-		matches: { id: string; format: string | null; stageId: number | null }[]
+		matches: Array<{
+			id: string;
+			format: string | null;
+			stageId: number | null;
+			teams: Array<{
+				matchId: string | null;
+				teamId: string | null;
+				position: number | null;
+				score: number | null;
+				team: {
+					id: string;
+					name: string;
+					slug: string;
+					abbr: string;
+					logo: string;
+					region: string;
+				};
+			}>;
+		}>
 	) {
 		return matches.toSorted((a, b) => {
 			if (sortBy === 'id-asc') {
@@ -239,6 +271,7 @@
 										{/if}
 									</button>
 								</th>
+								<th class="px-4 py-1 text-center">Matchup</th>
 								<th class="sticky right-0 z-10 h-12 bg-gray-800 px-4 py-1">Actions</th>
 							</tr>
 						</thead>
@@ -250,6 +283,47 @@
 									</td>
 									<td class="min-w-max px-4 py-1 whitespace-nowrap text-gray-300">{match.format}</td
 									>
+									<td class="px-4 py-1">
+										<div class="flex items-center justify-center gap-4">
+											<div class="flex items-center gap-2 rounded-lg bg-gray-700/50 px-3 py-1">
+												{#if match.teams[0]}
+													{#if match.teams[0].team.logo}
+														<img
+															src={match.teams[0].team.logo}
+															alt={match.teams[0].team.name}
+															class="h-6 w-6 rounded"
+														/>
+													{/if}
+													<span class="text-gray-300">{match.teams[0].team.name}</span>
+												{:else}
+													<span class="text-gray-500">TBD</span>
+												{/if}
+											</div>
+											<div class="flex items-center gap-2">
+												<span class="font-semibold text-yellow-500"
+													>{match.teams[0]?.score ?? '-'}</span
+												>
+												<span class="text-gray-500">vs.</span>
+												<span class="font-semibold text-yellow-500"
+													>{match.teams[1]?.score ?? '-'}</span
+												>
+											</div>
+											<div class="flex items-center gap-2 rounded-lg bg-gray-700/50 px-3 py-1">
+												{#if match.teams[1]}
+													{#if match.teams[1].team.logo}
+														<img
+															src={match.teams[1].team.logo}
+															alt={match.teams[1].team.name}
+															class="h-6 w-6 rounded"
+														/>
+													{/if}
+													<span class="text-gray-300">{match.teams[1].team.name}</span>
+												{:else}
+													<span class="text-gray-500">TBD</span>
+												{/if}
+											</div>
+										</div>
+									</td>
 									<td class="sticky right-0 z-10 h-12 min-w-max bg-gray-800 whitespace-nowrap">
 										<div class="flex h-full items-center gap-2 border-l border-gray-700 px-4 py-1">
 											<a
