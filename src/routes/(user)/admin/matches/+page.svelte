@@ -7,6 +7,7 @@
 	import TypcnArrowUnsorted from '~icons/typcn/arrow-unsorted';
 	import TypcnArrowSortedDown from '~icons/typcn/arrow-sorted-down';
 	import TypcnArrowSortedUp from '~icons/typcn/arrow-sorted-up';
+	import { goto } from '$app/navigation';
 
 	let { data }: PageProps = $props();
 
@@ -86,6 +87,18 @@
 			return 0;
 		});
 	}
+
+	function handleEventSelect(eventId: string) {
+		selectedEventId = eventId;
+		goto(`/admin/matches?event=${eventId}`, { replaceState: true });
+	}
+
+	// Handle URL parameters
+	$effect(() => {
+		if (data.event) {
+			selectedEventId = data.event;
+		}
+	});
 </script>
 
 <div class="mx-auto max-w-7xl p-4">
@@ -113,7 +126,7 @@
 				event.id
 					? 'border-yellow-500 bg-gray-700 shadow-lg shadow-yellow-500/10'
 					: 'border-gray-700 bg-gray-800 hover:border-gray-600 hover:bg-gray-700'}"
-				onclick={() => (selectedEventId = event.id)}
+				onclick={() => handleEventSelect(event.id)}
 			>
 				{#if event.image}
 					<img

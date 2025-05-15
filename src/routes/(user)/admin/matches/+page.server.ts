@@ -3,10 +3,13 @@ import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { desc, eq } from 'drizzle-orm';
 
-export async function load({ locals }) {
+export async function load({ locals, url }) {
 	if (!locals.user?.roles.includes('admin')) {
 		throw error(403, 'Forbidden');
 	}
+
+	// Get event ID from URL if present
+	const eventId = url.searchParams.get('event');
 
 	// Load all events with their stages and matches
 	const events = await db
@@ -93,6 +96,7 @@ export async function load({ locals }) {
 	);
 
 	return {
-		events: serializedEvents
+		events: serializedEvents,
+		event: eventId
 	};
 }
