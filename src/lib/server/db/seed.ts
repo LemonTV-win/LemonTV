@@ -14,6 +14,7 @@ export async function seed() {
 	await db.delete(schema.teamAlias);
 	await db.delete(schema.playerAlias);
 	await db.delete(schema.eventOrganizer);
+	await db.delete(schema.matchTeam);
 	// Then delete parent records
 	await db.delete(schema.teams);
 	await db.delete(schema.player);
@@ -45,12 +46,33 @@ export async function seed() {
 			name: 'Player 3',
 			slug: 'player-3',
 			nationality: 'US'
+		},
+		{
+			id: randomUUID(),
+			name: 'Player 4',
+			slug: 'player-4',
+			nationality: 'KR'
+		},
+		{
+			id: randomUUID(),
+			name: 'Player 5',
+			slug: 'player-5',
+			nationality: 'EU'
+		},
+		{
+			id: randomUUID(),
+			name: 'Player 6',
+			slug: 'player-6',
+			nationality: 'CN'
 		}
 	];
 	await db.insert(schema.player).values(PLAYERS);
 
 	console.log('[SEED] Seeding teams...');
 	const team1_id = randomUUID();
+	const team2_id = randomUUID();
+	const team3_id = randomUUID();
+	const team4_id = randomUUID();
 	await db.insert(schema.teams).values([
 		{
 			id: team1_id,
@@ -59,6 +81,36 @@ export async function seed() {
 			abbr: 'T1',
 			logo: 'https://picsum.photos/seed/team-1/256/256?blur',
 			region: 'NA',
+			createdAt: new Date().toISOString(),
+			updatedAt: new Date().toISOString()
+		},
+		{
+			id: team2_id,
+			name: 'Team 2',
+			slug: 'team-2',
+			abbr: 'T2',
+			logo: 'https://picsum.photos/seed/team-2/256/256?blur',
+			region: 'NA',
+			createdAt: new Date().toISOString(),
+			updatedAt: new Date().toISOString()
+		},
+		{
+			id: team3_id,
+			name: 'Team 3',
+			slug: 'team-3',
+			abbr: 'T3',
+			logo: 'https://picsum.photos/seed/team-3/256/256?blur',
+			region: 'EU',
+			createdAt: new Date().toISOString(),
+			updatedAt: new Date().toISOString()
+		},
+		{
+			id: team4_id,
+			name: 'Team 4',
+			slug: 'team-4',
+			abbr: 'T4',
+			logo: 'https://picsum.photos/seed/team-4/256/256?blur',
+			region: 'KR',
 			createdAt: new Date().toISOString(),
 			updatedAt: new Date().toISOString()
 		}
@@ -74,6 +126,30 @@ export async function seed() {
 			id: 3,
 			teamId: team1_id,
 			playerId: PLAYERS[1].id,
+			role: 'active'
+		},
+		{
+			id: 4,
+			teamId: team2_id,
+			playerId: PLAYERS[2].id,
+			role: 'active'
+		},
+		{
+			id: 5,
+			teamId: team2_id,
+			playerId: PLAYERS[3].id,
+			role: 'active'
+		},
+		{
+			id: 6,
+			teamId: team3_id,
+			playerId: PLAYERS[4].id,
+			role: 'active'
+		},
+		{
+			id: 7,
+			teamId: team4_id,
+			playerId: PLAYERS[5].id,
 			role: 'active'
 		}
 	]);
@@ -442,6 +518,114 @@ export async function seed() {
 		}
 	];
 	await db.insert(schema.match).values(MATCHES);
+
+	console.log('[SEED] Seeding match teams...');
+	await db.insert(schema.matchTeam).values([
+		// Qualifier matches (BO1)
+		{
+			matchId: MATCHES[0].id,
+			teamId: team1_id,
+			position: 0,
+			score: 1
+		},
+		{
+			matchId: MATCHES[0].id,
+			teamId: team2_id,
+			position: 1,
+			score: 0
+		},
+		// Group Stage A matches (BO3)
+		{
+			matchId: MATCHES[2].id,
+			teamId: team1_id,
+			position: 0,
+			score: 2
+		},
+		{
+			matchId: MATCHES[2].id,
+			teamId: team3_id,
+			position: 1,
+			score: 1
+		},
+		// Group Stage B matches (BO3)
+		{
+			matchId: MATCHES[3].id,
+			teamId: team2_id,
+			position: 0,
+			score: 2
+		},
+		{
+			matchId: MATCHES[3].id,
+			teamId: team4_id,
+			position: 1,
+			score: 0
+		},
+		// Playoff matches (BO5)
+		{
+			matchId: MATCHES[6].id,
+			teamId: team1_id,
+			position: 0,
+			score: 3
+		},
+		{
+			matchId: MATCHES[6].id,
+			teamId: team2_id,
+			position: 1,
+			score: 2
+		},
+		// Swiss Stage matches (BO3)
+		{
+			matchId: MATCHES[7].id,
+			teamId: team3_id,
+			position: 0,
+			score: 2
+		},
+		{
+			matchId: MATCHES[7].id,
+			teamId: team4_id,
+			position: 1,
+			score: 1
+		},
+		// Quarter Finals (BO3)
+		{
+			matchId: MATCHES[9].id,
+			teamId: team1_id,
+			position: 0,
+			score: 2
+		},
+		{
+			matchId: MATCHES[9].id,
+			teamId: team3_id,
+			position: 1,
+			score: 0
+		},
+		// Semi Finals (BO5)
+		{
+			matchId: MATCHES[10].id,
+			teamId: team2_id,
+			position: 0,
+			score: 3
+		},
+		{
+			matchId: MATCHES[10].id,
+			teamId: team4_id,
+			position: 1,
+			score: 1
+		},
+		// Grand Finals (BO5)
+		{
+			matchId: MATCHES[11].id,
+			teamId: team1_id,
+			position: 0,
+			score: 3
+		},
+		{
+			matchId: MATCHES[11].id,
+			teamId: team2_id,
+			position: 1,
+			score: 2
+		}
+	]);
 
 	console.log('[SEED] Seeding sources...');
 	// const sources = await db.query.source.findMany();
