@@ -7,7 +7,7 @@ const REQUIRED_ROLES = [
 	{ id: 'editor', name: 'Editor' } // Has access to all features except for user management
 ];
 
-export async function syncRoles() {
+async function syncRoles() {
 	await db.insert(schema.role).values(REQUIRED_ROLES).onConflictDoNothing();
 }
 
@@ -26,7 +26,7 @@ const SOCIAL_PLATFORMS = [
 	{ id: 'reddit', name: 'Reddit', url_template: 'https://reddit.com/u/{accountId}' }
 ];
 
-export async function syncSocialPlatforms() {
+async function syncSocialPlatforms() {
 	await db
 		.insert(schema.social_platform)
 		.values(SOCIAL_PLATFORMS)
@@ -47,6 +47,15 @@ const MAPS = [
 	{ id: 'orcanus' }
 ];
 
-export async function syncMaps() {
+async function syncMaps() {
 	await db.insert(schema.map).values(MAPS).onConflictDoNothing();
+}
+
+export async function syncAll() {
+	console.info('[Sync] Inserting required roles...');
+	await syncRoles();
+	console.info('[Sync] Inserting social platforms...');
+	await syncSocialPlatforms();
+	console.info('[Sync] Inserting maps...');
+	await syncMaps();
 }
