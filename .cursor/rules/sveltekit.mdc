@@ -1,0 +1,27 @@
+---
+description: SvelteKit considerations
+globs: '**/*.svelte'
+alwaysApply: false
+---
+
+# SvelteKit
+
+## +page.svelte
+
+### PageProps
+
+In pages, instead of using `PageData` directly, use `PageProps` instead.
+
+Before:
+
+```ts
+let { data }: { data: PageData } = $props();
+```
+
+After:
+
+```ts
+let { data }: PageProps = $props();
+```
+
+This also applies to `LayoutProps` in `+layout.svelte`.
