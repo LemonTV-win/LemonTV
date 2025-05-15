@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { m } from '$lib/paraglide/messages';
 	import type { PageProps } from './$types';
+	import { enhance } from '$app/forms';
 	import MaterialSymbolsFilterListRounded from '~icons/material-symbols/filter-list-rounded';
 	import MaterialSymbolsSearchRounded from '~icons/material-symbols/search-rounded';
 	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
@@ -12,6 +13,7 @@
 	import MatchEdit from './MatchEdit.svelte';
 	import type { Match, MatchTeam, MatchMap, Team, Map } from '$lib/server/db/schema';
 	import StageEdit from './StageEdit.svelte';
+	import Modal from '$lib/components/Modal.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -91,6 +93,8 @@
 			format: string;
 		};
 	} | null>(null);
+	let showDeleteModal = $state(false);
+	let isDeleting = $state(false);
 
 	// Convert eventsByEvent to array and filter based on search query
 	let filteredEvents = $derived(
@@ -227,6 +231,19 @@
 		cosmite: m.cosmite(),
 		orcanus: m.orcanus()
 	};
+
+	function closeDeleteModal() {
+		showDeleteModal = false;
+		editingMatch = null;
+	}
+
+	function handleDeleteSubmit() {
+		return async ({ update }: { update: () => Promise<void> }) => {
+			await update();
+			closeDeleteModal();
+			window.location.reload();
+		};
+	}
 </script>
 
 <div class="mx-auto max-w-7xl p-4">
@@ -564,6 +581,28 @@
 											>
 												<IconParkSolidEdit class="h-4 w-4" />
 											</button>
+											<button
+												onclick={() => {
+													editingMatch = {
+														match,
+														matchTeams: match.teams.map((t) => ({
+															matchId: match.id,
+															teamId: t.teamId,
+															position: t.position,
+															score: t.score
+														})),
+														matchMaps: match.maps.map((m) => ({
+															...m,
+															action: m.action as 'ban' | 'pick' | 'decider' | null
+														}))
+													};
+													showDeleteModal = true;
+												}}
+												class="flex items-center gap-1 text-red-500 hover:text-red-400"
+												title="Delete Match"
+											>
+												<IconParkSolidDelete class="h-4 w-4" />
+											</button>
 										</div>
 									</td>
 								</tr>
@@ -637,6 +676,38 @@
 					window.location.reload();
 				}}
 			/>
+		</div>
+	</div>
+{/if}
+
+{#if showDeleteModal && editingMatch}
+	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+		<div class="mx-auto w-full max-w-md rounded-lg border border-slate-700 bg-slate-800 p-6">
+			<div class="space-y-4">
+				<h3 class="text-lg font-semibold text-white">Delete Match</h3>
+				<p class="text-gray-300">
+					Are you sure you want to delete this match? This action cannot be undone.
+				</p>
+
+				<div class="flex justify-end gap-2">
+					<button
+						class="rounded-md bg-gray-700 px-4 py-2 font-medium text-white hover:bg-gray-600"
+						onclick={closeDeleteModal}
+					>
+						Cancel
+					</button>
+					<form method="POST" action="?/delete" use:enhance={handleDeleteSubmit} class="inline">
+						<input type="hidden" name="id" value={editingMatch.match.id} />
+						<button
+							type="submit"
+							class="rounded-md bg-red-600 px-4 py-2 font-medium text-white hover:bg-red-500"
+							disabled={isDeleting}
+						>
+							{isDeleting ? 'Deleting...' : 'Delete'}
+						</button>
+					</form>
+				</div>
+			</div>
 		</div>
 	</div>
 {/if}
