@@ -7,6 +7,7 @@
 	import IconParkSolidCalendar from '~icons/icon-park-solid/calendar';
 	import IconParkSolidHistory from '~icons/icon-park-solid/history-query';
 	import IconParkSolidTrophy from '~icons/icon-park-solid/trophy';
+	import IconParkSolidGame from '~icons/icon-park-solid/game';
 	import type { Component } from 'svelte';
 	import type { PageData } from './$types';
 	let { data }: { data: PageData } = $props();
@@ -78,6 +79,13 @@
 		m.events(),
 		m.admin_events_desc(),
 		'purple'
+	)}
+	{@render adminCard(
+		'/admin/matches',
+		IconParkSolidGame,
+		'Matches',
+		'Manage all matches, scores, and match details.',
+		'blue'
 	)}
 	{@render adminCard(
 		'/admin/organizers',
