@@ -109,10 +109,14 @@ export async function load({ locals, url }) {
 	const processedEvents = await Promise.all(
 		events.map(async (row) => ({
 			...row,
+			event: {
+				...row.event,
+				image: row.event.image ? await processImageURL(row.event.image) : null
+			},
 			teams: row.teams
 				? {
 						...row.teams,
-						logoURL: row.teams.logo ? await processImageURL(row.teams.logo) : null
+						logo: row.teams.logo ? await processImageURL(row.teams.logo) : null
 					}
 				: null,
 			map: row.map
