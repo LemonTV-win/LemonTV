@@ -2,6 +2,7 @@ import { error, fail } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { desc, eq } from 'drizzle-orm';
+import { processImageURL } from '$lib/server/storage';
 
 type PermissionResult =
 	| { status: 'success'; userId: string }
@@ -104,21 +105,35 @@ export async function load({ locals, url }) {
 		.leftJoin(table.map, eq(table.matchMap.mapId, table.map.id))
 		.orderBy(desc(table.event.createdAt));
 
-	type MatchWithTeams = (typeof events)[number]['match'] & {
+	// Process image URLs for teams
+	const processedEvents = await Promise.all(
+		events.map(async (row) => ({
+			...row,
+			teams: row.teams
+				? {
+						...row.teams,
+						logoURL: row.teams.logo ? await processImageURL(row.teams.logo) : null
+					}
+				: null,
+			map: row.map
+		}))
+	);
+
+	type MatchWithTeams = (typeof processedEvents)[number]['match'] & {
 		teams: Array<
-			(typeof events)[number]['match_team'] & {
-				team: (typeof events)[number]['teams'];
+			(typeof processedEvents)[number]['match_team'] & {
+				team: (typeof processedEvents)[number]['teams'];
 			}
 		>;
 		maps: Array<
-			(typeof events)[number]['match_map'] & {
-				map: (typeof events)[number]['map'];
+			(typeof processedEvents)[number]['match_map'] & {
+				map: (typeof processedEvents)[number]['map'];
 			}
 		>;
 	};
 
 	// Group events by event ID and collect all stages, matches, match teams, and match maps
-	const eventsByEvent = events.reduce(
+	const eventsByEvent = processedEvents.reduce(
 		(acc, row) => {
 			const eventId = row.event.id;
 			if (!acc[eventId]) {
@@ -208,7 +223,7 @@ export async function load({ locals, url }) {
 		{} as Record<
 			string,
 			{
-				event: (typeof events)[number]['event'];
+				event: (typeof processedEvents)[number]['event'];
 				stages: Map<
 					number,
 					{
@@ -270,7 +285,7 @@ export async function load({ locals, url }) {
 		{} as Record<
 			string,
 			{
-				event: (typeof events)[number]['event'];
+				event: (typeof processedEvents)[number]['event'];
 				stages: Record<
 					number,
 					{
@@ -289,7 +304,7 @@ export async function load({ locals, url }) {
 								teamId: string | null;
 								position: number;
 								score: number;
-								team: (typeof events)[number]['teams'];
+								team: (typeof processedEvents)[number]['teams'];
 							}>;
 							maps: Array<{
 								id: number;
@@ -300,7 +315,7 @@ export async function load({ locals, url }) {
 								action: string | null;
 								map_picker_position: number;
 								side_picker_position: number;
-								map: (typeof events)[number]['map'];
+								map: (typeof processedEvents)[number]['map'];
 							}>;
 						}>;
 					}
