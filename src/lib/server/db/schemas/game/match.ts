@@ -26,6 +26,7 @@ export const matchTeam = sqliteTable(
 	]
 );
 
+// Map veto info
 export const matchMap = sqliteTable('match_map', {
 	id: integer('id').primaryKey(),
 	matchId: text('match_id')
@@ -34,8 +35,9 @@ export const matchMap = sqliteTable('match_map', {
 	mapId: text('map_id')
 		.references(() => map.id)
 		.notNull(),
-	order: integer('order'), // 0 = First Map, 1 = Second Map, 2 = Third Map
-	side: integer('side'), // 0 = Attack, 1 = Defense for demolition
+	order: integer('order'), // Ban/Pick order 0 = First Map, 1 = Second Map, 2 = Third Map
+	side: integer('side'), // Starting side: 0 = Attack, 1 = Defense for demolition
+	action: text('action', { enum: ['ban', 'pick', 'decider'] }), // Ban/Pick/Swap
 	map_picker_position: integer('map_picker_position'),
 	side_picker_position: integer('side_picker_position')
 });

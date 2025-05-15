@@ -637,6 +637,7 @@ export async function seed() {
 			mapId: 'base_404',
 			order: 0,
 			side: 0,
+			action: 'ban',
 			map_picker_position: 0,
 			side_picker_position: 1
 		},
@@ -646,6 +647,7 @@ export async function seed() {
 			mapId: 'area_88',
 			order: 1,
 			side: 1,
+			action: 'ban',
 			map_picker_position: 1,
 			side_picker_position: 0
 		},
@@ -655,7 +657,8 @@ export async function seed() {
 			mapId: 'port_euler',
 			order: 2,
 			side: 0,
-			map_picker_position: 2,
+			action: 'pick',
+			map_picker_position: 0,
 			side_picker_position: 1
 		},
 		{
@@ -664,7 +667,8 @@ export async function seed() {
 			mapId: 'windy_town',
 			order: 3,
 			side: 1,
-			map_picker_position: 3,
+			action: 'pick',
+			map_picker_position: 1,
 			side_picker_position: 0
 		},
 		{
@@ -673,211 +677,374 @@ export async function seed() {
 			mapId: 'space_lab',
 			order: 4,
 			side: 0,
-			map_picker_position: 4,
-			side_picker_position: 1
-		},
-		// Semi Finals (BO5) - Match 10
-		{
-			id: 6,
-			matchId: MATCHES[10].id,
-			mapId: 'cauchy_district',
-			order: 0,
-			side: 0,
+			action: 'pick',
 			map_picker_position: 0,
 			side_picker_position: 1
 		},
 		{
-			id: 7,
-			matchId: MATCHES[10].id,
-			mapId: 'cosmite',
-			order: 1,
+			id: 6,
+			matchId: MATCHES[11].id,
+			mapId: 'cauchy_district',
+			order: 5,
 			side: 1,
+			action: 'pick',
 			map_picker_position: 1,
 			side_picker_position: 0
 		},
 		{
+			id: 7,
+			matchId: MATCHES[11].id,
+			mapId: 'cosmite',
+			order: 6,
+			side: 0,
+			action: 'decider',
+			map_picker_position: 0,
+			side_picker_position: 1
+		},
+		// Semi Finals (BO5) - Match 10
+		{
 			id: 8,
 			matchId: MATCHES[10].id,
-			mapId: 'orcanus',
-			order: 2,
+			mapId: 'cauchy_district',
+			order: 0,
 			side: 0,
-			map_picker_position: 2,
+			action: 'ban',
+			map_picker_position: 0,
 			side_picker_position: 1
 		},
 		{
 			id: 9,
 			matchId: MATCHES[10].id,
-			mapId: 'base_404',
-			order: 3,
+			mapId: 'cosmite',
+			order: 1,
 			side: 1,
-			map_picker_position: 3,
+			action: 'ban',
+			map_picker_position: 1,
 			side_picker_position: 0
 		},
 		{
 			id: 10,
 			matchId: MATCHES[10].id,
+			mapId: 'orcanus',
+			order: 2,
+			side: 0,
+			action: 'pick',
+			map_picker_position: 0,
+			side_picker_position: 1
+		},
+		{
+			id: 11,
+			matchId: MATCHES[10].id,
+			mapId: 'base_404',
+			order: 3,
+			side: 1,
+			action: 'pick',
+			map_picker_position: 1,
+			side_picker_position: 0
+		},
+		{
+			id: 12,
+			matchId: MATCHES[10].id,
 			mapId: 'area_88',
 			order: 4,
 			side: 0,
-			map_picker_position: 4,
+			action: 'pick',
+			map_picker_position: 0,
+			side_picker_position: 1
+		},
+		{
+			id: 13,
+			matchId: MATCHES[10].id,
+			mapId: 'windy_town',
+			order: 5,
+			side: 1,
+			action: 'pick',
+			map_picker_position: 1,
+			side_picker_position: 0
+		},
+		{
+			id: 14,
+			matchId: MATCHES[10].id,
+			mapId: 'space_lab',
+			order: 6,
+			side: 0,
+			action: 'decider',
+			map_picker_position: 0,
 			side_picker_position: 1
 		},
 		// Quarter Finals (BO3) - Match 9
 		{
-			id: 11,
+			id: 15,
 			matchId: MATCHES[9].id,
 			mapId: 'port_euler',
 			order: 0,
 			side: 0,
+			action: 'ban',
 			map_picker_position: 0,
 			side_picker_position: 1
 		},
 		{
-			id: 12,
+			id: 16,
 			matchId: MATCHES[9].id,
 			mapId: 'windy_town',
 			order: 1,
 			side: 1,
+			action: 'ban',
 			map_picker_position: 1,
 			side_picker_position: 0
 		},
 		{
-			id: 13,
+			id: 17,
 			matchId: MATCHES[9].id,
 			mapId: 'space_lab',
 			order: 2,
 			side: 0,
-			map_picker_position: 2,
-			side_picker_position: 1
-		},
-		// Group Stage A (BO3) - Match 2
-		{
-			id: 14,
-			matchId: MATCHES[2].id,
-			mapId: 'cauchy_district',
-			order: 0,
-			side: 0,
-			map_picker_position: 0,
-			side_picker_position: 1
-		},
-		{
-			id: 15,
-			matchId: MATCHES[2].id,
-			mapId: 'cosmite',
-			order: 1,
-			side: 1,
-			map_picker_position: 1,
-			side_picker_position: 0
-		},
-		{
-			id: 16,
-			matchId: MATCHES[2].id,
-			mapId: 'orcanus',
-			order: 2,
-			side: 0,
-			map_picker_position: 2,
-			side_picker_position: 1
-		},
-		// Group Stage B (BO3) - Match 3
-		{
-			id: 17,
-			matchId: MATCHES[3].id,
-			mapId: 'base_404',
-			order: 0,
-			side: 0,
+			action: 'pick',
 			map_picker_position: 0,
 			side_picker_position: 1
 		},
 		{
 			id: 18,
-			matchId: MATCHES[3].id,
-			mapId: 'area_88',
-			order: 1,
+			matchId: MATCHES[9].id,
+			mapId: 'cauchy_district',
+			order: 3,
 			side: 1,
+			action: 'pick',
 			map_picker_position: 1,
 			side_picker_position: 0
 		},
 		{
 			id: 19,
-			matchId: MATCHES[3].id,
-			mapId: 'port_euler',
-			order: 2,
+			matchId: MATCHES[9].id,
+			mapId: 'cosmite',
+			order: 4,
 			side: 0,
-			map_picker_position: 2,
+			action: 'decider',
+			map_picker_position: 0,
 			side_picker_position: 1
 		},
-		// Playoff (BO5) - Match 6
+		// Group Stage A (BO3) - Match 2
 		{
 			id: 20,
-			matchId: MATCHES[6].id,
-			mapId: 'windy_town',
+			matchId: MATCHES[2].id,
+			mapId: 'cauchy_district',
 			order: 0,
 			side: 0,
+			action: 'ban',
 			map_picker_position: 0,
 			side_picker_position: 1
 		},
 		{
 			id: 21,
-			matchId: MATCHES[6].id,
-			mapId: 'space_lab',
+			matchId: MATCHES[2].id,
+			mapId: 'cosmite',
 			order: 1,
 			side: 1,
+			action: 'ban',
 			map_picker_position: 1,
 			side_picker_position: 0
 		},
 		{
 			id: 22,
-			matchId: MATCHES[6].id,
-			mapId: 'cauchy_district',
+			matchId: MATCHES[2].id,
+			mapId: 'orcanus',
 			order: 2,
 			side: 0,
-			map_picker_position: 2,
+			action: 'pick',
+			map_picker_position: 0,
 			side_picker_position: 1
 		},
 		{
 			id: 23,
-			matchId: MATCHES[6].id,
-			mapId: 'cosmite',
+			matchId: MATCHES[2].id,
+			mapId: 'base_404',
 			order: 3,
 			side: 1,
-			map_picker_position: 3,
+			action: 'pick',
+			map_picker_position: 1,
 			side_picker_position: 0
 		},
 		{
 			id: 24,
-			matchId: MATCHES[6].id,
-			mapId: 'orcanus',
+			matchId: MATCHES[2].id,
+			mapId: 'area_88',
 			order: 4,
 			side: 0,
-			map_picker_position: 4,
+			action: 'decider',
+			map_picker_position: 0,
 			side_picker_position: 1
 		},
-		// Swiss Stage (BO3) - Match 7
+		// Group Stage B (BO3) - Match 3
 		{
 			id: 25,
-			matchId: MATCHES[7].id,
+			matchId: MATCHES[3].id,
 			mapId: 'base_404',
 			order: 0,
 			side: 0,
+			action: 'ban',
 			map_picker_position: 0,
 			side_picker_position: 1
 		},
 		{
 			id: 26,
-			matchId: MATCHES[7].id,
+			matchId: MATCHES[3].id,
 			mapId: 'area_88',
 			order: 1,
 			side: 1,
+			action: 'ban',
 			map_picker_position: 1,
 			side_picker_position: 0
 		},
 		{
 			id: 27,
+			matchId: MATCHES[3].id,
+			mapId: 'port_euler',
+			order: 2,
+			side: 0,
+			action: 'pick',
+			map_picker_position: 0,
+			side_picker_position: 1
+		},
+		{
+			id: 28,
+			matchId: MATCHES[3].id,
+			mapId: 'windy_town',
+			order: 3,
+			side: 1,
+			action: 'pick',
+			map_picker_position: 1,
+			side_picker_position: 0
+		},
+		{
+			id: 29,
+			matchId: MATCHES[3].id,
+			mapId: 'space_lab',
+			order: 4,
+			side: 0,
+			action: 'decider',
+			map_picker_position: 0,
+			side_picker_position: 1
+		},
+		// Playoff (BO5) - Match 6
+		{
+			id: 30,
+			matchId: MATCHES[6].id,
+			mapId: 'windy_town',
+			order: 0,
+			side: 0,
+			action: 'ban',
+			map_picker_position: 0,
+			side_picker_position: 1
+		},
+		{
+			id: 31,
+			matchId: MATCHES[6].id,
+			mapId: 'space_lab',
+			order: 1,
+			side: 1,
+			action: 'ban',
+			map_picker_position: 1,
+			side_picker_position: 0
+		},
+		{
+			id: 32,
+			matchId: MATCHES[6].id,
+			mapId: 'cauchy_district',
+			order: 2,
+			side: 0,
+			action: 'pick',
+			map_picker_position: 0,
+			side_picker_position: 1
+		},
+		{
+			id: 33,
+			matchId: MATCHES[6].id,
+			mapId: 'cosmite',
+			order: 3,
+			side: 1,
+			action: 'pick',
+			map_picker_position: 1,
+			side_picker_position: 0
+		},
+		{
+			id: 34,
+			matchId: MATCHES[6].id,
+			mapId: 'orcanus',
+			order: 4,
+			side: 0,
+			action: 'pick',
+			map_picker_position: 0,
+			side_picker_position: 1
+		},
+		{
+			id: 35,
+			matchId: MATCHES[6].id,
+			mapId: 'base_404',
+			order: 5,
+			side: 1,
+			action: 'pick',
+			map_picker_position: 1,
+			side_picker_position: 0
+		},
+		{
+			id: 36,
+			matchId: MATCHES[6].id,
+			mapId: 'area_88',
+			order: 6,
+			side: 0,
+			action: 'decider',
+			map_picker_position: 0,
+			side_picker_position: 1
+		},
+		// Swiss Stage (BO3) - Match 7
+		{
+			id: 37,
+			matchId: MATCHES[7].id,
+			mapId: 'base_404',
+			order: 0,
+			side: 0,
+			action: 'ban',
+			map_picker_position: 0,
+			side_picker_position: 1
+		},
+		{
+			id: 38,
+			matchId: MATCHES[7].id,
+			mapId: 'area_88',
+			order: 1,
+			side: 1,
+			action: 'ban',
+			map_picker_position: 1,
+			side_picker_position: 0
+		},
+		{
+			id: 39,
 			matchId: MATCHES[7].id,
 			mapId: 'port_euler',
 			order: 2,
 			side: 0,
-			map_picker_position: 2,
+			action: 'pick',
+			map_picker_position: 0,
+			side_picker_position: 1
+		},
+		{
+			id: 40,
+			matchId: MATCHES[7].id,
+			mapId: 'windy_town',
+			order: 3,
+			side: 1,
+			action: 'pick',
+			map_picker_position: 1,
+			side_picker_position: 0
+		},
+		{
+			id: 41,
+			matchId: MATCHES[7].id,
+			mapId: 'space_lab',
+			order: 4,
+			side: 0,
+			action: 'decider',
+			map_picker_position: 0,
 			side_picker_position: 1
 		}
 	]);
