@@ -17,6 +17,8 @@ export async function seed() {
 	// Then delete parent records
 	await db.delete(schema.teams);
 	await db.delete(schema.player);
+	await db.delete(schema.stage);
+	await db.delete(schema.match);
 	await db.delete(schema.event);
 	await db.delete(schema.organizer);
 	// Preserve user-related tables: user, role, userRole, session, editHistory
@@ -239,6 +241,208 @@ export async function seed() {
 			organizerId: ORGANIZERS[1].id
 		}
 	]);
+
+	console.log('[SEED] Seeding stages...');
+	const STAGES = [
+		// Event 1 - Full tournament structure
+		{
+			id: 1,
+			eventId: EVENTS[0].id,
+			title: 'Open Qualifiers',
+			stage: 'qualifier',
+			format: 'single'
+		},
+		{
+			id: 2,
+			eventId: EVENTS[0].id,
+			title: 'Group Stage A',
+			stage: 'group',
+			format: 'round-robin'
+		},
+		{
+			id: 3,
+			eventId: EVENTS[0].id,
+			title: 'Group Stage B',
+			stage: 'group',
+			format: 'round-robin'
+		},
+		{
+			id: 4,
+			eventId: EVENTS[0].id,
+			title: 'Playoffs',
+			stage: 'playoff',
+			format: 'double'
+		},
+		// Event 2 - LAN tournament
+		{
+			id: 5,
+			eventId: EVENTS[1].id,
+			title: 'Swiss Stage',
+			stage: 'group',
+			format: 'swiss'
+		},
+		{
+			id: 6,
+			eventId: EVENTS[1].id,
+			title: 'Quarter Finals',
+			stage: 'playoff',
+			format: 'single'
+		},
+		{
+			id: 7,
+			eventId: EVENTS[1].id,
+			title: 'Semi Finals',
+			stage: 'playoff',
+			format: 'single'
+		},
+		{
+			id: 8,
+			eventId: EVENTS[1].id,
+			title: 'Grand Finals',
+			stage: 'playoff',
+			format: 'single'
+		},
+		// Event 3 - Showmatch event
+		{
+			id: 9,
+			eventId: EVENTS[2].id,
+			title: 'Celebration Showmatch',
+			stage: 'showmatch',
+			format: 'single'
+		},
+		// Event 4 - Regional qualifier
+		{
+			id: 10,
+			eventId: EVENTS[3].id,
+			title: 'Regional Qualifier',
+			stage: 'qualifier',
+			format: 'double'
+		},
+		// Event 5 - Major tournament
+		{
+			id: 11,
+			eventId: EVENTS[4].id,
+			title: 'Group Stage',
+			stage: 'group',
+			format: 'swiss'
+		},
+		{
+			id: 12,
+			eventId: EVENTS[4].id,
+			title: 'Playoffs',
+			stage: 'playoff',
+			format: 'double'
+		}
+	];
+	await db.insert(schema.stage).values(STAGES);
+
+	console.log('[SEED] Seeding matches...');
+	const MATCHES = [
+		// Qualifier matches
+		{
+			id: randomUUID(),
+			format: 'BO1',
+			stageId: STAGES[0].id
+		},
+		{
+			id: randomUUID(),
+			format: 'BO1',
+			stageId: STAGES[0].id
+		},
+		// Group Stage A matches
+		{
+			id: randomUUID(),
+			format: 'BO3',
+			stageId: STAGES[1].id
+		},
+		{
+			id: randomUUID(),
+			format: 'BO3',
+			stageId: STAGES[1].id
+		},
+		// Group Stage B matches
+		{
+			id: randomUUID(),
+			format: 'BO3',
+			stageId: STAGES[2].id
+		},
+		{
+			id: randomUUID(),
+			format: 'BO3',
+			stageId: STAGES[2].id
+		},
+		// Playoff matches
+		{
+			id: randomUUID(),
+			format: 'BO5',
+			stageId: STAGES[3].id
+		},
+		// Swiss Stage matches
+		{
+			id: randomUUID(),
+			format: 'BO3',
+			stageId: STAGES[4].id
+		},
+		{
+			id: randomUUID(),
+			format: 'BO3',
+			stageId: STAGES[4].id
+		},
+		// Quarter Finals
+		{
+			id: randomUUID(),
+			format: 'BO3',
+			stageId: STAGES[5].id
+		},
+		// Semi Finals
+		{
+			id: randomUUID(),
+			format: 'BO5',
+			stageId: STAGES[6].id
+		},
+		// Grand Finals
+		{
+			id: randomUUID(),
+			format: 'BO5',
+			stageId: STAGES[7].id
+		},
+		// Showmatch
+		{
+			id: randomUUID(),
+			format: 'BO1',
+			stageId: STAGES[8].id
+		},
+		// Regional Qualifier
+		{
+			id: randomUUID(),
+			format: 'BO3',
+			stageId: STAGES[9].id
+		},
+		{
+			id: randomUUID(),
+			format: 'BO3',
+			stageId: STAGES[9].id
+		},
+		// Major Group Stage
+		{
+			id: randomUUID(),
+			format: 'BO3',
+			stageId: STAGES[10].id
+		},
+		{
+			id: randomUUID(),
+			format: 'BO3',
+			stageId: STAGES[10].id
+		},
+		// Major Playoffs
+		{
+			id: randomUUID(),
+			format: 'BO5',
+			stageId: STAGES[11].id
+		}
+	];
+	await db.insert(schema.match).values(MATCHES);
+
 	console.log('[SEED] Seeding sources...');
 	// const sources = await db.query.source.findMany();
 	// console.log(sources);
