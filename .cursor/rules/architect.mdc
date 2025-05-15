@@ -1,0 +1,79 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Project Architecture
+
+This is a SvelteKit-based web application with the following structure:
+
+## Core Directories
+
+- `/src` - Main source code directory
+  - `/routes` - SvelteKit routes and pages
+    - `/(content)` - Public content routes
+      - Category list pages and individual content pages
+      - Accessible to all users
+    - `/(user)` - Authenticated user routes
+      - User-specific content and actions
+      - Requires user authentication
+      - `/admin` - Admin and editor routes
+        - Data editing and settings management
+        - Restricted to admin/editor roles
+    - `/api` - API endpoints
+      - RESTful API routes
+      - Server-side functionality endpoints
+  - `/lib` - Core application code
+    - `/components` - Reusable UI components
+      - Organized by feature or functionality
+      - Each component should be self-contained with its own styles and logic
+      - Common components like buttons, forms, and layouts
+    - `/data` - Client-side data models
+      - Nested application data structures
+      - Legacy JSON-based hardcoded data
+      - Type definitions for client-side data
+    - `/server` - Server-side code
+      - `/auth.ts` - Authentication logic and middleware
+      - `/storage.ts` - Object storage and file upload handling
+      - `/data` - Data transformation and CRUD operations
+        - Converts between database and application structures
+        - Handles data access patterns
+      - `/db` - Database management
+        - `/schema` - Database schema exports
+          - Central export point for all database schemas
+          - Usage: `import * as table from '$lib/server/db/schema'`
+        - `/schemas` - Individual schema definitions
+          - Table and relation definitions
+          - Database structure specifications
+        - `/seed` - Development database seeding
+          - Mock data generation
+          - Initial database state
+        - `/sync` - Special table synchronization
+          - Enum-like table management
+          - Application-database state synchronization
+    - `/utils` - Utility functions and helpers
+      - Common helper functions
+      - Constants and configuration
+      - Type guards and validators
+    - `/validations` - Data validation schemas
+      - Form validation schemas
+      - API request/response validation
+      - Data integrity checks
+    - `/paraglide` - Internationalization setup
+      - Translation files and configurations
+      - Language-specific utilities
+      - i18n helpers and hooks
+  - `/assets` - Static assets
+    - Images, fonts, and other static files
+    - Global styles and themes
+    - Media files and resources
+  - `/hooks.server.ts` - Server-side hooks
+    - Request/response interceptors
+    - Authentication middleware
+    - Server-side initialization
+  - `/hooks.ts` - Client-side hooks
+    - Client-side initialization
+    - Browser-specific utilities
+    - Client-side middleware
+
+
