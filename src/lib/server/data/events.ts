@@ -114,51 +114,108 @@ export async function getEvents(conditions: { organizerIds?: string[] } = {}): P
 	const eventsWithOrganizers = await db
 		.select({
 			event: table.event,
-			organizer: table.organizer
+			organizer: table.organizer,
+			eventTeamPlayer: table.eventTeamPlayer,
+			team: table.team,
+			player: table.player
 		})
 		.from(table.event)
 		.leftJoin(table.eventOrganizer, eq(table.eventOrganizer.eventId, table.event.id))
 		.leftJoin(table.organizer, eq(table.organizer.id, table.eventOrganizer.organizerId))
+		.leftJoin(table.eventTeamPlayer, eq(table.eventTeamPlayer.eventId, table.event.id))
+		.leftJoin(table.team, eq(table.team.id, table.eventTeamPlayer.teamId))
+		.leftJoin(table.player, eq(table.player.id, table.eventTeamPlayer.playerId))
 		.where(
 			conditions.organizerIds
 				? inArray(table.eventOrganizer.organizerId, conditions.organizerIds)
 				: undefined
 		);
 
-	// Group organizers by event
-	const eventsMap = new Map<string, { event: Event; organizers: Organizer[] }>();
+	// Group organizers and team players by event
+	const eventsMap = new Map<
+		string,
+		{
+			event: Event;
+			organizers: Organizer[];
+			teamPlayers: Array<{
+				team: typeof table.team.$inferSelect;
+				player: typeof table.player.$inferSelect;
+				role: 'main' | 'sub' | 'coach';
+			}>;
+		}
+	>();
 
-	eventsWithOrganizers.forEach(({ event, organizer }) => {
+	eventsWithOrganizers.forEach(({ event, organizer, eventTeamPlayer, team, player }) => {
 		if (!eventsMap.has(event.id)) {
-			eventsMap.set(event.id, { event, organizers: [] });
+			eventsMap.set(event.id, { event, organizers: [], teamPlayers: [] });
 		}
 		if (organizer) {
 			eventsMap.get(event.id)?.organizers.push(organizer);
 		}
+		if (eventTeamPlayer && team && player) {
+			eventsMap.get(event.id)?.teamPlayers.push({
+				team,
+				player,
+				role: eventTeamPlayer.role
+			});
+		}
 	});
 
 	const events = await Promise.all(
-		Array.from(eventsMap.values()).map(async ({ event, organizers }) => ({
+		Array.from(eventsMap.values()).map(async ({ event, organizers, teamPlayers }) => ({
 			...event,
 			organizers,
-			image: await processImageURL(event.image)
+			image: await processImageURL(event.image),
+			teamPlayers
 		}))
 	);
 
 	return await Promise.all(
-		events.map(async (event) => ({
-			...event,
-			stages: [],
-			organizers:
-				event.organizers.length > 0
-					? await Promise.all(event.organizers.map(convertOrganizer))
-					: [],
-			participants: [],
-			server: event.server as 'calabiyau' | 'strinova',
-			format: event.format as 'lan' | 'online' | 'hybrid',
-			region: event.region as Region,
-			status: event.status as 'upcoming' | 'live' | 'finished' | 'cancelled' | 'postponed'
-		}))
+		events.map(async (event) => {
+			// Group team players by team
+			const teamPlayersMap = new Map<
+				string,
+				{ main: string[]; reserve: string[]; coach: string[] }
+			>();
+
+			event.teamPlayers.forEach(({ team, player, role }) => {
+				if (!team.abbr || !player.name) return; // Skip if team abbreviation or player name is missing
+
+				if (!teamPlayersMap.has(team.abbr)) {
+					teamPlayersMap.set(team.abbr, { main: [], reserve: [], coach: [] });
+				}
+				const teamData = teamPlayersMap.get(team.abbr)!;
+				if (role === 'main') {
+					teamData.main.push(player.name);
+				} else if (role === 'sub') {
+					teamData.reserve.push(player.name);
+				} else if (role === 'coach') {
+					teamData.coach.push(player.name);
+				}
+			});
+
+			// Convert to the expected format
+			const participants = Array.from(teamPlayersMap.entries()).map(([team, players]) => ({
+				team,
+				main: players.main,
+				reserve: players.reserve,
+				coach: players.coach
+			}));
+
+			return {
+				...event,
+				stages: [],
+				organizers:
+					event.organizers.length > 0
+						? await Promise.all(event.organizers.map(convertOrganizer))
+						: [],
+				participants,
+				server: event.server as 'calabiyau' | 'strinova',
+				format: event.format as 'lan' | 'online' | 'hybrid',
+				region: event.region as Region,
+				status: event.status as 'upcoming' | 'live' | 'finished' | 'cancelled' | 'postponed'
+			};
+		})
 	);
 }
 
