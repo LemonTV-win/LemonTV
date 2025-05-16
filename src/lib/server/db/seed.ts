@@ -319,6 +319,160 @@ export async function seed() {
 		}
 	]);
 
+	console.log('[SEED] Seeding event team players...');
+	await db.insert(schema.eventTeamPlayer).values([
+		// Event 1 - Team 1 players
+		{
+			eventId: EVENTS[0].id,
+			teamId: team1_id,
+			playerId: PLAYERS[0].id,
+			role: 'main'
+		},
+		{
+			eventId: EVENTS[0].id,
+			teamId: team1_id,
+			playerId: PLAYERS[1].id,
+			role: 'main'
+		},
+		{
+			eventId: EVENTS[0].id,
+			teamId: team1_id,
+			playerId: PLAYERS[2].id,
+			role: 'sub'
+		},
+		{
+			eventId: EVENTS[0].id,
+			teamId: team1_id,
+			playerId: PLAYERS[3].id,
+			role: 'coach'
+		},
+		// Event 1 - Team 2 players
+		{
+			eventId: EVENTS[0].id,
+			teamId: team2_id,
+			playerId: PLAYERS[2].id,
+			role: 'main'
+		},
+		{
+			eventId: EVENTS[0].id,
+			teamId: team2_id,
+			playerId: PLAYERS[3].id,
+			role: 'main'
+		},
+		{
+			eventId: EVENTS[0].id,
+			teamId: team2_id,
+			playerId: PLAYERS[4].id,
+			role: 'sub'
+		},
+		{
+			eventId: EVENTS[0].id,
+			teamId: team2_id,
+			playerId: PLAYERS[5].id,
+			role: 'sub'
+		},
+		// Event 2 - Team 3 players
+		{
+			eventId: EVENTS[1].id,
+			teamId: team3_id,
+			playerId: PLAYERS[0].id,
+			role: 'main'
+		},
+		{
+			eventId: EVENTS[1].id,
+			teamId: team3_id,
+			playerId: PLAYERS[1].id,
+			role: 'main'
+		},
+		{
+			eventId: EVENTS[1].id,
+			teamId: team3_id,
+			playerId: PLAYERS[2].id,
+			role: 'sub'
+		},
+		{
+			eventId: EVENTS[1].id,
+			teamId: team3_id,
+			playerId: PLAYERS[3].id,
+			role: 'coach'
+		},
+		// Event 2 - Team 4 players
+		{
+			eventId: EVENTS[1].id,
+			teamId: team4_id,
+			playerId: PLAYERS[4].id,
+			role: 'main'
+		},
+		{
+			eventId: EVENTS[1].id,
+			teamId: team4_id,
+			playerId: PLAYERS[5].id,
+			role: 'main'
+		},
+		{
+			eventId: EVENTS[1].id,
+			teamId: team4_id,
+			playerId: PLAYERS[0].id,
+			role: 'sub'
+		},
+		// Event 3 - Team 1 players
+		{
+			eventId: EVENTS[2].id,
+			teamId: team1_id,
+			playerId: PLAYERS[1].id,
+			role: 'main'
+		},
+		{
+			eventId: EVENTS[2].id,
+			teamId: team1_id,
+			playerId: PLAYERS[2].id,
+			role: 'main'
+		},
+		{
+			eventId: EVENTS[2].id,
+			teamId: team1_id,
+			playerId: PLAYERS[3].id,
+			role: 'sub'
+		},
+		{
+			eventId: EVENTS[2].id,
+			teamId: team1_id,
+			playerId: PLAYERS[4].id,
+			role: 'sub'
+		},
+		{
+			eventId: EVENTS[2].id,
+			teamId: team1_id,
+			playerId: PLAYERS[5].id,
+			role: 'coach'
+		},
+		// Event 3 - Team 2 players
+		{
+			eventId: EVENTS[2].id,
+			teamId: team2_id,
+			playerId: PLAYERS[0].id,
+			role: 'main'
+		},
+		{
+			eventId: EVENTS[2].id,
+			teamId: team2_id,
+			playerId: PLAYERS[1].id,
+			role: 'main'
+		},
+		{
+			eventId: EVENTS[2].id,
+			teamId: team2_id,
+			playerId: PLAYERS[2].id,
+			role: 'sub'
+		},
+		{
+			eventId: EVENTS[2].id,
+			teamId: team2_id,
+			playerId: PLAYERS[3].id,
+			role: 'coach'
+		}
+	]);
+
 	console.log('[SEED] Seeding stages...');
 	const STAGES = [
 		// Event 1 - Full tournament structure
