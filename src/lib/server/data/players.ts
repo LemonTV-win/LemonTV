@@ -127,7 +127,7 @@ export async function getPlayerTeams(slug: string) {
 		.from(schema.player)
 		.where(eq(schema.player.slug, slug))
 		.innerJoin(schema.teamPlayer, eq(schema.teamPlayer.playerId, schema.player.id))
-		.innerJoin(schema.teams, eq(schema.teamPlayer.teamId, schema.teams.id));
+		.innerJoin(schema.team, eq(schema.teamPlayer.teamId, schema.team.id));
 
 	return teams;
 }
@@ -137,7 +137,7 @@ export async function getPlayersTeams(): Promise<Record<string, Team[]>> {
 		.select()
 		.from(schema.player)
 		.innerJoin(schema.teamPlayer, eq(schema.teamPlayer.playerId, schema.player.id))
-		.innerJoin(schema.teams, eq(schema.teamPlayer.teamId, schema.teams.id));
+		.innerJoin(schema.team, eq(schema.teamPlayer.teamId, schema.team.id));
 
 	const result: Record<string, Team[]> = {};
 	for (const row of rows) {

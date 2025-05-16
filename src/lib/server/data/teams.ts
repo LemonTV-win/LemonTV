@@ -39,9 +39,9 @@ export function getTeamMemberStatistics(team: Team): Record<
 export async function getTeam(slug: string): Promise<Team | null> {
 	const rows = await db
 		.select()
-		.from(table.teams)
-		.where(or(eq(table.teams.slug, slug), eq(table.teams.id, slug)))
-		.leftJoin(table.teamPlayer, eq(table.teamPlayer.teamId, table.teams.id))
+		.from(table.team)
+		.where(or(eq(table.team.slug, slug), eq(table.team.id, slug)))
+		.leftJoin(table.teamPlayer, eq(table.teamPlayer.teamId, table.team.id))
 		.leftJoin(table.player, eq(table.player.id, table.teamPlayer.playerId))
 		.leftJoin(table.playerAlias, eq(table.playerAlias.playerId, table.player.id))
 		.leftJoin(table.gameAccount, eq(table.gameAccount.playerId, table.player.id))
@@ -148,8 +148,8 @@ export async function getTeam(slug: string): Promise<Team | null> {
 export async function getTeams(): Promise<Team[]> {
 	const rows = await db
 		.select()
-		.from(table.teams)
-		.leftJoin(table.teamPlayer, eq(table.teamPlayer.teamId, table.teams.id))
+		.from(table.team)
+		.leftJoin(table.teamPlayer, eq(table.teamPlayer.teamId, table.team.id))
 		.leftJoin(table.player, eq(table.player.id, table.teamPlayer.playerId))
 		.leftJoin(table.playerAlias, eq(table.playerAlias.playerId, table.player.id))
 		.leftJoin(table.gameAccount, eq(table.gameAccount.playerId, table.player.id))
@@ -159,7 +159,7 @@ export async function getTeams(): Promise<Team[]> {
 		)
 		.leftJoin(table.user, eq(table.user.id, table.player.userId))
 		.leftJoin(table.userRole, eq(table.userRole.userId, table.user.id))
-		.leftJoin(table.teamAlias, eq(table.teamAlias.teamId, table.teams.id));
+		.leftJoin(table.teamAlias, eq(table.teamAlias.teamId, table.team.id));
 
 	const teamMap = new Map<
 		string,
@@ -340,7 +340,7 @@ export async function createTeam(
 	const slug = data.slug ?? data.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
 
 	await db.transaction(async (tx) => {
-		await tx.insert(table.teams).values({
+		await tx.insert(table.team).values({
 			id,
 			name: data.name,
 			slug,
@@ -482,11 +482,11 @@ export async function updateTeam(
 ) {
 	await db.transaction(async (tx) => {
 		// Get the current team data before update
-		const [currentTeam] = await tx.select().from(table.teams).where(eq(table.teams.id, data.id));
+		const [currentTeam] = await tx.select().from(table.team).where(eq(table.team.id, data.id));
 
 		// Update team
 		await tx
-			.update(table.teams)
+			.update(table.team)
 			.set({
 				name: data.name,
 				slug: data.slug ?? data.name.toLowerCase().replace(/[^a-z0-9]/g, '-'),
@@ -495,7 +495,7 @@ export async function updateTeam(
 				region: data.region,
 				updatedAt: new Date().toISOString()
 			})
-			.where(eq(table.teams.id, data.id));
+			.where(eq(table.team.id, data.id));
 
 		// Track changes in edit_history
 		if (data.name !== currentTeam.name) {
@@ -658,7 +658,7 @@ export async function deleteTeam(id: string, deletedBy: string) {
 	console.info('[Teams] Attempting to delete team:', id);
 
 	// Get the team data before deletion
-	const [teamData] = await db.select().from(table.teams).where(eq(table.teams.id, id));
+	const [teamData] = await db.select().from(table.team).where(eq(table.team.id, id));
 
 	if (!teamData) {
 		console.warn('[Teams] Team not found:', id);
@@ -757,7 +757,7 @@ export async function deleteTeam(id: string, deletedBy: string) {
 		// Delete the records
 		await tx.delete(table.teamAlias).where(eq(table.teamAlias.teamId, id));
 		await tx.delete(table.teamPlayer).where(eq(table.teamPlayer.teamId, id));
-		await tx.delete(table.teams).where(eq(table.teams.id, id));
+		await tx.delete(table.team).where(eq(table.team.id, id));
 	});
 
 	console.info('[Teams] Successfully deleted team:', id);

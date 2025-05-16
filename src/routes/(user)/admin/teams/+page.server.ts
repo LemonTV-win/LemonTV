@@ -6,7 +6,7 @@ import { eq } from 'drizzle-orm';
 // import { importTeams } from '$lib/server/data/teams';
 
 export const load: PageServerLoad = async ({ url }) => {
-	const teamsList = await db.select().from(table.teams);
+	const teamsList = await db.select().from(table.team);
 	const teamPlayers = await db.select().from(table.teamPlayer);
 	const teamAliases = await db.select().from(table.teamAlias);
 	const players = await db.select().from(table.player);
@@ -55,7 +55,7 @@ export const actions = {
 
 		try {
 			const [newTeam] = await db
-				.insert(table.teams)
+				.insert(table.team)
 				.values({
 					id: crypto.randomUUID(),
 					name,
@@ -133,7 +133,7 @@ export const actions = {
 		try {
 			// Update team
 			await db
-				.update(table.teams)
+				.update(table.team)
 				.set({
 					name,
 					logo: logo || undefined,
@@ -142,7 +142,7 @@ export const actions = {
 					abbr: abbr || undefined,
 					updatedAt: new Date().toISOString()
 				})
-				.where(eq(table.teams.id, id));
+				.where(eq(table.team.id, id));
 
 			// Update aliases
 			await db.delete(table.teamAlias).where(eq(table.teamAlias.teamId, id));
@@ -236,7 +236,7 @@ export const actions = {
 			await db.delete(table.teamAlias).where(eq(table.teamAlias.teamId, id));
 			await db.delete(table.teamPlayer).where(eq(table.teamPlayer.teamId, id));
 			// Delete team
-			await db.delete(table.teams).where(eq(table.teams.id, id));
+			await db.delete(table.team).where(eq(table.team.id, id));
 
 			return {
 				success: true

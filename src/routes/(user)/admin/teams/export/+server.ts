@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { db } from '$lib/server/db';
-import { teams, teamPlayer, teamAlias } from '$lib/server/db/schemas/game/team';
+import { team, teamPlayer, teamAlias } from '$lib/server/db/schemas/game/team';
 
 export const GET: RequestHandler = async ({ locals }) => {
 	if (!locals.user?.roles.includes('admin')) {
@@ -9,7 +9,7 @@ export const GET: RequestHandler = async ({ locals }) => {
 	}
 
 	try {
-		const teamsList = await db.select().from(teams);
+		const teamsList = await db.select().from(team);
 		const teamPlayers = await db.select().from(teamPlayer);
 		const teamAliases = await db.select().from(teamAlias);
 

@@ -17,7 +17,7 @@ export async function seed() {
 	await db.delete(schema.matchTeam);
 	await db.delete(schema.matchMap);
 	// Then delete parent records
-	await db.delete(schema.teams);
+	await db.delete(schema.team);
 	await db.delete(schema.player);
 	await db.delete(schema.stage);
 	await db.delete(schema.match);
@@ -74,7 +74,7 @@ export async function seed() {
 	const team2_id = randomUUID();
 	const team3_id = randomUUID();
 	const team4_id = randomUUID();
-	await db.insert(schema.teams).values([
+	await db.insert(schema.team).values([
 		{
 			id: team1_id,
 			name: 'Team 1',

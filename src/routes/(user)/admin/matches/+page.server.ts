@@ -92,7 +92,7 @@ export async function load({ locals, url }) {
 			event_stage: table.stage,
 			match: table.match,
 			match_team: table.matchTeam,
-			teams: table.teams,
+			teams: table.team,
 			match_map: table.matchMap,
 			map: table.map
 		})
@@ -100,7 +100,7 @@ export async function load({ locals, url }) {
 		.leftJoin(table.stage, eq(table.event.id, table.stage.eventId))
 		.leftJoin(table.match, eq(table.stage.id, table.match.stageId))
 		.leftJoin(table.matchTeam, eq(table.match.id, table.matchTeam.matchId))
-		.leftJoin(table.teams, eq(table.matchTeam.teamId, table.teams.id))
+		.leftJoin(table.team, eq(table.matchTeam.teamId, table.team.id))
 		.leftJoin(table.matchMap, eq(table.match.id, table.matchMap.matchId))
 		.leftJoin(table.map, eq(table.matchMap.mapId, table.map.id))
 		.orderBy(desc(table.event.createdAt));
@@ -331,7 +331,7 @@ export async function load({ locals, url }) {
 	return {
 		events: serializedEvents,
 		event: eventId,
-		teams: await db.select().from(table.teams),
+		teams: await db.select().from(table.team),
 		maps: await db.select().from(table.map)
 	};
 }

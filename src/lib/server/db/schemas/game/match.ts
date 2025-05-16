@@ -1,6 +1,6 @@
 import { sql } from 'drizzle-orm';
 import { sqliteTable, text, integer, check, primaryKey } from 'drizzle-orm/sqlite-core';
-import { teams } from './team';
+import { team } from './team';
 import { map } from './game';
 export const match = sqliteTable(
 	'match',
@@ -16,7 +16,7 @@ export const matchTeam = sqliteTable(
 	'match_team',
 	{
 		matchId: text('match_id').references(() => match.id),
-		teamId: text('team_id').references(() => teams.id),
+		teamId: text('team_id').references(() => team.id),
 		position: integer('position'),
 		score: integer('score').default(0)
 	},
