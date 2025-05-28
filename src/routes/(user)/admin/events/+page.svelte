@@ -248,9 +248,12 @@
 								{/if}
 								<div class="flex min-w-max flex-shrink-0 flex-col">
 									<div class="flex-shrink-0 whitespace-nowrap text-white">{event.name}</div>
-									<div class="flex-shrink-0 text-sm whitespace-nowrap text-gray-400">
+									<a
+										href="/events/{event.slug}"
+										class="flex-shrink-0 text-sm whitespace-nowrap text-gray-400 transition-colors duration-200 hover:text-yellow-500"
+									>
 										{event.slug}
-									</div>
+									</a>
 								</div>
 							</div>
 						</td>
