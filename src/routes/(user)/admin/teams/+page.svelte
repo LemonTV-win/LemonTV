@@ -417,7 +417,11 @@
 									<span>{team.name}</span>
 									<div class="flex gap-2 text-xs">
 										<span class="text-yellow-400">{team.abbr || '-'}</span>
-										<a class="text-slate-400" href={`/teams/${team.slug}`}>{team.slug || '-'}</a>
+										<a
+											href={`/teams/${team.slug}`}
+											class="text-slate-400 transition-colors duration-200 hover:text-yellow-400"
+											>{team.slug || '-'}</a
+										>
 									</div>
 								</div>
 							</div>

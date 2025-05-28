@@ -250,7 +250,7 @@
 									<div class="flex-shrink-0 whitespace-nowrap text-white">{event.name}</div>
 									<a
 										href="/events/{event.slug}"
-										class="flex-shrink-0 text-sm whitespace-nowrap text-gray-400 transition-colors duration-200 hover:text-yellow-500"
+										class="flex-shrink-0 text-sm whitespace-nowrap text-gray-400 transition-colors duration-200 hover:text-yellow-400"
 									>
 										{event.slug}
 									</a>
