@@ -64,7 +64,18 @@
 		} else if (action === 'edit' && id) {
 			const eventToEdit = events.find((e) => e.id === id);
 			if (eventToEdit) {
-				handleEditEvent(eventToEdit);
+				handleEditEvent({
+					...eventToEdit,
+					createdAt: new Date(),
+					updatedAt: new Date(),
+					organizers: (eventToEdit.organizers || []).map((org) => ({
+						...org,
+						description: org.description ?? null,
+						url: org.url ?? null,
+						createdAt: new Date(),
+						updatedAt: new Date()
+					}))
+				});
 			}
 		}
 	});
@@ -137,6 +148,8 @@
 					const event = selectedEvent as EventWithOrganizers;
 					return eventOrganizers.filter((eo) => eo.eventId === event.id);
 				})()}
+				teams={data.teams}
+				players={data.players}
 				onCancel={handleCancel}
 				onSuccess={handleSuccess}
 			/>
@@ -226,10 +239,10 @@
 					<tr class="border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl">
 						<td class="min-w-max overflow-hidden px-4 py-1">
 							<div class="flex min-w-max items-center">
-								{#if event.imageURL}
+								{#if event.image}
 									<img
 										class="mr-3 h-10 w-10 flex-shrink-0 rounded-full"
-										src={event.imageURL}
+										src={event.image}
 										alt={event.name}
 									/>
 								{/if}
@@ -286,7 +299,18 @@
 								<button
 									class="flex items-center gap-1 text-yellow-500 hover:text-yellow-400"
 									onclick={() => {
-										selectedEvent = event;
+										selectedEvent = {
+											...event,
+											createdAt: new Date(),
+											updatedAt: new Date(),
+											organizers: (event.organizers || []).map((org) => ({
+												...org,
+												description: org.description ?? null,
+												url: org.url ?? null,
+												createdAt: new Date(),
+												updatedAt: new Date()
+											}))
+										};
 										isAddingNew = false;
 										isEditing = true;
 									}}
@@ -297,7 +321,18 @@
 								<button
 									class="text-gray-400 hover:text-gray-300"
 									onclick={() => {
-										selectedEvent = event;
+										selectedEvent = {
+											...event,
+											createdAt: new Date(),
+											updatedAt: new Date(),
+											organizers: (event.organizers || []).map((org) => ({
+												...org,
+												description: org.description ?? null,
+												url: org.url ?? null,
+												createdAt: new Date(),
+												updatedAt: new Date()
+											}))
+										};
 										showHistoryModal = true;
 									}}
 									title={m.history()}

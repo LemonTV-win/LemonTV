@@ -31,6 +31,18 @@ export interface UpdateEventData extends Partial<CreateEventData> {
 	id: string;
 }
 
+// Types for event team player management
+export interface EventTeamPlayerData {
+	eventId: string;
+	teamId: string;
+	playerId: string;
+	role: 'main' | 'sub' | 'coach';
+}
+
+export interface UpdateEventTeamPlayerData extends EventTeamPlayerData {
+	id?: string;
+}
+
 // Convert database event to application event with organizers
 export function toEventWithOrganizers(
 	event: Event,
@@ -217,6 +229,122 @@ export async function getEvents(conditions: { organizerIds?: string[] } = {}): P
 			};
 		})
 	);
+}
+
+// Get event team player changes
+export function getEventTeamPlayerChanges(
+	currentPlayers: (typeof table.eventTeamPlayer.$inferSelect)[],
+	newPlayers: EventTeamPlayerData[]
+): {
+	toAdd: EventTeamPlayerData[];
+	toRemove: (typeof table.eventTeamPlayer.$inferSelect)[];
+} {
+	const toAdd: EventTeamPlayerData[] = [];
+	const toRemove: (typeof table.eventTeamPlayer.$inferSelect)[] = [];
+
+	// Find players to add
+	newPlayers.forEach((newPlayer) => {
+		const exists = currentPlayers.some(
+			(current) =>
+				current.eventId === newPlayer.eventId &&
+				current.teamId === newPlayer.teamId &&
+				current.playerId === newPlayer.playerId &&
+				current.role === newPlayer.role
+		);
+		if (!exists) {
+			toAdd.push(newPlayer);
+		}
+	});
+
+	// Find players to remove
+	currentPlayers.forEach((current) => {
+		const exists = newPlayers.some(
+			(newPlayer) =>
+				current.eventId === newPlayer.eventId &&
+				current.teamId === newPlayer.teamId &&
+				current.playerId === newPlayer.playerId &&
+				current.role === newPlayer.role
+		);
+		if (!exists) {
+			toRemove.push(current);
+		}
+	});
+
+	return { toAdd, toRemove };
+}
+
+// Get event team players
+export async function getEventTeamPlayers(eventId: string) {
+	return await db
+		.select({
+			eventTeamPlayer: table.eventTeamPlayer,
+			team: table.team,
+			player: table.player
+		})
+		.from(table.eventTeamPlayer)
+		.leftJoin(table.team, eq(table.team.id, table.eventTeamPlayer.teamId))
+		.leftJoin(table.player, eq(table.player.id, table.eventTeamPlayer.playerId))
+		.where(eq(table.eventTeamPlayer.eventId, eventId));
+}
+
+// Update event team players
+export async function updateEventTeamPlayers(
+	eventId: string,
+	players: EventTeamPlayerData[],
+	userId: string
+) {
+	// Get current players
+	const currentPlayers = await db
+		.select()
+		.from(table.eventTeamPlayer)
+		.where(eq(table.eventTeamPlayer.eventId, eventId));
+
+	// Get changes
+	const { toAdd, toRemove } = getEventTeamPlayerChanges(currentPlayers, players);
+
+	// Add new players
+	if (toAdd.length > 0) {
+		await db.insert(table.eventTeamPlayer).values(
+			toAdd.map((player) => ({
+				eventId: eventId,
+				teamId: player.teamId,
+				playerId: player.playerId,
+				role: player.role,
+				createdAt: new Date(),
+				updatedAt: new Date()
+			}))
+		);
+	}
+
+	// Remove old players
+	if (toRemove.length > 0) {
+		await db
+			.delete(table.eventTeamPlayer)
+			.where(
+				toRemove
+					.map(
+						(p) =>
+							eq(table.eventTeamPlayer.eventId, p.eventId) &&
+							eq(table.eventTeamPlayer.teamId, p.teamId) &&
+							eq(table.eventTeamPlayer.playerId, p.playerId)
+					)
+					.reduce((acc, condition) => acc || condition)
+			);
+	}
+
+	// Add edit history
+	if (toAdd.length > 0 || toRemove.length > 0) {
+		await db.insert(table.editHistory).values({
+			id: crypto.randomUUID(),
+			tableName: 'event_team_player',
+			recordId: eventId,
+			fieldName: 'players',
+			oldValue: JSON.stringify(currentPlayers),
+			newValue: JSON.stringify(players),
+			editedBy: userId,
+			editedAt: new Date()
+		});
+	}
 }
 
 // export interface Event {

@@ -8,20 +8,21 @@ export async function seed() {
 	// Clear only game-related tables, preserving user data
 	console.log('[SEED] Clearing existing game data...');
 	// Delete child records first
-	await db.delete(schema.player_social_account);
-	await db.delete(schema.gameAccount);
+	await db.delete(schema.matchMap);
+	await db.delete(schema.matchTeam);
+	await db.delete(schema.eventTeamPlayer);
+	await db.delete(schema.eventOrganizer);
 	await db.delete(schema.teamPlayer);
 	await db.delete(schema.teamAlias);
 	await db.delete(schema.playerAlias);
-	await db.delete(schema.eventOrganizer);
-	await db.delete(schema.matchTeam);
-	await db.delete(schema.matchMap);
+	await db.delete(schema.player_social_account);
+	await db.delete(schema.gameAccount);
 	// Then delete parent records
+	await db.delete(schema.match);
+	await db.delete(schema.stage);
+	await db.delete(schema.event);
 	await db.delete(schema.team);
 	await db.delete(schema.player);
-	await db.delete(schema.stage);
-	await db.delete(schema.match);
-	await db.delete(schema.event);
 	await db.delete(schema.organizer);
 	// Preserve user-related tables: user, role, userRole, session, editHistory
 

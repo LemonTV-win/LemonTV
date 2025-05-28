@@ -1,20 +1,26 @@
 <!-- src/routes/(user)/admin/events/EventEdit.svelte -->
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import type { Event, Organizer, EventOrganizer } from '$lib/server/db/schema';
+	import type { Event, Organizer, EventOrganizer, Team, Player } from '$lib/server/db/schema';
 	import { m } from '$lib/paraglide/messages';
 	import ImageUpload from '$lib/components/ImageUpload.svelte';
+	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
+	import IconParkSolidAdd from '~icons/icon-park-solid/add';
 
 	let {
 		event,
 		organizers,
 		eventOrganizers,
+		teams,
+		players,
 		onCancel,
 		onSuccess: onsuccess
 	}: {
 		event: Partial<Event>;
 		organizers: Organizer[];
 		eventOrganizers: EventOrganizer[];
+		teams: Team[];
+		players: Player[];
 		onCancel: () => void;
 		onSuccess: () => void;
 	} = $props();
@@ -33,6 +39,33 @@
 		official: event.official || false,
 		organizers: eventOrganizers.map((eo) => eo.organizerId)
 	});
+
+	let teamPlayers = $state<
+		Array<{
+			teamId: string;
+			playerId: string;
+			role: 'main' | 'sub' | 'coach';
+		}>
+	>([]);
+
+	// Load existing team players when editing an event
+	$effect(() => {
+		if (event.id) {
+			fetch(`/api/events/${event.id}/team-players`)
+				.then((res) => res.json())
+				.then((data) => {
+					teamPlayers = data.map((tp: any) => ({
+						teamId: tp.teamId,
+						playerId: tp.playerId,
+						role: tp.role
+					}));
+				})
+				.catch((e) => {
+					console.error('Failed to load team players:', e);
+				});
+		}
+	});
+
 	let errorMessage = $state('');
 	let successMessage = $state('');
 	let dateRange = $state({ start: '', end: '' });
@@ -69,6 +102,25 @@
 		return true;
 	}
 
+	function addTeamPlayer() {
+		teamPlayers = [
+			...teamPlayers,
+			{
+				teamId: teams?.length > 0 ? teams[0].id : '',
+				playerId: players?.length > 0 ? players[0].id : '',
+				role: 'main'
+			}
+		];
+	}
+
+	function removeTeamPlayer(index: number) {
+		teamPlayers = teamPlayers.filter((_, i) => i !== index);
+	}
+
+	function updateTeamPlayer(index: number, field: 'teamId' | 'playerId' | 'role', value: string) {
+		teamPlayers = teamPlayers.map((tp, i) => (i === index ? { ...tp, [field]: value } : tp));
+	}
+
 	const statusOptions = ['upcoming', 'live', 'finished', 'cancelled', 'postponed'];
 	const serverOptions = {
 		strinova: 'Strinova',
@@ -76,6 +128,7 @@
 	};
 	const formatOptions = ['online', 'lan', 'hybrid'];
 	const regionOptions = ['Global', 'APAC', 'EU', 'CN', 'NA', 'SA', 'AF', 'OC'];
+	const roleOptions = ['main', 'sub', 'coach'];
 </script>
 
 <form
@@ -87,6 +140,17 @@
 				return;
 			}
 			if (result.type === 'success') {
+				// Update team players if event was created/updated successfully
+				const eventId = (result.data as { id?: string })?.id || event.id;
+				if (eventId) {
+					const formData = new FormData();
+					formData.append('eventId', eventId);
+					formData.append('players', JSON.stringify(teamPlayers));
+					await fetch('?/updateTeamPlayers', {
+						method: 'POST',
+						body: formData
+					});
+				}
 				onsuccess();
 				onCancel();
 			} else if (result.type === 'failure') {
@@ -283,6 +347,85 @@
 				class="h-4 w-4 rounded border-slate-700 bg-slate-800 text-yellow-500 focus:ring-yellow-500"
 			/>
 			<label for="official" class="ml-2 block text-sm text-slate-300">{m.official_event()}</label>
+		</div>
+
+		<div class="mb-4">
+			<h3 class="mb-2 text-lg font-semibold">Team Players</h3>
+			<div class="mt-2 rounded-lg border border-slate-700 bg-slate-800 p-4">
+				{#each teamPlayers as teamPlayer, index}
+					<div
+						class="grid grid-cols-[1fr_1fr_1fr_auto] gap-4 {index > 0
+							? 'mt-4 border-t border-slate-700 pt-4'
+							: ''}"
+					>
+						<div>
+							<label class="block text-sm font-medium text-slate-300" for="team-{index}">
+								{m.team()}
+							</label>
+							<select
+								id="team-{index}"
+								bind:value={teamPlayer.teamId}
+								class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+							>
+								<option value="">{m.select_team()}</option>
+								{#each teams as team}
+									<option value={team.id}>{team.name}</option>
+								{/each}
+							</select>
+						</div>
+						<div>
+							<label class="block text-sm font-medium text-slate-300" for="player-{index}">
+								{m.player()}
+							</label>
+							<select
+								id="player-{index}"
+								bind:value={teamPlayer.playerId}
+								class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+							>
+								<option value="">{m.select_player()}</option>
+								{#each players as player}
+									<option value={player.id}>{player.name}</option>
+								{/each}
+							</select>
+						</div>
+						<div>
+							<label class="block text-sm font-medium text-slate-300" for="role-{index}">
+								{m.role()}
+							</label>
+							<select
+								id="role-{index}"
+								bind:value={teamPlayer.role}
+								class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+							>
+								{#each roleOptions as role}
+									<option value={role}>{role}</option>
+								{/each}
+							</select>
+						</div>
+						<div class="flex items-center">
+							<button
+								type="button"
+								class="mt-[1.625rem] text-red-400 hover:text-red-300"
+								onclick={() => removeTeamPlayer(index)}
+								title={m.remove()}
+							>
+								<IconParkSolidDelete class="h-5 w-5" />
+							</button>
+						</div>
+					</div>
+				{/each}
+				{#if teamPlayers.length > 0}
+					<div class="my-4 border-t border-slate-700"></div>
+				{/if}
+				<button
+					type="button"
+					class="flex w-full items-center justify-center gap-2 rounded-md border border-dashed border-slate-700 bg-slate-800/50 px-4 py-2 text-yellow-500 transition-colors hover:border-yellow-500 hover:bg-slate-800"
+					onclick={addTeamPlayer}
+				>
+					<IconParkSolidAdd class="h-5 w-5" />
+					<span>{m.add_new_player()}</span>
+				</button>
+			</div>
 		</div>
 	</div>
 

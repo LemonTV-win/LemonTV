@@ -1,4 +1,4 @@
-import { fail } from '@sveltejs/kit';
+import { fail, error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
@@ -8,11 +8,14 @@ import {
 	type CreateEventData,
 	type UpdateEventData,
 	type EventWithOrganizers,
+	type EventTeamPlayerData,
 	toDatabaseEvent,
 	toDatabaseEventOrganizers,
 	getEventChanges,
 	getOrganizerChanges,
-	toEventWithOrganizers
+	toEventWithOrganizers,
+	getEvents,
+	updateEventTeamPlayers
 } from '$lib/server/data/events';
 
 type PermissionResult =
@@ -35,30 +38,26 @@ function checkPermissions(locals: App.Locals, requiredRoles: string[]): Permissi
 	return { status: 'success', userId: locals.user.id };
 }
 
-export const load: PageServerLoad = async ({ url }) => {
-	const eventsList = await db.select().from(table.event);
-	const organizersList = await db.select().from(table.organizer);
-	const eventOrganizersList = await db.select().from(table.eventOrganizer);
+export const load: PageServerLoad = async ({ locals, url }) => {
+	const result = checkPermissions(locals, ['admin', 'editor']);
+	if (result.status === 'error') {
+		throw error(result.statusCode, result.error);
+	}
 
-	const action = url.searchParams.get('action');
-	const id = url.searchParams.get('id');
-
-	// Transform events to include organizers
-	const eventsWithOrganizers: EventWithOrganizers[] = eventsList.map((event) =>
-		toEventWithOrganizers(event, eventOrganizersList, organizersList)
-	);
+	const events = await getEvents();
+	const organizers = await db.select().from(table.organizer);
+	const eventOrganizers = await db.select().from(table.eventOrganizer);
+	const teams = await db.select().from(table.team);
+	const players = await db.select().from(table.player);
 
 	return {
-		events: await Promise.all(
-			eventsWithOrganizers.map(async (event) => ({
-				...event,
-				imageURL: await processImageURL(event.image)
-			}))
-		),
-		organizers: organizersList,
-		eventOrganizers: eventOrganizersList,
-		action,
-		id
+		events,
+		organizers,
+		eventOrganizers,
+		teams,
+		players,
+		action: url.searchParams.get('action'),
+		id: url.searchParams.get('id')
 	};
 };
 
@@ -129,7 +128,8 @@ export const actions = {
 			});
 
 			return {
-				success: true
+				success: true,
+				id: eventId
 			};
 		} catch (e) {
 			console.error('[Admin][Events][Create] Failed to create event:', e);
@@ -353,6 +353,39 @@ export const actions = {
 			console.error('[Admin][Events][Upload] Failed to upload image:', e);
 			return fail(500, {
 				error: 'Failed to upload image'
+			});
+		}
+	},
+
+	updateTeamPlayers: async ({ request, locals }) => {
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
+			});
+		}
+
+		const formData = await request.formData();
+		const eventId = formData.get('eventId') as string;
+		const playersData = formData.get('players') as string;
+
+		if (!eventId || !playersData) {
+			return fail(400, {
+				error: 'Event ID and players data are required'
+			});
+		}
+
+		try {
+			const players = JSON.parse(playersData) as EventTeamPlayerData[];
+			await updateEventTeamPlayers(eventId, players, result.userId);
+
+			return {
+				success: true
+			};
+		} catch (e) {
+			console.error('[Admin][Events][UpdateTeamPlayers] Failed to update event team players:', e);
+			return fail(500, {
+				error: 'Failed to update event team players'
 			});
 		}
 	}
