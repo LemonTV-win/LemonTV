@@ -93,7 +93,7 @@ export const actions = {
 			!eventData.region ||
 			!eventData.image ||
 			!eventData.status ||
-			!eventData.capacity ||
+			// !eventData.capacity ||
 			!eventData.date
 		) {
 			return fail(400, {
