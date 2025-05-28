@@ -14,6 +14,38 @@
 	let isUploading = $state(false);
 	let selectedFile = $state<File | null>(null);
 	let imageInputMode = $state<'upload' | 'url'>('upload');
+	let previewUrl = $state<string | null>(null);
+
+	// Cleanup preview URL when component is destroyed
+	$effect(() => {
+		return () => {
+			if (previewUrl) {
+				URL.revokeObjectURL(previewUrl);
+			}
+		};
+	});
+
+	// Handle file selection
+	function handleFileSelect(file: File | null) {
+		if (previewUrl) {
+			URL.revokeObjectURL(previewUrl);
+			previewUrl = null;
+		}
+
+		if (file) {
+			previewUrl = URL.createObjectURL(file);
+		}
+		selectedFile = file;
+	}
+
+	// Format file size
+	function formatFileSize(bytes: number): string {
+		if (bytes === 0) return '0 Bytes';
+		const k = 1024;
+		const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+		const i = Math.floor(Math.log(bytes) / Math.log(k));
+		return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+	}
 
 	async function handleFileUpload() {
 		if (!selectedFile) {
@@ -40,12 +72,12 @@
 			if (response.ok) {
 				value = result.key;
 				successMessage = m.image_uploaded();
-				// Clear the file input
+				// Clear the file input and preview
 				const fileInput = document.getElementById('imageFile') as HTMLInputElement;
 				if (fileInput) {
 					fileInput.value = '';
 				}
-				selectedFile = null;
+				handleFileSelect(null);
 			} else {
 				errorMessage = result.error || m.failed_to_upload();
 			}
@@ -104,7 +136,7 @@
 					onchange={(event) => {
 						const input = event.currentTarget;
 						if (input.files && input.files[0]) {
-							selectedFile = input.files[0];
+							handleFileSelect(input.files[0]);
 						}
 					}}
 					class="block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
@@ -118,6 +150,28 @@
 					{isUploading ? m.uploading() : m.upload()}
 				</button>
 			</div>
+
+			{#if selectedFile && previewUrl}
+				<div class="rounded-md border border-slate-700 bg-slate-800/50 p-4">
+					<div class="flex flex-col gap-4">
+						<div class="relative aspect-video w-full overflow-hidden rounded-md">
+							<img src={previewUrl} alt="Preview" class="h-full w-full object-contain" />
+						</div>
+						<div class="space-y-2 text-sm text-slate-300">
+							<div class="flex justify-between">
+								<span class="font-mono">{selectedFile.name}</span>
+							</div>
+							<div class="flex justify-between">
+								<span class="font-mono">{formatFileSize(selectedFile.size)}</span>
+							</div>
+							<div class="flex justify-between">
+								<span class="font-mono">{selectedFile.type}</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			{/if}
+
 			{#if value}
 				<input
 					type="text"
