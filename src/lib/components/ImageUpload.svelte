@@ -157,15 +157,57 @@
 						<div class="relative aspect-video w-full overflow-hidden rounded-md">
 							<img src={previewUrl} alt="Preview" class="h-full w-full object-contain" />
 						</div>
-						<div class="space-y-2 text-sm text-slate-300">
-							<div class="flex justify-between">
-								<span class="font-mono">{selectedFile.name}</span>
+						<div
+							class="flex items-center justify-between gap-4 rounded-md bg-slate-800/50 p-3 text-sm text-slate-300"
+						>
+							<div class="flex items-center gap-2">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									class="h-4 w-4"
+									viewBox="0 0 20 20"
+									fill="currentColor"
+								>
+									<path
+										fill-rule="evenodd"
+										d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"
+										clip-rule="evenodd"
+									/>
+								</svg>
+								<span class="max-w-[200px] truncate font-mono" title={selectedFile.name}
+									>{selectedFile.name}</span
+								>
 							</div>
-							<div class="flex justify-between">
-								<span class="font-mono">{formatFileSize(selectedFile.size)}</span>
-							</div>
-							<div class="flex justify-between">
-								<span class="font-mono">{selectedFile.type}</span>
+							<div class="flex items-center gap-4">
+								<div class="flex items-center gap-1" title={formatFileSize(selectedFile.size)}>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										class="h-4 w-4"
+										viewBox="0 0 20 20"
+										fill="currentColor"
+									>
+										<path
+											fill-rule="evenodd"
+											d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 100-12 6 6 0 000 12z"
+											clip-rule="evenodd"
+										/>
+									</svg>
+									<span class="font-mono">{formatFileSize(selectedFile.size)}</span>
+								</div>
+								<div class="flex items-center gap-1" title={selectedFile.type}>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										class="h-4 w-4"
+										viewBox="0 0 20 20"
+										fill="currentColor"
+									>
+										<path
+											fill-rule="evenodd"
+											d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+											clip-rule="evenodd"
+										/>
+									</svg>
+									<span class="font-mono">{selectedFile.type.split('/')[1].toUpperCase()}</span>
+								</div>
 							</div>
 						</div>
 					</div>
