@@ -150,6 +150,7 @@
 				})()}
 				teams={data.teams}
 				players={data.players}
+				teamPlayers={data.teamPlayers}
 				onCancel={handleCancel}
 				onSuccess={handleSuccess}
 			/>

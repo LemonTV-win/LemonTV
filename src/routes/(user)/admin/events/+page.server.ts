@@ -49,6 +49,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	const eventOrganizers = await db.select().from(table.eventOrganizer);
 	const teams = await db.select().from(table.team);
 	const players = await db.select().from(table.player);
+	const teamPlayers = await db.select().from(table.teamPlayer);
 
 	return {
 		events,
@@ -56,6 +57,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		eventOrganizers,
 		teams,
 		players,
+		teamPlayers,
 		action: url.searchParams.get('action'),
 		id: url.searchParams.get('id')
 	};

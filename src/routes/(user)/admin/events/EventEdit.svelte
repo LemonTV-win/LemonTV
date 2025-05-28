@@ -13,6 +13,7 @@
 		eventOrganizers,
 		teams,
 		players,
+		teamPlayers,
 		onCancel,
 		onSuccess: onsuccess
 	}: {
@@ -21,6 +22,7 @@
 		eventOrganizers: EventOrganizer[];
 		teams: Team[];
 		players: Player[];
+		teamPlayers: Array<{ teamId: string; playerId: string; role: string }>;
 		onCancel: () => void;
 		onSuccess: () => void;
 	} = $props();
@@ -40,7 +42,7 @@
 		organizers: eventOrganizers.map((eo) => eo.organizerId)
 	});
 
-	let teamPlayers = $state<
+	let eventTeamPlayers = $state<
 		Array<{
 			teamId: string;
 			playerId: string;
@@ -48,22 +50,41 @@
 		}>
 	>([]);
 
+	// Track selected teams
+	let selectedTeams = $state<string[]>([]);
+
+	// Group players by team
+	let playersByTeam = $state<Record<string, Player[]>>({});
+
 	// Load existing team players when editing an event
 	$effect(() => {
 		if (event.id) {
 			fetch(`/api/events/${event.id}/team-players`)
 				.then((res) => res.json())
 				.then((data) => {
-					teamPlayers = data.map((tp: any) => ({
+					eventTeamPlayers = data.map((tp: any) => ({
 						teamId: tp.teamId,
 						playerId: tp.playerId,
 						role: tp.role
 					}));
+					// Initialize selected teams from existing team players
+					selectedTeams = [...new Set(eventTeamPlayers.map((tp) => tp.teamId))];
 				})
 				.catch((e) => {
 					console.error('Failed to load team players:', e);
 				});
 		}
+	});
+
+	// Update playersByTeam when eventTeamPlayers changes
+	$effect(() => {
+		const grouped: Record<string, Player[]> = {};
+		teams.forEach((team) => {
+			grouped[team.id] = players.filter((player) =>
+				eventTeamPlayers.some((tp) => tp.teamId === team.id && tp.playerId === player.id)
+			);
+		});
+		playersByTeam = grouped;
 	});
 
 	let errorMessage = $state('');
@@ -102,23 +123,52 @@
 		return true;
 	}
 
-	function addTeamPlayer() {
-		teamPlayers = [
-			...teamPlayers,
+	function addTeam(teamId: string) {
+		if (!selectedTeams.includes(teamId)) {
+			selectedTeams = [...selectedTeams, teamId];
+			// Add all players from the team by default, but only if they're not already assigned
+			const newTeamPlayers = teamPlayers
+				.filter((tp) => tp.teamId === teamId)
+				.filter(
+					(tp) =>
+						!eventTeamPlayers.some((etp) => etp.teamId === teamId && etp.playerId === tp.playerId)
+				)
+				.map((tp) => ({
+					teamId,
+					playerId: tp.playerId,
+					role: 'main' as const
+				}));
+			eventTeamPlayers = [...eventTeamPlayers, ...newTeamPlayers];
+		}
+	}
+
+	function removeTeam(teamId: string) {
+		selectedTeams = selectedTeams.filter((id) => id !== teamId);
+		// Remove all players associated with this team
+		eventTeamPlayers = eventTeamPlayers.filter((tp) => tp.teamId !== teamId);
+	}
+
+	function addTeamPlayer(teamId: string) {
+		eventTeamPlayers = [
+			...eventTeamPlayers,
 			{
-				teamId: teams?.length > 0 ? teams[0].id : '',
+				teamId,
 				playerId: players?.length > 0 ? players[0].id : '',
 				role: 'main'
 			}
 		];
 	}
 
-	function removeTeamPlayer(index: number) {
-		teamPlayers = teamPlayers.filter((_, i) => i !== index);
+	function removeTeamPlayer(teamPlayer: { teamId: string; playerId: string; role: string }) {
+		eventTeamPlayers = eventTeamPlayers.filter(
+			(tp) => !(tp.teamId === teamPlayer.teamId && tp.playerId === teamPlayer.playerId)
+		);
 	}
 
 	function updateTeamPlayer(index: number, field: 'teamId' | 'playerId' | 'role', value: string) {
-		teamPlayers = teamPlayers.map((tp, i) => (i === index ? { ...tp, [field]: value } : tp));
+		eventTeamPlayers = eventTeamPlayers.map((tp, i) =>
+			i === index ? { ...tp, [field]: value } : tp
+		);
 	}
 
 	const statusOptions = ['upcoming', 'live', 'finished', 'cancelled', 'postponed'];
@@ -145,7 +195,7 @@
 				if (eventId) {
 					const formData = new FormData();
 					formData.append('eventId', eventId);
-					formData.append('players', JSON.stringify(teamPlayers));
+					formData.append('players', JSON.stringify(eventTeamPlayers));
 					await fetch('?/updateTeamPlayers', {
 						method: 'POST',
 						body: formData
@@ -350,81 +400,144 @@
 		</div>
 
 		<div class="mb-4">
-			<h3 class="mb-2 text-lg font-semibold">Team Players</h3>
-			<div class="mt-2 rounded-lg border border-slate-700 bg-slate-800 p-4">
-				{#each teamPlayers as teamPlayer, index}
-					<div
-						class="grid grid-cols-[1fr_1fr_1fr_auto] gap-4 {index > 0
-							? 'mt-4 border-t border-slate-700 pt-4'
-							: ''}"
+			<h3 class="mb-2 text-lg font-semibold">Teams and Players</h3>
+
+			<!-- Team Selection -->
+			<div class="mb-6">
+				<label for="team-select" class="mb-2 block text-sm font-medium text-slate-300"
+					>Select Teams</label
+				>
+				<div class="flex items-center gap-2">
+					<select
+						id="team-select"
+						class="flex-1 rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 					>
-						<div>
-							<label class="block text-sm font-medium text-slate-300" for="team-{index}">
-								{m.team()}
-							</label>
-							<select
-								id="team-{index}"
-								bind:value={teamPlayer.teamId}
-								class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-							>
-								<option value="">{m.select_team()}</option>
-								{#each teams as team}
-									<option value={team.id}>{team.name}</option>
-								{/each}
-							</select>
-						</div>
-						<div>
-							<label class="block text-sm font-medium text-slate-300" for="player-{index}">
-								{m.player()}
-							</label>
-							<select
-								id="player-{index}"
-								bind:value={teamPlayer.playerId}
-								class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-							>
-								<option value="">{m.select_player()}</option>
-								{#each players as player}
-									<option value={player.id}>{player.name}</option>
-								{/each}
-							</select>
-						</div>
-						<div>
-							<label class="block text-sm font-medium text-slate-300" for="role-{index}">
-								{m.role()}
-							</label>
-							<select
-								id="role-{index}"
-								bind:value={teamPlayer.role}
-								class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-							>
-								{#each roleOptions as role}
-									<option value={role}>{role}</option>
-								{/each}
-							</select>
-						</div>
-						<div class="flex items-center">
+						<option value="">{m.select_team()}</option>
+						{#each teams.filter((team) => !selectedTeams.includes(team.id)) as team}
+							<option value={team.id}>{team.name}</option>
+						{/each}
+					</select>
+					<button
+						type="button"
+						class="flex items-center gap-2 rounded-md bg-yellow-500 px-3 py-2 text-sm font-medium text-black transition-colors hover:bg-yellow-600"
+						onclick={() => {
+							const select = document.getElementById('team-select') as HTMLSelectElement;
+							const teamId = select.value;
+							if (teamId) {
+								addTeam(teamId);
+								select.value = '';
+							}
+						}}
+					>
+						<IconParkSolidAdd class="h-4 w-4" />
+						{m.add()}
+					</button>
+				</div>
+			</div>
+
+			<!-- Team Players -->
+			<div class="mt-2 space-y-4">
+				{#each teams.filter((team) => selectedTeams.includes(team.id)) as team}
+					<div class="rounded-lg border border-slate-700 bg-slate-800 p-4">
+						<div class="mb-4 flex items-center justify-between">
+							<div class="flex items-center gap-2">
+								<h4 class="text-md font-medium text-slate-300">{team.name}</h4>
+								<button
+									type="button"
+									class="text-red-400 hover:text-red-300"
+									onclick={() => removeTeam(team.id)}
+									title={m.remove_team()}
+								>
+									<IconParkSolidDelete class="h-5 w-5" />
+								</button>
+							</div>
 							<button
 								type="button"
-								class="mt-[1.625rem] text-red-400 hover:text-red-300"
-								onclick={() => removeTeamPlayer(index)}
-								title={m.remove()}
+								class="flex items-center gap-2 rounded-md border border-dashed border-slate-700 bg-slate-800/50 px-3 py-1.5 text-yellow-500 transition-colors hover:border-yellow-500 hover:bg-slate-800"
+								onclick={() => addTeamPlayer(team.id)}
 							>
-								<IconParkSolidDelete class="h-5 w-5" />
+								<IconParkSolidAdd class="h-4 w-4" />
+								<span class="text-sm">{m.add_new_player()}</span>
 							</button>
 						</div>
+
+						{#if playersByTeam[team.id]?.length > 0}
+							<div class="space-y-3">
+								{#each playersByTeam[team.id] as player, index}
+									{@const teamPlayer = eventTeamPlayers.find(
+										(tp) => tp.teamId === team.id && tp.playerId === player.id
+									)}
+									{#if teamPlayer}
+										<div
+											class="grid grid-cols-[1fr_1fr_auto] gap-4 rounded-md border border-slate-700 bg-slate-800/50 p-3"
+										>
+											<div>
+												<label
+													class="block text-sm font-medium text-slate-300"
+													for="player-{team.id}-{index}"
+												>
+													{m.player()}
+												</label>
+												<select
+													id="player-{team.id}-{index}"
+													bind:value={teamPlayer.playerId}
+													class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+												>
+													<option value="">{m.select_player()}</option>
+													{#if teamPlayers.filter((tp) => tp.teamId === team.id).length > 0}
+														<optgroup label="Team Players">
+															{#each teamPlayers
+																.filter((tp) => tp.teamId === team.id)
+																.map((tp) => players.find((p) => p.id === tp.playerId)) as player}
+																{#if player}
+																	<option value={player.id}>{player.name} (Team)</option>
+																{/if}
+															{/each}
+														</optgroup>
+													{/if}
+													<optgroup label="Other Players">
+														{#each players.filter((p) => !teamPlayers.some((tp) => tp.teamId === team.id && tp.playerId === p.id)) as player}
+															<option value={player.id}>{player.name}</option>
+														{/each}
+													</optgroup>
+												</select>
+											</div>
+											<div>
+												<label
+													class="block text-sm font-medium text-slate-300"
+													for="role-{team.id}-{index}"
+												>
+													{m.role()}
+												</label>
+												<select
+													id="role-{team.id}-{index}"
+													bind:value={teamPlayer.role}
+													class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+												>
+													{#each roleOptions as role}
+														<option value={role}>{role}</option>
+													{/each}
+												</select>
+											</div>
+											<div class="flex items-center">
+												<button
+													type="button"
+													class="mt-[1.625rem] text-red-400 hover:text-red-300"
+													onclick={() => removeTeamPlayer(teamPlayer)}
+													title={m.remove()}
+												>
+													<IconParkSolidDelete class="h-5 w-5" />
+												</button>
+											</div>
+										</div>
+									{/if}
+								{/each}
+							</div>
+						{:else}
+							<p class="text-sm text-slate-400">{m.no_data()}</p>
+						{/if}
 					</div>
 				{/each}
-				{#if teamPlayers.length > 0}
-					<div class="my-4 border-t border-slate-700"></div>
-				{/if}
-				<button
-					type="button"
-					class="flex w-full items-center justify-center gap-2 rounded-md border border-dashed border-slate-700 bg-slate-800/50 px-4 py-2 text-yellow-500 transition-colors hover:border-yellow-500 hover:bg-slate-800"
-					onclick={addTeamPlayer}
-				>
-					<IconParkSolidAdd class="h-5 w-5" />
-					<span>{m.add_new_player()}</span>
-				</button>
 			</div>
 		</div>
 	</div>

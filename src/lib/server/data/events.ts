@@ -248,8 +248,7 @@ export function getEventTeamPlayerChanges(
 			(current) =>
 				current.eventId === newPlayer.eventId &&
 				current.teamId === newPlayer.teamId &&
-				current.playerId === newPlayer.playerId &&
-				current.role === newPlayer.role
+				current.playerId === newPlayer.playerId
 		);
 		if (!exists) {
 			toAdd.push(newPlayer);
@@ -262,8 +261,7 @@ export function getEventTeamPlayerChanges(
 			(newPlayer) =>
 				current.eventId === newPlayer.eventId &&
 				current.teamId === newPlayer.teamId &&
-				current.playerId === newPlayer.playerId &&
-				current.role === newPlayer.role
+				current.playerId === newPlayer.playerId
 		);
 		if (!exists) {
 			toRemove.push(current);
@@ -293,48 +291,32 @@ export async function updateEventTeamPlayers(
 	players: EventTeamPlayerData[],
 	userId: string
 ) {
-	// Get current players
-	const currentPlayers = await db
-		.select()
-		.from(table.eventTeamPlayer)
-		.where(eq(table.eventTeamPlayer.eventId, eventId));
+	await db.transaction(async (tx) => {
+		// Get current players for history
+		const currentPlayers = await tx
+			.select()
+			.from(table.eventTeamPlayer)
+			.where(eq(table.eventTeamPlayer.eventId, eventId));
 
-	// Get changes
-	const { toAdd, toRemove } = getEventTeamPlayerChanges(currentPlayers, players);
+		// Delete all players for this event
+		await tx.delete(table.eventTeamPlayer).where(eq(table.eventTeamPlayer.eventId, eventId));
 
-	// Add new players
-	if (toAdd.length > 0) {
-		await db.insert(table.eventTeamPlayer).values(
-			toAdd.map((player) => ({
-				eventId: eventId,
-				teamId: player.teamId,
-				playerId: player.playerId,
-				role: player.role,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}))
-		);
-	}
-
-	// Remove old players
-	if (toRemove.length > 0) {
-		await db
-			.delete(table.eventTeamPlayer)
-			.where(
-				toRemove
-					.map(
-						(p) =>
-							eq(table.eventTeamPlayer.eventId, p.eventId) &&
-							eq(table.eventTeamPlayer.teamId, p.teamId) &&
-							eq(table.eventTeamPlayer.playerId, p.playerId)
-					)
-					.reduce((acc, condition) => acc || condition)
+		// Add new players
+		if (players.length > 0) {
+			await tx.insert(table.eventTeamPlayer).values(
+				players.map((player) => ({
+					eventId: eventId,
+					teamId: player.teamId,
+					playerId: player.playerId,
+					role: player.role,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				}))
 			);
-	}
+		}
 
-	// Add edit history
-	if (toAdd.length > 0 || toRemove.length > 0) {
-		await db.insert(table.editHistory).values({
+		// Add edit history
+		await tx.insert(table.editHistory).values({
 			id: crypto.randomUUID(),
 			tableName: 'event_team_player',
 			recordId: eventId,
@@ -344,7 +326,7 @@ export async function updateEventTeamPlayers(
 			editedBy: userId,
 			editedAt: new Date()
 		});
-	}
+	});
 }
 
 // export interface Event {
