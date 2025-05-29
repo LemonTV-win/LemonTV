@@ -52,6 +52,8 @@
 
 	// Track selected teams
 	let selectedTeams = $state<string[]>([]);
+	// Track which teams are expanded
+	let expandedTeams = $state<Set<string>>(new Set());
 
 	// Group players by team
 	let playersByTeam = $state<Record<string, Player[]>>({});
@@ -139,6 +141,8 @@
 					role: 'main' as const
 				}));
 			eventTeamPlayers = [...eventTeamPlayers, ...newTeamPlayers];
+			// Expand the team when adding it
+			expandedTeams.add(teamId);
 		}
 	}
 
@@ -146,6 +150,17 @@
 		selectedTeams = selectedTeams.filter((id) => id !== teamId);
 		// Remove all players associated with this team
 		eventTeamPlayers = eventTeamPlayers.filter((tp) => tp.teamId !== teamId);
+		// Remove from expanded teams
+		expandedTeams.delete(teamId);
+	}
+
+	function toggleTeam(teamId: string) {
+		if (expandedTeams.has(teamId)) {
+			expandedTeams.delete(teamId);
+		} else {
+			expandedTeams.add(teamId);
+		}
+		expandedTeams = new Set(expandedTeams); // Trigger reactivity
 	}
 
 	function addTeamPlayer(teamId: string) {
@@ -179,6 +194,17 @@
 	const formatOptions = ['online', 'lan', 'hybrid'];
 	const regionOptions = ['Global', 'APAC', 'EU', 'CN', 'NA', 'SA', 'AF', 'OC'];
 	const roleOptions = ['main', 'sub', 'coach'];
+
+	// Helper function to get role counts for a team
+	function getTeamRoleCounts(teamId: string) {
+		const counts = { main: 0, sub: 0, coach: 0 };
+		eventTeamPlayers
+			.filter((tp) => tp.teamId === teamId)
+			.forEach((tp) => {
+				counts[tp.role as keyof typeof counts]++;
+			});
+		return counts;
+	}
 </script>
 
 <form
@@ -438,103 +464,164 @@
 			<!-- Team Players -->
 			<div class="mt-2 space-y-4">
 				{#each teams.filter((team) => selectedTeams.includes(team.id)) as team}
-					<div class="rounded-lg border border-slate-700 bg-slate-800 p-4">
-						<div class="mb-4 flex items-center justify-between">
+					<div class="rounded-lg border border-slate-700 bg-slate-800">
+						<div
+							role="button"
+							tabindex="0"
+							class="flex w-full cursor-pointer items-center justify-between p-4 text-left"
+							onclick={() => toggleTeam(team.id)}
+							onkeydown={(e) => e.key === 'Enter' && toggleTeam(team.id)}
+						>
 							<div class="flex items-center gap-2">
 								<h4 class="text-md font-medium text-slate-300">{team.name}</h4>
+								<div class="flex items-center gap-1.5">
+									{#each Object.entries(getTeamRoleCounts(team.id)) as [role, count]}
+										{#if count > 0}
+											<span
+												class="rounded-full px-1.5 py-0.5 text-xs font-medium {role === 'main'
+													? 'bg-blue-900/50 text-blue-300'
+													: role === 'sub'
+														? 'bg-purple-900/50 text-purple-300'
+														: 'bg-amber-900/50 text-amber-300'}"
+												title={`${count} ${role}${count === 1 ? '' : 's'}`}
+											>
+												{count}
+											</span>
+										{/if}
+									{/each}
+									{#if !Object.values(getTeamRoleCounts(team.id)).some((count) => count > 0)}
+										<span
+											class="rounded-full bg-slate-700 px-1.5 py-0.5 text-xs text-slate-400"
+											title="No players"
+										>
+											0
+										</span>
+									{/if}
+								</div>
 								<button
 									type="button"
 									class="text-red-400 hover:text-red-300"
-									onclick={() => removeTeam(team.id)}
+									onclick={(e) => {
+										e.stopPropagation();
+										removeTeam(team.id);
+									}}
 									title={m.remove_team()}
 								>
 									<IconParkSolidDelete class="h-5 w-5" />
 								</button>
 							</div>
-							<button
-								type="button"
-								class="flex items-center gap-2 rounded-md border border-dashed border-slate-700 bg-slate-800/50 px-3 py-1.5 text-yellow-500 transition-colors hover:border-yellow-500 hover:bg-slate-800"
-								onclick={() => addTeamPlayer(team.id)}
-							>
-								<IconParkSolidAdd class="h-4 w-4" />
-								<span class="text-sm">{m.add_new_player()}</span>
-							</button>
+							<div class="flex items-center gap-2">
+								<button
+									type="button"
+									class="flex items-center gap-2 rounded-md border border-dashed border-slate-700 bg-slate-800/50 px-3 py-1.5 text-yellow-500 transition-colors hover:border-yellow-500 hover:bg-slate-800"
+									onclick={(e) => {
+										e.stopPropagation();
+										addTeamPlayer(team.id);
+										expandedTeams.add(team.id);
+										expandedTeams = new Set(expandedTeams);
+									}}
+								>
+									<IconParkSolidAdd class="h-4 w-4" />
+									<span class="text-sm">{m.add_new_player()}</span>
+								</button>
+								<svg
+									class="h-5 w-5 transform text-slate-400 transition-transform {expandedTeams.has(
+										team.id
+									)
+										? 'rotate-180'
+										: ''}"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M19 9l-7 7-7-7"
+									/>
+								</svg>
+							</div>
 						</div>
 
-						{#if playersByTeam[team.id]?.length > 0}
-							<div class="space-y-3">
-								{#each playersByTeam[team.id] as player, index}
-									{@const teamPlayer = eventTeamPlayers.find(
-										(tp) => tp.teamId === team.id && tp.playerId === player.id
-									)}
-									{#if teamPlayer}
-										<div
-											class="grid grid-cols-[1fr_1fr_auto] gap-4 rounded-md border border-slate-700 bg-slate-800/50 p-3"
-										>
-											<div>
-												<label
-													class="block text-sm font-medium text-slate-300"
-													for="player-{team.id}-{index}"
+						{#if expandedTeams.has(team.id)}
+							<div class="border-t border-slate-700 p-4">
+								{#if playersByTeam[team.id]?.length > 0}
+									<div class="space-y-3">
+										{#each playersByTeam[team.id] as player, index}
+											{@const teamPlayer = eventTeamPlayers.find(
+												(tp) => tp.teamId === team.id && tp.playerId === player.id
+											)}
+											{#if teamPlayer}
+												<div
+													class="grid grid-cols-[1fr_1fr_auto] gap-4 rounded-md border border-slate-700 bg-slate-800/50 p-3"
 												>
-													{m.player()}
-												</label>
-												<select
-													id="player-{team.id}-{index}"
-													bind:value={teamPlayer.playerId}
-													class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-												>
-													<option value="">{m.select_player()}</option>
-													{#if teamPlayers.filter((tp) => tp.teamId === team.id).length > 0}
-														<optgroup label="Team Players">
-															{#each teamPlayers
-																.filter((tp) => tp.teamId === team.id)
-																.map((tp) => players.find((p) => p.id === tp.playerId)) as player}
-																{#if player}
-																	<option value={player.id}>{player.name} (Team)</option>
-																{/if}
+													<div>
+														<label
+															class="block text-sm font-medium text-slate-300"
+															for="player-{team.id}-{index}"
+														>
+															{m.player()}
+														</label>
+														<select
+															id="player-{team.id}-{index}"
+															bind:value={teamPlayer.playerId}
+															class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+														>
+															<option value="">{m.select_player()}</option>
+															{#if teamPlayers.filter((tp) => tp.teamId === team.id).length > 0}
+																<optgroup label="Team Players">
+																	{#each teamPlayers
+																		.filter((tp) => tp.teamId === team.id)
+																		.map( (tp) => players.find((p) => p.id === tp.playerId) ) as player}
+																		{#if player}
+																			<option value={player.id}>{player.name} (Team)</option>
+																		{/if}
+																	{/each}
+																</optgroup>
+															{/if}
+															<optgroup label="Other Players">
+																{#each players.filter((p) => !teamPlayers.some((tp) => tp.teamId === team.id && tp.playerId === p.id)) as player}
+																	<option value={player.id}>{player.name}</option>
+																{/each}
+															</optgroup>
+														</select>
+													</div>
+													<div>
+														<label
+															class="block text-sm font-medium text-slate-300"
+															for="role-{team.id}-{index}"
+														>
+															{m.role()}
+														</label>
+														<select
+															id="role-{team.id}-{index}"
+															bind:value={teamPlayer.role}
+															class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+														>
+															{#each roleOptions as role}
+																<option value={role}>{role}</option>
 															{/each}
-														</optgroup>
-													{/if}
-													<optgroup label="Other Players">
-														{#each players.filter((p) => !teamPlayers.some((tp) => tp.teamId === team.id && tp.playerId === p.id)) as player}
-															<option value={player.id}>{player.name}</option>
-														{/each}
-													</optgroup>
-												</select>
-											</div>
-											<div>
-												<label
-													class="block text-sm font-medium text-slate-300"
-													for="role-{team.id}-{index}"
-												>
-													{m.role()}
-												</label>
-												<select
-													id="role-{team.id}-{index}"
-													bind:value={teamPlayer.role}
-													class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-												>
-													{#each roleOptions as role}
-														<option value={role}>{role}</option>
-													{/each}
-												</select>
-											</div>
-											<div class="flex items-center">
-												<button
-													type="button"
-													class="mt-[1.625rem] text-red-400 hover:text-red-300"
-													onclick={() => removeTeamPlayer(teamPlayer)}
-													title={m.remove()}
-												>
-													<IconParkSolidDelete class="h-5 w-5" />
-												</button>
-											</div>
-										</div>
-									{/if}
-								{/each}
+														</select>
+													</div>
+													<div class="flex items-center">
+														<button
+															type="button"
+															class="mt-[1.625rem] text-red-400 hover:text-red-300"
+															onclick={() => removeTeamPlayer(teamPlayer)}
+															title={m.remove()}
+														>
+															<IconParkSolidDelete class="h-5 w-5" />
+														</button>
+													</div>
+												</div>
+											{/if}
+										{/each}
+									</div>
+								{:else}
+									<p class="text-sm text-slate-400">{m.no_data()}</p>
+								{/if}
 							</div>
-						{:else}
-							<p class="text-sm text-slate-400">{m.no_data()}</p>
 						{/if}
 					</div>
 				{/each}
