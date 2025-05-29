@@ -19,7 +19,7 @@
 	let { data }: { data: PageData } = $props();
 	let { events, action, id, organizers, eventOrganizers } = $derived(data);
 
-	$inspect('data', data);
+	$inspect('[admin/events] data', data);
 
 	let selectedEvent: EventWithOrganizers | null = $state(null);
 	let searchQuery = $state('');
@@ -240,10 +240,10 @@
 					<tr class="border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl">
 						<td class="min-w-max overflow-hidden px-4 py-1">
 							<div class="flex min-w-max items-center">
-								{#if event.image}
+								{#if event.imageURL}
 									<img
 										class="mr-3 h-10 w-10 flex-shrink-0 rounded-full"
-										src={event.image}
+										src={event.imageURL}
 										alt={event.name}
 									/>
 								{/if}

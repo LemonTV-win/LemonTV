@@ -177,7 +177,7 @@ export async function getEvents(conditions: { organizerIds?: string[] } = {}): P
 		Array.from(eventsMap.values()).map(async ({ event, organizers, teamPlayers }) => ({
 			...event,
 			organizers,
-			image: await processImageURL(event.image),
+			imageURL: await processImageURL(event.image),
 			teamPlayers
 		}))
 	);

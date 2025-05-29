@@ -57,6 +57,7 @@ export interface Event {
 	// location: string;
 	// description: string;
 	image: string;
+	imageURL?: string;
 	status: 'upcoming' | 'live' | 'finished' | 'cancelled' | 'postponed';
 	stages: Stage[];
 
