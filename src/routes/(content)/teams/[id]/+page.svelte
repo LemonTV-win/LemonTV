@@ -127,7 +127,7 @@
 		</h2>
 		{#if data.teamMatches}
 			<ul class="grid grid-cols-1 gap-3">
-				{#each data.teamMatches as match}
+				{#each data.teamMatches.toSorted((a, b) => new Date(b.event.date).getTime() - new Date(a.event.date).getTime()) as match}
 					{#if match}
 						<MatchCard {match} event={match.event} teamIndex={match.teamIndex} teams={data.teams} />
 					{/if}

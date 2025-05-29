@@ -161,7 +161,7 @@
 				<h2 class="my-5 text-xl font-bold">{m.recent_matches()}</h2>
 				<ul class="flex flex-col gap-2">
 					{#if data.playerMatches.length > 0}
-						{#each data.playerMatches as match}
+						{#each data.playerMatches.toSorted((a, b) => new Date(b.event.date).getTime() - new Date(a.event.date).getTime()) as match}
 							{#if match}
 								<MatchCard
 									{match}
