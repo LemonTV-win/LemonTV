@@ -4,7 +4,6 @@
 	import IconImage from '~icons/carbon/image';
 	import IconDocument from '~icons/carbon/document';
 	import IconCircle from '~icons/carbon/circle-dash';
-	import IconImageMedia from '~icons/carbon/image-media';
 
 	let {
 		value = $bindable(),
@@ -242,7 +241,7 @@
 								<span class="font-mono">{formatFileSize(selectedFile.size)}</span>
 							</div>
 							<div class="flex items-center gap-1" title={selectedFile.type}>
-								<IconImageMedia class="h-4 w-4" />
+								<IconImage class="h-4 w-4" />
 								<span class="font-mono">{selectedFile.type.split('/')[1].toUpperCase()}</span>
 							</div>
 						</div>
