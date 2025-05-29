@@ -1,5 +1,10 @@
 <script lang="ts">
 	import { m } from '$lib/paraglide/messages';
+	import IconExclamationCircle from '~icons/carbon/warning-alt';
+	import IconImage from '~icons/carbon/image';
+	import IconDocument from '~icons/carbon/document';
+	import IconCircle from '~icons/carbon/circle-dash';
+	import IconImageMedia from '~icons/carbon/image-media';
 
 	let {
 		value = $bindable(),
@@ -12,10 +17,11 @@
 	let errorMessage = $state('');
 	let successMessage = $state('');
 	let isUploading = $state(false);
-	let selectedFile = $state<File | null>(null);
-	let imageInputMode = $state<'upload' | 'url'>('upload');
-	let previewUrl = $state<string | null>(null);
-	let displayUrl = $state<string | null>(null);
+	let selectedFile: File | null = $state(null);
+	let imageInputMode: 'upload' | 'url' = $state('upload');
+	let previewUrl: string | null = $state(null);
+	let displayUrl: string | null = $state(null);
+	let imageLoadError = $state(false);
 
 	// Cleanup preview URL when component is destroyed
 	$effect(() => {
@@ -114,6 +120,23 @@
 			isUploading = false;
 		}
 	}
+
+	function handleImageError() {
+		imageLoadError = true;
+		errorMessage = 'Invalid image URL';
+	}
+
+	function resetImageError() {
+		imageLoadError = false;
+		errorMessage = '';
+	}
+
+	// Reset error state when value changes
+	$effect(() => {
+		if (value) {
+			resetImageError();
+		}
+	});
 </script>
 
 <div class="space-y-4">
@@ -159,36 +182,48 @@
 					<div class="grid grid-cols-2 gap-4">
 						<div class="flex flex-col gap-2">
 							<div class="text-sm font-medium text-slate-400">Current Image</div>
-							<div class="relative aspect-video w-full overflow-hidden rounded-md">
-								<img
-									src={displayUrl}
-									alt="Current"
-									class="h-full w-full object-contain"
-									onerror={(e) => {
-										(e.target as HTMLImageElement).src = '/placeholder-image.png';
-										errorMessage = 'Invalid image URL';
-									}}
-								/>
+							<div class="relative aspect-video w-full overflow-hidden rounded-md bg-slate-900">
+								{#if displayUrl && !imageLoadError}
+									<img
+										src={displayUrl}
+										alt="Current"
+										class="h-full w-full object-contain"
+										onerror={handleImageError}
+									/>
+								{:else}
+									<div
+										class="flex h-full flex-col items-center justify-center gap-2 border-2 border-red-500 bg-slate-800/50 p-4 text-center"
+									>
+										<IconExclamationCircle class="h-12 w-12 text-red-400" />
+										<span class="text-sm text-red-400">Failed to load image</span>
+									</div>
+								{/if}
 							</div>
 						</div>
 						<div class="flex flex-col gap-2">
 							<div class="text-sm font-medium text-slate-400">New Image</div>
-							<div class="relative aspect-video w-full overflow-hidden rounded-md">
+							<div class="relative aspect-video w-full overflow-hidden rounded-md bg-slate-900">
 								<img src={previewUrl} alt="Preview" class="h-full w-full object-contain" />
 							</div>
 						</div>
 					</div>
 				{:else}
-					<div class="relative aspect-video w-full overflow-hidden rounded-md">
-						<img
-							src={previewUrl || displayUrl}
-							alt="Preview"
-							class="h-full w-full object-contain"
-							onerror={(e) => {
-								(e.target as HTMLImageElement).src = '/placeholder-image.png';
-								errorMessage = 'Invalid image URL';
-							}}
-						/>
+					<div class="relative aspect-video w-full overflow-hidden rounded-md bg-slate-900">
+						{#if previewUrl || (displayUrl && !imageLoadError)}
+							<img
+								src={previewUrl || displayUrl}
+								alt="Preview"
+								class="h-full w-full object-contain"
+								onerror={handleImageError}
+							/>
+						{:else}
+							<div
+								class="flex h-full flex-col items-center justify-center gap-2 bg-slate-800/50 p-4 text-center"
+							>
+								<IconImage class="h-12 w-12 text-slate-500" />
+								<span class="text-sm text-slate-400">No image selected</span>
+							</div>
+						{/if}
 					</div>
 				{/if}
 				{#if selectedFile}
@@ -196,51 +231,18 @@
 						class="flex items-center justify-between gap-4 rounded-md bg-slate-800/50 p-3 text-sm text-slate-300"
 					>
 						<div class="flex items-center gap-2">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								class="h-4 w-4"
-								viewBox="0 0 20 20"
-								fill="currentColor"
-							>
-								<path
-									fill-rule="evenodd"
-									d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"
-									clip-rule="evenodd"
-								/>
-							</svg>
+							<IconDocument class="h-4 w-4" />
 							<span class="max-w-[200px] truncate font-mono" title={selectedFile.name}
 								>{selectedFile.name}</span
 							>
 						</div>
 						<div class="flex items-center gap-4">
 							<div class="flex items-center gap-1" title={formatFileSize(selectedFile.size)}>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									class="h-4 w-4"
-									viewBox="0 0 20 20"
-									fill="currentColor"
-								>
-									<path
-										fill-rule="evenodd"
-										d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 100-12 6 6 0 000 12z"
-										clip-rule="evenodd"
-									/>
-								</svg>
+								<IconCircle class="h-4 w-4" />
 								<span class="font-mono">{formatFileSize(selectedFile.size)}</span>
 							</div>
 							<div class="flex items-center gap-1" title={selectedFile.type}>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									class="h-4 w-4"
-									viewBox="0 0 20 20"
-									fill="currentColor"
-								>
-									<path
-										fill-rule="evenodd"
-										d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-										clip-rule="evenodd"
-									/>
-								</svg>
+								<IconImageMedia class="h-4 w-4" />
 								<span class="font-mono">{selectedFile.type.split('/')[1].toUpperCase()}</span>
 							</div>
 						</div>
