@@ -29,7 +29,11 @@
 			showPopup = false;
 		}}
 	>
-		<img src={event.image} alt={event.name} class="w-full max-w-full sm:max-w-64" />
+		<img
+			src={event.imageURL ?? event.image}
+			alt={event.name}
+			class="w-full max-w-full sm:max-w-64"
+		/>
 		<div class="flex flex-col p-4">
 			<span class="text-xl text-white sm:text-2xl">{event.name}</span>
 			{#if detailed}
