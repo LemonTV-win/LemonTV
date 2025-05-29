@@ -545,18 +545,16 @@
 						</div>
 
 						{#if expandedTeams.has(team.id)}
-							<div class="border-t border-slate-700 p-4">
+							<div class="border-t border-slate-700">
 								{#if playersByTeam[team.id]?.length > 0}
-									<div class="space-y-3">
+									<div class="divide-y divide-slate-700">
 										{#each playersByTeam[team.id] as player, index}
 											{@const teamPlayer = eventTeamPlayers.find(
 												(tp) => tp.teamId === team.id && tp.playerId === player.id
 											)}
 											{#if teamPlayer}
-												<div
-													class="grid grid-cols-[1fr_1fr_auto] gap-4 rounded-md border border-slate-700 bg-slate-800/50 p-3"
-												>
-													<div>
+												<div class="flex items-start gap-3 px-4 py-2 hover:bg-slate-800/50">
+													<div class="flex-1">
 														<label
 															class="block text-sm font-medium text-slate-300"
 															for="player-{team.id}-{index}"
@@ -566,7 +564,7 @@
 														<select
 															id="player-{team.id}-{index}"
 															bind:value={teamPlayer.playerId}
-															class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+															class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-2 py-1 text-sm text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 														>
 															<option value="">{m.select_player()}</option>
 															{#if teamPlayers.filter((tp) => tp.teamId === team.id).length > 0}
@@ -587,7 +585,7 @@
 															</optgroup>
 														</select>
 													</div>
-													<div>
+													<div class="w-24">
 														<label
 															class="block text-sm font-medium text-slate-300"
 															for="role-{team.id}-{index}"
@@ -597,29 +595,27 @@
 														<select
 															id="role-{team.id}-{index}"
 															bind:value={teamPlayer.role}
-															class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+															class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-2 py-1 text-sm text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 														>
 															{#each roleOptions as role}
 																<option value={role}>{role}</option>
 															{/each}
 														</select>
 													</div>
-													<div class="flex items-center">
-														<button
-															type="button"
-															class="mt-[1.625rem] text-red-400 hover:text-red-300"
-															onclick={() => removeTeamPlayer(teamPlayer)}
-															title={m.remove()}
-														>
-															<IconParkSolidDelete class="h-5 w-5" />
-														</button>
-													</div>
+													<button
+														type="button"
+														class="mt-auto mb-2 text-red-400 hover:text-red-300"
+														onclick={() => removeTeamPlayer(teamPlayer)}
+														title={m.remove()}
+													>
+														<IconParkSolidDelete class="h-4 w-4" />
+													</button>
 												</div>
 											{/if}
 										{/each}
 									</div>
 								{:else}
-									<p class="text-sm text-slate-400">{m.no_data()}</p>
+									<p class="px-4 py-2 text-sm text-slate-400">{m.no_data()}</p>
 								{/if}
 							</div>
 						{/if}
