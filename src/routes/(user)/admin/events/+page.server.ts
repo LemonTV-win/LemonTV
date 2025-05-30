@@ -84,7 +84,7 @@ export const actions = {
 			status: formData.get('status') as string,
 			capacity: parseInt(formData.get('capacity') as string),
 			date: formData.get('date') as string,
-			organizerIds: formData.getAll('organizers') as string[]
+			organizerIds: (formData.getAll('organizers') as string[]) || []
 		};
 
 		if (
@@ -111,8 +111,8 @@ export const actions = {
 				...dbEvent
 			});
 
-			// Add event organizers
-			if (eventData.organizerIds.length > 0) {
+			// Add event organizers if any are selected
+			if (eventData.organizerIds && eventData.organizerIds.length > 0) {
 				const dbEventOrganizers = toDatabaseEventOrganizers(eventId, eventData.organizerIds);
 				await db.insert(table.eventOrganizer).values(dbEventOrganizers);
 			}
@@ -162,7 +162,7 @@ export const actions = {
 			status: formData.get('status') as string,
 			capacity: parseInt(formData.get('capacity') as string),
 			date: formData.get('date') as string,
-			organizerIds: formData.getAll('organizers') as string[]
+			organizerIds: (formData.getAll('organizers') as string[]) || []
 		};
 
 		if (
