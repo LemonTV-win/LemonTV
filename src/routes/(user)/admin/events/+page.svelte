@@ -15,6 +15,7 @@
 	import TypcnArrowSortedUp from '~icons/typcn/arrow-sorted-up';
 	import type { EventWithOrganizers } from '$lib/server/data/events';
 	import OrganizerChip from '$lib/components/OrganizerChip.svelte';
+	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 
 	let { data }: { data: PageData } = $props();
 	let { events, action, id, organizers, eventOrganizers } = $derived(data);
@@ -121,7 +122,10 @@
 
 <main class="mx-auto max-w-screen-lg px-4">
 	<div class="mb-6 flex items-center justify-between">
-		<h1 class="text-2xl font-bold">{m.events()}</h1>
+		<div class="flex items-center gap-4">
+			<h1 class="text-2xl font-bold">{m.events()}</h1>
+			<ContentActionLink href="/events" type="view" />
+		</div>
 		<button
 			class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600"
 			onclick={() => {

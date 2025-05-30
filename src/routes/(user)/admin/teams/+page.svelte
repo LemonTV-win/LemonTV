@@ -14,6 +14,7 @@
 	import Modal from '$lib/components/Modal.svelte';
 	import EditHistory from './EditHistory.svelte';
 	import TeamEdit from './TeamEdit.svelte';
+	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 
 	import type { PageProps } from './$types';
 
@@ -270,7 +271,10 @@
 
 <main class="mx-auto max-w-screen-lg px-4">
 	<div class="mb-6 flex items-center justify-between">
-		<h1 class="text-2xl font-bold">{m.admin_dashboard()}</h1>
+		<div class="flex items-center gap-4">
+			<h1 class="text-2xl font-bold">{m.teams()}</h1>
+			<ContentActionLink href="/teams" type="view" />
+		</div>
 		<div class="flex gap-2">
 			{#if data.user?.roles.includes('admin')}
 				<label

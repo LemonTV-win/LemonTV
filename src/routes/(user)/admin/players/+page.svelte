@@ -21,6 +21,7 @@
 	import type { PageProps } from './$types';
 	import { countryCodeToLocalizedName } from '$lib/utils/strings';
 	import { getLocale } from '$lib/paraglide/runtime';
+	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 
 	let searchQuery = $state('');
 	let selectedPlayer: Player | null = $state(null);
@@ -274,7 +275,10 @@
 
 <main class="mx-auto max-w-screen-lg px-4">
 	<div class="mb-6 flex items-center justify-between">
-		<h1 class="text-2xl font-bold">{m.admin_dashboard()}</h1>
+		<div class="flex items-center gap-4">
+			<h1 class="text-2xl font-bold">{m.players()}</h1>
+			<ContentActionLink href="/players" type="view" />
+		</div>
 		<div class="flex gap-2">
 			{#if data.user?.roles.includes('admin')}
 				<label
