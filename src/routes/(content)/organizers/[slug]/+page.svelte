@@ -6,6 +6,7 @@
 	import { m } from '$lib/paraglide/messages';
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
+	import OrganizerTypeBadge from '$lib/components/OrganizerTypeBadge.svelte';
 
 	export let data: PageData;
 	const { organizer, events } = data;
@@ -39,13 +40,7 @@
 			<div class="flex flex-1 flex-col gap-4">
 				<div class="flex items-center gap-2">
 					<h1 class="text-3xl font-bold text-white">{organizer.name}</h1>
-					{#if organizer.type}
-						<span
-							class={`inline-flex items-center rounded-md border border-current/20 px-2 py-1 text-sm ${typeColors[organizer.type] || 'bg-gray-500/10 text-gray-500'}`}
-						>
-							{typeLabels[organizer.type as keyof typeof typeLabels] || organizer.type}
-						</span>
-					{/if}
+					<OrganizerTypeBadge type={organizer.type} />
 					{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
 						<a
 							href={`/admin/organizers?action=edit&id=${organizer.id}`}

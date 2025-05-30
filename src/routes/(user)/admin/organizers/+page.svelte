@@ -15,6 +15,7 @@
 	import TypcnArrowSortedUp from '~icons/typcn/arrow-sorted-up';
 	import type { Organizer } from '$lib/server/db/schemas/game/organizer';
 	import type { ActionResult } from '@sveltejs/kit';
+	import OrganizerTypeBadge from '$lib/components/OrganizerTypeBadge.svelte';
 
 	let { data }: { data: PageData } = $props();
 	let { organizers, action, id } = $derived(data);
@@ -355,11 +356,7 @@
 							</div>
 						</td>
 						<td class="min-w-max overflow-hidden px-4 py-1">
-							<span
-								class={`inline-flex items-center rounded-md border border-current/20 px-2 py-1 text-sm ${organizer.type ? typeColors[organizer.type] : 'bg-gray-500/10 text-gray-500'}`}
-							>
-								{organizer.type ? typeLabels[organizer.type] : m.none()}
-							</span>
+							<OrganizerTypeBadge type={organizer.type} />
 						</td>
 						<td class="min-w-max overflow-hidden px-4 py-1 text-gray-300"
 							>{organizer.description}</td
