@@ -247,7 +247,7 @@
 							<div class="flex min-w-max items-center">
 								{#if event.imageURL}
 									<img
-										class="mr-3 h-10 w-10 flex-shrink-0 rounded-full"
+										class="mr-3 h-10 w-16 flex-shrink-0 rounded-md object-cover"
 										src={event.imageURL}
 										alt={event.name}
 									/>
