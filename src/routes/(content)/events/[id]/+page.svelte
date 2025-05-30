@@ -34,7 +34,7 @@
 	<Breadcrumbs currentTitle={data.event.name} />
 	<div
 		class="banner flex min-h-48 flex-col gap-2 bg-cover bg-top p-4 text-white"
-		style:--banner-image={`url(${data.event.image})`}
+		style:--banner-image={`url(${data.event.imageURL})`}
 	>
 		<h1 class="my-2 flex items-center gap-2 text-3xl font-bold">
 			{data.event.name}
