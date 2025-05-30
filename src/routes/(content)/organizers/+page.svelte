@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { m } from '$lib/paraglide/messages';
 	import type { PageProps } from './$types';
-	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
 	import OrganizerTypeBadge from '$lib/components/OrganizerTypeBadge.svelte';
 	import IconChevronDown from '~icons/mdi/chevron-down';
+	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 
 	let { data }: PageProps = $props();
 	let selectedType = $state<string | null>(null);
@@ -38,13 +38,7 @@
 	<h1 class="mx-0 my-10 flex items-center gap-4 text-2xl font-bold md:mx-4">
 		{m.organizers()}
 		{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
-			<a
-				href="/admin/organizers"
-				class="flex items-center gap-1 rounded-md border border-gray-700 px-2 py-1 text-sm text-gray-400 transition-all duration-200 hover:bg-gray-700"
-			>
-				<IconParkSolidEdit class="h-4 w-4" />
-				{m.edit()}
-			</a>
+			<ContentActionLink href="/admin/organizers" type="edit" />
 		{/if}
 	</h1>
 

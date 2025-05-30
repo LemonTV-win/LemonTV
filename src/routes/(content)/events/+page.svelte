@@ -2,8 +2,8 @@
 	import EventCard from '$lib/components/EventCard.svelte';
 	import { m } from '$lib/paraglide/messages';
 	import type { PageProps } from './$types';
-	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
 	import MaterialSymbolsChevronRightRounded from '~icons/material-symbols/chevron-right-rounded';
+	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -28,13 +28,7 @@
 	<h1 class="mx-0 my-10 flex items-center gap-4 text-2xl font-bold md:mx-4">
 		{m.events()}
 		{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
-			<a
-				href="/admin/events"
-				class="flex items-center gap-1 rounded-md border border-gray-700 px-2 py-1 text-sm text-gray-400 transition-all duration-200 hover:bg-gray-700"
-			>
-				<IconParkSolidEdit class="h-4 w-4" />
-				{m.edit()}
-			</a>
+			<ContentActionLink href="/admin/events" type="edit" />
 		{/if}
 	</h1>
 

@@ -13,10 +13,10 @@
 	import TypcnArrowUnsorted from '~icons/typcn/arrow-unsorted';
 	import TypcnArrowSortedDown from '~icons/typcn/arrow-sorted-down';
 	import TypcnArrowSortedUp from '~icons/typcn/arrow-sorted-up';
-	import IconParkSolidView from '~icons/icon-park-solid/eyes';
 	import type { Organizer } from '$lib/server/db/schemas/game/organizer';
 	import type { ActionResult } from '@sveltejs/kit';
 	import OrganizerTypeBadge from '$lib/components/OrganizerTypeBadge.svelte';
+	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 
 	let { data }: { data: PageData } = $props();
 	let { organizers, action, id } = $derived(data);
@@ -182,15 +182,7 @@
 	<div class="mb-6 flex items-center justify-between">
 		<div class="flex items-center gap-4">
 			<h1 class="text-2xl font-bold">{m.organizers()}</h1>
-			<a
-				href="/organizers"
-				class="flex items-center gap-1 rounded-md border border-gray-700 px-2 py-1 text-sm text-gray-400 transition-all duration-200 hover:bg-gray-700"
-				target="_blank"
-				rel="noopener noreferrer"
-			>
-				<IconParkSolidView class="h-4 w-4" />
-				{m.view_all()}
-			</a>
+			<ContentActionLink href="/organizers" type="view" />
 		</div>
 		<button
 			class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600"

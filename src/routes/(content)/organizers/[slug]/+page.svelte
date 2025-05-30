@@ -5,8 +5,8 @@
 	import IconParkSolidComputer from '~icons/icon-park-solid/computer';
 	import { m } from '$lib/paraglide/messages';
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
-	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
 	import OrganizerTypeBadge from '$lib/components/OrganizerTypeBadge.svelte';
+	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 
 	export let data: PageData;
 	const { organizer, events } = data;
@@ -42,13 +42,10 @@
 					<h1 class="text-3xl font-bold text-white">{organizer.name}</h1>
 					<OrganizerTypeBadge type={organizer.type} />
 					{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
-						<a
+						<ContentActionLink
 							href={`/admin/organizers?action=edit&id=${organizer.id}`}
-							class="flex items-center gap-1 rounded-md border border-gray-700 px-2 py-1 text-sm text-gray-400 transition-all duration-200 hover:bg-gray-700"
-						>
-							<IconParkSolidEdit class="h-4 w-4" />
-							{m.edit()}
-						</a>
+							type="edit"
+						/>
 					{/if}
 				</div>
 

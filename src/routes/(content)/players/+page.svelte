@@ -2,20 +2,18 @@
 	import type { PageProps } from './$types';
 
 	import { m } from '$lib/paraglide/messages.js';
-	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import CharacterIcon from '$lib/components/CharacterIcon.svelte';
 	import TypcnArrowUnsorted from '~icons/typcn/arrow-unsorted';
 	import TypcnArrowSortedDown from '~icons/typcn/arrow-sorted-down';
 	import TypcnArrowSortedUp from '~icons/typcn/arrow-sorted-up';
-	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
 	import SearchInput from '$lib/components/SearchInput.svelte';
 	import { getAllNames } from '$lib/data/players';
-	import countryCodeToFlagEmoji from 'country-code-to-flag-emoji';
 	import { getLocale } from '$lib/paraglide/runtime';
 	import { countryCodeToLocalizedName } from '$lib/utils/strings';
 	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
 	import IconChevronDown from '~icons/mdi/chevron-down';
+	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 	let { data }: PageProps = $props();
 
 	let search = $state(data.search || '');
@@ -167,13 +165,7 @@
 	<h1 class="my-10 flex items-center gap-4 text-2xl font-bold">
 		{m.players()}
 		{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
-			<a
-				href="/admin/players"
-				class="flex items-center gap-1 rounded-md border border-gray-700 px-2 py-1 text-sm text-gray-400 transition-all duration-200 hover:bg-gray-700"
-			>
-				<IconParkSolidEdit class="h-4 w-4" />
-				{m.edit()}
-			</a>
+			<ContentActionLink href="/admin/players" type="edit" />
 		{/if}
 	</h1>
 

@@ -10,7 +10,7 @@
 	import RegionTag from '$lib/components/tags/RegionTag.svelte';
 	import { getAllNames } from '$lib/data/players';
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
-	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
+	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 	let { data }: PageProps = $props();
 </script>
 
@@ -49,13 +49,7 @@
 				</div>
 
 				{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
-					<a
-						href={`/admin/teams?action=edit&id=${data.team.id}`}
-						class="flex items-center gap-1 rounded-md border border-gray-700 px-2 py-1 text-sm text-gray-400 transition-all duration-200 hover:bg-gray-700"
-					>
-						<IconParkSolidEdit class="h-4 w-4" />
-						{m.edit()}
-					</a>
+					<ContentActionLink href={`/admin/teams?action=edit&id=${data.team.id}`} type="edit" />
 				{/if}
 			</div>
 			{#if data.team.logo}

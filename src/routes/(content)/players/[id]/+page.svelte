@@ -9,7 +9,7 @@
 	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
 	import { getAllNames } from '$lib/data/players';
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
-	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
+	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -41,13 +41,10 @@
 							</span>
 						</h1>
 						{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
-							<a
+							<ContentActionLink
 								href={`/admin/players?action=edit&id=${data.player.id}`}
-								class="flex items-center gap-1 rounded-md border border-gray-700 px-2 py-1 text-sm text-gray-400 transition-all duration-200 hover:bg-gray-700"
-							>
-								<IconParkSolidEdit class="h-4 w-4" />
-								{m.edit()}
-							</a>
+								type="edit"
+							/>
 						{/if}
 					</div>
 					{#if data.player.nationality}
