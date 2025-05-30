@@ -111,10 +111,18 @@ export const actions = {
 				...dbEvent
 			});
 
-			// Add event organizers if any are selected
+			// Handle event organizers
 			if (eventData.organizerIds && eventData.organizerIds.length > 0) {
-				const dbEventOrganizers = toDatabaseEventOrganizers(eventId, eventData.organizerIds);
-				await db.insert(table.eventOrganizer).values(dbEventOrganizers);
+				// First remove all existing organizers
+				await db.delete(table.eventOrganizer).where(eq(table.eventOrganizer.eventId, eventId));
+
+				// Then add the new organizers
+				await db
+					.insert(table.eventOrganizer)
+					.values(toDatabaseEventOrganizers(eventId, eventData.organizerIds));
+			} else {
+				// If no organizers are selected, remove all existing organizers
+				await db.delete(table.eventOrganizer).where(eq(table.eventOrganizer.eventId, eventId));
 			}
 
 			// Add edit history
@@ -202,32 +210,18 @@ export const actions = {
 			const dbEvent = toDatabaseEvent(eventData as CreateEventData);
 			await db.update(table.event).set(dbEvent).where(eq(table.event.id, eventData.id));
 
-			// Update event organizers
-			const currentOrganizers = await db
-				.select()
-				.from(table.eventOrganizer)
-				.where(eq(table.eventOrganizer.eventId, eventData.id));
+			// Handle event organizers
+			if (eventData.organizerIds && eventData.organizerIds.length > 0) {
+				// First remove all existing organizers
+				await db.delete(table.eventOrganizer).where(eq(table.eventOrganizer.eventId, eventData.id));
 
-			const currentOrganizerIds = currentOrganizers.map((eo) => eo.organizerId);
-			const { toAdd, toRemove } = getOrganizerChanges(
-				currentOrganizerIds,
-				eventData.organizerIds ?? []
-			);
-
-			if (toAdd.length > 0) {
-				const dbEventOrganizers = toDatabaseEventOrganizers(eventData.id, toAdd);
-				await db.insert(table.eventOrganizer).values(dbEventOrganizers);
-			}
-
-			if (toRemove.length > 0) {
+				// Then add the new organizers
 				await db
-					.delete(table.eventOrganizer)
-					.where(
-						and(
-							eq(table.eventOrganizer.eventId, eventData.id),
-							inArray(table.eventOrganizer.organizerId, toRemove)
-						)
-					);
+					.insert(table.eventOrganizer)
+					.values(toDatabaseEventOrganizers(eventData.id, eventData.organizerIds));
+			} else {
+				// If no organizers are selected, remove all existing organizers
+				await db.delete(table.eventOrganizer).where(eq(table.eventOrganizer.eventId, eventData.id));
 			}
 
 			// Add edit history if there are changes
@@ -246,20 +240,6 @@ export const actions = {
 						})
 					)
 				);
-			}
-
-			// Add edit history for organizer changes
-			if (toAdd.length > 0 || toRemove.length > 0) {
-				await db.insert(table.editHistory).values({
-					id: crypto.randomUUID(),
-					tableName: 'event',
-					recordId: eventData.id,
-					fieldName: 'organizers',
-					oldValue: JSON.stringify(currentOrganizerIds),
-					newValue: JSON.stringify(eventData.organizerIds),
-					editedBy: result.userId,
-					editedAt: new Date()
-				});
 			}
 
 			return {
