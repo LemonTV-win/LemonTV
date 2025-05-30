@@ -162,7 +162,11 @@ export async function getEvents(conditions: { organizerIds?: string[] } = {}): P
 			eventsMap.set(event.id, { event, organizers: [], teamPlayers: [] });
 		}
 		if (organizer) {
-			eventsMap.get(event.id)?.organizers.push(organizer);
+			const eventData = eventsMap.get(event.id)!;
+			// Only add the organizer if it's not already in the array
+			if (!eventData.organizers.some((o) => o.id === organizer.id)) {
+				eventData.organizers.push(organizer);
+			}
 		}
 		if (eventTeamPlayer && team && player) {
 			eventsMap.get(event.id)?.teamPlayers.push({
