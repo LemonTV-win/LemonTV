@@ -416,5 +416,6 @@
 	"remove_map": "Удалить карту",
 	"add_map": "Добавить карту",
 	"update_match": "Обновить матч",
-	"create_match": "Создать матч"
+	"create_match": "Создать матч",
+	"view_all_organizers": "Показать всех организаторов"
 }

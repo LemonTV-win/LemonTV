@@ -416,5 +416,6 @@
 	"remove_map": "Hapus Peta",
 	"add_map": "Tambah Peta",
 	"update_match": "Perbarui Pertandingan",
-	"create_match": "Buat Pertandingan"
+	"create_match": "Buat Pertandingan",
+	"view_all_organizers": "Lihat Semua Penyelenggara"
 }

@@ -416,5 +416,6 @@
 	"role_deleted_successfully": "ロールが正常に削除されました",
 	"failed_to_add_role": "ロールの追加に失敗しました",
 	"failed_to_remove_role": "ロールの削除に失敗しました",
-	"failed_to_update_role": "ロールの更新に失敗しました"
+	"failed_to_update_role": "ロールの更新に失敗しました",
+	"view_all_organizers": "すべての主催者を見る"
 }

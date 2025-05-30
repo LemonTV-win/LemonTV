@@ -416,5 +416,6 @@
 	"remove_map": "Remover mapa",
 	"add_map": "Adicionar mapa",
 	"update_match": "Atualizar partida",
-	"create_match": "Criar partida"
+	"create_match": "Criar partida",
+	"view_all_organizers": "Ver todos os organizadores"
 }

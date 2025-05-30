@@ -416,5 +416,6 @@
 	"type": "Tipo",
 	"users_affected": "{count} usuarios se verán afectados",
 	"warning": "Advertencia",
-	"deleting": "Eliminando..."
+	"deleting": "Eliminando...",
+	"view_all_organizers": "Ver todos los organizadores"
 }

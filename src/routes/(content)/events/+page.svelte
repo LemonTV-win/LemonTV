@@ -3,6 +3,7 @@
 	import { m } from '$lib/paraglide/messages';
 	import type { PageProps } from './$types';
 	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
+	import MaterialSymbolsChevronRightRounded from '~icons/material-symbols/chevron-right-rounded';
 
 	let { data }: PageProps = $props();
 
@@ -36,6 +37,13 @@
 			</a>
 		{/if}
 	</h1>
+
+	<div class="mb-6 flex justify-end">
+		<a href="/organizers" class="flex items-center gap-2 text-gray-400 hover:text-yellow-500">
+			<span class="text-sm">{m.view_all_organizers()}</span>
+			<MaterialSymbolsChevronRightRounded class="h-4 w-4" />
+		</a>
+	</div>
 
 	<ul>
 		{#each ongoingEvents as event}
