@@ -242,7 +242,7 @@ export async function seed() {
 			logo: 'https://picsum.photos/seed/organizer-8/256/256?blur',
 			description: 'Organizer 8 description',
 			url: 'https://organizer-8.com',
-			type: 'organization',
+			type: null,
 			createdAt: new Date(),
 			updatedAt: new Date()
 		}
