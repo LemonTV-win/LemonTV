@@ -406,5 +406,6 @@
 	"remove_map": "Eliminar Mapa",
 	"add_map": "Añadir Mapa",
 	"update_match": "Actualizar Partido",
-	"create_match": "Crear Partido"
+	"create_match": "Crear Partido",
+	"other_players": "Otros jugadores"
 }

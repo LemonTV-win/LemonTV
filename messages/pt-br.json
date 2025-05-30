@@ -393,5 +393,6 @@
 	"select_stage": "Selecionar etapa",
 	"select_team": "Selecionar equipe",
 	"score": "Pontuação",
-	"remove_team": "Remover equipe"
+	"remove_team": "Remover equipe",
+	"other_players": "Outros jogadores"
 }

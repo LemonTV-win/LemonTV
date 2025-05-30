@@ -403,5 +403,6 @@
 	"remove_map": "맵 제거",
 	"add_map": "맵 추가",
 	"update_match": "경기 업데이트",
-	"create_match": "경기 생성"
+	"create_match": "경기 생성",
+	"other_players": "다른 선수"
 }

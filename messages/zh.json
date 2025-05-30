@@ -406,5 +406,6 @@
 	"remove_map": "移除地图",
 	"add_map": "添加地图",
 	"update_match": "更新比赛",
-	"create_match": "创建比赛"
+	"create_match": "创建比赛",
+	"other_players": "其他选手"
 }

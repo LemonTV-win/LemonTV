@@ -393,5 +393,6 @@
 	"select_stage": "選擇賽事階段",
 	"select_team": "選擇隊伍",
 	"score": "分數",
-	"remove_team": "刪除隊伍"
+	"remove_team": "刪除隊伍",
+	"other_players": "其他選手"
 }

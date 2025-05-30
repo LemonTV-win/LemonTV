@@ -278,5 +278,6 @@
 	"remove_map": "マップを削除",
 	"add_map": "マップを追加",
 	"update_match": "試合を更新",
-	"create_match": "試合を作成"
+	"create_match": "試合を作成",
+	"other_players": "他の選手"
 }

@@ -4,6 +4,7 @@
 	import type { Event, Organizer, EventOrganizer, Team, Player } from '$lib/server/db/schema';
 	import { m } from '$lib/paraglide/messages';
 	import ImageUpload from '$lib/components/ImageUpload.svelte';
+	import Combobox from '$lib/components/Combobox.svelte';
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import IconParkSolidAdd from '~icons/icon-park-solid/add';
 
@@ -82,9 +83,16 @@
 	$effect(() => {
 		const grouped: Record<string, Player[]> = {};
 		teams.forEach((team) => {
-			grouped[team.id] = players.filter((player) =>
-				eventTeamPlayers.some((tp) => tp.teamId === team.id && tp.playerId === player.id)
-			);
+			// Get all players for this team, including those not yet assigned
+			grouped[team.id] = players.filter((player) => {
+				const isAssignedToOtherTeam = eventTeamPlayers.some(
+					(tp) => tp.playerId === player.id && tp.teamId !== team.id
+				);
+				const isAssignedToThisTeam = eventTeamPlayers.some(
+					(tp) => tp.playerId === player.id && tp.teamId === team.id
+				);
+				return !isAssignedToOtherTeam || isAssignedToThisTeam;
+			});
 		});
 		playersByTeam = grouped;
 	});
@@ -433,32 +441,25 @@
 				<label for="team-select" class="mb-2 block text-sm font-medium text-slate-300"
 					>Select Teams</label
 				>
-				<div class="flex items-center gap-2">
-					<select
-						id="team-select"
-						class="flex-1 rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-					>
-						<option value="">{m.select_team()}</option>
-						{#each teams.filter((team) => !selectedTeams.includes(team.id)) as team}
-							<option value={team.id}>{team.name}</option>
-						{/each}
-					</select>
-					<button
-						type="button"
-						class="flex items-center gap-2 rounded-md bg-yellow-500 px-3 py-2 text-sm font-medium text-black transition-colors hover:bg-yellow-600"
-						onclick={() => {
-							const select = document.getElementById('team-select') as HTMLSelectElement;
-							const teamId = select.value;
-							if (teamId) {
-								addTeam(teamId);
-								select.value = '';
-							}
+				<div class="w-full">
+					<Combobox
+						items={teams
+							.filter((team) => !selectedTeams.includes(team.id))
+							.map((team) => ({
+								id: team.id,
+								name: team.name
+							}))}
+						value=""
+						placeholder={m.select_team()}
+						groups={[]}
+						disabled={false}
+						class="px-3 py-2"
+						onChange={(item) => {
+							addTeam(item.id);
 						}}
-					>
-						<IconParkSolidAdd class="h-4 w-4" />
-						{m.add()}
-					</button>
+					/>
 				</div>
+				<p class="mt-1 text-sm text-slate-400">Select a team to add it to the event</p>
 			</div>
 
 			<!-- Team Players -->
@@ -561,29 +562,46 @@
 														>
 															{m.player()}
 														</label>
-														<select
-															id="player-{team.id}-{index}"
-															bind:value={teamPlayer.playerId}
-															class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-2 py-1 text-sm text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-														>
-															<option value="">{m.select_player()}</option>
-															{#if teamPlayers.filter((tp) => tp.teamId === team.id).length > 0}
-																<optgroup label="Team Players">
-																	{#each teamPlayers
-																		.filter((tp) => tp.teamId === team.id)
-																		.map( (tp) => players.find((p) => p.id === tp.playerId) ) as player}
-																		{#if player}
-																			<option value={player.id}>{player.name} (Team)</option>
-																		{/if}
-																	{/each}
-																</optgroup>
-															{/if}
-															<optgroup label="Other Players">
-																{#each players.filter((p) => !teamPlayers.some((tp) => tp.teamId === team.id && tp.playerId === p.id)) as player}
-																	<option value={player.id}>{player.name}</option>
-																{/each}
-															</optgroup>
-														</select>
+														<div class="mt-1">
+															<Combobox
+																items={(() => {
+																	const filteredPlayers = players
+																		.filter((p) => {
+																			// Show all players that are either:
+																			// 1. Not assigned to any team in the event
+																			// 2. Already assigned to this team
+																			const isAssignedToOtherTeam = eventTeamPlayers.some(
+																				(tp) => tp.playerId === p.id && tp.teamId !== team.id
+																			);
+																			const isAssignedToThisTeam = eventTeamPlayers.some(
+																				(tp) => tp.playerId === p.id && tp.teamId === team.id
+																			);
+																			return !isAssignedToOtherTeam || isAssignedToThisTeam;
+																		})
+																		.map((p) => ({
+																			id: p.id,
+																			name: p.name,
+																			group: eventTeamPlayers.some(
+																				(tp) => tp.teamId === team.id && tp.playerId === p.id
+																			)
+																				? 'team'
+																				: 'other'
+																		}));
+																	return filteredPlayers;
+																})()}
+																value={teamPlayer.playerId}
+																placeholder={m.search_players()}
+																groups={[
+																	{ id: 'team', label: m.team_players() },
+																	{ id: 'other', label: m.other_players() }
+																]}
+																disabled={false}
+																class="px-2 py-1"
+																onChange={(item) => {
+																	teamPlayer.playerId = item.id;
+																}}
+															/>
+														</div>
 													</div>
 													<div class="w-24">
 														<label

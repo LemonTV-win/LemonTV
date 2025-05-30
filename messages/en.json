@@ -409,5 +409,6 @@
 	"remove_map": "Remove Map",
 	"add_map": "Add Map",
 	"update_match": "Update Match",
-	"create_match": "Create Match"
+	"create_match": "Create Match",
+	"other_players": "Other Players"
 }

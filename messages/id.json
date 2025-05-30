@@ -393,5 +393,6 @@
 	"select_stage": "Pilih Babak",
 	"select_team": "Pilih Tim",
 	"score": "Skor",
-	"remove_team": "Hapus Tim"
+	"remove_team": "Hapus Tim",
+	"other_players": "Pemain lain"
 }
