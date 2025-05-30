@@ -417,5 +417,6 @@
 	"add_map": "Thêm bản đồ",
 	"update_match": "Cập nhật trận đấu",
 	"create_match": "Tạo trận đấu",
-	"view_all_organizers": "Xem tất cả ban tổ chức"
+	"view_all_organizers": "Xem tất cả ban tổ chức",
+	"admin_matches_desc": "Quản lý tất cả trận đấu, điểm số và chi tiết trận đấu."
 }

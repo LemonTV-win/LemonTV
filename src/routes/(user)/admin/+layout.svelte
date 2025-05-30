@@ -92,7 +92,7 @@
 		{@render tab('/admin/players', IconParkSolidPeople, m.players())}
 		{@render tab('/admin/teams', IconParkSolidEveryUser, m.teams())}
 		{@render tab('/admin/events', IconParkSolidCalendar, m.events())}
-		{@render tab('/admin/matches', IconParkSolidGame, 'Matches')}
+		{@render tab('/admin/matches', IconParkSolidGame, m.matches())}
 		{@render tab('/admin/organizers', IconParkSolidTrophy, m.organizers())}
 		{@render tab('/admin/edit-history', IconParkSolidHistory, m.edit_history())}
 	</nav>

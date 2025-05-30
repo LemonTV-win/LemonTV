@@ -248,7 +248,7 @@
 
 <div class="mx-auto max-w-7xl p-4">
 	<div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-		<h1 class="text-2xl font-bold">Matches Manager</h1>
+		<h1 class="text-2xl font-bold">{m.matches()}</h1>
 		<div class="flex flex-col gap-4 sm:flex-row">
 			<div class="relative">
 				<MaterialSymbolsSearchRounded

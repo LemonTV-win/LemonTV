@@ -417,5 +417,6 @@
 	"users_affected": "{count} utilisateur(s) seront affectés",
 	"warning": "Avertissement",
 	"deleting": "Suppression en cours...",
-	"view_all_organizers": "Voir tous les organisateurs"
+	"view_all_organizers": "Voir tous les organisateurs",
+	"admin_matches_desc": "Gérer tous les matchs, scores et détails du match."
 }

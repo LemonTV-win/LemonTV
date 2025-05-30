@@ -417,5 +417,6 @@
 	"add_map": "添加地圖",
 	"update_match": "更新比賽",
 	"create_match": "創建比賽",
-	"view_all_organizers": "查看所有主辦方"
+	"view_all_organizers": "查看所有主辦方",
+	"admin_matches_desc": "管理所有比賽、分數和比賽詳細信息。"
 }

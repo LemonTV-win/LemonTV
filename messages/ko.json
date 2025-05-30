@@ -417,5 +417,6 @@
 	"users_affected": "{count}명의 사용자가 영향을 받습니다",
 	"warning": "경고",
 	"deleting": "삭제 중...",
-	"view_all_organizers": "모든 주최자 보기"
+	"view_all_organizers": "모든 주최자 보기",
+	"admin_matches_desc": "모든 경기, 점수 및 경기 세부 정보 관리"
 }

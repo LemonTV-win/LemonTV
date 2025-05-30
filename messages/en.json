@@ -417,5 +417,6 @@
 	"tournament_series": "Tournament Series",
 	"league": "League",
 	"type": "Type",
-	"view_all_organizers": "View All Organizers"
+	"view_all_organizers": "View All Organizers",
+	"admin_matches_desc": "Manage all matches, scores, and match details."
 }

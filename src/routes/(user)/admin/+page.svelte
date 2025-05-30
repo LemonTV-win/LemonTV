@@ -83,8 +83,8 @@
 	{@render adminCard(
 		'/admin/matches',
 		IconParkSolidGame,
-		'Matches',
-		'Manage all matches, scores, and match details.',
+		m.matches(),
+		m.admin_matches_desc(),
 		'blue'
 	)}
 	{@render adminCard(

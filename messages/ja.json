@@ -417,5 +417,6 @@
 	"failed_to_add_role": "ロールの追加に失敗しました",
 	"failed_to_remove_role": "ロールの削除に失敗しました",
 	"failed_to_update_role": "ロールの更新に失敗しました",
-	"view_all_organizers": "すべての主催者を見る"
+	"view_all_organizers": "すべての主催者を見る",
+	"admin_matches_desc": "すべての試合、スコア、試合の詳細を管理します。"
 }
