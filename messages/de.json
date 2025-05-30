@@ -413,5 +413,8 @@
 	"organization": "Organisation",
 	"tournament_series": "Turnierserie",
 	"league": "League",
-	"type": "Typ"
+	"type": "Typ",
+	"users_affected": "{count} Benutzer werden betroffen sein",
+	"warning": "Warnung",
+	"deleting": "Wird gelöscht..."
 }

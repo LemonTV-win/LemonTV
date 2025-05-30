@@ -400,5 +400,21 @@
 	"organization": "Tổ chức",
 	"tournament_series": "Giải đấu",
 	"league": "Giải",
-	"type": "Loại"
+	"type": "Loại",
+	"users_affected": "{count} người dùng sẽ bị ảnh hưởng",
+	"warning": "Cảnh báo",
+	"deleting": "Đang xóa...",
+	"add_team": "Thêm đội",
+	"maps": "Bản đồ",
+	"map": "Bản đồ",
+	"select_map": "Chọn bản đồ",
+	"action": "Hành động",
+	"none": "Không có",
+	"side": "Bên",
+	"attack": "Tấn công",
+	"defense": "Phòng thủ",
+	"remove_map": "Xóa bản đồ",
+	"add_map": "Thêm bản đồ",
+	"update_match": "Cập nhật trận đấu",
+	"create_match": "Tạo trận đấu"
 }

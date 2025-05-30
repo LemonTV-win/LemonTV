@@ -413,5 +413,8 @@
 	"organization": "Organización",
 	"tournament_series": "Serie de Torneos",
 	"league": "Liga",
-	"type": "Tipo"
+	"type": "Tipo",
+	"users_affected": "{count} usuarios se verán afectados",
+	"warning": "Advertencia",
+	"deleting": "Eliminando..."
 }

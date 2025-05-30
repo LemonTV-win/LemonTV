@@ -400,5 +400,21 @@
 	"organization": "Организация",
 	"tournament_series": "Серия турниров",
 	"league": "Лига",
-	"type": "Тип"
+	"type": "Тип",
+	"users_affected": "{count} пользователей будет затронуто",
+	"warning": "Предупреждение",
+	"deleting": "Удаление...",
+	"add_team": "Добавить команду",
+	"maps": "Карты",
+	"map": "Карта",
+	"select_map": "Выбрать карту",
+	"action": "Действие",
+	"none": "Нет",
+	"side": "Сторона",
+	"attack": "Атака",
+	"defense": "Защита",
+	"remove_map": "Удалить карту",
+	"add_map": "Добавить карту",
+	"update_match": "Обновить матч",
+	"create_match": "Создать матч"
 }

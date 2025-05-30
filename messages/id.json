@@ -400,5 +400,21 @@
 	"organization": "Organisasi",
 	"tournament_series": "Seri Turnamen",
 	"league": "Liga",
-	"type": "Jenis"
+	"type": "Jenis",
+	"users_affected": "{count} pengguna akan terpengaruh",
+	"warning": "Peringatan",
+	"deleting": "Menghapus...",
+	"add_team": "Tambah Tim",
+	"maps": "Peta",
+	"map": "Peta",
+	"select_map": "Pilih Peta",
+	"action": "Tindakan",
+	"none": "Tidak Ada",
+	"side": "Sisi",
+	"attack": "Serang",
+	"defense": "Bertahan",
+	"remove_map": "Hapus Peta",
+	"add_map": "Tambah Peta",
+	"update_match": "Perbarui Pertandingan",
+	"create_match": "Buat Pertandingan"
 }

@@ -400,5 +400,21 @@
 	"organization": "Organização",
 	"tournament_series": "Série de Torneios",
 	"league": "Liga",
-	"type": "Tipo"
+	"type": "Tipo",
+	"users_affected": "{count} usuário(s) serão afetados",
+	"warning": "Aviso",
+	"deleting": "Excluindo...",
+	"add_team": "Adicionar equipe",
+	"maps": "Mapas",
+	"map": "Mapa",
+	"select_map": "Selecionar mapa",
+	"action": "Ação",
+	"none": "Nenhum",
+	"side": "Lado",
+	"attack": "Ataque",
+	"defense": "Defesa",
+	"remove_map": "Remover mapa",
+	"add_map": "Adicionar mapa",
+	"update_match": "Atualizar partida",
+	"create_match": "Criar partida"
 }

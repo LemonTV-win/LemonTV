@@ -400,5 +400,21 @@
 	"organization": "組織",
 	"tournament_series": "賽事系列",
 	"league": "聯賽",
-	"type": "類型"
+	"type": "類型",
+	"users_affected": "{count}個用戶將受到影響",
+	"warning": "警告",
+	"deleting": "正在刪除...",
+	"add_team": "添加隊伍",
+	"maps": "地圖",
+	"map": "地圖",
+	"select_map": "選擇地圖",
+	"action": "操作",
+	"none": "無",
+	"side": "陣營",
+	"attack": "進攻",
+	"defense": "防守",
+	"remove_map": "移除地圖",
+	"add_map": "添加地圖",
+	"update_match": "更新比賽",
+	"create_match": "創建比賽"
 }

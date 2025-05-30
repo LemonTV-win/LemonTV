@@ -413,5 +413,8 @@
 	"organization": "组织",
 	"tournament_series": "赛事系列",
 	"league": "联赛",
-	"type": "类型"
+	"type": "类型",
+	"users_affected": "{count}个用户将受到影响",
+	"warning": "警告",
+	"deleting": "正在删除..."
 }
