@@ -21,10 +21,19 @@
 		slug: organizer.slug || '',
 		logo: organizer.logo || '',
 		description: organizer.description || '',
-		url: organizer.url || ''
+		url: organizer.url || '',
+		type: organizer.type || ''
 	});
 	let errorMessage = $state('');
 	let successMessage = $state('');
+
+	const organizerTypes = [
+		{ value: 'individual', label: m.individual() },
+		{ value: 'organization', label: m.organization() },
+		{ value: 'community', label: m.community() },
+		{ value: 'tournament_series', label: m.tournament_series() },
+		{ value: 'league', label: m.league() }
+	];
 </script>
 
 <form
@@ -77,6 +86,21 @@
 			required
 			class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 		/>
+	</div>
+
+	<div class="mb-4">
+		<label class="block text-sm font-medium text-slate-300" for="type">Type</label>
+		<select
+			id="type"
+			name="type"
+			bind:value={newOrganizer.type}
+			class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+		>
+			<option value="">({m.none()})</option>
+			{#each organizerTypes as type}
+				<option value={type.value}>{type.label}</option>
+			{/each}
+		</select>
 	</div>
 
 	<div class="mb-4">

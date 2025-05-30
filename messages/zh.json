@@ -407,5 +407,10 @@
 	"add_map": "添加地图",
 	"update_match": "更新比赛",
 	"create_match": "创建比赛",
-	"other_players": "其他选手"
+	"other_players": "其他选手",
+	"individual": "个人",
+	"organization": "组织",
+	"tournament_series": "赛事系列",
+	"league": "联赛",
+	"type": "类型"
 }

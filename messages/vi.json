@@ -394,5 +394,10 @@
 	"select_team": "Chọn đội",
 	"score": "Điểm",
 	"remove_team": "Xóa đội",
-	"other_players": "Cầu thủ khác"
+	"other_players": "Cầu thủ khác",
+	"individual": "Cá nhân",
+	"organization": "Tổ chức",
+	"tournament_series": "Giải đấu",
+	"league": "Giải",
+	"type": "Loại"
 }

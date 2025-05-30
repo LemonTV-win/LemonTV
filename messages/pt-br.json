@@ -394,5 +394,10 @@
 	"select_team": "Selecionar equipe",
 	"score": "Pontuação",
 	"remove_team": "Remover equipe",
-	"other_players": "Outros jogadores"
+	"other_players": "Outros jogadores",
+	"individual": "Individual",
+	"organization": "Organização",
+	"tournament_series": "Série de Torneios",
+	"league": "Liga",
+	"type": "Tipo"
 }

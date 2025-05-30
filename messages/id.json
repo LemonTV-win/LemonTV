@@ -394,5 +394,10 @@
 	"select_team": "Pilih Tim",
 	"score": "Skor",
 	"remove_team": "Hapus Tim",
-	"other_players": "Pemain lain"
+	"other_players": "Pemain lain",
+	"individual": "Individu",
+	"organization": "Organisasi",
+	"tournament_series": "Seri Turnamen",
+	"league": "Liga",
+	"type": "Jenis"
 }

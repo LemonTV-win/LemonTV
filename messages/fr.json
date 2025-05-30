@@ -407,5 +407,10 @@
 	"add_map": "Ajouter la Carte",
 	"update_match": "Mettre à jour le Match",
 	"create_match": "Créer le Match",
-	"other_players": "Autres joueurs"
+	"other_players": "Autres joueurs",
+	"individual": "Individuel",
+	"organization": "Organisation",
+	"tournament_series": "Série de Tournois",
+	"league": "Ligue",
+	"type": "Type"
 }

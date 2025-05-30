@@ -407,5 +407,10 @@
 	"add_map": "Añadir Mapa",
 	"update_match": "Actualizar Partido",
 	"create_match": "Crear Partido",
-	"other_players": "Otros jugadores"
+	"other_players": "Otros jugadores",
+	"individual": "Individual",
+	"organization": "Organización",
+	"tournament_series": "Serie de Torneos",
+	"league": "Liga",
+	"type": "Tipo"
 }

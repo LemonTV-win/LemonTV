@@ -72,6 +72,7 @@
 						...org,
 						description: org.description ?? null,
 						url: org.url ?? null,
+						type: org.type ?? null,
 						createdAt: new Date(),
 						updatedAt: new Date()
 					}))
@@ -311,6 +312,7 @@
 												...org,
 												description: org.description ?? null,
 												url: org.url ?? null,
+												type: org.type ?? null,
 												createdAt: new Date(),
 												updatedAt: new Date()
 											}))
@@ -333,6 +335,7 @@
 												...org,
 												description: org.description ?? null,
 												url: org.url ?? null,
+												type: org.type ?? null,
 												createdAt: new Date(),
 												updatedAt: new Date()
 											}))

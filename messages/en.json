@@ -410,5 +410,10 @@
 	"add_map": "Add Map",
 	"update_match": "Update Match",
 	"create_match": "Create Match",
-	"other_players": "Other Players"
+	"other_players": "Other Players",
+	"individual": "Individual",
+	"organization": "Organization",
+	"tournament_series": "Tournament Series",
+	"league": "League",
+	"type": "Type"
 }

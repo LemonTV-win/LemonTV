@@ -9,6 +9,22 @@
 
 	export let data: PageData;
 	const { organizer, events } = data;
+
+	const typeLabels: Record<string, string> = {
+		individual: m.individual(),
+		organization: m.organization(),
+		community: m.community(),
+		tournament_series: m.tournament_series(),
+		league: m.league()
+	};
+
+	const typeColors: Record<string, string> = {
+		individual: 'bg-blue-500/10 text-blue-500',
+		organization: 'bg-purple-500/10 text-purple-500',
+		community: 'bg-green-500/10 text-green-500',
+		tournament_series: 'bg-yellow-500/10 text-yellow-500',
+		league: 'bg-red-500/10 text-red-500'
+	};
 </script>
 
 <Breadcrumbs currentTitle={organizer.name} />
@@ -21,8 +37,15 @@
 			</div>
 
 			<div class="flex flex-1 flex-col gap-4">
-				<h1 class="flex items-center gap-2 text-3xl font-bold text-white">
-					{organizer.name}
+				<div class="flex items-center gap-2">
+					<h1 class="text-3xl font-bold text-white">{organizer.name}</h1>
+					{#if organizer.type}
+						<span
+							class={`inline-flex items-center rounded-md border border-current/20 px-2 py-1 text-sm ${typeColors[organizer.type] || 'bg-gray-500/10 text-gray-500'}`}
+						>
+							{typeLabels[organizer.type as keyof typeof typeLabels] || organizer.type}
+						</span>
+					{/if}
 					{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
 						<a
 							href={`/admin/organizers?action=edit&id=${organizer.id}`}
@@ -32,7 +55,7 @@
 							{m.edit()}
 						</a>
 					{/if}
-				</h1>
+				</div>
 
 				<p class="text-gray-400">{organizer.description}</p>
 

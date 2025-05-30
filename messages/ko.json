@@ -404,5 +404,10 @@
 	"add_map": "맵 추가",
 	"update_match": "경기 업데이트",
 	"create_match": "경기 생성",
-	"other_players": "다른 선수"
+	"other_players": "다른 선수",
+	"individual": "개인",
+	"organization": "조직",
+	"tournament_series": "토너먼트 시리즈",
+	"league": "리그",
+	"type": "유형"
 }

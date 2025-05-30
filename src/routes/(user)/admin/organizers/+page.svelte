@@ -32,6 +32,22 @@
 	} | null = $state(null);
 	let isDeleting = $state(false);
 
+	const typeColors: Record<string, string> = {
+		individual: 'bg-blue-500/10 text-blue-500',
+		organization: 'bg-purple-500/10 text-purple-500',
+		community: 'bg-green-500/10 text-green-500',
+		tournament_series: 'bg-yellow-500/10 text-yellow-500',
+		league: 'bg-red-500/10 text-red-500'
+	};
+
+	const typeLabels: Record<string, string> = {
+		individual: m.individual(),
+		organization: m.organization(),
+		community: m.community(),
+		tournament_series: m.tournament_series(),
+		league: m.league()
+	};
+
 	let filteredOrganizers = $derived(
 		organizers
 			.filter((organizer) => {
@@ -295,6 +311,7 @@
 							{/if}
 						</button>
 					</th>
+					<th class="px-4 py-1">{m.type()}</th>
 					<th class="px-4 py-1">{m.description()}</th>
 					<th class="px-4 py-1">{m.url()}</th>
 					<th class="px-4 py-1">
@@ -336,6 +353,13 @@
 									<div class="flex-shrink-0 text-sm text-gray-400">{organizer.slug}</div>
 								</a>
 							</div>
+						</td>
+						<td class="min-w-max overflow-hidden px-4 py-1">
+							<span
+								class={`inline-flex items-center rounded-md border border-current/20 px-2 py-1 text-sm ${organizer.type ? typeColors[organizer.type] : 'bg-gray-500/10 text-gray-500'}`}
+							>
+								{organizer.type ? typeLabels[organizer.type] : m.none()}
+							</span>
 						</td>
 						<td class="min-w-max overflow-hidden px-4 py-1 text-gray-300"
 							>{organizer.description}</td

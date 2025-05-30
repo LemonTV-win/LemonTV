@@ -65,7 +65,8 @@ export const actions = {
 			slug: formData.get('slug') as string,
 			logo: formData.get('logo') as string,
 			description: formData.get('description') as string,
-			url: formData.get('url') as string
+			url: formData.get('url') as string,
+			type: formData.get('type') as string
 		};
 
 		if (
@@ -73,6 +74,7 @@ export const actions = {
 			!organizerData.slug ||
 			!organizerData.description ||
 			!organizerData.url
+			// || !organizerData.type
 		) {
 			return fail(400, {
 				error: 'All fields are required'
@@ -83,7 +85,8 @@ export const actions = {
 			const organizerId = crypto.randomUUID();
 			await db.insert(table.organizer).values({
 				id: organizerId,
-				...organizerData
+				...organizerData,
+				type: organizerData.type || null
 			});
 
 			// Add edit history
@@ -124,7 +127,8 @@ export const actions = {
 			slug: formData.get('slug') as string,
 			logo: formData.get('logo') as string,
 			description: formData.get('description') as string,
-			url: formData.get('url') as string
+			url: formData.get('url') as string,
+			type: formData.get('type') as string
 		};
 
 		if (
@@ -133,6 +137,7 @@ export const actions = {
 			!organizerData.slug ||
 			!organizerData.description ||
 			!organizerData.url
+			// || !organizerData.type
 		) {
 			return fail(400, {
 				error: 'All fields are required'
@@ -162,6 +167,7 @@ export const actions = {
 					logo: organizerData.logo,
 					description: organizerData.description,
 					url: organizerData.url,
+					type: organizerData.type || null,
 					updatedAt: new Date()
 				})
 				.where(eq(table.organizer.id, organizerData.id));

@@ -9,7 +9,8 @@ export async function convertOrganizer(organizer: table.Organizer): Promise<AppO
 		...organizer,
 		logo: await processImageURL(organizer.logo),
 		description: organizer.description ?? undefined,
-		url: organizer.url ?? undefined
+		url: organizer.url ?? undefined,
+		type: organizer.type ?? undefined
 	};
 }
 
