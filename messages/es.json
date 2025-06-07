@@ -418,5 +418,9 @@
 	"warning": "Advertencia",
 	"deleting": "Eliminando...",
 	"view_all_organizers": "Ver todos los organizadores",
-	"admin_matches_desc": "Administrar todos los partidos, puntuaciones y detalles del partido."
+	"admin_matches_desc": "Administrar todos los partidos, puntuaciones y detalles del partido.",
+	"amount": "Cantidad",
+	"rank": "Rango",
+	"prize": "Premio",
+	"currency": "Moneda"
 }

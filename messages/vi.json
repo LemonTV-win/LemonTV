@@ -418,5 +418,9 @@
 	"update_match": "Cập nhật trận đấu",
 	"create_match": "Tạo trận đấu",
 	"view_all_organizers": "Xem tất cả ban tổ chức",
-	"admin_matches_desc": "Quản lý tất cả trận đấu, điểm số và chi tiết trận đấu."
+	"admin_matches_desc": "Quản lý tất cả trận đấu, điểm số và chi tiết trận đấu.",
+	"amount": "Số tiền",
+	"rank": "Xếp hạng",
+	"prize": "Giải thưởng",
+	"currency": "Tiền tệ"
 }

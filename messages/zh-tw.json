@@ -418,5 +418,9 @@
 	"update_match": "更新比賽",
 	"create_match": "創建比賽",
 	"view_all_organizers": "查看所有主辦方",
-	"admin_matches_desc": "管理所有比賽、分數和比賽詳細信息。"
+	"admin_matches_desc": "管理所有比賽、分數和比賽詳細信息。",
+	"amount": "金額",
+	"rank": "排名",
+	"prize": "獎金",
+	"currency": "貨幣"
 }

@@ -418,5 +418,9 @@
 	"warning": "Warnung",
 	"deleting": "Wird gelöscht...",
 	"view_all_organizers": "Alle Organisatoren ansehen",
-	"admin_matches_desc": "Alle Spiele, Punkte und Spieldetails verwalten."
+	"admin_matches_desc": "Alle Spiele, Punkte und Spieldetails verwalten.",
+	"amount": "Betrag",
+	"rank": "Rang",
+	"prize": "Preis",
+	"currency": "Währung"
 }

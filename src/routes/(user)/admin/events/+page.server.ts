@@ -125,6 +125,30 @@ export const actions = {
 				await db.delete(table.eventOrganizer).where(eq(table.eventOrganizer.eventId, eventId));
 			}
 
+			// Handle event results
+			const resultsData = formData.get('results') as string;
+			if (resultsData) {
+				const results = JSON.parse(resultsData) as Array<{
+					teamId: string;
+					rank: number;
+					prizeAmount: number;
+					prizeCurrency: string;
+				}>;
+
+				await db.insert(table.eventResult).values(
+					results.map((result) => ({
+						id: crypto.randomUUID(),
+						eventId,
+						teamId: result.teamId,
+						rank: result.rank,
+						prizeAmount: result.prizeAmount,
+						prizeCurrency: result.prizeCurrency,
+						createdAt: new Date(),
+						updatedAt: new Date()
+					}))
+				);
+			}
+
 			// Add edit history
 			await db.insert(table.editHistory).values({
 				id: crypto.randomUUID(),
@@ -222,6 +246,34 @@ export const actions = {
 			} else {
 				// If no organizers are selected, remove all existing organizers
 				await db.delete(table.eventOrganizer).where(eq(table.eventOrganizer.eventId, eventData.id));
+			}
+
+			// Handle event results
+			const resultsData = formData.get('results') as string;
+			if (resultsData) {
+				const results = JSON.parse(resultsData) as Array<{
+					teamId: string;
+					rank: number;
+					prizeAmount: number;
+					prizeCurrency: string;
+				}>;
+
+				// First delete all existing results
+				await db.delete(table.eventResult).where(eq(table.eventResult.eventId, eventData.id));
+
+				// Then insert the new results
+				await db.insert(table.eventResult).values(
+					results.map((result) => ({
+						id: crypto.randomUUID(),
+						eventId: eventData.id,
+						teamId: result.teamId,
+						rank: result.rank,
+						prizeAmount: result.prizeAmount,
+						prizeCurrency: result.prizeCurrency,
+						createdAt: new Date(),
+						updatedAt: new Date()
+					}))
+				);
 			}
 
 			// Add edit history if there are changes
@@ -370,6 +422,72 @@ export const actions = {
 			console.error('[Admin][Events][UpdateTeamPlayers] Failed to update event team players:', e);
 			return fail(500, {
 				error: 'Failed to update event team players'
+			});
+		}
+	},
+
+	updateResults: async ({ request, locals }) => {
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
+			});
+		}
+
+		const formData = await request.formData();
+		const eventId = formData.get('eventId') as string;
+		const resultsData = formData.get('results') as string;
+
+		if (!eventId || !resultsData) {
+			return fail(400, {
+				error: 'Event ID and results data are required'
+			});
+		}
+
+		try {
+			const results = JSON.parse(resultsData) as Array<{
+				teamId: string;
+				rank: number;
+				prizeAmount: number;
+				prizeCurrency: string;
+			}>;
+
+			// First delete all existing results
+			await db.delete(table.eventResult).where(eq(table.eventResult.eventId, eventId));
+
+			// Then insert the new results
+			await db.insert(table.eventResult).values(
+				results.map((result) => ({
+					id: crypto.randomUUID(),
+					eventId,
+					teamId: result.teamId,
+					rank: result.rank,
+					prizeAmount: result.prizeAmount,
+					prizeCurrency: result.prizeCurrency,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				}))
+			);
+
+			// Add edit history
+			await db.insert(table.editHistory).values({
+				id: crypto.randomUUID(),
+				tableName: 'event_result',
+				recordId: eventId,
+				fieldName: 'results',
+				oldValue: null,
+				newValue: JSON.stringify(results),
+				editedBy: result.userId,
+				editedAt: new Date()
+			});
+
+			return {
+				success: true
+			};
+		} catch (e) {
+			console.error('[Admin][Events][UpdateResults] Failed to update event results:', e);
+			return fail(500, {
+				error: 'Failed to update event results'
 			});
 		}
 	}

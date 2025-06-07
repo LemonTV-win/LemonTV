@@ -418,5 +418,9 @@
 	"update_match": "Atualizar partida",
 	"create_match": "Criar partida",
 	"view_all_organizers": "Ver todos os organizadores",
-	"admin_matches_desc": "Gerenciar todos os jogos, pontuações e detalhes do jogo."
+	"admin_matches_desc": "Gerenciar todos os jogos, pontuações e detalhes do jogo.",
+	"amount": "Valor",
+	"rank": "Posição",
+	"prize": "Prêmio",
+	"currency": "Moeda"
 }

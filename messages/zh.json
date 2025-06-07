@@ -418,5 +418,9 @@
 	"warning": "警告",
 	"deleting": "正在删除...",
 	"view_all_organizers": "查看所有主办方",
-	"admin_matches_desc": "管理所有比赛、分数和比赛详细信息。"
+	"admin_matches_desc": "管理所有比赛、分数和比赛详细信息。",
+	"amount": "金额",
+	"rank": "排名",
+	"prize": "奖金",
+	"currency": "货币"
 }

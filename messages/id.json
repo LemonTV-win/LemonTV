@@ -418,5 +418,9 @@
 	"update_match": "Perbarui Pertandingan",
 	"create_match": "Buat Pertandingan",
 	"view_all_organizers": "Lihat Semua Penyelenggara",
-	"admin_matches_desc": "Mengelola semua pertandingan, skor, dan detail pertandingan."
+	"admin_matches_desc": "Mengelola semua pertandingan, skor, dan detail pertandingan.",
+	"amount": "Jumlah",
+	"rank": "Peringkat",
+	"prize": "Hadiah",
+	"currency": "Mata Uang"
 }

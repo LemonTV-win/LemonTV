@@ -7,6 +7,7 @@
 	import Combobox from '$lib/components/Combobox.svelte';
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import IconParkSolidAdd from '~icons/icon-park-solid/add';
+	import type { EventResult } from '$lib/data/events';
 
 	let {
 		event,
@@ -213,19 +214,64 @@
 			});
 		return counts;
 	}
+
+	let results = $state<
+		Array<{
+			teamId: string;
+			rank: number;
+			prizeAmount: number;
+			prizeCurrency: string;
+		}>
+	>(
+		((event as any).results ?? []).map((result: EventResult) => ({
+			teamId: result.team.id,
+			rank: result.rank,
+			prizeAmount: result.prizes[0]?.amount ?? 0,
+			prizeCurrency: result.prizes[0]?.currency ?? 'Bablo'
+		}))
+	);
+
+	let isSubmitting = $state(false);
+
+	function addResult() {
+		results = [
+			...results,
+			{
+				teamId: '',
+				rank: results.length + 1,
+				prizeAmount: 0,
+				prizeCurrency: 'Bablo'
+			}
+		];
+	}
+
+	function removeResult(index: number) {
+		results = results
+			.filter((_, i) => i !== index)
+			.map((result, i) => ({
+				...result,
+				rank: i + 1
+			}));
+	}
+
+	function updateResult(index: number, field: string, value: string | number) {
+		results = results.map((result, i) => (i === index ? { ...result, [field]: value } : result));
+	}
 </script>
 
 <form
 	method="POST"
 	action={event.id ? '?/update' : '?/create'}
-	use:enhance={() => {
+	use:enhance={({ formData }) => {
+		isSubmitting = true;
+		// Add results data
+		formData.append('results', JSON.stringify(results));
 		return async ({ result }) => {
-			if (!validateDateRange()) {
-				return;
-			}
+			isSubmitting = false;
 			if (result.type === 'success') {
 				// Update team players if event was created/updated successfully
-				const eventId = (result.data as { id?: string })?.id || event.id;
+				const eventId =
+					(result as { type: 'success'; data?: { id?: string } }).data?.id || event.id;
 				if (eventId) {
 					const formData = new FormData();
 					formData.append('eventId', eventId);
@@ -239,9 +285,11 @@
 				onCancel();
 			} else if (result.type === 'failure') {
 				errorMessage =
-					typeof result.data?.error === 'string' ? result.data.error : 'Failed to save event';
+					(result as { type: 'failure'; data?: { error?: string } }).data?.error ??
+					'An error occurred';
 			} else if (result.type === 'error') {
-				errorMessage = result.error?.message || 'An error occurred';
+				errorMessage =
+					(result as { type: 'error'; error: any }).error?.message ?? 'An error occurred';
 			}
 		};
 	}}
@@ -651,6 +699,95 @@
 						{/if}
 					</div>
 				{/each}
+			</div>
+		</div>
+
+		<div class="mb-6">
+			<h3 class="mb-4 text-lg font-semibold">{m.results()}</h3>
+			<div class="space-y-4">
+				{#each results as result, index}
+					<div class="flex items-center gap-4 rounded-lg border border-slate-700 bg-slate-800 p-4">
+						<div class="flex-1">
+							<label class="mb-2 block text-sm font-medium text-slate-300" for="team-{index}">
+								{m.team()}
+							</label>
+							<select
+								id="team-{index}"
+								name="teamId"
+								bind:value={result.teamId}
+								class="w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+								required
+							>
+								<option value="">{m.select_team()}</option>
+								{#each teams as team}
+									<option value={team.id}>{team.name}</option>
+								{/each}
+							</select>
+						</div>
+						<div class="w-24">
+							<label class="mb-2 block text-sm font-medium text-slate-300" for="rank-{index}">
+								{m.rank()}
+							</label>
+							<input
+								id="rank-{index}"
+								type="number"
+								name="rank"
+								bind:value={result.rank}
+								min="1"
+								class="w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+								required
+							/>
+						</div>
+						<div class="w-32">
+							<label
+								class="mb-2 block text-sm font-medium text-slate-300"
+								for="prize-amount-{index}"
+							>
+								{m.amount()}
+							</label>
+							<input
+								id="prize-amount-{index}"
+								type="number"
+								name="prizeAmount"
+								bind:value={result.prizeAmount}
+								min="0"
+								class="w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+								required
+							/>
+						</div>
+						<div class="w-32">
+							<label
+								class="mb-2 block text-sm font-medium text-slate-300"
+								for="prize-currency-{index}"
+							>
+								{m.currency()}
+							</label>
+							<input
+								id="prize-currency-{index}"
+								type="text"
+								name="prizeCurrency"
+								bind:value={result.prizeCurrency}
+								class="w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+								required
+							/>
+						</div>
+						<button
+							type="button"
+							class="mt-6 text-red-500 hover:text-red-400"
+							onclick={() => removeResult(index)}
+						>
+							<IconParkSolidDelete class="h-5 w-5" />
+						</button>
+					</div>
+				{/each}
+				<button
+					type="button"
+					class="flex items-center gap-2 text-yellow-500 hover:text-yellow-400"
+					onclick={addResult}
+				>
+					<IconParkSolidAdd class="h-5 w-5" />
+					{m.add()}
+				</button>
 			</div>
 		</div>
 	</div>
