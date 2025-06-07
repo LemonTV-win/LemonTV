@@ -147,10 +147,10 @@
 		{/if}
 		{#if data.event.results}
 			<h2 class="my-4 text-2xl font-bold text-white">{m.results()}</h2>
-			<div class="flex h-72 items-end justify-center gap-6 px-4">
+			<div class="flex h-100 items-end justify-center gap-6 px-4">
 				{#each podiumOrder as result}
 					<div
-						class="flex min-w-64 flex-col items-center justify-between gap-2 bg-gray-200/10 p-4 {result.rank ===
+						class="glass flex min-w-72 flex-col items-center justify-between gap-2 p-4 {result.rank ===
 						1
 							? 'z-10 h-[100%]'
 							: result.rank === 2
@@ -167,7 +167,15 @@
 							#{result.rank}
 						</div>
 						{#if result.team.logo}
-							<img src={result.team.logo} alt={result.team.name} class="h-16 w-16 rounded-full" />
+							<img
+								src={result.team.logo}
+								alt={result.team.name}
+								class={['h-24 w-24 rounded-full', result.rank === 1 ? 'h-32 w-32' : 'h-24 w-24']}
+							/>
+						{:else}
+							<IconParkSolidPeoples
+								class={['h-24 w-24 text-gray-300', result.rank === 1 ? 'h-32 w-32' : 'h-24 w-24']}
+							/>
 						{/if}
 						<div class="flex flex-col items-center gap-2">
 							<div class="text-center">
@@ -198,10 +206,12 @@
 			</div>
 			<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
 				{#each data.event.results.sort((a, b) => a.rank - b.rank).slice(3) as result}
-					<div class="flex flex-col items-center gap-2 bg-gray-200/10 p-4">
+					<div class="glass flex flex-col items-center gap-2 p-4">
 						<div class="text-4xl font-bold text-yellow-600">#{result.rank}</div>
 						{#if result.team.logo}
 							<img src={result.team.logo} alt={result.team.name} class="h-16 w-16 rounded-full" />
+						{:else}
+							<IconParkSolidPeoples class="h-16 w-16 text-gray-300" />
 						{/if}
 						<div class="text-center">
 							<div class="font-bold">
@@ -254,9 +264,7 @@
 						{#if participant}
 							{@const { team, main, reserve, coach } = participant}
 							{#if team}
-								<li
-									class="grid min-w-48 grid-cols-2 grid-rows-[auto_1fr] gap-2 rounded-sm bg-gray-200/10 p-4"
-								>
+								<li class="glass grid min-w-48 grid-cols-2 grid-rows-[auto_1fr] gap-2 p-4">
 									<h3 class="col-span-2 font-bold">
 										<a href={`/teams/${data.teams.get(team)?.id}`} class="hover:text-yellow-500">
 											{data.teams.get(team)?.name}
@@ -267,7 +275,7 @@
 											<img
 												src={data.teams.get(team)?.logo}
 												alt={data.teams.get(team)?.name}
-												class="h-4 w-4 rounded-full"
+												class="h-24 w-24 rounded-full"
 											/>
 										{:else}
 											<IconParkSolidPeoples class="h-16 w-16 text-gray-300" />
@@ -305,12 +313,10 @@
 								???
 							{/if}
 						{:else}
-							<li
-								class="flex min-h-48 min-w-48 flex-col items-center gap-2 rounded-sm bg-gray-200/10 p-2"
-							>
+							<li class="glass flex min-h-48 min-w-48 flex-col items-center gap-2 p-2">
 								<div class="flex h-full w-full flex-col items-center justify-center gap-2">
-									<IconParkSolidPeoples class="h-16 w-16 text-gray-700" />
-									<div class="text-2xl font-bold text-gray-700">TBD</div>
+									<IconParkSolidPeoples class="h-16 w-16 text-gray-500" />
+									<div class="text-2xl font-bold text-gray-500">TBD</div>
 								</div>
 							</li>
 						{/if}
