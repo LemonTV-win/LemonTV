@@ -2,6 +2,7 @@ import type { Match } from '$lib/data/matches';
 import type { LocalizedString } from '$lib/data/string';
 import type { Region } from './game';
 import type { Organizer } from './organizer';
+import type { Team } from './teams';
 
 export interface Stage {
 	id: number;
@@ -46,6 +47,18 @@ export interface EventPrize {
 	currency: string;
 }
 
+export interface LegacyEventResult {
+	rank: number;
+	team: string; // team abbr
+	prizes: EventPrize[];
+}
+
+export interface EventResult {
+	rank: number;
+	team: Team;
+	prizes: EventPrize[];
+}
+
 export interface Event {
 	id: string;
 	slug: string;
@@ -77,11 +90,7 @@ export interface Event {
 		platform: 'twitch' | 'youtube' | 'bilibili';
 		url: string;
 	}[];
-	results?: {
-		rank: number;
-		team: string;
-		prizes: EventPrize[];
-	}[];
+	results?: LegacyEventResult[] | EventResult[];
 	highlights?: string[];
 }
 

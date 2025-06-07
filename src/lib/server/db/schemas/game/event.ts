@@ -64,6 +64,26 @@ export const eventTeamPlayer = sqliteTable(
 	(t) => [primaryKey({ columns: [t.eventId, t.teamId, t.playerId] })]
 );
 
+export const eventResult = sqliteTable('event_result', {
+	id: text('id').primaryKey(),
+	eventId: text('event_id')
+		.references(() => event.id)
+		.notNull(),
+	teamId: text('team_id')
+		.references(() => team.id)
+		.notNull(),
+	rank: integer('rank').notNull(),
+	prizeAmount: integer('prize_amount'),
+	prizeCurrency: text('prize_currency'),
+	createdAt: integer('created_at', { mode: 'timestamp_ms' })
+		.notNull()
+		.default(sql`(unixepoch() * 1000)`),
+	updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
+		.notNull()
+		.default(sql`(unixepoch() * 1000)`)
+});
+
 export type Event = typeof event.$inferSelect;
 export type EventOrganizer = typeof eventOrganizer.$inferSelect;
 export type EventTeamPlayer = typeof eventTeamPlayer.$inferSelect;
+export type EventResult = typeof eventResult.$inferSelect;

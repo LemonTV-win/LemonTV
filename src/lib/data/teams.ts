@@ -3,13 +3,14 @@ import type { Player } from './players';
 
 export interface Team {
 	id: string;
-	name: string;
-	abbr?: string;
 	slug: string;
-	logo?: string;
-	region?: Region;
+	name: string;
+	abbr: string | null;
+	region: string | null;
+	logo: string | null;
+	createdAt: string | null;
+	updatedAt: string | null;
 	players?: Player[];
 	wins?: number;
-	createdAt?: string;
 	aliases?: string[];
 }

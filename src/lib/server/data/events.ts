@@ -123,6 +123,22 @@ export function getOrganizerChanges(
 }
 
 export async function getEvents(conditions: { organizerIds?: string[] } = {}): Promise<AppEvent[]> {
+	// First get the event results separately
+	const eventResults = await db
+		.select({
+			eventId: table.eventResult.eventId,
+			teamId: table.eventResult.teamId,
+			rank: table.eventResult.rank,
+			prizeAmount: table.eventResult.prizeAmount,
+			prizeCurrency: table.eventResult.prizeCurrency,
+			team: table.team,
+			event: table.event
+		})
+		.from(table.eventResult)
+		.leftJoin(table.team, eq(table.team.id, table.eventResult.teamId))
+		.leftJoin(table.event, eq(table.event.id, table.eventResult.eventId));
+
+	// Then get the main event data
 	const eventsWithOrganizers = await db
 		.select({
 			event: table.event,
@@ -154,12 +170,60 @@ export async function getEvents(conditions: { organizerIds?: string[] } = {}): P
 				player: typeof table.player.$inferSelect;
 				role: 'main' | 'sub' | 'coach';
 			}>;
+			results: Array<{
+				rank: number;
+				team: typeof table.team.$inferSelect;
+				prizes: Array<{
+					amount: number;
+					currency: string;
+				}>;
+			}>;
 		}
 	>();
 
+	// Process event results first
+	eventResults.forEach((result) => {
+		if (!eventsMap.has(result.eventId) && result.event) {
+			eventsMap.set(result.eventId, {
+				event: result.event,
+				organizers: [],
+				teamPlayers: [],
+				results: []
+			});
+		}
+		const eventData = eventsMap.get(result.eventId)!;
+		if (
+			result.team &&
+			result.rank !== null &&
+			result.prizeAmount !== null &&
+			result.prizeCurrency
+		) {
+			eventData.results.push({
+				rank: result.rank,
+				team: {
+					id: result.team.id,
+					name: result.team.name,
+					slug: result.team.slug,
+					abbr: result.team.abbr,
+					region: result.team.region,
+					logo: result.team.logo,
+					createdAt: result.team.createdAt,
+					updatedAt: result.team.updatedAt
+				},
+				prizes: [
+					{
+						amount: result.prizeAmount,
+						currency: result.prizeCurrency
+					}
+				]
+			});
+		}
+	});
+
+	// Then process the main event data
 	eventsWithOrganizers.forEach(({ event, organizer, eventTeamPlayer, team, player }) => {
 		if (!eventsMap.has(event.id)) {
-			eventsMap.set(event.id, { event, organizers: [], teamPlayers: [] });
+			eventsMap.set(event.id, { event, organizers: [], teamPlayers: [], results: [] });
 		}
 		if (organizer) {
 			const eventData = eventsMap.get(event.id)!;
@@ -178,11 +242,12 @@ export async function getEvents(conditions: { organizerIds?: string[] } = {}): P
 	});
 
 	const events = await Promise.all(
-		Array.from(eventsMap.values()).map(async ({ event, organizers, teamPlayers }) => ({
+		Array.from(eventsMap.values()).map(async ({ event, organizers, teamPlayers, results }) => ({
 			...event,
 			organizers,
 			imageURL: await processImageURL(event.image),
-			teamPlayers
+			teamPlayers,
+			results: results.length > 0 ? results : undefined
 		}))
 	);
 

@@ -166,12 +166,8 @@
 						>
 							#{result.rank}
 						</div>
-						{#if data.teams.get(result.team)?.logo}
-							<img
-								src={data.teams.get(result.team)?.logo}
-								alt={data.teams.get(result.team)?.name}
-								class="h-16 w-16 rounded-full"
-							/>
+						{#if result.team.logo}
+							<img src={result.team.logo} alt={result.team.name} class="h-16 w-16 rounded-full" />
 						{/if}
 						<div class="flex flex-col items-center gap-2">
 							<div class="text-center">
@@ -182,14 +178,11 @@
 											? 'text-xl'
 											: 'text-lg'}"
 								>
-									<a
-										href={`/teams/${data.teams.get(result.team)?.id}`}
-										class="hover:text-yellow-500"
-									>
-										{data.teams.get(result.team)?.name}
+									<a href={`/teams/${result.team.id}`} class="hover:text-yellow-500">
+										{result.team.name}
 									</a>
 								</div>
-								<div class="text-gray-400">({data.teams.get(result.team)?.region})</div>
+								<div class="text-gray-400">({result.team.region})</div>
 							</div>
 							<div class="flex flex-col items-center gap-1">
 								{#each result.prizes as prize}
@@ -207,20 +200,16 @@
 				{#each data.event.results.sort((a, b) => a.rank - b.rank).slice(3) as result}
 					<div class="flex flex-col items-center gap-2 bg-gray-200/10 p-4">
 						<div class="text-4xl font-bold text-yellow-600">#{result.rank}</div>
-						{#if data.teams.get(result.team)?.logo}
-							<img
-								src={data.teams.get(result.team)?.logo}
-								alt={data.teams.get(result.team)?.name}
-								class="h-16 w-16 rounded-full"
-							/>
+						{#if result.team.logo}
+							<img src={result.team.logo} alt={result.team.name} class="h-16 w-16 rounded-full" />
 						{/if}
 						<div class="text-center">
 							<div class="font-bold">
-								<a href={`/teams/${data.teams.get(result.team)?.id}`} class="hover:text-yellow-500">
-									{data.teams.get(result.team)?.name}
+								<a href={`/teams/${result.team.id}`} class="hover:text-yellow-500">
+									{result.team.name}
 								</a>
 							</div>
-							<div class="text-gray-400">({data.teams.get(result.team)?.region})</div>
+							<div class="text-gray-400">({result.team.region})</div>
 						</div>
 						<div class="flex flex-col items-center gap-1">
 							{#each result.prizes as prize}

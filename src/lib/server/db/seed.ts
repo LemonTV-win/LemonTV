@@ -12,6 +12,7 @@ export async function seed() {
 	await db.delete(schema.matchTeam);
 	await db.delete(schema.eventTeamPlayer);
 	await db.delete(schema.eventOrganizer);
+	await db.delete(schema.eventResult);
 	await db.delete(schema.teamPlayer);
 	await db.delete(schema.teamAlias);
 	await db.delete(schema.playerAlias);
@@ -1259,6 +1260,76 @@ export async function seed() {
 			action: 'decider',
 			map_picker_position: 0,
 			side_picker_position: 1
+		}
+	]);
+
+	console.log('[SEED] Seeding event results...');
+	await db.insert(schema.eventResult).values([
+		// Event 1 (Imaginary Cup 1) Results
+		{
+			id: randomUUID(),
+			eventId: EVENTS[0].id,
+			teamId: team1_id,
+			rank: 1,
+			prizeAmount: 45000,
+			prizeCurrency: 'Bablo'
+		},
+		{
+			id: randomUUID(),
+			eventId: EVENTS[0].id,
+			teamId: team2_id,
+			rank: 2,
+			prizeAmount: 35000,
+			prizeCurrency: 'Bablo'
+		},
+		{
+			id: randomUUID(),
+			eventId: EVENTS[0].id,
+			teamId: team3_id,
+			rank: 3,
+			prizeAmount: 25000,
+			prizeCurrency: 'Bablo'
+		},
+		{
+			id: randomUUID(),
+			eventId: EVENTS[0].id,
+			teamId: team4_id,
+			rank: 4,
+			prizeAmount: 16000,
+			prizeCurrency: 'Bablo'
+		},
+		// Event 2 (Imaginary Cup 2) Results
+		{
+			id: randomUUID(),
+			eventId: EVENTS[1].id,
+			teamId: team1_id,
+			rank: 1,
+			prizeAmount: 50000,
+			prizeCurrency: 'Bablo'
+		},
+		{
+			id: randomUUID(),
+			eventId: EVENTS[1].id,
+			teamId: team2_id,
+			rank: 2,
+			prizeAmount: 40000,
+			prizeCurrency: 'Bablo'
+		},
+		{
+			id: randomUUID(),
+			eventId: EVENTS[1].id,
+			teamId: team3_id,
+			rank: 3,
+			prizeAmount: 30000,
+			prizeCurrency: 'Bablo'
+		},
+		{
+			id: randomUUID(),
+			eventId: EVENTS[1].id,
+			teamId: team4_id,
+			rank: 4,
+			prizeAmount: 20000,
+			prizeCurrency: 'Bablo'
 		}
 	]);
 
