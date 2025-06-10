@@ -24,8 +24,15 @@
 
 	let selectedEvent: EventWithOrganizers | null = $state(null);
 	let searchQuery = $state('');
-	let sortBy: 'name-asc' | 'name-desc' | 'date-asc' | 'date-desc' | 'status-asc' | 'status-desc' =
-		$state('date-desc');
+	let sortBy:
+		| 'name-asc'
+		| 'name-desc'
+		| 'date-asc'
+		| 'date-desc'
+		| 'status-asc'
+		| 'status-desc'
+		| 'official-asc'
+		| 'official-desc' = $state('date-desc');
 	let isAddingNew = $state(false);
 	let isEditing = $state(false);
 	let showHistoryModal = $state(false);
@@ -53,6 +60,10 @@
 					return a.status.localeCompare(b.status);
 				} else if (sortBy === 'status-desc') {
 					return b.status.localeCompare(a.status);
+				} else if (sortBy === 'official-asc') {
+					return (a.official ? 1 : 0) - (b.official ? 1 : 0);
+				} else if (sortBy === 'official-desc') {
+					return (b.official ? 1 : 0) - (a.official ? 1 : 0);
 				}
 				return 0;
 			})
@@ -220,7 +231,23 @@
 							{/if}
 						</button>
 					</th>
-					<th class="px-4 py-1">{m.official()}</th>
+					<th class="px-4 py-1">
+						<button
+							class="flex items-center gap-1 text-left"
+							class:text-white={sortBy === 'official-asc' || sortBy === 'official-desc'}
+							onclick={() =>
+								(sortBy = sortBy === 'official-asc' ? 'official-desc' : 'official-asc')}
+						>
+							{m.official()}
+							{#if sortBy === 'official-asc'}
+								<TypcnArrowSortedUp class="inline-block" />
+							{:else if sortBy === 'official-desc'}
+								<TypcnArrowSortedDown class="inline-block" />
+							{:else}
+								<TypcnArrowUnsorted class="inline-block" />
+							{/if}
+						</button>
+					</th>
 					<th class="px-4 py-1">
 						<button
 							class="flex items-center gap-1 text-left"
