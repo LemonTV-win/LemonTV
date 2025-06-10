@@ -5,7 +5,7 @@ import { db } from '../db';
 import * as table from '$lib/server/db/schema';
 import { processImageURL } from '$lib/server/storage';
 import type { Region } from '$lib/data/game';
-import { inArray, eq } from 'drizzle-orm';
+import { inArray, eq, or } from 'drizzle-orm';
 import { convertOrganizer } from './organizers';
 
 // Types for the application layer
@@ -123,7 +123,9 @@ export function getOrganizerChanges(
 	};
 }
 
-export async function getEvents(conditions: { organizerIds?: string[] } = {}): Promise<AppEvent[]> {
+export async function getEvents(
+	conditions: { organizerIds?: string[]; searchKeyword?: string } = {}
+): Promise<AppEvent[]> {
 	// First get the event results separately
 	const eventResults = await db
 		.select({
@@ -137,7 +139,15 @@ export async function getEvents(conditions: { organizerIds?: string[] } = {}): P
 		})
 		.from(table.eventResult)
 		.leftJoin(table.team, eq(table.team.id, table.eventResult.teamId))
-		.leftJoin(table.event, eq(table.event.id, table.eventResult.eventId));
+		.leftJoin(table.event, eq(table.event.id, table.eventResult.eventId))
+		.where(
+			conditions.searchKeyword
+				? or(
+						eq(table.event.id, conditions.searchKeyword),
+						eq(table.event.slug, conditions.searchKeyword)
+					)
+				: undefined
+		);
 
 	// Then get the main event data
 	const eventsWithOrganizers = await db
@@ -159,7 +169,12 @@ export async function getEvents(conditions: { organizerIds?: string[] } = {}): P
 		.where(
 			conditions.organizerIds
 				? inArray(table.eventOrganizer.organizerId, conditions.organizerIds)
-				: undefined
+				: conditions.searchKeyword
+					? or(
+							eq(table.event.id, conditions.searchKeyword),
+							eq(table.event.slug, conditions.searchKeyword)
+						)
+					: undefined
 		);
 
 	// Group organizers and team players by event
@@ -330,9 +345,8 @@ export async function getEvents(conditions: { organizerIds?: string[] } = {}): P
 }
 
 export async function getEvent(id: string): Promise<AppEvent | undefined> {
-	// TODO: Optimize to filter by id or slug or directly from database
-	const serverEvents = await getEvents();
-	return serverEvents.find((event) => event.id === id || event.slug === id);
+	const events = await getEvents({ searchKeyword: id });
+	return events[0];
 }
 
 // Get event team player changes
