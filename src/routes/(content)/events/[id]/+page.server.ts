@@ -2,22 +2,12 @@ import type { PageServerLoad } from './$types';
 import type { LegacyEventResult, Event, EventResult } from '$lib/data/events';
 
 import { getEvent } from '$lib/data';
-import { getEvents as getServerEvents } from '$lib/server/data/events';
+import { getEvent as getServerEvent } from '$lib/server/data/events';
 import { getTeams } from '$lib/server/data/teams';
 import { error } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ params }) => {
-	// Try to get event from local data first
-	let event: Event | undefined = getEvent(params.id);
-
-	// If not found locally, try to get from database
-	if (!event) {
-		const serverEvents = await getServerEvents();
-		const serverEvent = serverEvents.find((e) => e.id === params.id || e.slug === params.id);
-		if (serverEvent) {
-			event = serverEvent;
-		}
-	}
+	let event: Event | undefined = getEvent(params.id) || (await getServerEvent(params.id));
 
 	if (!event) {
 		throw error(404, 'Event not found');

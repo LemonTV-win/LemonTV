@@ -329,6 +329,12 @@ export async function getEvents(conditions: { organizerIds?: string[] } = {}): P
 	);
 }
 
+export async function getEvent(id: string): Promise<AppEvent | undefined> {
+	// TODO: Optimize to filter by id or slug or directly from database
+	const serverEvents = await getEvents();
+	return serverEvents.find((event) => event.id === id || event.slug === id);
+}
+
 // Get event team player changes
 export function getEventTeamPlayerChanges(
 	currentPlayers: (typeof table.eventTeamPlayer.$inferSelect)[],
