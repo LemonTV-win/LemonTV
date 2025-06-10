@@ -424,5 +424,7 @@
 	"prize": "Hadiah",
 	"currency": "Mata Uang",
 	"yes": "Ya",
-	"no": "Tidak"
+	"no": "Tidak",
+	"links": "Tautan",
+	"label": "Label"
 }

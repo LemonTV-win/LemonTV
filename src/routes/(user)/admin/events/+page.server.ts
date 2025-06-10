@@ -84,7 +84,8 @@ export const actions = {
 			status: formData.get('status') as string,
 			capacity: parseInt(formData.get('capacity') as string),
 			date: formData.get('date') as string,
-			organizerIds: (formData.getAll('organizers') as string[]) || []
+			organizerIds: (formData.getAll('organizers') as string[]) || [],
+			websites: JSON.parse((formData.get('websites') as string) || '[]')
 		};
 
 		if (
@@ -125,6 +126,31 @@ export const actions = {
 				await db.delete(table.eventOrganizer).where(eq(table.eventOrganizer.eventId, eventId));
 			}
 
+			// Handle event websites
+			if (eventData.websites && eventData.websites.length > 0) {
+				// First remove all existing websites
+				await db.delete(table.eventWebsite).where(eq(table.eventWebsite.eventId, eventId));
+
+				// Then add the new websites
+				const websiteValues = eventData.websites
+					.filter((website) => website.url) // Only include websites with URLs
+					.map((website) => ({
+						id: crypto.randomUUID(),
+						eventId,
+						url: website.url,
+						label: website.label || null,
+						createdAt: new Date(),
+						updatedAt: new Date()
+					}));
+
+				if (websiteValues.length > 0) {
+					await db.insert(table.eventWebsite).values(websiteValues);
+				}
+			} else {
+				// If no websites are provided, remove all existing websites
+				await db.delete(table.eventWebsite).where(eq(table.eventWebsite.eventId, eventId));
+			}
+
 			// Handle event results
 			const resultsData = formData.get('results') as string;
 			if (resultsData) {
@@ -135,18 +161,24 @@ export const actions = {
 					prizeCurrency: string;
 				}>;
 
-				await db.insert(table.eventResult).values(
-					results.map((result) => ({
-						id: crypto.randomUUID(),
-						eventId,
-						teamId: result.teamId,
-						rank: result.rank,
-						prizeAmount: result.prizeAmount,
-						prizeCurrency: result.prizeCurrency,
-						createdAt: new Date(),
-						updatedAt: new Date()
-					}))
-				);
+				// First delete all existing results
+				await db.delete(table.eventResult).where(eq(table.eventResult.eventId, eventId));
+
+				// Then insert the new results if there are any
+				if (results.length > 0) {
+					await db.insert(table.eventResult).values(
+						results.map((result) => ({
+							id: crypto.randomUUID(),
+							eventId,
+							teamId: result.teamId,
+							rank: result.rank,
+							prizeAmount: result.prizeAmount,
+							prizeCurrency: result.prizeCurrency,
+							createdAt: new Date(),
+							updatedAt: new Date()
+						}))
+					);
+				}
 			}
 
 			// Add edit history
@@ -194,7 +226,8 @@ export const actions = {
 			status: formData.get('status') as string,
 			capacity: parseInt(formData.get('capacity') as string),
 			date: formData.get('date') as string,
-			organizerIds: (formData.getAll('organizers') as string[]) || []
+			organizerIds: (formData.getAll('organizers') as string[]) || [],
+			websites: JSON.parse((formData.get('websites') as string) || '[]')
 		};
 
 		if (
@@ -248,6 +281,31 @@ export const actions = {
 				await db.delete(table.eventOrganizer).where(eq(table.eventOrganizer.eventId, eventData.id));
 			}
 
+			// Handle event websites
+			if (eventData.websites && eventData.websites.length > 0) {
+				// First remove all existing websites
+				await db.delete(table.eventWebsite).where(eq(table.eventWebsite.eventId, eventData.id));
+
+				// Then add the new websites
+				const websiteValues = eventData.websites
+					.filter((website) => website.url) // Only include websites with URLs
+					.map((website) => ({
+						id: crypto.randomUUID(),
+						eventId: eventData.id,
+						url: website.url,
+						label: website.label || null,
+						createdAt: new Date(),
+						updatedAt: new Date()
+					}));
+
+				if (websiteValues.length > 0) {
+					await db.insert(table.eventWebsite).values(websiteValues);
+				}
+			} else {
+				// If no websites are provided, remove all existing websites
+				await db.delete(table.eventWebsite).where(eq(table.eventWebsite.eventId, eventData.id));
+			}
+
 			// Handle event results
 			const resultsData = formData.get('results') as string;
 			if (resultsData) {
@@ -261,19 +319,21 @@ export const actions = {
 				// First delete all existing results
 				await db.delete(table.eventResult).where(eq(table.eventResult.eventId, eventData.id));
 
-				// Then insert the new results
-				await db.insert(table.eventResult).values(
-					results.map((result) => ({
-						id: crypto.randomUUID(),
-						eventId: eventData.id,
-						teamId: result.teamId,
-						rank: result.rank,
-						prizeAmount: result.prizeAmount,
-						prizeCurrency: result.prizeCurrency,
-						createdAt: new Date(),
-						updatedAt: new Date()
-					}))
-				);
+				// Then insert the new results if there are any
+				if (results.length > 0) {
+					await db.insert(table.eventResult).values(
+						results.map((result) => ({
+							id: crypto.randomUUID(),
+							eventId: eventData.id,
+							teamId: result.teamId,
+							rank: result.rank,
+							prizeAmount: result.prizeAmount,
+							prizeCurrency: result.prizeCurrency,
+							createdAt: new Date(),
+							updatedAt: new Date()
+						}))
+					);
+				}
 			}
 
 			// Add edit history if there are changes

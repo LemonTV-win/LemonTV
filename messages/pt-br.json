@@ -424,5 +424,7 @@
 	"prize": "Prêmio",
 	"currency": "Moeda",
 	"yes": "Sim",
-	"no": "Não"
+	"no": "Não",
+	"links": "Links",
+	"label": "Rótulo"
 }

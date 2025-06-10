@@ -288,6 +288,7 @@
 						</button>
 					</th>
 					<th class="px-4 py-1">Organizers</th>
+					<th class="px-4 py-1">{m.links()}</th>
 					<th class="sticky right-0 z-10 h-12 bg-gray-800 px-4 py-1">{m.actions()}</th>
 				</tr>
 			</thead>
@@ -363,6 +364,25 @@
 									{/each}
 								{:else}
 									<span class="text-sm whitespace-nowrap text-slate-500">No organizers</span>
+								{/if}
+							</div>
+						</td>
+						<td class="min-w-max px-4 py-1">
+							<div class="flex min-w-max flex-wrap gap-2">
+								{#if event.websites?.length}
+									{#each event.websites as website}
+										<a
+											href={website.url}
+											target="_blank"
+											rel="noopener noreferrer"
+											class="inline-flex items-center gap-1 rounded-full bg-slate-700 px-2 py-1 text-xs text-slate-300 hover:bg-slate-600"
+											title={website.label || website.url}
+										>
+											{website.label || new URL(website.url).hostname}
+										</a>
+									{/each}
+								{:else}
+									<span class="text-sm whitespace-nowrap text-slate-500">{m.no_data()}</span>
 								{/if}
 							</div>
 						</td>

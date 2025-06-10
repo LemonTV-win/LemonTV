@@ -424,5 +424,7 @@
 	"prize": "Prix",
 	"currency": "Devise",
 	"yes": "Oui",
-	"no": "Non"
+	"no": "Non",
+	"links": "Liens",
+	"label": "Étiquette"
 }

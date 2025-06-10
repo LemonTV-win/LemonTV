@@ -25,6 +25,7 @@ export interface CreateEventData {
 	capacity: number;
 	date: string;
 	organizerIds: string[];
+	websites: { url: string; label?: string }[];
 }
 
 export interface UpdateEventData extends Partial<CreateEventData> {
