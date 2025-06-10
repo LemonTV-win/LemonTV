@@ -422,5 +422,7 @@
 	"amount": "金额",
 	"rank": "排名",
 	"prize": "奖金",
-	"currency": "货币"
+	"currency": "货币",
+	"yes": "是",
+	"no": "否"
 }

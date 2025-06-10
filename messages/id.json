@@ -422,5 +422,7 @@
 	"amount": "Jumlah",
 	"rank": "Peringkat",
 	"prize": "Hadiah",
-	"currency": "Mata Uang"
+	"currency": "Mata Uang",
+	"yes": "Ya",
+	"no": "Tidak"
 }

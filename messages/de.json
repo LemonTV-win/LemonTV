@@ -422,5 +422,7 @@
 	"amount": "Betrag",
 	"rank": "Rang",
 	"prize": "Preis",
-	"currency": "Währung"
+	"currency": "Währung",
+	"yes": "Ja",
+	"no": "Nein"
 }

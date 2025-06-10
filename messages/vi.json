@@ -422,5 +422,7 @@
 	"amount": "Số tiền",
 	"rank": "Xếp hạng",
 	"prize": "Giải thưởng",
-	"currency": "Tiền tệ"
+	"currency": "Tiền tệ",
+	"yes": "Có",
+	"no": "Không"
 }

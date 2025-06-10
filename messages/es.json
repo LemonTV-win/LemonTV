@@ -422,5 +422,7 @@
 	"amount": "Cantidad",
 	"rank": "Rango",
 	"prize": "Premio",
-	"currency": "Moneda"
+	"currency": "Moneda",
+	"yes": "Sí",
+	"no": "No"
 }

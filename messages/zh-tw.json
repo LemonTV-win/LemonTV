@@ -422,5 +422,7 @@
 	"amount": "金額",
 	"rank": "排名",
 	"prize": "獎金",
-	"currency": "貨幣"
+	"currency": "貨幣",
+	"yes": "是",
+	"no": "否"
 }

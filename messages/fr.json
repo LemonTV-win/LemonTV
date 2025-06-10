@@ -422,5 +422,7 @@
 	"amount": "Montant",
 	"rank": "Rang",
 	"prize": "Prix",
-	"currency": "Devise"
+	"currency": "Devise",
+	"yes": "Oui",
+	"no": "Non"
 }

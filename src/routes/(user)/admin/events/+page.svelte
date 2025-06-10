@@ -220,6 +220,7 @@
 							{/if}
 						</button>
 					</th>
+					<th class="px-4 py-1">{m.official()}</th>
 					<th class="px-4 py-1">
 						<button
 							class="flex items-center gap-1 text-left"
@@ -280,6 +281,15 @@
 												: 'bg-gray-900/50 text-gray-200'}"
 							>
 								{event.status}
+							</span>
+						</td>
+						<td class="min-w-max px-4 py-1 whitespace-nowrap">
+							<span
+								class="inline-flex rounded-full px-2 text-xs leading-5 font-semibold {event.official
+									? 'bg-yellow-900/50 text-yellow-200'
+									: 'bg-gray-900/50 text-gray-200'}"
+							>
+								{event.official ? m.yes() : m.no()}
 							</span>
 						</td>
 						<td class="min-w-max px-4 py-1 whitespace-nowrap text-gray-300">

@@ -422,5 +422,7 @@
 	"amount": "금액",
 	"rank": "순위",
 	"prize": "상금",
-	"currency": "통화"
+	"currency": "통화",
+	"yes": "예",
+	"no": "아니오"
 }
