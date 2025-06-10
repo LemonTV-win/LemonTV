@@ -102,6 +102,28 @@
 							</a>
 						</div>
 					</div>
+					<div class="glass-card p-6">
+						<h3 class="mb-2 text-xl font-semibold">Krihcity</h3>
+						<p class="mb-4 text-slate-300">Chief Editor</p>
+						<div class="flex justify-center gap-4">
+							<a
+								href="https://www.youtube.com/@krihcity"
+								target="_blank"
+								rel="noopener noreferrer"
+								class="text-blue-400 hover:underline"
+							>
+								<IconYoutube class="h-6 w-6" />
+							</a>
+							<a
+								href="https://www.twitch.tv/krihcity"
+								target="_blank"
+								rel="noopener noreferrer"
+								class="text-blue-400 hover:underline"
+							>
+								<IconTwitch class="h-6 w-6" />
+							</a>
+						</div>
+					</div>
 					<div class="glass-card p-6 md:col-span-2">
 						<h3 class="mb-2 text-xl font-semibold">{m.about_team_join_title()}</h3>
 						<p class="mb-4 text-slate-300">{m.about_team_join_description()}</p>
