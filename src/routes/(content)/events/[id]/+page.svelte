@@ -92,10 +92,10 @@
 				{#if data.event.websites}
 					{#each data.event.websites as website}
 						<a
-							href={website}
+							href={website.url}
 							class="w-fit rounded-sm border-2 border-yellow-500 bg-yellow-500/10 px-2 py-1 text-yellow-500 hover:border-yellow-500 hover:bg-yellow-500 hover:text-white"
 						>
-							{m.visit_website()}
+							{website.label ? `${m.visit_website()} (${website.label})` : m.visit_website()}
 						</a>
 					{/each}
 				{/if}

@@ -83,7 +83,23 @@ export const eventResult = sqliteTable('event_result', {
 		.default(sql`(unixepoch() * 1000)`)
 });
 
+export const eventWebsite = sqliteTable('event_website', {
+	id: text('id').primaryKey(),
+	eventId: text('event_id')
+		.references(() => event.id)
+		.notNull(),
+	url: text('url').notNull(),
+	label: text('label'),
+	createdAt: integer('created_at', { mode: 'timestamp_ms' })
+		.notNull()
+		.default(sql`(unixepoch() * 1000)`),
+	updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
+		.notNull()
+		.default(sql`(unixepoch() * 1000)`)
+});
+
 export type Event = typeof event.$inferSelect;
 export type EventOrganizer = typeof eventOrganizer.$inferSelect;
 export type EventTeamPlayer = typeof eventTeamPlayer.$inferSelect;
 export type EventResult = typeof eventResult.$inferSelect;
+export type EventWebsite = typeof eventWebsite.$inferSelect;

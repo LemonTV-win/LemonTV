@@ -145,7 +145,8 @@ export async function getEvents(conditions: { organizerIds?: string[] } = {}): P
 			organizer: table.organizer,
 			eventTeamPlayer: table.eventTeamPlayer,
 			team: table.team,
-			player: table.player
+			player: table.player,
+			eventWebsite: table.eventWebsite
 		})
 		.from(table.event)
 		.leftJoin(table.eventOrganizer, eq(table.eventOrganizer.eventId, table.event.id))
@@ -153,6 +154,7 @@ export async function getEvents(conditions: { organizerIds?: string[] } = {}): P
 		.leftJoin(table.eventTeamPlayer, eq(table.eventTeamPlayer.eventId, table.event.id))
 		.leftJoin(table.team, eq(table.team.id, table.eventTeamPlayer.teamId))
 		.leftJoin(table.player, eq(table.player.id, table.eventTeamPlayer.playerId))
+		.leftJoin(table.eventWebsite, eq(table.eventWebsite.eventId, table.event.id))
 		.where(
 			conditions.organizerIds
 				? inArray(table.eventOrganizer.organizerId, conditions.organizerIds)
@@ -178,6 +180,10 @@ export async function getEvents(conditions: { organizerIds?: string[] } = {}): P
 					currency: string;
 				}>;
 			}>;
+			websites: Array<{
+				url: string;
+				label?: string;
+			}>;
 		}
 	>();
 
@@ -188,7 +194,8 @@ export async function getEvents(conditions: { organizerIds?: string[] } = {}): P
 				event: result.event,
 				organizers: [],
 				teamPlayers: [],
-				results: []
+				results: [],
+				websites: []
 			});
 		}
 		const eventData = eventsMap.get(result.eventId)!;
@@ -221,34 +228,55 @@ export async function getEvents(conditions: { organizerIds?: string[] } = {}): P
 	});
 
 	// Then process the main event data
-	eventsWithOrganizers.forEach(({ event, organizer, eventTeamPlayer, team, player }) => {
-		if (!eventsMap.has(event.id)) {
-			eventsMap.set(event.id, { event, organizers: [], teamPlayers: [], results: [] });
-		}
-		if (organizer) {
-			const eventData = eventsMap.get(event.id)!;
-			// Only add the organizer if it's not already in the array
-			if (!eventData.organizers.some((o) => o.id === organizer.id)) {
-				eventData.organizers.push(organizer);
+	eventsWithOrganizers.forEach(
+		({ event, organizer, eventTeamPlayer, team, player, eventWebsite }) => {
+			if (!eventsMap.has(event.id)) {
+				eventsMap.set(event.id, {
+					event,
+					organizers: [],
+					teamPlayers: [],
+					results: [],
+					websites: []
+				});
+			}
+			if (organizer) {
+				const eventData = eventsMap.get(event.id)!;
+				// Only add the organizer if it's not already in the array
+				if (!eventData.organizers.some((o) => o.id === organizer.id)) {
+					eventData.organizers.push(organizer);
+				}
+			}
+			if (eventTeamPlayer && team && player) {
+				eventsMap.get(event.id)?.teamPlayers.push({
+					team,
+					player,
+					role: eventTeamPlayer.role
+				});
+			}
+			if (eventWebsite) {
+				const eventData = eventsMap.get(event.id)!;
+				// Only add the website if it's not already in the array
+				if (!eventData.websites.some((w) => w.url === eventWebsite.url)) {
+					eventData.websites.push({
+						url: eventWebsite.url,
+						label: eventWebsite.label || undefined
+					});
+				}
 			}
 		}
-		if (eventTeamPlayer && team && player) {
-			eventsMap.get(event.id)?.teamPlayers.push({
-				team,
-				player,
-				role: eventTeamPlayer.role
-			});
-		}
-	});
+	);
 
 	const events = await Promise.all(
-		Array.from(eventsMap.values()).map(async ({ event, organizers, teamPlayers, results }) => ({
-			...event,
-			organizers,
-			imageURL: await processImageURL(event.image),
-			teamPlayers,
-			results: results.length > 0 ? results : undefined
-		}))
+		Array.from(eventsMap.values()).map(
+			async ({ event, organizers, teamPlayers, results, websites }) => ({
+				...event,
+				organizers,
+				imageURL: await processImageURL(event.image),
+				teamPlayers,
+				results: results.length > 0 ? results : undefined,
+				websites: websites.length > 0 ? websites : undefined
+			})
+		)
 	);
 
 	return await Promise.all(

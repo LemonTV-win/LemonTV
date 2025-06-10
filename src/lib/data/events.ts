@@ -59,6 +59,11 @@ export interface EventResult {
 	prizes: EventPrize[];
 }
 
+export interface LabeledURL {
+	url: string;
+	label?: string;
+}
+
 export interface Event {
 	id: string;
 	slug: string;
@@ -79,7 +84,7 @@ export interface Event {
 	organizers: Organizer[];
 	capacity: number; // expected number of teams
 	date: string;
-	websites?: string[];
+	websites?: LabeledURL[];
 	participants: {
 		team: string; // team abbr
 		main: string[];
@@ -1804,7 +1809,10 @@ export const events: Event[] = [
 		],
 		capacity: 16,
 		date: '2025-05-04/2025-05-05',
-		websites: ['https://tonamel.com/competition/OU2cd', 'https://tonamel.com/competition/Vf3kx'],
+		websites: [
+			{ url: 'https://tonamel.com/competition/OU2cd', label: 'Day 1' },
+			{ url: 'https://tonamel.com/competition/Vf3kx', label: 'Day 2' }
+		],
 		livestreams: [
 			{
 				platform: 'twitch',
@@ -3113,7 +3121,9 @@ export const events: Event[] = [
 			}
 		],
 		websites: [
-			'https://docs.google.com/spreadsheets/d/1eL5kWIBFGlrQ4HLLAaYyFoJvAMNswvQFSFC00-A8M9M/edit'
+			{
+				url: 'https://docs.google.com/spreadsheets/d/1eL5kWIBFGlrQ4HLLAaYyFoJvAMNswvQFSFC00-A8M9M/edit'
+			}
 		]
 	},
 	{
