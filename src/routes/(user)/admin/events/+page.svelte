@@ -215,6 +215,7 @@
 					<th class="px-4 py-1">{m.server()}</th>
 					<th class="px-4 py-1">{m.format()}</th>
 					<th class="px-4 py-1">{m.region()}</th>
+					<th class="px-4 py-1">{m.capacity()}</th>
 					<th class="px-4 py-1">
 						<button
 							class="flex items-center gap-1 text-left"
@@ -294,6 +295,9 @@
 						<td class="min-w-max px-4 py-1 whitespace-nowrap text-gray-300">{event.server}</td>
 						<td class="min-w-max px-4 py-1 whitespace-nowrap text-gray-300">{event.format}</td>
 						<td class="min-w-max px-4 py-1 whitespace-nowrap text-gray-300">{event.region}</td>
+						<td class="min-w-max px-4 py-1 whitespace-nowrap text-gray-300"
+							>{event.capacity || '-'}</td
+						>
 						<td class="min-w-max px-4 py-1 whitespace-nowrap">
 							<span
 								class="inline-flex rounded-full px-2 text-xs leading-5 font-semibold {event.status ===
