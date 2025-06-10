@@ -32,7 +32,9 @@
 		| 'status-asc'
 		| 'status-desc'
 		| 'official-asc'
-		| 'official-desc' = $state('date-desc');
+		| 'official-desc'
+		| 'capacity-asc'
+		| 'capacity-desc' = $state('date-desc');
 	let isAddingNew = $state(false);
 	let isEditing = $state(false);
 	let showHistoryModal = $state(false);
@@ -64,6 +66,10 @@
 					return (a.official ? 1 : 0) - (b.official ? 1 : 0);
 				} else if (sortBy === 'official-desc') {
 					return (b.official ? 1 : 0) - (a.official ? 1 : 0);
+				} else if (sortBy === 'capacity-asc') {
+					return (a.capacity ?? 0) - (b.capacity ?? 0);
+				} else if (sortBy === 'capacity-desc') {
+					return (b.capacity ?? 0) - (a.capacity ?? 0);
 				}
 				return 0;
 			})
@@ -213,9 +219,25 @@
 						</button>
 					</th>
 					<th class="px-4 py-1">{m.server()}</th>
+					<th class="px-4 py-1">
+						<button
+							class="flex items-center gap-1 text-left"
+							class:text-white={sortBy === 'capacity-asc' || sortBy === 'capacity-desc'}
+							onclick={() =>
+								(sortBy = sortBy === 'capacity-asc' ? 'capacity-desc' : 'capacity-asc')}
+						>
+							{m.capacity()}
+							{#if sortBy === 'capacity-asc'}
+								<TypcnArrowSortedUp class="inline-block" />
+							{:else if sortBy === 'capacity-desc'}
+								<TypcnArrowSortedDown class="inline-block" />
+							{:else}
+								<TypcnArrowUnsorted class="inline-block" />
+							{/if}
+						</button>
+					</th>
 					<th class="px-4 py-1">{m.format()}</th>
 					<th class="px-4 py-1">{m.region()}</th>
-					<th class="px-4 py-1">{m.capacity()}</th>
 					<th class="px-4 py-1">
 						<button
 							class="flex items-center gap-1 text-left"
@@ -293,11 +315,11 @@
 							</div>
 						</td>
 						<td class="min-w-max px-4 py-1 whitespace-nowrap text-gray-300">{event.server}</td>
-						<td class="min-w-max px-4 py-1 whitespace-nowrap text-gray-300">{event.format}</td>
-						<td class="min-w-max px-4 py-1 whitespace-nowrap text-gray-300">{event.region}</td>
 						<td class="min-w-max px-4 py-1 whitespace-nowrap text-gray-300"
 							>{event.capacity || '-'}</td
 						>
+						<td class="min-w-max px-4 py-1 whitespace-nowrap text-gray-300">{event.format}</td>
+						<td class="min-w-max px-4 py-1 whitespace-nowrap text-gray-300">{event.region}</td>
 						<td class="min-w-max px-4 py-1 whitespace-nowrap">
 							<span
 								class="inline-flex rounded-full px-2 text-xs leading-5 font-semibold {event.status ===
