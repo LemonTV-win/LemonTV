@@ -263,11 +263,18 @@ export async function getEvents(
 				}
 			}
 			if (eventTeamPlayer && team && player) {
-				eventsMap.get(event.id)?.teamPlayers.push({
-					team,
-					player,
-					role: eventTeamPlayer.role
-				});
+				const eventData = eventsMap.get(event.id)!;
+				// Check if this team-player combination already exists
+				const exists = eventData.teamPlayers.some(
+					(tp) => tp.team.id === team.id && tp.player.id === player.id
+				);
+				if (!exists) {
+					eventData.teamPlayers.push({
+						team,
+						player,
+						role: eventTeamPlayer.role
+					});
+				}
 			}
 			if (eventWebsite) {
 				const eventData = eventsMap.get(event.id)!;
