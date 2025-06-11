@@ -12,6 +12,12 @@ export async function seed() {
 	console.info('[SEED] - Deleted matchMap');
 	await db.delete(schema.matchTeam);
 	console.info('[SEED] - Deleted matchTeam');
+	await db.delete(schema.gamePlayerScore);
+	console.info('[SEED] - Deleted gamePlayerScore');
+	await db.delete(schema.gameTeam);
+	console.info('[SEED] - Deleted gameTeam');
+	await db.delete(schema.game);
+	console.info('[SEED] - Deleted game');
 	await db.delete(schema.eventTeamPlayer);
 	console.info('[SEED] - Deleted eventTeamPlayer');
 	await db.delete(schema.eventOrganizer);
@@ -1624,4 +1630,287 @@ export async function seed() {
 	console.log('[SEED] Seeding sources...');
 	// const sources = await db.query.source.findMany();
 	// console.log(sources);
+
+	console.log('[SEED] Seeding games...');
+	const GAMES = [
+		// Grand Finals (BO5) - Match 11
+		{
+			id: 1,
+			matchId: MATCHES[11].id,
+			mapId: 'port_euler',
+			duration: 1800,
+			winner: 0
+		},
+		{
+			id: 2,
+			matchId: MATCHES[11].id,
+			mapId: 'windy_town',
+			duration: 2100,
+			winner: 1
+		},
+		{
+			id: 3,
+			matchId: MATCHES[11].id,
+			mapId: 'space_lab',
+			duration: 1950,
+			winner: 0
+		},
+		{
+			id: 4,
+			matchId: MATCHES[11].id,
+			mapId: 'cauchy_district',
+			duration: 2400,
+			winner: 1
+		},
+		{
+			id: 5,
+			matchId: MATCHES[11].id,
+			mapId: 'cosmite',
+			duration: 2250,
+			winner: 0
+		},
+		// Semi Finals (BO5) - Match 10
+		{
+			id: 6,
+			matchId: MATCHES[10].id,
+			mapId: 'orcanus',
+			duration: 1950,
+			winner: 0
+		},
+		{
+			id: 7,
+			matchId: MATCHES[10].id,
+			mapId: 'base_404',
+			duration: 2100,
+			winner: 0
+		},
+		{
+			id: 8,
+			matchId: MATCHES[10].id,
+			mapId: 'area_88',
+			duration: 1800,
+			winner: 1
+		},
+		{
+			id: 9,
+			matchId: MATCHES[10].id,
+			mapId: 'windy_town',
+			duration: 2400,
+			winner: 0
+		},
+		{
+			id: 10,
+			matchId: MATCHES[10].id,
+			mapId: 'space_lab',
+			duration: 2250,
+			winner: 0
+		}
+	];
+	await db.insert(schema.game).values(GAMES);
+
+	console.log('[SEED] Seeding game teams...');
+	await db.insert(schema.gameTeam).values([
+		// Grand Finals Game 1
+		{
+			gameId: 1,
+			teamId: team1_id,
+			position: 0,
+			score: 13
+		},
+		{
+			gameId: 1,
+			teamId: team2_id,
+			position: 1,
+			score: 11
+		},
+		// Grand Finals Game 2
+		{
+			gameId: 2,
+			teamId: team1_id,
+			position: 0,
+			score: 9
+		},
+		{
+			gameId: 2,
+			teamId: team2_id,
+			position: 1,
+			score: 13
+		},
+		// Grand Finals Game 3
+		{
+			gameId: 3,
+			teamId: team1_id,
+			position: 0,
+			score: 13
+		},
+		{
+			gameId: 3,
+			teamId: team2_id,
+			position: 1,
+			score: 10
+		},
+		// Grand Finals Game 4
+		{
+			gameId: 4,
+			teamId: team1_id,
+			position: 0,
+			score: 11
+		},
+		{
+			gameId: 4,
+			teamId: team2_id,
+			position: 1,
+			score: 13
+		},
+		// Grand Finals Game 5
+		{
+			gameId: 5,
+			teamId: team1_id,
+			position: 0,
+			score: 13
+		},
+		{
+			gameId: 5,
+			teamId: team2_id,
+			position: 1,
+			score: 9
+		},
+		// Semi Finals Game 1
+		{
+			gameId: 6,
+			teamId: team2_id,
+			position: 0,
+			score: 13
+		},
+		{
+			gameId: 6,
+			teamId: team4_id,
+			position: 1,
+			score: 8
+		},
+		// Semi Finals Game 2
+		{
+			gameId: 7,
+			teamId: team2_id,
+			position: 0,
+			score: 13
+		},
+		{
+			gameId: 7,
+			teamId: team4_id,
+			position: 1,
+			score: 10
+		},
+		// Semi Finals Game 3
+		{
+			gameId: 8,
+			teamId: team2_id,
+			position: 0,
+			score: 9
+		},
+		{
+			gameId: 8,
+			teamId: team4_id,
+			position: 1,
+			score: 13
+		},
+		// Semi Finals Game 4
+		{
+			gameId: 9,
+			teamId: team2_id,
+			position: 0,
+			score: 13
+		},
+		{
+			gameId: 9,
+			teamId: team4_id,
+			position: 1,
+			score: 11
+		},
+		// Semi Finals Game 5
+		{
+			gameId: 10,
+			teamId: team2_id,
+			position: 0,
+			score: 13
+		},
+		{
+			gameId: 10,
+			teamId: team4_id,
+			position: 1,
+			score: 7
+		}
+	]);
+
+	console.log('[SEED] Seeding game player scores...');
+	await db.insert(schema.gamePlayerScore).values([
+		// Grand Finals Game 1 - Team 1 Player 1
+		{
+			id: 1,
+			gameId: 1,
+			teamId: team1_id,
+			accountId: 123456,
+			player: 'Player1',
+			characterFirstHalf: 'Flavia',
+			characterSecondHalf: 'Ming',
+			score: 250,
+			damageScore: 180,
+			kills: 15,
+			knocks: 8,
+			deaths: 12,
+			assists: 5,
+			damage: 2800
+		},
+		// Grand Finals Game 1 - Team 1 Player 2
+		{
+			id: 2,
+			gameId: 1,
+			teamId: team1_id,
+			accountId: 123457,
+			player: 'Player2',
+			characterFirstHalf: 'Celestia',
+			characterSecondHalf: 'Celestia',
+			score: 220,
+			damageScore: 160,
+			kills: 12,
+			knocks: 6,
+			deaths: 14,
+			assists: 8,
+			damage: 2500
+		},
+		// Grand Finals Game 1 - Team 2 Player 1
+		{
+			id: 3,
+			gameId: 1,
+			teamId: team2_id,
+			accountId: 123458,
+			player: 'Player3',
+			characterFirstHalf: 'Nobunaga',
+			characterSecondHalf: 'Reiichi',
+			score: 240,
+			damageScore: 170,
+			kills: 14,
+			knocks: 7,
+			deaths: 13,
+			assists: 6,
+			damage: 2700
+		},
+		// Grand Finals Game 1 - Team 2 Player 2
+		{
+			id: 4,
+			gameId: 1,
+			teamId: team2_id,
+			accountId: 123459,
+			player: 'Player4',
+			characterFirstHalf: 'Ming',
+			characterSecondHalf: 'Flavia',
+			score: 210,
+			damageScore: 150,
+			kills: 11,
+			knocks: 5,
+			deaths: 15,
+			assists: 9,
+			damage: 2300
+		}
+	]);
 }
