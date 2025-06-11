@@ -14,6 +14,7 @@
 
 	import Scoreboard from '$lib/components/Scoreboard.svelte';
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
+	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 	import { m } from '$lib/paraglide/messages';
 
 	const MAP_2_IMAGE: Record<GameMap, string> = {
@@ -77,23 +78,28 @@
 		class="banner flex min-h-48 flex-col gap-2 bg-cover bg-top p-4 text-white"
 		style:--banner-image={`url(${MAP_2_IMAGE[data.match.maps?.[currentMapID]?.map ?? 'base_404']})`}
 	>
-		<nav class="m-2 flex gap-4 rounded-sm">
-			{#each data.match.maps as map, index}
-				<button
-					class="overflow-clip rounded-sm bg-gray-200/50"
-					onclick={() => (currentMapID = index)}
-					disabled={index >= (data.match.games?.length ?? 0)}
-					style:opacity={index >= (data.match.games?.length ?? 0) ? '0.5' : '1'}
-					class:active={index === currentMapID}
-				>
-					<img src={MAP_2_IMAGE[map.map]} class="h-10 w-full" alt={MAP_2_NAME[map.map]} />
-					<span class="px-4 text-sm">{MAP_2_NAME[map.map]}</span>
-					<span class="px-4 text-sm text-yellow-300"
-						>{formatDuration(data.match.games?.[index]?.duration ?? 0)}</span
+		<div class="flex items-center justify-between">
+			<nav class="m-2 flex gap-4 rounded-sm">
+				{#each data.match.maps as map, index}
+					<button
+						class="overflow-clip rounded-sm bg-gray-200/50"
+						onclick={() => (currentMapID = index)}
+						disabled={index >= (data.match.games?.length ?? 0)}
+						style:opacity={index >= (data.match.games?.length ?? 0) ? '0.5' : '1'}
+						class:active={index === currentMapID}
 					>
-				</button>
-			{/each}
-		</nav>
+						<img src={MAP_2_IMAGE[map.map]} class="h-10 w-full" alt={MAP_2_NAME[map.map]} />
+						<span class="px-4 text-sm">{MAP_2_NAME[map.map]}</span>
+						<span class="px-4 text-sm text-yellow-300"
+							>{formatDuration(data.match.games?.[index]?.duration ?? 0)}</span
+						>
+					</button>
+				{/each}
+			</nav>
+			{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
+				<ContentActionLink href={`/admin/matches?action=edit&id=${data.match.id}`} type="edit" />
+			{/if}
+		</div>
 		<!-- Scoreboard -->
 		{#if data.match.games?.[currentMapID] && data.match.teams[0]?.team && data.match.teams[1]?.team}
 			<Scoreboard
