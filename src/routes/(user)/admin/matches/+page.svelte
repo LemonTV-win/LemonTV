@@ -448,7 +448,12 @@
 							{#each getSortedMatches(matches) as match}
 								<tr class="border-b border-gray-700 hover:bg-gray-700/50">
 									<td class="min-w-max px-4 py-1 whitespace-nowrap">
-										<span class="text-xs text-gray-300">{match.id}</span>
+										<a
+											href="/matches/{match.id}"
+											class="text-xs text-gray-300 transition-colors hover:text-yellow-500"
+										>
+											{match.id}
+										</a>
 									</td>
 									<td class="min-w-max px-4 py-1 whitespace-nowrap text-gray-300">{match.format}</td
 									>
