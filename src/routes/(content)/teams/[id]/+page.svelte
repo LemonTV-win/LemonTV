@@ -52,8 +52,8 @@
 					<ContentActionLink href={`/admin/teams?action=edit&id=${data.team.id}`} type="edit" />
 				{/if}
 			</div>
-			{#if data.team.logo}
-				<img src={data.team.logo} alt={data.team.name} />
+			{#if data.team.logoURL}
+				<img src={data.team.logoURL} alt={data.team.name} class="h-24 w-24 rounded-full" />
 			{/if}
 		</section>
 		<h2 class="my-5 flex items-center text-xl font-bold">

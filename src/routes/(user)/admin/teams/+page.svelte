@@ -377,8 +377,8 @@
 						</td>
 						<td class="max-w-32 truncate px-4 py-1 text-white">
 							<div class="flex items-center">
-								{#if team.logo}
-									<img src={team.logo} alt={team.name} class="mr-2 h-8 w-8 rounded-full" />
+								{#if team.logoURL}
+									<img src={team.logoURL} alt={team.name} class="mr-2 h-8 w-8 rounded-full" />
 								{/if}
 								<div class="flex flex-col">
 									<span>{team.name}</span>

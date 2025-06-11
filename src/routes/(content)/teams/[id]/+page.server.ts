@@ -8,6 +8,7 @@ import {
 	getTeamMemberStatistics
 } from '$lib/server/data/teams';
 import { error } from '@sveltejs/kit';
+import { processImageURL } from '$lib/server/storage';
 
 export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 	const team = await getTeam(params.id);
@@ -18,7 +19,10 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 
 	const teams = await getTeams();
 	return {
-		team,
+		team: {
+			...team,
+			logoURL: team.logoURL ? await processImageURL(team.logoURL) : null
+		},
 		teams: new Map(teams.map((team) => [team.abbr ?? team.id ?? team.name ?? team.slug, team])), // TODO: remove this
 		teamMatches: getTeamMatches(team),
 		teamMemberStatistics: getTeamMemberStatistics(team),

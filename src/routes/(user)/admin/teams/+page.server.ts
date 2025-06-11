@@ -3,6 +3,7 @@ import type { PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
+import { processImageURL } from '$lib/server/storage';
 // import { importTeams } from '$lib/server/data/teams';
 
 export const load: PageServerLoad = async ({ url }) => {
@@ -15,7 +16,12 @@ export const load: PageServerLoad = async ({ url }) => {
 	const id = url.searchParams.get('id');
 
 	return {
-		teams: teamsList,
+		teams: await Promise.all(
+			teamsList.map(async (team) => ({
+				...team,
+				logoURL: team.logo ? await processImageURL(team.logo) : null
+			}))
+		),
 		teamPlayers,
 		teamAliases,
 		players,
