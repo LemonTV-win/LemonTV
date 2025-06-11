@@ -21,7 +21,7 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 	return {
 		team: {
 			...team,
-			logoURL: team.logoURL ? await processImageURL(team.logoURL) : null
+			logoURL: team.logo ? await processImageURL(team.logo) : null
 		},
 		teams: new Map(teams.map((team) => [team.abbr ?? team.id ?? team.name ?? team.slug, team])), // TODO: remove this
 		teamMatches: getTeamMatches(team),
