@@ -426,5 +426,10 @@
 	"yes": "Sim",
 	"no": "Não",
 	"links": "Links",
-	"label": "Rótulo"
+	"label": "Rótulo",
+	"admin_community_desc": "Gerenciar links para comunidades e recursos relacionados.",
+	"discord_invite_url": "URL de convite do Discord",
+	"icon_url": "URL do ícone",
+	"additional_link_text": "Texto do link adicional",
+	"additional_link_url": "URL do link adicional"
 }

@@ -8,6 +8,7 @@
 	import IconParkSolidHistory from '~icons/icon-park-solid/history-query';
 	import IconParkSolidTrophy from '~icons/icon-park-solid/trophy';
 	import IconParkSolidGame from '~icons/icon-park-solid/game';
+	import IconParkSolidMessage from '~icons/icon-park-solid/message';
 	import type { Component } from 'svelte';
 	import type { PageData } from './$types';
 	let { data }: { data: PageData } = $props();
@@ -93,6 +94,13 @@
 		m.organizers(),
 		m.admin_organizers_desc(),
 		'yellow'
+	)}
+	{@render adminCard(
+		'/admin/community',
+		IconParkSolidMessage,
+		m.community(),
+		m.admin_community_desc(),
+		'purple'
 	)}
 	{@render adminCard(
 		'/admin/edit-history',

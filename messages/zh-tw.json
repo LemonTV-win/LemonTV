@@ -426,5 +426,10 @@
 	"yes": "是",
 	"no": "否",
 	"links": "連結",
-	"label": "標籤"
+	"label": "標籤",
+	"admin_community_desc": "管理社群和相關資源的連結。",
+	"discord_invite_url": "Discord邀請連結",
+	"icon_url": "圖示連結",
+	"additional_link_text": "附加連結文字",
+	"additional_link_url": "附加連結網址"
 }

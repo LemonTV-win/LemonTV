@@ -426,5 +426,10 @@
 	"yes": "Ja",
 	"no": "Nein",
 	"links": "Links",
-	"label": "Bezeichnung"
+	"label": "Bezeichnung",
+	"admin_community_desc": "Verwalten Sie Links zu Communities und verwandten Ressourcen.",
+	"discord_invite_url": "Discord-Einladungs-URL",
+	"icon_url": "Icon-URL",
+	"additional_link_text": "Zusätzlicher Link-Text",
+	"additional_link_url": "Zusätzliche Link-URL"
 }

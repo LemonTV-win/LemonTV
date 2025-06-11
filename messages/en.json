@@ -426,5 +426,10 @@
 	"yes": "Yes",
 	"no": "No",
 	"links": "Links",
-	"label": "Label"
+	"label": "Label",
+	"admin_community_desc": "Manage links to communities and related resources.",
+	"discord_invite_url": "Discord Invite URL",
+	"icon_url": "Icon URL",
+	"additional_link_text": "Additional Link Text",
+	"additional_link_url": "Additional Link URL"
 }

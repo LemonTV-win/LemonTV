@@ -426,5 +426,10 @@
 	"yes": "はい",
 	"no": "いいえ",
 	"links": "リンク",
-	"label": "ラベル"
+	"label": "ラベル",
+	"admin_community_desc": "コミュニティと関連リソースへのリンクを管理します。",
+	"discord_invite_url": "Discord招待URL",
+	"icon_url": "アイコンURL",
+	"additional_link_text": "追加リンクテキスト",
+	"additional_link_url": "追加リンクURL"
 }

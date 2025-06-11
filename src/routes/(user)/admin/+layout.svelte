@@ -12,6 +12,7 @@
 	import IconParkSolidCalendar from '~icons/icon-park-solid/calendar';
 	import IconParkSolidTrophy from '~icons/icon-park-solid/trophy';
 	import IconParkSolidGame from '~icons/icon-park-solid/game';
+	import IconParkSolidMessage from '~icons/icon-park-solid/message';
 
 	import type { Component } from 'svelte';
 
@@ -94,6 +95,7 @@
 		{@render tab('/admin/events', IconParkSolidCalendar, m.events())}
 		{@render tab('/admin/matches', IconParkSolidGame, m.matches())}
 		{@render tab('/admin/organizers', IconParkSolidTrophy, m.organizers())}
+		{@render tab('/admin/community', IconParkSolidMessage, m.community())}
 		{@render tab('/admin/edit-history', IconParkSolidHistory, m.edit_history())}
 	</nav>
 	<main

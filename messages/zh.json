@@ -426,5 +426,10 @@
 	"yes": "是",
 	"no": "否",
 	"links": "链接",
-	"label": "标签"
+	"label": "标签",
+	"admin_community_desc": "管理社区和相关资源的链接。",
+	"discord_invite_url": "Discord邀请链接",
+	"icon_url": "图标链接",
+	"additional_link_text": "附加链接文本",
+	"additional_link_url": "附加链接地址"
 }

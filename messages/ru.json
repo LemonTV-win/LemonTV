@@ -426,5 +426,10 @@
 	"yes": "Да",
 	"no": "Нет",
 	"links": "Ссылки",
-	"label": "Метка"
+	"label": "Метка",
+	"admin_community_desc": "Управление ссылками на сообщества и связанные ресурсы.",
+	"discord_invite_url": "URL-адрес приглашения Discord",
+	"icon_url": "URL-адрес иконки",
+	"additional_link_text": "Текст дополнительной ссылки",
+	"additional_link_url": "URL-адрес дополнительной ссылки"
 }

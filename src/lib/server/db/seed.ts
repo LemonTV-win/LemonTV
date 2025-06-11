@@ -19,6 +19,7 @@ export async function seed() {
 	await db.delete(schema.playerAlias);
 	await db.delete(schema.player_social_account);
 	await db.delete(schema.gameAccount);
+	await db.delete(schema.discordServer);
 	// Then delete parent records
 	await db.delete(schema.match);
 	await db.delete(schema.stage);
@@ -1435,6 +1436,31 @@ export async function seed() {
 			rank: 4,
 			prizeAmount: 20000,
 			prizeCurrency: 'Bablo'
+		}
+	]);
+
+	console.log('[SEED] Seeding Discord servers...');
+	await db.insert(schema.discordServer).values([
+		{
+			id: randomUUID(),
+			title: 'Strinova Esports Hub',
+			url: 'https://discord.gg/mY8DMatXM4',
+			icon: 'https://cdn.discordapp.com/icons/1371077914723881010/17d112c45f5dbeac98c746c158605696.webp',
+			description:
+				'Community server focused on competitive play, resources, and media for Strinova Esports.',
+			createdAt: new Date(),
+			updatedAt: new Date()
+		},
+		{
+			id: randomUUID(),
+			title: 'Official Strinova Discord Server',
+			url: 'https://discord.com/invite/strinova',
+			icon: 'https://cdn.discordapp.com/icons/1182952140684136470/b05a9cb0f65b845b6d2ad7a63182081d.webp',
+			description: 'The main community hub for Strinova players worldwide',
+			additionalLinkText: '#tournament-chat',
+			additionalLinkUrl: 'https://discord.com/channels/1182952140684136470/1320683196698066954',
+			createdAt: new Date(),
+			updatedAt: new Date()
 		}
 	]);
 

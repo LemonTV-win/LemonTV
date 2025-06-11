@@ -426,5 +426,10 @@
 	"yes": "Sí",
 	"no": "No",
 	"links": "Enlaces",
-	"label": "Etiqueta"
+	"label": "Etiqueta",
+	"admin_community_desc": "Administrar enlaces a comunidades y recursos relacionados.",
+	"discord_invite_url": "URL de invitación de Discord",
+	"icon_url": "URL del icono",
+	"additional_link_text": "Texto del enlace adicional",
+	"additional_link_url": "URL del enlace adicional"
 }

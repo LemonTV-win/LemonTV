@@ -426,5 +426,10 @@
 	"yes": "Có",
 	"no": "Không",
 	"links": "Liên kết",
-	"label": "Nhãn"
+	"label": "Nhãn",
+	"admin_community_desc": "Quản lý liên kết đến cộng đồng và tài nguyên liên quan.",
+	"discord_invite_url": "URL mời Discord",
+	"icon_url": "URL biểu tượng",
+	"additional_link_text": "Văn bản liên kết bổ sung",
+	"additional_link_url": "URL liên kết bổ sung"
 }

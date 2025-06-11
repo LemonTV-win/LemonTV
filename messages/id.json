@@ -426,5 +426,10 @@
 	"yes": "Ya",
 	"no": "Tidak",
 	"links": "Tautan",
-	"label": "Label"
+	"label": "Label",
+	"admin_community_desc": "Kelola tautan ke komunitas dan sumber daya terkait.",
+	"discord_invite_url": "URL Undangan Discord",
+	"icon_url": "URL Ikon",
+	"additional_link_text": "Teks Tautan Tambahan",
+	"additional_link_url": "URL Tautan Tambahan"
 }
