@@ -7,6 +7,8 @@
 	import Combobox from '$lib/components/Combobox.svelte';
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import IconParkSolidAdd from '~icons/icon-park-solid/add';
+	import IconWarning from '~icons/ion/warning';
+	import IconError from '~icons/tdesign/error-circle';
 	import type { EventResult } from '$lib/data/events';
 
 	let {
@@ -209,6 +211,38 @@
 				counts[tp.role as keyof typeof counts]++;
 			});
 		return counts;
+	}
+
+	// Helper function to check for duplicate players
+	function getPlayerValidationStatus(teamId: string, playerId: string) {
+		const sameTeamEntries = eventTeamPlayers.filter(
+			(tp) => tp.teamId === teamId && tp.playerId === playerId
+		);
+		const otherTeamEntries = eventTeamPlayers.filter(
+			(tp) => tp.teamId !== teamId && tp.playerId === playerId
+		);
+
+		const validations = [];
+
+		if (sameTeamEntries.length > 1) {
+			validations.push({
+				type: 'error',
+				message: 'This player appears multiple times in the same team'
+			});
+		}
+
+		if (otherTeamEntries.length > 0) {
+			const otherTeamNames = otherTeamEntries
+				.map((tp) => teams.find((t) => t.id === tp.teamId)?.name)
+				.filter(Boolean)
+				.join(', ');
+			validations.push({
+				type: 'warning',
+				message: `Player is already in other teams: ${otherTeamNames}`
+			});
+		}
+
+		return validations.length > 0 ? validations : null;
 	}
 
 	let results = $state<
@@ -642,6 +676,28 @@
 																teamPlayer.playerId = item.id;
 															}}
 														/>
+														{#if teamPlayer.playerId}
+															{#if getPlayerValidationStatus(team.id, teamPlayer.playerId)}
+																<div class="mt-1 space-y-1">
+																	{#each getPlayerValidationStatus(team.id, teamPlayer.playerId) ?? [] as validation}
+																		<div
+																			class="flex items-center gap-1 text-sm {validation.type ===
+																			'error'
+																				? 'text-red-400'
+																				: 'text-yellow-400'}"
+																			title={validation.message}
+																		>
+																			{#if validation.type === 'error'}
+																				<IconError class="h-4 w-4" />
+																			{:else}
+																				<IconWarning class="h-4 w-4" />
+																			{/if}
+																			{validation.message}
+																		</div>
+																	{/each}
+																</div>
+															{/if}
+														{/if}
 													</div>
 												</div>
 												<div class="w-24">
