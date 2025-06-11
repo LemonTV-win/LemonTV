@@ -120,7 +120,7 @@ export const actions = {
 		const eventData: CreateEventData = {
 			name: formData.get('name') as string,
 			slug: formData.get('slug') as string,
-			official: formData.get('official') === 'true',
+			official: formData.get('official') === 'on',
 			server: formData.get('server') as string,
 			format: formData.get('format') as string,
 			region: formData.get('region') as string,
@@ -286,7 +286,7 @@ export const actions = {
 			id: formData.get('id') as string,
 			name: formData.get('name') as string,
 			slug: formData.get('slug') as string,
-			official: formData.get('official') === 'true',
+			official: formData.get('official') === 'on',
 			server: formData.get('server') as string,
 			format: formData.get('format') as string,
 			region: formData.get('region') as string,
