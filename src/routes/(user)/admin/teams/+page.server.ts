@@ -136,10 +136,10 @@ export const actions = {
 				.update(table.team)
 				.set({
 					name,
-					logo: logo || undefined,
-					region: region || undefined,
+					logo: logo || null,
+					region: region || null,
 					slug: slug || name.toLowerCase().replace(/[^a-z0-9]/g, '-'),
-					abbr: abbr || undefined,
+					abbr: abbr || null,
 					updatedAt: new Date().toISOString()
 				})
 				.where(eq(table.team.id, id));

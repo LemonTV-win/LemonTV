@@ -97,43 +97,6 @@
 		goto(`/admin/teams?action=edit&id=${team.id}`, { replaceState: true });
 	}
 
-	async function handleSaveTeam(team: Partial<Team> & { aliases?: string[]; players?: any[] }) {
-		errorMessage = '';
-		successMessage = '';
-
-		const formData = new FormData();
-		formData.append('id', team.id || '');
-		formData.append('name', team.name || '');
-		formData.append('logo', team.logo || '');
-		formData.append('region', team.region || '');
-		formData.append('slug', team.slug || '');
-		formData.append('abbr', team.abbr || '');
-		formData.append('aliases', JSON.stringify(team.aliases || []));
-		formData.append('players', JSON.stringify(team.players || []));
-
-		try {
-			const response = await fetch(team.id ? '?/update' : '?/create', {
-				method: 'POST',
-				body: formData
-			});
-
-			const result = await response.json();
-
-			if (result.error) {
-				errorMessage = result.error;
-			} else {
-				isAddingNew = false;
-				isEditing = false;
-				selectedTeam = null;
-				await goto('/admin/teams', { invalidateAll: true });
-				successMessage = team.id ? 'Team updated successfully' : 'Team created successfully';
-			}
-		} catch (e) {
-			errorMessage = team.id ? 'Failed to update team' : 'Failed to create team';
-			console.error('Error saving team:', e);
-		}
-	}
-
 	function handleCancel() {
 		isAddingNew = false;
 		isEditing = false;
@@ -523,7 +486,6 @@
 			players={data.players}
 			teamPlayers={getTeamPlayers(selectedTeam?.id || '')}
 			teamAliases={getTeamAliases(selectedTeam?.id || '')}
-			onSave={handleSaveTeam}
 			onCancel={handleCancel}
 		/>
 	</Modal>

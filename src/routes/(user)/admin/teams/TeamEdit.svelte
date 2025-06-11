@@ -1,20 +1,23 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import type { Team, TeamPlayer, TeamAlias } from '$lib/server/db/schema';
 	import type { Player } from '$lib/server/db/schema';
 	import { m } from '$lib/paraglide/messages';
 	import IconParkSolidAdd from '~icons/icon-park-solid/add';
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 
-	let { team, players, teamPlayers, teamAliases, onSave, onCancel } = $props<{
+	let { team, players, teamPlayers, teamAliases, onCancel } = $props<{
 		team: Partial<Team>;
 		players: Player[];
 		teamPlayers: TeamPlayer[];
 		teamAliases: TeamAlias[];
-		onSave: (team: Partial<Team> & { aliases?: string[]; players?: any[] }) => void;
 		onCancel: () => void;
 	}>();
 
 	let newTeam = $state<Team>(team);
+	let isSubmitting = $state(false);
+	let errorMessage = $state('');
+	let successMessage = $state('');
 
 	function formatSlug(name: string): string {
 		return name
@@ -89,20 +92,65 @@
 	function removePlayer(playerId: string) {
 		selectedPlayers = selectedPlayers.filter((p: { playerId: string }) => p.playerId !== playerId);
 	}
-
-	function handleSubmit() {
-		onSave({
-			...newTeam,
-			aliases,
-			players: selectedPlayers
-		});
-	}
 </script>
 
-<form onsubmit={handleSubmit} class="flex h-full flex-col">
+<form
+	method="POST"
+	action={team.id ? '?/update' : '?/create'}
+	use:enhance={({ formData }) => {
+		isSubmitting = true;
+
+		// Add aliases data
+		formData.append('aliases', JSON.stringify(aliases));
+		// Add players data
+		formData.append('players', JSON.stringify(selectedPlayers));
+
+		console.log('[Admin][Teams][TeamEdit] Form data:', [...formData.entries()]);
+
+		return async ({ result }) => {
+			isSubmitting = false;
+			if (result.type === 'success') {
+				onCancel();
+			} else if (result.type === 'failure') {
+				errorMessage =
+					(result as { type: 'failure'; data?: { error?: string } }).data?.error ??
+					'An error occurred';
+			} else if (result.type === 'error') {
+				errorMessage =
+					(result as { type: 'error'; error: any }).error?.message ?? 'An error occurred';
+			}
+		};
+	}}
+	class="flex h-full flex-col"
+>
+	{#if errorMessage}
+		<div class="mb-4 rounded-md bg-red-900/50 p-4 text-red-200" role="alert">
+			<span class="block sm:inline">{errorMessage}</span>
+		</div>
+	{/if}
+
+	{#if successMessage}
+		<div class="mb-4 rounded-md bg-green-900/50 p-4 text-green-200" role="alert">
+			<span class="block sm:inline">{successMessage}</span>
+		</div>
+	{/if}
+
 	<div
 		class="flex-1 space-y-4 overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800"
 	>
+		{#if team.id}
+			<div>
+				<label class="block text-sm font-medium text-slate-300" for="eventId">ID</label>
+				<input
+					type="text"
+					id="teamId"
+					name="id"
+					value={team.id}
+					readonly
+					class="block w-full rounded-md border border-slate-700 bg-slate-800/50 px-3 py-2 text-slate-400 placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none [&:read-only]:cursor-default [&:read-only]:opacity-75 [&:read-only]:select-none"
+				/>
+			</div>
+		{/if}
 		<div class="grid grid-cols-2 gap-4">
 			<div>
 				<label for="teamName" class="block text-sm font-medium text-slate-300">
@@ -111,6 +159,7 @@
 				<input
 					type="text"
 					id="teamName"
+					name="name"
 					bind:value={newTeam.name}
 					class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 					placeholder={m.team_name()}
@@ -123,6 +172,7 @@
 				</label>
 				<select
 					id="teamRegion"
+					name="region"
 					bind:value={newTeam.region}
 					class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 				>
@@ -139,6 +189,7 @@
 				<input
 					type="text"
 					id="teamSlug"
+					name="slug"
 					bind:value={newTeam.slug}
 					class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 					placeholder={m.slug()}
@@ -151,6 +202,7 @@
 				<input
 					type="text"
 					id="teamAbbr"
+					name="abbr"
 					bind:value={newTeam.abbr}
 					class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 					placeholder={m.abbr()}
@@ -165,6 +217,7 @@
 			<input
 				type="text"
 				id="teamLogo"
+				name="logo"
 				bind:value={newTeam.logo}
 				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 				placeholder={m.logo_url()}
@@ -178,6 +231,7 @@
 				>
 			</div>
 			<div id="aliases-section" class="mt-2 rounded-lg border border-slate-700 bg-slate-800 p-4">
+				<!-- <input type="hidden" id="aliases" name="aliases" value={aliases} /> -->
 				{#each aliases as alias, i}
 					<div
 						class="grid grid-cols-[1fr_auto] gap-4 {i > 0
@@ -231,6 +285,7 @@
 		</div>
 
 		<div>
+			<!-- <input type="hidden" id="players" name="players" value={selectedPlayers} /> -->
 			<div class="flex items-center justify-between">
 				<label for="players-section" class="block text-sm font-medium text-slate-300"
 					>{m.players()}</label
