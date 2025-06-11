@@ -88,16 +88,8 @@
 	$effect(() => {
 		const grouped: Record<string, Player[]> = {};
 		teams.forEach((team) => {
-			// Get all players for this team, including those not yet assigned
-			grouped[team.id] = players.filter((player) => {
-				const isAssignedToOtherTeam = eventTeamPlayers.some(
-					(tp) => tp.playerId === player.id && tp.teamId !== team.id
-				);
-				const isAssignedToThisTeam = eventTeamPlayers.some(
-					(tp) => tp.playerId === player.id && tp.teamId === team.id
-				);
-				return !isAssignedToOtherTeam || isAssignedToThisTeam;
-			});
+			// Get all players for this team
+			grouped[team.id] = players;
 		});
 		playersByTeam = grouped;
 	});
@@ -627,23 +619,15 @@
 													<div class="mt-1">
 														<Combobox
 															items={(() => {
-																const filteredPlayers = players
-																	.filter((p) => {
-																		// Only filter out players that are assigned to other teams
-																		const isAssignedToOtherTeam = eventTeamPlayers.some(
-																			(tp) => tp.playerId === p.id && tp.teamId !== team.id
-																		);
-																		return !isAssignedToOtherTeam;
-																	})
-																	.map((p) => ({
-																		id: p.id,
-																		name: p.name,
-																		group: eventTeamPlayers.some(
-																			(tp) => tp.teamId === team.id && tp.playerId === p.id
-																		)
-																			? 'team'
-																			: 'other'
-																	}));
+																const filteredPlayers = players.map((p) => ({
+																	id: p.id,
+																	name: p.name,
+																	group: eventTeamPlayers.some(
+																		(tp) => tp.teamId === team.id && tp.playerId === p.id
+																	)
+																		? 'team'
+																		: 'other'
+																}));
 																return filteredPlayers;
 															})()}
 															value={teamPlayer.playerId}
