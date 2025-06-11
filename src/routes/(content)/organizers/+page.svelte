@@ -62,8 +62,8 @@
 					class="flex flex-col gap-4 rounded-b-lg border border-t-0 border-white/30 bg-gradient-to-br from-slate-600/60 to-slate-800 p-4 shadow-2xl ring-1 ring-white/30 backdrop-blur-lg"
 				>
 					<div class="flex flex-col gap-2">
-						<label class="text-sm font-medium text-gray-300">{m.type()}</label>
-						<div class="flex flex-wrap gap-2">
+						<label for="type-filter" class="text-sm font-medium text-gray-300">{m.type()}</label>
+						<div id="type-filter" class="flex flex-wrap gap-2">
 							<button
 								class={[
 									'flex items-center gap-1 rounded-full border px-2 py-1 text-sm transition-colors',
