@@ -3,6 +3,7 @@
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 	import type { PageData } from './$types';
 	import CommunityTagComponent from '$lib/components/tags/CommunityTag.svelte';
+	import type { CommunityTag } from '$lib/data/community';
 
 	let { data }: { data: PageData } = $props();
 
@@ -36,6 +37,19 @@
 			url: 'https://www.speedrun.com/Strinova'
 		}
 	];
+
+	function sortTagsByCategory(tags: CommunityTag[]) {
+		return [...tags].toSorted((a, b) => {
+			const categoryA = a.category;
+			const categoryB = b.category;
+
+			if (categoryA !== categoryB) {
+				return categoryA.localeCompare(categoryB);
+			}
+
+			return a.value.localeCompare(b.value);
+		});
+	}
 </script>
 
 <svelte:head>
@@ -74,7 +88,7 @@
 						{/if}
 						{#if link.tags && link.tags.length > 0}
 							<div class="mt-2 flex flex-wrap gap-2">
-								{#each link.tags as tag}
+								{#each sortTagsByCategory(link.tags) as tag}
 									<CommunityTagComponent {tag} />
 								{/each}
 							</div>
