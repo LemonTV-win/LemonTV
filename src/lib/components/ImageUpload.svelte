@@ -9,7 +9,7 @@
 		value = $bindable(),
 		prefix = 'events'
 	}: {
-		value: string;
+		value: string | null;
 		prefix?: string;
 	} = $props();
 

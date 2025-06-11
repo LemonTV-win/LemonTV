@@ -5,6 +5,7 @@
 	import { m } from '$lib/paraglide/messages';
 	import IconParkSolidAdd from '~icons/icon-park-solid/add';
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
+	import ImageUpload from '$lib/components/ImageUpload.svelte';
 
 	let { team, players, teamPlayers, teamAliases, onCancel } = $props<{
 		team: Partial<Team>;
@@ -212,16 +213,10 @@
 
 		<div>
 			<label for="teamLogo" class="block text-sm font-medium text-slate-300">
-				{m.logo_url()}
+				{m.logo()}
 			</label>
-			<input
-				type="text"
-				id="teamLogo"
-				name="logo"
-				bind:value={newTeam.logo}
-				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-				placeholder={m.logo_url()}
-			/>
+			<ImageUpload bind:value={newTeam.logo} prefix="teams" />
+			<input type="hidden" name="logo" value={newTeam.logo} />
 		</div>
 
 		<div>
