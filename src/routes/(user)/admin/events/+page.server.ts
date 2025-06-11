@@ -44,12 +44,14 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		throw error(result.statusCode, result.error);
 	}
 
-	const events = await getEvents();
-	const organizers = await db.select().from(table.organizer);
-	const eventOrganizers = await db.select().from(table.eventOrganizer);
-	const teams = await db.select().from(table.team);
-	const players = await db.select().from(table.player);
-	const teamPlayers = await db.select().from(table.teamPlayer);
+	const [events, organizers, eventOrganizers, teams, players, teamPlayers] = await Promise.all([
+		getEvents(),
+		db.select().from(table.organizer),
+		db.select().from(table.eventOrganizer),
+		db.select().from(table.team),
+		db.select().from(table.player),
+		db.select().from(table.teamPlayer)
+	]);
 
 	return {
 		events,
