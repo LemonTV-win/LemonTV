@@ -8,7 +8,7 @@ type PermissionResult =
 	| { status: 'success'; userId: string }
 	| { status: 'error'; error: string; statusCode: 401 | 403 };
 
-type MapAction = 'ban' | 'pick' | 'decider' | null;
+type MapAction = 'ban' | 'pick' | 'decider' | 'set' | null;
 
 function checkPermissions(locals: App.Locals, requiredRoles: string[]): PermissionResult {
 	if (!locals.user?.id) {

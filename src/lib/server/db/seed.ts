@@ -1147,7 +1147,7 @@ export async function seed() {
 			mapId: 'cauchy_district',
 			order: 0,
 			side: 0,
-			action: 'ban',
+			action: 'set',
 			map_picker_position: 0,
 			side_picker_position: 1
 		},
@@ -1157,7 +1157,7 @@ export async function seed() {
 			mapId: 'cosmite',
 			order: 1,
 			side: 1,
-			action: 'ban',
+			action: 'set',
 			map_picker_position: 1,
 			side_picker_position: 0
 		},
@@ -1167,27 +1167,7 @@ export async function seed() {
 			mapId: 'orcanus',
 			order: 2,
 			side: 0,
-			action: 'pick',
-			map_picker_position: 0,
-			side_picker_position: 1
-		},
-		{
-			id: 23,
-			matchId: MATCHES[2].id,
-			mapId: 'base_404',
-			order: 3,
-			side: 1,
-			action: 'pick',
-			map_picker_position: 1,
-			side_picker_position: 0
-		},
-		{
-			id: 24,
-			matchId: MATCHES[2].id,
-			mapId: 'area_88',
-			order: 4,
-			side: 0,
-			action: 'decider',
+			action: 'set',
 			map_picker_position: 0,
 			side_picker_position: 1
 		},
@@ -1361,6 +1341,28 @@ export async function seed() {
 			order: 4,
 			side: 0,
 			action: 'decider',
+			map_picker_position: 0,
+			side_picker_position: 1
+		},
+		// Qualifier matches (BO1) - Match 0
+		{
+			id: 42,
+			matchId: MATCHES[0].id,
+			mapId: 'base_404',
+			order: 0,
+			side: 0,
+			action: 'set',
+			map_picker_position: 0,
+			side_picker_position: 1
+		},
+		// Qualifier matches (BO1) - Match 1
+		{
+			id: 43,
+			matchId: MATCHES[1].id,
+			mapId: 'area_88',
+			order: 0,
+			side: 0,
+			action: 'set',
 			map_picker_position: 0,
 			side_picker_position: 1
 		}

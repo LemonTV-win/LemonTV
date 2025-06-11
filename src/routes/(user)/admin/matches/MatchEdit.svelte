@@ -61,7 +61,7 @@
 
 	const formatOptions = ['BO1', 'BO3', 'BO5'];
 	const sideOptions = ['Attack', 'Defense'];
-	const mapActionOptions = ['pick', 'ban', 'decider'] as const;
+	const mapActionOptions = ['pick', 'ban', 'decider', 'set'] as const;
 	type MapAction = (typeof mapActionOptions)[number] | null;
 
 	const MAP_2_NAME: Record<string, string> = {
