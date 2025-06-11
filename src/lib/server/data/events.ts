@@ -7,6 +7,9 @@ import { processImageURL } from '$lib/server/storage';
 import type { Region } from '$lib/data/game';
 import { inArray, eq, or } from 'drizzle-orm';
 import { convertOrganizer } from './organizers';
+import type { LegacyEventParticipant, EventParticipant } from '$lib/data/events';
+import type { Player } from '$lib/data/players';
+import { getPlayer } from '$lib/server/data/players';
 
 // Types for the application layer
 export interface EventWithOrganizers extends Event {
@@ -304,35 +307,58 @@ export async function getEvents(
 
 	return await Promise.all(
 		events.map(async (event) => {
+			// Fetch full Player objects for all unique player IDs
+			const uniquePlayerIds = Array.from(new Set(event.teamPlayers.map((tp) => tp.player.id)));
+			const playerMap: Record<string, Player> = {};
+			await Promise.all(
+				uniquePlayerIds.map(async (id) => {
+					const fullPlayer = await getPlayer(id);
+					if (fullPlayer) playerMap[id] = fullPlayer;
+				})
+			);
+
 			// Group team players by team
 			const teamPlayersMap = new Map<
 				string,
-				{ main: string[]; reserve: string[]; coach: string[] }
+				{ main: Player[]; reserve: Player[]; coach: Player[] }
 			>();
 
 			event.teamPlayers.forEach(({ team, player, role }) => {
-				if (!team.abbr || !player.name) return; // Skip if team abbreviation or player name is missing
+				const fullPlayer = playerMap[player.id];
+				if (!fullPlayer) return;
 
-				if (!teamPlayersMap.has(team.abbr)) {
-					teamPlayersMap.set(team.abbr, { main: [], reserve: [], coach: [] });
+				if (!teamPlayersMap.has(team.id)) {
+					teamPlayersMap.set(team.id, { main: [], reserve: [], coach: [] });
 				}
-				const teamData = teamPlayersMap.get(team.abbr)!;
+				const teamData = teamPlayersMap.get(team.id)!;
 				if (role === 'main') {
-					teamData.main.push(player.name);
+					teamData.main.push(fullPlayer);
 				} else if (role === 'sub') {
-					teamData.reserve.push(player.name);
+					teamData.reserve.push(fullPlayer);
 				} else if (role === 'coach') {
-					teamData.coach.push(player.name);
+					teamData.coach.push(fullPlayer);
 				}
 			});
 
 			// Convert to the expected format
-			const participants = Array.from(teamPlayersMap.entries()).map(([team, players]) => ({
-				team,
-				main: players.main,
-				reserve: players.reserve,
-				coach: players.coach
-			}));
+			const participants = Array.from(teamPlayersMap.entries()).map(([team, players]) => {
+				const teamObj = event.teamPlayers.find((t) => t.team.id === team)?.team;
+				if (!teamObj) {
+					return {
+						team,
+						main: players.main.map((p) => p.name),
+						reserve: players.reserve.map((p) => p.name),
+						coach: players.coach.map((p) => p.name)
+					} as LegacyEventParticipant;
+				}
+				return {
+					legacy: false,
+					team: teamObj,
+					main: players.main,
+					reserve: players.reserve,
+					coach: players.coach
+				} as EventParticipant;
+			});
 
 			return {
 				...event,

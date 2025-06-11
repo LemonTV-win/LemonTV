@@ -2,6 +2,7 @@ import type { Match } from '$lib/data/matches';
 import type { LocalizedString } from '$lib/data/string';
 import type { Region } from './game';
 import type { Organizer } from './organizer';
+import type { Player } from './players';
 import type { Team } from './teams';
 
 export interface Stage {
@@ -64,6 +65,27 @@ export interface LabeledURL {
 	label?: string;
 }
 
+export interface LegacyEventParticipant {
+	team: string; // team abbr
+	main: string[];
+	reserve: string[];
+	coach: string[];
+}
+
+export interface EventParticipant {
+	legacy: false;
+	team: Team;
+	main: Player[];
+	reserve: Player[];
+	coach: Player[];
+}
+
+export function isLegacyEventParticipant(
+	participant: EventParticipant | LegacyEventParticipant
+): participant is LegacyEventParticipant {
+	return !('legacy' in participant && participant.legacy === false);
+}
+
 export interface Event {
 	id: string;
 	slug: string;
@@ -85,12 +107,7 @@ export interface Event {
 	capacity: number; // expected number of teams
 	date: string;
 	websites?: LabeledURL[];
-	participants: {
-		team: string; // team abbr
-		main: string[];
-		reserve: string[];
-		coach: string[];
-	}[];
+	participants: (EventParticipant | LegacyEventParticipant)[];
 	livestreams?: {
 		platform: 'twitch' | 'youtube' | 'bilibili';
 		url: string;
