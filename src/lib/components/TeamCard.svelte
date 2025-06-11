@@ -13,7 +13,7 @@
 		rank,
 		expanded = false
 	}: {
-		team: Team & { players: (Player & { rating: number })[] };
+		team: Team & { players: (Player & { rating: number })[]; logoURL: string | null };
 		wins: number;
 		rank: number;
 		expanded: boolean;
@@ -44,6 +44,9 @@
 					href={`/teams/${team.slug}`}
 					class="flex items-center gap-2 text-xl font-bold md:text-2xl"
 				>
+					{#if team.logoURL}
+						<img src={team.logoURL} alt={team.name} class="h-8 w-8 rounded-full" />
+					{/if}
 					{team.name}
 					{#if team.region}
 						<RegionTag region={team.region} class="text-sm" />
