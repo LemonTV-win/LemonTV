@@ -1,11 +1,18 @@
 import type { PageServerLoad } from './$types';
-import type { LegacyEventResult, Event, EventResult } from '$lib/data/events';
+import type {
+	LegacyEventResult,
+	Event,
+	EventResult,
+	EventParticipant,
+	LegacyEventParticipant
+} from '$lib/data/events';
 
 import { getEvent } from '$lib/data';
 import { getEvent as getServerEvent } from '$lib/server/data/events';
 import { getTeams } from '$lib/server/data/teams';
 import { getPlayers } from '$lib/server/data/players';
 import { error } from '@sveltejs/kit';
+import type { Team } from '$lib/data/teams';
 
 export const load: PageServerLoad = async ({ params }) => {
 	let event: Event | undefined = getEvent(params.id) || (await getServerEvent(params.id));
@@ -56,9 +63,19 @@ export const load: PageServerLoad = async ({ params }) => {
 	}
 
 	// Ensure event has the correct type by creating a new object with only the new format
-	const typedEvent: Omit<Event, 'results'> & { results?: EventResult[] } = {
+	const typedEvent: Omit<Event, 'results'> & {
+		results?: (Omit<EventResult, 'team'> & { team: Team & { logoURL: string | null } })[];
+		participants:
+			| LegacyEventParticipant[]
+			| (Omit<EventParticipant, 'team'> & { team: Team & { logoURL: string | null } })[];
+	} = {
 		...event,
-		results: event.results as EventResult[] | undefined
+		results: event.results as
+			| (Omit<EventResult, 'team'> & { team: Team & { logoURL: string | null } })[]
+			| undefined,
+		participants: event.participants as
+			| LegacyEventParticipant[]
+			| (Omit<EventParticipant, 'team'> & { team: Team & { logoURL: string | null } })[]
 	};
 
 	return {

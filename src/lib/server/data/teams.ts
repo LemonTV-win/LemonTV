@@ -166,9 +166,7 @@ export async function getTeams(): Promise<(Team & { logoURL: string | null })[]>
 
 	const teamMap = new Map<
 		string,
-		Omit<Team, 'players' | 'aliases'> & { players: Map<string, Player>; aliases: Set<string> } & {
-			logoURL: string | null;
-		}
+		Omit<Team, 'players' | 'aliases'> & { players: Map<string, Player>; aliases: Set<string> }
 	>();
 
 	for (const row of rows) {
@@ -190,8 +188,7 @@ export async function getTeams(): Promise<(Team & { logoURL: string | null })[]>
 					abbr: t.abbr
 				}),
 				createdAt: t.createdAt,
-				updatedAt: t.updatedAt,
-				logoURL: t.logo ? await processImageURL(t.logo) : null
+				updatedAt: t.updatedAt
 			});
 		}
 
@@ -266,11 +263,14 @@ export async function getTeams(): Promise<(Team & { logoURL: string | null })[]>
 		}
 	}
 
-	return Array.from(teamMap.values()).map((t) => ({
-		...t,
-		players: Array.from(t.players.values()),
-		aliases: Array.from(t.aliases)
-	}));
+	return await Promise.all(
+		Array.from(teamMap.values()).map(async (t) => ({
+			...t,
+			players: Array.from(t.players.values()),
+			aliases: Array.from(t.aliases),
+			logoURL: t.logo ? await processImageURL(t.logo) : null
+		}))
+	);
 }
 
 export function getTeamMatches(

@@ -299,7 +299,18 @@ export async function getEvents(
 				organizers,
 				imageURL: await processImageURL(event.image),
 				teamPlayers,
-				results: results.length > 0 ? results : undefined,
+				results:
+					results.length > 0
+						? await Promise.all(
+								results.map(async (r) => ({
+									...r,
+									team: {
+										...r.team,
+										logoURL: r.team.logo ? await processImageURL(r.team.logo) : null
+									}
+								}))
+							)
+						: undefined,
 				websites: websites.length > 0 ? websites : undefined
 			})
 		)
@@ -341,24 +352,29 @@ export async function getEvents(
 			});
 
 			// Convert to the expected format
-			const participants = Array.from(teamPlayersMap.entries()).map(([team, players]) => {
-				const teamObj = event.teamPlayers.find((t) => t.team.id === team)?.team;
-				if (!teamObj) {
+			const participants = await Promise.all(
+				Array.from(teamPlayersMap.entries()).map(async ([team, players]) => {
+					const teamObj = event.teamPlayers.find((t) => t.team.id === team)?.team;
+					if (!teamObj) {
+						return {
+							team,
+							main: players.main.map((p) => p.name),
+							reserve: players.reserve.map((p) => p.name),
+							coach: players.coach.map((p) => p.name)
+						} as LegacyEventParticipant;
+					}
 					return {
-						team,
-						main: players.main.map((p) => p.name),
-						reserve: players.reserve.map((p) => p.name),
-						coach: players.coach.map((p) => p.name)
-					} as LegacyEventParticipant;
-				}
-				return {
-					legacy: false,
-					team: teamObj,
-					main: players.main,
-					reserve: players.reserve,
-					coach: players.coach
-				} as EventParticipant;
-			});
+						legacy: false,
+						team: {
+							...teamObj,
+							logoURL: teamObj.logo ? await processImageURL(teamObj.logo) : null
+						},
+						main: players.main,
+						reserve: players.reserve,
+						coach: players.coach
+					} as EventParticipant;
+				})
+			);
 
 			return {
 				...event,

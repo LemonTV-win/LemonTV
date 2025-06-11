@@ -169,9 +169,9 @@
 						>
 							#{result.rank}
 						</div>
-						{#if result.team.logo}
+						{#if result.team.logoURL}
 							<img
-								src={result.team.logo}
+								src={result.team.logoURL}
 								alt={result.team.name}
 								class={['h-24 w-24 rounded-full', result.rank === 1 ? 'h-32 w-32' : 'h-24 w-24']}
 							/>
@@ -211,8 +211,12 @@
 				{#each data.event.results.sort((a, b) => a.rank - b.rank).slice(3) as result}
 					<div class="glass flex flex-col items-center gap-2 p-4">
 						<div class="text-4xl font-bold text-yellow-600">#{result.rank}</div>
-						{#if result.team.logo}
-							<img src={result.team.logo} alt={result.team.name} class="h-16 w-16 rounded-full" />
+						{#if result.team.logoURL}
+							<img
+								src={result.team.logoURL}
+								alt={result.team.name}
+								class="h-16 w-16 rounded-full"
+							/>
 						{:else}
 							<IconParkSolidPeoples class="h-16 w-16 text-gray-300" />
 						{/if}
@@ -275,9 +279,9 @@
 											</a>
 										</h3>
 										<div class="flex flex-col items-center justify-center gap-2">
-											{#if data.teams.get(team)?.logo}
+											{#if data.teams.get(team)?.logoURL}
 												<img
-													src={data.teams.get(team)?.logo}
+													src={data.teams.get(team)?.logoURL}
 													alt={data.teams.get(team)?.name}
 													class="h-24 w-24 rounded-full"
 												/>
@@ -348,8 +352,8 @@
 											</a>
 										</h3>
 										<div class="flex flex-col items-center justify-center gap-2">
-											{#if team.logo}
-												<img src={team.logo} alt={team.name} class="h-24 w-24 rounded-full" />
+											{#if team.logoURL}
+												<img src={team.logoURL} alt={team.name} class="h-24 w-24 rounded-full" />
 											{:else}
 												<IconParkSolidPeoples class="h-16 w-16 text-gray-300" />
 											{/if}
