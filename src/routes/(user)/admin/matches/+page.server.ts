@@ -78,8 +78,9 @@ function parseFormData(formData: FormData) {
 }
 
 export async function load({ locals, url }) {
-	if (!locals.user?.roles.includes('admin')) {
-		throw error(403, 'Forbidden');
+	const result = checkPermissions(locals, ['admin', 'editor']);
+	if (result.status === 'error') {
+		throw error(result.statusCode, result.error);
 	}
 
 	// Get event ID from URL if present
