@@ -1,13 +1,21 @@
-import { fail } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import {
 	getDiscordServers,
 	createDiscordServer,
 	updateDiscordServer,
-	deleteDiscordServer
+	deleteDiscordServer,
+	createTag,
+	updateTag,
+	deleteTag,
+	addTagToServer,
+	removeTagFromServer,
+	getTags,
+	getServerTags
 } from '$lib/server/data/community';
-import { randomUUID } from 'node:crypto';
-import type { PageServerLoad } from './$types';
+import { randomUUID } from 'crypto';
+import type { PageServerLoad, Actions } from './$types';
+import type { DiscordServer, CommunityTag } from '$lib/server/db/schemas/about/community';
 
 const serverSchema = z.object({
 	id: z.string(),
@@ -21,103 +29,201 @@ const serverSchema = z.object({
 	updatedAt: z.date()
 });
 
-const createServerSchema = serverSchema.omit({ id: true, createdAt: true, updatedAt: true });
-const updateServerSchema = serverSchema.omit({ updatedAt: true, createdAt: true });
-
 export const load: PageServerLoad = async ({ locals, url }) => {
-	const action = url.searchParams.get('action');
-	const id = url.searchParams.get('id');
+	const user = locals.user;
+	if (!user?.roles) {
+		throw redirect(302, '/login');
+	}
+
+	const searchParams = url.searchParams;
+	const action = searchParams.get('action');
+	const id = searchParams.get('id');
+
+	if (!['admin', 'editor'].some((role) => user.roles.includes(role))) {
+		throw redirect(302, '/');
+	}
 
 	return {
 		discordServers: await getDiscordServers(),
-		user: locals.user,
+		tags: await getTags(),
 		action,
 		id
 	};
 };
 
-export const actions = {
+export const actions: Actions = {
 	create: async ({ request }) => {
 		const formData = await request.formData();
-		const data = {
-			title: formData.get('title'),
-			url: formData.get('url'),
-			icon: formData.get('icon'),
-			description: formData.get('description'),
-			additionalLinkText: formData.get('additionalLinkText') || null,
-			additionalLinkUrl: formData.get('additionalLinkUrl') || null
+		const title = formData.get('title') as string;
+		const url = formData.get('url') as string;
+		const icon = formData.get('icon') as string;
+		const description = formData.get('description') as string;
+		const additionalLinkText = formData.get('additionalLinkText') as string;
+		const additionalLinkUrl = formData.get('additionalLinkUrl') as string;
+		const tags = JSON.parse(formData.get('tags') as string) as string[];
+
+		if (!title || !url || !icon || !description) {
+			return fail(400, { error: 'Missing required fields' });
+		}
+
+		const server: DiscordServer = {
+			id: randomUUID(),
+			title,
+			url,
+			icon,
+			description,
+			additionalLinkText: additionalLinkText || null,
+			additionalLinkUrl: additionalLinkUrl || null,
+			createdAt: new Date(),
+			updatedAt: new Date()
 		};
 
-		const result = createServerSchema.safeParse(data);
-		if (!result.success) {
-			return fail(400, { error: 'Invalid data' });
+		await createDiscordServer(server);
+
+		for (const tagId of tags) {
+			await addTagToServer(server.id, tagId);
 		}
 
-		try {
-			const now = new Date();
-			await createDiscordServer({
-				...result.data,
-				id: randomUUID(),
-				createdAt: now,
-				updatedAt: now
-			});
-			return { success: true };
-		} catch (error) {
-			return fail(500, { error: 'Failed to create Discord server' });
-		}
+		return {
+			success: true
+		};
 	},
 
 	update: async ({ request }) => {
 		const formData = await request.formData();
-		const data = {
-			id: formData.get('id'),
-			title: formData.get('title'),
-			url: formData.get('url'),
-			icon: formData.get('icon'),
-			description: formData.get('description'),
-			additionalLinkText: formData.get('additionalLinkText') || null,
-			additionalLinkUrl: formData.get('additionalLinkUrl') || null
+		const id = formData.get('id') as string;
+		const title = formData.get('title') as string;
+		const url = formData.get('url') as string;
+		const icon = formData.get('icon') as string;
+		const description = formData.get('description') as string;
+		const additionalLinkText = formData.get('additionalLinkText') as string;
+		const additionalLinkUrl = formData.get('additionalLinkUrl') as string;
+		const tags = JSON.parse(formData.get('tags') as string) as string[];
+
+		if (!id || !title || !url || !icon || !description) {
+			return fail(400, { error: 'Missing required fields' });
+		}
+
+		const server: DiscordServer = {
+			id,
+			title,
+			url,
+			icon,
+			description,
+			additionalLinkText: additionalLinkText || null,
+			additionalLinkUrl: additionalLinkUrl || null,
+			createdAt: new Date(),
+			updatedAt: new Date()
 		};
 
-		const result = updateServerSchema.safeParse(data);
-		if (!result.success) {
-			console.error('Validation error:', result.error);
-			return fail(400, { error: 'Invalid data' });
+		await updateDiscordServer(server);
+
+		const previousTags = await getServerTags(server.id);
+		for (const tag of previousTags) {
+			await removeTagFromServer(server.id, tag.tag.id);
 		}
 
-		try {
-			// Get existing server data to preserve createdAt
-			const servers = await getDiscordServers();
-			const existingServer = servers.find((s) => s.id === result.data.id);
-			if (!existingServer) {
-				return fail(404, { error: 'Server not found' });
-			}
-
-			await updateDiscordServer({
-				...result.data,
-				createdAt: existingServer.createdAt,
-				updatedAt: new Date()
-			});
-			return { success: true };
-		} catch (error) {
-			console.error('Update error:', error);
-			return fail(500, { error: 'Failed to update Discord server' });
+		for (const tagId of tags) {
+			await addTagToServer(server.id, tagId);
 		}
+
+		return {
+			success: true
+		};
 	},
 
 	delete: async ({ request }) => {
 		const formData = await request.formData();
-		const id = formData.get('id');
+		const id = formData.get('id') as string;
 
-		if (!id || typeof id !== 'string') {
-			return fail(400, { error: 'Invalid ID' });
+		if (!id) {
+			return fail(400, { error: 'Missing server ID' });
 		}
 
-		try {
-			await deleteDiscordServer(id);
-			return { success: true };
-		} catch (error) {
-			return fail(500, { error: 'Failed to delete Discord server' });
+		const tags = await getServerTags(id);
+		for (const tag of tags) {
+			await removeTagFromServer(id, tag.tag.id);
 		}
+
+		await deleteDiscordServer(id);
+
+		return {
+			success: true
+		};
+	},
+
+	tag: async ({ request }) => {
+		const formData = await request.formData();
+		const id = formData.get('id') as string;
+		const category = formData.get('category') as string;
+		const value = formData.get('value') as string;
+		const name = formData.get('name') as string;
+
+		if (!category || !value || !name) {
+			return fail(400, { error: 'Missing required fields' });
+		}
+
+		const tag: CommunityTag = {
+			id: id || randomUUID(),
+			category,
+			value,
+			name,
+			createdAt: new Date(),
+			updatedAt: new Date()
+		};
+
+		if (id) {
+			await updateTag(tag);
+		} else {
+			await createTag(tag);
+		}
+
+		return {
+			success: true
+		};
+	},
+
+	deleteTag: async ({ request }) => {
+		const formData = await request.formData();
+		const id = formData.get('id') as string;
+
+		if (!id) {
+			return fail(400, { error: 'Missing tag ID' });
+		}
+
+		await deleteTag(id);
+		return {
+			success: true
+		};
+	},
+
+	addTagToServer: async ({ request }) => {
+		const formData = await request.formData();
+		const serverId = formData.get('serverId') as string;
+		const tagId = formData.get('tagId') as string;
+
+		if (!serverId || !tagId) {
+			return fail(400, { error: 'Missing required fields' });
+		}
+
+		await addTagToServer(serverId, tagId);
+		return {
+			success: true
+		};
+	},
+
+	removeTagFromServer: async ({ request }) => {
+		const formData = await request.formData();
+		const serverId = formData.get('serverId') as string;
+		const tagId = formData.get('tagId') as string;
+
+		if (!serverId || !tagId) {
+			return fail(400, { error: 'Missing required fields' });
+		}
+
+		await removeTagFromServer(serverId, tagId);
+		return {
+			success: true
+		};
 	}
 };

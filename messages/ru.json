@@ -431,5 +431,12 @@
 	"discord_invite_url": "URL-адрес приглашения Discord",
 	"icon_url": "URL-адрес иконки",
 	"additional_link_text": "Текст дополнительной ссылки",
-	"additional_link_url": "URL-адрес дополнительной ссылки"
+	"additional_link_url": "URL-адрес дополнительной ссылки",
+	"tags": "Теги",
+	"category": "Категория",
+	"select_category": "Выбрать категорию",
+	"value": "Значение",
+	"add_tag": "Добавить тег",
+	"edit_tag": "Редактировать тег",
+	"delete_tag": "Удалить тег"
 }

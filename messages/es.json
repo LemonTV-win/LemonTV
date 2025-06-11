@@ -431,5 +431,12 @@
 	"discord_invite_url": "URL de invitación de Discord",
 	"icon_url": "URL del icono",
 	"additional_link_text": "Texto del enlace adicional",
-	"additional_link_url": "URL del enlace adicional"
+	"additional_link_url": "URL del enlace adicional",
+	"tags": "Etiquetas",
+	"category": "Categoría",
+	"select_category": "Seleccionar categoría",
+	"value": "Valor",
+	"add_tag": "Añadir etiqueta",
+	"edit_tag": "Editar etiqueta",
+	"delete_tag": "Eliminar etiqueta"
 }

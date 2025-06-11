@@ -1,16 +1,18 @@
 <!-- src/routes/(user)/admin/community/DiscordEdit.svelte -->
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import type { DiscordServer } from '$lib/server/db/schemas/community';
+	import type { DiscordServer, CommunityTag } from '$lib/server/db/schemas/about/community';
 	import { m } from '$lib/paraglide/messages';
 	import ImageUpload from '$lib/components/ImageUpload.svelte';
 
 	let {
 		server,
+		tags,
 		onCancel,
-		onSuccess: onsuccess
+		onSuccess
 	}: {
-		server: Partial<DiscordServer>;
+		server: Partial<DiscordServer> & { tags?: CommunityTag[] };
+		tags: CommunityTag[];
 		onCancel: () => void;
 		onSuccess: () => void;
 	} = $props();
@@ -22,21 +24,29 @@
 		icon: server.icon || '',
 		description: server.description || '',
 		additionalLinkText: server.additionalLinkText || '',
-		additionalLinkUrl: server.additionalLinkUrl || ''
+		additionalLinkUrl: server.additionalLinkUrl || '',
+		tags: server.tags || []
 	});
 	let errorMessage = $state('');
 	let successMessage = $state('');
+
+	function handleTagToggle(tag: CommunityTag) {
+		const index = newServer.tags.findIndex((t) => t.id === tag.id);
+		if (index === -1) {
+			newServer.tags = [...newServer.tags, tag];
+		} else {
+			newServer.tags = newServer.tags.filter((t) => t.id !== tag.id);
+		}
+	}
 </script>
 
 <form
 	method="POST"
 	action={server.id ? '?/update' : '?/create'}
-	use:enhance={({ formData }) => {
-		console.log('enhance', [...formData.entries()]);
+	use:enhance={() => {
 		return async ({ result }) => {
 			if (result.type === 'success') {
-				onsuccess();
-				onCancel();
+				onSuccess();
 			} else if (result.type === 'failure') {
 				errorMessage =
 					typeof result.data?.error === 'string' ? result.data.error : 'Failed to save server';
@@ -127,6 +137,26 @@
 			bind:value={newServer.additionalLinkUrl}
 			class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 		/>
+	</div>
+
+	<div class="mb-4">
+		<label class="block text-sm font-medium text-slate-300" for="tags-container">{m.tags()}</label>
+		<div id="tags-container" class="mt-2 flex flex-wrap gap-2">
+			{#each tags as tag}
+				<button
+					type="button"
+					class="rounded-full px-3 py-1 text-sm transition-colors"
+					class:bg-yellow-500={newServer.tags.some((t) => t.id === tag.id)}
+					class:bg-gray-700={!newServer.tags.some((t) => t.id === tag.id)}
+					class:text-black={newServer.tags.some((t) => t.id === tag.id)}
+					class:text-white={!newServer.tags.some((t) => t.id === tag.id)}
+					onclick={() => handleTagToggle(tag)}
+				>
+					{tag.category}:{tag.value}
+				</button>
+			{/each}
+		</div>
+		<input type="hidden" name="tags" value={JSON.stringify(newServer.tags.map((t) => t.id))} />
 	</div>
 
 	<div class="mt-auto flex justify-end gap-4">

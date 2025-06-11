@@ -431,5 +431,12 @@
 	"discord_invite_url": "Discord邀請連結",
 	"icon_url": "圖示連結",
 	"additional_link_text": "附加連結文字",
-	"additional_link_url": "附加連結網址"
+	"additional_link_url": "附加連結網址",
+	"tags": "標籤",
+	"category": "類別",
+	"select_category": "選擇類別",
+	"value": "數值",
+	"add_tag": "新增標籤",
+	"edit_tag": "編輯標籤",
+	"delete_tag": "刪除標籤"
 }

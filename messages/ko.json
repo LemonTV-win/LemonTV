@@ -431,5 +431,12 @@
 	"discord_invite_url": "Discord 초대 URL",
 	"icon_url": "아이콘 URL",
 	"additional_link_text": "추가 링크 텍스트",
-	"additional_link_url": "추가 링크 URL"
+	"additional_link_url": "추가 링크 URL",
+	"tags": "태그",
+	"category": "카테고리",
+	"select_category": "카테고리 선택",
+	"value": "값",
+	"add_tag": "태그 추가",
+	"edit_tag": "태그 수정",
+	"delete_tag": "태그 삭제"
 }

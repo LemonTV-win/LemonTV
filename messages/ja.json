@@ -431,5 +431,12 @@
 	"discord_invite_url": "Discord招待URL",
 	"icon_url": "アイコンURL",
 	"additional_link_text": "追加リンクテキスト",
-	"additional_link_url": "追加リンクURL"
+	"additional_link_url": "追加リンクURL",
+	"tags": "タグ",
+	"category": "カテゴリー",
+	"select_category": "カテゴリーを選択",
+	"value": "値",
+	"add_tag": "タグを追加",
+	"edit_tag": "タグを編集",
+	"delete_tag": "タグを削除"
 }

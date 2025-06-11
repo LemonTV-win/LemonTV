@@ -2,19 +2,9 @@
 	import { m } from '$lib/paraglide/messages.js';
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 	import type { PageData } from './$types';
+	import CommunityTagComponent from '$lib/components/tags/CommunityTag.svelte';
 
 	let { data }: { data: PageData } = $props();
-
-	const discordLinks = data.discordServers.map((server) => ({
-		title: server.title,
-		url: server.url,
-		icon: server.icon,
-		description: server.description,
-		additionalLink:
-			server.additionalLinkText && server.additionalLinkUrl
-				? { text: server.additionalLinkText, url: server.additionalLinkUrl }
-				: null
-	}));
 
 	const toolsAndResources = [
 		{
@@ -62,7 +52,7 @@
 
 	<h2 class="text-xl font-bold">Discord</h2>
 	<div class="m-4 grid grid-cols-1 gap-4 p-2 sm:grid-cols-2 lg:grid-cols-3">
-		{#each discordLinks as link}
+		{#each data.discordServers as link}
 			<div
 				class="glass-card group flex items-start gap-3 rounded-lg p-4 transition-all hover:bg-white/5"
 			>
@@ -81,6 +71,13 @@
 						>
 						{#if link.description}
 							<span class="text-sm text-gray-400">{link.description}</span>
+						{/if}
+						{#if link.tags && link.tags.length > 0}
+							<div class="mt-2 flex flex-wrap gap-2">
+								{#each link.tags as tag}
+									<CommunityTagComponent {tag} />
+								{/each}
+							</div>
 						{/if}
 						{#if link.additionalLink}
 							<a

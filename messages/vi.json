@@ -431,5 +431,12 @@
 	"discord_invite_url": "URL mời Discord",
 	"icon_url": "URL biểu tượng",
 	"additional_link_text": "Văn bản liên kết bổ sung",
-	"additional_link_url": "URL liên kết bổ sung"
+	"additional_link_url": "URL liên kết bổ sung",
+	"tags": "Thẻ",
+	"category": "Danh mục",
+	"select_category": "Chọn danh mục",
+	"value": "Giá trị",
+	"add_tag": "Thêm thẻ",
+	"edit_tag": "Sửa thẻ",
+	"delete_tag": "Xóa thẻ"
 }
