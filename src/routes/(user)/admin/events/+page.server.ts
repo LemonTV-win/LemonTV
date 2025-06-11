@@ -63,8 +63,52 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	};
 };
 
+// Helper function to handle team players update
+async function handleTeamPlayersUpdate(eventId: string, playersData: string, userId: string) {
+	console.info('[Admin][Events][HandleTeamPlayersUpdate] Updating event team players');
+
+	if (!eventId || !playersData) {
+		return fail(400, {
+			error: 'Event ID and players data are required'
+		});
+	}
+
+	try {
+		const players = JSON.parse(playersData) as EventTeamPlayerData[];
+
+		// Check for duplicate players in the same team
+		const teamPlayerMap = new Map<string, Set<string>>();
+		for (const player of players) {
+			if (!teamPlayerMap.has(player.teamId)) {
+				teamPlayerMap.set(player.teamId, new Set());
+			}
+			const teamPlayers = teamPlayerMap.get(player.teamId)!;
+			if (teamPlayers.has(player.playerId)) {
+				return fail(400, {
+					error: 'A player cannot be added multiple times to the same team'
+				});
+			}
+			teamPlayers.add(player.playerId);
+		}
+
+		await updateEventTeamPlayers(eventId, players, userId);
+
+		return {
+			success: true
+		};
+	} catch (e) {
+		console.error(
+			'[Admin][Events][HandleTeamPlayersUpdate] Failed to update event team players:',
+			e
+		);
+		return fail(500, {
+			error: 'Failed to update event team players'
+		});
+	}
+}
+
 export const actions = {
-	create: async ({ request, locals }) => {
+	create: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
 		if (result.status === 'error') {
 			return fail(result.statusCode, {
@@ -181,6 +225,19 @@ export const actions = {
 				}
 			}
 
+			// Handle team players
+			const playersData = formData.get('players') as string;
+			if (playersData) {
+				const teamPlayersResult = await handleTeamPlayersUpdate(
+					eventId,
+					playersData,
+					result.userId
+				);
+				if ('error' in teamPlayersResult) {
+					return teamPlayersResult;
+				}
+			}
+
 			// Add edit history
 			await db.insert(table.editHistory).values({
 				id: crypto.randomUUID(),
@@ -205,7 +262,7 @@ export const actions = {
 		}
 	},
 
-	update: async ({ request, locals }) => {
+	update: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
 		if (result.status === 'error') {
 			return fail(result.statusCode, {
@@ -336,6 +393,19 @@ export const actions = {
 				}
 			}
 
+			// Handle team players
+			const playersData = formData.get('players') as string;
+			if (playersData) {
+				const teamPlayersResult = await handleTeamPlayersUpdate(
+					eventData.id,
+					playersData,
+					result.userId
+				);
+				if ('error' in teamPlayersResult) {
+					return teamPlayersResult;
+				}
+			}
+
 			// Add edit history if there are changes
 			if (Object.keys(changes).length > 0) {
 				await Promise.all(
@@ -453,61 +523,7 @@ export const actions = {
 		}
 	},
 
-	updateTeamPlayers: async ({ request, locals }) => {
-		console.info('[Admin][Events][UpdateTeamPlayers] Updating event team players');
-
-		const result = checkPermissions(locals, ['admin', 'editor']);
-		if (result.status === 'error') {
-			return fail(result.statusCode, {
-				error: result.error
-			});
-		}
-
-		const formData = await request.formData();
-		const eventId = formData.get('eventId') as string;
-		const playersData = formData.get('players') as string;
-
-		console.info('[Admin][Events][UpdateTeamPlayers] Event ID:', eventId);
-		console.info('[Admin][Events][UpdateTeamPlayers] Players data:', playersData);
-
-		if (!eventId || !playersData) {
-			return fail(400, {
-				error: 'Event ID and players data are required'
-			});
-		}
-
-		try {
-			const players = JSON.parse(playersData) as EventTeamPlayerData[];
-
-			// Check for duplicate players in the same team
-			const teamPlayerMap = new Map<string, Set<string>>();
-			for (const player of players) {
-				if (!teamPlayerMap.has(player.teamId)) {
-					teamPlayerMap.set(player.teamId, new Set());
-				}
-				const teamPlayers = teamPlayerMap.get(player.teamId)!;
-				if (teamPlayers.has(player.playerId)) {
-					return fail(400, {
-						error: 'A player cannot be added multiple times to the same team'
-					});
-				}
-				teamPlayers.add(player.playerId);
-			}
-
-			await updateEventTeamPlayers(eventId, players, result.userId);
-
-			return {
-				success: true
-			};
-		} catch (e) {
-			console.error('[Admin][Events][UpdateTeamPlayers] Failed to update event team players:', e);
-			return fail(500, {
-				error: 'Failed to update event team players'
-			});
-		}
-	},
-
-	updateResults: async ({ request, locals }) => {
+	updateResults: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
 		if (result.status === 'error') {
 			return fail(result.statusCode, {

@@ -298,21 +298,11 @@
 		formData.append('results', JSON.stringify(results));
 		// Add websites data
 		formData.append('websites', JSON.stringify(newEvent.websites));
+		// Add team players data
+		formData.append('players', JSON.stringify(eventTeamPlayers));
 		return async ({ result }) => {
 			isSubmitting = false;
 			if (result.type === 'success') {
-				// Update team players if event was created/updated successfully
-				const eventId =
-					(result as { type: 'success'; data?: { id?: string } }).data?.id || event.id;
-				if (eventId) {
-					const formData = new FormData();
-					formData.append('eventId', eventId);
-					formData.append('players', JSON.stringify(eventTeamPlayers));
-					await fetch('?/updateTeamPlayers', {
-						method: 'POST',
-						body: formData
-					});
-				}
 				onsuccess();
 				onCancel();
 			} else if (result.type === 'failure') {
