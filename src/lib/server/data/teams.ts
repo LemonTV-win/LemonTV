@@ -15,6 +15,7 @@ import type { Event } from '$lib/data/events';
 
 import { randomUUID } from 'crypto';
 import { editHistory } from '$lib/server/db/schemas/edit-history';
+import { processImageURL } from '../storage';
 
 export function getTeamMemberStatistics(team: Team): Record<
 	string,
@@ -125,27 +126,29 @@ export async function getTeam(slug: string): Promise<Team | null> {
 		}
 	}
 
-	const fullTeam: Team = {
+	const fullTeam: Team & { logoURL: string | null } = {
 		id: teamRow.id,
 		name: teamRow.name,
 		slug: teamRow.slug,
-		abbr: teamRow.abbr ?? undefined,
-		logo: teamRow.logo ?? undefined,
+		abbr: teamRow.abbr,
+		logo: teamRow.logo,
+		logoURL: teamRow.logo ? await processImageURL(teamRow.logo) : null,
 		region: (teamRow.region as Region) ?? undefined,
 		players: Array.from(playerMap.values()),
 		wins: getTeamWins({
 			id: teamRow.id,
 			name: teamRow.name,
 			slug: teamRow.slug,
-			abbr: teamRow.abbr ?? undefined
+			abbr: teamRow.abbr
 		}),
-		createdAt: teamRow.createdAt ?? undefined
+		createdAt: teamRow.createdAt,
+		updatedAt: teamRow.updatedAt
 	};
 
 	return fullTeam;
 }
 
-export async function getTeams(): Promise<Team[]> {
+export async function getTeams(): Promise<(Team & { logoURL: string | null })[]> {
 	const rows = await db
 		.select()
 		.from(table.team)
@@ -163,7 +166,9 @@ export async function getTeams(): Promise<Team[]> {
 
 	const teamMap = new Map<
 		string,
-		Omit<Team, 'players' | 'aliases'> & { players: Map<string, Player>; aliases: Set<string> }
+		Omit<Team, 'players' | 'aliases'> & { players: Map<string, Player>; aliases: Set<string> } & {
+			logoURL: string | null;
+		}
 	>();
 
 	for (const row of rows) {
@@ -173,8 +178,8 @@ export async function getTeams(): Promise<Team[]> {
 				id: t.id,
 				name: t.name,
 				slug: t.slug,
-				abbr: t.abbr ?? undefined,
-				logo: t.logo ?? undefined,
+				abbr: t.abbr,
+				logo: t.logo,
 				region: (t.region as Region) ?? undefined,
 				players: new Map<string, Player>(),
 				aliases: new Set<string>(),
@@ -182,9 +187,11 @@ export async function getTeams(): Promise<Team[]> {
 					id: t.id,
 					name: t.name,
 					slug: t.slug,
-					abbr: t.abbr ?? undefined
+					abbr: t.abbr
 				}),
-				createdAt: t.createdAt ?? undefined
+				createdAt: t.createdAt,
+				updatedAt: t.updatedAt,
+				logoURL: t.logo ? await processImageURL(t.logo) : null
 			});
 		}
 
