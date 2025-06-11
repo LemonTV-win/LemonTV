@@ -613,89 +613,79 @@
 
 						{#if expandedTeams.has(team.id)}
 							<div class="border-t border-slate-700">
-								{#if playersByTeam[team.id]?.length > 0}
+								{#if eventTeamPlayers.filter((tp) => tp.teamId === team.id).length > 0}
 									<div class="divide-y divide-slate-700">
-										{#each playersByTeam[team.id] as player, index}
-											{@const teamPlayer = eventTeamPlayers.find(
-												(tp) => tp.teamId === team.id && tp.playerId === player.id
-											)}
-											{#if teamPlayer}
-												<div class="flex items-start gap-3 px-4 py-2 hover:bg-slate-800/50">
-													<div class="flex-1">
-														<label
-															class="block text-sm font-medium text-slate-300"
-															for="player-{team.id}-{index}"
-														>
-															{m.player()}
-														</label>
-														<div class="mt-1">
-															<Combobox
-																items={(() => {
-																	const filteredPlayers = players
-																		.filter((p) => {
-																			// Show all players that are either:
-																			// 1. Not assigned to any team in the event
-																			// 2. Already assigned to this team
-																			const isAssignedToOtherTeam = eventTeamPlayers.some(
-																				(tp) => tp.playerId === p.id && tp.teamId !== team.id
-																			);
-																			const isAssignedToThisTeam = eventTeamPlayers.some(
-																				(tp) => tp.playerId === p.id && tp.teamId === team.id
-																			);
-																			return !isAssignedToOtherTeam || isAssignedToThisTeam;
-																		})
-																		.map((p) => ({
-																			id: p.id,
-																			name: p.name,
-																			group: eventTeamPlayers.some(
-																				(tp) => tp.teamId === team.id && tp.playerId === p.id
-																			)
-																				? 'team'
-																				: 'other'
-																		}));
-																	return filteredPlayers;
-																})()}
-																value={teamPlayer.playerId}
-																placeholder={m.search_players()}
-																groups={[
-																	{ id: 'team', label: m.team_players() },
-																	{ id: 'other', label: m.other_players() }
-																]}
-																disabled={false}
-																class="px-2 py-1"
-																onChange={(item) => {
-																	teamPlayer.playerId = item.id;
-																}}
-															/>
-														</div>
-													</div>
-													<div class="w-24">
-														<label
-															class="block text-sm font-medium text-slate-300"
-															for="role-{team.id}-{index}"
-														>
-															{m.role()}
-														</label>
-														<select
-															id="role-{team.id}-{index}"
-															bind:value={teamPlayer.role}
-															class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-2 py-1 text-sm text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-														>
-															{#each roleOptions as role}
-																<option value={role}>{role}</option>
-															{/each}
-														</select>
-													</div>
-													<button
-														type="button"
-														class="mt-auto mb-2 text-red-400 hover:text-red-300"
-														onclick={() => removeTeamPlayer(teamPlayer)}
-														title={m.remove()}
+										{#each eventTeamPlayers.filter((tp) => tp.teamId === team.id) as teamPlayer, index}
+											<div class="flex items-start gap-3 px-4 py-2 hover:bg-slate-800/50">
+												<div class="flex-1">
+													<label
+														class="block text-sm font-medium text-slate-300"
+														for="player-{team.id}-{index}"
 													>
-														<IconParkSolidDelete class="h-4 w-4" />
-													</button>
+														{m.player()}
+													</label>
+													<div class="mt-1">
+														<Combobox
+															items={(() => {
+																const filteredPlayers = players
+																	.filter((p) => {
+																		// Only filter out players that are assigned to other teams
+																		const isAssignedToOtherTeam = eventTeamPlayers.some(
+																			(tp) => tp.playerId === p.id && tp.teamId !== team.id
+																		);
+																		return !isAssignedToOtherTeam;
+																	})
+																	.map((p) => ({
+																		id: p.id,
+																		name: p.name,
+																		group: eventTeamPlayers.some(
+																			(tp) => tp.teamId === team.id && tp.playerId === p.id
+																		)
+																			? 'team'
+																			: 'other'
+																	}));
+																return filteredPlayers;
+															})()}
+															value={teamPlayer.playerId}
+															placeholder={m.search_players()}
+															groups={[
+																{ id: 'team', label: m.team_players() },
+																{ id: 'other', label: m.other_players() }
+															]}
+															disabled={false}
+															class="px-2 py-1"
+															onChange={(item) => {
+																teamPlayer.playerId = item.id;
+															}}
+														/>
+													</div>
 												</div>
-											{/if}
+												<div class="w-24">
+													<label
+														class="block text-sm font-medium text-slate-300"
+														for="role-{team.id}-{index}"
+													>
+														{m.role()}
+													</label>
+													<select
+														id="role-{team.id}-{index}"
+														bind:value={teamPlayer.role}
+														class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-2 py-1 text-sm text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+													>
+														{#each roleOptions as role}
+															<option value={role}>{role}</option>
+														{/each}
+													</select>
+												</div>
+												<button
+													type="button"
+													class="mt-auto mb-2 text-red-400 hover:text-red-300"
+													onclick={() => removeTeamPlayer(teamPlayer)}
+													title={m.remove()}
+												>
+													<IconParkSolidDelete class="h-4 w-4" />
+												</button>
+											</div>
 										{/each}
 									</div>
 								{:else}
