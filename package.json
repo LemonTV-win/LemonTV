@@ -12,7 +12,7 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
-		"db:prod:push": "drizzle-kit push",
+		"db:prod:push": "bun run db:prod:dump && drizzle-kit push",
 		"db:prod:migrate": "drizzle-kit migrate",
 		"db:prod:studio": "drizzle-kit studio",
 		"db:prod:dump": "turso db shell lemon-tv .dump > dumps/prod-$(date +%Y-%m-%d).sql",
