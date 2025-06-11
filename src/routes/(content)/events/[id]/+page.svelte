@@ -11,6 +11,8 @@
 		throw error(404, 'Event not found');
 	}
 
+	$inspect('[Content][Event] data.event', data.event);
+
 	import BracketGraph from '$lib/components/Brackets.svelte';
 	import OrganizerChip from '$lib/components/OrganizerChip.svelte';
 	import GgOrganisation from '~icons/gg/organisation';
