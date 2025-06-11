@@ -454,6 +454,8 @@ export const actions = {
 	},
 
 	updateTeamPlayers: async ({ request, locals }) => {
+		console.info('[Admin][Events][UpdateTeamPlayers] Updating event team players');
+
 		const result = checkPermissions(locals, ['admin', 'editor']);
 		if (result.status === 'error') {
 			return fail(result.statusCode, {
@@ -464,6 +466,9 @@ export const actions = {
 		const formData = await request.formData();
 		const eventId = formData.get('eventId') as string;
 		const playersData = formData.get('players') as string;
+
+		console.info('[Admin][Events][UpdateTeamPlayers] Event ID:', eventId);
+		console.info('[Admin][Events][UpdateTeamPlayers] Players data:', playersData);
 
 		if (!eventId || !playersData) {
 			return fail(400, {
