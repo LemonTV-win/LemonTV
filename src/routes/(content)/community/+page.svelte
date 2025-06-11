@@ -38,6 +38,17 @@
 		}
 	];
 
+	const forums = [
+		{
+			title: 'r/Strinova - Reddit',
+			url: 'https://www.reddit.com/r/Strinova/'
+		},
+		{
+			title: 'Strinova General Discussions - Steam Community',
+			url: 'https://steamcommunity.com/app/1282270/discussions/'
+		}
+	];
+
 	function sortTagsByCategory(tags: CommunityTag[]) {
 		return [...tags].toSorted((a, b) => {
 			const categoryA = a.category;
@@ -125,6 +136,19 @@
 				{#if resource.description}
 					{resource.description}
 				{/if}
+			</li>
+		{/each}
+	</ul>
+
+	<h2 class="text-xl font-bold">Forums</h2>
+	<ul class="m-4 flex flex-col flex-wrap gap-4 p-2">
+		{#each forums as forum}
+			<li class="glass-card rounded-lg p-4">
+				<a
+					href={forum.url}
+					class="text-yellow-300 hover:text-yellow-400 hover:underline"
+					target="_blank">{forum.title}</a
+				>
 			</li>
 		{/each}
 	</ul>
