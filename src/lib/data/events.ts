@@ -3145,55 +3145,6 @@ export const events: Event[] = [
 	},
 	{
 		id: crypto.randomUUID(),
-		slug: 'ewc-2024',
-		name: '2024 Esports World Cup',
-		official: true,
-		server: 'strinova',
-		format: 'lan',
-		region: 'Global',
-		image: 'https://upload.wikimedia.org/wikipedia/commons/b/b4/Esports_World_Cup_logo.svg',
-		status: 'finished',
-		stages: [],
-		organizers: [
-			{
-				id: crypto.randomUUID(),
-				name: 'Esports World Cup',
-				url: 'https://esportsworldcup.com/en/2024',
-				slug: 'esportsworldcup',
-				logo: 'https://upload.wikimedia.org/wikipedia/commons/b/b4/Esports_World_Cup_logo.svg'
-			}
-		],
-		capacity: 4,
-		date: '2024-08-04/2024-08-05',
-		participants: [
-			{
-				team: 'MMR',
-				main: ['Fan', 'yzii', 'Rite', 'Xiaowu', 'ON'],
-				reserve: [],
-				coach: []
-			},
-			{
-				team: 'SUS',
-				main: ['lyr1c', 'Kariyu', 'BriBri', 'BTMC', 'Tuonto'],
-				reserve: [],
-				coach: []
-			},
-			{
-				team: 'NG',
-				main: ['Masuo', 'kept', 'SKJsa2', 'SKJShinka', 'SoVault'],
-				reserve: [],
-				coach: []
-			},
-			{
-				team: 'TM',
-				main: ['Zimo', 'ExiT', 'Saint', 'GWZH', 'Fr4nky'],
-				reserve: [],
-				coach: []
-			}
-		]
-	},
-	{
-		id: crypto.randomUUID(),
 		slug: 'wgs',
 		name: 'Waiguoren stringify invitational',
 		official: false,
