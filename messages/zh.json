@@ -431,5 +431,12 @@
 	"discord_invite_url": "Discord邀请链接",
 	"icon_url": "图标链接",
 	"additional_link_text": "附加链接文本",
-	"additional_link_url": "附加链接地址"
+	"additional_link_url": "附加链接地址",
+	"tags": "标签",
+	"category": "分类",
+	"select_category": "选择分类",
+	"value": "值",
+	"add_tag": "添加标签",
+	"edit_tag": "编辑标签",
+	"delete_tag": "删除标签"
 }
