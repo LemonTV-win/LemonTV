@@ -473,6 +473,22 @@ export const actions = {
 
 		try {
 			const players = JSON.parse(playersData) as EventTeamPlayerData[];
+
+			// Check for duplicate players in the same team
+			const teamPlayerMap = new Map<string, Set<string>>();
+			for (const player of players) {
+				if (!teamPlayerMap.has(player.teamId)) {
+					teamPlayerMap.set(player.teamId, new Set());
+				}
+				const teamPlayers = teamPlayerMap.get(player.teamId)!;
+				if (teamPlayers.has(player.playerId)) {
+					return fail(400, {
+						error: 'A player cannot be added multiple times to the same team'
+					});
+				}
+				teamPlayers.add(player.playerId);
+			}
+
 			await updateEventTeamPlayers(eventId, players, result.userId);
 
 			return {
