@@ -23,6 +23,7 @@
 	import IconParkSolidComputer from '~icons/icon-park-solid/computer';
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
+	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
 	let activeStage = $state<Stage | null>(null);
 
 	$inspect(activeStage);
@@ -358,6 +359,7 @@
 											{#each main as player}
 												{#if player}
 													<li>
+														<NationalityFlag nationality={player.nationality} />
 														<a href={`/players/${player.slug}`} class="hover:text-yellow-500">
 															{player.name}
 														</a>
@@ -367,6 +369,7 @@
 											{#each reserve as player}
 												{#if player}
 													<li class="text-white/50">
+														<NationalityFlag nationality={player.nationality} />
 														<a href={`/players/${player.slug}`} class="hover:text-yellow-500">
 															{player.name}
 														</a>
@@ -376,6 +379,7 @@
 											{#each coach as player}
 												{#if player}
 													<li class="text-white/50">
+														<NationalityFlag nationality={player.nationality} />
 														<a href={`/players/${player.slug}`} class="hover:text-yellow-500">
 															({player.name})
 														</a>
