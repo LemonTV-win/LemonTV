@@ -10,6 +10,7 @@ import { convertOrganizer } from './organizers';
 import type { LegacyEventParticipant, EventParticipant } from '$lib/data/events';
 import type { Player } from '$lib/data/players';
 import { getPlayer } from '$lib/server/data/players';
+import type { UserRole } from '$lib/data/user';
 
 // Types for the application layer
 export interface EventWithOrganizers extends Event {
@@ -320,13 +321,97 @@ export async function getEvents(
 		events.map(async (event) => {
 			// Fetch full Player objects for all unique player IDs
 			const uniquePlayerIds = Array.from(new Set(event.teamPlayers.map((tp) => tp.player.id)));
-			const playerMap: Record<string, Player> = {};
-			await Promise.all(
-				uniquePlayerIds.map(async (id) => {
-					const fullPlayer = await getPlayer(id);
-					if (fullPlayer) playerMap[id] = fullPlayer;
+
+			// Fetch all player data in a single batch query
+			const playerRows = await db
+				.select({
+					player: table.player,
+					playerAlias: table.playerAlias,
+					gameAccount: table.gameAccount,
+					socialAccount: table.player_social_account,
+					user: table.user,
+					userRole: table.userRole
 				})
-			);
+				.from(table.player)
+				.leftJoin(table.playerAlias, eq(table.playerAlias.playerId, table.player.id))
+				.leftJoin(table.gameAccount, eq(table.gameAccount.playerId, table.player.id))
+				.leftJoin(
+					table.player_social_account,
+					eq(table.player_social_account.playerId, table.player.id)
+				)
+				.leftJoin(table.user, eq(table.user.id, table.player.userId))
+				.leftJoin(table.userRole, eq(table.userRole.userId, table.user.id))
+				.where(inArray(table.player.id, uniquePlayerIds));
+
+			// Group data by player
+			const playerMap: Record<string, Player> = {};
+			for (const row of playerRows) {
+				const p = row.player;
+				if (!p?.id) continue;
+
+				if (!playerMap[p.id]) {
+					playerMap[p.id] = {
+						id: p.id,
+						name: p.name,
+						slug: p.slug,
+						nationality: p.nationality as Player['nationality'],
+						aliases: [],
+						gameAccounts: [],
+						socialAccounts: [],
+						user: row.user
+							? {
+									id: row.user.id,
+									username: row.user.username,
+									email: row.user.email,
+									roles: []
+								}
+							: undefined
+					};
+				}
+
+				const player = playerMap[p.id];
+
+				// Add alias
+				const alias = row.playerAlias?.alias;
+				if (alias && !player.aliases!.includes(alias)) {
+					player.aliases!.push(alias);
+				}
+
+				// Add game account
+				const ga = row.gameAccount;
+				if (
+					ga?.accountId &&
+					!player.gameAccounts.some((a) => a.accountId === ga.accountId && a.server === ga.server)
+				) {
+					player.gameAccounts.push({
+						server: ga.server as 'Strinova' | 'CalabiYau',
+						accountId: ga.accountId,
+						currentName: ga.currentName,
+						region: ga.region as Player['gameAccounts'][0]['region']
+					});
+				}
+
+				// Add social account
+				const sa = row.socialAccount;
+				if (
+					sa?.platformId &&
+					!player.socialAccounts!.some(
+						(a) => a.platformId === sa.platformId && a.accountId === sa.accountId
+					)
+				) {
+					player.socialAccounts!.push({
+						platformId: sa.platformId,
+						accountId: sa.accountId,
+						overridingUrl: sa.overriding_url || undefined
+					});
+				}
+
+				// Add user role
+				const role = row.userRole?.roleId;
+				if (player.user && role && !player.user.roles.includes(role as UserRole)) {
+					player.user.roles.push(role as UserRole);
+				}
+			}
 
 			// Group team players by team
 			const teamPlayersMap = new Map<
