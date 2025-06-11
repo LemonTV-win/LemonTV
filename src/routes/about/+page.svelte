@@ -140,6 +140,12 @@
 				</div>
 			</section>
 
+			<p class="text-slate-200">
+				and thank you to everyone who provided information about past and upcoming events, to
+				iDreamSky for creating the game we’re passionate about, and to every player who made the
+				eSport scene possible.
+			</p>
+
 			<section class="mb-12 text-center">
 				<h2 class="mb-6 text-3xl font-semibold">{m.about_links_title()}</h2>
 				<div class="flex flex-col items-center gap-4">
