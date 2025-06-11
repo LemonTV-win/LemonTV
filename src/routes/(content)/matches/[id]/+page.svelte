@@ -6,6 +6,8 @@
 
 	let { data }: PageProps = $props();
 
+	$inspect(`[Content][Match][${data.match.id}]`, data.match);
+
 	if (!data.match) {
 		throw error(404, 'Event not found');
 	}
