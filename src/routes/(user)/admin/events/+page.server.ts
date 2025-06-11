@@ -143,8 +143,19 @@ export const actions = {
 			// !eventData.capacity ||
 			!eventData.date
 		) {
+			const missingFields = [];
+			if (!eventData.name) missingFields.push('name');
+			if (!eventData.slug) missingFields.push('slug');
+			if (!eventData.server) missingFields.push('server');
+			if (!eventData.format) missingFields.push('format');
+			if (!eventData.region) missingFields.push('region');
+			if (!eventData.image) missingFields.push('image');
+			if (!eventData.status) missingFields.push('status');
+			// if (!eventData.capacity) missingFields.push('capacity');
+			if (!eventData.date) missingFields.push('date');
+
 			return fail(400, {
-				error: 'All fields are required'
+				error: `Missing required fields: ${missingFields.join(', ')}`
 			});
 		}
 
@@ -299,8 +310,20 @@ export const actions = {
 			// !eventData.capacity ||
 			!eventData.date
 		) {
+			const missingFields = [];
+			if (!eventData.id) missingFields.push('id');
+			if (!eventData.name) missingFields.push('name');
+			if (!eventData.slug) missingFields.push('slug');
+			if (!eventData.server) missingFields.push('server');
+			if (!eventData.format) missingFields.push('format');
+			if (!eventData.region) missingFields.push('region');
+			if (!eventData.image) missingFields.push('image');
+			if (!eventData.status) missingFields.push('status');
+			// if (!eventData.capacity) missingFields.push('capacity');
+			if (!eventData.date) missingFields.push('date');
+
 			return fail(400, {
-				error: 'All fields are required'
+				error: `Missing required fields: ${missingFields.join(', ')}`
 			});
 		}
 

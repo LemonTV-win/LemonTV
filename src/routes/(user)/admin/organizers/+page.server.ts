@@ -76,8 +76,14 @@ export const actions = {
 			!organizerData.url
 			// || !organizerData.type
 		) {
+			const missingFields = [];
+			if (!organizerData.name) missingFields.push('name');
+			if (!organizerData.slug) missingFields.push('slug');
+			if (!organizerData.description) missingFields.push('description');
+			if (!organizerData.url) missingFields.push('url');
+
 			return fail(400, {
-				error: 'All fields are required'
+				error: `Missing required fields: ${missingFields.join(', ')}`
 			});
 		}
 
@@ -137,10 +143,16 @@ export const actions = {
 			!organizerData.slug ||
 			!organizerData.description ||
 			!organizerData.url
-			// || !organizerData.type
 		) {
+			const missingFields = [];
+			if (!organizerData.id) missingFields.push('id');
+			if (!organizerData.name) missingFields.push('name');
+			if (!organizerData.slug) missingFields.push('slug');
+			if (!organizerData.description) missingFields.push('description');
+			if (!organizerData.url) missingFields.push('url');
+
 			return fail(400, {
-				error: 'All fields are required'
+				error: `Missing required fields: ${missingFields.join(', ')}`
 			});
 		}
 

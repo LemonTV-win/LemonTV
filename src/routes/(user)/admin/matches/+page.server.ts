@@ -353,8 +353,12 @@ export const actions = {
 		};
 
 		if (!matchData.format || !matchData.stageId) {
+			const missingFields = [];
+			if (!matchData.format) missingFields.push('format');
+			if (!matchData.stageId) missingFields.push('stage');
+
 			return fail(400, {
-				error: 'Format and stage are required'
+				error: `Missing required fields: ${missingFields.join(', ')}`
 			});
 		}
 
