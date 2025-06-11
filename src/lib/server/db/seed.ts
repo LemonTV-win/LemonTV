@@ -3,30 +3,54 @@ import { db } from '$lib/server/db';
 import { randomUUID } from 'node:crypto';
 
 export async function seed() {
-	console.log('[SEED] Starting seeding...');
+	console.info('[SEED] Starting seeding...');
 
 	// Clear only game-related tables, preserving user data
-	console.log('[SEED] Clearing existing game data...');
+	console.info('[SEED] Clearing existing game data...');
 	// Delete child records first
 	await db.delete(schema.matchMap);
+	console.info('[SEED] - Deleted matchMap');
 	await db.delete(schema.matchTeam);
+	console.info('[SEED] - Deleted matchTeam');
 	await db.delete(schema.eventTeamPlayer);
+	console.info('[SEED] - Deleted eventTeamPlayer');
 	await db.delete(schema.eventOrganizer);
+	console.info('[SEED] - Deleted eventOrganizer');
 	await db.delete(schema.eventResult);
+	console.info('[SEED] - Deleted eventResult');
 	await db.delete(schema.eventWebsite);
+	console.info('[SEED] - Deleted eventWebsite');
 	await db.delete(schema.teamPlayer);
+	console.info('[SEED] - Deleted teamPlayer');
 	await db.delete(schema.teamAlias);
+	console.info('[SEED] - Deleted teamAlias');
 	await db.delete(schema.playerAlias);
+	console.info('[SEED] - Deleted playerAlias');
 	await db.delete(schema.player_social_account);
+	console.info('[SEED] - Deleted player_social_account');
 	await db.delete(schema.gameAccount);
+	console.info('[SEED] - Deleted gameAccount');
+	await db.delete(schema.discordServerTag);
+	console.info('[SEED] - Deleted discordServerTag');
 	await db.delete(schema.discordServer);
-	// Then delete parent records
+	console.info('[SEED] - Deleted discordServer');
+	// Delete match records before stages
 	await db.delete(schema.match);
+	console.info('[SEED] - Deleted match');
+	// Delete stages before events
 	await db.delete(schema.stage);
+	console.info('[SEED] - Deleted stage');
+	// Delete events before teams and organizers
 	await db.delete(schema.event);
+	console.info('[SEED] - Deleted event');
+	// Delete teams and players
 	await db.delete(schema.team);
+	console.info('[SEED] - Deleted team');
 	await db.delete(schema.player);
+	console.info('[SEED] - Deleted player');
+	// Delete organizers last
 	await db.delete(schema.organizer);
+	console.info('[SEED] - Deleted organizer');
 	// Preserve user-related tables: user, role, userRole, session, editHistory
 
 	const firstUser = await db.select().from(schema.user).limit(1);
@@ -1440,7 +1464,7 @@ export async function seed() {
 	]);
 
 	console.log('[SEED] Seeding Discord servers...');
-	await db.insert(schema.discordServer).values([
+	const DISCORD_SERVERS = [
 		{
 			id: randomUUID(),
 			title: 'Strinova Esports Hub',
@@ -1459,6 +1483,139 @@ export async function seed() {
 			description: 'The main community hub for Strinova players worldwide',
 			additionalLinkText: '#tournament-chat',
 			additionalLinkUrl: 'https://discord.com/channels/1182952140684136470/1320683196698066954',
+			createdAt: new Date(),
+			updatedAt: new Date()
+		}
+	];
+	await db.insert(schema.discordServer).values(DISCORD_SERVERS);
+
+	console.log('[SEED] Seeding community tags...');
+	const COMMUNITY_TAGS = [
+		// Language tags
+		{
+			id: randomUUID(),
+			name: 'Japanese',
+			category: 'language',
+			value: 'ja',
+			createdAt: new Date(),
+			updatedAt: new Date()
+		},
+		{
+			id: randomUUID(),
+			name: 'English',
+			category: 'language',
+			value: 'en',
+			createdAt: new Date(),
+			updatedAt: new Date()
+		},
+		{
+			id: randomUUID(),
+			name: 'Korean',
+			category: 'language',
+			value: 'ko',
+			createdAt: new Date(),
+			updatedAt: new Date()
+		},
+		// Type tags
+		{
+			id: randomUUID(),
+			name: 'Competitive',
+			category: 'type',
+			value: 'competitive',
+			createdAt: new Date(),
+			updatedAt: new Date()
+		},
+		{
+			id: randomUUID(),
+			name: 'Casual',
+			category: 'type',
+			value: 'casual',
+			createdAt: new Date(),
+			updatedAt: new Date()
+		},
+		{
+			id: randomUUID(),
+			name: 'Tournament',
+			category: 'type',
+			value: 'tournament',
+			createdAt: new Date(),
+			updatedAt: new Date()
+		},
+		// Status tags
+		{
+			id: randomUUID(),
+			name: 'Active',
+			category: 'status',
+			value: 'active',
+			createdAt: new Date(),
+			updatedAt: new Date()
+		},
+		{
+			id: randomUUID(),
+			name: 'New',
+			category: 'status',
+			value: 'new',
+			createdAt: new Date(),
+			updatedAt: new Date()
+		}
+	];
+	await db.insert(schema.communityTag).values(COMMUNITY_TAGS);
+
+	console.log('[SEED] Seeding Discord server tags...');
+	await db.insert(schema.discordServerTag).values([
+		// Strinova Esports Hub tags
+		{
+			serverId: DISCORD_SERVERS[0].id,
+			tagId: COMMUNITY_TAGS[0].id, // Japanese
+			createdAt: new Date(),
+			updatedAt: new Date()
+		},
+		{
+			serverId: DISCORD_SERVERS[0].id,
+			tagId: COMMUNITY_TAGS[1].id, // English
+			createdAt: new Date(),
+			updatedAt: new Date()
+		},
+		{
+			serverId: DISCORD_SERVERS[0].id,
+			tagId: COMMUNITY_TAGS[3].id, // Competitive
+			createdAt: new Date(),
+			updatedAt: new Date()
+		},
+		{
+			serverId: DISCORD_SERVERS[0].id,
+			tagId: COMMUNITY_TAGS[6].id, // Active
+			createdAt: new Date(),
+			updatedAt: new Date()
+		},
+		// Official Strinova Discord Server tags
+		{
+			serverId: DISCORD_SERVERS[1].id,
+			tagId: COMMUNITY_TAGS[1].id, // English
+			createdAt: new Date(),
+			updatedAt: new Date()
+		},
+		{
+			serverId: DISCORD_SERVERS[1].id,
+			tagId: COMMUNITY_TAGS[2].id, // Korean
+			createdAt: new Date(),
+			updatedAt: new Date()
+		},
+		{
+			serverId: DISCORD_SERVERS[1].id,
+			tagId: COMMUNITY_TAGS[4].id, // Casual
+			createdAt: new Date(),
+			updatedAt: new Date()
+		},
+		{
+			serverId: DISCORD_SERVERS[1].id,
+			tagId: COMMUNITY_TAGS[5].id, // Tournament
+			createdAt: new Date(),
+			updatedAt: new Date()
+		},
+		{
+			serverId: DISCORD_SERVERS[1].id,
+			tagId: COMMUNITY_TAGS[7].id, // New
 			createdAt: new Date(),
 			updatedAt: new Date()
 		}
