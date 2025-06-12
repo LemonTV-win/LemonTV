@@ -32,7 +32,7 @@
 		<img
 			src={event.imageURL ?? event.image}
 			alt={event.name}
-			class="w-full max-w-full sm:max-w-64"
+			class="max-h-64 w-full max-w-full object-cover sm:max-w-64"
 		/>
 		<div class="flex flex-col p-4">
 			<span class="text-xl text-white sm:text-2xl">{event.name}</span>
