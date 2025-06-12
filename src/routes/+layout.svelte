@@ -338,6 +338,16 @@
 					<IconGithub class="h-6 w-6" />
 				</a>
 			</div>
+			<div class="mb-4 flex justify-center gap-4">
+				<a
+					href="https://lemonade.mkpo.li/"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="text-yellow-300 hover:text-yellow-400"
+				>
+					Lemonade
+				</a>
+			</div>
 			<p class="text-xs text-gray-400">
 				{@html m.footer_trademark({
 					strinova: `<a href="https://www.strinova.com/" class="underline hover:text-gray-300" target="_blank">Strinova</a>`,

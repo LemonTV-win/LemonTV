@@ -21,6 +21,11 @@
 			url: 'https://strinova.fsltech.cn/'
 		},
 		{
+			title: 'Lemonade',
+			url: 'https://lemonade.mkpo.li/',
+			description: 'Strinova Utility Lineups'
+		},
+		{
 			title: 'カラビヤウ（ストリノヴァ）中国語単語帳',
 			url: 'https://docs.google.com/spreadsheets/d/1H-C2nFi11dSbqhQ6-_3QgBjw99LslWnazGd_tSvWKGM/edit?usp=sharing',
 			description: '(Chinese-Japanese glossary of Calabiyau/Strinova)'
