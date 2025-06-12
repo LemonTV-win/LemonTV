@@ -33,6 +33,11 @@
 	const podiumOrder = top3.length >= 3 ? [top3[1], top3[0], top3[2]] : top3;
 </script>
 
+<svelte:head>
+	<title>{data.event.name} | LemonTV</title>
+	<meta name="description" content={m.about_tagline()} />
+</svelte:head>
+
 {#if data.event}
 	<Breadcrumbs currentTitle={data.event.name} />
 	<div

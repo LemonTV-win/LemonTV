@@ -7,6 +7,10 @@
 	import * as m from '$lib/paraglide/messages';
 </script>
 
+<svelte:head>
+	<title>{m.about_title()} | LemonTV</title>
+</svelte:head>
+
 <main class="glass-container mx-auto max-w-screen-lg p-12">
 	<div class="glass rounded-lg p-8 hover:scale-100">
 		<div class="mx-auto max-w-4xl">

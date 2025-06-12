@@ -17,6 +17,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>{m.profile_settings()} | LemonTV</title>
+</svelte:head>
+
 {#snippet tab(href: string, Icon: Component, label: string)}
 	<a
 		class="flex items-center rounded-lg transition-all duration-300 {isExpanded

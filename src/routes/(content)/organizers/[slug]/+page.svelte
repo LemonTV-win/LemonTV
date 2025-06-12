@@ -28,6 +28,11 @@
 	};
 </script>
 
+<svelte:head>
+	<title>{organizer.name} | LemonTV</title>
+	<meta name="description" content={organizer.description || m.about_tagline()} />
+</svelte:head>
+
 <Breadcrumbs currentTitle={organizer.name} />
 
 <div class="mx-auto max-w-4xl px-4 py-8">

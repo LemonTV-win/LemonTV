@@ -64,6 +64,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>{data.match.teams[0]?.team?.name} vs. {data.match.teams[1]?.team?.name} | LemonTV</title>
+</svelte:head>
+
 {#if data.match}
 	<Breadcrumbs
 		currentTitle={`${data.match.teams[0]?.team?.name} vs. ${data.match.teams[1]?.team?.name}`}
