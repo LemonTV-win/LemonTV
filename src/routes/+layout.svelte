@@ -77,6 +77,20 @@
 
 <svelte:head>
 	<title>LemonTV</title>
+	<meta name="description" content={m.about_tagline()} />
+	<meta name="keywords" content="LemonTV, Strinova, Esports, News, Community, Tournaments" />
+	<meta property="og:title" content="LemonTV" />
+	<meta property="og:description" content={m.about_tagline()} />
+	<meta property="og:image" content="https://lemontv.win/screenshot.png" />
+	<meta property="og:url" content="https://lemontv.win" />
+	<meta property="og:type" content="website" />
+	<meta property="twitter:card" content="summary_large_image" />
+	<meta property="twitter:title" content="LemonTV" />
+	<meta property="twitter:description" content={m.about_tagline()} />
+	<meta property="twitter:creator" content="@mkpoli" />
+	<meta property="twitter:image" content="https://lemontv.win/screenshot.png" />
+	<meta property="twitter:url" content="https://lemontv.win" />
+	<!-- TODO: Differ by page -->
 </svelte:head>
 
 <div class="flex min-h-dvh flex-col">
