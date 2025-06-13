@@ -661,7 +661,7 @@
 																{ id: 'other', label: m.other_players() }
 															]}
 															disabled={false}
-															class="px-2 py-1"
+															class="px-2 py-1 text-sm"
 															onChange={(item) => {
 																teamPlayer.playerId = item.id;
 															}}

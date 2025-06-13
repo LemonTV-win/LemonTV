@@ -128,7 +128,10 @@
 		oninput={handleInput}
 		onfocus={handleFocus}
 		onblur={handleBlur}
-		class="block w-full rounded-md border border-slate-700 bg-slate-800 px-2 py-1 text-sm text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 {className}"
+		class={[
+			'block w-full rounded-md border border-slate-700 bg-slate-800 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50',
+			className
+		]}
 		title={value}
 	/>
 

@@ -310,7 +310,7 @@
 									{ id: 'team', label: m.team_players() },
 									{ id: 'other', label: m.other_players() }
 								]}
-								class="px-2 py-1"
+								class="mt-1 px-4 py-2"
 								onChange={(item) => {
 									newPlayer.playerId = item.id;
 								}}
