@@ -288,7 +288,7 @@
 				>
 			</div>
 			<div id="players-section" class="mt-2 rounded-lg border border-slate-700 bg-slate-800 p-4">
-				<div class="grid grid-cols-5 gap-4">
+				<div class="grid grid-cols-[1fr_1fr_auto] gap-4">
 					<div>
 						<label for="playerSelect" class="block text-sm font-medium text-slate-300">
 							{m.player()}
@@ -317,6 +317,7 @@
 							/>
 						</div>
 					</div>
+
 					<div>
 						<label for="roleSelect" class="block text-sm font-medium text-slate-300">
 							{m.role()}
@@ -331,7 +332,8 @@
 							{/each}
 						</select>
 					</div>
-					<div>
+
+					<div class="col-start-1 row-start-2">
 						<label for="startDate" class="block text-sm font-medium text-slate-300">
 							{m.start_date()}
 						</label>
@@ -342,7 +344,8 @@
 							class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 						/>
 					</div>
-					<div>
+
+					<div class="col-start-2 row-start-2">
 						<label for="endDate" class="block text-sm font-medium text-slate-300">
 							{m.end_date()}
 						</label>
@@ -353,7 +356,8 @@
 							class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 						/>
 					</div>
-					<div class="flex items-end">
+
+					<div class="col-start-3 row-start-2 flex items-end">
 						<button
 							type="button"
 							onclick={addPlayer}
