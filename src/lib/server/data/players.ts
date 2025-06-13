@@ -173,9 +173,11 @@ export async function getPlayersTeams(): Promise<Record<string, Team[]>> {
 			id: row.teams.id,
 			name: row.teams.name,
 			slug: row.teams.slug,
-			abbr: row.teams.abbr ?? undefined,
-			logo: row.teams.logo ?? undefined,
-			region: row.teams.region as Region | undefined
+			abbr: row.teams.abbr || null,
+			logo: row.teams.logo || null,
+			region: (row.teams.region as Region) || null,
+			createdAt: row.teams.createdAt,
+			updatedAt: row.teams.updatedAt
 		});
 	}
 	return result;
