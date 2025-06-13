@@ -271,39 +271,7 @@
 				required
 			/>
 		</div>
-		<div>
-			<label class="block text-sm font-medium text-slate-300" for="playerUser">
-				{m.associated_user_id()}
-			</label>
-			<div class="relative">
-				<input type="hidden" name="userId" value={userId} />
-				<input
-					type="text"
-					id="playerUser"
-					bind:value={userSearch}
-					onfocus={() => (showUserDropdown = true)}
-					oninput={() => (showUserDropdown = true)}
-					onblur={() => setTimeout(() => (showUserDropdown = false), 200)}
-					class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-					placeholder={m.search_users()}
-				/>
-				{#if showUserDropdown && filteredUsers.length > 0}
-					<div
-						class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-slate-700 bg-slate-800 py-1 shadow-lg"
-					>
-						{#each filteredUsers as user}
-							<button
-								type="button"
-								class="w-full px-4 py-2 text-left text-white hover:bg-slate-700"
-								onmousedown={() => selectUser(user)}
-							>
-								{user.username}
-							</button>
-						{/each}
-					</div>
-				{/if}
-			</div>
-		</div>
+
 		<div>
 			<label class="block text-sm font-medium text-slate-300" for="playerNationality">
 				{m.nationality()}
@@ -590,6 +558,40 @@
 					<IconParkSolidAdd class="h-5 w-5" />
 					<span>{m.add_social_account()}</span>
 				</button>
+			</div>
+		</div>
+
+		<div>
+			<label class="block text-sm font-medium text-slate-300" for="playerUser">
+				{m.associated_user_id()}
+			</label>
+			<div class="relative">
+				<input type="hidden" name="userId" value={userId} />
+				<input
+					type="text"
+					id="playerUser"
+					bind:value={userSearch}
+					onfocus={() => (showUserDropdown = true)}
+					oninput={() => (showUserDropdown = true)}
+					onblur={() => setTimeout(() => (showUserDropdown = false), 200)}
+					class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+					placeholder={m.search_users()}
+				/>
+				{#if showUserDropdown && filteredUsers.length > 0}
+					<div
+						class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-slate-700 bg-slate-800 py-1 shadow-lg"
+					>
+						{#each filteredUsers as user}
+							<button
+								type="button"
+								class="w-full px-4 py-2 text-left text-white hover:bg-slate-700"
+								onmousedown={() => selectUser(user)}
+							>
+								{user.username}
+							</button>
+						{/each}
+					</div>
+				{/if}
 			</div>
 		</div>
 	</div>
