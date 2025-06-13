@@ -7,11 +7,12 @@ import { processImageURL } from '$lib/server/storage';
 import type { Region } from '$lib/data/game';
 import { inArray, eq, or } from 'drizzle-orm';
 import { convertOrganizer } from './organizers';
-import type { LegacyEventParticipant, EventParticipant } from '$lib/data/events';
+import type { LegacyEventParticipant, EventParticipant, StageNode } from '$lib/data/events';
 import type { Player } from '$lib/data/players';
 import { getPlayer } from '$lib/server/data/players';
 import type { UserRole } from '$lib/data/user';
 import type { TCountryCode } from 'countries-list';
+import type { Participant } from '$lib/data/matches';
 
 // Types for the application layer
 export interface EventWithOrganizers extends Event {
@@ -231,6 +232,7 @@ export async function getEvents(
 					nodes: Array<{
 						id: number;
 						matchId: string;
+						roundId: number;
 						dependencies: Array<{
 							dependencyMatchId: string;
 							outcome: string;
@@ -238,6 +240,7 @@ export async function getEvents(
 					}>;
 				}>;
 			}>;
+			participants: Array<LegacyEventParticipant | EventParticipant>;
 		}
 	>();
 
@@ -250,7 +253,8 @@ export async function getEvents(
 				teamPlayers: [],
 				results: [],
 				websites: [],
-				stages: []
+				stages: [],
+				participants: []
 			});
 		}
 		const eventData = eventsMap.get(result.eventId)!;
@@ -304,7 +308,8 @@ export async function getEvents(
 					teamPlayers: [],
 					results: [],
 					websites: [],
-					stages: []
+					stages: [],
+					participants: []
 				});
 			}
 			const eventData = eventsMap.get(event.id)!;
@@ -383,6 +388,7 @@ export async function getEvents(
 							round.nodes.push({
 								id: stageNode.id,
 								matchId: stageNode.matchId,
+								roundId: stageNode.roundId,
 								dependencies: []
 							});
 						}
@@ -416,69 +422,173 @@ export async function getEvents(
 
 	const events = await Promise.all(
 		Array.from(eventsMap.values()).map(
-			async ({ event, organizers, teamPlayers, results, websites, stages }) => ({
-				...event,
-				organizers,
-				imageURL: await processImageURL(event.image),
-				teamPlayers,
-				results:
-					results.length > 0
-						? await Promise.all(
-								results.map(async (r) => ({
-									...r,
-									team: {
-										...r.team,
-										logoURL: r.team.logo ? await processImageURL(r.team.logo) : null
-									}
-								}))
-							)
-						: undefined,
-				websites: websites.length > 0 ? websites : undefined,
-				stages:
-					stages.length > 0
-						? stages.map((stage) => ({
-								...stage,
-								stage: stage.stage as 'group' | 'qualifier' | 'playoff' | 'showmatch',
-								format: stage.format as 'single' | 'double' | 'swiss' | 'round-robin',
-								matches: [],
-								structure: {
-									rounds: stage.rounds.map((round) => ({
-										...round,
-										type: round.type as
-											| 'quarterfinals'
-											| 'semifinals'
-											| 'final'
-											| 'top16'
-											| 'group'
-											| 'thirdplace'
-											| 'lower'
-											| 'grandfinal',
-										title: {
-											en: round.title,
-											es: round.title,
-											zh: round.title,
-											ko: round.title,
-											ja: round.title,
-											'pt-br': round.title,
-											de: round.title,
-											ru: round.title,
-											'zh-tw': round.title,
-											vi: round.title,
-											id: round.title,
-											fr: round.title
+			async ({ event, organizers, teamPlayers, results, websites, stages }) => {
+				// Gather all matches for this event from the structure
+				const allMatchIds = new Set<string>();
+				stages.forEach((stage) => {
+					stage.rounds.forEach((round) => {
+						round.nodes.forEach((node) => {
+							if (node.matchId) {
+								allMatchIds.add(node.matchId);
+							}
+						});
+					});
+				});
+
+				// Query all matches for this event
+				let eventMatches: any[] = [];
+				if (allMatchIds.size > 0) {
+					const matchData = await db
+						.select({
+							match: table.match,
+							matchTeam: table.matchTeam,
+							team: table.team
+						})
+						.from(table.match)
+						.leftJoin(table.matchTeam, eq(table.matchTeam.matchId, table.match.id))
+						.leftJoin(table.team, eq(table.matchTeam.teamId, table.team.id))
+						.where(inArray(table.match.id, Array.from(allMatchIds)));
+
+					// Group match data by match ID
+					const matchMap = new Map<string, any>();
+					matchData.forEach(({ match, matchTeam, team }) => {
+						if (!matchMap.has(match.id)) {
+							matchMap.set(match.id, {
+								...match,
+								id: match.id,
+								teams: [],
+								maps: []
+							});
+						}
+						if (team && matchTeam && matchTeam.position !== null) {
+							const matchObj = matchMap.get(match.id);
+							matchObj.teams[matchTeam.position] = {
+								team: team.abbr || team.name,
+								score: matchTeam.score || 0
+							};
+						}
+					});
+					eventMatches = Array.from(matchMap.values());
+				}
+
+				return {
+					...event,
+					organizers,
+					imageURL: await processImageURL(event.image),
+					teamPlayers,
+					results:
+						results.length > 0
+							? await Promise.all(
+									results.map(async (r) => ({
+										...r,
+										team: {
+											...r.team,
+											logoURL: r.team.logo ? await processImageURL(r.team.logo) : null
 										}
-									})),
-									nodes: stage.rounds.flatMap((round) =>
-										round.nodes.map((node) => ({
-											...node,
-											round: round.id,
-											matchId: parseInt(node.matchId)
-										}))
-									)
-								}
-							}))
-						: undefined
-			})
+									}))
+								)
+							: undefined,
+					websites: websites.length > 0 ? websites : undefined,
+					stages:
+						stages.length > 0
+							? stages.map((stage) => {
+									// Get matches for this stage
+									const stageMatches = eventMatches
+										.filter((match) =>
+											stage.rounds.some((round) =>
+												round.nodes.some((node) => node.matchId === match.id)
+											)
+										)
+										.map((match) => ({
+											id: match.id,
+											teams: [
+												{
+													team: match.teams[0]?.team || '',
+													score: match.teams[0]?.score || 0,
+													roaster: [],
+													substitutes: []
+												},
+												{
+													team: match.teams[1]?.team || '',
+													score: match.teams[1]?.score || 0,
+													roaster: [],
+													substitutes: []
+												}
+											] as [Participant, Participant],
+											battleOf: match.format as 'BO1' | 'BO3' | 'BO5',
+											maps: (match.maps || []).map(
+												(map: { map: string; map_picker_position: number; side: number }) => ({
+													map: {
+														id: map.map,
+														name: map.map,
+														image: `/maps/${map.map}.png`
+													},
+													pickerId: map.map_picker_position,
+													pickedSide: map.side === 0 ? 'Attack' : 'Defense'
+												})
+											)
+										}));
+
+									return {
+										id: stage.id,
+										title: stage.title,
+										stage: stage.stage as 'qualifier' | 'playoff' | 'group' | 'showmatch',
+										format: stage.format as 'single' | 'double' | 'swiss' | 'round-robin',
+										matches: stageMatches,
+										structure: {
+											rounds: stage.rounds.map((round) => ({
+												id: round.id,
+												type: round.type as
+													| 'quarterfinals'
+													| 'semifinals'
+													| 'final'
+													| 'top16'
+													| 'group'
+													| 'thirdplace'
+													| 'lower'
+													| 'grandfinal',
+												title: round.title
+													? {
+															en: round.title,
+															es: round.title,
+															zh: round.title,
+															ko: round.title,
+															ja: round.title,
+															'pt-br': round.title,
+															de: round.title,
+															ru: round.title,
+															'zh-tw': round.title,
+															vi: round.title,
+															id: round.title,
+															fr: round.title
+														}
+													: undefined,
+												parallelGroup: round.parallelGroup
+											})),
+											nodes: stage.rounds.flatMap((round) =>
+												round.nodes.map(
+													(node: {
+														id: number;
+														matchId: string;
+														roundId: number;
+														dependencies: { dependencyMatchId: string; outcome: string }[];
+													}) =>
+														({
+															matchId: parseInt(node.matchId),
+															round: node.roundId,
+															dependsOn: node.dependencies?.map((dep) => ({
+																matchId: parseInt(dep.dependencyMatchId),
+																outcome: dep.outcome as 'winner' | 'loser'
+															}))
+														}) as StageNode
+												)
+											)
+										}
+									};
+								})
+							: undefined
+				};
+			}
 		)
 	);
 
@@ -641,17 +751,39 @@ export async function getEvents(
 			);
 
 			return {
-				...event,
+				id: event.id,
+				slug: event.slug,
+				name: event.name,
+				official: event.official,
+				server: event.server as 'calabiyau' | 'strinova',
+				format: event.format as 'lan' | 'online' | 'hybrid',
+				region: event.region as Region,
+				image: event.image,
+				imageURL: event.image ? await processImageURL(event.image) : undefined,
+				status: event.status as 'upcoming' | 'live' | 'finished' | 'cancelled' | 'postponed',
 				stages: event.stages || [],
 				organizers:
 					event.organizers.length > 0
 						? await Promise.all(event.organizers.map(convertOrganizer))
 						: [],
-				participants,
-				server: event.server as 'calabiyau' | 'strinova',
-				format: event.format as 'lan' | 'online' | 'hybrid',
-				region: event.region as Region,
-				status: event.status as 'upcoming' | 'live' | 'finished' | 'cancelled' | 'postponed'
+				capacity: event.capacity,
+				date: event.date,
+				websites: event.websites?.map((website) => ({
+					url: website.url,
+					label: website.label
+				})),
+				participants: participants,
+				livestreams: [],
+				results: event.results?.map((result) => ({
+					rank: result.rank,
+					rankTo: result.rankTo,
+					team: result.team,
+					prizes: result.prizes?.map((prize) => ({
+						amount: prize.amount,
+						currency: prize.currency
+					}))
+				})),
+				highlights: []
 			};
 		})
 	);
@@ -749,4 +881,6 @@ export async function updateEventTeamPlayers(
 // 		prizes: EventPrize[];
 // 	}[];
 // 	highlights?: string[];
+// }
+
 // }
