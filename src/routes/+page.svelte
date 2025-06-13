@@ -26,6 +26,10 @@
 	let featuredEvent = $derived(ongoingEvents[0] || upcomingEvents[0]);
 </script>
 
+<svelte:head>
+	<title>LemonTV – Strinova Esports Coverage: Matches & Stats</title>
+</svelte:head>
+
 {#if !data.user}
 	<section class="relative flex min-h-[60vh] items-center justify-center px-4 text-center">
 		<div class="absolute inset-0 z-0 bg-gradient-to-b from-black/80 to-transparent"></div>

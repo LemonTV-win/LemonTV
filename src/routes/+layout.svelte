@@ -76,7 +76,6 @@
 </script>
 
 <svelte:head>
-	<title>LemonTV</title>
 	<meta name="description" content={m.about_tagline()} />
 	<meta name="keywords" content="LemonTV, Strinova, Esports, News, Community, Tournaments" />
 	<meta property="og:title" content="LemonTV" />
