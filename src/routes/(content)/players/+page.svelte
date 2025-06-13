@@ -50,9 +50,9 @@
 			} else if (sortBy === 'rating-desc') {
 				return b.rating - a.rating;
 			} else if (sortBy === 'region-asc') {
-				return a.nationality?.localeCompare(b.nationality ?? '') ?? 0;
+				return a.nationalities[0]?.localeCompare(b.nationalities[0] ?? '') ?? 0;
 			} else if (sortBy === 'region-desc') {
-				return b.nationality?.localeCompare(a.nationality ?? '') ?? 0;
+				return b.nationalities[0]?.localeCompare(a.nationalities[0] ?? '') ?? 0;
 			} else if (sortBy === 'team-asc') {
 				const aTeams = data.playersTeams[a.id ?? '']?.map((t) => t.name).join(', ') ?? '';
 				const bTeams = data.playersTeams[b.id ?? '']?.map((t) => t.name).join(', ') ?? '';
@@ -78,7 +78,7 @@
 			);
 			const matchesNationality =
 				selectedNationalities.length === 0 ||
-				(player.nationality && selectedNationalities.includes(player.nationality));
+				player.nationalities.some((nationality) => selectedNationalities.includes(nationality));
 			const matchesSuperstring =
 				selectedSuperstrings.length === 0 ||
 				data.playersAgents[player.id ?? '']?.some(([agent]) =>
@@ -129,9 +129,7 @@
 	});
 
 	// Get unique nationalities and superstrings for filter options
-	let uniqueNationalities = $derived([
-		...new Set(data.players.map((p) => p.nationality).filter(Boolean))
-	]);
+	let uniqueNationalities = $derived([...new Set(data.players.flatMap((p) => p.nationalities))]);
 	let uniqueSuperstrings = $derived([
 		...new Set(
 			Object.values(data.playersAgents)
@@ -144,7 +142,7 @@
 	let countryStats = $derived(
 		uniqueNationalities
 			.map((nationality) => {
-				const playersInCountry = data.players.filter((p) => p.nationality === nationality);
+				const playersInCountry = data.players.filter((p) => p.nationalities.includes(nationality));
 				const totalPlayers = playersInCountry.length;
 				const totalWins = playersInCountry.reduce((sum, p) => sum + p.wins, 0);
 				const avgRating = playersInCountry.reduce((sum, p) => sum + p.rating, 0) / totalPlayers;
@@ -367,7 +365,9 @@
 				{#each filtered as player}
 					<tr>
 						<td class=" py-1 text-center">
-							<NationalityFlag nationality={player.nationality} />
+							{#each player.nationalities as nationality}
+								<NationalityFlag {nationality} />
+							{/each}
 						</td>
 						<td class="px-4 py-1">
 							<a class="flex items-baseline gap-1" href={`/players/${player.slug ?? player.id}`}

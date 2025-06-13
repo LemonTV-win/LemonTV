@@ -83,9 +83,9 @@
 									>
 										{player.name}
 									</span>
-									{#if player.nationality}
-										<NationalityFlag nationality={player.nationality} class="h-5 w-5" />
-									{/if}
+									{#each player.nationalities as nationality}
+										<NationalityFlag {nationality} class="h-5 w-5" />
+									{/each}
 									{#if player.rating}
 										<span class="ml-auto text-sm font-medium text-yellow-500"
 											>{player.rating.toFixed(2)}</span

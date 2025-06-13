@@ -51,7 +51,11 @@ export async function getTeam(slug: string): Promise<Team | null> {
 			eq(table.player_social_account.playerId, table.player.id)
 		)
 		.leftJoin(table.user, eq(table.user.id, table.player.userId))
-		.leftJoin(table.userRole, eq(table.userRole.userId, table.user.id));
+		.leftJoin(table.userRole, eq(table.userRole.userId, table.user.id))
+		.leftJoin(
+			table.playerAdditionalNationality,
+			eq(table.playerAdditionalNationality.playerId, table.player.id)
+		);
 
 	if (rows.length === 0) return null;
 
@@ -67,7 +71,7 @@ export async function getTeam(slug: string): Promise<Team | null> {
 				id: p.id,
 				name: p.name,
 				slug: p.slug ?? undefined,
-				nationality: (p.nationality as TCountryCode) ?? undefined,
+				nationalities: p.nationality ? [p.nationality as TCountryCode] : [],
 				aliases: [],
 				gameAccounts: [],
 				socialAccounts: [],
@@ -83,6 +87,15 @@ export async function getTeam(slug: string): Promise<Team | null> {
 		}
 
 		const player = playerMap.get(p.id)!;
+
+		// Add additional nationality
+		const additionalNationality = row.player_additional_nationality?.nationality;
+		if (
+			additionalNationality &&
+			!player.nationalities.includes(additionalNationality as TCountryCode)
+		) {
+			player.nationalities.push(additionalNationality as TCountryCode);
+		}
 
 		// Add alias
 		const alias = row.player_alias?.alias;
@@ -162,7 +175,11 @@ export async function getTeams(): Promise<(Team & { logoURL: string | null })[]>
 		)
 		.leftJoin(table.user, eq(table.user.id, table.player.userId))
 		.leftJoin(table.userRole, eq(table.userRole.userId, table.user.id))
-		.leftJoin(table.teamAlias, eq(table.teamAlias.teamId, table.team.id));
+		.leftJoin(table.teamAlias, eq(table.teamAlias.teamId, table.team.id))
+		.leftJoin(
+			table.playerAdditionalNationality,
+			eq(table.playerAdditionalNationality.playerId, table.player.id)
+		);
 
 	const teamMap = new Map<
 		string,
@@ -208,7 +225,7 @@ export async function getTeams(): Promise<(Team & { logoURL: string | null })[]>
 				id: p.id,
 				name: p.name,
 				slug: p.slug ?? undefined,
-				nationality: (p.nationality as TCountryCode) ?? undefined,
+				nationalities: p.nationality ? [p.nationality as TCountryCode] : [],
 				aliases: [],
 				gameAccounts: [],
 				socialAccounts: [],
@@ -224,6 +241,15 @@ export async function getTeams(): Promise<(Team & { logoURL: string | null })[]>
 		}
 
 		const player = team.players.get(p.id)!;
+
+		// Add additional nationality
+		const additionalNationality = row.player_additional_nationality?.nationality;
+		if (
+			additionalNationality &&
+			!player.nationalities.includes(additionalNationality as TCountryCode)
+		) {
+			player.nationalities.push(additionalNationality as TCountryCode);
+		}
 
 		const alias = row.player_alias?.alias;
 		if (alias && !player.aliases!.includes(alias)) {

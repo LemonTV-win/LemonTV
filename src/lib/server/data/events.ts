@@ -11,6 +11,7 @@ import type { LegacyEventParticipant, EventParticipant } from '$lib/data/events'
 import type { Player } from '$lib/data/players';
 import { getPlayer } from '$lib/server/data/players';
 import type { UserRole } from '$lib/data/user';
+import type { TCountryCode } from 'countries-list';
 
 // Types for the application layer
 export interface EventWithOrganizers extends Event {
@@ -330,7 +331,8 @@ export async function getEvents(
 					gameAccount: table.gameAccount,
 					socialAccount: table.player_social_account,
 					user: table.user,
-					userRole: table.userRole
+					userRole: table.userRole,
+					playerAdditionalNationality: table.playerAdditionalNationality
 				})
 				.from(table.player)
 				.leftJoin(table.playerAlias, eq(table.playerAlias.playerId, table.player.id))
@@ -341,6 +343,10 @@ export async function getEvents(
 				)
 				.leftJoin(table.user, eq(table.user.id, table.player.userId))
 				.leftJoin(table.userRole, eq(table.userRole.userId, table.user.id))
+				.leftJoin(
+					table.playerAdditionalNationality,
+					eq(table.playerAdditionalNationality.playerId, table.player.id)
+				)
 				.where(inArray(table.player.id, uniquePlayerIds));
 
 			// Group data by player
@@ -354,7 +360,7 @@ export async function getEvents(
 						id: p.id,
 						name: p.name,
 						slug: p.slug,
-						nationality: p.nationality as Player['nationality'],
+						nationalities: p.nationality ? [p.nationality as TCountryCode] : [],
 						aliases: [],
 						gameAccounts: [],
 						socialAccounts: [],
@@ -370,6 +376,15 @@ export async function getEvents(
 				}
 
 				const player = playerMap[p.id];
+
+				// Add additional nationality
+				const additionalNationality = row.playerAdditionalNationality?.nationality;
+				if (
+					additionalNationality &&
+					!player.nationalities.includes(additionalNationality as TCountryCode)
+				) {
+					player.nationalities.push(additionalNationality as TCountryCode);
+				}
 
 				// Add alias
 				const alias = row.playerAlias?.alias;

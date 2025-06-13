@@ -146,7 +146,9 @@
 							class={['grid grid-cols-[1fr_auto] items-center gap-2 px-4 py-2', 'glass-card']}
 						>
 							<span class="flex items-baseline gap-2 text-white">
-								<NationalityFlag nationality={player.nationality} />
+								{#each player.nationalities as nationality}
+									<NationalityFlag {nationality} />
+								{/each}
 								{player.name}
 								{#if player.teams.length > 0}
 									<span class="text-xs text-gray-400" title={m.teams()}>

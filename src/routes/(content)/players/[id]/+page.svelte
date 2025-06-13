@@ -47,9 +47,11 @@
 							/>
 						{/if}
 					</div>
-					{#if data.player.nationality}
+					{#if data.player.nationalities.length}
 						<p class="text-center text-gray-400">
-							<NationalityFlag nationality={data.player.nationality} showLabel />
+							{#each data.player.nationalities as nationality}
+								<NationalityFlag {nationality} showLabel />
+							{/each}
 						</p>
 					{/if}
 					{#if data.player.socialAccounts?.length}

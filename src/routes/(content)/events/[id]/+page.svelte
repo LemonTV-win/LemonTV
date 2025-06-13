@@ -368,7 +368,9 @@
 											{#each main as player}
 												{#if player}
 													<li>
-														<NationalityFlag nationality={player.nationality} />
+														{#each player.nationalities as nationality}
+															<NationalityFlag {nationality} />
+														{/each}
 														<a href={`/players/${player.slug}`} class="hover:text-yellow-500">
 															{player.name}
 														</a>
@@ -378,7 +380,9 @@
 											{#each reserve as player}
 												{#if player}
 													<li class="text-white/50">
-														<NationalityFlag nationality={player.nationality} />
+														{#each player.nationalities as nationality}
+															<NationalityFlag {nationality} />
+														{/each}
 														<a href={`/players/${player.slug}`} class="hover:text-yellow-500">
 															{player.name}
 														</a>
@@ -388,7 +392,9 @@
 											{#each coach as player}
 												{#if player}
 													<li class="text-white/50">
-														<NationalityFlag nationality={player.nationality} />
+														{#each player.nationalities as nationality}
+															<NationalityFlag {nationality} />
+														{/each}
 														<a href={`/players/${player.slug}`} class="hover:text-yellow-500">
 															({player.name})
 														</a>
