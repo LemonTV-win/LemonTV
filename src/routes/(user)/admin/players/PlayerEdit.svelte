@@ -170,20 +170,6 @@
 			}, 2000);
 		}
 	}
-
-	function handleSubmit(e: Event) {
-		errorMessage = '';
-		successMessage = '';
-	}
-
-	function handleResult({ result, update }: { result: { error?: string }; update: () => void }) {
-		if (result.error) {
-			errorMessage = result.error;
-		} else {
-			update();
-			onCancel();
-		}
-	}
 </script>
 
 <form
