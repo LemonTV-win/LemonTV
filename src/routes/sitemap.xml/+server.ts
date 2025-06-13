@@ -1,7 +1,10 @@
+import { locales } from '$lib/paraglide/runtime';
 import { getEvents } from '$lib/server/data/events';
 import { getOrganizers } from '$lib/server/data/organizers';
 import { getPlayers } from '$lib/server/data/players';
 import { getTeams } from '$lib/server/data/teams';
+
+const HOSTNAME = 'https://lemontv.win';
 
 function generateSitemap(hostname: string, urls: string[]) {
 	return `<?xml version="1.0" encoding="UTF-8" ?>
@@ -50,7 +53,12 @@ export async function GET() {
 		...teams.map((team) => `/teams/${team.slug}`),
 		...organizers.map((organizer) => `/organizers/${organizer.slug}`)
 	]);
-	return new Response(generateSitemap('https://lemontv.win/', Array.from(urls)), {
+
+	const localizedUrls: Set<string> = new Set(
+		locales.flatMap((locale) => [...urls].map((url) => `/${locale}${url}`))
+	);
+
+	return new Response(generateSitemap(HOSTNAME, [...urls, ...localizedUrls]), {
 		headers: { 'Content-Type': 'application/xml', 'Cache-Control': 'max-age=0' }
 	});
 }
