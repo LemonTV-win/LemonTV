@@ -654,7 +654,7 @@
 																}));
 																return filteredPlayers;
 															})()}
-															value={teamPlayer.playerId}
+															bind:value={teamPlayer.playerId}
 															placeholder={m.search_players()}
 															groups={[
 																{ id: 'team', label: m.team_players() },
@@ -662,9 +662,6 @@
 															]}
 															disabled={false}
 															class="px-2 py-1 text-sm"
-															onChange={(item) => {
-																teamPlayer.playerId = item.id;
-															}}
 														/>
 														{#if teamPlayer.playerId}
 															{#if getPlayerValidationStatus(team.id, teamPlayer.playerId)}

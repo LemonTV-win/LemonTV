@@ -5,7 +5,7 @@
 	let {
 		id = undefined,
 		items = [],
-		value = '',
+		value = $bindable(''),
 		placeholder = '',
 		groups = [],
 		disabled = false,
@@ -19,7 +19,7 @@
 		groups: Array<{ id: string; label: string }>;
 		disabled?: boolean;
 		class: string;
-		onChange: (item: { id: string; name: string }) => void;
+		onChange?: (item: { id: string; name: string }) => void;
 	} = $props();
 
 	let isOpen = $state(false);
@@ -38,7 +38,8 @@
 
 	function handleSelect(item: { id: string; name: string }) {
 		search = item.name;
-		onChange(item);
+		value = item.id;
+		onChange?.(item);
 		isOpen = false;
 	}
 

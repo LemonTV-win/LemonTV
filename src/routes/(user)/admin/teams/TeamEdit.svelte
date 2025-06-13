@@ -304,16 +304,13 @@
 									}));
 									return filteredPlayers;
 								})()}
-								value={newPlayer.playerId}
+								bind:value={newPlayer.playerId}
 								placeholder={m.search_players()}
 								groups={[
 									{ id: 'team', label: m.team_players() },
 									{ id: 'other', label: m.other_players() }
 								]}
 								class="mt-1 px-4 py-2"
-								onChange={(item) => {
-									newPlayer.playerId = item.id;
-								}}
 							/>
 						</div>
 					</div>
