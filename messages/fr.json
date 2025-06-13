@@ -439,5 +439,6 @@
 	"value": "Valeur",
 	"add_tag": "Ajouter un tag",
 	"edit_tag": "Modifier le tag",
-	"delete_tag": "Supprimer le tag"
+	"delete_tag": "Supprimer le tag",
+	"title_description": "Suivi des compétitions Strinova : matchs & stats"
 }

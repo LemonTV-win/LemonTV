@@ -27,7 +27,7 @@
 </script>
 
 <svelte:head>
-	<title>LemonTV – Strinova Esports Coverage: Matches & Stats</title>
+	<title>LemonTV – {m.title_description()}</title>
 </svelte:head>
 
 {#if !data.user}
