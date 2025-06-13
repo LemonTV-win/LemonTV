@@ -9,7 +9,7 @@ export interface Stage {
 	id: number;
 	title: string; // Qualifier A1, EU Qualifier, Main Bracket, etc.
 	stage: 'qualifier' | 'playoff' | 'group' | 'showmatch';
-	format: 'single' | 'double' | 'swiss' | 'round-robin' | 'rematch';
+	format: 'single' | 'double' | 'swiss' | 'round-robin';
 	matches: Match[];
 	structure: StageStructure;
 }
