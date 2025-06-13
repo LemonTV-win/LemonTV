@@ -137,6 +137,7 @@ export async function getEvents(
 			eventId: table.eventResult.eventId,
 			teamId: table.eventResult.teamId,
 			rank: table.eventResult.rank,
+			rankTo: table.eventResult.rankTo,
 			prizeAmount: table.eventResult.prizeAmount,
 			prizeCurrency: table.eventResult.prizeCurrency,
 			team: table.team,
@@ -195,6 +196,7 @@ export async function getEvents(
 			}>;
 			results: Array<{
 				rank: number;
+				rankTo?: number;
 				team: typeof table.team.$inferSelect;
 				prizes: Array<{
 					amount: number;
@@ -228,6 +230,7 @@ export async function getEvents(
 		) {
 			eventData.results.push({
 				rank: result.rank,
+				rankTo: result.rankTo ?? undefined,
 				team: {
 					id: result.team.id,
 					name: result.team.name,

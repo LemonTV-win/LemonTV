@@ -56,6 +56,7 @@ export interface LegacyEventResult {
 
 export interface EventResult {
 	rank: number;
+	rankTo?: number;
 	team: Team;
 	prizes: EventPrize[];
 }

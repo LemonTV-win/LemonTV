@@ -214,6 +214,7 @@ export const actions = {
 				const results = JSON.parse(resultsData) as Array<{
 					teamId: string;
 					rank: number;
+					rankTo?: number;
 					prizeAmount: number;
 					prizeCurrency: string;
 				}>;
@@ -229,6 +230,7 @@ export const actions = {
 							eventId,
 							teamId: result.teamId,
 							rank: result.rank,
+							rankTo: result.rankTo ?? null,
 							prizeAmount: result.prizeAmount,
 							prizeCurrency: result.prizeCurrency,
 							createdAt: new Date(),
@@ -394,6 +396,7 @@ export const actions = {
 				const results = JSON.parse(resultsData) as Array<{
 					teamId: string;
 					rank: number;
+					rankTo?: number;
 					prizeAmount: number;
 					prizeCurrency: string;
 				}>;
@@ -409,6 +412,7 @@ export const actions = {
 							eventId: eventData.id,
 							teamId: result.teamId,
 							rank: result.rank,
+							rankTo: result.rankTo ?? null,
 							prizeAmount: result.prizeAmount,
 							prizeCurrency: result.prizeCurrency,
 							createdAt: new Date(),
@@ -570,6 +574,7 @@ export const actions = {
 			const results = JSON.parse(resultsData) as Array<{
 				teamId: string;
 				rank: number;
+				rankTo?: number;
 				prizeAmount: number;
 				prizeCurrency: string;
 			}>;
@@ -584,6 +589,7 @@ export const actions = {
 					eventId,
 					teamId: result.teamId,
 					rank: result.rank,
+					rankTo: result.rankTo ?? null,
 					prizeAmount: result.prizeAmount,
 					prizeCurrency: result.prizeCurrency,
 					createdAt: new Date(),

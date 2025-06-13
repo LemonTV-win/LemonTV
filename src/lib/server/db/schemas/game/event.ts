@@ -73,6 +73,7 @@ export const eventResult = sqliteTable('event_result', {
 		.references(() => team.id)
 		.notNull(),
 	rank: integer('rank').notNull(),
+	rankTo: integer('rank_to'),
 	prizeAmount: integer('prize_amount'),
 	prizeCurrency: text('prize_currency'),
 	createdAt: integer('created_at', { mode: 'timestamp_ms' })

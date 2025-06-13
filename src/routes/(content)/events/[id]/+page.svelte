@@ -172,7 +172,7 @@
 									? 'py-4 text-5xl text-gray-300'
 									: 'py-2 text-amber-700'}"
 						>
-							#{result.rank}
+							#{result.rank}{result.rankTo ? `-${result.rankTo}` : ''}
 						</div>
 						{#if result.team.logoURL}
 							<img
@@ -215,7 +215,9 @@
 			<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
 				{#each data.event.results.sort((a, b) => a.rank - b.rank).slice(3) as result}
 					<div class="glass flex flex-col items-center gap-2 p-4">
-						<div class="text-4xl font-bold text-yellow-600">#{result.rank}</div>
+						<div class="text-4xl font-bold text-yellow-600">
+							#{result.rank}{result.rankTo ? `-${result.rankTo}` : ''}
+						</div>
 						{#if result.team.logoURL}
 							<img
 								src={result.team.logoURL}

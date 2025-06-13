@@ -249,6 +249,7 @@
 		Array<{
 			teamId: string;
 			rank: number;
+			rankTo?: number;
 			prizeAmount: number;
 			prizeCurrency: string;
 		}>
@@ -256,6 +257,7 @@
 		((event as any).results ?? []).map((result: EventResult) => ({
 			teamId: result.team.id,
 			rank: result.rank,
+			rankTo: result.rankTo,
 			prizeAmount: result.prizes[0]?.amount ?? 0,
 			prizeCurrency: result.prizes[0]?.currency ?? 'Bablo'
 		}))
@@ -269,6 +271,7 @@
 			{
 				teamId: '',
 				rank: results.length + 1,
+				rankTo: undefined,
 				prizeAmount: 0,
 				prizeCurrency: 'Bablo'
 			}
@@ -789,8 +792,10 @@
 			<h3 class="mb-4 text-lg font-semibold">{m.results()}</h3>
 			<div class="space-y-4">
 				{#each results as result, index}
-					<div class="flex items-center gap-4 rounded-lg border border-slate-700 bg-slate-800 p-4">
-						<div class="flex-1">
+					<div
+						class="grid grid-cols-[1fr_auto_auto_auto_auto] items-start gap-4 rounded-lg border border-slate-700 bg-slate-800 p-4"
+					>
+						<div>
 							<label class="mb-2 block text-sm font-medium text-slate-300" for="team-{index}">
 								{m.team()}
 							</label>
@@ -807,21 +812,33 @@
 								{/each}
 							</select>
 						</div>
-						<div class="w-24">
+						<div>
 							<label class="mb-2 block text-sm font-medium text-slate-300" for="rank-{index}">
 								{m.rank()}
 							</label>
-							<input
-								id="rank-{index}"
-								type="number"
-								name="rank"
-								bind:value={result.rank}
-								min="1"
-								class="w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-								required
-							/>
+							<div class="flex items-center gap-2">
+								<input
+									id="rank-{index}"
+									type="number"
+									name="rank"
+									bind:value={result.rank}
+									min="1"
+									class="w-15 rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+									required
+								/>
+								<span class="text-slate-400">–</span>
+								<input
+									id="rankTo-{index}"
+									type="number"
+									name="rankTo"
+									bind:value={result.rankTo}
+									min={result.rank}
+									class="w-15 rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+									placeholder=""
+								/>
+							</div>
 						</div>
-						<div class="w-32">
+						<div>
 							<label
 								class="mb-2 block text-sm font-medium text-slate-300"
 								for="prize-amount-{index}"
@@ -834,11 +851,11 @@
 								name="prizeAmount"
 								bind:value={result.prizeAmount}
 								min="0"
-								class="w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+								class="w-20 rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 								required
 							/>
 						</div>
-						<div class="w-32">
+						<div>
 							<label
 								class="mb-2 block text-sm font-medium text-slate-300"
 								for="prize-currency-{index}"
@@ -850,7 +867,7 @@
 								type="text"
 								name="prizeCurrency"
 								bind:value={result.prizeCurrency}
-								class="w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+								class="w-20 rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 								required
 							/>
 						</div>
