@@ -29,7 +29,7 @@ export interface SocialAccount {
 
 export function getAllNames(player: Player) {
 	return [
-		player.slug,
+		// player.slug,
 		player.name,
 		...(player.gameAccounts?.flatMap((account) => [
 			account.currentName,
