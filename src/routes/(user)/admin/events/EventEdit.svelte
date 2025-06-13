@@ -799,18 +799,24 @@
 							<label class="mb-2 block text-sm font-medium text-slate-300" for="team-{index}">
 								{m.team()}
 							</label>
-							<select
-								id="team-{index}"
-								name="teamId"
+							<Combobox
+								items={(() => {
+									const filteredTeams = teams.map((t) => ({
+										id: t.id,
+										name: t.name,
+										group: selectedTeams.includes(t.id) ? 'participating' : 'other'
+									}));
+									return filteredTeams;
+								})()}
 								bind:value={result.teamId}
-								class="w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-								required
-							>
-								<option value="">{m.select_team()}</option>
-								{#each teams as team}
-									<option value={team.id}>{team.name}</option>
-								{/each}
-							</select>
+								placeholder={m.select_team()}
+								groups={[
+									{ id: 'participating', label: m.attending_teams() },
+									{ id: 'other', label: m.other_teams() }
+								]}
+								disabled={false}
+								class="mt-1 px-4 py-2"
+							/>
 						</div>
 						<div>
 							<label class="mb-2 block text-sm font-medium text-slate-300" for="rank-{index}">
