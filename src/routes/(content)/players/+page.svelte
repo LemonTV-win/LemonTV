@@ -73,9 +73,9 @@
 	let filtered = $derived(
 		sorted.filter((player) => {
 			const allNames = getAllNames(player);
-			const matchesSearch = allNames.some((name) =>
-				name.toLowerCase().includes(search.toLowerCase())
-			);
+			const matchesSearch =
+				search.length === 0 ||
+				allNames.some((name) => name.toLowerCase().includes(search.toLowerCase()));
 			const matchesNationality =
 				selectedNationalities.length === 0 ||
 				player.nationalities.some((nationality) => selectedNationalities.includes(nationality));
