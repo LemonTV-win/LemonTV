@@ -310,7 +310,6 @@
 									{ id: 'team', label: m.team_players() },
 									{ id: 'other', label: m.other_players() }
 								]}
-								disabled={false}
 								class="px-2 py-1"
 								onChange={(item) => {
 									newPlayer.playerId = item.id;

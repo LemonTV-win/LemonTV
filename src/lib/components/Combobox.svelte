@@ -17,7 +17,7 @@
 		value: string;
 		placeholder: string;
 		groups: Array<{ id: string; label: string }>;
-		disabled: boolean;
+		disabled?: boolean;
 		class: string;
 		onChange: (item: { id: string; name: string }) => void;
 	} = $props();
