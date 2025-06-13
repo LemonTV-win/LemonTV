@@ -6,6 +6,7 @@
 	import IconParkSolidAdd from '~icons/icon-park-solid/add';
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import ImageUpload from '$lib/components/ImageUpload.svelte';
+	import Combobox from '$lib/components/Combobox.svelte';
 
 	let { team, players, teamPlayers, teamAliases, onCancel } = $props<{
 		team: Partial<Team>;
@@ -292,16 +293,29 @@
 						<label for="playerSelect" class="block text-sm font-medium text-slate-300">
 							{m.player()}
 						</label>
-						<select
-							id="playerSelect"
-							bind:value={newPlayer.playerId}
-							class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-						>
-							<option value="">{m.select_player()}</option>
-							{#each players as player}
-								<option value={player.id}>{player.name}</option>
-							{/each}
-						</select>
+						<div class="mt-1">
+							<Combobox
+								items={(() => {
+									const filteredPlayers = players.map((p: Player) => ({
+										id: p.id,
+										name: p.name,
+										group: selectedPlayers.some((sp) => sp.playerId === p.id) ? 'team' : 'other'
+									}));
+									return filteredPlayers;
+								})()}
+								value={newPlayer.playerId}
+								placeholder={m.search_players()}
+								groups={[
+									{ id: 'team', label: m.team_players() },
+									{ id: 'other', label: m.other_players() }
+								]}
+								disabled={false}
+								class="px-2 py-1"
+								onChange={(item) => {
+									newPlayer.playerId = item.id;
+								}}
+							/>
+						</div>
 					</div>
 					<div>
 						<label for="roleSelect" class="block text-sm font-medium text-slate-300">
