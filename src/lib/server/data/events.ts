@@ -501,6 +501,50 @@ export async function getEvent(id: string): Promise<AppEvent | undefined> {
 	return events[0];
 }
 
+// Update event team players
+export async function updateEventTeamPlayers(
+	eventId: string,
+	players: EventTeamPlayerData[],
+	userId: string
+) {
+	await db.transaction(async (tx) => {
+		// Get current players for history
+		const currentPlayers = await tx
+			.select()
+			.from(table.eventTeamPlayer)
+			.where(eq(table.eventTeamPlayer.eventId, eventId));
+
+		// Delete all players for this event
+		await tx.delete(table.eventTeamPlayer).where(eq(table.eventTeamPlayer.eventId, eventId));
+
+		// Add new players
+		if (players.length > 0) {
+			await tx.insert(table.eventTeamPlayer).values(
+				players.map((player) => ({
+					eventId: eventId,
+					teamId: player.teamId,
+					playerId: player.playerId,
+					role: player.role,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				}))
+			);
+		}
+
+		// Add edit history
+		await tx.insert(table.editHistory).values({
+			id: crypto.randomUUID(),
+			tableName: 'event_team_player',
+			recordId: eventId,
+			fieldName: 'players',
+			oldValue: JSON.stringify(currentPlayers),
+			newValue: JSON.stringify(players),
+			editedBy: userId,
+			editedAt: new Date()
+		});
+	});
+}
+
 // export interface Event {
 // 	id: number;
 // 	slug: string;
