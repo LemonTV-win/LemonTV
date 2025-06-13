@@ -364,7 +364,8 @@
 							<button
 								type="button"
 								class="mt-[1.625rem] text-red-400 hover:text-red-300"
-								onclick={() => additionalNationalities.filter((_, i) => i !== index)}
+								onclick={() =>
+									(additionalNationalities = additionalNationalities.filter((_, i) => i !== index))}
 								title={m.remove()}
 							>
 								<IconParkSolidDelete class="h-5 w-5" />
