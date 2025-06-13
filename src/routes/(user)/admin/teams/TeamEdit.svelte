@@ -295,6 +295,7 @@
 						</label>
 						<div class="mt-1">
 							<Combobox
+								id="playerSelect"
 								items={(() => {
 									const filteredPlayers = players.map((p: Player) => ({
 										id: p.id,

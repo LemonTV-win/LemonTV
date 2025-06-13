@@ -3,6 +3,7 @@
 	import { m } from '$lib/paraglide/messages';
 
 	let {
+		id = undefined,
 		items = [],
 		value = '',
 		placeholder = '',
@@ -11,6 +12,7 @@
 		class: className = '',
 		onChange
 	}: {
+		id?: string;
 		items: Array<{ id: string; name: string; group?: string }>;
 		value: string;
 		placeholder: string;
@@ -117,6 +119,7 @@
 
 <div class="combobox relative">
 	<input
+		{id}
 		bind:this={inputElement}
 		type="text"
 		value={search}
