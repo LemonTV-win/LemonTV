@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { Player } from '$lib/data/players';
+	import type { TCountryCode } from 'countries-list';
 	import { m } from '$lib/paraglide/messages';
 	import { getLocale } from '$lib/paraglide/runtime';
 	import { countries } from 'countries-list';
@@ -36,6 +37,10 @@
 	let userId = $state(player.user?.id || '');
 	let userSearch = $state(users.find((user) => user.id === userId)?.username || '');
 	let showUserDropdown = $state(false);
+	let primaryNationality = $state<TCountryCode | undefined>(player.nationalities?.[0]);
+	let additionalNationalities = $state<(TCountryCode | undefined)[]>(
+		player.nationalities?.slice(1) || []
+	);
 
 	const filteredUsers = $derived(
 		users.filter((user) => user.username.toLowerCase().includes(userSearch.toLowerCase()))
@@ -175,7 +180,21 @@
 <form
 	method="POST"
 	action={player.id ? '?/update' : '?/create'}
-	use:enhance={() => {
+	use:enhance={({ formData }) => {
+		// Update nationalities in the player object
+		const validAdditionalNationalities = additionalNationalities.filter(
+			(n): n is TCountryCode => n !== undefined
+		);
+		if (!primaryNationality && validAdditionalNationalities.length === 0) {
+			newPlayer.nationalities = undefined;
+		} else if (primaryNationality) {
+			newPlayer.nationalities = [primaryNationality, ...validAdditionalNationalities];
+		} else {
+			newPlayer.nationalities = validAdditionalNationalities;
+		}
+
+		formData.set('nationalities', JSON.stringify(newPlayer.nationalities || []));
+
 		return ({ result }: { result: ActionResult }) => {
 			if (result.type === 'success') {
 				onsuccess();
@@ -292,7 +311,7 @@
 			<select
 				id="playerNationality"
 				name="nationality"
-				bind:value={newPlayer.nationality}
+				bind:value={primaryNationality}
 				class="font-emoji mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 			>
 				<option value={undefined}>{m.select_nationality()}</option>
@@ -312,6 +331,61 @@
 					</option>
 				{/each}
 			</select>
+		</div>
+		<div>
+			<div class="mt-2 rounded-lg border border-slate-700 bg-slate-800 p-4">
+				{#each additionalNationalities as nationality, index}
+					<div
+						class="grid grid-cols-[1fr_auto] gap-4 {index > 0
+							? 'mt-4 border-t border-slate-700 pt-4'
+							: ''}"
+					>
+						<div>
+							<select
+								id="additionalNationality-{index}"
+								bind:value={additionalNationalities[index]}
+								onchange={() => {
+									additionalNationalities = [...additionalNationalities];
+								}}
+								class="font-emoji mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+							>
+								<option value={undefined}>{m.select_nationality()}</option>
+								{#each countryCodes as code}
+									<option value={code} disabled={code === primaryNationality}>
+										{code} - {countryCodeToFlagEmoji(code)} - {countryCodeToLocalizedName(
+											code,
+											getLocale()
+										)}
+									</option>
+								{/each}
+							</select>
+						</div>
+						<div class="flex items-center">
+							<button
+								type="button"
+								class="mt-[1.625rem] text-red-400 hover:text-red-300"
+								onclick={() => additionalNationalities.filter((_, i) => i !== index)}
+								title={m.remove()}
+							>
+								<IconParkSolidDelete class="h-5 w-5" />
+							</button>
+						</div>
+					</div>
+				{/each}
+				{#if additionalNationalities.length > 0}
+					<div class="my-4 border-t border-slate-700"></div>
+				{/if}
+				<button
+					type="button"
+					class="flex w-full items-center justify-center gap-2 rounded-md border border-dashed border-slate-700 bg-slate-800/50 px-4 py-2 text-yellow-500 transition-colors hover:border-yellow-500 hover:bg-slate-800"
+					onclick={() => {
+						additionalNationalities = [...additionalNationalities, undefined];
+					}}
+				>
+					<IconParkSolidAdd class="h-5 w-5" />
+					<span>{m.add()}</span>
+				</button>
+			</div>
 		</div>
 		<input type="hidden" name="aliases" value={JSON.stringify(newPlayer.aliases || [])} />
 		<input type="hidden" name="gameAccounts" value={JSON.stringify(newPlayer.gameAccounts || [])} />

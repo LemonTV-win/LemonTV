@@ -1,4 +1,4 @@
-import { sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { primaryKey, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 import { user } from '../auth/user';
 
 export const player = sqliteTable('player', {
@@ -16,5 +16,17 @@ export const playerAlias = sqliteTable('player_alias', {
 	alias: text('alias').notNull()
 });
 
+export const playerAdditionalNationality = sqliteTable(
+	'player_additional_nationality',
+	{
+		playerId: text('player_id')
+			.notNull()
+			.references(() => player.id),
+		nationality: text('nationality').notNull()
+	},
+	(t) => [primaryKey({ columns: [t.playerId, t.nationality] })]
+);
+
 export type Player = typeof player.$inferSelect;
 export type PlayerAlias = typeof playerAlias.$inferSelect;
+export type PlayerAdditionalNationality = typeof playerAdditionalNationality.$inferSelect;

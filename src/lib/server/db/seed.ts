@@ -32,6 +32,8 @@ export async function seed() {
 	console.info('[SEED] - Deleted teamAlias');
 	await db.delete(schema.playerAlias);
 	console.info('[SEED] - Deleted playerAlias');
+	await db.delete(schema.playerAdditionalNationality);
+	console.info('[SEED] - Deleted playerAdditionalNationality');
 	await db.delete(schema.player_social_account);
 	console.info('[SEED] - Deleted player_social_account');
 	await db.delete(schema.gameAccount);
@@ -102,6 +104,22 @@ export async function seed() {
 		}
 	];
 	await db.insert(schema.player).values(PLAYERS);
+
+	console.log('[SEED] Seeding player additional nationalities...');
+	await db.insert(schema.playerAdditionalNationality).values([
+		{
+			playerId: PLAYERS[0].id, // Player 1 (US)
+			nationality: 'CA' // Adding Canadian nationality
+		},
+		{
+			playerId: PLAYERS[3].id, // Player 4 (KR)
+			nationality: 'US' // Adding US nationality
+		},
+		{
+			playerId: PLAYERS[5].id, // Player 6 (CN)
+			nationality: 'HK' // Adding Hong Kong nationality
+		}
+	]);
 
 	console.log('[SEED] Seeding teams...');
 	const team1_id = randomUUID();

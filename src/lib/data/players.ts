@@ -6,7 +6,7 @@ export interface Player {
 	id: string;
 	name: string; // display name
 	slug: string; // url name (https://lemon.mkpo.li/players/<slug>)
-	nationality?: TCountryCode;
+	nationalities: TCountryCode[]; // First element is primary nationality, rest are additional
 	aliases?: string[];
 	gameAccounts: GameAccount[];
 	socialAccounts?: SocialAccount[];

@@ -66,7 +66,7 @@
 	let topCountries = $derived(
 		Object.entries(
 			data.players
-				.map((player) => player.nationality)
+				.map((player) => player.nationalities[0])
 				.reduce(
 					(acc, country) => {
 						if (country) {
@@ -94,7 +94,7 @@
 					);
 				const matchesNationality =
 					selectedNationalities.length === 0 ||
-					(player.nationality && selectedNationalities.includes(player.nationality));
+					player.nationalities.some((nationality) => selectedNationalities.includes(nationality));
 				const matchesTeam =
 					!selectedTeam ||
 					data.playersTeams[player.id ?? '']?.some((team) => team.name === selectedTeam);
@@ -111,9 +111,9 @@
 				} else if (sortBy === 'name-desc') {
 					return b.name.localeCompare(a.name);
 				} else if (sortBy === 'nationality-asc') {
-					return (a.nationality ?? '').localeCompare(b.nationality ?? '');
+					return (a.nationalities[0] ?? '').localeCompare(b.nationalities[0] ?? '');
 				} else if (sortBy === 'nationality-desc') {
-					return (b.nationality ?? '').localeCompare(a.nationality ?? '');
+					return (b.nationalities[0] ?? '').localeCompare(a.nationalities[0] ?? '');
 				} else if (sortBy === 'slug-asc') {
 					return (a.slug ?? a.id).localeCompare(b.slug ?? b.id);
 				} else if (sortBy === 'slug-desc') {
@@ -135,7 +135,7 @@
 
 	// Get unique nationalities for filter options
 	let uniqueNationalities = $derived([
-		...new Set(data.players.map((p) => p.nationality).filter(Boolean))
+		...new Set(data.players.map((p) => p.nationalities[0]).filter(Boolean))
 	]);
 
 	// Get unique teams for combobox
@@ -628,7 +628,9 @@
 							{/if}
 						</td>
 						<td class="max-w-6 px-4 py-1 text-gray-300">
-							<NationalityFlag nationality={player.nationality} />
+							{#each player.nationalities as nationality}
+								<NationalityFlag {nationality} />
+							{/each}
 						</td>
 						<td class="px-4 py-1 text-gray-300">
 							{#if player.gameAccounts?.length}

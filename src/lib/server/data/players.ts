@@ -5,7 +5,8 @@ import {
 	gameAccount,
 	player_social_account,
 	social_platform,
-	editHistory
+	editHistory,
+	playerAdditionalNationality
 } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import type { Player } from '$lib/data/players';
@@ -14,6 +15,7 @@ import { calculateWinnerIndex, getEvents, getMatches, identifyPlayer } from '$li
 import type { Team } from '$lib/data/teams';
 import type { Character, Region } from '$lib/data/game';
 import { or } from 'drizzle-orm';
+import type { TCountryCode } from 'countries-list';
 
 import * as schema from '$lib/server/db/schema';
 import type { Match, PlayerScore } from '$lib/data/matches';
@@ -37,13 +39,22 @@ export async function getPlayer(keyword: string): Promise<Player | null> {
 		.select()
 		.from(player_social_account)
 		.where(eq(player_social_account.playerId, playerData.id));
+	const additionalNationalities = await db
+		.select()
+		.from(playerAdditionalNationality)
+		.where(eq(playerAdditionalNationality.playerId, playerData.id));
 
 	console.info('[Players] Successfully retrieved player:', keyword);
 	return {
 		id: playerData.id,
 		slug: playerData.slug,
 		name: playerData.name,
-		nationality: playerData.nationality as Player['nationality'],
+		nationalities: playerData.nationality
+			? [
+					playerData.nationality as TCountryCode,
+					...additionalNationalities.map((n) => n.nationality as TCountryCode)
+				]
+			: additionalNationalities.map((n) => n.nationality as TCountryCode),
 		aliases: aliases.map((a) => a.alias),
 		gameAccounts: accounts.map((acc) => ({
 			accountId: acc.accountId,
@@ -90,11 +101,25 @@ export async function getPlayers(): Promise<Player[]> {
 		socialAccountsByPlayer.get(acc.playerId)!.push(acc);
 	}
 
+	const additionalNationalities = await db.select().from(playerAdditionalNationality);
+	const additionalNationalitiesByPlayer = new Map<string, string[]>();
+	for (const nat of additionalNationalities) {
+		if (!additionalNationalitiesByPlayer.has(nat.playerId)) {
+			additionalNationalitiesByPlayer.set(nat.playerId, []);
+		}
+		additionalNationalitiesByPlayer.get(nat.playerId)!.push(nat.nationality);
+	}
+
 	const result: Player[] = players.map((p) => ({
 		id: p.id,
 		name: p.name,
 		slug: p.slug,
-		nationality: p.nationality as Player['nationality'],
+		nationalities: p.nationality
+			? [
+					p.nationality as TCountryCode,
+					...(additionalNationalitiesByPlayer.get(p.id) || []).map((n) => n as TCountryCode)
+				]
+			: (additionalNationalitiesByPlayer.get(p.id) || []).map((n) => n as TCountryCode),
 		aliases: aliasesByPlayer.get(p.id) ?? [],
 		gameAccounts: (accountsByPlayer.get(p.id) ?? []).map((acc) => ({
 			accountId: acc.accountId,
@@ -298,13 +323,14 @@ export async function createPlayer(
 	const id = randomUUID();
 	const slug = data.slug ?? data.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
 	const userId = data.user?.id;
+	const primaryNationality = data.nationalities?.[0] as TCountryCode | undefined;
 
 	await db.transaction(async (tx) => {
 		await tx.insert(player).values({
 			id,
 			name: data.name,
 			slug,
-			nationality: data.nationality,
+			nationality: primaryNationality,
 			userId
 		});
 
@@ -332,16 +358,40 @@ export async function createPlayer(
 			});
 		}
 
-		if (data.nationality) {
+		if (data.nationalities?.length) {
+			// Record primary nationality
 			await tx.insert(editHistory).values({
 				id: randomUUID(),
 				tableName: 'player',
 				recordId: id,
 				fieldName: 'nationality',
 				oldValue: null,
-				newValue: data.nationality.toString(),
+				newValue: primaryNationality?.toString() || null,
 				editedBy
 			});
+
+			// Insert additional nationalities
+			if (data.nationalities.length > 1) {
+				await tx.insert(playerAdditionalNationality).values(
+					data.nationalities.slice(1).map((nationality) => ({
+						playerId: id,
+						nationality: nationality as TCountryCode
+					}))
+				);
+
+				// Record additional nationalities
+				for (const nationality of data.nationalities.slice(1)) {
+					await tx.insert(editHistory).values({
+						id: randomUUID(),
+						tableName: 'player_additional_nationality',
+						recordId: id,
+						fieldName: 'nationality',
+						oldValue: null,
+						newValue: nationality.toString(),
+						editedBy
+					});
+				}
+			}
 		}
 
 		if (userId) {
@@ -441,16 +491,19 @@ export async function updatePlayer(
 	await db.transaction(async (tx) => {
 		// Get the current player data before update
 		const [currentPlayer] = await tx.select().from(player).where(eq(player.id, data.id));
+		const currentAdditionalNationalities = await tx
+			.select()
+			.from(playerAdditionalNationality)
+			.where(eq(playerAdditionalNationality.playerId, data.id));
 
-		console.log('currentPlayer', currentPlayer);
-		console.log('data', data);
+		const primaryNationality = data.nationalities?.[0] as TCountryCode | undefined;
 
 		// Update player
 		await tx
 			.update(player)
 			.set({
 				name: data.name,
-				nationality: data.nationality,
+				nationality: primaryNationality,
 				userId: data.user?.id
 			})
 			.where(eq(player.id, data.id));
@@ -468,14 +521,14 @@ export async function updatePlayer(
 			});
 		}
 
-		if (data.nationality !== currentPlayer.nationality) {
+		if (primaryNationality !== currentPlayer.nationality) {
 			await tx.insert(editHistory).values({
 				id: randomUUID(),
 				tableName: 'player',
 				recordId: data.id,
 				fieldName: 'nationality',
 				oldValue: currentPlayer.nationality?.toString() || null,
-				newValue: data.nationality?.toString() || null,
+				newValue: primaryNationality?.toString() || null,
 				editedBy
 			});
 		}
@@ -490,6 +543,58 @@ export async function updatePlayer(
 				newValue: data.user?.id?.toString() || null,
 				editedBy
 			});
+		}
+
+		// Update additional nationalities
+		if (data.nationalities) {
+			const newAdditionalNationalities = data.nationalities.slice(1) as TCountryCode[];
+			const oldAdditionalNationalities = currentAdditionalNationalities.map(
+				(n) => n.nationality as TCountryCode
+			);
+
+			// Remove old additional nationalities
+			await tx
+				.delete(playerAdditionalNationality)
+				.where(eq(playerAdditionalNationality.playerId, data.id));
+
+			// Add new additional nationalities
+			if (newAdditionalNationalities.length > 0) {
+				await tx.insert(playerAdditionalNationality).values(
+					newAdditionalNationalities.map((nationality) => ({
+						playerId: data.id,
+						nationality
+					}))
+				);
+			}
+
+			// Track changes in additional nationalities
+			for (const oldNat of oldAdditionalNationalities) {
+				if (!newAdditionalNationalities.includes(oldNat)) {
+					await tx.insert(editHistory).values({
+						id: randomUUID(),
+						tableName: 'player_additional_nationality',
+						recordId: data.id,
+						fieldName: 'nationality',
+						oldValue: oldNat.toString(),
+						newValue: null,
+						editedBy
+					});
+				}
+			}
+
+			for (const newNat of newAdditionalNationalities) {
+				if (!oldAdditionalNationalities.includes(newNat)) {
+					await tx.insert(editHistory).values({
+						id: randomUUID(),
+						tableName: 'player_additional_nationality',
+						recordId: data.id,
+						fieldName: 'nationality',
+						oldValue: null,
+						newValue: newNat.toString(),
+						editedBy
+					});
+				}
+			}
 		}
 
 		// Get current aliases
@@ -658,6 +763,10 @@ export async function deletePlayer(id: string, deletedBy: string) {
 
 	// Get the player data before deletion
 	const [playerData] = await db.select().from(player).where(eq(player.id, id));
+	const additionalNationalities = await db
+		.select()
+		.from(playerAdditionalNationality)
+		.where(eq(playerAdditionalNationality.playerId, id));
 
 	if (!playerData) {
 		console.warn('[Players] Player not found:', id);
@@ -694,6 +803,19 @@ export async function deletePlayer(id: string, deletedBy: string) {
 				recordId: id,
 				fieldName: 'nationality',
 				oldValue: playerData.nationality,
+				newValue: null,
+				editedBy: deletedBy
+			});
+		}
+
+		// Get and record additional nationalities
+		for (const nat of additionalNationalities) {
+			await tx.insert(editHistory).values({
+				id: randomUUID(),
+				tableName: 'player_additional_nationality',
+				recordId: id,
+				fieldName: 'nationality',
+				oldValue: nat.nationality,
 				newValue: null,
 				editedBy: deletedBy
 			});
@@ -751,6 +873,9 @@ export async function deletePlayer(id: string, deletedBy: string) {
 		await tx.delete(playerAlias).where(eq(playerAlias.playerId, id));
 		await tx.delete(gameAccount).where(eq(gameAccount.playerId, id));
 		await tx.delete(player_social_account).where(eq(player_social_account.playerId, id));
+		await tx
+			.delete(playerAdditionalNationality)
+			.where(eq(playerAdditionalNationality.playerId, id));
 		await tx.delete(player).where(eq(player.id, id));
 	});
 

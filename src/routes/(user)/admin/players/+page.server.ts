@@ -71,7 +71,7 @@ export const actions = {
 		const slug = formData.get('slug') as string;
 		const name = formData.get('name') as string;
 		const userId = (formData.get('userId') || null) as string | null;
-		const nationality = (formData.get('nationality') || null) as TCountryCode | null;
+		const nationalities = JSON.parse(formData.get('nationalities') as string) as TCountryCode[];
 		const aliases = JSON.parse(formData.get('aliases') as string) as string[];
 		const gameAccounts = JSON.parse(
 			formData.get('gameAccounts') as string
@@ -91,7 +91,7 @@ export const actions = {
 				{
 					slug,
 					name,
-					nationality: nationality ?? undefined,
+					nationalities,
 					aliases,
 					gameAccounts,
 					socialAccounts,
@@ -146,7 +146,7 @@ export const actions = {
 		const slug = formData.get('slug') as string;
 		const name = formData.get('name') as string;
 		const userId = (formData.get('userId') || null) as string | null;
-		const nationality = (formData.get('nationality') || null) as TCountryCode | null;
+		const nationalities = JSON.parse(formData.get('nationalities') as string) as TCountryCode[];
 		const aliases = JSON.parse(formData.get('aliases') as string) as string[];
 		const gameAccounts = JSON.parse(
 			formData.get('gameAccounts') as string
@@ -167,7 +167,7 @@ export const actions = {
 					id,
 					slug,
 					name,
-					nationality: nationality ?? undefined,
+					nationalities,
 					aliases,
 					gameAccounts,
 					socialAccounts,
@@ -243,7 +243,7 @@ export const actions = {
 				await createPlayer(
 					{
 						name: playerData.name,
-						nationality: playerData.nationality,
+						nationalities: playerData.nationalities,
 						aliases: playerData.aliases || [],
 						gameAccounts: playerData.gameAccounts,
 						slug: playerData.slug
