@@ -4,6 +4,7 @@ import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { processImageURL } from '$lib/server/storage';
+import { createTeam, updateTeam, deleteTeam } from '$lib/server/data/teams';
 // import { importTeams } from '$lib/server/data/teams';
 
 export const load: PageServerLoad = async ({ url }) => {
@@ -60,41 +61,18 @@ export const actions = {
 		}
 
 		try {
-			const [newTeam] = await db
-				.insert(table.team)
-				.values({
-					id: crypto.randomUUID(),
+			await createTeam(
+				{
 					name,
 					logo: logo || undefined,
-					region: region || undefined,
-					slug: slug || name.toLowerCase().replace(/[^a-z0-9]/g, '-'),
-					abbr: abbr || undefined
-				})
-				.returning();
-
-			// Insert team aliases
-			if (aliases.length > 0) {
-				await db.insert(table.teamAlias).values(
-					aliases.map((alias) => ({
-						teamId: newTeam.id,
-						alias
-					}))
-				);
-			}
-
-			// Insert team players
-			if (players.length > 0) {
-				await db.insert(table.teamPlayer).values(
-					players.map((player) => ({
-						teamId: newTeam.id,
-						playerId: player.playerId,
-						role: player.role,
-						startedOn: player.startedOn,
-						endedOn: player.endedOn,
-						note: player.note
-					}))
-				);
-			}
+					region: (region as any) || undefined,
+					slug: slug || undefined,
+					abbr: abbr || undefined,
+					aliases,
+					players
+				},
+				locals.user.id
+			);
 
 			return {
 				success: true
@@ -137,44 +115,19 @@ export const actions = {
 		}
 
 		try {
-			// Update team
-			await db
-				.update(table.team)
-				.set({
+			await updateTeam(
+				{
+					id,
 					name,
-					logo: logo || null,
-					region: region || null,
-					slug: slug || name.toLowerCase().replace(/[^a-z0-9]/g, '-'),
-					abbr: abbr || null,
-					updatedAt: new Date().toISOString()
-				})
-				.where(eq(table.team.id, id));
-
-			// Update aliases
-			await db.delete(table.teamAlias).where(eq(table.teamAlias.teamId, id));
-			if (aliases.length > 0) {
-				await db.insert(table.teamAlias).values(
-					aliases.map((alias) => ({
-						teamId: id,
-						alias
-					}))
-				);
-			}
-
-			// Update players
-			await db.delete(table.teamPlayer).where(eq(table.teamPlayer.teamId, id));
-			if (players.length > 0) {
-				await db.insert(table.teamPlayer).values(
-					players.map((player) => ({
-						teamId: id,
-						playerId: player.playerId,
-						role: player.role,
-						startedOn: player.startedOn,
-						endedOn: player.endedOn,
-						note: player.note
-					}))
-				);
-			}
+					logo: logo || undefined,
+					region: (region as any) || undefined,
+					slug: slug || undefined,
+					abbr: abbr || undefined,
+					aliases,
+					players
+				},
+				locals.user.id
+			);
 
 			return {
 				success: true
@@ -238,12 +191,7 @@ export const actions = {
 		}
 
 		try {
-			// Delete team aliases and players first
-			await db.delete(table.teamAlias).where(eq(table.teamAlias.teamId, id));
-			await db.delete(table.teamPlayer).where(eq(table.teamPlayer.teamId, id));
-			// Delete team
-			await db.delete(table.team).where(eq(table.team.id, id));
-
+			await deleteTeam(id, locals.user.id);
 			return {
 				success: true
 			};
