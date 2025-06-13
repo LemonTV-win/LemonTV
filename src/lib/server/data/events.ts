@@ -163,7 +163,12 @@ export async function getEvents(
 			eventTeamPlayer: table.eventTeamPlayer,
 			team: table.team,
 			player: table.player,
-			eventWebsite: table.eventWebsite
+			eventWebsite: table.eventWebsite,
+			stage: table.stage,
+			stageRound: table.stageRound,
+			stageNode: table.stageNode,
+			stageNodeDependency: table.stageNodeDependency,
+			match: table.match
 		})
 		.from(table.event)
 		.leftJoin(table.eventOrganizer, eq(table.eventOrganizer.eventId, table.event.id))
@@ -172,6 +177,11 @@ export async function getEvents(
 		.leftJoin(table.team, eq(table.team.id, table.eventTeamPlayer.teamId))
 		.leftJoin(table.player, eq(table.player.id, table.eventTeamPlayer.playerId))
 		.leftJoin(table.eventWebsite, eq(table.eventWebsite.eventId, table.event.id))
+		.leftJoin(table.stage, eq(table.stage.eventId, table.event.id))
+		.leftJoin(table.stageRound, eq(table.stageRound.stageId, table.stage.id))
+		.leftJoin(table.stageNode, eq(table.stageNode.stageId, table.stage.id))
+		.leftJoin(table.stageNodeDependency, eq(table.stageNodeDependency.nodeId, table.stageNode.id))
+		.leftJoin(table.match, eq(table.match.id, table.stageNode.matchId))
 		.where(
 			conditions.organizerIds
 				? inArray(table.eventOrganizer.organizerId, conditions.organizerIds)
@@ -207,6 +217,27 @@ export async function getEvents(
 				url: string;
 				label?: string;
 			}>;
+			stages: Array<{
+				id: number;
+				title: string;
+				stage: string;
+				format: string;
+				rounds: Array<{
+					id: number;
+					type: string;
+					title: string;
+					bracket: string;
+					parallelGroup: number;
+					nodes: Array<{
+						id: number;
+						matchId: string;
+						dependencies: Array<{
+							dependencyMatchId: string;
+							outcome: string;
+						}>;
+					}>;
+				}>;
+			}>;
 		}
 	>();
 
@@ -218,7 +249,8 @@ export async function getEvents(
 				organizers: [],
 				teamPlayers: [],
 				results: [],
-				websites: []
+				websites: [],
+				stages: []
 			});
 		}
 		const eventData = eventsMap.get(result.eventId)!;
@@ -253,25 +285,38 @@ export async function getEvents(
 
 	// Then process the main event data
 	eventsWithOrganizers.forEach(
-		({ event, organizer, eventTeamPlayer, team, player, eventWebsite }) => {
+		({
+			event,
+			organizer,
+			eventTeamPlayer,
+			team,
+			player,
+			eventWebsite,
+			stage,
+			stageRound,
+			stageNode,
+			stageNodeDependency
+		}) => {
 			if (!eventsMap.has(event.id)) {
 				eventsMap.set(event.id, {
 					event,
 					organizers: [],
 					teamPlayers: [],
 					results: [],
-					websites: []
+					websites: [],
+					stages: []
 				});
 			}
+			const eventData = eventsMap.get(event.id)!;
+
 			if (organizer) {
-				const eventData = eventsMap.get(event.id)!;
 				// Only add the organizer if it's not already in the array
 				if (!eventData.organizers.some((o) => o.id === organizer.id)) {
 					eventData.organizers.push(organizer);
 				}
 			}
+
 			if (eventTeamPlayer && team && player) {
-				const eventData = eventsMap.get(event.id)!;
 				// Check if this team-player combination already exists
 				const exists = eventData.teamPlayers.some(
 					(tp) => tp.team.id === team.id && tp.player.id === player.id
@@ -284,8 +329,8 @@ export async function getEvents(
 					});
 				}
 			}
+
 			if (eventWebsite) {
-				const eventData = eventsMap.get(event.id)!;
 				// Only add the website if it's not already in the array
 				if (!eventData.websites.some((w) => w.url === eventWebsite.url)) {
 					eventData.websites.push({
@@ -294,12 +339,84 @@ export async function getEvents(
 					});
 				}
 			}
+
+			if (stage) {
+				// Check if this stage already exists
+				const existingStage = eventData.stages.find((s) => s.id === stage.id);
+				if (!existingStage) {
+					eventData.stages.push({
+						id: stage.id,
+						title: stage.title,
+						stage: stage.stage,
+						format: stage.format,
+						rounds: []
+					});
+				}
+			}
+
+			if (stageRound) {
+				const stage = eventData.stages.find((s) => s.id === stageRound.stageId);
+				if (stage) {
+					// Check if this round already exists
+					const existingRound = stage.rounds.find((r) => r.id === stageRound.id);
+					if (!existingRound) {
+						stage.rounds.push({
+							id: stageRound.id,
+							type: stageRound.type,
+							title: stageRound.title || '',
+							bracket: stageRound.bracket || '',
+							parallelGroup: stageRound.parallelGroup || 1,
+							nodes: []
+						});
+					}
+				}
+			}
+
+			if (stageNode) {
+				const stage = eventData.stages.find((s) => s.id === stageNode.stageId);
+				if (stage) {
+					const round = stage.rounds.find((r) => r.id === stageNode.roundId);
+					if (round) {
+						// Check if this node already exists
+						const existingNode = round.nodes.find((n) => n.id === stageNode.id);
+						if (!existingNode) {
+							round.nodes.push({
+								id: stageNode.id,
+								matchId: stageNode.matchId,
+								dependencies: []
+							});
+						}
+					}
+				}
+			}
+
+			if (stageNodeDependency) {
+				const stage = eventData.stages.find((s) => s.id === stageNode?.stageId);
+				if (stage) {
+					const round = stage.rounds.find((r) => r.id === stageNode?.roundId);
+					if (round) {
+						const node = round.nodes.find((n) => n.id === stageNodeDependency.nodeId);
+						if (node) {
+							// Check if this dependency already exists
+							const existingDependency = node.dependencies.find(
+								(d) => d.dependencyMatchId === stageNodeDependency.dependencyMatchId
+							);
+							if (!existingDependency) {
+								node.dependencies.push({
+									dependencyMatchId: stageNodeDependency.dependencyMatchId,
+									outcome: stageNodeDependency.outcome
+								});
+							}
+						}
+					}
+				}
+			}
 		}
 	);
 
 	const events = await Promise.all(
 		Array.from(eventsMap.values()).map(
-			async ({ event, organizers, teamPlayers, results, websites }) => ({
+			async ({ event, organizers, teamPlayers, results, websites, stages }) => ({
 				...event,
 				organizers,
 				imageURL: await processImageURL(event.image),
@@ -316,7 +433,51 @@ export async function getEvents(
 								}))
 							)
 						: undefined,
-				websites: websites.length > 0 ? websites : undefined
+				websites: websites.length > 0 ? websites : undefined,
+				stages:
+					stages.length > 0
+						? stages.map((stage) => ({
+								...stage,
+								stage: stage.stage as 'group' | 'qualifier' | 'playoff' | 'showmatch',
+								format: stage.format as 'single' | 'double' | 'swiss' | 'round-robin',
+								matches: [],
+								structure: {
+									rounds: stage.rounds.map((round) => ({
+										...round,
+										type: round.type as
+											| 'quarterfinals'
+											| 'semifinals'
+											| 'final'
+											| 'top16'
+											| 'group'
+											| 'thirdplace'
+											| 'lower'
+											| 'grandfinal',
+										title: {
+											en: round.title,
+											es: round.title,
+											zh: round.title,
+											ko: round.title,
+											ja: round.title,
+											'pt-br': round.title,
+											de: round.title,
+											ru: round.title,
+											'zh-tw': round.title,
+											vi: round.title,
+											id: round.title,
+											fr: round.title
+										}
+									})),
+									nodes: stage.rounds.flatMap((round) =>
+										round.nodes.map((node) => ({
+											...node,
+											round: round.id,
+											matchId: parseInt(node.matchId)
+										}))
+									)
+								}
+							}))
+						: undefined
 			})
 		)
 	);
@@ -481,7 +642,7 @@ export async function getEvents(
 
 			return {
 				...event,
-				stages: [],
+				stages: event.stages || [],
 				organizers:
 					event.organizers.length > 0
 						? await Promise.all(event.organizers.map(convertOrganizer))

@@ -8,16 +8,26 @@ export async function seed() {
 	// Clear only game-related tables, preserving user data
 	console.info('[SEED] Clearing existing game data...');
 	// Delete child records first
-	await db.delete(schema.matchMap);
-	console.info('[SEED] - Deleted matchMap');
-	await db.delete(schema.matchTeam);
-	console.info('[SEED] - Deleted matchTeam');
 	await db.delete(schema.gamePlayerScore);
 	console.info('[SEED] - Deleted gamePlayerScore');
 	await db.delete(schema.gameTeam);
 	console.info('[SEED] - Deleted gameTeam');
 	await db.delete(schema.game);
 	console.info('[SEED] - Deleted game');
+	await db.delete(schema.matchMap);
+	console.info('[SEED] - Deleted matchMap');
+	await db.delete(schema.matchTeam);
+	console.info('[SEED] - Deleted matchTeam');
+	await db.delete(schema.stageNodeDependency);
+	console.info('[SEED] - Deleted stageNodeDependency');
+	await db.delete(schema.stageNode);
+	console.info('[SEED] - Deleted stageNode');
+	await db.delete(schema.stageRound);
+	console.info('[SEED] - Deleted stageRound');
+	await db.delete(schema.match);
+	console.info('[SEED] - Deleted match');
+	await db.delete(schema.stage);
+	console.info('[SEED] - Deleted stage');
 	await db.delete(schema.eventTeamPlayer);
 	console.info('[SEED] - Deleted eventTeamPlayer');
 	await db.delete(schema.eventOrganizer);
@@ -26,10 +36,14 @@ export async function seed() {
 	console.info('[SEED] - Deleted eventResult');
 	await db.delete(schema.eventWebsite);
 	console.info('[SEED] - Deleted eventWebsite');
+	await db.delete(schema.event);
+	console.info('[SEED] - Deleted event');
 	await db.delete(schema.teamPlayer);
 	console.info('[SEED] - Deleted teamPlayer');
 	await db.delete(schema.teamAlias);
 	console.info('[SEED] - Deleted teamAlias');
+	await db.delete(schema.team);
+	console.info('[SEED] - Deleted team');
 	await db.delete(schema.playerAlias);
 	console.info('[SEED] - Deleted playerAlias');
 	await db.delete(schema.playerAdditionalNationality);
@@ -38,25 +52,12 @@ export async function seed() {
 	console.info('[SEED] - Deleted player_social_account');
 	await db.delete(schema.gameAccount);
 	console.info('[SEED] - Deleted gameAccount');
+	await db.delete(schema.player);
+	console.info('[SEED] - Deleted player');
 	await db.delete(schema.discordServerTag);
 	console.info('[SEED] - Deleted discordServerTag');
 	await db.delete(schema.discordServer);
 	console.info('[SEED] - Deleted discordServer');
-	// Delete match records before stages
-	await db.delete(schema.match);
-	console.info('[SEED] - Deleted match');
-	// Delete stages before events
-	await db.delete(schema.stage);
-	console.info('[SEED] - Deleted stage');
-	// Delete events before teams and organizers
-	await db.delete(schema.event);
-	console.info('[SEED] - Deleted event');
-	// Delete teams and players
-	await db.delete(schema.team);
-	console.info('[SEED] - Deleted team');
-	await db.delete(schema.player);
-	console.info('[SEED] - Deleted player');
-	// Delete organizers last
 	await db.delete(schema.organizer);
 	console.info('[SEED] - Deleted organizer');
 	// Preserve user-related tables: user, role, userRole, session, editHistory
@@ -781,7 +782,7 @@ export async function seed() {
 
 	console.log('[SEED] Seeding matches...');
 	const MATCHES = [
-		// Qualifier matches
+		// Event 1: Open Qualifiers
 		{
 			id: randomUUID(),
 			format: 'BO1',
@@ -792,7 +793,17 @@ export async function seed() {
 			format: 'BO1',
 			stageId: STAGES[0].id
 		},
-		// Group Stage A matches
+		{
+			id: randomUUID(),
+			format: 'BO1',
+			stageId: STAGES[0].id
+		},
+		{
+			id: randomUUID(),
+			format: 'BO1',
+			stageId: STAGES[0].id
+		},
+		// Event 1: Group Stage A
 		{
 			id: randomUUID(),
 			format: 'BO3',
@@ -803,7 +814,17 @@ export async function seed() {
 			format: 'BO3',
 			stageId: STAGES[1].id
 		},
-		// Group Stage B matches
+		{
+			id: randomUUID(),
+			format: 'BO3',
+			stageId: STAGES[1].id
+		},
+		{
+			id: randomUUID(),
+			format: 'BO3',
+			stageId: STAGES[1].id
+		},
+		// Event 1: Group Stage B
 		{
 			id: randomUUID(),
 			format: 'BO3',
@@ -814,13 +835,38 @@ export async function seed() {
 			format: 'BO3',
 			stageId: STAGES[2].id
 		},
-		// Playoff matches
+		{
+			id: randomUUID(),
+			format: 'BO3',
+			stageId: STAGES[2].id
+		},
+		{
+			id: randomUUID(),
+			format: 'BO3',
+			stageId: STAGES[2].id
+		},
+		// Event 1: Playoffs
 		{
 			id: randomUUID(),
 			format: 'BO5',
 			stageId: STAGES[3].id
 		},
-		// Swiss Stage matches
+		{
+			id: randomUUID(),
+			format: 'BO5',
+			stageId: STAGES[3].id
+		},
+		{
+			id: randomUUID(),
+			format: 'BO5',
+			stageId: STAGES[3].id
+		},
+		{
+			id: randomUUID(),
+			format: 'BO5',
+			stageId: STAGES[3].id
+		},
+		// Event 2: Swiss Stage
 		{
 			id: randomUUID(),
 			format: 'BO3',
@@ -831,31 +877,61 @@ export async function seed() {
 			format: 'BO3',
 			stageId: STAGES[4].id
 		},
-		// Quarter Finals
+		{
+			id: randomUUID(),
+			format: 'BO3',
+			stageId: STAGES[4].id
+		},
+		{
+			id: randomUUID(),
+			format: 'BO3',
+			stageId: STAGES[4].id
+		},
+		// Event 2: Quarter Finals
 		{
 			id: randomUUID(),
 			format: 'BO3',
 			stageId: STAGES[5].id
 		},
-		// Semi Finals
+		{
+			id: randomUUID(),
+			format: 'BO3',
+			stageId: STAGES[5].id
+		},
+		{
+			id: randomUUID(),
+			format: 'BO3',
+			stageId: STAGES[5].id
+		},
+		{
+			id: randomUUID(),
+			format: 'BO3',
+			stageId: STAGES[5].id
+		},
+		// Event 2: Semi Finals
 		{
 			id: randomUUID(),
 			format: 'BO5',
 			stageId: STAGES[6].id
 		},
-		// Grand Finals
+		{
+			id: randomUUID(),
+			format: 'BO5',
+			stageId: STAGES[6].id
+		},
+		// Event 2: Grand Finals
 		{
 			id: randomUUID(),
 			format: 'BO5',
 			stageId: STAGES[7].id
 		},
-		// Showmatch
+		// Event 3: Showmatch
 		{
 			id: randomUUID(),
 			format: 'BO1',
 			stageId: STAGES[8].id
 		},
-		// Regional Qualifier
+		// Event 4: Regional Qualifier
 		{
 			id: randomUUID(),
 			format: 'BO3',
@@ -866,7 +942,17 @@ export async function seed() {
 			format: 'BO3',
 			stageId: STAGES[9].id
 		},
-		// Major Group Stage
+		{
+			id: randomUUID(),
+			format: 'BO3',
+			stageId: STAGES[9].id
+		},
+		{
+			id: randomUUID(),
+			format: 'BO3',
+			stageId: STAGES[9].id
+		},
+		// Event 5: Group Stage
 		{
 			id: randomUUID(),
 			format: 'BO3',
@@ -877,7 +963,32 @@ export async function seed() {
 			format: 'BO3',
 			stageId: STAGES[10].id
 		},
-		// Major Playoffs
+		{
+			id: randomUUID(),
+			format: 'BO3',
+			stageId: STAGES[10].id
+		},
+		{
+			id: randomUUID(),
+			format: 'BO3',
+			stageId: STAGES[10].id
+		},
+		// Event 5: Playoffs
+		{
+			id: randomUUID(),
+			format: 'BO5',
+			stageId: STAGES[11].id
+		},
+		{
+			id: randomUUID(),
+			format: 'BO5',
+			stageId: STAGES[11].id
+		},
+		{
+			id: randomUUID(),
+			format: 'BO5',
+			stageId: STAGES[11].id
+		},
 		{
 			id: randomUUID(),
 			format: 'BO5',
@@ -885,6 +996,551 @@ export async function seed() {
 		}
 	];
 	await db.insert(schema.match).values(MATCHES);
+
+	console.log('[SEED] Seeding stage rounds...');
+	const STAGE_ROUNDS = [
+		// Example stage rounds for Event 1 (Open Qualifiers)
+		{
+			id: 1,
+			stageId: STAGES[0].id,
+			type: 'round' as const,
+			title: 'Qualifier Round 1',
+			bracket: 'upper' as const,
+			parallelGroup: 1
+		},
+		{
+			id: 2,
+			stageId: STAGES[0].id,
+			type: 'round' as const,
+			title: 'Qualifier Round 2',
+			bracket: 'upper' as const,
+			parallelGroup: 1
+		},
+		// Example stage rounds for Event 1 (Group Stage A)
+		{
+			id: 3,
+			stageId: STAGES[1].id,
+			type: 'group' as const,
+			title: 'Group A Round 1',
+			bracket: 'group' as const,
+			parallelGroup: 1
+		},
+		{
+			id: 4,
+			stageId: STAGES[1].id,
+			type: 'group' as const,
+			title: 'Group A Round 2',
+			bracket: 'group' as const,
+			parallelGroup: 1
+		},
+		// Example stage rounds for Event 1 (Group Stage B)
+		{
+			id: 5,
+			stageId: STAGES[2].id,
+			type: 'group' as const,
+			title: 'Group B Round 1',
+			bracket: 'group' as const,
+			parallelGroup: 1
+		},
+		{
+			id: 6,
+			stageId: STAGES[2].id,
+			type: 'group' as const,
+			title: 'Group B Round 2',
+			bracket: 'group' as const,
+			parallelGroup: 1
+		},
+		// Example stage rounds for Event 1 (Playoffs)
+		{
+			id: 7,
+			stageId: STAGES[3].id,
+			type: 'quarterfinals' as const,
+			title: 'Quarter Finals',
+			bracket: 'upper' as const,
+			parallelGroup: 1
+		},
+		{
+			id: 8,
+			stageId: STAGES[3].id,
+			type: 'semifinals' as const,
+			title: 'Semi Finals',
+			bracket: 'upper' as const,
+			parallelGroup: 1
+		},
+		{
+			id: 9,
+			stageId: STAGES[3].id,
+			type: 'final' as const,
+			title: 'Grand Finals',
+			bracket: 'upper' as const,
+			parallelGroup: 1
+		},
+		// Example stage rounds for Event 2 (Swiss Stage)
+		{
+			id: 10,
+			stageId: STAGES[4].id,
+			type: 'round' as const,
+			title: 'Swiss Round 1',
+			bracket: 'group' as const,
+			parallelGroup: 1
+		},
+		{
+			id: 11,
+			stageId: STAGES[4].id,
+			type: 'round' as const,
+			title: 'Swiss Round 2',
+			bracket: 'group' as const,
+			parallelGroup: 1
+		},
+		// Example stage rounds for Event 2 (Quarter Finals)
+		{
+			id: 12,
+			stageId: STAGES[5].id,
+			type: 'quarterfinals' as const,
+			title: 'Quarter Finals',
+			bracket: 'upper' as const,
+			parallelGroup: 1
+		},
+		// Example stage rounds for Event 2 (Semi Finals)
+		{
+			id: 13,
+			stageId: STAGES[6].id,
+			type: 'semifinals' as const,
+			title: 'Semi Finals',
+			bracket: 'upper' as const,
+			parallelGroup: 1
+		},
+		// Example stage rounds for Event 2 (Grand Finals)
+		{
+			id: 14,
+			stageId: STAGES[7].id,
+			type: 'final' as const,
+			title: 'Grand Finals',
+			bracket: 'upper' as const,
+			parallelGroup: 1
+		},
+		// Example stage rounds for Event 3 (Showmatch)
+		{
+			id: 15,
+			stageId: STAGES[8].id,
+			type: 'round' as const,
+			title: 'Celebration Showmatch',
+			bracket: 'upper' as const,
+			parallelGroup: 1
+		},
+		// Example stage rounds for Event 4 (Regional Qualifier)
+		{
+			id: 16,
+			stageId: STAGES[9].id,
+			type: 'round' as const,
+			title: 'Qualifier Round 1',
+			bracket: 'upper' as const,
+			parallelGroup: 1
+		},
+		{
+			id: 17,
+			stageId: STAGES[9].id,
+			type: 'round' as const,
+			title: 'Qualifier Round 2',
+			bracket: 'upper' as const,
+			parallelGroup: 1
+		},
+		// Example stage rounds for Event 5 (Group Stage)
+		{
+			id: 18,
+			stageId: STAGES[10].id,
+			type: 'round' as const,
+			title: 'Group Stage Round 1',
+			bracket: 'group' as const,
+			parallelGroup: 1
+		},
+		{
+			id: 19,
+			stageId: STAGES[10].id,
+			type: 'round' as const,
+			title: 'Group Stage Round 2',
+			bracket: 'group' as const,
+			parallelGroup: 1
+		},
+		// Example stage rounds for Event 5 (Playoffs)
+		{
+			id: 20,
+			stageId: STAGES[11].id,
+			type: 'quarterfinals' as const,
+			title: 'Quarter Finals',
+			bracket: 'upper' as const,
+			parallelGroup: 1
+		},
+		{
+			id: 21,
+			stageId: STAGES[11].id,
+			type: 'semifinals' as const,
+			title: 'Semi Finals',
+			bracket: 'upper' as const,
+			parallelGroup: 1
+		},
+		{
+			id: 22,
+			stageId: STAGES[11].id,
+			type: 'final' as const,
+			title: 'Grand Finals',
+			bracket: 'upper' as const,
+			parallelGroup: 1
+		}
+	];
+	await db.insert(schema.stageRound).values(STAGE_ROUNDS);
+
+	console.log('[SEED] Seeding stage nodes...');
+	const STAGE_NODES = [
+		// Event 1: Open Qualifiers
+		{
+			id: 1,
+			stageId: STAGES[0].id,
+			matchId: MATCHES[0].id,
+			roundId: STAGE_ROUNDS[0].id
+		},
+		{
+			id: 2,
+			stageId: STAGES[0].id,
+			matchId: MATCHES[1].id,
+			roundId: STAGE_ROUNDS[0].id
+		},
+		{
+			id: 3,
+			stageId: STAGES[0].id,
+			matchId: MATCHES[2].id,
+			roundId: STAGE_ROUNDS[1].id
+		},
+		{
+			id: 4,
+			stageId: STAGES[0].id,
+			matchId: MATCHES[3].id,
+			roundId: STAGE_ROUNDS[1].id
+		},
+		// Event 1: Group Stage A
+		{
+			id: 5,
+			stageId: STAGES[1].id,
+			matchId: MATCHES[4].id,
+			roundId: STAGE_ROUNDS[2].id
+		},
+		{
+			id: 6,
+			stageId: STAGES[1].id,
+			matchId: MATCHES[5].id,
+			roundId: STAGE_ROUNDS[2].id
+		},
+		{
+			id: 7,
+			stageId: STAGES[1].id,
+			matchId: MATCHES[6].id,
+			roundId: STAGE_ROUNDS[3].id
+		},
+		{
+			id: 8,
+			stageId: STAGES[1].id,
+			matchId: MATCHES[7].id,
+			roundId: STAGE_ROUNDS[3].id
+		},
+		// Event 1: Group Stage B
+		{
+			id: 9,
+			stageId: STAGES[2].id,
+			matchId: MATCHES[8].id,
+			roundId: STAGE_ROUNDS[4].id
+		},
+		{
+			id: 10,
+			stageId: STAGES[2].id,
+			matchId: MATCHES[9].id,
+			roundId: STAGE_ROUNDS[4].id
+		},
+		{
+			id: 11,
+			stageId: STAGES[2].id,
+			matchId: MATCHES[10].id,
+			roundId: STAGE_ROUNDS[5].id
+		},
+		{
+			id: 12,
+			stageId: STAGES[2].id,
+			matchId: MATCHES[11].id,
+			roundId: STAGE_ROUNDS[5].id
+		},
+		// Event 1: Playoffs
+		{
+			id: 13,
+			stageId: STAGES[3].id,
+			matchId: MATCHES[12].id,
+			roundId: STAGE_ROUNDS[6].id
+		},
+		{
+			id: 14,
+			stageId: STAGES[3].id,
+			matchId: MATCHES[13].id,
+			roundId: STAGE_ROUNDS[7].id
+		},
+		{
+			id: 15,
+			stageId: STAGES[3].id,
+			matchId: MATCHES[14].id,
+			roundId: STAGE_ROUNDS[8].id
+		},
+		{
+			id: 16,
+			stageId: STAGES[3].id,
+			matchId: MATCHES[15].id,
+			roundId: STAGE_ROUNDS[8].id
+		},
+		// Event 2: Swiss Stage
+		{
+			id: 17,
+			stageId: STAGES[4].id,
+			matchId: MATCHES[16].id,
+			roundId: STAGE_ROUNDS[9].id
+		},
+		{
+			id: 18,
+			stageId: STAGES[4].id,
+			matchId: MATCHES[17].id,
+			roundId: STAGE_ROUNDS[9].id
+		},
+		{
+			id: 19,
+			stageId: STAGES[4].id,
+			matchId: MATCHES[18].id,
+			roundId: STAGE_ROUNDS[10].id
+		},
+		{
+			id: 20,
+			stageId: STAGES[4].id,
+			matchId: MATCHES[19].id,
+			roundId: STAGE_ROUNDS[10].id
+		},
+		// Event 2: Quarter Finals
+		{
+			id: 21,
+			stageId: STAGES[5].id,
+			matchId: MATCHES[20].id,
+			roundId: STAGE_ROUNDS[11].id
+		},
+		{
+			id: 22,
+			stageId: STAGES[5].id,
+			matchId: MATCHES[21].id,
+			roundId: STAGE_ROUNDS[11].id
+		},
+		{
+			id: 23,
+			stageId: STAGES[5].id,
+			matchId: MATCHES[22].id,
+			roundId: STAGE_ROUNDS[11].id
+		},
+		{
+			id: 24,
+			stageId: STAGES[5].id,
+			matchId: MATCHES[23].id,
+			roundId: STAGE_ROUNDS[11].id
+		},
+		// Event 2: Semi Finals
+		{
+			id: 25,
+			stageId: STAGES[6].id,
+			matchId: MATCHES[24].id,
+			roundId: STAGE_ROUNDS[12].id
+		},
+		{
+			id: 26,
+			stageId: STAGES[6].id,
+			matchId: MATCHES[25].id,
+			roundId: STAGE_ROUNDS[12].id
+		},
+		// Event 2: Grand Finals
+		{
+			id: 27,
+			stageId: STAGES[7].id,
+			matchId: MATCHES[26].id,
+			roundId: STAGE_ROUNDS[13].id
+		},
+		// Event 3: Showmatch
+		{
+			id: 28,
+			stageId: STAGES[8].id,
+			matchId: MATCHES[27].id,
+			roundId: STAGE_ROUNDS[14].id
+		},
+		// Event 4: Regional Qualifier
+		{
+			id: 29,
+			stageId: STAGES[9].id,
+			matchId: MATCHES[28].id,
+			roundId: STAGE_ROUNDS[15].id
+		},
+		{
+			id: 30,
+			stageId: STAGES[9].id,
+			matchId: MATCHES[29].id,
+			roundId: STAGE_ROUNDS[15].id
+		},
+		{
+			id: 31,
+			stageId: STAGES[9].id,
+			matchId: MATCHES[30].id,
+			roundId: STAGE_ROUNDS[16].id
+		},
+		{
+			id: 32,
+			stageId: STAGES[9].id,
+			matchId: MATCHES[31].id,
+			roundId: STAGE_ROUNDS[16].id
+		},
+		// Event 5: Group Stage
+		{
+			id: 33,
+			stageId: STAGES[10].id,
+			matchId: MATCHES[32].id,
+			roundId: STAGE_ROUNDS[17].id
+		},
+		{
+			id: 34,
+			stageId: STAGES[10].id,
+			matchId: MATCHES[33].id,
+			roundId: STAGE_ROUNDS[17].id
+		},
+		{
+			id: 35,
+			stageId: STAGES[10].id,
+			matchId: MATCHES[34].id,
+			roundId: STAGE_ROUNDS[18].id
+		},
+		{
+			id: 36,
+			stageId: STAGES[10].id,
+			matchId: MATCHES[35].id,
+			roundId: STAGE_ROUNDS[18].id
+		},
+		// Event 5: Playoffs
+		{
+			id: 37,
+			stageId: STAGES[11].id,
+			matchId: MATCHES[36].id,
+			roundId: STAGE_ROUNDS[19].id
+		},
+		{
+			id: 38,
+			stageId: STAGES[11].id,
+			matchId: MATCHES[37].id,
+			roundId: STAGE_ROUNDS[20].id
+		},
+		{
+			id: 39,
+			stageId: STAGES[11].id,
+			matchId: MATCHES[38].id,
+			roundId: STAGE_ROUNDS[21].id
+		},
+		{
+			id: 40,
+			stageId: STAGES[11].id,
+			matchId: MATCHES[39].id,
+			roundId: STAGE_ROUNDS[21].id
+		}
+	];
+	await db.insert(schema.stageNode).values(STAGE_NODES);
+
+	console.log('[SEED] Seeding stage node dependencies...');
+	const STAGE_NODE_DEPENDENCIES = [
+		// Example dependencies for Event 1 (Open Qualifiers)
+		{
+			id: 1,
+			nodeId: STAGE_NODES[1].id,
+			dependencyMatchId: MATCHES[0].id,
+			outcome: 'winner' as const
+		},
+		// Example dependencies for Event 1 (Group Stage A)
+		{
+			id: 2,
+			nodeId: STAGE_NODES[3].id,
+			dependencyMatchId: MATCHES[2].id,
+			outcome: 'winner' as const
+		},
+		// Example dependencies for Event 1 (Group Stage B)
+		{
+			id: 3,
+			nodeId: STAGE_NODES[5].id,
+			dependencyMatchId: MATCHES[4].id,
+			outcome: 'winner' as const
+		},
+		// Example dependencies for Event 1 (Playoffs)
+		{
+			id: 4,
+			nodeId: STAGE_NODES[7].id,
+			dependencyMatchId: MATCHES[6].id,
+			outcome: 'winner' as const
+		},
+		{
+			id: 5,
+			nodeId: STAGE_NODES[8].id,
+			dependencyMatchId: MATCHES[7].id,
+			outcome: 'winner' as const
+		},
+		// Example dependencies for Event 2 (Swiss Stage)
+		{
+			id: 6,
+			nodeId: STAGE_NODES[10].id,
+			dependencyMatchId: MATCHES[9].id,
+			outcome: 'winner' as const
+		},
+		// Example dependencies for Event 2 (Quarter Finals)
+		{
+			id: 7,
+			nodeId: STAGE_NODES[12].id,
+			dependencyMatchId: MATCHES[11].id,
+			outcome: 'winner' as const
+		},
+		// Example dependencies for Event 2 (Semi Finals)
+		{
+			id: 8,
+			nodeId: STAGE_NODES[13].id,
+			dependencyMatchId: MATCHES[12].id,
+			outcome: 'winner' as const
+		},
+		// Example dependencies for Event 2 (Grand Finals)
+		{
+			id: 9,
+			nodeId: STAGE_NODES[14].id,
+			dependencyMatchId: MATCHES[13].id,
+			outcome: 'winner' as const
+		},
+		// Example dependencies for Event 3 (Showmatch)
+		{
+			id: 10,
+			nodeId: STAGE_NODES[15].id,
+			dependencyMatchId: MATCHES[14].id,
+			outcome: 'winner' as const
+		},
+		// Example dependencies for Event 4 (Regional Qualifier)
+		{
+			id: 11,
+			nodeId: STAGE_NODES[17].id,
+			dependencyMatchId: MATCHES[16].id,
+			outcome: 'winner' as const
+		},
+		// Example dependencies for Event 5 (Group Stage)
+		{
+			id: 12,
+			nodeId: STAGE_NODES[19].id,
+			dependencyMatchId: MATCHES[18].id,
+			outcome: 'winner' as const
+		},
+		// Example dependencies for Event 5 (Playoffs)
+		{
+			id: 13,
+			nodeId: STAGE_NODES[21].id,
+			dependencyMatchId: MATCHES[20].id,
+			outcome: 'winner' as const
+		}
+	];
+	await db.insert(schema.stageNodeDependency).values(STAGE_NODE_DEPENDENCIES);
 
 	console.log('[SEED] Seeding match teams...');
 	await db.insert(schema.matchTeam).values([
