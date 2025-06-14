@@ -7,6 +7,7 @@
 	import Combobox from '$lib/components/Combobox.svelte';
 	import VideoInput from '$lib/components/forms/VideoInput.svelte';
 	import ResultInput from '$lib/components/forms/ResultInput.svelte';
+	import WebsiteInput from '$lib/components/forms/WebsiteInput.svelte';
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import IconParkSolidAdd from '~icons/icon-park-solid/add';
 	import IconWarning from '~icons/ion/warning';
@@ -719,62 +720,7 @@
 
 		<div class="mb-6">
 			<h3 class="mb-4 text-lg font-semibold">{m.links()}</h3>
-			<div class="space-y-4">
-				{#each newEvent.websites as website, index}
-					<div class="flex items-center gap-4 rounded-lg border border-slate-700 bg-slate-800 p-4">
-						<div class="flex-1">
-							<label
-								class="mb-2 block text-sm font-medium text-slate-300"
-								for="website-url-{index}"
-							>
-								{m.url()}
-							</label>
-							<input
-								id="website-url-{index}"
-								type="url"
-								bind:value={website.url}
-								class="w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-								required
-							/>
-						</div>
-						<div class="flex-1">
-							<label
-								class="mb-2 block text-sm font-medium text-slate-300"
-								for="website-label-{index}"
-							>
-								{m.label()}
-							</label>
-							<input
-								id="website-label-{index}"
-								type="text"
-								bind:value={website.label}
-								placeholder={m.none()}
-								class="w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-							/>
-						</div>
-						<button
-							type="button"
-							class="mt-6 text-red-500 hover:text-red-400"
-							onclick={() => {
-								newEvent.websites = newEvent.websites.filter((_: any, i: number) => i !== index);
-							}}
-							title={m.remove()}
-						>
-							<IconParkSolidDelete class="h-5 w-5" />
-						</button>
-					</div>
-				{/each}
-				<button
-					type="button"
-					class="flex items-center gap-2 text-yellow-500 hover:text-yellow-400"
-					onclick={() => {
-						newEvent.websites = [...newEvent.websites, { url: '', label: '' }];
-					}}
-				>
-					<IconParkSolidAdd class="h-5 w-5" />
-					{m.add()}
-				</button>
-			</div>
+			<WebsiteInput bind:websites={newEvent.websites} />
 		</div>
 
 		<div class="mb-6">
