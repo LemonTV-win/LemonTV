@@ -24,6 +24,7 @@
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
+	import { page } from '$app/state';
 	let activeStage = $state<Stage | null>(null);
 
 	$inspect(activeStage);
@@ -255,7 +256,7 @@
 						{#if video.platform === 'twitch'}
 							<li>
 								<iframe
-									src={`https://clips.twitch.tv/embed?clip=${video.url.split('/').pop()}&parent=lemon.mkpo.li`}
+									src={`https://clips.twitch.tv/embed?clip=${video.url.split('/').pop()}&parent=${page.url.host}`}
 									allowfullscreen
 									title={video.title ?? `${data.event.name} - ${video.url}`}
 									frameborder="0"

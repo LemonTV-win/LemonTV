@@ -8,11 +8,9 @@
 	import IconParkSolidCheckOne from '~icons/icon-park-solid/check-one';
 	import IconParkSolidComputer from '~icons/icon-park-solid/computer';
 	import OrganizerChip from '$lib/components/OrganizerChip.svelte';
+	import { page } from '$app/state';
 
 	let { event, detailed = false }: { event: Event; detailed?: boolean } = $props();
-	// TODO:
-	// const HOST = page.url.host;
-	const HOST = 'lemon.mkpo.li';
 
 	let live = $derived(event.status === 'live');
 	let showPopup = $state(false);
@@ -149,7 +147,7 @@
 		{#each event.videos.filter((v) => v.type === 'stream') as stream}
 			{#if stream.platform === 'twitch'}
 				<iframe
-					src={`https://player.twitch.tv/?channel=${stream.url.split('/').pop()}&parent=${HOST}`}
+					src={`https://player.twitch.tv/?channel=${stream.url.split('/').pop()}&parent=${page.url.host}`}
 					height="100%"
 					width="100%"
 					allowfullscreen
