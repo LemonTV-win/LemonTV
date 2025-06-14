@@ -8,6 +8,7 @@
 	import ResultInput from '$lib/components/forms/ResultInput.svelte';
 	import WebsiteInput from '$lib/components/forms/WebsiteInput.svelte';
 	import TeamPlayersInput from '$lib/components/forms/TeamPlayersInput.svelte';
+	import OrganizerInput from '$lib/components/forms/OrganizerInput.svelte';
 	import type { EventResult } from '$lib/data/events';
 
 	let {
@@ -467,30 +468,7 @@
 
 		<div>
 			<label class="block text-sm font-medium text-slate-300" for="organizers">Organizers</label>
-			<div class="flex gap-2">
-				<select
-					id="organizers"
-					name="organizers"
-					bind:value={newEvent.organizers}
-					multiple
-					class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-				>
-					{#each organizers as organizer}
-						<option value={organizer.id}>{organizer.name}</option>
-					{/each}
-				</select>
-				<button
-					type="button"
-					class="mt-1 rounded-md border border-slate-700 px-3 py-2 text-sm text-slate-400 hover:bg-slate-800"
-					onclick={() => (newEvent.organizers = [])}
-					title="Clear all organizers"
-				>
-					Clear
-				</button>
-			</div>
-			<p class="mt-1 text-sm text-slate-400">
-				Hold Ctrl/Cmd to select multiple organizers. You can add organizers later.
-			</p>
+			<OrganizerInput id="organizers" {organizers} bind:selectedOrganizers={newEvent.organizers} />
 		</div>
 
 		<div class="flex items-center">
