@@ -718,20 +718,20 @@
 			</div>
 		</div>
 
-		<div class="mb-6">
-			<h3 class="mb-4 text-lg font-semibold">{m.links()}</h3>
+		<section class="mb-6 flex flex-col gap-4">
+			<h3 class="text-lg font-semibold">{m.links()}</h3>
 			<WebsiteInput bind:websites={newEvent.websites} />
-		</div>
+		</section>
 
-		<div class="mb-6">
-			<h3 class="mb-4 text-lg font-semibold">{m.results()}</h3>
+		<section class="mb-6 flex flex-col gap-4">
+			<h3 class="text-lg font-semibold">{m.results()}</h3>
 			<ResultInput bind:results {teams} {selectedTeams} />
-		</div>
+		</section>
 
-		<div class="flex flex-col gap-4">
-			<h3 class="text-xl font-bold text-white">{m.videos()}</h3>
+		<section class="mb-6 flex flex-col gap-4">
+			<h3 class="text-lg font-semibold">{m.videos()}</h3>
 			<VideoInput bind:videos={newEvent.videos} />
-		</div>
+		</section>
 	</div>
 
 	<div class="mt-6 flex justify-end gap-4 border-t border-slate-700 pt-4">
