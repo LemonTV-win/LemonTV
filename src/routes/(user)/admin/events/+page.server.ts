@@ -11,6 +11,7 @@ import {
 	type EventTeamPlayerData,
 	toDatabaseEvent,
 	toDatabaseEventOrganizers,
+	toDatabaseEventVideos,
 	getEventChanges,
 	getOrganizerChanges,
 	toEventWithOrganizers,
@@ -52,6 +53,8 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		db.select().from(table.player),
 		db.select().from(table.teamPlayer)
 	]);
+
+	console.info('[Admin][Events][Load] Events:', events);
 
 	return {
 		events,
@@ -131,8 +134,11 @@ export const actions = {
 			capacity: parseInt(formData.get('capacity') as string),
 			date: formData.get('date') as string,
 			organizerIds: (formData.getAll('organizers') as string[]) || [],
-			websites: JSON.parse((formData.get('websites') as string) || '[]')
+			websites: JSON.parse((formData.get('websites') as string) || '[]'),
+			videos: JSON.parse((formData.get('videos') as string) || '[]')
 		};
+
+		console.info('[Admin][Events][Create] Event data:', eventData);
 
 		if (
 			!eventData.name ||
@@ -171,24 +177,13 @@ export const actions = {
 
 			// Handle event organizers
 			if (eventData.organizerIds && eventData.organizerIds.length > 0) {
-				// First remove all existing organizers
-				await db.delete(table.eventOrganizer).where(eq(table.eventOrganizer.eventId, eventId));
-
-				// Then add the new organizers
 				await db
 					.insert(table.eventOrganizer)
 					.values(toDatabaseEventOrganizers(eventId, eventData.organizerIds));
-			} else {
-				// If no organizers are selected, remove all existing organizers
-				await db.delete(table.eventOrganizer).where(eq(table.eventOrganizer.eventId, eventId));
 			}
 
 			// Handle event websites
 			if (eventData.websites && eventData.websites.length > 0) {
-				// First remove all existing websites
-				await db.delete(table.eventWebsite).where(eq(table.eventWebsite.eventId, eventId));
-
-				// Then add the new websites
 				const websiteValues = eventData.websites
 					.filter((website) => website.url) // Only include websites with URLs
 					.map((website) => ({
@@ -203,9 +198,20 @@ export const actions = {
 				if (websiteValues.length > 0) {
 					await db.insert(table.eventWebsite).values(websiteValues);
 				}
-			} else {
-				// If no websites are provided, remove all existing websites
-				await db.delete(table.eventWebsite).where(eq(table.eventWebsite.eventId, eventId));
+			}
+
+			// Handle event videos
+			if (eventData.videos && eventData.videos.length > 0) {
+				const videoValues = toDatabaseEventVideos(eventId, eventData.videos).map((video) => ({
+					...video,
+					id: crypto.randomUUID(),
+					createdAt: new Date(),
+					updatedAt: new Date()
+				}));
+
+				if (videoValues.length > 0) {
+					await db.insert(table.eventVideo).values(videoValues);
+				}
 			}
 
 			// Handle event results
@@ -299,8 +305,11 @@ export const actions = {
 			capacity: parseInt(formData.get('capacity') as string),
 			date: formData.get('date') as string,
 			organizerIds: (formData.getAll('organizers') as string[]) || [],
-			websites: JSON.parse((formData.get('websites') as string) || '[]')
+			websites: JSON.parse((formData.get('websites') as string) || '[]'),
+			videos: JSON.parse((formData.get('videos') as string) || '[]')
 		};
+
+		console.info('[Admin][Events][Update] Event data:', eventData);
 
 		if (
 			!eventData.id ||
@@ -388,6 +397,27 @@ export const actions = {
 			} else {
 				// If no websites are provided, remove all existing websites
 				await db.delete(table.eventWebsite).where(eq(table.eventWebsite.eventId, eventData.id));
+			}
+
+			// Handle event videos
+			if (eventData.videos && eventData.videos.length > 0) {
+				// First remove all existing videos
+				await db.delete(table.eventVideo).where(eq(table.eventVideo.eventId, eventData.id));
+
+				// Then add the new videos
+				const videoValues = toDatabaseEventVideos(eventData.id, eventData.videos).map((video) => ({
+					...video,
+					id: crypto.randomUUID(),
+					createdAt: new Date(),
+					updatedAt: new Date()
+				}));
+
+				if (videoValues.length > 0) {
+					await db.insert(table.eventVideo).values(videoValues);
+				}
+			} else {
+				// If no videos are provided, remove all existing videos
+				await db.delete(table.eventVideo).where(eq(table.eventVideo.eventId, eventData.id));
 			}
 
 			// Handle event results

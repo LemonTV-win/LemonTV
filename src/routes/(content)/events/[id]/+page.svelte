@@ -247,17 +247,17 @@
 				{/each}
 			</div>
 		{/if}
-		{#if data.event.highlights}
+		{#if data.event.videos?.some((v) => v.type === 'clip')}
 			<section>
 				<h2 class="my-4 text-2xl font-bold text-white">{m.highlights()}</h2>
 				<ul class="flex flex-wrap gap-4">
-					{#each data.event.highlights as highlight}
-						{#if highlight.startsWith('https://www.twitch.tv/')}
+					{#each data.event.videos.filter((v) => v.type === 'clip') as video}
+						{#if video.platform === 'twitch'}
 							<li>
 								<iframe
-									src={`https://clips.twitch.tv/embed?clip=${highlight.split('/').pop()}&parent=lemon.mkpo.li`}
+									src={`https://clips.twitch.tv/embed?clip=${video.url.split('/').pop()}&parent=lemon.mkpo.li`}
 									allowfullscreen
-									title={`${data.event.name} - ${highlight}`}
+									title={video.title ?? `${data.event.name} - ${video.url}`}
 									frameborder="0"
 									scrolling="no"
 									height="378"

@@ -32,6 +32,12 @@ export interface CreateEventData {
 	date: string;
 	organizerIds: string[];
 	websites: { url: string; label?: string }[];
+	videos: {
+		type: 'stream' | 'clip' | 'vod';
+		platform: 'twitch' | 'youtube' | 'bilibili';
+		url: string;
+		title?: string;
+	}[];
 }
 
 export interface UpdateEventData extends Partial<CreateEventData> {
@@ -92,6 +98,20 @@ export function toDatabaseEventOrganizers(
 	return organizerIds.map((organizerId) => ({
 		eventId,
 		organizerId
+	}));
+}
+
+// Convert application event data to database event video data
+export function toDatabaseEventVideos(
+	eventId: string,
+	videos: CreateEventData['videos']
+): Omit<typeof table.eventVideo.$inferInsert, 'id' | 'createdAt' | 'updatedAt'>[] {
+	return videos.map((video) => ({
+		eventId,
+		type: video.type,
+		platform: video.platform,
+		url: video.url,
+		title: video.title || null
 	}));
 }
 
@@ -165,6 +185,7 @@ export async function getEvents(
 			team: table.team,
 			player: table.player,
 			eventWebsite: table.eventWebsite,
+			eventVideo: table.eventVideo,
 			stage: table.stage,
 			stageRound: table.stageRound,
 			stageNode: table.stageNode,
@@ -178,6 +199,7 @@ export async function getEvents(
 		.leftJoin(table.team, eq(table.team.id, table.eventTeamPlayer.teamId))
 		.leftJoin(table.player, eq(table.player.id, table.eventTeamPlayer.playerId))
 		.leftJoin(table.eventWebsite, eq(table.eventWebsite.eventId, table.event.id))
+		.leftJoin(table.eventVideo, eq(table.eventVideo.eventId, table.event.id))
 		.leftJoin(table.stage, eq(table.stage.eventId, table.event.id))
 		.leftJoin(table.stageRound, eq(table.stageRound.stageId, table.stage.id))
 		.leftJoin(table.stageNode, eq(table.stageNode.stageId, table.stage.id))
@@ -218,6 +240,12 @@ export async function getEvents(
 				url: string;
 				label?: string;
 			}>;
+			videos: Array<{
+				type: 'stream' | 'clip' | 'vod';
+				platform: 'twitch' | 'youtube' | 'bilibili';
+				url: string;
+				title?: string;
+			}>;
 			stages: Array<{
 				id: number;
 				title: string;
@@ -253,6 +281,7 @@ export async function getEvents(
 				teamPlayers: [],
 				results: [],
 				websites: [],
+				videos: [],
 				stages: [],
 				participants: []
 			});
@@ -296,6 +325,7 @@ export async function getEvents(
 			team,
 			player,
 			eventWebsite,
+			eventVideo,
 			stage,
 			stageRound,
 			stageNode,
@@ -308,6 +338,7 @@ export async function getEvents(
 					teamPlayers: [],
 					results: [],
 					websites: [],
+					videos: [],
 					stages: [],
 					participants: []
 				});
@@ -341,6 +372,18 @@ export async function getEvents(
 					eventData.websites.push({
 						url: eventWebsite.url,
 						label: eventWebsite.label || undefined
+					});
+				}
+			}
+
+			if (eventVideo) {
+				// Only add the video if it's not already in the array
+				if (!eventData.videos.some((v) => v.url === eventVideo.url)) {
+					eventData.videos.push({
+						type: eventVideo.type as 'stream' | 'clip' | 'vod',
+						platform: eventVideo.platform as 'twitch' | 'youtube' | 'bilibili',
+						url: eventVideo.url,
+						title: eventVideo.title || undefined
 					});
 				}
 			}
@@ -422,7 +465,7 @@ export async function getEvents(
 
 	const events = await Promise.all(
 		Array.from(eventsMap.values()).map(
-			async ({ event, organizers, teamPlayers, results, websites, stages }) => {
+			async ({ event, organizers, teamPlayers, results, websites, videos, stages }) => {
 				// Gather all matches for this event from the structure
 				const allMatchIds = new Set<string>();
 				stages.forEach((stage) => {
@@ -489,6 +532,7 @@ export async function getEvents(
 								)
 							: undefined,
 					websites: websites.length > 0 ? websites : undefined,
+					videos: videos.length > 0 ? videos : undefined,
 					stages:
 						stages.length > 0
 							? stages.map((stage) => {
@@ -771,6 +815,12 @@ export async function getEvents(
 				websites: event.websites?.map((website) => ({
 					url: website.url,
 					label: website.label
+				})),
+				videos: event.videos?.map((video) => ({
+					type: video.type,
+					platform: video.platform,
+					url: video.url,
+					title: video.title
 				})),
 				participants: participants,
 				livestreams: [],

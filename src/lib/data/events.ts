@@ -109,12 +109,13 @@ export interface Event {
 	date: string;
 	websites?: LabeledURL[];
 	participants: (EventParticipant | LegacyEventParticipant)[];
-	livestreams?: {
+	videos?: {
+		type: 'stream' | 'clip' | 'vod';
 		platform: 'twitch' | 'youtube' | 'bilibili';
 		url: string;
+		title?: string;
 	}[];
 	results?: LegacyEventResult[] | EventResult[];
-	highlights?: string[];
 }
 
 // const MMC_QUALIFIERS: Stage[] = [
@@ -1831,10 +1832,54 @@ export const events: Event[] = [
 			{ url: 'https://tonamel.com/competition/OU2cd', label: 'Day 1' },
 			{ url: 'https://tonamel.com/competition/Vf3kx', label: 'Day 2' }
 		],
-		livestreams: [
+		videos: [
 			{
+				type: 'stream',
 				platform: 'twitch',
-				url: 'https://www.twitch.tv/kawashimakyuden'
+				url: 'https://www.twitch.tv/kawashimakyuden',
+				title: 'Main Stream'
+			},
+			{
+				type: 'clip',
+				platform: 'twitch',
+				url: 'https://www.twitch.tv/kawashimakyuden/clip/BillowingExuberantPorcupineOSsloth-IVXXOk83_FshmXdA',
+				title: 'Highlight 1'
+			},
+			{
+				type: 'clip',
+				platform: 'twitch',
+				url: 'https://www.twitch.tv/kawashimakyuden/clip/AntsySmilingButterflyWTRuck-lP423TgoTg6O4BSg',
+				title: 'Highlight 2'
+			},
+			{
+				type: 'clip',
+				platform: 'twitch',
+				url: 'https://www.twitch.tv/kawashimakyuden/clip/TriangularAdorableMilkMrDestructoid-PU_ZwmTpJ4PGGDaw',
+				title: 'Highlight 3'
+			},
+			{
+				type: 'clip',
+				platform: 'twitch',
+				url: 'https://www.twitch.tv/kawashimakyuden/clip/SillyObeseCormorantTBTacoLeft-Vc1kG7frQ1bp0czx',
+				title: 'Highlight 4'
+			},
+			{
+				type: 'clip',
+				platform: 'twitch',
+				url: 'https://www.twitch.tv/kawashimakyuden/clip/CarefulCuteNostrilNerfRedBlaster-iolAyPlnftAVVoQs',
+				title: 'Highlight 5'
+			},
+			{
+				type: 'clip',
+				platform: 'twitch',
+				url: 'https://www.twitch.tv/kawashimakyuden/clip/FurtiveKnottyClipzKeyboardCat-kVQxVrrA4HHvrLzN',
+				title: 'Highlight 6'
+			},
+			{
+				type: 'clip',
+				platform: 'twitch',
+				url: 'https://www.twitch.tv/kawashimakyuden/clip/TrustworthySourAmazonStinkyCheese-q5hWAfgD9igExWBX',
+				title: 'Highlight 7'
 			}
 		],
 		participants: [
@@ -2016,15 +2061,6 @@ export const events: Event[] = [
 					}
 				]
 			}
-		],
-		highlights: [
-			'https://www.twitch.tv/kawashimakyuden/clip/BillowingExuberantPorcupineOSsloth-IVXXOk83_FshmXdA',
-			'https://www.twitch.tv/kawashimakyuden/clip/AntsySmilingButterflyWTRuck-lP423TgoTg6O4BSg',
-			'https://www.twitch.tv/kawashimakyuden/clip/TriangularAdorableMilkMrDestructoid-PU_ZwmTpJ4PGGDaw',
-			'https://www.twitch.tv/kawashimakyuden/clip/SillyObeseCormorantTBTacoLeft-Vc1kG7frQ1bp0czx',
-			'https://www.twitch.tv/kawashimakyuden/clip/CarefulCuteNostrilNerfRedBlaster-iolAyPlnftAVVoQs',
-			'https://www.twitch.tv/kawashimakyuden/clip/FurtiveKnottyClipzKeyboardCat-kVQxVrrA4HHvrLzN',
-			'https://www.twitch.tv/kawashimakyuden/clip/TrustworthySourAmazonStinkyCheese-q5hWAfgD9igExWBX'
 		]
 	},
 	{

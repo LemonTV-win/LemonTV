@@ -36,6 +36,8 @@ export async function seed() {
 	console.info('[SEED] - Deleted eventResult');
 	await db.delete(schema.eventWebsite);
 	console.info('[SEED] - Deleted eventWebsite');
+	await db.delete(schema.eventVideo);
+	console.info('[SEED] - Deleted eventVideo');
 	await db.delete(schema.event);
 	console.info('[SEED] - Deleted event');
 	await db.delete(schema.teamPlayer);
@@ -3403,6 +3405,41 @@ export async function seed() {
 			deaths: 21,
 			assists: 13,
 			damage: 1800
+		}
+	]);
+
+	// After seeding events, add some sample videos
+	console.log('[SEED] Seeding event videos...');
+	await db.insert(schema.eventVideo).values([
+		{
+			id: randomUUID(),
+			eventId: EVENTS[0].id,
+			type: 'stream',
+			url: 'https://www.twitch.tv/example1',
+			platform: 'twitch',
+			title: 'Day 1 Main Stream',
+			createdAt: new Date(),
+			updatedAt: new Date()
+		},
+		{
+			id: randomUUID(),
+			eventId: EVENTS[0].id,
+			type: 'vod',
+			url: 'https://www.youtube.com/watch?v=example1',
+			platform: 'youtube',
+			title: 'Grand Finals VOD',
+			createdAt: new Date(),
+			updatedAt: new Date()
+		},
+		{
+			id: randomUUID(),
+			eventId: EVENTS[1].id,
+			type: 'clip',
+			url: 'https://www.twitch.tv/example2/clip/example',
+			platform: 'twitch',
+			title: 'Amazing Play Highlight',
+			createdAt: new Date(),
+			updatedAt: new Date()
 		}
 	]);
 }

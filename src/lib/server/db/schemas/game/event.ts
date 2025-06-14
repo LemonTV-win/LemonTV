@@ -99,8 +99,26 @@ export const eventWebsite = sqliteTable('event_website', {
 		.default(sql`(unixepoch() * 1000)`)
 });
 
+export const eventVideo = sqliteTable('event_video', {
+	id: text('id').primaryKey(),
+	eventId: text('event_id')
+		.references(() => event.id)
+		.notNull(),
+	type: text('type', { enum: ['stream', 'clip', 'vod'] }).notNull(),
+	url: text('url').notNull(),
+	platform: text('platform').notNull(),
+	title: text('title'),
+	createdAt: integer('created_at', { mode: 'timestamp_ms' })
+		.notNull()
+		.default(sql`(unixepoch() * 1000)`),
+	updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
+		.notNull()
+		.default(sql`(unixepoch() * 1000)`)
+});
+
 export type Event = typeof event.$inferSelect;
 export type EventOrganizer = typeof eventOrganizer.$inferSelect;
 export type EventTeamPlayer = typeof eventTeamPlayer.$inferSelect;
 export type EventResult = typeof eventResult.$inferSelect;
 export type EventWebsite = typeof eventWebsite.$inferSelect;
+export type EventVideo = typeof eventVideo.$inferSelect;

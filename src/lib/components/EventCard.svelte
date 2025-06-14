@@ -145,26 +145,26 @@
 		{/if}
 	</a>
 
-	{#if live && event.livestreams}
-		{#each event.livestreams as livestream}
-			{#if livestream.platform === 'twitch'}
+	{#if live && event.videos?.some((v) => v.type === 'stream')}
+		{#each event.videos.filter((v) => v.type === 'stream') as stream}
+			{#if stream.platform === 'twitch'}
 				<iframe
-					src={`https://player.twitch.tv/?channel=${livestream.url.split('/').pop()}&parent=${HOST}`}
+					src={`https://player.twitch.tv/?channel=${stream.url.split('/').pop()}&parent=${HOST}`}
 					height="100%"
 					width="100%"
 					allowfullscreen
-					title={`${event.name} - ${livestream.platform}`}
+					title={stream.title ?? `${event.name} - ${stream.platform}`}
 				>
 				</iframe>
-			{:else if livestream.platform === 'youtube'}
+			{:else if stream.platform === 'youtube'}
 				<!-- TODO: YouTube -->
-			{:else if livestream.platform === 'bilibili'}
+			{:else if stream.platform === 'bilibili'}
 				<iframe
-					src={`https://player.bilibili.com/player.html?bvid=${livestream.url.split('/').pop()}&page=1&high_quality=1&danmaku=0`}
+					src={`https://player.bilibili.com/player.html?bvid=${stream.url.split('/').pop()}&page=1&high_quality=1&danmaku=0`}
 					height="100%"
 					width="100%"
 					allowfullscreen
-					title={`${event.name} - ${livestream.platform}`}
+					title={stream.title ?? `${event.name} - ${stream.platform}`}
 				>
 				</iframe>
 			{/if}
