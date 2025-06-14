@@ -18,10 +18,13 @@
 			name="organizers"
 			bind:value={selectedOrganizers}
 			multiple
-			class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+			class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb]:hover:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800"
 		>
 			{#each organizers as organizer}
-				<option value={organizer.id}>{organizer.name}</option>
+				<option
+					class="checked:bg-slate-500 hover:bg-slate-700 hover:checked:bg-slate-500 focus:bg-slate-500"
+					value={organizer.id}>{organizer.name}</option
+				>
 			{/each}
 		</select>
 		<button
