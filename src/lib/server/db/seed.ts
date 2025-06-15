@@ -38,6 +38,8 @@ export async function seed() {
 	console.info('[SEED] - Deleted eventWebsite');
 	await db.delete(schema.eventVideo);
 	console.info('[SEED] - Deleted eventVideo');
+	await db.delete(schema.eventCaster);
+	console.info('[SEED] - Deleted eventCaster');
 	await db.delete(schema.event);
 	console.info('[SEED] - Deleted event');
 	await db.delete(schema.teamPlayer);
@@ -3442,4 +3444,68 @@ export async function seed() {
 			updatedAt: new Date()
 		}
 	]);
+
+	// After seeding event videos, add some sample casters
+	console.log('[SEED] Seeding event casters...');
+	await db.insert(schema.eventCaster).values([
+		// Event 1 casters
+		{
+			eventId: EVENTS[0].id,
+			playerId: PLAYERS[0].id,
+			role: 'host',
+			createdAt: new Date(),
+			updatedAt: new Date()
+		},
+		{
+			eventId: EVENTS[0].id,
+			playerId: PLAYERS[1].id,
+			role: 'commentator',
+			createdAt: new Date(),
+			updatedAt: new Date()
+		},
+		{
+			eventId: EVENTS[0].id,
+			playerId: PLAYERS[2].id,
+			role: 'analyst',
+			createdAt: new Date(),
+			updatedAt: new Date()
+		},
+		// Event 2 casters
+		{
+			eventId: EVENTS[1].id,
+			playerId: PLAYERS[3].id,
+			role: 'host',
+			createdAt: new Date(),
+			updatedAt: new Date()
+		},
+		{
+			eventId: EVENTS[1].id,
+			playerId: PLAYERS[4].id,
+			role: 'commentator',
+			createdAt: new Date(),
+			updatedAt: new Date()
+		},
+		// Event 3 casters
+		{
+			eventId: EVENTS[2].id,
+			playerId: PLAYERS[5].id,
+			role: 'host',
+			createdAt: new Date(),
+			updatedAt: new Date()
+		},
+		{
+			eventId: EVENTS[2].id,
+			playerId: PLAYERS[0].id,
+			role: 'analyst',
+			createdAt: new Date(),
+			updatedAt: new Date()
+		},
+		{
+			eventId: EVENTS[2].id,
+			playerId: PLAYERS[1].id,
+			role: 'commentator',
+			createdAt: new Date(),
+			updatedAt: new Date()
+		}
+	] as Array<typeof schema.eventCaster.$inferInsert>);
 }

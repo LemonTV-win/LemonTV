@@ -16,7 +16,8 @@ import {
 	getOrganizerChanges,
 	toEventWithOrganizers,
 	getEvents,
-	updateEventTeamPlayers
+	updateEventTeamPlayers,
+	updateEventCasters
 } from '$lib/server/data/events';
 
 type PermissionResult =
@@ -135,7 +136,8 @@ export const actions = {
 			date: formData.get('date') as string,
 			organizerIds: (formData.getAll('organizers') as string[]) || [],
 			websites: JSON.parse((formData.get('websites') as string) || '[]'),
-			videos: JSON.parse((formData.get('videos') as string) || '[]')
+			videos: JSON.parse((formData.get('videos') as string) || '[]'),
+			casters: JSON.parse((formData.get('casters') as string) || '[]')
 		};
 
 		console.info('[Admin][Events][Create] Event data:', eventData);
@@ -211,6 +213,19 @@ export const actions = {
 
 				if (videoValues.length > 0) {
 					await db.insert(table.eventVideo).values(videoValues);
+				}
+			}
+
+			// Handle event casters
+			const castersData = formData.get('casters') as string;
+			if (castersData) {
+				const casters = JSON.parse(castersData) as Array<{
+					playerId: string;
+					role: 'host' | 'analyst' | 'commentator';
+				}>;
+
+				if (casters.length > 0) {
+					await updateEventCasters(eventId, casters, result.userId);
 				}
 			}
 
@@ -306,7 +321,8 @@ export const actions = {
 			date: formData.get('date') as string,
 			organizerIds: (formData.getAll('organizers') as string[]) || [],
 			websites: JSON.parse((formData.get('websites') as string) || '[]'),
-			videos: JSON.parse((formData.get('videos') as string) || '[]')
+			videos: JSON.parse((formData.get('videos') as string) || '[]'),
+			casters: JSON.parse((formData.get('casters') as string) || '[]')
 		};
 
 		console.info('[Admin][Events][Update] Event data:', eventData);
@@ -418,6 +434,17 @@ export const actions = {
 			} else {
 				// If no videos are provided, remove all existing videos
 				await db.delete(table.eventVideo).where(eq(table.eventVideo.eventId, eventData.id));
+			}
+
+			// Handle event casters
+			const castersData = formData.get('casters') as string;
+			if (castersData) {
+				const casters = JSON.parse(castersData) as Array<{
+					playerId: string;
+					role: 'host' | 'analyst' | 'commentator';
+				}>;
+
+				await updateEventCasters(eventData.id, casters, result.userId);
 			}
 
 			// Handle event results

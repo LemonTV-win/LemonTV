@@ -441,5 +441,12 @@
 	"edit_tag": "Modifier le tag",
 	"delete_tag": "Supprimer le tag",
 	"title_description": "Suivi des compétitions Strinova : matchs & stats",
-	"videos": "Vidéos"
+	"videos": "Vidéos",
+	"casters": "Commentateurs",
+	"role_host": "Présentateur",
+	"role_analyst": "Analyste",
+	"role_commentator": "Commentateur",
+	"add_caster": "Ajouter un commentateur",
+	"no_casters": "Aucun commentateur ajouté",
+	"duplicate_caster": "Ce joueur apparaît plusieurs fois comme commentateur"
 }

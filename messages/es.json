@@ -441,5 +441,12 @@
 	"edit_tag": "Editar etiqueta",
 	"delete_tag": "Eliminar etiqueta",
 	"title_description": "Cobertura de Esports Strinova: Partidas y Estadísticas",
-	"videos": "Videos"
+	"videos": "Videos",
+	"casters": "Comentaristas",
+	"role_host": "Presentador",
+	"role_analyst": "Analista",
+	"role_commentator": "Comentarista",
+	"add_caster": "Añadir comentarista",
+	"no_casters": "No hay comentaristas añadidos",
+	"duplicate_caster": "Este jugador aparece varias veces como comentarista"
 }

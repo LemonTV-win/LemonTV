@@ -116,9 +116,30 @@ export const eventVideo = sqliteTable('event_video', {
 		.default(sql`(unixepoch() * 1000)`)
 });
 
+export const eventCaster = sqliteTable(
+	'event_caster',
+	{
+		eventId: text('event_id')
+			.references(() => event.id)
+			.notNull(),
+		playerId: text('player_id')
+			.references(() => player.id)
+			.notNull(),
+		role: text('role', { enum: ['host', 'analyst', 'commentator'] }).notNull(),
+		createdAt: integer('created_at', { mode: 'timestamp_ms' })
+			.notNull()
+			.default(sql`(unixepoch() * 1000)`),
+		updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
+			.notNull()
+			.default(sql`(unixepoch() * 1000)`)
+	},
+	(t) => [primaryKey({ columns: [t.eventId, t.playerId] })]
+);
+
 export type Event = typeof event.$inferSelect;
 export type EventOrganizer = typeof eventOrganizer.$inferSelect;
 export type EventTeamPlayer = typeof eventTeamPlayer.$inferSelect;
 export type EventResult = typeof eventResult.$inferSelect;
 export type EventWebsite = typeof eventWebsite.$inferSelect;
 export type EventVideo = typeof eventVideo.$inferSelect;
+export type EventCaster = typeof eventCaster.$inferSelect;

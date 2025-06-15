@@ -441,5 +441,12 @@
 	"edit_tag": "编辑标签",
 	"delete_tag": "删除标签",
 	"title_description": "卡拉彼丘电竞赛事中心",
-	"videos": "视频"
+	"videos": "视频",
+	"casters": "主播",
+	"role_host": "主持人",
+	"role_analyst": "分析师",
+	"role_commentator": "解说",
+	"add_caster": "添加主播",
+	"no_casters": "暂无主播",
+	"duplicate_caster": "该选手已多次被添加为主播"
 }

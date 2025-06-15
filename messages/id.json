@@ -441,5 +441,12 @@
 	"edit_tag": "Edit tag",
 	"delete_tag": "Hapus tag",
 	"title_description": "Pusat Info Esports Strinova: Jadwal & Statistik",
-	"videos": "Video"
+	"videos": "Video",
+	"casters": "Caster",
+	"role_host": "Pembawa Acara",
+	"role_analyst": "Analis",
+	"role_commentator": "Komentator",
+	"add_caster": "Tambah Caster",
+	"no_casters": "Belum ada caster yang ditambahkan",
+	"duplicate_caster": "Pemain ini muncul beberapa kali sebagai caster"
 }

@@ -441,5 +441,12 @@
 	"edit_tag": "Tag bearbeiten",
 	"delete_tag": "Tag löschen",
 	"title_description": "Strinova Esports: Spiele & Statistiken",
-	"videos": "Videos"
+	"videos": "Videos",
+	"casters": "Caster",
+	"role_host": "Moderator",
+	"role_analyst": "Analyst",
+	"role_commentator": "Kommentator",
+	"add_caster": "Caster hinzufügen",
+	"no_casters": "Keine Caster hinzugefügt",
+	"duplicate_caster": "Dieser Spieler erscheint mehrfach als Caster"
 }

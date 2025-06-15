@@ -6,6 +6,7 @@ import * as table from '$lib/server/db/schema';
 import { processImageURL } from '$lib/server/storage';
 import type { Region } from '$lib/data/game';
 import { inArray, eq, or } from 'drizzle-orm';
+import { alias } from 'drizzle-orm/sqlite-core';
 import { convertOrganizer } from './organizers';
 import type { LegacyEventParticipant, EventParticipant, StageNode } from '$lib/data/events';
 import type { Player } from '$lib/data/players';
@@ -38,6 +39,7 @@ export interface CreateEventData {
 		url: string;
 		title?: string;
 	}[];
+	casters: EventCasterData[];
 }
 
 export interface UpdateEventData extends Partial<CreateEventData> {
@@ -50,6 +52,11 @@ export interface EventTeamPlayerData {
 	teamId: string;
 	playerId: string;
 	role: 'main' | 'sub' | 'coach';
+}
+
+export interface EventCasterData {
+	playerId: string;
+	role: 'host' | 'analyst' | 'commentator';
 }
 
 export interface UpdateEventTeamPlayerData extends EventTeamPlayerData {
@@ -152,6 +159,9 @@ export function getOrganizerChanges(
 export async function getEvents(
 	conditions: { organizerIds?: string[]; searchKeyword?: string } = {}
 ): Promise<AppEvent[]> {
+	// Create alias for player table for casters
+	const casterPlayer = alias(table.player, 'casterPlayer');
+
 	// First get the event results separately
 	const eventResults = await db
 		.select({
@@ -186,6 +196,8 @@ export async function getEvents(
 			player: table.player,
 			eventWebsite: table.eventWebsite,
 			eventVideo: table.eventVideo,
+			eventCaster: table.eventCaster,
+			casterPlayer: casterPlayer,
 			stage: table.stage,
 			stageRound: table.stageRound,
 			stageNode: table.stageNode,
@@ -200,6 +212,8 @@ export async function getEvents(
 		.leftJoin(table.player, eq(table.player.id, table.eventTeamPlayer.playerId))
 		.leftJoin(table.eventWebsite, eq(table.eventWebsite.eventId, table.event.id))
 		.leftJoin(table.eventVideo, eq(table.eventVideo.eventId, table.event.id))
+		.leftJoin(table.eventCaster, eq(table.eventCaster.eventId, table.event.id))
+		.leftJoin(casterPlayer, eq(casterPlayer.id, table.eventCaster.playerId))
 		.leftJoin(table.stage, eq(table.stage.eventId, table.event.id))
 		.leftJoin(table.stageRound, eq(table.stageRound.stageId, table.stage.id))
 		.leftJoin(table.stageNode, eq(table.stageNode.stageId, table.stage.id))
@@ -246,6 +260,10 @@ export async function getEvents(
 				url: string;
 				title?: string;
 			}>;
+			casters: Array<{
+				player: typeof table.player.$inferSelect;
+				role: 'host' | 'analyst' | 'commentator';
+			}>;
 			stages: Array<{
 				id: number;
 				title: string;
@@ -282,6 +300,7 @@ export async function getEvents(
 				results: [],
 				websites: [],
 				videos: [],
+				casters: [],
 				stages: [],
 				participants: []
 			});
@@ -326,6 +345,8 @@ export async function getEvents(
 			player,
 			eventWebsite,
 			eventVideo,
+			eventCaster,
+			casterPlayer,
 			stage,
 			stageRound,
 			stageNode,
@@ -339,6 +360,7 @@ export async function getEvents(
 					results: [],
 					websites: [],
 					videos: [],
+					casters: [],
 					stages: [],
 					participants: []
 				});
@@ -384,6 +406,16 @@ export async function getEvents(
 						platform: eventVideo.platform as 'twitch' | 'youtube' | 'bilibili',
 						url: eventVideo.url,
 						title: eventVideo.title || undefined
+					});
+				}
+			}
+
+			if (eventCaster && casterPlayer) {
+				// Only add the caster if it's not already in the array
+				if (!eventData.casters.some((c) => c.player.id === casterPlayer.id)) {
+					eventData.casters.push({
+						player: casterPlayer,
+						role: eventCaster.role as 'host' | 'analyst' | 'commentator'
 					});
 				}
 			}
@@ -465,7 +497,7 @@ export async function getEvents(
 
 	const events = await Promise.all(
 		Array.from(eventsMap.values()).map(
-			async ({ event, organizers, teamPlayers, results, websites, videos, stages }) => {
+			async ({ event, organizers, teamPlayers, results, websites, videos, casters, stages }) => {
 				// Gather all matches for this event from the structure
 				const allMatchIds = new Set<string>();
 				stages.forEach((stage) => {
@@ -533,6 +565,21 @@ export async function getEvents(
 							: undefined,
 					websites: websites.length > 0 ? websites : undefined,
 					videos: videos.length > 0 ? videos : undefined,
+					casters:
+						casters.length > 0
+							? ((
+									await Promise.all(
+										casters.map(async (c) => {
+											// TODO: getPlayers with conditions
+											const player = await getPlayer(c.player.id);
+											return player ? { player, role: c.role } : null;
+										})
+									)
+								).filter((c): c is NonNullable<typeof c> => c !== null) as Array<{
+									player: Player;
+									role: 'host' | 'analyst' | 'commentator';
+								}>)
+							: undefined,
 					stages:
 						stages.length > 0
 							? stages.map((stage) => {
@@ -822,6 +869,12 @@ export async function getEvents(
 					url: video.url,
 					title: video.title
 				})),
+				casters: event.casters?.map((c) => {
+					return {
+						player: c.player,
+						role: c.role
+					};
+				}),
 				participants: participants,
 				livestreams: [],
 				results: event.results?.map((result) => ({
@@ -882,6 +935,48 @@ export async function updateEventTeamPlayers(
 			fieldName: 'players',
 			oldValue: JSON.stringify(currentPlayers),
 			newValue: JSON.stringify(players),
+			editedBy: userId,
+			editedAt: new Date()
+		});
+	});
+}
+
+export async function updateEventCasters(
+	eventId: string,
+	casters: EventCasterData[],
+	userId: string
+) {
+	await db.transaction(async (tx) => {
+		// Get current casters for history
+		const currentCasters = await tx
+			.select()
+			.from(table.eventCaster)
+			.where(eq(table.eventCaster.eventId, eventId));
+
+		// Delete all casters for this event
+		await tx.delete(table.eventCaster).where(eq(table.eventCaster.eventId, eventId));
+
+		// Add new casters
+		if (casters.length > 0) {
+			await tx.insert(table.eventCaster).values(
+				casters.map((caster) => ({
+					eventId: eventId,
+					playerId: caster.playerId,
+					role: caster.role,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				}))
+			);
+		}
+
+		// Add edit history
+		await tx.insert(table.editHistory).values({
+			id: crypto.randomUUID(),
+			tableName: 'event_caster',
+			recordId: eventId,
+			fieldName: 'casters',
+			oldValue: JSON.stringify(currentCasters),
+			newValue: JSON.stringify(casters),
 			editedBy: userId,
 			editedAt: new Date()
 		});

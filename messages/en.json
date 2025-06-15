@@ -441,5 +441,12 @@
 	"edit_tag": "Edit Tag",
 	"delete_tag": "Delete Tag",
 	"title_description": "Strinova Esports Coverage: Matches & Stats",
-	"videos": "Videos"
+	"videos": "Videos",
+	"casters": "Casters",
+	"role_host": "Host",
+	"role_analyst": "Analyst",
+	"role_commentator": "Commentator",
+	"add_caster": "Add Caster",
+	"no_casters": "No casters added",
+	"duplicate_caster": "This player appears multiple times as a caster"
 }

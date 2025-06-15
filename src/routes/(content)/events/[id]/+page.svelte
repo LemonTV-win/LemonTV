@@ -271,6 +271,34 @@
 				</ul>
 			</section>
 		{/if}
+		{#if data.event.casters?.length}
+			<section>
+				<h2 class="my-4 text-2xl font-bold text-white">{m.casters()}</h2>
+				<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+					{#each data.event.casters as caster}
+						<div class="glass flex flex-col items-center gap-2 p-4">
+							{#each caster.player.nationalities as nationality}
+								<NationalityFlag {nationality} />
+							{/each}
+							<a href={`/players/${caster.player.slug}`} class="text-center hover:text-yellow-500">
+								<!-- TODO: Add image -->
+								<IconParkSolidPeoples class="h-16 w-16 text-gray-300" />
+								<div class="font-bold">{caster.player.name}</div>
+								<div class="text-sm text-gray-400">
+									{#if caster.role === 'host'}
+										{m.role_host()}
+									{:else if caster.role === 'analyst'}
+										{m.role_analyst()}
+									{:else if caster.role === 'commentator'}
+										{m.role_commentator()}
+									{/if}
+								</div>
+							</a>
+						</div>
+					{/each}
+				</div>
+			</section>
+		{/if}
 		<section>
 			{#if data.event.capacity > 0}
 				<h2 class="my-4 text-2xl font-bold text-white">{m.attending_teams()}</h2>

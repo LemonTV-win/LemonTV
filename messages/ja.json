@@ -441,5 +441,12 @@
 	"edit_tag": "タグを編集",
 	"delete_tag": "タグを削除",
 	"title_description": "ストリノヴァのeスポーツ情報サイト",
-	"videos": "動画"
+	"videos": "動画",
+	"casters": "キャスター",
+	"role_host": "ホスト",
+	"role_analyst": "アナリスト",
+	"role_commentator": "解説者",
+	"add_caster": "キャスターを追加",
+	"no_casters": "キャスターが追加されていません",
+	"duplicate_caster": "このプレイヤーは複数回キャスターとして登録されています"
 }

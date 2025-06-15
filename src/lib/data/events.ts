@@ -115,6 +115,10 @@ export interface Event {
 		url: string;
 		title?: string;
 	}[];
+	casters?: Array<{
+		player: Player;
+		role: 'host' | 'analyst' | 'commentator';
+	}>;
 	results?: LegacyEventResult[] | EventResult[];
 }
 

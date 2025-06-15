@@ -9,7 +9,9 @@
 	import WebsiteInput from '$lib/components/forms/WebsiteInput.svelte';
 	import TeamPlayersInput from '$lib/components/forms/TeamPlayersInput.svelte';
 	import OrganizerInput from '$lib/components/forms/OrganizerInput.svelte';
+	import CasterInput from '$lib/components/forms/CasterInput.svelte';
 	import type { EventResult } from '$lib/data/events';
+	import type { TCountryCode } from 'countries-list';
 
 	let {
 		event,
@@ -58,7 +60,14 @@
 			platform: 'twitch' | 'youtube' | 'bilibili';
 			url: string;
 			title: string;
-		}[]
+		}[],
+		casters: ((event as any).casters || []).map((c: any) => ({
+			playerId: c.player.id,
+			role: c.role
+		})) as Array<{
+			playerId: string;
+			role: 'host' | 'analyst' | 'commentator';
+		}>
 	});
 
 	let eventTeamPlayers = $state<
@@ -105,6 +114,23 @@
 			grouped[team.id] = players;
 		});
 		playersByTeam = grouped;
+	});
+
+	// Load existing casters when editing an event
+	$effect(() => {
+		if (event.id) {
+			fetch(`/api/events/${event.id}/casters`)
+				.then((res) => res.json())
+				.then((data) => {
+					newEvent.casters = data.map((c: any) => ({
+						playerId: c.playerId,
+						role: c.role
+					}));
+				})
+				.catch((e) => {
+					console.error('Failed to load casters:', e);
+				});
+		}
 	});
 
 	let errorMessage = $state('');
@@ -290,6 +316,8 @@
 		formData.append('players', JSON.stringify(eventTeamPlayers));
 		// Add videos data
 		formData.append('videos', JSON.stringify(newEvent.videos));
+		// Add casters data
+		formData.append('casters', JSON.stringify(newEvent.casters));
 		return async ({ result }) => {
 			isSubmitting = false;
 			if (result.type === 'success') {
@@ -500,6 +528,19 @@
 		<section class="mb-6 flex flex-col gap-4">
 			<h3 class="text-lg font-semibold">{m.videos()}</h3>
 			<VideoInput bind:videos={newEvent.videos} />
+		</section>
+
+		<section class="mb-6 flex flex-col gap-4">
+			<h3 class="text-lg font-semibold">{m.casters()}</h3>
+			<!-- TODO: nationality should include all nationalities -->
+			<CasterInput
+				players={players.map((p) => ({
+					...p,
+					nationalities: (p.nationality ? [p.nationality] : []) as TCountryCode[],
+					gameAccounts: []
+				}))}
+				bind:casters={newEvent.casters}
+			/>
 		</section>
 	</div>
 

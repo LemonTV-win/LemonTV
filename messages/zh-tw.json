@@ -441,5 +441,12 @@
 	"edit_tag": "編輯標籤",
 	"delete_tag": "刪除標籤",
 	"title_description": "卡拉彼丘賽事中心",
-	"videos": "影片"
+	"videos": "影片",
+	"casters": "主播",
+	"role_host": "主持人",
+	"role_analyst": "分析師",
+	"role_commentator": "解說",
+	"add_caster": "新增主播",
+	"no_casters": "尚未新增主播",
+	"duplicate_caster": "此選手已多次被新增為主播"
 }

@@ -441,5 +441,12 @@
 	"edit_tag": "Sửa thẻ",
 	"delete_tag": "Xóa thẻ",
 	"title_description": "Trung tâm dữ liệu Esports Strinova",
-	"videos": "Video"
+	"videos": "Video",
+	"casters": "Bình luận viên",
+	"role_host": "Người dẫn chương trình",
+	"role_analyst": "Chuyên gia phân tích",
+	"role_commentator": "Bình luận viên",
+	"add_caster": "Thêm bình luận viên",
+	"no_casters": "Chưa có bình luận viên nào được thêm",
+	"duplicate_caster": "Người chơi này xuất hiện nhiều lần với vai trò bình luận viên"
 }

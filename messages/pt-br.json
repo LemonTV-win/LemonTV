@@ -441,5 +441,12 @@
 	"edit_tag": "Editar tag",
 	"delete_tag": "Excluir tag",
 	"title_description": "Central de Esports Strinova: Jogos e Estatísticas",
-	"videos": "Vídeos"
+	"videos": "Vídeos",
+	"casters": "Narradores",
+	"role_host": "Apresentador",
+	"role_analyst": "Analista",
+	"role_commentator": "Narrador",
+	"add_caster": "Adicionar narrador",
+	"no_casters": "Nenhum narrador adicionado",
+	"duplicate_caster": "Este jogador aparece várias vezes como narrador"
 }
