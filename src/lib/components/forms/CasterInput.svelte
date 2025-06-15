@@ -3,6 +3,7 @@
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import IconParkSolidAdd from '~icons/icon-park-solid/add';
 	import type { Player } from '$lib/data/players';
+	import Combobox from '$lib/components/Combobox.svelte';
 
 	type Caster = {
 		playerId: string;
@@ -21,7 +22,7 @@
 		casters = [
 			...casters,
 			{
-				playerId: players?.length > 0 ? players[0].id : '',
+				playerId: '',
 				role: 'commentator'
 			}
 		];
@@ -73,17 +74,21 @@
 						<label for={`caster-player-${i}`} class="text-sm font-medium text-slate-300"
 							>Player</label
 						>
-						<select
+						<Combobox
 							id={`caster-player-${i}`}
+							items={players.map((p) => ({
+								id: p.id,
+								name: p.name,
+								group: casters.some((c) => c.playerId === p.id) ? 'selected' : 'available'
+							}))}
 							bind:value={caster.playerId}
-							onchange={(e) => updateCaster(i, 'playerId', e.currentTarget.value)}
-							class="rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-						>
-							<option value="">{m.select_player()}</option>
-							{#each players as player}
-								<option value={player.id}>{player.name}</option>
-							{/each}
-						</select>
+							placeholder={m.search_players()}
+							groups={[
+								{ id: 'selected', label: 'Selected' },
+								{ id: 'available', label: 'Available' }
+							]}
+							class="mt-1 px-4 py-2"
+						/>
 					</div>
 
 					<div class="flex flex-col gap-2">
