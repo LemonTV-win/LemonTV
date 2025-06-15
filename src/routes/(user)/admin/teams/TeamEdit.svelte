@@ -20,6 +20,7 @@
 	let isSubmitting = $state(false);
 	let errorMessage = $state('');
 	let successMessage = $state('');
+	let lastTeamName = $state(team.name || '');
 
 	function formatSlug(name: string): string {
 		return name
@@ -29,8 +30,15 @@
 	}
 
 	$effect(() => {
-		if (newTeam.name) {
-			newTeam.slug = formatSlug(newTeam.name);
+		// Only update slug if:
+		// 1. Team name has changed AND
+		// 2. Either there's no slug yet OR the current slug matches the last generated slug
+		if (newTeam.name && newTeam.name !== lastTeamName) {
+			const generatedSlug = formatSlug(newTeam.name);
+			if (!newTeam.slug || newTeam.slug === formatSlug(lastTeamName)) {
+				newTeam.slug = generatedSlug;
+			}
+			lastTeamName = newTeam.name;
 		}
 	});
 
