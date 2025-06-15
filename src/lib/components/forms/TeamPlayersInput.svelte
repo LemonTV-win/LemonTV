@@ -16,13 +16,19 @@
 			playerId: string;
 			role: 'main' | 'sub' | 'coach';
 		}>;
+		teamPlayers: Array<{
+			teamId: string;
+			playerId: string;
+			role: string;
+		}>;
 	}
 
 	let {
 		teams,
 		players,
 		selectedTeams = $bindable([]),
-		eventTeamPlayers = $bindable([])
+		eventTeamPlayers = $bindable([]),
+		teamPlayers = []
 	}: Props = $props();
 
 	$inspect('eventTeamPlayers', eventTeamPlayers);
@@ -35,17 +41,19 @@
 	function addTeam(teamId: string) {
 		if (!selectedTeams.includes(teamId)) {
 			selectedTeams = [...selectedTeams, teamId];
-			// Add all players from the team by default, but only if they're not already assigned
-			const newTeamPlayers = players
+			// Only add players that belong to this team
+			const teamMembers = teamPlayers.filter((tp) => tp.teamId === teamId);
+			const newTeamPlayers = teamMembers
 				.filter(
-					(p) => !eventTeamPlayers.some((etp) => etp.teamId === teamId && etp.playerId === p.id)
+					(tp) =>
+						!eventTeamPlayers.some((etp) => etp.teamId === teamId && etp.playerId === tp.playerId)
 				)
-				.map((p) => {
+				.map((tp) => {
 					// Find the player's existing role in other teams
-					const existingRole = eventTeamPlayers.find((etp) => etp.playerId === p.id)?.role;
+					const existingRole = eventTeamPlayers.find((etp) => etp.playerId === tp.playerId)?.role;
 					return {
 						teamId,
-						playerId: p.id,
+						playerId: tp.playerId,
 						role: existingRole || ('main' as const)
 					};
 				});
@@ -73,11 +81,16 @@
 	}
 
 	function addTeamPlayer(teamId: string) {
+		const teamMembers = players.filter(
+			(p) =>
+				teamPlayers.some((tp) => tp.playerId === p.id) &&
+				!eventTeamPlayers.some((etp) => etp.playerId === p.id)
+		);
 		eventTeamPlayers = [
 			...eventTeamPlayers,
 			{
 				teamId,
-				playerId: players?.length > 0 ? players[0].id : '',
+				playerId: teamMembers?.length > 0 ? teamMembers[0].id : '',
 				role: 'main'
 			}
 		];
