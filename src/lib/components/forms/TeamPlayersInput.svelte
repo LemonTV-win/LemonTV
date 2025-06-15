@@ -28,7 +28,7 @@
 		players,
 		selectedTeams = $bindable([]),
 		eventTeamPlayers = $bindable([]),
-		teamPlayers = []
+		teamPlayers
 	}: Props = $props();
 
 	$inspect('eventTeamPlayers', eventTeamPlayers);

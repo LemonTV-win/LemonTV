@@ -512,7 +512,7 @@
 
 		<section class="mb-6 flex flex-col gap-4">
 			<h3 class="text-lg font-semibold">Teams and Players</h3>
-			<TeamPlayersInput {teams} {players} bind:selectedTeams bind:eventTeamPlayers />
+			<TeamPlayersInput {teams} {players} {teamPlayers} bind:selectedTeams bind:eventTeamPlayers />
 		</section>
 
 		<section class="mb-6 flex flex-col gap-4">
