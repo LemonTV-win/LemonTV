@@ -106,6 +106,10 @@
 	);
 </script>
 
+<svelte:head>
+	<title>{m.edit_history()} | {m.admin_panel()} | LemonTV</title>
+</svelte:head>
+
 <main class="mx-auto max-w-screen-lg px-4">
 	<div class="mb-6 flex items-center justify-between">
 		<h1 class="text-2xl font-bold">{m.admin_dashboard()}</h1>

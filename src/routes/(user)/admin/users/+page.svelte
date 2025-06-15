@@ -102,6 +102,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>{m.users()} | {m.admin_panel()} | LemonTV</title>
+</svelte:head>
+
 <svelte:window bind:innerWidth />
 
 <main class="mx-auto max-w-screen-lg px-4">
