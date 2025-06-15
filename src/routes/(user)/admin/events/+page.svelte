@@ -55,9 +55,17 @@
 				} else if (sortBy === 'name-desc') {
 					return b.name.localeCompare(a.name);
 				} else if (sortBy === 'date-asc') {
-					return new Date(a.date).getTime() - new Date(b.date).getTime();
+					const getDate = (dateStr: string) => {
+						const [start] = dateStr.split('/');
+						return new Date(start).getTime();
+					};
+					return getDate(a.date) - getDate(b.date);
 				} else if (sortBy === 'date-desc') {
-					return new Date(b.date).getTime() - new Date(a.date).getTime();
+					const getDate = (dateStr: string) => {
+						const [start] = dateStr.split('/');
+						return new Date(start).getTime();
+					};
+					return getDate(b.date) - getDate(a.date);
 				} else if (sortBy === 'status-asc') {
 					return a.status.localeCompare(b.status);
 				} else if (sortBy === 'status-desc') {
