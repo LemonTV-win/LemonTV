@@ -36,7 +36,10 @@
 			selectedPlayers = [...selectedPlayers, { ...newPlayer }];
 			newPlayer = {
 				playerId: '',
-				role: 'active'
+				role: 'active',
+				// Keep the dates from the last added player for easier batch editing
+				startedOn: newPlayer.startedOn,
+				endedOn: newPlayer.endedOn
 			};
 		}
 	}
