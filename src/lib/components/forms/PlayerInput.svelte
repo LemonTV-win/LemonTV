@@ -125,13 +125,21 @@
 		<div class="my-4 border-t border-slate-700"></div>
 		<div class="space-y-2">
 			{#each selectedPlayers as player}
-				<div class="grid grid-cols-5 items-center gap-4">
+				<div class="grid grid-cols-[auto_auto_auto_auto_auto] items-center gap-4">
 					<span class="text-sm text-slate-300">
 						{players.find((p) => p.id === player.playerId)?.name}
 					</span>
 					<span class="text-sm text-slate-300">{player.role}</span>
-					<span class="text-sm text-slate-300">{player.startedOn}</span>
-					<span class="text-sm text-slate-300">{player.endedOn}</span>
+					<input
+						type="date"
+						bind:value={player.startedOn}
+						class="block w-full rounded-md border border-slate-700 bg-slate-800 px-2 py-1 text-sm text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+					/>
+					<input
+						type="date"
+						bind:value={player.endedOn}
+						class="block w-full rounded-md border border-slate-700 bg-slate-800 px-2 py-1 text-sm text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+					/>
 					<button
 						type="button"
 						onclick={() => removePlayer(player.playerId)}
