@@ -25,6 +25,8 @@
 		eventTeamPlayers = $bindable([])
 	}: Props = $props();
 
+	$inspect('eventTeamPlayers', eventTeamPlayers);
+
 	// Track which teams are expanded
 	let expandedTeams = $state<Set<string>>(new Set());
 
@@ -38,11 +40,15 @@
 				.filter(
 					(p) => !eventTeamPlayers.some((etp) => etp.teamId === teamId && etp.playerId === p.id)
 				)
-				.map((p) => ({
-					teamId,
-					playerId: p.id,
-					role: 'main' as const
-				}));
+				.map((p) => {
+					// Find the player's existing role in other teams
+					const existingRole = eventTeamPlayers.find((etp) => etp.playerId === p.id)?.role;
+					return {
+						teamId,
+						playerId: p.id,
+						role: existingRole || ('main' as const)
+					};
+				});
 			eventTeamPlayers = [...eventTeamPlayers, ...newTeamPlayers];
 			// Expand the team when adding it
 			expandedTeams.add(teamId);
