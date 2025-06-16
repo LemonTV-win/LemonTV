@@ -18,14 +18,21 @@ export const init: ServerInit = async () => {
 	}
 };
 
-const handleParaglide: Handle = ({ event, resolve }) =>
-	paraglideMiddleware(event.request, ({ request, locale }) => {
+const handleParaglide: Handle = ({ event, resolve }) => {
+	// Skip localization for specific paths
+	const excludedPaths = ['/sitemap.xml', '/api/'];
+	if (excludedPaths.some((path) => event.url.pathname.startsWith(path))) {
+		return resolve(event);
+	}
+
+	return paraglideMiddleware(event.request, ({ request, locale }) => {
 		event.request = request;
 
 		return resolve(event, {
 			transformPageChunk: ({ html }) => html.replace('%paraglide.lang%', locale)
 		});
 	});
+};
 
 const handleAuth: Handle = async ({ event, resolve }) => {
 	const sessionToken = event.cookies.get(auth.sessionCookieName);
