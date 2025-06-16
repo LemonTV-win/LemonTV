@@ -102,6 +102,15 @@
 	<meta property="twitter:creator" content="@mkpoli" />
 	<meta property="twitter:image" content="https://lemontv.win/screenshot.png" />
 	<meta property="twitter:url" content={`${SITE_CANONICAL_HOST}${page.url.pathname}`} />
+
+	<!-- Schema.org Structured Data -->
+	{@html `<script type="application/ld+json">${JSON.stringify({
+		'@context': 'https://schema.org',
+		'@type': 'WebSite',
+		name: 'LemonTV',
+		url: SITE_CANONICAL_HOST,
+		description: m.about_tagline()
+	})}</script>`}
 </svelte:head>
 
 <div class="flex min-h-dvh flex-col">
