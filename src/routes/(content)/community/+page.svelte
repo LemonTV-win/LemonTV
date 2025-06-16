@@ -68,10 +68,6 @@
 	}
 </script>
 
-<svelte:head>
-	<title>{m.community()} | LemonTV</title>
-</svelte:head>
-
 <main class="mx-auto max-w-screen-lg">
 	<div class="flex items-center gap-4">
 		<h1 class="my-10 text-2xl font-bold">{m.community()}</h1>

@@ -449,5 +449,11 @@
 	"add_caster": "キャスターを追加",
 	"no_casters": "キャスターが追加されていません",
 	"duplicate_caster": "このプレイヤーは複数回キャスターとして登録されています",
-	"homepage_description": "ストリノヴァのプレイヤーによる、コミュニティ発のeスポーツ情報サイト。試合を観戦し、トーナメントや最新の選手情報・ニュースをチェック！"
+	"homepage_description": "ストリノヴァのプレイヤーによる、コミュニティ発のeスポーツ情報サイト。試合を観戦し、トーナメントや最新の選手情報・ニュースをチェック！",
+	"events_description": "Strinovaの大会情報をチェック。過去の試合結果やスケジュール、公式・コミュニティ主催のイベントでのチーム成績を確認できます。",
+	"news_description": "Strinova Esportsの最新ニュースをお届け。コミュニティの話題、発表、トーナメント情報、アップデート内容などを掲載。",
+	"organizers_description": "Strinovaのイベントを支えるチームや個人を紹介。活動の目的や背景、コミュニティへの貢献について知ることができます。",
+	"teams_description": "Strinova Esportsに参加するチーム一覧。チームの歴史や選手情報、実績を確認できます。",
+	"players_description": "Strinova Esportsのプレイヤーを紹介。プレイスタイルや戦略、コミュニティへの貢献を知ることができます。",
+	"community_description": "Strinovaの仲間とつながろう。Discordで交流し、最新情報を共有しましょう。"
 }

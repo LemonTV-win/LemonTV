@@ -449,5 +449,11 @@
 	"add_caster": "Caster hinzufügen",
 	"no_casters": "Keine Caster hinzugefügt",
 	"duplicate_caster": "Dieser Spieler erscheint mehrfach als Caster",
-	"homepage_description": "Eine Community-Esports-Plattform von leidenschaftlichen Strinova-Spielern. Sieh dir Live-Matches an, verfolge Turniere und entdecke Spielerstatistiken sowie Neuigkeiten."
+	"homepage_description": "Eine Community-Esports-Plattform von leidenschaftlichen Strinova-Spielern. Sieh dir Live-Matches an, verfolge Turniere und entdecke Spielerstatistiken sowie Neuigkeiten.",
+	"events_description": "Entdecke vergangene und kommende Strinova-Turniere. Sieh dir Ergebnisse, Zeitpläne und Teamleistungen bei offiziellen und Community-Events an.",
+	"news_description": "Bleib auf dem Laufenden über Strinova Esports. Lies Community-Berichte, Ankündigungen, Turnierzusammenfassungen und Patch-News.",
+	"organizers_description": "Lerne die Teams und Personen hinter den Strinova-Events kennen. Erfahre mehr über ihre Ziele, Hintergründe und Beiträge zur Community.",
+	"teams_description": "Entdecke die Teams, die die Strinova-Esports-Szene prägen. Erfahre mehr über ihre Geschichte, Spieler und Erfolge.",
+	"players_description": "Lerne die Spieler kennen, die Strinova Esports möglich machen. Entdecke ihre Spielweise, Strategien und Beiträge zur Community.",
+	"community_description": "Tritt mit anderen Strinova-Spielern in Kontakt und teile deine Erfahrungen. Komm auf unseren Discord und bleib informiert."
 }

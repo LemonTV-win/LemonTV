@@ -449,5 +449,11 @@
 	"add_caster": "Thêm bình luận viên",
 	"no_casters": "Chưa có bình luận viên nào được thêm",
 	"duplicate_caster": "Người chơi này xuất hiện nhiều lần với vai trò bình luận viên",
-	"homepage_description": "Nền tảng Esports do cộng đồng tạo ra, được xây dựng bởi những người chơi Strinova đam mê. Xem trận đấu trực tiếp, theo dõi giải đấu, số liệu và tin tức mới nhất."
+	"homepage_description": "Nền tảng Esports do cộng đồng tạo ra, được xây dựng bởi những người chơi Strinova đam mê. Xem trận đấu trực tiếp, theo dõi giải đấu, số liệu và tin tức mới nhất.",
+	"events_description": "Khám phá các giải đấu Strinova sắp diễn ra và đã diễn ra. Xem kết quả, lịch trình và thành tích đội tại các sự kiện chính thức và cộng đồng.",
+	"news_description": "Cập nhật tin tức mới nhất về Strinova Esports. Đọc bài viết cộng đồng, thông báo, tổng hợp giải đấu và thông tin bản vá.",
+	"organizers_description": "Tìm hiểu về các đội và cá nhân tổ chức giải Strinova. Biết thêm về lý lịch, mục tiêu và đóng góp của họ cho cộng đồng.",
+	"teams_description": "Khám phá các đội tuyển tạo nên sân chơi Strinova Esports. Tìm hiểu lịch sử, đội hình và thành tích của họ.",
+	"players_description": "Làm quen với các tuyển thủ đóng góp vào Strinova Esports. Khám phá kỹ năng, chiến lược và vai trò của họ trong cộng đồng.",
+	"community_description": "Kết nối với những người chơi Strinova khác và chia sẻ trải nghiệm của bạn. Tham gia Discord của chúng tôi để không bỏ lỡ thông tin mới nhất."
 }

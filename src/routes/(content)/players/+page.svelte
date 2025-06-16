@@ -158,10 +158,6 @@
 	);
 </script>
 
-<svelte:head>
-	<title>{m.players()} | LemonTV</title>
-</svelte:head>
-
 <main class="mx-auto max-w-screen-lg px-4">
 	<h1 class="my-10 flex items-center gap-4 text-2xl font-bold">
 		{m.players()}

@@ -449,5 +449,11 @@
 	"add_caster": "新增主播",
 	"no_casters": "尚未新增主播",
 	"duplicate_caster": "此選手已多次被新增為主播",
-	"homepage_description": "由熱愛卡拉彼丘的玩家打造的社群電競平台。觀看即時比賽，追蹤賽事，查看選手數據與最新訊息"
+	"homepage_description": "由熱愛卡拉彼丘的玩家打造的社群電競平台。觀看即時比賽，追蹤賽事，查看選手數據與最新訊息",
+	"events_description": "瀏覽卡拉彼丘的過去和即將舉行的錦標賽。查看比賽結果、賽程和官方及社群組織的隊伍表現。",
+	"news_description": "了解卡拉彼丘電競的最新動態。閱讀社群報導、官方公告、賽事回顧和版本更新。",
+	"organizers_description": "認識卡拉彼丘賽事背後的團隊與個人。了解他們的背景、目標和對社群的貢獻。",
+	"teams_description": "探索構成卡拉彼丘電競賽場的戰隊。了解他們的歷史、成員及賽事表現。",
+	"players_description": "結識推動卡拉彼丘電競發展的選手。了解他們的技能、戰術和對社群的貢獻。",
+	"community_description": "與其他卡拉彼丘玩家互動並分享你的體驗。加入我們的Discord社群，獲取第一手資訊。"
 }

@@ -449,5 +449,11 @@
 	"add_caster": "Ajouter un commentateur",
 	"no_casters": "Aucun commentateur ajouté",
 	"duplicate_caster": "Ce joueur apparaît plusieurs fois comme commentateur",
-	"homepage_description": "Une plateforme Esports communautaire conçue par des joueurs passionnés de Strinova. Regardez des matchs en direct, suivez les tournois et consultez les stats et actus."
+	"homepage_description": "Une plateforme Esports communautaire conçue par des joueurs passionnés de Strinova. Regardez des matchs en direct, suivez les tournois et consultez les stats et actus.",
+	"events_description": "Découvrez les tournois Strinova passés et à venir. Consultez les résultats, les plannings et les performances des équipes lors d'événements officiels ou communautaires.",
+	"news_description": "Suivez toute l’actualité de Strinova Esports. Lisez les articles de la communauté, les annonces, les résumés de tournois et les notes de mise à jour.",
+	"organizers_description": "Découvrez les équipes et les personnes derrière les événements Strinova. Apprenez-en plus sur leur parcours, leurs objectifs et leur rôle dans la communauté.",
+	"teams_description": "Explorez les équipes qui composent la scène Strinova Esports. Découvrez leur histoire, leurs joueurs et leurs succès.",
+	"players_description": "Faites connaissance avec les joueurs de Strinova Esports. Apprenez-en plus sur leurs compétences, leur style de jeu et leur contribution à la communauté.",
+	"community_description": "Rejoignez d'autres joueurs de Strinova et partagez votre expérience. Venez sur notre Discord pour rester connecté."
 }

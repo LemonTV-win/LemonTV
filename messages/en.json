@@ -449,5 +449,11 @@
 	"add_caster": "Add Caster",
 	"no_casters": "No casters added",
 	"duplicate_caster": "This player appears multiple times as a caster",
-	"homepage_description": "A community-curated Esports platform made by passionate Strinova players. Watch live matches, follow tournaments, explore player stats, and stay up to date with the latest news."
+	"homepage_description": "A community-curated Esports platform made by passionate Strinova players. Watch live matches, follow tournaments, explore player stats, and stay up to date with the latest news.",
+	"events_description": "Browse past and upcoming Strinova tournaments. Watch match results, schedules, and team performances across official and community-run events.",
+	"news_description": "Stay updated with the latest Strinova Esports news. Read community coverage, announcements, tournament reports, and patch highlights.",
+	"organizers_description": "Discover the teams and individuals behind Strinova Esports events. Learn about their backgrounds, goals, and contributions to the community.",
+	"teams_description": "Explore the teams that make up the Strinova Esports scene. Learn about their history, players, and achievements.",
+	"players_description": "Meet the players who make Strinova Esports possible. Learn about their skills, strategies, and contributions to the community.",
+	"community_description": "Connect with fellow Strinova players and share your experiences. Join our Discord community to stay connected and informed."
 }

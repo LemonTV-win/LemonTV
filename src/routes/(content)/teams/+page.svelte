@@ -35,10 +35,6 @@
 	});
 </script>
 
-<svelte:head>
-	<title>{m.teams()} | LemonTV</title>
-</svelte:head>
-
 <main class="mx-auto max-w-screen-lg md:px-4">
 	<div class="flex items-center gap-4">
 		<h1 class="my-10 text-2xl font-bold md:mx-0">{m.teams()}</h1>
