@@ -75,8 +75,8 @@
 		return page.url.pathname === href;
 	}
 
-	const pageTitle = page.data.metadata?.title || `LemonTV – ${m.title_description()}`;
-	const pageDescription = page.data.metadata?.description || m.about_tagline();
+	let pageTitle = $derived(page.data.metadata?.title || `LemonTV – ${m.title_description()}`);
+	let pageDescription = $derived(page.data.metadata?.description || m.about_tagline());
 </script>
 
 <svelte:head>
