@@ -448,5 +448,6 @@
 	"role_commentator": "Narrador",
 	"add_caster": "Adicionar narrador",
 	"no_casters": "Nenhum narrador adicionado",
-	"duplicate_caster": "Este jogador aparece várias vezes como narrador"
+	"duplicate_caster": "Este jogador aparece várias vezes como narrador",
+	"homepage_description": "Plataforma de Esports feita por jogadores apaixonados por Strinova. Assista a partidas ao vivo, acompanhe torneios e explore estatísticas e novidades."
 }

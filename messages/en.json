@@ -448,5 +448,6 @@
 	"role_commentator": "Commentator",
 	"add_caster": "Add Caster",
 	"no_casters": "No casters added",
-	"duplicate_caster": "This player appears multiple times as a caster"
+	"duplicate_caster": "This player appears multiple times as a caster",
+	"homepage_description": "A community-curated Esports platform made by passionate Strinova players. Watch live matches, follow tournaments, explore player stats, and stay up to date with the latest news."
 }

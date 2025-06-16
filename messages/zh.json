@@ -448,5 +448,6 @@
 	"role_commentator": "解说",
 	"add_caster": "添加主播",
 	"no_casters": "暂无主播",
-	"duplicate_caster": "该选手已多次被添加为主播"
+	"duplicate_caster": "该选手已多次被添加为主播",
+	"homepage_description": "由热爱卡拉彼丘的玩家打造的社区电竞平台。观看直播比赛，了解赛事进程，查看选手数据与最新资讯。"
 }

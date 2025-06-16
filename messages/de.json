@@ -448,5 +448,6 @@
 	"role_commentator": "Kommentator",
 	"add_caster": "Caster hinzufügen",
 	"no_casters": "Keine Caster hinzugefügt",
-	"duplicate_caster": "Dieser Spieler erscheint mehrfach als Caster"
+	"duplicate_caster": "Dieser Spieler erscheint mehrfach als Caster",
+	"homepage_description": "Eine Community-Esports-Plattform von leidenschaftlichen Strinova-Spielern. Sieh dir Live-Matches an, verfolge Turniere und entdecke Spielerstatistiken sowie Neuigkeiten."
 }

@@ -448,5 +448,6 @@
 	"role_commentator": "Comentarista",
 	"add_caster": "Añadir comentarista",
 	"no_casters": "No hay comentaristas añadidos",
-	"duplicate_caster": "Este jugador aparece varias veces como comentarista"
+	"duplicate_caster": "Este jugador aparece varias veces como comentarista",
+	"homepage_description": "Plataforma de Esports creada por apasionados jugadores de Strinova. Mira partidas en vivo, sigue torneos y consulta estadísticas y noticias actualizadas."
 }

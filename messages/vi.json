@@ -448,5 +448,6 @@
 	"role_commentator": "Bình luận viên",
 	"add_caster": "Thêm bình luận viên",
 	"no_casters": "Chưa có bình luận viên nào được thêm",
-	"duplicate_caster": "Người chơi này xuất hiện nhiều lần với vai trò bình luận viên"
+	"duplicate_caster": "Người chơi này xuất hiện nhiều lần với vai trò bình luận viên",
+	"homepage_description": "Nền tảng Esports do cộng đồng tạo ra, được xây dựng bởi những người chơi Strinova đam mê. Xem trận đấu trực tiếp, theo dõi giải đấu, số liệu và tin tức mới nhất."
 }

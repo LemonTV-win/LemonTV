@@ -448,5 +448,6 @@
 	"role_commentator": "해설자",
 	"add_caster": "캐스터 추가",
 	"no_casters": "추가된 캐스터가 없습니다",
-	"duplicate_caster": "이 선수는 여러 번 캐스터로 등록되어 있습니다"
+	"duplicate_caster": "이 선수는 여러 번 캐스터로 등록되어 있습니다",
+	"homepage_description": "열정적인 스트리노바 플레이어들이 만든 커뮤니티 기반 e스포츠 플랫폼. 생중계, 토너먼트, 선수 통계, 최신 뉴스까지 한눈에 확인하세요."
 }

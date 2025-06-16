@@ -448,5 +448,6 @@
 	"role_commentator": "解說",
 	"add_caster": "新增主播",
 	"no_casters": "尚未新增主播",
-	"duplicate_caster": "此選手已多次被新增為主播"
+	"duplicate_caster": "此選手已多次被新增為主播",
+	"homepage_description": "由熱愛卡拉彼丘的玩家打造的社群電競平台。觀看即時比賽，追蹤賽事，查看選手數據與最新訊息"
 }

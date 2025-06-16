@@ -74,24 +74,31 @@
 	function isActive(href: string) {
 		return page.url.pathname === href;
 	}
+
+	const pageTitle = page.data.metadata?.title || `LemonTV – ${m.title_description()}`;
+	const pageDescription = page.data.metadata?.description || m.about_tagline();
 </script>
 
 <svelte:head>
-	<!-- Shared Meta -->
+	<!-- Basic HTML Metadata -->
+	<title>{pageTitle}</title>
+	<meta name="description" content={pageDescription} />
 	<meta name="keywords" content="LemonTV, Strinova, Esports, News, Community, Tournaments" />
-
-	<!-- Shared Link -->
 	<link rel="canonical" href={`${SITE_CANONICAL_HOST}${page.url.pathname}`} />
 
-	<!-- Shared Open Graph -->
+	<!-- Open Graph -->
 	<meta property="og:site_name" content="LemonTV" />
 	<meta property="og:url" content={`${SITE_CANONICAL_HOST}${page.url.pathname}`} />
+	<meta property="og:title" content={pageTitle} />
+	<meta property="og:description" content={pageDescription} />
 	<meta property="og:type" content="website" />
 	<!-- TODO: Generate og:image for sub pages such as Team / Player -->
 	<meta property="og:image" content="https://lemontv.win/screenshot.png" />
 
-	<!-- Shared Twitter Card -->
+	<!-- Twitter Card -->
 	<meta property="twitter:card" content="summary_large_image" />
+	<meta property="twitter:title" content={pageTitle} />
+	<meta property="twitter:description" content={pageDescription} />
 	<meta property="twitter:creator" content="@mkpoli" />
 	<meta property="twitter:image" content="https://lemontv.win/screenshot.png" />
 	<meta property="twitter:url" content={`${SITE_CANONICAL_HOST}${page.url.pathname}`} />
