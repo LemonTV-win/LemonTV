@@ -455,5 +455,9 @@
 	"organizers_description": "Strinovaのイベントを支えるチームや個人を紹介。活動の目的や背景、コミュニティへの貢献について知ることができます。",
 	"teams_description": "Strinova Esportsに参加するチーム一覧。チームの歴史や選手情報、実績を確認できます。",
 	"players_description": "Strinova Esportsのプレイヤーを紹介。プレイスタイルや戦略、コミュニティへの貢献を知ることができます。",
-	"community_description": "Strinovaの仲間とつながろう。Discordで交流し、最新情報を共有しましょう。"
+	"community_description": "Strinovaの仲間とつながろう。Discordで交流し、最新情報を共有しましょう。",
+	"event_page_description": "{name}のすべてをチェック：試合結果、スケジュール、参加チーム、選手情報、トーナメント詳細など。",
+	"organizer_page_description": "{name}の詳細情報：開催イベント、コミュニティへの貢献、背景、Strinova Esportsでの役割を紹介。",
+	"team_page_description": "{name}のチーム情報：歴史、メンバー構成、過去の実績、Strinovaでの戦績を確認。",
+	"player_page_description": "{name}のプロフィール：スキル、実績、Strinovaコミュニティへの貢献を紹介。"
 }

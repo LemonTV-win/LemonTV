@@ -455,5 +455,9 @@
 	"organizers_description": "认识卡拉彼丘赛事背后的团队与个人。了解他们的背景、目标和对社区的贡献。",
 	"teams_description": "探索构成卡拉彼丘电竞赛场的战队。了解他们的历史、成员及赛事表现。",
 	"players_description": "结识推动卡拉彼丘电竞发展的选手。了解他们的技能、战术和对社区的贡献。",
-	"community_description": "与其他卡拉彼丘玩家互动并分享你的体验。加入我们的Discord社区，获取第一手资讯。"
+	"community_description": "与其他卡拉彼丘玩家互动并分享你的体验。加入我们的Discord社区，获取第一手资讯。",
+	"event_page_description": "了解{name}的全部内容：比赛结果、时间表、参赛队伍、选手名单和赛事详情。",
+	"organizer_page_description": "深入了解{name}：他们的赛事、对社区的贡献、背景，以及在卡拉彼丘电竞生态中的角色。",
+	"team_page_description": "探索{name}：战队历史、阵容、过往表现和在卡拉彼丘赛事中的成绩。",
+	"player_page_description": "认识{name}：他们的技术、成就以及在卡拉彼丘电竞社区中的贡献。"
 }

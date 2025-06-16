@@ -455,5 +455,9 @@
 	"organizers_description": "認識卡拉彼丘賽事背後的團隊與個人。了解他們的背景、目標和對社群的貢獻。",
 	"teams_description": "探索構成卡拉彼丘電競賽場的戰隊。了解他們的歷史、成員及賽事表現。",
 	"players_description": "結識推動卡拉彼丘電競發展的選手。了解他們的技能、戰術和對社群的貢獻。",
-	"community_description": "與其他卡拉彼丘玩家互動並分享你的體驗。加入我們的Discord社群，獲取第一手資訊。"
+	"community_description": "與其他卡拉彼丘玩家互動並分享你的體驗。加入我們的Discord社群，獲取第一手資訊。",
+	"event_page_description": "探索{name}的所有資訊：比賽結果、時間表、參賽隊伍、選手名單與賽事細節。",
+	"organizer_page_description": "深入了解{name}：他們舉辦的活動、對社群的貢獻、背景，以及在卡拉彼丘電競生態中的角色。",
+	"team_page_description": "認識{name}：隊伍歷史、成員陣容、過往表現與在卡拉彼丘賽事中的成績。",
+	"player_page_description": "了解{name}：他的技能、成就以及對卡拉彼丘電競社群的貢獻。"
 }

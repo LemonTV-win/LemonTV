@@ -455,5 +455,9 @@
 	"organizers_description": "Conoce a los equipos y personas detrás de los eventos de Strinova. Descubre su historia, objetivos y contribuciones a la comunidad.",
 	"teams_description": "Descubre los equipos que dan vida a la escena de Strinova Esports. Conoce su historia, jugadores y logros.",
 	"players_description": "Conoce a los jugadores que hacen posible Strinova Esports. Descubre sus habilidades, estrategias y aportes a la comunidad.",
-	"community_description": "Conecta con otros jugadores de Strinova y comparte tu experiencia. Únete a nuestro Discord para mantenerte informado."
+	"community_description": "Conecta con otros jugadores de Strinova y comparte tu experiencia. Únete a nuestro Discord para mantenerte informado.",
+	"event_page_description": "Explora todo sobre {name}: resultados, horarios, equipos, jugadores y detalles del torneo.",
+	"organizer_page_description": "Conoce más sobre {name}: sus eventos, aportes a la comunidad, trayectoria y rol en el ecosistema de Strinova Esports.",
+	"team_page_description": "Descubre a {name}: historia del equipo, plantilla, actuaciones pasadas y resultados en torneos de Strinova.",
+	"player_page_description": "Conoce a {name}: sus habilidades, logros y aportes a la comunidad de Strinova Esports."
 }

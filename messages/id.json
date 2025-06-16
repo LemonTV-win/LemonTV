@@ -449,5 +449,9 @@
 	"add_caster": "Tambah Caster",
 	"no_casters": "Belum ada caster yang ditambahkan",
 	"duplicate_caster": "Pemain ini muncul beberapa kali sebagai caster",
-	"homepage_description": "Platform Esports buatan komunitas dari para pemain Strinova yang berdedikasi. Tonton pertandingan langsung, ikuti turnamen, dan lihat statistik serta berita terbaru."
+	"homepage_description": "Platform Esports buatan komunitas dari para pemain Strinova yang berdedikasi. Tonton pertandingan langsung, ikuti turnamen, dan lihat statistik serta berita terbaru.",
+	"event_page_description": "Temukan semua informasi tentang {name}：hasil pertandingan, jadwal, tim peserta, dan detail pertandingan lainnya.",
+	"organizer_page_description": "Temukan semua informasi tentang {name}：acara yang mereka selenggarakan, kontribusi mereka terhadap komunitas, latar belakang, dan peran mereka dalam ekosistem e-sports Strinova.",
+	"team_page_description": "Temukan semua informasi tentang {name}：sejarah tim, komposisi pemain, prestasi sebelumnya, dan hasil pertandingan di e-sports Strinova.",
+	"player_page_description": "Temukan semua informasi tentang {name}：kemampuan mereka, prestasi, dan kontribusi terhadap komunitas e-sports Strinova."
 }

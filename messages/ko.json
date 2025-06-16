@@ -455,5 +455,9 @@
 	"organizers_description": "Strinova 대회를 이끄는 팀과 개인들을 알아보세요. 그들의 목표, 배경, 커뮤니티에 대한 기여를 소개합니다.",
 	"teams_description": "Strinova Esports 씬을 구성하는 팀을 살펴보세요. 팀의 역사, 선수 명단, 주요 성과를 확인할 수 있습니다.",
 	"players_description": "Strinova Esports를 만드는 플레이어들을 만나보세요. 그들의 실력, 전략, 커뮤니티 기여를 알아보세요.",
-	"community_description": "Strinova 플레이어들과 소통하고 경험을 나누세요. Discord에서 함께 이야기하고 정보를 공유하세요."
+	"community_description": "Strinova 플레이어들과 소통하고 경험을 나누세요. Discord에서 함께 이야기하고 정보를 공유하세요.",
+	"event_page_description": "{name}에 대한 모든 정보 — 경기 결과, 일정, 팀, 선수, 토너먼트 세부 정보를 확인하세요.",
+	"organizer_page_description": "{name}에 대해 더 알아보세요 — 주최한 이벤트, 커뮤니티 기여, 배경, Strinova Esports에서의 역할까지.",
+	"team_page_description": "{name}을 소개합니다 — 팀 역사, 선수 명단, 과거 성과 및 Strinova 대회 기록을 확인하세요.",
+	"player_page_description": "{name}에 대해 알아보세요 — 실력, 주요 성과, Strinova 커뮤니티에서의 활동을 확인할 수 있습니다."
 }
