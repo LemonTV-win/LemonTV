@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /api/
+Disallow: /profile/
+
+# Allow all other paths
+Allow: /
