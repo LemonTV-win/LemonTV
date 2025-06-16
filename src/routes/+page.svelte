@@ -24,10 +24,19 @@
 
 	// Get featured event (first ongoing event or first upcoming event)
 	let featuredEvent = $derived(ongoingEvents[0] || upcomingEvents[0]);
+
+	const title = `LemonTV – ${m.title_description()}`;
 </script>
 
 <svelte:head>
-	<title>LemonTV – {m.title_description()}</title>
+	<title>{title}</title>
+	<meta name="description" content={m.about_tagline()} />
+
+	<meta property="og:title" content={title} />
+	<meta property="og:description" content={m.about_tagline()} />
+
+	<meta property="twitter:title" content={title} />
+	<meta property="twitter:description" content={m.about_tagline()} />
 </svelte:head>
 
 {#if !data.user}

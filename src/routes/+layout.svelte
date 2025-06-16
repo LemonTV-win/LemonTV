@@ -15,6 +15,7 @@
 	import type { LayoutProps } from './$types';
 	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
+	import { SITE_CANONICAL_HOST } from '$lib/consts';
 
 	let { data, children }: LayoutProps = $props();
 
@@ -76,21 +77,24 @@
 </script>
 
 <svelte:head>
-	<meta name="description" content={m.about_tagline()} />
+	<!-- Shared Meta -->
 	<meta name="keywords" content="LemonTV, Strinova, Esports, News, Community, Tournaments" />
-	<meta property="og:title" content="LemonTV" />
+
+	<!-- Shared Link -->
+	<link rel="canonical" href={`${SITE_CANONICAL_HOST}${page.url.pathname}`} />
+
+	<!-- Shared Open Graph -->
 	<meta property="og:site_name" content="LemonTV" />
-	<meta property="og:description" content={m.about_tagline()} />
-	<meta property="og:image" content="https://lemontv.win/screenshot.png" />
-	<meta property="og:url" content="https://lemontv.win" />
+	<meta property="og:url" content={`${SITE_CANONICAL_HOST}${page.url.pathname}`} />
 	<meta property="og:type" content="website" />
+	<!-- TODO: Generate og:image for sub pages such as Team / Player -->
+	<meta property="og:image" content="https://lemontv.win/screenshot.png" />
+
+	<!-- Shared Twitter Card -->
 	<meta property="twitter:card" content="summary_large_image" />
-	<meta property="twitter:title" content="LemonTV" />
-	<meta property="twitter:description" content={m.about_tagline()} />
 	<meta property="twitter:creator" content="@mkpoli" />
 	<meta property="twitter:image" content="https://lemontv.win/screenshot.png" />
-	<meta property="twitter:url" content="https://lemontv.win" />
-	<!-- TODO: Differ by page -->
+	<meta property="twitter:url" content={`${SITE_CANONICAL_HOST}${page.url.pathname}`} />
 </svelte:head>
 
 <div class="flex min-h-dvh flex-col">
