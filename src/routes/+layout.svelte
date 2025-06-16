@@ -79,6 +79,7 @@
 	<meta name="description" content={m.about_tagline()} />
 	<meta name="keywords" content="LemonTV, Strinova, Esports, News, Community, Tournaments" />
 	<meta property="og:title" content="LemonTV" />
+	<meta property="og:site_name" content="LemonTV" />
 	<meta property="og:description" content={m.about_tagline()} />
 	<meta property="og:image" content="https://lemontv.win/screenshot.png" />
 	<meta property="og:url" content="https://lemontv.win" />
