@@ -1548,7 +1548,7 @@ export async function seed() {
 
 	console.log('[SEED] Seeding match teams...');
 	await db.insert(schema.matchTeam).values([
-		// Qualifier matches (BO1)
+		// Event 1: Open Qualifiers (BO1)
 		{
 			matchId: MATCHES[0].id,
 			teamId: team1_id,
@@ -1561,25 +1561,35 @@ export async function seed() {
 			position: 1,
 			score: 0
 		},
-		// Group Stage A matches (BO3)
+		{
+			matchId: MATCHES[1].id,
+			teamId: team3_id,
+			position: 0,
+			score: 1
+		},
+		{
+			matchId: MATCHES[1].id,
+			teamId: team4_id,
+			position: 1,
+			score: 0
+		},
 		{
 			matchId: MATCHES[2].id,
 			teamId: team1_id,
 			position: 0,
-			score: 2
+			score: 1
 		},
 		{
 			matchId: MATCHES[2].id,
 			teamId: team3_id,
 			position: 1,
-			score: 1
+			score: 0
 		},
-		// Group Stage B matches (BO3)
 		{
 			matchId: MATCHES[3].id,
 			teamId: team2_id,
 			position: 0,
-			score: 2
+			score: 1
 		},
 		{
 			matchId: MATCHES[3].id,
@@ -1587,23 +1597,46 @@ export async function seed() {
 			position: 1,
 			score: 0
 		},
-		// Playoff matches (BO5)
+		// Event 1: Group Stage A (BO3)
+		{
+			matchId: MATCHES[4].id,
+			teamId: team1_id,
+			position: 0,
+			score: 2
+		},
+		{
+			matchId: MATCHES[4].id,
+			teamId: team2_id,
+			position: 1,
+			score: 1
+		},
+		{
+			matchId: MATCHES[5].id,
+			teamId: team3_id,
+			position: 0,
+			score: 2
+		},
+		{
+			matchId: MATCHES[5].id,
+			teamId: team4_id,
+			position: 1,
+			score: 0
+		},
 		{
 			matchId: MATCHES[6].id,
 			teamId: team1_id,
 			position: 0,
-			score: 3
+			score: 2
 		},
 		{
 			matchId: MATCHES[6].id,
-			teamId: team2_id,
+			teamId: team3_id,
 			position: 1,
-			score: 2
+			score: 1
 		},
-		// Swiss Stage matches (BO3)
 		{
 			matchId: MATCHES[7].id,
-			teamId: team3_id,
+			teamId: team2_id,
 			position: 0,
 			score: 2
 		},
@@ -1611,12 +1644,24 @@ export async function seed() {
 			matchId: MATCHES[7].id,
 			teamId: team4_id,
 			position: 1,
+			score: 0
+		},
+		// Event 1: Group Stage B (BO3)
+		{
+			matchId: MATCHES[8].id,
+			teamId: team1_id,
+			position: 0,
+			score: 2
+		},
+		{
+			matchId: MATCHES[8].id,
+			teamId: team4_id,
+			position: 1,
 			score: 1
 		},
-		// Quarter Finals (BO3)
 		{
 			matchId: MATCHES[9].id,
-			teamId: team1_id,
+			teamId: team2_id,
 			position: 0,
 			score: 2
 		},
@@ -1626,31 +1671,374 @@ export async function seed() {
 			position: 1,
 			score: 0
 		},
-		// Semi Finals (BO5)
+		{
+			matchId: MATCHES[10].id,
+			teamId: team1_id,
+			position: 0,
+			score: 2
+		},
 		{
 			matchId: MATCHES[10].id,
 			teamId: team2_id,
-			position: 0,
-			score: 3
-		},
-		{
-			matchId: MATCHES[10].id,
-			teamId: team4_id,
 			position: 1,
 			score: 1
 		},
-		// Grand Finals (BO5)
 		{
 			matchId: MATCHES[11].id,
+			teamId: team3_id,
+			position: 0,
+			score: 2
+		},
+		{
+			matchId: MATCHES[11].id,
+			teamId: team4_id,
+			position: 1,
+			score: 0
+		},
+		// Event 1: Playoffs (BO5)
+		{
+			matchId: MATCHES[12].id,
 			teamId: team1_id,
 			position: 0,
 			score: 3
 		},
 		{
-			matchId: MATCHES[11].id,
+			matchId: MATCHES[12].id,
 			teamId: team2_id,
 			position: 1,
 			score: 2
+		},
+		{
+			matchId: MATCHES[13].id,
+			teamId: team3_id,
+			position: 0,
+			score: 3
+		},
+		{
+			matchId: MATCHES[13].id,
+			teamId: team4_id,
+			position: 1,
+			score: 1
+		},
+		{
+			matchId: MATCHES[14].id,
+			teamId: team1_id,
+			position: 0,
+			score: 3
+		},
+		{
+			matchId: MATCHES[14].id,
+			teamId: team3_id,
+			position: 1,
+			score: 2
+		},
+		{
+			matchId: MATCHES[15].id,
+			teamId: team2_id,
+			position: 0,
+			score: 3
+		},
+		{
+			matchId: MATCHES[15].id,
+			teamId: team4_id,
+			position: 1,
+			score: 1
+		},
+		// Event 2: Swiss Stage (BO3)
+		{
+			matchId: MATCHES[16].id,
+			teamId: team1_id,
+			position: 0,
+			score: 2
+		},
+		{
+			matchId: MATCHES[16].id,
+			teamId: team2_id,
+			position: 1,
+			score: 1
+		},
+		{
+			matchId: MATCHES[17].id,
+			teamId: team3_id,
+			position: 0,
+			score: 2
+		},
+		{
+			matchId: MATCHES[17].id,
+			teamId: team4_id,
+			position: 1,
+			score: 0
+		},
+		{
+			matchId: MATCHES[18].id,
+			teamId: team1_id,
+			position: 0,
+			score: 2
+		},
+		{
+			matchId: MATCHES[18].id,
+			teamId: team3_id,
+			position: 1,
+			score: 1
+		},
+		{
+			matchId: MATCHES[19].id,
+			teamId: team2_id,
+			position: 0,
+			score: 2
+		},
+		{
+			matchId: MATCHES[19].id,
+			teamId: team4_id,
+			position: 1,
+			score: 0
+		},
+		// Event 2: Quarter Finals (BO3)
+		{
+			matchId: MATCHES[20].id,
+			teamId: team1_id,
+			position: 0,
+			score: 2
+		},
+		{
+			matchId: MATCHES[20].id,
+			teamId: team2_id,
+			position: 1,
+			score: 1
+		},
+		{
+			matchId: MATCHES[21].id,
+			teamId: team3_id,
+			position: 0,
+			score: 2
+		},
+		{
+			matchId: MATCHES[21].id,
+			teamId: team4_id,
+			position: 1,
+			score: 0
+		},
+		{
+			matchId: MATCHES[22].id,
+			teamId: team1_id,
+			position: 0,
+			score: 2
+		},
+		{
+			matchId: MATCHES[22].id,
+			teamId: team3_id,
+			position: 1,
+			score: 1
+		},
+		{
+			matchId: MATCHES[23].id,
+			teamId: team2_id,
+			position: 0,
+			score: 2
+		},
+		{
+			matchId: MATCHES[23].id,
+			teamId: team4_id,
+			position: 1,
+			score: 0
+		},
+		// Event 2: Semi Finals (BO5)
+		{
+			matchId: MATCHES[24].id,
+			teamId: team1_id,
+			position: 0,
+			score: 3
+		},
+		{
+			matchId: MATCHES[24].id,
+			teamId: team3_id,
+			position: 1,
+			score: 2
+		},
+		{
+			matchId: MATCHES[25].id,
+			teamId: team2_id,
+			position: 0,
+			score: 3
+		},
+		{
+			matchId: MATCHES[25].id,
+			teamId: team4_id,
+			position: 1,
+			score: 1
+		},
+		// Event 2: Grand Finals (BO5)
+		{
+			matchId: MATCHES[26].id,
+			teamId: team1_id,
+			position: 0,
+			score: 3
+		},
+		{
+			matchId: MATCHES[26].id,
+			teamId: team2_id,
+			position: 1,
+			score: 2
+		},
+		// Event 3: Showmatch (BO1)
+		{
+			matchId: MATCHES[27].id,
+			teamId: team1_id,
+			position: 0,
+			score: 1
+		},
+		{
+			matchId: MATCHES[27].id,
+			teamId: team2_id,
+			position: 1,
+			score: 0
+		},
+		// Event 4: Regional Qualifier (BO3)
+		{
+			matchId: MATCHES[28].id,
+			teamId: team1_id,
+			position: 0,
+			score: 2
+		},
+		{
+			matchId: MATCHES[28].id,
+			teamId: team2_id,
+			position: 1,
+			score: 1
+		},
+		{
+			matchId: MATCHES[29].id,
+			teamId: team3_id,
+			position: 0,
+			score: 2
+		},
+		{
+			matchId: MATCHES[29].id,
+			teamId: team4_id,
+			position: 1,
+			score: 0
+		},
+		{
+			matchId: MATCHES[30].id,
+			teamId: team1_id,
+			position: 0,
+			score: 2
+		},
+		{
+			matchId: MATCHES[30].id,
+			teamId: team3_id,
+			position: 1,
+			score: 1
+		},
+		{
+			matchId: MATCHES[31].id,
+			teamId: team2_id,
+			position: 0,
+			score: 2
+		},
+		{
+			matchId: MATCHES[31].id,
+			teamId: team4_id,
+			position: 1,
+			score: 0
+		},
+		// Event 5: Group Stage (BO3)
+		{
+			matchId: MATCHES[32].id,
+			teamId: team1_id,
+			position: 0,
+			score: 2
+		},
+		{
+			matchId: MATCHES[32].id,
+			teamId: team2_id,
+			position: 1,
+			score: 1
+		},
+		{
+			matchId: MATCHES[33].id,
+			teamId: team3_id,
+			position: 0,
+			score: 2
+		},
+		{
+			matchId: MATCHES[33].id,
+			teamId: team4_id,
+			position: 1,
+			score: 0
+		},
+		{
+			matchId: MATCHES[34].id,
+			teamId: team1_id,
+			position: 0,
+			score: 2
+		},
+		{
+			matchId: MATCHES[34].id,
+			teamId: team3_id,
+			position: 1,
+			score: 1
+		},
+		{
+			matchId: MATCHES[35].id,
+			teamId: team2_id,
+			position: 0,
+			score: 2
+		},
+		{
+			matchId: MATCHES[35].id,
+			teamId: team4_id,
+			position: 1,
+			score: 0
+		},
+		// Event 5: Playoffs (BO5)
+		{
+			matchId: MATCHES[36].id,
+			teamId: team1_id,
+			position: 0,
+			score: 3
+		},
+		{
+			matchId: MATCHES[36].id,
+			teamId: team2_id,
+			position: 1,
+			score: 2
+		},
+		{
+			matchId: MATCHES[37].id,
+			teamId: team3_id,
+			position: 0,
+			score: 3
+		},
+		{
+			matchId: MATCHES[37].id,
+			teamId: team4_id,
+			position: 1,
+			score: 1
+		},
+		{
+			matchId: MATCHES[38].id,
+			teamId: team1_id,
+			position: 0,
+			score: 3
+		},
+		{
+			matchId: MATCHES[38].id,
+			teamId: team3_id,
+			position: 1,
+			score: 2
+		},
+		{
+			matchId: MATCHES[39].id,
+			teamId: team2_id,
+			position: 0,
+			score: 3
+		},
+		{
+			matchId: MATCHES[39].id,
+			teamId: team4_id,
+			position: 1,
+			score: 1
 		}
 	]);
 
