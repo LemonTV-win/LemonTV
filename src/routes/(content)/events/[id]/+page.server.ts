@@ -10,7 +10,6 @@ import type {
 import { getEvent } from '$lib/data';
 import { getEvent as getServerEvent } from '$lib/server/data/events';
 import { getTeams } from '$lib/server/data/teams';
-import { getPlayers } from '$lib/server/data/players';
 import { error } from '@sveltejs/kit';
 import type { Team } from '$lib/data/teams';
 
@@ -30,14 +29,6 @@ export const load: PageServerLoad = async ({ params }) => {
 			)
 	);
 	const teamMap = new Map(filteredTeams.map((t) => [t.abbr ?? t.id, t]));
-
-	const players = await getPlayers();
-	const playerMap = new Map(
-		players.flatMap((player) => [
-			[player.name, player],
-			[player.slug, player]
-		])
-	);
 
 	// Convert legacy results to new format if needed
 	if (event.results && typeof (event.results[0] as LegacyEventResult)?.team === 'string') {
@@ -80,7 +71,6 @@ export const load: PageServerLoad = async ({ params }) => {
 
 	return {
 		event: typedEvent,
-		teams: teamMap,
-		players: playerMap
+		teams: teamMap
 	};
 };

@@ -325,46 +325,21 @@
 											{#each main as player}
 												{#if player}
 													<li>
-														{#if data.players.get(player)}
-															{@const playerData = data.players.get(player)}
-															<a href={`/players/${playerData?.id}`} class="hover:text-yellow-500">
-																{playerData?.name}
-															</a>
-														{:else}
-															<span>{player}</span>
-														{/if}
+														<span>{player}</span>
 													</li>
 												{/if}
 											{/each}
 											{#each reserve as player}
 												{#if player}
 													<li class="text-white/50">
-														{#if data.players.get(player)}
-															<a
-																href={`/players/${data.players.get(player)?.id}`}
-																class="hover:text-yellow-500"
-															>
-																{player}
-															</a>
-														{:else}
-															<span>{player}</span>
-														{/if}
+														<span>{player}</span>
 													</li>
 												{/if}
 											{/each}
 											{#each coach as player}
 												{#if player}
 													<li class="text-white/50">
-														{#if data.players.get(player)}
-															<a
-																href={`/players/${data.players.get(player)?.id}`}
-																class="hover:text-yellow-500"
-															>
-																({player})
-															</a>
-														{:else}
-															<span>({player})</span>
-														{/if}
+														<span>({player})</span>
 													</li>
 												{/if}
 											{/each}
