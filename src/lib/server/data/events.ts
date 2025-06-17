@@ -283,7 +283,7 @@ export async function getEvents(
 					type: string;
 					title: string;
 					bracket: string;
-					parallelGroup: number;
+					parallelGroup: number | undefined;
 					nodes: Array<{
 						id: number;
 						matchId: string;
@@ -454,7 +454,7 @@ export async function getEvents(
 							type: stageRound.type,
 							title: stageRound.title || '',
 							bracket: stageRound.bracket || '',
-							parallelGroup: stageRound.parallelGroup || 1,
+							parallelGroup: stageRound.parallelGroup || undefined,
 							nodes: []
 						});
 					}
