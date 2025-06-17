@@ -68,18 +68,19 @@ export async function seed() {
 	console.info('[SEED] - Deleted organizer');
 	// Preserve user-related tables: user, role, userRole, session, editHistory
 
-	console.log('[SEED] Seeding players...');
-
+	console.info('[SEED] Seeding players...');
 	await db.insert(schema.player).values(PLAYERS);
 
-	console.log('[SEED] Seeding player additional nationalities...');
+	console.info('[SEED] Seeding player additional nationalities...');
 	await db.insert(schema.playerAdditionalNationality).values(PLAYER_ADDITIONAL_NATIONALITIES);
 
-	console.log('[SEED] Seeding teams...');
+	console.info('[SEED] Seeding teams...');
 	await db.insert(schema.team).values(TEAMS);
+
+	console.info('[SEED] Seeding team players...');
 	await db.insert(schema.teamPlayer).values(TEAM_PLAYERS);
 
-	console.log('[SEED] Seeding organizers...');
+	console.info('[SEED] Seeding organizers...');
 	const ORGANIZERS = [
 		{
 			id: randomUUID(),
@@ -172,7 +173,7 @@ export async function seed() {
 	];
 	await db.insert(schema.organizer).values(ORGANIZERS);
 
-	console.log('[SEED] Seeding events...');
+	console.info('[SEED] Seeding events...');
 	const EVENTS = [
 		{
 			id: randomUUID(),
@@ -281,7 +282,7 @@ export async function seed() {
 	];
 	await db.insert(schema.event).values(EVENTS);
 
-	console.log('[SEED] Seeding event websites...');
+	console.info('[SEED] Seeding event websites...');
 	await db.insert(schema.eventWebsite).values([
 		// Event 1 websites
 		{
@@ -383,7 +384,7 @@ export async function seed() {
 		}
 	]);
 
-	console.log('[SEED] Seeding event organizers...');
+	console.info('[SEED] Seeding event organizers...');
 	await db.insert(schema.eventOrganizer).values([
 		{
 			eventId: EVENTS[0].id,
@@ -403,7 +404,7 @@ export async function seed() {
 		}
 	]);
 
-	console.log('[SEED] Seeding event team players...');
+	console.info('[SEED] Seeding event team players...');
 	await db.insert(schema.eventTeamPlayer).values([
 		// Event 1 - Team 1 players
 		{
@@ -557,7 +558,7 @@ export async function seed() {
 		}
 	]);
 
-	console.log('[SEED] Seeding stages...');
+	console.info('[SEED] Seeding stages...');
 	const STAGES = [
 		// Event 1 - Full tournament structure
 		{
@@ -651,7 +652,7 @@ export async function seed() {
 	];
 	await db.insert(schema.stage).values(STAGES);
 
-	console.log('[SEED] Seeding matches...');
+	console.info('[SEED] Seeding matches...');
 	const MATCHES = [
 		// Event 1: Open Qualifiers
 		{
@@ -868,7 +869,7 @@ export async function seed() {
 	];
 	await db.insert(schema.match).values(MATCHES);
 
-	console.log('[SEED] Seeding stage rounds...');
+	console.info('[SEED] Seeding stage rounds...');
 	const STAGE_ROUNDS = [
 		// Example stage rounds for Event 1 (Open Qualifiers)
 		{
@@ -1061,7 +1062,7 @@ export async function seed() {
 	];
 	await db.insert(schema.stageRound).values(STAGE_ROUNDS);
 
-	console.log('[SEED] Seeding stage nodes...');
+	console.info('[SEED] Seeding stage nodes...');
 	const STAGE_NODES = [
 		// Event 1: Open Qualifiers
 		{
@@ -1318,7 +1319,7 @@ export async function seed() {
 	];
 	await db.insert(schema.stageNode).values(STAGE_NODES);
 
-	console.log('[SEED] Seeding stage node dependencies...');
+	console.info('[SEED] Seeding stage node dependencies...');
 	const STAGE_NODE_DEPENDENCIES = [
 		// Example dependencies for Event 1 (Open Qualifiers)
 		{
@@ -1413,7 +1414,7 @@ export async function seed() {
 	];
 	await db.insert(schema.stageNodeDependency).values(STAGE_NODE_DEPENDENCIES);
 
-	console.log('[SEED] Seeding match teams...');
+	console.info('[SEED] Seeding match teams...');
 	await db.insert(schema.matchTeam).values([
 		// Event 1: Open Qualifiers (BO1)
 		{
@@ -1909,7 +1910,7 @@ export async function seed() {
 		}
 	]);
 
-	console.log('[SEED] Seeding match maps...');
+	console.info('[SEED] Seeding match maps...');
 	await db.insert(schema.matchMap).values([
 		// Grand Finals (BO5) - Match 11
 		{
@@ -2332,7 +2333,7 @@ export async function seed() {
 		}
 	]);
 
-	console.log('[SEED] Seeding event results...');
+	console.info('[SEED] Seeding event results...');
 	await db.insert(schema.eventResult).values([
 		// Event 1 (Imaginary Cup 1) Results
 		{
@@ -2608,7 +2609,7 @@ export async function seed() {
 		}
 	]);
 
-	console.log('[SEED] Seeding Discord servers...');
+	console.info('[SEED] Seeding Discord servers...');
 	const DISCORD_SERVERS = [
 		{
 			id: randomUUID(),
@@ -2634,7 +2635,7 @@ export async function seed() {
 	];
 	await db.insert(schema.discordServer).values(DISCORD_SERVERS);
 
-	console.log('[SEED] Seeding community tags...');
+	console.info('[SEED] Seeding community tags...');
 	const COMMUNITY_TAGS = [
 		// Language tags
 		{
@@ -2706,7 +2707,7 @@ export async function seed() {
 	];
 	await db.insert(schema.communityTag).values(COMMUNITY_TAGS);
 
-	console.log('[SEED] Seeding Discord server tags...');
+	console.info('[SEED] Seeding Discord server tags...');
 	await db.insert(schema.discordServerTag).values([
 		// Strinova Esports Hub tags
 		{
@@ -2766,11 +2767,11 @@ export async function seed() {
 		}
 	]);
 
-	console.log('[SEED] Seeding sources...');
+	console.info('[SEED] Seeding sources...');
 	// const sources = await db.query.source.findMany();
 	// console.log(sources);
 
-	console.log('[SEED] Seeding games...');
+	console.info('[SEED] Seeding games...');
 	const GAMES = [
 		// Grand Finals (BO5) - Match 11
 		{
@@ -2847,7 +2848,7 @@ export async function seed() {
 	];
 	await db.insert(schema.game).values(GAMES);
 
-	console.log('[SEED] Seeding game teams...');
+	console.info('[SEED] Seeding game teams...');
 	await db.insert(schema.gameTeam).values([
 		// Grand Finals Game 1
 		{
@@ -2981,7 +2982,7 @@ export async function seed() {
 		}
 	]);
 
-	console.log('[SEED] Seeding game player scores...');
+	console.info('[SEED] Seeding game player scores...');
 	await db.insert(schema.gamePlayerScore).values([
 		// Grand Finals Game 1 - Team 1 Player 1
 		{
@@ -3666,7 +3667,7 @@ export async function seed() {
 	]);
 
 	// After seeding events, add some sample videos
-	console.log('[SEED] Seeding event videos...');
+	console.info('[SEED] Seeding event videos...');
 	await db.insert(schema.eventVideo).values([
 		{
 			id: randomUUID(),
@@ -3701,7 +3702,7 @@ export async function seed() {
 	]);
 
 	// After seeding event videos, add some sample casters
-	console.log('[SEED] Seeding event casters...');
+	console.info('[SEED] Seeding event casters...');
 	await db.insert(schema.eventCaster).values([
 		// Event 1 casters
 		{
