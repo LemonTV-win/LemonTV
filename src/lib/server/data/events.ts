@@ -159,6 +159,12 @@ export function getOrganizerChanges(
 export async function getEvents(
 	conditions: { organizerIds?: string[]; searchKeyword?: string } = {}
 ): Promise<AppEvent[]> {
+	if (conditions.organizerIds || conditions.searchKeyword) {
+		console.info('[Events] Fetching events with conditions: ', conditions);
+	} else {
+		console.info('[Events] Fetching all events');
+	}
+
 	// Create alias for player table for casters
 	const casterPlayer = alias(table.player, 'casterPlayer');
 
