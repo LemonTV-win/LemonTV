@@ -1,6 +1,7 @@
 import * as schema from '$lib/server/db/schema';
 import { db } from '$lib/server/db';
 import { randomUUID } from 'node:crypto';
+import { PLAYERS } from './seeds/players';
 
 export async function seed() {
 	console.info('[SEED] Starting seeding...');
@@ -66,48 +67,8 @@ export async function seed() {
 	console.info('[SEED] - Deleted organizer');
 	// Preserve user-related tables: user, role, userRole, session, editHistory
 
-	const firstUser = await db.select().from(schema.user).limit(1);
-
 	console.log('[SEED] Seeding players...');
-	const PLAYERS = [
-		{
-			id: randomUUID(),
-			name: 'Player 1',
-			slug: 'player-1',
-			nationality: 'US',
-			userId: firstUser.length > 0 ? firstUser[0].id : null
-		},
-		{
-			id: randomUUID(),
-			name: 'Player 2',
-			slug: 'player-2',
-			nationality: 'US'
-		},
-		{
-			id: randomUUID(),
-			name: 'Player 3',
-			slug: 'player-3',
-			nationality: 'US'
-		},
-		{
-			id: randomUUID(),
-			name: 'Player 4',
-			slug: 'player-4',
-			nationality: 'KR'
-		},
-		{
-			id: randomUUID(),
-			name: 'Player 5',
-			slug: 'player-5',
-			nationality: 'EU'
-		},
-		{
-			id: randomUUID(),
-			name: 'Player 6',
-			slug: 'player-6',
-			nationality: 'CN'
-		}
-	];
+
 	await db.insert(schema.player).values(PLAYERS);
 
 	console.log('[SEED] Seeding player additional nationalities...');
