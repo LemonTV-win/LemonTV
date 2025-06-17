@@ -382,3 +382,278 @@ export const EVENT_TEAM_PLAYERS = [
 		role: 'coach' as const
 	}
 ];
+
+export const EVENT_RESULTS = [
+	// Event 1 (Imaginary Cup 1) Results
+	{
+		id: randomUUID(),
+		eventId: EVENTS[0].id,
+		teamId: TEAMS[0].id,
+		rank: 1,
+		prizeAmount: 45000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[0].id,
+		teamId: TEAMS[1].id,
+		rank: 2,
+		prizeAmount: 35000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[0].id,
+		teamId: TEAMS[2].id,
+		rank: 3,
+		rankTo: 4,
+		prizeAmount: 25000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[0].id,
+		teamId: TEAMS[3].id,
+		rank: 3,
+		rankTo: 4,
+		prizeAmount: 25000,
+		prizeCurrency: 'Bablo'
+	},
+	// Event 2 (Imaginary Cup 2) Results
+	{
+		id: randomUUID(),
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[0].id,
+		rank: 1,
+		prizeAmount: 50000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[1].id,
+		rank: 2,
+		prizeAmount: 40000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[2].id,
+		rank: 3,
+		rankTo: 4,
+		prizeAmount: 30000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[3].id,
+		rank: 3,
+		rankTo: 4,
+		prizeAmount: 30000,
+		prizeCurrency: 'Bablo'
+	},
+	// Event 3 (Imaginary Cup 3) Results - showing different ranking scenarios
+	{
+		id: randomUUID(),
+		eventId: EVENTS[2].id,
+		teamId: TEAMS[0].id,
+		rank: 1,
+		prizeAmount: 55000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[2].id,
+		teamId: TEAMS[1].id,
+		rank: 2,
+		prizeAmount: 45000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[2].id,
+		teamId: TEAMS[2].id,
+		rank: 3,
+		prizeAmount: 35000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[2].id,
+		teamId: TEAMS[3].id,
+		rank: 3,
+		prizeAmount: 35000,
+		prizeCurrency: 'Bablo'
+	},
+	// Event 4 (Imaginary Cup 4) Results - showing different ranking scenarios
+	{
+		id: randomUUID(),
+		eventId: EVENTS[3].id,
+		teamId: TEAMS[0].id,
+		rank: 1,
+		prizeAmount: 60000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[3].id,
+		teamId: TEAMS[1].id,
+		rank: 2,
+		prizeAmount: 50000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[3].id,
+		teamId: TEAMS[2].id,
+		rank: 3,
+		prizeAmount: 40000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[3].id,
+		teamId: TEAMS[3].id,
+		rank: 4,
+		prizeAmount: 30000,
+		prizeCurrency: 'Bablo'
+	},
+	// Event 5 (Imaginary Cup 5) Results - showing different ranking scenarios
+	{
+		id: randomUUID(),
+		eventId: EVENTS[4].id,
+		teamId: TEAMS[0].id,
+		rank: 1,
+		prizeAmount: 65000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[4].id,
+		teamId: TEAMS[1].id,
+		rank: 2,
+		prizeAmount: 55000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[4].id,
+		teamId: TEAMS[2].id,
+		rank: 3,
+		rankTo: 4,
+		prizeAmount: 45000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[4].id,
+		teamId: TEAMS[3].id,
+		rank: 3,
+		rankTo: 4,
+		prizeAmount: 45000,
+		prizeCurrency: 'Bablo'
+	},
+	// KAWA Cup Results - showing same rank (3rd)
+	{
+		id: randomUUID(),
+		eventId: EVENTS[5].id,
+		teamId: TEAMS[0].id,
+		rank: 1,
+		prizeAmount: 55000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[5].id,
+		teamId: TEAMS[1].id,
+		rank: 2,
+		prizeAmount: 45000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[5].id,
+		teamId: TEAMS[2].id,
+		rank: 3,
+		prizeAmount: 35000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[5].id,
+		teamId: TEAMS[3].id,
+		rank: 3,
+		prizeAmount: 35000,
+		prizeCurrency: 'Bablo'
+	},
+	// Origami Cup Results - showing normal sequential ranks
+	{
+		id: randomUUID(),
+		eventId: EVENTS[6].id,
+		teamId: TEAMS[0].id,
+		rank: 1,
+		prizeAmount: 60000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[6].id,
+		teamId: TEAMS[1].id,
+		rank: 2,
+		prizeAmount: 50000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[6].id,
+		teamId: TEAMS[2].id,
+		rank: 3,
+		prizeAmount: 40000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[6].id,
+		teamId: TEAMS[3].id,
+		rank: 4,
+		prizeAmount: 30000,
+		prizeCurrency: 'Bablo'
+	},
+	// Mighty Meow Cup Results - showing range ranks (3rd-4th)
+	{
+		id: randomUUID(),
+		eventId: EVENTS[7].id,
+		teamId: TEAMS[0].id,
+		rank: 1,
+		prizeAmount: 65000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[7].id,
+		teamId: TEAMS[1].id,
+		rank: 2,
+		prizeAmount: 55000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[7].id,
+		teamId: TEAMS[2].id,
+		rank: 3,
+		rankTo: 4,
+		prizeAmount: 45000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[7].id,
+		teamId: TEAMS[3].id,
+		rank: 3,
+		rankTo: 4,
+		prizeAmount: 45000,
+		prizeCurrency: 'Bablo'
+	}
+];
