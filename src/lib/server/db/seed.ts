@@ -1,7 +1,7 @@
 import * as schema from '$lib/server/db/schema';
 import { db } from '$lib/server/db';
 import { randomUUID } from 'node:crypto';
-import { PLAYERS } from './seeds/players';
+import { PLAYER_ADDITIONAL_NATIONALITIES, PLAYERS } from './seeds/players';
 
 export async function seed() {
 	console.info('[SEED] Starting seeding...');
@@ -72,20 +72,7 @@ export async function seed() {
 	await db.insert(schema.player).values(PLAYERS);
 
 	console.log('[SEED] Seeding player additional nationalities...');
-	await db.insert(schema.playerAdditionalNationality).values([
-		{
-			playerId: PLAYERS[0].id, // Player 1 (US)
-			nationality: 'CA' // Adding Canadian nationality
-		},
-		{
-			playerId: PLAYERS[3].id, // Player 4 (KR)
-			nationality: 'US' // Adding US nationality
-		},
-		{
-			playerId: PLAYERS[5].id, // Player 6 (CN)
-			nationality: 'HK' // Adding Hong Kong nationality
-		}
-	]);
+	await db.insert(schema.playerAdditionalNationality).values(PLAYER_ADDITIONAL_NATIONALITIES);
 
 	console.log('[SEED] Seeding teams...');
 	const team1_id = randomUUID();

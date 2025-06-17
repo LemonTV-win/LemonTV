@@ -43,3 +43,18 @@ export const PLAYERS = [
 		nationality: 'CN'
 	}
 ];
+
+export const PLAYER_ADDITIONAL_NATIONALITIES = [
+	{
+		playerId: PLAYERS[0].id, // Player 1 (US)
+		nationality: 'CA' // Adding Canadian nationality
+	},
+	{
+		playerId: PLAYERS[3].id, // Player 4 (KR)
+		nationality: 'US' // Adding US nationality
+	},
+	{
+		playerId: PLAYERS[5].id, // Player 6 (CN)
+		nationality: 'HK' // Adding Hong Kong nationality
+	}
+];
