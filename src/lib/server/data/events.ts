@@ -177,13 +177,16 @@ export async function getEvents(
 		.from(table.eventResult)
 		.leftJoin(table.team, eq(table.team.id, table.eventResult.teamId))
 		.leftJoin(table.event, eq(table.event.id, table.eventResult.eventId))
+		.leftJoin(table.eventOrganizer, eq(table.eventOrganizer.eventId, table.event.id))
 		.where(
-			conditions.searchKeyword
-				? or(
-						eq(table.event.id, conditions.searchKeyword),
-						eq(table.event.slug, conditions.searchKeyword)
-					)
-				: undefined
+			conditions.organizerIds
+				? inArray(table.eventOrganizer.organizerId, conditions.organizerIds)
+				: conditions.searchKeyword
+					? or(
+							eq(table.event.id, conditions.searchKeyword),
+							eq(table.event.slug, conditions.searchKeyword)
+						)
+					: undefined
 		);
 
 	// Then get the main event data

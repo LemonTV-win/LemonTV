@@ -11,9 +11,26 @@ export const load: PageServerLoad = async ({ params }) => {
 		throw error(404, 'Organizer not found');
 	}
 
-	const organizedEvents = events
-		.filter((event) => event.organizers.some((org) => org.name === organizer.name))
-		.concat(await getServerEvents({ organizerIds: [organizer.id] }));
+	const legacyEvents = events.filter((event) =>
+		event.organizers.some((org) => org.name === organizer.name)
+	);
+	console.log(
+		`[Content][Organizer][${organizer.name}] Found ${legacyEvents.length} legacy events`,
+		legacyEvents.map((e) => ({ id: e.id, name: e.name }))
+	);
+
+	console.log(`[Content][Organizer][${organizer.name}] Organizer ID: ${organizer.id}`);
+	const serverEvents = await getServerEvents({ organizerIds: [organizer.id] });
+	console.log(
+		`[Content][Organizer][${organizer.name}] Found ${serverEvents.length} server events`,
+		serverEvents.map((e) => ({
+			id: e.id,
+			name: e.name,
+			organizers: e.organizers.map((o) => o.name)
+		}))
+	);
+
+	const organizedEvents = [...legacyEvents, ...serverEvents];
 
 	return {
 		organizer,
