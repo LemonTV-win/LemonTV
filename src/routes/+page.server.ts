@@ -7,7 +7,8 @@ import { getEvents as getServerEvents } from '$lib/server/data/events';
 import { getTeams } from '$lib/server/data/teams';
 
 export const load: PageServerLoad = async () => {
-	const players = await getPlayers(); // TODO: limit =5
+	// TODO: Only get top players by pre populate player rating and rank them later, then limit to 5
+	const players = await getPlayers();
 	const playersTeams = await getPlayersTeams();
 	return {
 		events: [...getEvents(), ...(await getServerEvents())], // TODO: limit = 5
