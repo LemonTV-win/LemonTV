@@ -540,7 +540,7 @@ export async function getEvents(
 							matchMap.set(match.id, {
 								...match,
 								id: match.id,
-								teams: [],
+								teams: [null, null],
 								maps: []
 							});
 						}
