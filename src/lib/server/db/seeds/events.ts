@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { ORGANIZERS } from './organizers';
 
 export const EVENTS = [
 	{
@@ -205,5 +206,24 @@ export const EVENT_WEBSITES = [
 		eventId: EVENTS[7].id,
 		url: 'https://imaginary-cup-8.com/rules',
 		label: 'Rules'
+	}
+];
+
+export const EVENT_ORGANIZERS = [
+	{
+		eventId: EVENTS[0].id,
+		organizerId: ORGANIZERS[0].id
+	},
+	{
+		eventId: EVENTS[1].id,
+		organizerId: ORGANIZERS[0].id
+	},
+	{
+		eventId: EVENTS[1].id,
+		organizerId: ORGANIZERS[1].id
+	},
+	{
+		eventId: EVENTS[2].id,
+		organizerId: ORGANIZERS[1].id
 	}
 ];

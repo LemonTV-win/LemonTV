@@ -4,7 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { PLAYER_ADDITIONAL_NATIONALITIES, PLAYERS } from './seeds/players';
 import { TEAMS, TEAM_PLAYERS } from './seeds/teams';
 import { ORGANIZERS } from './seeds/organizers';
-import { EVENTS, EVENT_WEBSITES } from './seeds/events';
+import { EVENTS, EVENT_WEBSITES, EVENT_ORGANIZERS } from './seeds/events';
 
 export async function seed() {
 	console.info('[SEED] Starting seeding...');
@@ -92,24 +92,7 @@ export async function seed() {
 	await db.insert(schema.eventWebsite).values(EVENT_WEBSITES);
 
 	console.info('[SEED] Seeding event organizers...');
-	await db.insert(schema.eventOrganizer).values([
-		{
-			eventId: EVENTS[0].id,
-			organizerId: ORGANIZERS[0].id
-		},
-		{
-			eventId: EVENTS[1].id,
-			organizerId: ORGANIZERS[0].id
-		},
-		{
-			eventId: EVENTS[1].id,
-			organizerId: ORGANIZERS[1].id
-		},
-		{
-			eventId: EVENTS[2].id,
-			organizerId: ORGANIZERS[1].id
-		}
-	]);
+	await db.insert(schema.eventOrganizer).values(EVENT_ORGANIZERS);
 
 	console.info('[SEED] Seeding event team players...');
 	await db.insert(schema.eventTeamPlayer).values([
