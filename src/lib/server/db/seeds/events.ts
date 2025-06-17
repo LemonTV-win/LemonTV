@@ -1,5 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { ORGANIZERS } from './organizers';
+import { TEAMS } from './teams';
+import { PLAYERS } from './players';
 
 export const EVENTS = [
 	{
@@ -225,5 +227,158 @@ export const EVENT_ORGANIZERS = [
 	{
 		eventId: EVENTS[2].id,
 		organizerId: ORGANIZERS[1].id
+	}
+];
+
+export const EVENT_TEAM_PLAYERS = [
+	// Event 1 - Team 1 players
+	{
+		eventId: EVENTS[0].id,
+		teamId: TEAMS[0].id,
+		playerId: PLAYERS[0].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[0].id,
+		teamId: TEAMS[0].id,
+		playerId: PLAYERS[1].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[0].id,
+		teamId: TEAMS[0].id,
+		playerId: PLAYERS[2].id,
+		role: 'sub' as const
+	},
+	{
+		eventId: EVENTS[0].id,
+		teamId: TEAMS[0].id,
+		playerId: PLAYERS[3].id,
+		role: 'coach' as const
+	},
+	// Event 1 - Team 2 players
+	{
+		eventId: EVENTS[0].id,
+		teamId: TEAMS[1].id,
+		playerId: PLAYERS[2].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[0].id,
+		teamId: TEAMS[1].id,
+		playerId: PLAYERS[3].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[0].id,
+		teamId: TEAMS[1].id,
+		playerId: PLAYERS[4].id,
+		role: 'sub' as const
+	},
+	{
+		eventId: EVENTS[0].id,
+		teamId: TEAMS[1].id,
+		playerId: PLAYERS[5].id,
+		role: 'sub' as const
+	},
+	// Event 2 - Team 3 players
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[2].id,
+		playerId: PLAYERS[0].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[2].id,
+		playerId: PLAYERS[1].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[2].id,
+		playerId: PLAYERS[2].id,
+		role: 'sub' as const
+	},
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[2].id,
+		playerId: PLAYERS[3].id,
+		role: 'coach' as const
+	},
+	// Event 2 - Team 4 players
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[3].id,
+		playerId: PLAYERS[4].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[3].id,
+		playerId: PLAYERS[5].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[3].id,
+		playerId: PLAYERS[0].id,
+		role: 'sub' as const
+	},
+	// Event 3 - Team 1 players
+	{
+		eventId: EVENTS[2].id,
+		teamId: TEAMS[0].id,
+		playerId: PLAYERS[1].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[2].id,
+		teamId: TEAMS[0].id,
+		playerId: PLAYERS[2].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[2].id,
+		teamId: TEAMS[0].id,
+		playerId: PLAYERS[3].id,
+		role: 'sub' as const
+	},
+	{
+		eventId: EVENTS[2].id,
+		teamId: TEAMS[0].id,
+		playerId: PLAYERS[4].id,
+		role: 'sub' as const
+	},
+	{
+		eventId: EVENTS[2].id,
+		teamId: TEAMS[0].id,
+		playerId: PLAYERS[5].id,
+		role: 'coach' as const
+	},
+	// Event 3 - Team 2 players
+	{
+		eventId: EVENTS[2].id,
+		teamId: TEAMS[1].id,
+		playerId: PLAYERS[0].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[2].id,
+		teamId: TEAMS[1].id,
+		playerId: PLAYERS[1].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[2].id,
+		teamId: TEAMS[1].id,
+		playerId: PLAYERS[2].id,
+		role: 'sub' as const
+	},
+	{
+		eventId: EVENTS[2].id,
+		teamId: TEAMS[1].id,
+		playerId: PLAYERS[3].id,
+		role: 'coach' as const
 	}
 ];
