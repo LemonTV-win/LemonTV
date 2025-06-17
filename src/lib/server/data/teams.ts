@@ -162,6 +162,7 @@ export async function getTeam(slug: string): Promise<Team | null> {
 }
 
 export async function getTeams(): Promise<(Team & { logoURL: string | null })[]> {
+	console.info('[Teams] Fetching all teams');
 	const rows = await db
 		.select()
 		.from(table.team)
