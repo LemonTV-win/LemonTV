@@ -8,13 +8,12 @@ import {
 	editHistory,
 	playerAdditionalNationality
 } from '$lib/server/db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, inArray, or } from 'drizzle-orm';
 import type { Player } from '$lib/data/players';
 import { randomUUID } from 'crypto';
 import { calculateWinnerIndex, getEvents, getMatches, identifyPlayer } from '$lib/data';
 import type { Team } from '$lib/data/teams';
 import type { Character, Region } from '$lib/data/game';
-import { or } from 'drizzle-orm';
 import type { TCountryCode } from 'countries-list';
 
 import * as schema from '$lib/server/db/schema';
