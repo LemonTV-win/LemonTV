@@ -2,6 +2,7 @@ import * as schema from '$lib/server/db/schema';
 import { db } from '$lib/server/db';
 import { randomUUID } from 'node:crypto';
 import { PLAYER_ADDITIONAL_NATIONALITIES, PLAYERS } from './seeds/players';
+import { TEAMS, TEAM_PLAYERS } from './seeds/teams';
 
 export async function seed() {
 	console.info('[SEED] Starting seeding...');
@@ -75,90 +76,8 @@ export async function seed() {
 	await db.insert(schema.playerAdditionalNationality).values(PLAYER_ADDITIONAL_NATIONALITIES);
 
 	console.log('[SEED] Seeding teams...');
-	const team1_id = randomUUID();
-	const team2_id = randomUUID();
-	const team3_id = randomUUID();
-	const team4_id = randomUUID();
-	await db.insert(schema.team).values([
-		{
-			id: team1_id,
-			name: 'Team 1',
-			slug: 'team-1',
-			abbr: 'T1',
-			logo: 'https://picsum.photos/seed/team-1/256/256?blur',
-			region: 'NA',
-			createdAt: new Date().toISOString(),
-			updatedAt: new Date().toISOString()
-		},
-		{
-			id: team2_id,
-			name: 'Team 2',
-			slug: 'team-2',
-			abbr: 'T2',
-			logo: 'https://picsum.photos/seed/team-2/256/256?blur',
-			region: 'NA',
-			createdAt: new Date().toISOString(),
-			updatedAt: new Date().toISOString()
-		},
-		{
-			id: team3_id,
-			name: 'Team 3',
-			slug: 'team-3',
-			abbr: 'T3',
-			logo: 'https://picsum.photos/seed/team-3/256/256?blur',
-			region: 'EU',
-			createdAt: new Date().toISOString(),
-			updatedAt: new Date().toISOString()
-		},
-		{
-			id: team4_id,
-			name: 'Team 4',
-			slug: 'team-4',
-			abbr: 'T4',
-			logo: 'https://picsum.photos/seed/team-4/256/256?blur',
-			region: 'KR',
-			createdAt: new Date().toISOString(),
-			updatedAt: new Date().toISOString()
-		}
-	]);
-	await db.insert(schema.teamPlayer).values([
-		{
-			id: 2,
-			teamId: team1_id,
-			playerId: PLAYERS[0].id,
-			role: 'active'
-		},
-		{
-			id: 3,
-			teamId: team1_id,
-			playerId: PLAYERS[1].id,
-			role: 'active'
-		},
-		{
-			id: 4,
-			teamId: team2_id,
-			playerId: PLAYERS[2].id,
-			role: 'active'
-		},
-		{
-			id: 5,
-			teamId: team2_id,
-			playerId: PLAYERS[3].id,
-			role: 'active'
-		},
-		{
-			id: 6,
-			teamId: team3_id,
-			playerId: PLAYERS[4].id,
-			role: 'active'
-		},
-		{
-			id: 7,
-			teamId: team4_id,
-			playerId: PLAYERS[5].id,
-			role: 'active'
-		}
-	]);
+	await db.insert(schema.team).values(TEAMS);
+	await db.insert(schema.teamPlayer).values(TEAM_PLAYERS);
 
 	console.log('[SEED] Seeding organizers...');
 	const ORGANIZERS = [
@@ -489,150 +408,150 @@ export async function seed() {
 		// Event 1 - Team 1 players
 		{
 			eventId: EVENTS[0].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			playerId: PLAYERS[0].id,
 			role: 'main'
 		},
 		{
 			eventId: EVENTS[0].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			playerId: PLAYERS[1].id,
 			role: 'main'
 		},
 		{
 			eventId: EVENTS[0].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			playerId: PLAYERS[2].id,
 			role: 'sub'
 		},
 		{
 			eventId: EVENTS[0].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			playerId: PLAYERS[3].id,
 			role: 'coach'
 		},
 		// Event 1 - Team 2 players
 		{
 			eventId: EVENTS[0].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			playerId: PLAYERS[2].id,
 			role: 'main'
 		},
 		{
 			eventId: EVENTS[0].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			playerId: PLAYERS[3].id,
 			role: 'main'
 		},
 		{
 			eventId: EVENTS[0].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			playerId: PLAYERS[4].id,
 			role: 'sub'
 		},
 		{
 			eventId: EVENTS[0].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			playerId: PLAYERS[5].id,
 			role: 'sub'
 		},
 		// Event 2 - Team 3 players
 		{
 			eventId: EVENTS[1].id,
-			teamId: team3_id,
+			teamId: TEAMS[2].id,
 			playerId: PLAYERS[0].id,
 			role: 'main'
 		},
 		{
 			eventId: EVENTS[1].id,
-			teamId: team3_id,
+			teamId: TEAMS[2].id,
 			playerId: PLAYERS[1].id,
 			role: 'main'
 		},
 		{
 			eventId: EVENTS[1].id,
-			teamId: team3_id,
+			teamId: TEAMS[2].id,
 			playerId: PLAYERS[2].id,
 			role: 'sub'
 		},
 		{
 			eventId: EVENTS[1].id,
-			teamId: team3_id,
+			teamId: TEAMS[2].id,
 			playerId: PLAYERS[3].id,
 			role: 'coach'
 		},
 		// Event 2 - Team 4 players
 		{
 			eventId: EVENTS[1].id,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			playerId: PLAYERS[4].id,
 			role: 'main'
 		},
 		{
 			eventId: EVENTS[1].id,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			playerId: PLAYERS[5].id,
 			role: 'main'
 		},
 		{
 			eventId: EVENTS[1].id,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			playerId: PLAYERS[0].id,
 			role: 'sub'
 		},
 		// Event 3 - Team 1 players
 		{
 			eventId: EVENTS[2].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			playerId: PLAYERS[1].id,
 			role: 'main'
 		},
 		{
 			eventId: EVENTS[2].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			playerId: PLAYERS[2].id,
 			role: 'main'
 		},
 		{
 			eventId: EVENTS[2].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			playerId: PLAYERS[3].id,
 			role: 'sub'
 		},
 		{
 			eventId: EVENTS[2].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			playerId: PLAYERS[4].id,
 			role: 'sub'
 		},
 		{
 			eventId: EVENTS[2].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			playerId: PLAYERS[5].id,
 			role: 'coach'
 		},
 		// Event 3 - Team 2 players
 		{
 			eventId: EVENTS[2].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			playerId: PLAYERS[0].id,
 			role: 'main'
 		},
 		{
 			eventId: EVENTS[2].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			playerId: PLAYERS[1].id,
 			role: 'main'
 		},
 		{
 			eventId: EVENTS[2].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			playerId: PLAYERS[2].id,
 			role: 'sub'
 		},
 		{
 			eventId: EVENTS[2].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			playerId: PLAYERS[3].id,
 			role: 'coach'
 		}
@@ -1499,492 +1418,492 @@ export async function seed() {
 		// Event 1: Open Qualifiers (BO1)
 		{
 			matchId: MATCHES[0].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			position: 0,
 			score: 1
 		},
 		{
 			matchId: MATCHES[0].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			position: 1,
 			score: 0
 		},
 		{
 			matchId: MATCHES[1].id,
-			teamId: team3_id,
+			teamId: TEAMS[2].id,
 			position: 0,
 			score: 1
 		},
 		{
 			matchId: MATCHES[1].id,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			position: 1,
 			score: 0
 		},
 		{
 			matchId: MATCHES[2].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			position: 0,
 			score: 1
 		},
 		{
 			matchId: MATCHES[2].id,
-			teamId: team3_id,
+			teamId: TEAMS[2].id,
 			position: 1,
 			score: 0
 		},
 		{
 			matchId: MATCHES[3].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			position: 0,
 			score: 1
 		},
 		{
 			matchId: MATCHES[3].id,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			position: 1,
 			score: 0
 		},
 		// Event 1: Group Stage A (BO3)
 		{
 			matchId: MATCHES[4].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			position: 0,
 			score: 2
 		},
 		{
 			matchId: MATCHES[4].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			position: 1,
 			score: 1
 		},
 		{
 			matchId: MATCHES[5].id,
-			teamId: team3_id,
+			teamId: TEAMS[2].id,
 			position: 0,
 			score: 2
 		},
 		{
 			matchId: MATCHES[5].id,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			position: 1,
 			score: 0
 		},
 		{
 			matchId: MATCHES[6].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			position: 0,
 			score: 2
 		},
 		{
 			matchId: MATCHES[6].id,
-			teamId: team3_id,
+			teamId: TEAMS[2].id,
 			position: 1,
 			score: 1
 		},
 		{
 			matchId: MATCHES[7].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			position: 0,
 			score: 2
 		},
 		{
 			matchId: MATCHES[7].id,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			position: 1,
 			score: 0
 		},
 		// Event 1: Group Stage B (BO3)
 		{
 			matchId: MATCHES[8].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			position: 0,
 			score: 2
 		},
 		{
 			matchId: MATCHES[8].id,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			position: 1,
 			score: 1
 		},
 		{
 			matchId: MATCHES[9].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			position: 0,
 			score: 2
 		},
 		{
 			matchId: MATCHES[9].id,
-			teamId: team3_id,
+			teamId: TEAMS[2].id,
 			position: 1,
 			score: 0
 		},
 		{
 			matchId: MATCHES[10].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			position: 0,
 			score: 2
 		},
 		{
 			matchId: MATCHES[10].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			position: 1,
 			score: 1
 		},
 		{
 			matchId: MATCHES[11].id,
-			teamId: team3_id,
+			teamId: TEAMS[2].id,
 			position: 0,
 			score: 2
 		},
 		{
 			matchId: MATCHES[11].id,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			position: 1,
 			score: 0
 		},
 		// Event 1: Playoffs (BO5)
 		{
 			matchId: MATCHES[12].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			position: 0,
 			score: 3
 		},
 		{
 			matchId: MATCHES[12].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			position: 1,
 			score: 2
 		},
 		{
 			matchId: MATCHES[13].id,
-			teamId: team3_id,
+			teamId: TEAMS[2].id,
 			position: 0,
 			score: 3
 		},
 		{
 			matchId: MATCHES[13].id,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			position: 1,
 			score: 1
 		},
 		{
 			matchId: MATCHES[14].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			position: 0,
 			score: 3
 		},
 		{
 			matchId: MATCHES[14].id,
-			teamId: team3_id,
+			teamId: TEAMS[2].id,
 			position: 1,
 			score: 2
 		},
 		{
 			matchId: MATCHES[15].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			position: 0,
 			score: 3
 		},
 		{
 			matchId: MATCHES[15].id,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			position: 1,
 			score: 1
 		},
 		// Event 2: Swiss Stage (BO3)
 		{
 			matchId: MATCHES[16].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			position: 0,
 			score: 2
 		},
 		{
 			matchId: MATCHES[16].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			position: 1,
 			score: 1
 		},
 		{
 			matchId: MATCHES[17].id,
-			teamId: team3_id,
+			teamId: TEAMS[2].id,
 			position: 0,
 			score: 2
 		},
 		{
 			matchId: MATCHES[17].id,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			position: 1,
 			score: 0
 		},
 		{
 			matchId: MATCHES[18].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			position: 0,
 			score: 2
 		},
 		{
 			matchId: MATCHES[18].id,
-			teamId: team3_id,
+			teamId: TEAMS[2].id,
 			position: 1,
 			score: 1
 		},
 		{
 			matchId: MATCHES[19].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			position: 0,
 			score: 2
 		},
 		{
 			matchId: MATCHES[19].id,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			position: 1,
 			score: 0
 		},
 		// Event 2: Quarter Finals (BO3)
 		{
 			matchId: MATCHES[20].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			position: 0,
 			score: 2
 		},
 		{
 			matchId: MATCHES[20].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			position: 1,
 			score: 1
 		},
 		{
 			matchId: MATCHES[21].id,
-			teamId: team3_id,
+			teamId: TEAMS[2].id,
 			position: 0,
 			score: 2
 		},
 		{
 			matchId: MATCHES[21].id,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			position: 1,
 			score: 0
 		},
 		{
 			matchId: MATCHES[22].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			position: 0,
 			score: 2
 		},
 		{
 			matchId: MATCHES[22].id,
-			teamId: team3_id,
+			teamId: TEAMS[2].id,
 			position: 1,
 			score: 1
 		},
 		{
 			matchId: MATCHES[23].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			position: 0,
 			score: 2
 		},
 		{
 			matchId: MATCHES[23].id,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			position: 1,
 			score: 0
 		},
 		// Event 2: Semi Finals (BO5)
 		{
 			matchId: MATCHES[24].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			position: 0,
 			score: 3
 		},
 		{
 			matchId: MATCHES[24].id,
-			teamId: team3_id,
+			teamId: TEAMS[2].id,
 			position: 1,
 			score: 2
 		},
 		{
 			matchId: MATCHES[25].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			position: 0,
 			score: 3
 		},
 		{
 			matchId: MATCHES[25].id,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			position: 1,
 			score: 1
 		},
 		// Event 2: Grand Finals (BO5)
 		{
 			matchId: MATCHES[26].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			position: 0,
 			score: 3
 		},
 		{
 			matchId: MATCHES[26].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			position: 1,
 			score: 2
 		},
 		// Event 3: Showmatch (BO1)
 		{
 			matchId: MATCHES[27].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			position: 0,
 			score: 1
 		},
 		{
 			matchId: MATCHES[27].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			position: 1,
 			score: 0
 		},
 		// Event 4: Regional Qualifier (BO3)
 		{
 			matchId: MATCHES[28].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			position: 0,
 			score: 2
 		},
 		{
 			matchId: MATCHES[28].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			position: 1,
 			score: 1
 		},
 		{
 			matchId: MATCHES[29].id,
-			teamId: team3_id,
+			teamId: TEAMS[2].id,
 			position: 0,
 			score: 2
 		},
 		{
 			matchId: MATCHES[29].id,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			position: 1,
 			score: 0
 		},
 		{
 			matchId: MATCHES[30].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			position: 0,
 			score: 2
 		},
 		{
 			matchId: MATCHES[30].id,
-			teamId: team3_id,
+			teamId: TEAMS[2].id,
 			position: 1,
 			score: 1
 		},
 		{
 			matchId: MATCHES[31].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			position: 0,
 			score: 2
 		},
 		{
 			matchId: MATCHES[31].id,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			position: 1,
 			score: 0
 		},
 		// Event 5: Group Stage (BO3)
 		{
 			matchId: MATCHES[32].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			position: 0,
 			score: 2
 		},
 		{
 			matchId: MATCHES[32].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			position: 1,
 			score: 1
 		},
 		{
 			matchId: MATCHES[33].id,
-			teamId: team3_id,
+			teamId: TEAMS[2].id,
 			position: 0,
 			score: 2
 		},
 		{
 			matchId: MATCHES[33].id,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			position: 1,
 			score: 0
 		},
 		{
 			matchId: MATCHES[34].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			position: 0,
 			score: 2
 		},
 		{
 			matchId: MATCHES[34].id,
-			teamId: team3_id,
+			teamId: TEAMS[2].id,
 			position: 1,
 			score: 1
 		},
 		{
 			matchId: MATCHES[35].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			position: 0,
 			score: 2
 		},
 		{
 			matchId: MATCHES[35].id,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			position: 1,
 			score: 0
 		},
 		// Event 5: Playoffs (BO5)
 		{
 			matchId: MATCHES[36].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			position: 0,
 			score: 3
 		},
 		{
 			matchId: MATCHES[36].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			position: 1,
 			score: 2
 		},
 		{
 			matchId: MATCHES[37].id,
-			teamId: team3_id,
+			teamId: TEAMS[2].id,
 			position: 0,
 			score: 3
 		},
 		{
 			matchId: MATCHES[37].id,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			position: 1,
 			score: 1
 		},
 		{
 			matchId: MATCHES[38].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			position: 0,
 			score: 3
 		},
 		{
 			matchId: MATCHES[38].id,
-			teamId: team3_id,
+			teamId: TEAMS[2].id,
 			position: 1,
 			score: 2
 		},
 		{
 			matchId: MATCHES[39].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			position: 0,
 			score: 3
 		},
 		{
 			matchId: MATCHES[39].id,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			position: 1,
 			score: 1
 		}
@@ -2419,7 +2338,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[0].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			rank: 1,
 			prizeAmount: 45000,
 			prizeCurrency: 'Bablo'
@@ -2427,7 +2346,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[0].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			rank: 2,
 			prizeAmount: 35000,
 			prizeCurrency: 'Bablo'
@@ -2435,7 +2354,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[0].id,
-			teamId: team3_id,
+			teamId: TEAMS[2].id,
 			rank: 3,
 			rankTo: 4,
 			prizeAmount: 25000,
@@ -2444,7 +2363,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[0].id,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			rank: 3,
 			rankTo: 4,
 			prizeAmount: 25000,
@@ -2454,7 +2373,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[1].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			rank: 1,
 			prizeAmount: 50000,
 			prizeCurrency: 'Bablo'
@@ -2462,7 +2381,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[1].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			rank: 2,
 			prizeAmount: 40000,
 			prizeCurrency: 'Bablo'
@@ -2470,7 +2389,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[1].id,
-			teamId: team3_id,
+			teamId: TEAMS[2].id,
 			rank: 3,
 			rankTo: 4,
 			prizeAmount: 30000,
@@ -2479,7 +2398,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[1].id,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			rank: 3,
 			rankTo: 4,
 			prizeAmount: 30000,
@@ -2489,7 +2408,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[2].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			rank: 1,
 			prizeAmount: 55000,
 			prizeCurrency: 'Bablo'
@@ -2497,7 +2416,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[2].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			rank: 2,
 			prizeAmount: 45000,
 			prizeCurrency: 'Bablo'
@@ -2505,7 +2424,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[2].id,
-			teamId: team3_id,
+			teamId: TEAMS[2].id,
 			rank: 3,
 			prizeAmount: 35000,
 			prizeCurrency: 'Bablo'
@@ -2513,7 +2432,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[2].id,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			rank: 3,
 			prizeAmount: 35000,
 			prizeCurrency: 'Bablo'
@@ -2522,7 +2441,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[3].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			rank: 1,
 			prizeAmount: 60000,
 			prizeCurrency: 'Bablo'
@@ -2530,7 +2449,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[3].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			rank: 2,
 			prizeAmount: 50000,
 			prizeCurrency: 'Bablo'
@@ -2538,7 +2457,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[3].id,
-			teamId: team3_id,
+			teamId: TEAMS[2].id,
 			rank: 3,
 			prizeAmount: 40000,
 			prizeCurrency: 'Bablo'
@@ -2546,7 +2465,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[3].id,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			rank: 4,
 			prizeAmount: 30000,
 			prizeCurrency: 'Bablo'
@@ -2555,7 +2474,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[4].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			rank: 1,
 			prizeAmount: 65000,
 			prizeCurrency: 'Bablo'
@@ -2563,7 +2482,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[4].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			rank: 2,
 			prizeAmount: 55000,
 			prizeCurrency: 'Bablo'
@@ -2571,7 +2490,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[4].id,
-			teamId: team3_id,
+			teamId: TEAMS[2].id,
 			rank: 3,
 			rankTo: 4,
 			prizeAmount: 45000,
@@ -2580,7 +2499,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[4].id,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			rank: 3,
 			rankTo: 4,
 			prizeAmount: 45000,
@@ -2590,7 +2509,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[5].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			rank: 1,
 			prizeAmount: 55000,
 			prizeCurrency: 'Bablo'
@@ -2598,7 +2517,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[5].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			rank: 2,
 			prizeAmount: 45000,
 			prizeCurrency: 'Bablo'
@@ -2606,7 +2525,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[5].id,
-			teamId: team3_id,
+			teamId: TEAMS[2].id,
 			rank: 3,
 			prizeAmount: 35000,
 			prizeCurrency: 'Bablo'
@@ -2614,7 +2533,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[5].id,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			rank: 3,
 			prizeAmount: 35000,
 			prizeCurrency: 'Bablo'
@@ -2623,7 +2542,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[6].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			rank: 1,
 			prizeAmount: 60000,
 			prizeCurrency: 'Bablo'
@@ -2631,7 +2550,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[6].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			rank: 2,
 			prizeAmount: 50000,
 			prizeCurrency: 'Bablo'
@@ -2639,7 +2558,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[6].id,
-			teamId: team3_id,
+			teamId: TEAMS[2].id,
 			rank: 3,
 			prizeAmount: 40000,
 			prizeCurrency: 'Bablo'
@@ -2647,7 +2566,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[6].id,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			rank: 4,
 			prizeAmount: 30000,
 			prizeCurrency: 'Bablo'
@@ -2656,7 +2575,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[7].id,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			rank: 1,
 			prizeAmount: 65000,
 			prizeCurrency: 'Bablo'
@@ -2664,7 +2583,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[7].id,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			rank: 2,
 			prizeAmount: 55000,
 			prizeCurrency: 'Bablo'
@@ -2672,7 +2591,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[7].id,
-			teamId: team3_id,
+			teamId: TEAMS[2].id,
 			rank: 3,
 			rankTo: 4,
 			prizeAmount: 45000,
@@ -2681,7 +2600,7 @@ export async function seed() {
 		{
 			id: randomUUID(),
 			eventId: EVENTS[7].id,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			rank: 3,
 			rankTo: 4,
 			prizeAmount: 45000,
@@ -2933,130 +2852,130 @@ export async function seed() {
 		// Grand Finals Game 1
 		{
 			gameId: 1,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			position: 0,
 			score: 13
 		},
 		{
 			gameId: 1,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			position: 1,
 			score: 11
 		},
 		// Grand Finals Game 2
 		{
 			gameId: 2,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			position: 0,
 			score: 9
 		},
 		{
 			gameId: 2,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			position: 1,
 			score: 13
 		},
 		// Grand Finals Game 3
 		{
 			gameId: 3,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			position: 0,
 			score: 13
 		},
 		{
 			gameId: 3,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			position: 1,
 			score: 10
 		},
 		// Grand Finals Game 4
 		{
 			gameId: 4,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			position: 0,
 			score: 11
 		},
 		{
 			gameId: 4,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			position: 1,
 			score: 13
 		},
 		// Grand Finals Game 5
 		{
 			gameId: 5,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			position: 0,
 			score: 13
 		},
 		{
 			gameId: 5,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			position: 1,
 			score: 9
 		},
 		// Semi Finals Game 1
 		{
 			gameId: 6,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			position: 0,
 			score: 13
 		},
 		{
 			gameId: 6,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			position: 1,
 			score: 8
 		},
 		// Semi Finals Game 2
 		{
 			gameId: 7,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			position: 0,
 			score: 13
 		},
 		{
 			gameId: 7,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			position: 1,
 			score: 10
 		},
 		// Semi Finals Game 3
 		{
 			gameId: 8,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			position: 0,
 			score: 9
 		},
 		{
 			gameId: 8,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			position: 1,
 			score: 13
 		},
 		// Semi Finals Game 4
 		{
 			gameId: 9,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			position: 0,
 			score: 13
 		},
 		{
 			gameId: 9,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			position: 1,
 			score: 11
 		},
 		// Semi Finals Game 5
 		{
 			gameId: 10,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			position: 0,
 			score: 13
 		},
 		{
 			gameId: 10,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			position: 1,
 			score: 7
 		}
@@ -3068,7 +2987,7 @@ export async function seed() {
 		{
 			id: 1,
 			gameId: 1,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			accountId: 123456,
 			player: 'Player1',
 			characterFirstHalf: 'Flavia',
@@ -3085,7 +3004,7 @@ export async function seed() {
 		{
 			id: 2,
 			gameId: 1,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			accountId: 123457,
 			player: 'Player2',
 			characterFirstHalf: 'Celestia',
@@ -3102,7 +3021,7 @@ export async function seed() {
 		{
 			id: 3,
 			gameId: 1,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			accountId: 123458,
 			player: 'Player3',
 			characterFirstHalf: 'Nobunaga',
@@ -3119,7 +3038,7 @@ export async function seed() {
 		{
 			id: 4,
 			gameId: 1,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			accountId: 123459,
 			player: 'Player4',
 			characterFirstHalf: 'Ming',
@@ -3136,7 +3055,7 @@ export async function seed() {
 		{
 			id: 5,
 			gameId: 2,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			accountId: 123456,
 			player: 'Player1',
 			characterFirstHalf: 'Reiichi',
@@ -3153,7 +3072,7 @@ export async function seed() {
 		{
 			id: 6,
 			gameId: 2,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			accountId: 123457,
 			player: 'Player2',
 			characterFirstHalf: 'Ming',
@@ -3170,7 +3089,7 @@ export async function seed() {
 		{
 			id: 7,
 			gameId: 2,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			accountId: 123458,
 			player: 'Player3',
 			characterFirstHalf: 'Celestia',
@@ -3187,7 +3106,7 @@ export async function seed() {
 		{
 			id: 8,
 			gameId: 2,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			accountId: 123459,
 			player: 'Player4',
 			characterFirstHalf: 'Flavia',
@@ -3204,7 +3123,7 @@ export async function seed() {
 		{
 			id: 9,
 			gameId: 3,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			accountId: 123456,
 			player: 'Player1',
 			characterFirstHalf: 'Ming',
@@ -3221,7 +3140,7 @@ export async function seed() {
 		{
 			id: 10,
 			gameId: 3,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			accountId: 123457,
 			player: 'Player2',
 			characterFirstHalf: 'Nobunaga',
@@ -3238,7 +3157,7 @@ export async function seed() {
 		{
 			id: 11,
 			gameId: 3,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			accountId: 123458,
 			player: 'Player3',
 			characterFirstHalf: 'Celestia',
@@ -3255,7 +3174,7 @@ export async function seed() {
 		{
 			id: 12,
 			gameId: 3,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			accountId: 123459,
 			player: 'Player4',
 			characterFirstHalf: 'Flavia',
@@ -3272,7 +3191,7 @@ export async function seed() {
 		{
 			id: 13,
 			gameId: 4,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			accountId: 123456,
 			player: 'Player1',
 			characterFirstHalf: 'Reiichi',
@@ -3289,7 +3208,7 @@ export async function seed() {
 		{
 			id: 14,
 			gameId: 4,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			accountId: 123457,
 			player: 'Player2',
 			characterFirstHalf: 'Celestia',
@@ -3306,7 +3225,7 @@ export async function seed() {
 		{
 			id: 15,
 			gameId: 4,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			accountId: 123458,
 			player: 'Player3',
 			characterFirstHalf: 'Ming',
@@ -3323,7 +3242,7 @@ export async function seed() {
 		{
 			id: 16,
 			gameId: 4,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			accountId: 123459,
 			player: 'Player4',
 			characterFirstHalf: 'Flavia',
@@ -3340,7 +3259,7 @@ export async function seed() {
 		{
 			id: 17,
 			gameId: 5,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			accountId: 123456,
 			player: 'Player1',
 			characterFirstHalf: 'Ming',
@@ -3357,7 +3276,7 @@ export async function seed() {
 		{
 			id: 18,
 			gameId: 5,
-			teamId: team1_id,
+			teamId: TEAMS[0].id,
 			accountId: 123457,
 			player: 'Player2',
 			characterFirstHalf: 'Nobunaga',
@@ -3374,7 +3293,7 @@ export async function seed() {
 		{
 			id: 19,
 			gameId: 5,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			accountId: 123458,
 			player: 'Player3',
 			characterFirstHalf: 'Celestia',
@@ -3391,7 +3310,7 @@ export async function seed() {
 		{
 			id: 20,
 			gameId: 5,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			accountId: 123459,
 			player: 'Player4',
 			characterFirstHalf: 'Flavia',
@@ -3408,7 +3327,7 @@ export async function seed() {
 		{
 			id: 21,
 			gameId: 6,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			accountId: 123458,
 			player: 'Player3',
 			characterFirstHalf: 'Ming',
@@ -3425,7 +3344,7 @@ export async function seed() {
 		{
 			id: 22,
 			gameId: 6,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			accountId: 123459,
 			player: 'Player4',
 			characterFirstHalf: 'Nobunaga',
@@ -3442,7 +3361,7 @@ export async function seed() {
 		{
 			id: 23,
 			gameId: 6,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			accountId: 123460,
 			player: 'Player5',
 			characterFirstHalf: 'Celestia',
@@ -3459,7 +3378,7 @@ export async function seed() {
 		{
 			id: 24,
 			gameId: 6,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			accountId: 123461,
 			player: 'Player6',
 			characterFirstHalf: 'Flavia',
@@ -3476,7 +3395,7 @@ export async function seed() {
 		{
 			id: 25,
 			gameId: 7,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			accountId: 123458,
 			player: 'Player3',
 			characterFirstHalf: 'Reiichi',
@@ -3493,7 +3412,7 @@ export async function seed() {
 		{
 			id: 26,
 			gameId: 7,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			accountId: 123459,
 			player: 'Player4',
 			characterFirstHalf: 'Celestia',
@@ -3510,7 +3429,7 @@ export async function seed() {
 		{
 			id: 27,
 			gameId: 7,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			accountId: 123460,
 			player: 'Player5',
 			characterFirstHalf: 'Ming',
@@ -3527,7 +3446,7 @@ export async function seed() {
 		{
 			id: 28,
 			gameId: 7,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			accountId: 123461,
 			player: 'Player6',
 			characterFirstHalf: 'Flavia',
@@ -3544,7 +3463,7 @@ export async function seed() {
 		{
 			id: 29,
 			gameId: 8,
-			teamId: team2_id,
+			teamId: TEAMS[2].id,
 			accountId: 123458,
 			player: 'Player3',
 			characterFirstHalf: 'Ming',
@@ -3561,7 +3480,7 @@ export async function seed() {
 		{
 			id: 30,
 			gameId: 8,
-			teamId: team2_id,
+			teamId: TEAMS[2].id,
 			accountId: 123459,
 			player: 'Player4',
 			characterFirstHalf: 'Nobunaga',
@@ -3578,7 +3497,7 @@ export async function seed() {
 		{
 			id: 31,
 			gameId: 8,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			accountId: 123460,
 			player: 'Player5',
 			characterFirstHalf: 'Celestia',
@@ -3595,7 +3514,7 @@ export async function seed() {
 		{
 			id: 32,
 			gameId: 8,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			accountId: 123461,
 			player: 'Player6',
 			characterFirstHalf: 'Flavia',
@@ -3612,7 +3531,7 @@ export async function seed() {
 		{
 			id: 33,
 			gameId: 9,
-			teamId: team2_id,
+			teamId: TEAMS[2].id,
 			accountId: 123458,
 			player: 'Player3',
 			characterFirstHalf: 'Reiichi',
@@ -3629,7 +3548,7 @@ export async function seed() {
 		{
 			id: 34,
 			gameId: 9,
-			teamId: team2_id,
+			teamId: TEAMS[2].id,
 			accountId: 123459,
 			player: 'Player4',
 			characterFirstHalf: 'Celestia',
@@ -3646,7 +3565,7 @@ export async function seed() {
 		{
 			id: 35,
 			gameId: 9,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			accountId: 123460,
 			player: 'Player5',
 			characterFirstHalf: 'Ming',
@@ -3663,7 +3582,7 @@ export async function seed() {
 		{
 			id: 36,
 			gameId: 9,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			accountId: 123461,
 			player: 'Player6',
 			characterFirstHalf: 'Flavia',
@@ -3680,7 +3599,7 @@ export async function seed() {
 		{
 			id: 37,
 			gameId: 10,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			accountId: 123458,
 			player: 'Player3',
 			characterFirstHalf: 'Ming',
@@ -3697,7 +3616,7 @@ export async function seed() {
 		{
 			id: 38,
 			gameId: 10,
-			teamId: team2_id,
+			teamId: TEAMS[1].id,
 			accountId: 123459,
 			player: 'Player4',
 			characterFirstHalf: 'Nobunaga',
@@ -3714,7 +3633,7 @@ export async function seed() {
 		{
 			id: 39,
 			gameId: 10,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			accountId: 123460,
 			player: 'Player5',
 			characterFirstHalf: 'Celestia',
@@ -3731,7 +3650,7 @@ export async function seed() {
 		{
 			id: 40,
 			gameId: 10,
-			teamId: team4_id,
+			teamId: TEAMS[3].id,
 			accountId: 123461,
 			player: 'Player6',
 			characterFirstHalf: 'Flavia',
