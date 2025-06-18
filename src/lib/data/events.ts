@@ -122,34 +122,6 @@ export interface Event {
 	results?: LegacyEventResult[] | EventResult[];
 }
 
-// const MMC_QUALIFIERS: Stage[] = [
-// 	{
-// 		id: 1,
-// 		title: 'APAC Qualifier',
-// 		stage: 'qualifier',
-// 		format: 'swiss',
-// 		// format: 'swiss',
-// 		matches: [],
-// 		structure: {
-// 			rounds: [
-// 				{
-// 					id: 1,
-// 					type: 'top16'
-// 				}
-// 			],
-// 			nodes: [
-// 				{
-// 					matchId: 1,
-// 					round: 1
-// 				}
-// 			]
-// 		}
-// 	}
-// 	// structure: {
-
-// 	// }
-// ];
-
 export const events: Event[] = [
 	{
 		id: crypto.randomUUID(),
