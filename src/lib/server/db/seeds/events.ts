@@ -403,176 +403,262 @@ export const EVENT_TEAM_PLAYERS = [
 		playerId: PLAYERS[27].id,
 		role: 'coach' as const
 	},
-	// Event 3 - Team 1 players (different roster from Event 1)
+	// Event 2 - Team 1 players
 	{
-		eventId: EVENTS[2].id,
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[0].id,
+		playerId: PLAYERS[0].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[1].id,
 		teamId: TEAMS[0].id,
 		playerId: PLAYERS[1].id,
 		role: 'main' as const
 	},
 	{
-		eventId: EVENTS[2].id,
+		eventId: EVENTS[1].id,
 		teamId: TEAMS[0].id,
 		playerId: PLAYERS[2].id,
 		role: 'main' as const
 	},
 	{
-		eventId: EVENTS[2].id,
+		eventId: EVENTS[1].id,
 		teamId: TEAMS[0].id,
 		playerId: PLAYERS[3].id,
 		role: 'main' as const
 	},
 	{
-		eventId: EVENTS[2].id,
+		eventId: EVENTS[1].id,
 		teamId: TEAMS[0].id,
 		playerId: PLAYERS[4].id,
 		role: 'main' as const
 	},
 	{
-		eventId: EVENTS[2].id,
+		eventId: EVENTS[1].id,
 		teamId: TEAMS[0].id,
 		playerId: PLAYERS[5].id,
-		role: 'main' as const
-	},
-	{
-		eventId: EVENTS[2].id,
-		teamId: TEAMS[0].id,
-		playerId: PLAYERS[6].id,
 		role: 'sub' as const
 	},
 	{
-		eventId: EVENTS[2].id,
+		eventId: EVENTS[1].id,
 		teamId: TEAMS[0].id,
-		playerId: PLAYERS[0].id,
+		playerId: PLAYERS[6].id,
 		role: 'coach' as const
 	},
-	// Event 3 - Team 2 players (different roster from Event 1)
+	// Event 2 - Team 2 players
 	{
-		eventId: EVENTS[2].id,
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[1].id,
+		playerId: PLAYERS[7].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[1].id,
 		teamId: TEAMS[1].id,
 		playerId: PLAYERS[8].id,
 		role: 'main' as const
 	},
 	{
-		eventId: EVENTS[2].id,
+		eventId: EVENTS[1].id,
 		teamId: TEAMS[1].id,
 		playerId: PLAYERS[9].id,
 		role: 'main' as const
 	},
 	{
-		eventId: EVENTS[2].id,
+		eventId: EVENTS[1].id,
 		teamId: TEAMS[1].id,
 		playerId: PLAYERS[10].id,
 		role: 'main' as const
 	},
 	{
-		eventId: EVENTS[2].id,
+		eventId: EVENTS[1].id,
 		teamId: TEAMS[1].id,
 		playerId: PLAYERS[11].id,
 		role: 'main' as const
 	},
 	{
-		eventId: EVENTS[2].id,
+		eventId: EVENTS[1].id,
 		teamId: TEAMS[1].id,
 		playerId: PLAYERS[12].id,
-		role: 'main' as const
+		role: 'sub' as const
 	},
 	{
-		eventId: EVENTS[2].id,
+		eventId: EVENTS[1].id,
 		teamId: TEAMS[1].id,
 		playerId: PLAYERS[13].id,
-		role: 'sub' as const
-	},
-	{
-		eventId: EVENTS[2].id,
-		teamId: TEAMS[1].id,
-		playerId: PLAYERS[7].id,
 		role: 'coach' as const
 	},
-	// Event 4 - Team 3 players (different roster from Event 2)
+	// Event 2 - Team 5 players
 	{
-		eventId: EVENTS[3].id,
-		teamId: TEAMS[2].id,
-		playerId: PLAYERS[15].id,
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[4].id,
+		playerId: PLAYERS[28].id,
 		role: 'main' as const
 	},
 	{
-		eventId: EVENTS[3].id,
-		teamId: TEAMS[2].id,
-		playerId: PLAYERS[16].id,
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[4].id,
+		playerId: PLAYERS[29].id,
 		role: 'main' as const
 	},
 	{
-		eventId: EVENTS[3].id,
-		teamId: TEAMS[2].id,
-		playerId: PLAYERS[17].id,
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[4].id,
+		playerId: PLAYERS[30].id,
 		role: 'main' as const
 	},
 	{
-		eventId: EVENTS[3].id,
-		teamId: TEAMS[2].id,
-		playerId: PLAYERS[18].id,
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[4].id,
+		playerId: PLAYERS[31].id,
 		role: 'main' as const
 	},
 	{
-		eventId: EVENTS[3].id,
-		teamId: TEAMS[2].id,
-		playerId: PLAYERS[19].id,
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[4].id,
+		playerId: PLAYERS[32].id,
 		role: 'main' as const
 	},
 	{
-		eventId: EVENTS[3].id,
-		teamId: TEAMS[2].id,
-		playerId: PLAYERS[20].id,
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[4].id,
+		playerId: PLAYERS[33].id,
 		role: 'sub' as const
 	},
 	{
-		eventId: EVENTS[3].id,
-		teamId: TEAMS[2].id,
-		playerId: PLAYERS[14].id,
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[4].id,
+		playerId: PLAYERS[34].id,
 		role: 'coach' as const
 	},
-	// Event 4 - Team 4 players (different roster from Event 2)
+	// Event 2 - Team 6 players
 	{
-		eventId: EVENTS[3].id,
-		teamId: TEAMS[3].id,
-		playerId: PLAYERS[22].id,
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[5].id,
+		playerId: PLAYERS[35].id,
 		role: 'main' as const
 	},
 	{
-		eventId: EVENTS[3].id,
-		teamId: TEAMS[3].id,
-		playerId: PLAYERS[23].id,
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[5].id,
+		playerId: PLAYERS[36].id,
 		role: 'main' as const
 	},
 	{
-		eventId: EVENTS[3].id,
-		teamId: TEAMS[3].id,
-		playerId: PLAYERS[24].id,
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[5].id,
+		playerId: PLAYERS[37].id,
 		role: 'main' as const
 	},
 	{
-		eventId: EVENTS[3].id,
-		teamId: TEAMS[3].id,
-		playerId: PLAYERS[25].id,
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[5].id,
+		playerId: PLAYERS[38].id,
 		role: 'main' as const
 	},
 	{
-		eventId: EVENTS[3].id,
-		teamId: TEAMS[3].id,
-		playerId: PLAYERS[26].id,
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[5].id,
+		playerId: PLAYERS[39].id,
 		role: 'main' as const
 	},
 	{
-		eventId: EVENTS[3].id,
-		teamId: TEAMS[3].id,
-		playerId: PLAYERS[27].id,
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[5].id,
+		playerId: PLAYERS[40].id,
 		role: 'sub' as const
 	},
 	{
-		eventId: EVENTS[3].id,
-		teamId: TEAMS[3].id,
-		playerId: PLAYERS[21].id,
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[5].id,
+		playerId: PLAYERS[41].id,
+		role: 'coach' as const
+	},
+	// Event 2 - Team 7 players
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[6].id,
+		playerId: PLAYERS[42].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[6].id,
+		playerId: PLAYERS[43].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[6].id,
+		playerId: PLAYERS[44].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[6].id,
+		playerId: PLAYERS[45].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[6].id,
+		playerId: PLAYERS[46].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[6].id,
+		playerId: PLAYERS[47].id,
+		role: 'sub' as const
+	},
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[6].id,
+		playerId: PLAYERS[48].id,
+		role: 'coach' as const
+	},
+	// Event 2 - Team 8 players
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[7].id,
+		playerId: PLAYERS[49].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[7].id,
+		playerId: PLAYERS[50].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[7].id,
+		playerId: PLAYERS[51].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[7].id,
+		playerId: PLAYERS[52].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[7].id,
+		playerId: PLAYERS[53].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[7].id,
+		playerId: PLAYERS[54].id,
+		role: 'sub' as const
+	},
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[7].id,
+		playerId: PLAYERS[55].id,
 		role: 'coach' as const
 	}
 ];
@@ -848,6 +934,135 @@ export const EVENT_RESULTS = [
 		rank: 3,
 		rankTo: 4,
 		prizeAmount: 45000,
+		prizeCurrency: 'Bablo'
+	},
+	// Event 5 (Imaginary Cup 5) Results - Additional teams
+	{
+		id: randomUUID(),
+		eventId: EVENTS[4].id,
+		teamId: TEAMS[4].id,
+		rank: 5,
+		rankTo: 8,
+		prizeAmount: 25000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[4].id,
+		teamId: TEAMS[5].id,
+		rank: 5,
+		rankTo: 8,
+		prizeAmount: 25000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[4].id,
+		teamId: TEAMS[6].id,
+		rank: 5,
+		rankTo: 8,
+		prizeAmount: 25000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[4].id,
+		teamId: TEAMS[7].id,
+		rank: 5,
+		rankTo: 8,
+		prizeAmount: 25000,
+		prizeCurrency: 'Bablo'
+	},
+	// Event 6 (Imaginary Cup 6) Results - Additional teams
+	{
+		id: randomUUID(),
+		eventId: EVENTS[5].id,
+		teamId: TEAMS[4].id,
+		rank: 5,
+		rankTo: 8,
+		prizeAmount: 20000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[5].id,
+		teamId: TEAMS[5].id,
+		rank: 5,
+		rankTo: 8,
+		prizeAmount: 20000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[5].id,
+		teamId: TEAMS[6].id,
+		rank: 5,
+		rankTo: 8,
+		prizeAmount: 20000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[5].id,
+		teamId: TEAMS[7].id,
+		rank: 5,
+		rankTo: 8,
+		prizeAmount: 20000,
+		prizeCurrency: 'Bablo'
+	},
+	// Event 2 (Imaginary Cup 2) Results - Additional teams
+	{
+		id: randomUUID(),
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[0].id,
+		rank: 5,
+		rankTo: 8,
+		prizeAmount: 20000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[1].id,
+		rank: 5,
+		rankTo: 8,
+		prizeAmount: 20000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[4].id,
+		rank: 5,
+		rankTo: 8,
+		prizeAmount: 20000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[5].id,
+		rank: 5,
+		rankTo: 8,
+		prizeAmount: 20000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[6].id,
+		rank: 5,
+		rankTo: 8,
+		prizeAmount: 20000,
+		prizeCurrency: 'Bablo'
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[7].id,
+		rank: 5,
+		rankTo: 8,
+		prizeAmount: 20000,
 		prizeCurrency: 'Bablo'
 	}
 ];
