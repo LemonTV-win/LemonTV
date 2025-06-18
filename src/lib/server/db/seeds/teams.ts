@@ -41,6 +41,46 @@ export const TEAMS = [
 		region: 'KR',
 		createdAt: new Date().toISOString(),
 		updatedAt: new Date().toISOString()
+	},
+	{
+		id: randomUUID(),
+		name: 'Team 5',
+		slug: 'team-5',
+		abbr: 'T5',
+		logo: 'https://picsum.photos/seed/team-5/256/256?blur',
+		region: 'APAC',
+		createdAt: new Date().toISOString(),
+		updatedAt: new Date().toISOString()
+	},
+	{
+		id: randomUUID(),
+		name: 'Team 6',
+		slug: 'team-6',
+		abbr: 'T6',
+		logo: 'https://picsum.photos/seed/team-6/256/256?blur',
+		region: 'CN',
+		createdAt: new Date().toISOString(),
+		updatedAt: new Date().toISOString()
+	},
+	{
+		id: randomUUID(),
+		name: 'Team 7',
+		slug: 'team-7',
+		abbr: 'T7',
+		logo: 'https://picsum.photos/seed/team-7/256/256?blur',
+		region: 'EU',
+		createdAt: new Date().toISOString(),
+		updatedAt: new Date().toISOString()
+	},
+	{
+		id: randomUUID(),
+		name: 'Team 8',
+		slug: 'team-8',
+		abbr: 'T8',
+		logo: 'https://picsum.photos/seed/team-8/256/256?blur',
+		region: 'SA',
+		createdAt: new Date().toISOString(),
+		updatedAt: new Date().toISOString()
 	}
 ];
 
@@ -215,6 +255,178 @@ export const TEAM_PLAYERS = [
 		id: 28,
 		teamId: TEAMS[3].id,
 		playerId: PLAYERS[27].id,
+		role: 'substitute'
+	},
+	// Team 5 Players (7 players)
+	{
+		id: 29,
+		teamId: TEAMS[4].id,
+		playerId: PLAYERS[28].id,
+		role: 'active'
+	},
+	{
+		id: 30,
+		teamId: TEAMS[4].id,
+		playerId: PLAYERS[29].id,
+		role: 'active'
+	},
+	{
+		id: 31,
+		teamId: TEAMS[4].id,
+		playerId: PLAYERS[30].id,
+		role: 'active'
+	},
+	{
+		id: 32,
+		teamId: TEAMS[4].id,
+		playerId: PLAYERS[31].id,
+		role: 'active'
+	},
+	{
+		id: 33,
+		teamId: TEAMS[4].id,
+		playerId: PLAYERS[32].id,
+		role: 'active'
+	},
+	{
+		id: 34,
+		teamId: TEAMS[4].id,
+		playerId: PLAYERS[33].id,
+		role: 'substitute'
+	},
+	{
+		id: 35,
+		teamId: TEAMS[4].id,
+		playerId: PLAYERS[34].id,
+		role: 'substitute'
+	},
+	// Team 6 Players (7 players)
+	{
+		id: 36,
+		teamId: TEAMS[5].id,
+		playerId: PLAYERS[35].id,
+		role: 'active'
+	},
+	{
+		id: 37,
+		teamId: TEAMS[5].id,
+		playerId: PLAYERS[36].id,
+		role: 'active'
+	},
+	{
+		id: 38,
+		teamId: TEAMS[5].id,
+		playerId: PLAYERS[37].id,
+		role: 'active'
+	},
+	{
+		id: 39,
+		teamId: TEAMS[5].id,
+		playerId: PLAYERS[38].id,
+		role: 'active'
+	},
+	{
+		id: 40,
+		teamId: TEAMS[5].id,
+		playerId: PLAYERS[39].id,
+		role: 'active'
+	},
+	{
+		id: 41,
+		teamId: TEAMS[5].id,
+		playerId: PLAYERS[40].id,
+		role: 'substitute'
+	},
+	{
+		id: 42,
+		teamId: TEAMS[5].id,
+		playerId: PLAYERS[41].id,
+		role: 'substitute'
+	},
+	// Team 7 Players (7 players)
+	{
+		id: 43,
+		teamId: TEAMS[6].id,
+		playerId: PLAYERS[42].id,
+		role: 'active'
+	},
+	{
+		id: 44,
+		teamId: TEAMS[6].id,
+		playerId: PLAYERS[43].id,
+		role: 'active'
+	},
+	{
+		id: 45,
+		teamId: TEAMS[6].id,
+		playerId: PLAYERS[44].id,
+		role: 'active'
+	},
+	{
+		id: 46,
+		teamId: TEAMS[6].id,
+		playerId: PLAYERS[45].id,
+		role: 'active'
+	},
+	{
+		id: 47,
+		teamId: TEAMS[6].id,
+		playerId: PLAYERS[46].id,
+		role: 'active'
+	},
+	{
+		id: 48,
+		teamId: TEAMS[6].id,
+		playerId: PLAYERS[47].id,
+		role: 'substitute'
+	},
+	{
+		id: 49,
+		teamId: TEAMS[6].id,
+		playerId: PLAYERS[48].id,
+		role: 'substitute'
+	},
+	// Team 8 Players (7 players)
+	{
+		id: 50,
+		teamId: TEAMS[7].id,
+		playerId: PLAYERS[49].id,
+		role: 'active'
+	},
+	{
+		id: 51,
+		teamId: TEAMS[7].id,
+		playerId: PLAYERS[50].id,
+		role: 'active'
+	},
+	{
+		id: 52,
+		teamId: TEAMS[7].id,
+		playerId: PLAYERS[51].id,
+		role: 'active'
+	},
+	{
+		id: 53,
+		teamId: TEAMS[7].id,
+		playerId: PLAYERS[52].id,
+		role: 'active'
+	},
+	{
+		id: 54,
+		teamId: TEAMS[7].id,
+		playerId: PLAYERS[53].id,
+		role: 'active'
+	},
+	{
+		id: 55,
+		teamId: TEAMS[7].id,
+		playerId: PLAYERS[54].id,
+		role: 'substitute'
+	},
+	{
+		id: 56,
+		teamId: TEAMS[7].id,
+		playerId: PLAYERS[55].id,
 		role: 'substitute'
 	}
 ];

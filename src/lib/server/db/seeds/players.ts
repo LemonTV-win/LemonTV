@@ -177,6 +177,178 @@ export const PLAYERS = [
 		name: 'Player 28',
 		slug: 'player-28',
 		nationality: 'TW'
+	},
+	// Team 5 Players (5-7 players)
+	{
+		id: randomUUID(),
+		name: 'Player 29',
+		slug: 'player-29',
+		nationality: 'AU'
+	},
+	{
+		id: randomUUID(),
+		name: 'Player 30',
+		slug: 'player-30',
+		nationality: 'NZ'
+	},
+	{
+		id: randomUUID(),
+		name: 'Player 31',
+		slug: 'player-31',
+		nationality: 'PH'
+	},
+	{
+		id: randomUUID(),
+		name: 'Player 32',
+		slug: 'player-32',
+		nationality: 'TH'
+	},
+	{
+		id: randomUUID(),
+		name: 'Player 33',
+		slug: 'player-33',
+		nationality: 'MY'
+	},
+	{
+		id: randomUUID(),
+		name: 'Player 34',
+		slug: 'player-34',
+		nationality: 'ID'
+	},
+	{
+		id: randomUUID(),
+		name: 'Player 35',
+		slug: 'player-35',
+		nationality: 'VN'
+	},
+	// Team 6 Players (5-7 players)
+	{
+		id: randomUUID(),
+		name: 'Player 36',
+		slug: 'player-36',
+		nationality: 'CN'
+	},
+	{
+		id: randomUUID(),
+		name: 'Player 37',
+		slug: 'player-37',
+		nationality: 'CN'
+	},
+	{
+		id: randomUUID(),
+		name: 'Player 38',
+		slug: 'player-38',
+		nationality: 'CN'
+	},
+	{
+		id: randomUUID(),
+		name: 'Player 39',
+		slug: 'player-39',
+		nationality: 'CN'
+	},
+	{
+		id: randomUUID(),
+		name: 'Player 40',
+		slug: 'player-40',
+		nationality: 'CN'
+	},
+	{
+		id: randomUUID(),
+		name: 'Player 41',
+		slug: 'player-41',
+		nationality: 'CN'
+	},
+	{
+		id: randomUUID(),
+		name: 'Player 42',
+		slug: 'player-42',
+		nationality: 'CN'
+	},
+	// Team 7 Players (5-7 players)
+	{
+		id: randomUUID(),
+		name: 'Player 43',
+		slug: 'player-43',
+		nationality: 'NL'
+	},
+	{
+		id: randomUUID(),
+		name: 'Player 44',
+		slug: 'player-44',
+		nationality: 'BE'
+	},
+	{
+		id: randomUUID(),
+		name: 'Player 45',
+		slug: 'player-45',
+		nationality: 'CH'
+	},
+	{
+		id: randomUUID(),
+		name: 'Player 46',
+		slug: 'player-46',
+		nationality: 'NO'
+	},
+	{
+		id: randomUUID(),
+		name: 'Player 47',
+		slug: 'player-47',
+		nationality: 'DK'
+	},
+	{
+		id: randomUUID(),
+		name: 'Player 48',
+		slug: 'player-48',
+		nationality: 'FI'
+	},
+	{
+		id: randomUUID(),
+		name: 'Player 49',
+		slug: 'player-49',
+		nationality: 'PL'
+	},
+	// Team 8 Players (5-7 players)
+	{
+		id: randomUUID(),
+		name: 'Player 50',
+		slug: 'player-50',
+		nationality: 'BR'
+	},
+	{
+		id: randomUUID(),
+		name: 'Player 51',
+		slug: 'player-51',
+		nationality: 'AR'
+	},
+	{
+		id: randomUUID(),
+		name: 'Player 52',
+		slug: 'player-52',
+		nationality: 'CL'
+	},
+	{
+		id: randomUUID(),
+		name: 'Player 53',
+		slug: 'player-53',
+		nationality: 'PE'
+	},
+	{
+		id: randomUUID(),
+		name: 'Player 54',
+		slug: 'player-54',
+		nationality: 'CO'
+	},
+	{
+		id: randomUUID(),
+		name: 'Player 55',
+		slug: 'player-55',
+		nationality: 'MX'
+	},
+	{
+		id: randomUUID(),
+		name: 'Player 56',
+		slug: 'player-56',
+		nationality: 'UY'
 	}
 ];
 
