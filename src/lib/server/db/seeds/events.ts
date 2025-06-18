@@ -657,3 +657,98 @@ export const EVENT_RESULTS = [
 		prizeCurrency: 'Bablo'
 	}
 ];
+
+export const EVENT_VIDEOS = [
+	{
+		id: randomUUID(),
+		eventId: EVENTS[0].id,
+		type: 'stream' as const,
+		url: 'https://www.twitch.tv/example1',
+		platform: 'twitch',
+		title: 'Day 1 Main Stream',
+		createdAt: new Date(),
+		updatedAt: new Date()
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[0].id,
+		type: 'vod' as const,
+		url: 'https://www.youtube.com/watch?v=example1',
+		platform: 'youtube',
+		title: 'Grand Finals VOD',
+		createdAt: new Date(),
+		updatedAt: new Date()
+	},
+	{
+		id: randomUUID(),
+		eventId: EVENTS[1].id,
+		type: 'clip' as const,
+		url: 'https://www.twitch.tv/example2/clip/example',
+		platform: 'twitch',
+		title: 'Amazing Play Highlight',
+		createdAt: new Date(),
+		updatedAt: new Date()
+	}
+];
+
+export const EVENT_CASTERS = [
+	// Event 1 casters
+	{
+		eventId: EVENTS[0].id,
+		playerId: PLAYERS[0].id,
+		role: 'host' as const,
+		createdAt: new Date(),
+		updatedAt: new Date()
+	},
+	{
+		eventId: EVENTS[0].id,
+		playerId: PLAYERS[1].id,
+		role: 'commentator' as const,
+		createdAt: new Date(),
+		updatedAt: new Date()
+	},
+	{
+		eventId: EVENTS[0].id,
+		playerId: PLAYERS[2].id,
+		role: 'analyst' as const,
+		createdAt: new Date(),
+		updatedAt: new Date()
+	},
+	// Event 2 casters
+	{
+		eventId: EVENTS[1].id,
+		playerId: PLAYERS[3].id,
+		role: 'host' as const,
+		createdAt: new Date(),
+		updatedAt: new Date()
+	},
+	{
+		eventId: EVENTS[1].id,
+		playerId: PLAYERS[4].id,
+		role: 'commentator' as const,
+		createdAt: new Date(),
+		updatedAt: new Date()
+	},
+	// Event 3 casters
+	{
+		eventId: EVENTS[2].id,
+		playerId: PLAYERS[5].id,
+		role: 'host' as const,
+		createdAt: new Date(),
+		updatedAt: new Date()
+	},
+	{
+		eventId: EVENTS[2].id,
+		playerId: PLAYERS[0].id,
+		role: 'analyst' as const,
+		createdAt: new Date(),
+		updatedAt: new Date()
+	},
+	{
+		eventId: EVENTS[2].id,
+		playerId: PLAYERS[1].id,
+		role: 'commentator' as const,
+		createdAt: new Date(),
+		updatedAt: new Date()
+	}
+];
