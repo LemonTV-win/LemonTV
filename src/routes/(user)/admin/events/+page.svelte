@@ -299,7 +299,7 @@
 							{/if}
 						</button>
 					</th>
-					<th class="px-4 py-1">Organizers</th>
+					<th class="px-4 py-1">{m.organizers()}</th>
 					<th class="px-4 py-1">{m.links()}</th>
 					<th class="px-4 py-1">{m.matches()}</th>
 					<th class="sticky right-0 z-10 h-12 bg-gray-800 px-4 py-1">{m.actions()}</th>
