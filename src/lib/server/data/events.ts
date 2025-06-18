@@ -288,6 +288,7 @@ export async function getEvents(
 						id: number;
 						matchId: string;
 						roundId: number;
+						order: number;
 						dependencies: Array<{
 							dependencyMatchId: string;
 							outcome: string;
@@ -473,7 +474,8 @@ export async function getEvents(
 								id: stageNode.id,
 								matchId: stageNode.matchId,
 								roundId: stageNode.roundId,
-								dependencies: []
+								dependencies: [],
+								order: stageNode.order
 							});
 						}
 					}
@@ -672,6 +674,7 @@ export async function getEvents(
 														matchId: string;
 														roundId: number;
 														dependencies: { dependencyMatchId: string; outcome: string }[];
+														order: number;
 													}) =>
 														({
 															matchId: node.matchId,
@@ -679,7 +682,8 @@ export async function getEvents(
 															dependsOn: node.dependencies?.map((dep) => ({
 																matchId: dep.dependencyMatchId,
 																outcome: dep.outcome as 'winner' | 'loser'
-															}))
+															})),
+															order: node.order
 														}) as StageNode
 												)
 											)

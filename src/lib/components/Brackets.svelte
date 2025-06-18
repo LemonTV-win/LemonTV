@@ -23,7 +23,15 @@
 		new Map(
 			rounds.map((r) => [
 				r.id,
-				matches.filter((m) => stage.structure.nodes.find((n) => n.matchId === m.id)?.round === r.id)
+				matches
+					.filter((m) => stage.structure.nodes.find((n) => n.matchId === m.id)?.round === r.id)
+					.sort((a, b) => {
+						// Get the node IDs for both matches
+						const nodeA = stage.structure.nodes.find((n) => n.matchId === a.id);
+						const nodeB = stage.structure.nodes.find((n) => n.matchId === b.id);
+						// Sort by node ID to preserve the order defined in STAGE_NODES
+						return (nodeA?.order ?? 0) - (nodeB?.order ?? 0);
+					})
 			])
 		)
 	);
@@ -38,13 +46,29 @@
 				[
 					r.title?.[getLocale() as Locale] ??
 						m[r.type as 'thirdplace' | 'semifinals' | 'final' | 'quarterfinals'](),
-					matches.filter(
-						(m) => stage.structure.nodes.find((n) => n.matchId === m.id)?.round === r.id
-					)
+					matches
+						.filter((m) => stage.structure.nodes.find((n) => n.matchId === m.id)?.round === r.id)
+						.sort((a, b) => {
+							// Get the node IDs for both matches
+							const nodeA = stage.structure.nodes.find((n) => n.matchId === a.id);
+							const nodeB = stage.structure.nodes.find((n) => n.matchId === b.id);
+							// Sort by node ID to preserve the order defined in STAGE_NODES
+							return (nodeA?.order ?? 0) - (nodeB?.order ?? 0);
+						})
 				]
 			])
 		)
 	);
+
+	// Check if any matches are found through nodes
+	let hasNodeMatches = $derived(
+		stage.structure.nodes.some((n) => n.matchId !== null) &&
+			matches.some((m) => stage.structure.nodes.some((n) => n.matchId === m.id))
+	);
+
+	// For your case, we want the third-place match to be in the same column as the final
+	// So let's just use the original grid layout and position parallel rounds correctly
+	let gridColumns = $derived(rounds.length);
 
 	let container = $state<HTMLDivElement>();
 	let positions = new SvelteMap<string, { x: number; y: number }>();
@@ -187,7 +211,7 @@
 <div
 	bind:this={container}
 	class="relative grid auto-rows-min justify-items-center gap-x-8 gap-y-0 overflow-x-auto bg-zinc-900 px-4 py-8 [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-800"
-	style="grid-template-columns: repeat({rounds.length}, 1fr);"
+	style="grid-template-columns: repeat({gridColumns}, 1fr);"
 >
 	{#each rounds as r}
 		<h4 class="mb-4">
@@ -198,20 +222,27 @@
 	{#each rounds as r, i}
 		<div class="flex flex-col items-center justify-center" style:grid-column={i + 1}>
 			<div class="flex flex-col gap-6">
-				{#each matchesByRound.get(r.id) ?? [] as match (match.id)}
+				{#each hasNodeMatches ? (matchesByRound.get(r.id) ?? []) : i === 0 ? matches : [] as match (match.id)}
 					{@render matchContainer(match, i)}
 				{/each}
 			</div>
 		</div>
 	{/each}
 
-	{#each rounds as r, i}
-		{@const [title, matches] = parallelMatchesByRound.get(r.id) ?? ['', []]}
-		<div class="flex flex-col items-center justify-center" style:grid-column={i + 1}>
+	{#each parallelRounds as r}
+		{@const [title, roundMatches] = hasNodeMatches
+			? (parallelMatchesByRound.get(r.parallelGroup ?? 0) ?? ['', []])
+			: [
+					r.title?.[getLocale() as Locale] ??
+						m[r.type as 'thirdplace' | 'semifinals' | 'final' | 'quarterfinals'](),
+					matches
+				]}
+		{@const targetColumn = r.type === 'thirdplace' ? gridColumns : 1}
+		<div class="flex flex-col items-center justify-center" style:grid-column={targetColumn}>
 			<div class="flex flex-col gap-6">
 				<h4 class="text-center">{title}</h4>
-				{#each matches as match (match.id)}
-					{@render matchContainer(match, i)}
+				{#each roundMatches as match (match.id)}
+					{@render matchContainer(match, targetColumn - 1)}
 				{/each}
 			</div>
 		</div>

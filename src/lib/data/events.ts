@@ -36,6 +36,7 @@ export interface StageNode {
 		matchId: string;
 		outcome: 'winner' | 'loser';
 	}[]; // match IDs that this match depends on
+	order: number;
 }
 
 export interface StageStructure {
@@ -1544,20 +1545,23 @@ export const events: Event[] = [
 					nodes: [
 						{
 							matchId: 'legacy-1001',
-							round: 0
+							round: 0,
+							order: 0
 						},
-
 						{
 							matchId: 'legacy-1',
-							round: 1
+							round: 1,
+							order: 0
 						},
 						{
 							matchId: 'legacy-2',
-							round: 1
+							round: 1,
+							order: 1
 						},
 						{
 							matchId: 'legacy-5',
 							round: 2,
+							order: 0,
 							dependsOn: [
 								{ matchId: 'legacy-1', outcome: 'winner' },
 								{ matchId: 'legacy-2', outcome: 'winner' }
@@ -1565,45 +1569,46 @@ export const events: Event[] = [
 						},
 						{
 							matchId: 'legacy-3',
-							round: 1
+							round: 1,
+							order: 2
 						},
 						{
 							matchId: 'legacy-4',
-							round: 1
+							round: 1,
+							order: 3
 						},
 						{
 							matchId: 'legacy-6',
 							round: 2,
+							order: 1,
 							dependsOn: [
 								{ matchId: 'legacy-3', outcome: 'winner' },
 								{ matchId: 'legacy-4', outcome: 'winner' }
 							]
 						},
-
 						{
 							matchId: 'legacy-9',
 							round: 3,
+							order: 0,
 							dependsOn: [
 								{ matchId: 'legacy-5', outcome: 'winner' },
 								{ matchId: 'legacy-6', outcome: 'winner' }
 							]
 						},
-
 						{
 							matchId: 'legacy-7',
-							round: 4
+							round: 4,
+							order: 0
 						},
 						{
 							matchId: 'legacy-8',
-							round: 4
+							round: 4,
+							order: 1
 						},
-						// {
-						// 	matchId: 'legacy-10',
-						// 	round: 1
-						// },
 						{
 							matchId: 'legacy-11',
 							round: 5,
+							order: 0,
 							dependsOn: [
 								{ matchId: 'legacy-8', outcome: 'winner' },
 								{
@@ -1615,6 +1620,7 @@ export const events: Event[] = [
 						{
 							matchId: 'legacy-12',
 							round: 6,
+							order: 0,
 							dependsOn: [
 								{ matchId: 'legacy-6', outcome: 'loser' },
 								{ matchId: 'legacy-11', outcome: 'winner' }
@@ -1623,6 +1629,7 @@ export const events: Event[] = [
 						{
 							matchId: 'legacy-13',
 							round: 7,
+							order: 0,
 							dependsOn: [
 								{ matchId: 'legacy-9', outcome: 'loser' },
 								{ matchId: 'legacy-12', outcome: 'winner' }
@@ -1631,6 +1638,7 @@ export const events: Event[] = [
 						{
 							matchId: 'legacy-15',
 							round: 8,
+							order: 0,
 							dependsOn: [
 								{ matchId: 'legacy-13', outcome: 'winner' },
 								{ matchId: 'legacy-9', outcome: 'winner' }
@@ -1776,15 +1784,18 @@ export const events: Event[] = [
 					nodes: [
 						{
 							matchId: 'legacy-220001',
-							round: 0
+							round: 0,
+							order: 0
 						},
 						{
 							matchId: 'legacy-220002',
-							round: 0
+							round: 0,
+							order: 1
 						},
 						{
 							matchId: 'legacy-220003',
 							round: 1,
+							order: 0,
 							dependsOn: [
 								{ matchId: 'legacy-220001', outcome: 'winner' },
 								{ matchId: 'legacy-220002', outcome: 'winner' }
@@ -1793,6 +1804,7 @@ export const events: Event[] = [
 						{
 							matchId: 'legacy-220004',
 							round: 2,
+							order: 0,
 							dependsOn: [
 								{ matchId: 'legacy-220001', outcome: 'loser' },
 								{ matchId: 'legacy-220002', outcome: 'loser' }
@@ -3104,15 +3116,16 @@ export const events: Event[] = [
 					],
 					nodes: [
 						// QFs
-						{ matchId: 'legacy-10001', round: 1 },
-						{ matchId: 'legacy-10002', round: 1 },
-						{ matchId: 'legacy-10003', round: 1 },
-						{ matchId: 'legacy-10004', round: 1 },
+						{ matchId: 'legacy-10001', round: 1, order: 0 },
+						{ matchId: 'legacy-10002', round: 1, order: 1 },
+						{ matchId: 'legacy-10003', round: 1, order: 2 },
+						{ matchId: 'legacy-10004', round: 1, order: 3 },
 
 						// SFs
 						{
 							matchId: 'legacy-10005',
 							round: 2,
+							order: 0,
 							dependsOn: [
 								{ matchId: 'legacy-10001', outcome: 'winner' },
 								{ matchId: 'legacy-10002', outcome: 'winner' }
@@ -3121,6 +3134,7 @@ export const events: Event[] = [
 						{
 							matchId: 'legacy-10006',
 							round: 2,
+							order: 1,
 							dependsOn: [
 								{ matchId: 'legacy-10003', outcome: 'winner' },
 								{ matchId: 'legacy-10004', outcome: 'winner' }
@@ -3131,6 +3145,7 @@ export const events: Event[] = [
 						{
 							matchId: 'legacy-10007',
 							round: 3,
+							order: 0,
 							dependsOn: [
 								{ matchId: 'legacy-10005', outcome: 'winner' },
 								{ matchId: 'legacy-10006', outcome: 'winner' }
@@ -3141,6 +3156,7 @@ export const events: Event[] = [
 						{
 							matchId: 'legacy-10008',
 							round: 4,
+							order: 0,
 							dependsOn: [
 								{ matchId: 'legacy-10005', outcome: 'loser' },
 								{ matchId: 'legacy-10006', outcome: 'loser' }

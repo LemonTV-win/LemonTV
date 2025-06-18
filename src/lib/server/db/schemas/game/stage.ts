@@ -68,6 +68,7 @@ export const stageNode = sqliteTable('stage_node', {
 	roundId: integer('round_id')
 		.references(() => stageRound.id)
 		.notNull(),
+	order: integer('order').notNull(),
 	createdAt: integer('created_at', { mode: 'timestamp_ms' })
 		.notNull()
 		.default(sql`(unixepoch() * 1000)`),
