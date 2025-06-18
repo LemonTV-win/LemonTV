@@ -134,7 +134,7 @@
 				onmouseleave={() => (highlightingTeam = undefined)}
 				class:bg-gray-700={highlightingTeam === teams.get(match.teams[0].team)?.id}
 			>
-				{teams.get(match.teams[0].team)?.name}
+				{teams.get(match.teams[0].team)?.name ?? match.teams[0].team}
 				{#if match.teams[0].score !== undefined}
 					<span class="score">{match.teams[0].score}</span>
 				{/if}
@@ -150,7 +150,7 @@
 				onmouseleave={() => (highlightingTeam = undefined)}
 				class:bg-gray-700={highlightingTeam === teams.get(match.teams[1].team)?.id}
 			>
-				{teams.get(match.teams[1].team)?.name}
+				{teams.get(match.teams[1].team)?.name ?? match.teams[1].team}
 				{#if match.teams[1].score !== undefined}
 					<span class="score">{match.teams[1].score}</span>
 				{/if}
