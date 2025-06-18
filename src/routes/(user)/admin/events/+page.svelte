@@ -301,6 +301,7 @@
 					</th>
 					<th class="px-4 py-1">Organizers</th>
 					<th class="px-4 py-1">{m.links()}</th>
+					<th class="px-4 py-1">{m.matches()}</th>
 					<th class="sticky right-0 z-10 h-12 bg-gray-800 px-4 py-1">{m.actions()}</th>
 				</tr>
 			</thead>
@@ -397,6 +398,15 @@
 									<span class="text-sm whitespace-nowrap text-slate-500">{m.no_data()}</span>
 								{/if}
 							</div>
+						</td>
+						<td class="min-w-max px-4 py-1">
+							<a
+								href="/admin/matches?event={event.id}"
+								class="inline-flex items-center gap-1 rounded-full bg-yellow-500 px-2 py-1 text-xs text-black transition-colors hover:bg-yellow-600"
+								title="View matches for this event"
+							>
+								{m.matches()}
+							</a>
 						</td>
 						<td class="sticky right-0 z-10 h-12 min-w-max bg-gray-800 whitespace-nowrap">
 							<div class="flex h-full items-center gap-2 border-l border-gray-700 px-4 py-1">
