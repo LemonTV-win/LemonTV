@@ -674,10 +674,10 @@ export async function getEvents(
 														dependencies: { dependencyMatchId: string; outcome: string }[];
 													}) =>
 														({
-															matchId: parseInt(node.matchId),
+															matchId: node.matchId,
 															round: node.roundId,
 															dependsOn: node.dependencies?.map((dep) => ({
-																matchId: parseInt(dep.dependencyMatchId),
+																matchId: dep.dependencyMatchId,
 																outcome: dep.outcome as 'winner' | 'loser'
 															}))
 														}) as StageNode

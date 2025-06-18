@@ -47,8 +47,8 @@
 	);
 
 	let container = $state<HTMLDivElement>();
-	let positions = new SvelteMap<number, { x: number; y: number }>();
-	function register(el: HTMLElement, matchId: number) {
+	let positions = new SvelteMap<string, { x: number; y: number }>();
+	function register(el: HTMLElement, matchId: string) {
 		if (!container) {
 			tick().then(() => register(el, matchId));
 			return;
@@ -70,7 +70,7 @@
 		console.log('positions', positions);
 	});
 
-	let matchRefs = new SvelteMap<number, HTMLElement>();
+	let matchRefs = new SvelteMap<string, HTMLElement>();
 
 	onMount(() => {
 		const recalc = () => {
@@ -106,7 +106,7 @@
 		);
 	}
 
-	let tooltipID = $state<number>();
+	let tooltipID = $state<string>();
 
 	let highlightingTeam = $state<string>();
 </script>

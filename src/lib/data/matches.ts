@@ -23,7 +23,7 @@ export interface CompiledParticipant {
 }
 
 export interface Match {
-	id: number;
+	id: string;
 	teams: [Participant, Participant];
 	battleOf: 'BO1' | 'BO3' | 'BO5';
 	maps: {

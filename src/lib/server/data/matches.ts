@@ -192,7 +192,7 @@ export async function getMatch(id: string): Promise<(AppMatch & { event: Event }
 	});
 
 	const result: AppMatch & { event: Event } = {
-		id: -1,
+		id: match.match.id,
 		battleOf: (format || 'BO1') as 'BO1' | 'BO3' | 'BO5',
 		maps: validMaps.map((m) => ({
 			map: m.map.id as GameMap,
