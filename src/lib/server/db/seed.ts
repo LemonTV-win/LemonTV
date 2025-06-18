@@ -82,6 +82,8 @@ export async function seed() {
 	console.info('[SEED] - Deleted player');
 	await db.delete(schema.discordServerTag);
 	console.info('[SEED] - Deleted discordServerTag');
+	await db.delete(schema.communityTag);
+	console.info('[SEED] - Deleted communityTag');
 	await db.delete(schema.discordServer);
 	console.info('[SEED] - Deleted discordServer');
 	await db.delete(schema.organizer);
