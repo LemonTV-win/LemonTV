@@ -45,40 +45,176 @@ export const TEAMS = [
 ];
 
 export const TEAM_PLAYERS = [
+	// Team 1 Players (7 players)
 	{
-		id: 2,
+		id: 1,
 		teamId: TEAMS[0].id,
 		playerId: PLAYERS[0].id,
 		role: 'active'
 	},
 	{
-		id: 3,
+		id: 2,
 		teamId: TEAMS[0].id,
 		playerId: PLAYERS[1].id,
 		role: 'active'
 	},
 	{
-		id: 4,
-		teamId: TEAMS[1].id,
+		id: 3,
+		teamId: TEAMS[0].id,
 		playerId: PLAYERS[2].id,
 		role: 'active'
 	},
 	{
-		id: 5,
-		teamId: TEAMS[1].id,
+		id: 4,
+		teamId: TEAMS[0].id,
 		playerId: PLAYERS[3].id,
 		role: 'active'
 	},
 	{
-		id: 6,
-		teamId: TEAMS[2].id,
+		id: 5,
+		teamId: TEAMS[0].id,
 		playerId: PLAYERS[4].id,
 		role: 'active'
 	},
 	{
-		id: 7,
-		teamId: TEAMS[3].id,
+		id: 6,
+		teamId: TEAMS[0].id,
 		playerId: PLAYERS[5].id,
+		role: 'substitute'
+	},
+	{
+		id: 7,
+		teamId: TEAMS[0].id,
+		playerId: PLAYERS[6].id,
+		role: 'substitute'
+	},
+	// Team 2 Players (7 players)
+	{
+		id: 8,
+		teamId: TEAMS[1].id,
+		playerId: PLAYERS[7].id,
 		role: 'active'
+	},
+	{
+		id: 9,
+		teamId: TEAMS[1].id,
+		playerId: PLAYERS[8].id,
+		role: 'active'
+	},
+	{
+		id: 10,
+		teamId: TEAMS[1].id,
+		playerId: PLAYERS[9].id,
+		role: 'active'
+	},
+	{
+		id: 11,
+		teamId: TEAMS[1].id,
+		playerId: PLAYERS[10].id,
+		role: 'active'
+	},
+	{
+		id: 12,
+		teamId: TEAMS[1].id,
+		playerId: PLAYERS[11].id,
+		role: 'active'
+	},
+	{
+		id: 13,
+		teamId: TEAMS[1].id,
+		playerId: PLAYERS[12].id,
+		role: 'substitute'
+	},
+	{
+		id: 14,
+		teamId: TEAMS[1].id,
+		playerId: PLAYERS[13].id,
+		role: 'substitute'
+	},
+	// Team 3 Players (7 players)
+	{
+		id: 15,
+		teamId: TEAMS[2].id,
+		playerId: PLAYERS[14].id,
+		role: 'active'
+	},
+	{
+		id: 16,
+		teamId: TEAMS[2].id,
+		playerId: PLAYERS[15].id,
+		role: 'active'
+	},
+	{
+		id: 17,
+		teamId: TEAMS[2].id,
+		playerId: PLAYERS[16].id,
+		role: 'active'
+	},
+	{
+		id: 18,
+		teamId: TEAMS[2].id,
+		playerId: PLAYERS[17].id,
+		role: 'active'
+	},
+	{
+		id: 19,
+		teamId: TEAMS[2].id,
+		playerId: PLAYERS[18].id,
+		role: 'active'
+	},
+	{
+		id: 20,
+		teamId: TEAMS[2].id,
+		playerId: PLAYERS[19].id,
+		role: 'substitute'
+	},
+	{
+		id: 21,
+		teamId: TEAMS[2].id,
+		playerId: PLAYERS[20].id,
+		role: 'substitute'
+	},
+	// Team 4 Players (7 players)
+	{
+		id: 22,
+		teamId: TEAMS[3].id,
+		playerId: PLAYERS[21].id,
+		role: 'active'
+	},
+	{
+		id: 23,
+		teamId: TEAMS[3].id,
+		playerId: PLAYERS[22].id,
+		role: 'active'
+	},
+	{
+		id: 24,
+		teamId: TEAMS[3].id,
+		playerId: PLAYERS[23].id,
+		role: 'active'
+	},
+	{
+		id: 25,
+		teamId: TEAMS[3].id,
+		playerId: PLAYERS[24].id,
+		role: 'active'
+	},
+	{
+		id: 26,
+		teamId: TEAMS[3].id,
+		playerId: PLAYERS[25].id,
+		role: 'active'
+	},
+	{
+		id: 27,
+		teamId: TEAMS[3].id,
+		playerId: PLAYERS[26].id,
+		role: 'substitute'
+	},
+	{
+		id: 28,
+		teamId: TEAMS[3].id,
+		playerId: PLAYERS[27].id,
+		role: 'substitute'
 	}
 ];
