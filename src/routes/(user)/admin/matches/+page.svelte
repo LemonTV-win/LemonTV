@@ -2,6 +2,7 @@
 	import { m } from '$lib/paraglide/messages';
 	import type { PageProps } from './$types';
 	import { enhance } from '$app/forms';
+	import { page } from '$app/state';
 	import MaterialSymbolsFilterListRounded from '~icons/material-symbols/filter-list-rounded';
 	import MaterialSymbolsSearchRounded from '~icons/material-symbols/search-rounded';
 	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
@@ -14,6 +15,7 @@
 	import type { Match, MatchTeam, MatchMap, Team, Map } from '$lib/server/db/schema';
 	import StageEdit from './StageEdit.svelte';
 	import Modal from '$lib/components/Modal.svelte';
+	import BracketInput from './BracketInput.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -73,6 +75,27 @@
 						action?: string;
 					}>;
 				}>;
+				rounds: Array<{
+					id: number;
+					stageId: number;
+					type: string;
+					title: string | null;
+					bracket: string | null;
+					parallelGroup: number | null;
+				}>;
+				nodes: Array<{
+					id: number;
+					stageId: number;
+					matchId: string;
+					roundId: number;
+					order: number;
+					dependencies: Array<{
+						id: number;
+						nodeId: number;
+						dependencyMatchId: string;
+						outcome: string;
+					}>;
+				}>;
 			}
 		>;
 	};
@@ -95,6 +118,20 @@
 	} | null>(null);
 	let showDeleteModal = $state(false);
 	let isDeleting = $state(false);
+	let selectedEvent = $state(data.event || '');
+	let selectedStage = $state<
+		| {
+				id: number;
+				title: string;
+				stage: string;
+				format: string;
+		  }
+		| undefined
+	>(undefined);
+	let showStageEdit = $state(false);
+	let showBracketEdit = $state(false);
+	let errorMessage = $state('');
+	let successMessage = $state('');
 
 	// Convert eventsByEvent to array and filter based on search query
 	let filteredEvents = $derived(
@@ -179,6 +216,14 @@
 		}
 	});
 
+	// Handle URL parameters from page store
+	$effect(() => {
+		const eventParam = page.url.searchParams.get('event');
+		if (eventParam && eventParam !== selectedEventId) {
+			selectedEventId = eventParam;
+		}
+	});
+
 	// Helper function to get side text
 	function getSideText(side: number) {
 		return side === 0 ? 'Attack' : 'Defense';
@@ -244,6 +289,93 @@
 			window.location.reload();
 		};
 	}
+
+	function handleEventChange(eventId: string) {
+		selectedEvent = eventId;
+		selectedStage = undefined;
+	}
+
+	function handleStageSelect(stage: { id: number; title: string; stage: string; format: string }) {
+		selectedStage = stage;
+	}
+
+	function openStageEdit() {
+		showStageEdit = true;
+	}
+
+	function closeStageEdit() {
+		showStageEdit = false;
+		successMessage = '';
+		errorMessage = '';
+	}
+
+	function openBracketEdit() {
+		if (!selectedStage) {
+			errorMessage = 'Please select a stage first';
+			return;
+		}
+		showBracketEdit = true;
+	}
+
+	function closeBracketEdit() {
+		showBracketEdit = false;
+		successMessage = '';
+		errorMessage = '';
+	}
+
+	function handleStageSuccess() {
+		successMessage = 'Stage updated successfully';
+		closeStageEdit();
+		// Refresh the page to get updated data
+		window.location.reload();
+	}
+
+	function handleBracketSuccess() {
+		successMessage = 'Bracket structure updated successfully';
+		closeBracketEdit();
+		// Refresh the page to get updated data
+		window.location.reload();
+	}
+
+	// Get matches for selected stage
+	let stageMatches = $derived(
+		selectedEventId && selectedStage
+			? selectedEventData?.stages[selectedStage.id]?.matches.map((match) => ({
+					id: match.id,
+					format: match.format,
+					stageId: match.stageId,
+					teams: match.teams.map((team) => ({
+						matchId: team.matchId,
+						teamId: team.teamId,
+						position: team.position ?? 0,
+						score: team.score ?? 0,
+						team: team.team
+					})),
+					maps: match.maps.map((map) => ({
+						id: map.id,
+						matchId: map.matchId,
+						mapId: map.mapId,
+						order: map.order,
+						side: map.side,
+						action: map.action ?? null,
+						map_picker_position: map.map_picker_position,
+						side_picker_position: map.side_picker_position,
+						map: map.map
+					}))
+				})) || []
+			: []
+	);
+
+	// Get bracket data for selected stage
+	let stageRounds = $derived(
+		selectedEventId && selectedStage
+			? selectedEventData?.stages[selectedStage.id]?.rounds || []
+			: []
+	);
+
+	let stageNodes = $derived(
+		selectedEventId && selectedStage ? selectedEventData?.stages[selectedStage.id]?.nodes || [] : []
+	);
 </script>
 
 <svelte:head>
@@ -374,6 +506,16 @@
 					</h3>
 					<div class="flex items-center gap-4">
 						<span class="text-sm text-gray-400">{matches.length} matches</span>
+						<button
+							onclick={() => {
+								selectedStage = stage;
+								openBracketEdit();
+							}}
+							class="rounded-md bg-green-600 px-2 py-1 text-xs font-medium text-white hover:bg-green-700"
+							title="Edit Bracket Structure"
+						>
+							Edit Bracket
+						</button>
 						<button
 							onclick={() => {
 								editingStage = { stage };
@@ -711,4 +853,32 @@
 			</div>
 		</div>
 	</div>
+{/if}
+
+<!-- Stage Edit Modal -->
+{#if showStageEdit}
+	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+		<div class="max-h-[90vh] w-full max-w-2xl overflow-hidden rounded-lg bg-slate-900 shadow-xl">
+			<StageEdit
+				stage={selectedStage}
+				eventId={selectedEvent}
+				onCancel={closeStageEdit}
+				onSuccess={handleStageSuccess}
+			/>
+		</div>
+	</div>
+{/if}
+
+<!-- Bracket Edit Modal -->
+{#if showBracketEdit && selectedStage}
+	<Modal show={true} title="Edit Bracket" onClose={closeBracketEdit}>
+		<BracketInput
+			stage={selectedStage}
+			matches={stageMatches}
+			rounds={stageRounds}
+			nodes={stageNodes}
+			onCancel={closeBracketEdit}
+			onSuccess={handleBracketSuccess}
+		/>
+	</Modal>
 {/if}

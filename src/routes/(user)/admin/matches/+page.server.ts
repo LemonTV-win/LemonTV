@@ -106,6 +106,16 @@ export async function load({ locals, url }) {
 		.leftJoin(table.map, eq(table.matchMap.mapId, table.map.id))
 		.orderBy(desc(table.event.createdAt));
 
+	// Load bracket structure data
+	const stageRounds = await db.select().from(table.stageRound).orderBy(table.stageRound.id);
+
+	const stageNodes = await db.select().from(table.stageNode).orderBy(table.stageNode.order);
+
+	const stageNodeDependencies = await db
+		.select()
+		.from(table.stageNodeDependency)
+		.orderBy(table.stageNodeDependency.id);
+
 	// Process image URLs for teams
 	const processedEvents = await Promise.all(
 		events.map(async (row) => ({
@@ -159,7 +169,9 @@ export async function load({ locals, url }) {
 							stage: row.event_stage.stage,
 							format: row.event_stage.format
 						},
-						matches: new Map<string, MatchWithTeams>()
+						matches: new Map<string, MatchWithTeams>(),
+						rounds: [],
+						nodes: []
 					});
 				}
 
@@ -239,11 +251,40 @@ export async function load({ locals, url }) {
 							format: string;
 						};
 						matches: Map<string, MatchWithTeams>;
+						rounds: Array<(typeof stageRounds)[number]>;
+						nodes: Array<
+							(typeof stageNodes)[number] & {
+								dependencies: Array<(typeof stageNodeDependencies)[number]>;
+							}
+						>;
 					}
 				>;
 			}
 		>
 	);
+
+	// Add bracket structure data to stages
+	stageRounds.forEach((round) => {
+		Object.values(eventsByEvent).forEach((eventData) => {
+			const stageData = eventData.stages.get(round.stageId);
+			if (stageData) {
+				stageData.rounds.push(round);
+			}
+		});
+	});
+
+	stageNodes.forEach((node) => {
+		Object.values(eventsByEvent).forEach((eventData) => {
+			const stageData = eventData.stages.get(node.stageId);
+			if (stageData) {
+				const nodeWithDependencies = {
+					...node,
+					dependencies: stageNodeDependencies.filter((dep) => dep.nodeId === node.id)
+				};
+				stageData.nodes.push(nodeWithDependencies);
+			}
+		});
+	});
 
 	// Convert Map to object for serialization
 	const serializedEvents = Object.entries(eventsByEvent).reduce(
@@ -279,7 +320,9 @@ export async function load({ locals, url }) {
 							Number(stageId),
 							{
 								stage: stageData.stage,
-								matches
+								matches,
+								rounds: stageData.rounds,
+								nodes: stageData.nodes
 							}
 						];
 					})
@@ -323,6 +366,12 @@ export async function load({ locals, url }) {
 								map: (typeof processedEvents)[number]['map'];
 							}>;
 						}>;
+						rounds: Array<(typeof stageRounds)[number]>;
+						nodes: Array<
+							(typeof stageNodes)[number] & {
+								dependencies: Array<(typeof stageNodeDependencies)[number]>;
+							}
+						>;
 					}
 				>;
 			}
@@ -338,7 +387,7 @@ export async function load({ locals, url }) {
 }
 
 export const actions = {
-	create: async ({ request, locals }) => {
+	create: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
 		if (result.status === 'error') {
 			return fail(result.statusCode, {
@@ -421,7 +470,7 @@ export const actions = {
 		}
 	},
 
-	update: async ({ request, locals }) => {
+	update: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
 		if (result.status === 'error') {
 			return fail(result.statusCode, {
@@ -522,7 +571,7 @@ export const actions = {
 		}
 	},
 
-	delete: async ({ request, locals }) => {
+	delete: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
 		if (result.status === 'error') {
 			return fail(result.statusCode, {
@@ -579,7 +628,7 @@ export const actions = {
 		}
 	},
 
-	createStage: async ({ request, locals }) => {
+	createStage: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
 		if (result.status === 'error') {
 			return fail(result.statusCode, {
@@ -636,7 +685,7 @@ export const actions = {
 		}
 	},
 
-	updateStage: async ({ request, locals }) => {
+	updateStage: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
 		if (result.status === 'error') {
 			return fail(result.statusCode, {
@@ -716,7 +765,7 @@ export const actions = {
 		}
 	},
 
-	deleteStage: async ({ request, locals }) => {
+	deleteStage: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
 		if (result.status === 'error') {
 			return fail(result.statusCode, {
@@ -772,6 +821,541 @@ export const actions = {
 			console.error('[Admin][Stages][Delete] Failed to delete stage:', e);
 			return fail(500, {
 				error: 'Failed to delete stage'
+			});
+		}
+	},
+
+	// New bracket structure actions
+	createStageRound: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
+			});
+		}
+
+		const formData = await request.formData();
+		const roundData = {
+			stageId: parseInt(formData.get('stageId') as string),
+			type: formData.get('type') as string,
+			title: formData.get('title') as string,
+			bracket: formData.get('bracket') as string,
+			parallelGroup: formData.get('parallelGroup')
+				? parseInt(formData.get('parallelGroup') as string)
+				: null
+		};
+
+		if (!roundData.stageId || !roundData.type || !roundData.bracket) {
+			return fail(400, {
+				error: 'Stage ID, type, and bracket are required'
+			});
+		}
+
+		try {
+			// Create the stage round
+			const [newRound] = await db
+				.insert(table.stageRound)
+				.values({
+					stageId: roundData.stageId,
+					type: roundData.type as any,
+					title: roundData.title || null,
+					bracket: roundData.bracket as any,
+					parallelGroup: roundData.parallelGroup
+				})
+				.returning();
+
+			// Add edit history
+			await db.insert(table.editHistory).values({
+				id: crypto.randomUUID(),
+				tableName: 'stage_round',
+				recordId: newRound.id.toString(),
+				fieldName: 'creation',
+				oldValue: null,
+				newValue: 'created',
+				editedBy: result.userId,
+				editedAt: new Date()
+			});
+
+			return {
+				success: true,
+				roundId: newRound.id
+			};
+		} catch (e) {
+			console.error('[Admin][StageRounds][Create] Failed to create stage round:', e);
+			return fail(500, {
+				error: 'Failed to create stage round'
+			});
+		}
+	},
+
+	updateStageRound: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
+			});
+		}
+
+		const formData = await request.formData();
+		const roundData = {
+			id: parseInt(formData.get('id') as string),
+			stageId: parseInt(formData.get('stageId') as string),
+			type: formData.get('type') as string,
+			title: formData.get('title') as string,
+			bracket: formData.get('bracket') as string,
+			parallelGroup: formData.get('parallelGroup')
+				? parseInt(formData.get('parallelGroup') as string)
+				: null
+		};
+
+		if (!roundData.id || !roundData.stageId || !roundData.type || !roundData.bracket) {
+			return fail(400, {
+				error: 'ID, stage ID, type, and bracket are required'
+			});
+		}
+
+		try {
+			// Get the current round data for comparison
+			const currentRound = await db
+				.select()
+				.from(table.stageRound)
+				.where(eq(table.stageRound.id, roundData.id))
+				.limit(1);
+
+			if (!currentRound.length) {
+				return fail(404, {
+					error: 'Stage round not found'
+				});
+			}
+
+			// Update the stage round
+			await db
+				.update(table.stageRound)
+				.set({
+					type: roundData.type as any,
+					title: roundData.title || null,
+					bracket: roundData.bracket as any,
+					parallelGroup: roundData.parallelGroup
+				})
+				.where(eq(table.stageRound.id, roundData.id));
+
+			// Add edit history
+			await db.insert(table.editHistory).values({
+				id: crypto.randomUUID(),
+				tableName: 'stage_round',
+				recordId: roundData.id.toString(),
+				fieldName: 'update',
+				oldValue: JSON.stringify(currentRound[0]),
+				newValue: JSON.stringify({
+					type: roundData.type,
+					title: roundData.title,
+					bracket: roundData.bracket,
+					parallelGroup: roundData.parallelGroup
+				}),
+				editedBy: result.userId,
+				editedAt: new Date()
+			});
+
+			return {
+				success: true
+			};
+		} catch (e) {
+			console.error('[Admin][StageRounds][Update] Failed to update stage round:', e);
+			return fail(500, {
+				error: 'Failed to update stage round'
+			});
+		}
+	},
+
+	deleteStageRound: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
+			});
+		}
+
+		const formData = await request.formData();
+		const id = parseInt(formData.get('id') as string);
+
+		if (!id) {
+			return fail(400, {
+				error: 'ID is required'
+			});
+		}
+
+		try {
+			// Get the current round data for history
+			const currentRound = await db
+				.select()
+				.from(table.stageRound)
+				.where(eq(table.stageRound.id, id))
+				.limit(1);
+
+			if (!currentRound.length) {
+				return fail(404, {
+					error: 'Stage round not found'
+				});
+			}
+
+			// Delete all stage nodes in this round first
+			await db.delete(table.stageNode).where(eq(table.stageNode.roundId, id));
+
+			// Delete the stage round
+			await db.delete(table.stageRound).where(eq(table.stageRound.id, id));
+
+			// Add edit history
+			await db.insert(table.editHistory).values({
+				id: crypto.randomUUID(),
+				tableName: 'stage_round',
+				recordId: id.toString(),
+				fieldName: 'deletion',
+				oldValue: JSON.stringify(currentRound[0]),
+				newValue: 'deleted',
+				editedBy: result.userId,
+				editedAt: new Date()
+			});
+
+			return {
+				success: true
+			};
+		} catch (e) {
+			console.error('[Admin][StageRounds][Delete] Failed to delete stage round:', e);
+			return fail(500, {
+				error: 'Failed to delete stage round'
+			});
+		}
+	},
+
+	createStageNode: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
+			});
+		}
+
+		const formData = await request.formData();
+		const nodeData = {
+			stageId: parseInt(formData.get('stageId') as string),
+			matchId: formData.get('matchId') as string,
+			roundId: parseInt(formData.get('roundId') as string),
+			order: parseInt(formData.get('order') as string)
+		};
+
+		if (
+			!nodeData.stageId ||
+			!nodeData.matchId ||
+			!nodeData.roundId ||
+			nodeData.order === undefined
+		) {
+			return fail(400, {
+				error: 'Stage ID, match ID, round ID, and order are required'
+			});
+		}
+
+		try {
+			// Create the stage node
+			const [newNode] = await db
+				.insert(table.stageNode)
+				.values({
+					stageId: nodeData.stageId,
+					matchId: nodeData.matchId,
+					roundId: nodeData.roundId,
+					order: nodeData.order
+				})
+				.returning();
+
+			// Add edit history
+			await db.insert(table.editHistory).values({
+				id: crypto.randomUUID(),
+				tableName: 'stage_node',
+				recordId: newNode.id.toString(),
+				fieldName: 'creation',
+				oldValue: null,
+				newValue: 'created',
+				editedBy: result.userId,
+				editedAt: new Date()
+			});
+
+			return {
+				success: true,
+				nodeId: newNode.id
+			};
+		} catch (e) {
+			console.error('[Admin][StageNodes][Create] Failed to create stage node:', e);
+			return fail(500, {
+				error: 'Failed to create stage node'
+			});
+		}
+	},
+
+	updateStageNode: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
+			});
+		}
+
+		const formData = await request.formData();
+		const nodeData = {
+			id: parseInt(formData.get('id') as string),
+			stageId: parseInt(formData.get('stageId') as string),
+			matchId: formData.get('matchId') as string,
+			roundId: parseInt(formData.get('roundId') as string),
+			order: parseInt(formData.get('order') as string)
+		};
+
+		if (
+			!nodeData.id ||
+			!nodeData.stageId ||
+			!nodeData.matchId ||
+			!nodeData.roundId ||
+			nodeData.order === undefined
+		) {
+			return fail(400, {
+				error: 'ID, stage ID, match ID, round ID, and order are required'
+			});
+		}
+
+		try {
+			// Get the current node data for comparison
+			const currentNode = await db
+				.select()
+				.from(table.stageNode)
+				.where(eq(table.stageNode.id, nodeData.id))
+				.limit(1);
+
+			if (!currentNode.length) {
+				return fail(404, {
+					error: 'Stage node not found'
+				});
+			}
+
+			// Update the stage node
+			await db
+				.update(table.stageNode)
+				.set({
+					matchId: nodeData.matchId,
+					roundId: nodeData.roundId,
+					order: nodeData.order
+				})
+				.where(eq(table.stageNode.id, nodeData.id));
+
+			// Add edit history
+			await db.insert(table.editHistory).values({
+				id: crypto.randomUUID(),
+				tableName: 'stage_node',
+				recordId: nodeData.id.toString(),
+				fieldName: 'update',
+				oldValue: JSON.stringify(currentNode[0]),
+				newValue: JSON.stringify({
+					matchId: nodeData.matchId,
+					roundId: nodeData.roundId,
+					order: nodeData.order
+				}),
+				editedBy: result.userId,
+				editedAt: new Date()
+			});
+
+			return {
+				success: true
+			};
+		} catch (e) {
+			console.error('[Admin][StageNodes][Update] Failed to update stage node:', e);
+			return fail(500, {
+				error: 'Failed to update stage node'
+			});
+		}
+	},
+
+	deleteStageNode: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
+			});
+		}
+
+		const formData = await request.formData();
+		const id = parseInt(formData.get('id') as string);
+
+		if (!id) {
+			return fail(400, {
+				error: 'ID is required'
+			});
+		}
+
+		try {
+			// Get the current node data for history
+			const currentNode = await db
+				.select()
+				.from(table.stageNode)
+				.where(eq(table.stageNode.id, id))
+				.limit(1);
+
+			if (!currentNode.length) {
+				return fail(404, {
+					error: 'Stage node not found'
+				});
+			}
+
+			// Delete all dependencies for this node first
+			await db.delete(table.stageNodeDependency).where(eq(table.stageNodeDependency.nodeId, id));
+
+			// Delete the stage node
+			await db.delete(table.stageNode).where(eq(table.stageNode.id, id));
+
+			// Add edit history
+			await db.insert(table.editHistory).values({
+				id: crypto.randomUUID(),
+				tableName: 'stage_node',
+				recordId: id.toString(),
+				fieldName: 'deletion',
+				oldValue: JSON.stringify(currentNode[0]),
+				newValue: 'deleted',
+				editedBy: result.userId,
+				editedAt: new Date()
+			});
+
+			return {
+				success: true
+			};
+		} catch (e) {
+			console.error('[Admin][StageNodes][Delete] Failed to delete stage node:', e);
+			return fail(500, {
+				error: 'Failed to delete stage node'
+			});
+		}
+	},
+
+	createStageNodeDependency: async ({
+		request,
+		locals
+	}: {
+		request: Request;
+		locals: App.Locals;
+	}) => {
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
+			});
+		}
+
+		const formData = await request.formData();
+		const dependencyData = {
+			nodeId: parseInt(formData.get('nodeId') as string),
+			dependencyMatchId: formData.get('dependencyMatchId') as string,
+			outcome: formData.get('outcome') as 'winner' | 'loser'
+		};
+
+		if (!dependencyData.nodeId || !dependencyData.dependencyMatchId || !dependencyData.outcome) {
+			return fail(400, {
+				error: 'Node ID, dependency match ID, and outcome are required'
+			});
+		}
+
+		try {
+			// Create the stage node dependency
+			const [newDependency] = await db
+				.insert(table.stageNodeDependency)
+				.values({
+					nodeId: dependencyData.nodeId,
+					dependencyMatchId: dependencyData.dependencyMatchId,
+					outcome: dependencyData.outcome
+				})
+				.returning();
+
+			// Add edit history
+			await db.insert(table.editHistory).values({
+				id: crypto.randomUUID(),
+				tableName: 'stage_node_dependency',
+				recordId: newDependency.id.toString(),
+				fieldName: 'creation',
+				oldValue: null,
+				newValue: 'created',
+				editedBy: result.userId,
+				editedAt: new Date()
+			});
+
+			return {
+				success: true
+			};
+		} catch (e) {
+			console.error(
+				'[Admin][StageNodeDependencies][Create] Failed to create stage node dependency:',
+				e
+			);
+			return fail(500, {
+				error: 'Failed to create stage node dependency'
+			});
+		}
+	},
+
+	deleteStageNodeDependency: async ({
+		request,
+		locals
+	}: {
+		request: Request;
+		locals: App.Locals;
+	}) => {
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
+			});
+		}
+
+		const formData = await request.formData();
+		const id = parseInt(formData.get('id') as string);
+
+		if (!id) {
+			return fail(400, {
+				error: 'ID is required'
+			});
+		}
+
+		try {
+			// Get the current dependency data for history
+			const currentDependency = await db
+				.select()
+				.from(table.stageNodeDependency)
+				.where(eq(table.stageNodeDependency.id, id))
+				.limit(1);
+
+			if (!currentDependency.length) {
+				return fail(404, {
+					error: 'Stage node dependency not found'
+				});
+			}
+
+			// Delete the stage node dependency
+			await db.delete(table.stageNodeDependency).where(eq(table.stageNodeDependency.id, id));
+
+			// Add edit history
+			await db.insert(table.editHistory).values({
+				id: crypto.randomUUID(),
+				tableName: 'stage_node_dependency',
+				recordId: id.toString(),
+				fieldName: 'deletion',
+				oldValue: JSON.stringify(currentDependency[0]),
+				newValue: 'deleted',
+				editedBy: result.userId,
+				editedAt: new Date()
+			});
+
+			return {
+				success: true
+			};
+		} catch (e) {
+			console.error(
+				'[Admin][StageNodeDependencies][Delete] Failed to delete stage node dependency:',
+				e
+			);
+			return fail(500, {
+				error: 'Failed to delete stage node dependency'
 			});
 		}
 	}
