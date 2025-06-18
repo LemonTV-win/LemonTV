@@ -231,7 +231,7 @@ export const EVENT_ORGANIZERS = [
 ];
 
 export const EVENT_TEAM_PLAYERS = [
-	// Event 1 - Team 1 players
+	// Event 1 - Team 1 players (using players 0-6)
 	{
 		eventId: EVENTS[0].id,
 		teamId: TEAMS[0].id,
@@ -248,84 +248,162 @@ export const EVENT_TEAM_PLAYERS = [
 		eventId: EVENTS[0].id,
 		teamId: TEAMS[0].id,
 		playerId: PLAYERS[2].id,
-		role: 'sub' as const
+		role: 'main' as const
 	},
 	{
 		eventId: EVENTS[0].id,
 		teamId: TEAMS[0].id,
 		playerId: PLAYERS[3].id,
-		role: 'coach' as const
-	},
-	// Event 1 - Team 2 players
-	{
-		eventId: EVENTS[0].id,
-		teamId: TEAMS[1].id,
-		playerId: PLAYERS[2].id,
 		role: 'main' as const
 	},
 	{
 		eventId: EVENTS[0].id,
-		teamId: TEAMS[1].id,
-		playerId: PLAYERS[3].id,
-		role: 'main' as const
-	},
-	{
-		eventId: EVENTS[0].id,
-		teamId: TEAMS[1].id,
-		playerId: PLAYERS[4].id,
-		role: 'sub' as const
-	},
-	{
-		eventId: EVENTS[0].id,
-		teamId: TEAMS[1].id,
-		playerId: PLAYERS[5].id,
-		role: 'sub' as const
-	},
-	// Event 2 - Team 3 players
-	{
-		eventId: EVENTS[1].id,
-		teamId: TEAMS[2].id,
-		playerId: PLAYERS[0].id,
-		role: 'main' as const
-	},
-	{
-		eventId: EVENTS[1].id,
-		teamId: TEAMS[2].id,
-		playerId: PLAYERS[1].id,
-		role: 'main' as const
-	},
-	{
-		eventId: EVENTS[1].id,
-		teamId: TEAMS[2].id,
-		playerId: PLAYERS[2].id,
-		role: 'sub' as const
-	},
-	{
-		eventId: EVENTS[1].id,
-		teamId: TEAMS[2].id,
-		playerId: PLAYERS[3].id,
-		role: 'coach' as const
-	},
-	// Event 2 - Team 4 players
-	{
-		eventId: EVENTS[1].id,
-		teamId: TEAMS[3].id,
+		teamId: TEAMS[0].id,
 		playerId: PLAYERS[4].id,
 		role: 'main' as const
 	},
 	{
+		eventId: EVENTS[0].id,
+		teamId: TEAMS[0].id,
+		playerId: PLAYERS[5].id,
+		role: 'sub' as const
+	},
+	{
+		eventId: EVENTS[0].id,
+		teamId: TEAMS[0].id,
+		playerId: PLAYERS[6].id,
+		role: 'coach' as const
+	},
+	// Event 1 - Team 2 players (using players 7-13)
+	{
+		eventId: EVENTS[0].id,
+		teamId: TEAMS[1].id,
+		playerId: PLAYERS[7].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[0].id,
+		teamId: TEAMS[1].id,
+		playerId: PLAYERS[8].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[0].id,
+		teamId: TEAMS[1].id,
+		playerId: PLAYERS[9].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[0].id,
+		teamId: TEAMS[1].id,
+		playerId: PLAYERS[10].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[0].id,
+		teamId: TEAMS[1].id,
+		playerId: PLAYERS[11].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[0].id,
+		teamId: TEAMS[1].id,
+		playerId: PLAYERS[12].id,
+		role: 'sub' as const
+	},
+	{
+		eventId: EVENTS[0].id,
+		teamId: TEAMS[1].id,
+		playerId: PLAYERS[13].id,
+		role: 'coach' as const
+	},
+	// Event 2 - Team 3 players (using players 14-20)
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[2].id,
+		playerId: PLAYERS[14].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[2].id,
+		playerId: PLAYERS[15].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[2].id,
+		playerId: PLAYERS[16].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[2].id,
+		playerId: PLAYERS[17].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[2].id,
+		playerId: PLAYERS[18].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[2].id,
+		playerId: PLAYERS[19].id,
+		role: 'sub' as const
+	},
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[2].id,
+		playerId: PLAYERS[20].id,
+		role: 'coach' as const
+	},
+	// Event 2 - Team 4 players (using players 21-27)
+	{
 		eventId: EVENTS[1].id,
 		teamId: TEAMS[3].id,
-		playerId: PLAYERS[5].id,
+		playerId: PLAYERS[21].id,
 		role: 'main' as const
 	},
 	{
 		eventId: EVENTS[1].id,
 		teamId: TEAMS[3].id,
-		playerId: PLAYERS[0].id,
+		playerId: PLAYERS[22].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[3].id,
+		playerId: PLAYERS[23].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[3].id,
+		playerId: PLAYERS[24].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[3].id,
+		playerId: PLAYERS[25].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[3].id,
+		playerId: PLAYERS[26].id,
 		role: 'sub' as const
 	},
-	// Event 3 - Team 1 players
+	{
+		eventId: EVENTS[1].id,
+		teamId: TEAMS[3].id,
+		playerId: PLAYERS[27].id,
+		role: 'coach' as const
+	},
+	// Event 3 - Team 1 players (different roster from Event 1)
 	{
 		eventId: EVENTS[2].id,
 		teamId: TEAMS[0].id,
@@ -342,43 +420,159 @@ export const EVENT_TEAM_PLAYERS = [
 		eventId: EVENTS[2].id,
 		teamId: TEAMS[0].id,
 		playerId: PLAYERS[3].id,
-		role: 'sub' as const
+		role: 'main' as const
 	},
 	{
 		eventId: EVENTS[2].id,
 		teamId: TEAMS[0].id,
 		playerId: PLAYERS[4].id,
-		role: 'sub' as const
+		role: 'main' as const
 	},
 	{
 		eventId: EVENTS[2].id,
 		teamId: TEAMS[0].id,
 		playerId: PLAYERS[5].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[2].id,
+		teamId: TEAMS[0].id,
+		playerId: PLAYERS[6].id,
+		role: 'sub' as const
+	},
+	{
+		eventId: EVENTS[2].id,
+		teamId: TEAMS[0].id,
+		playerId: PLAYERS[0].id,
 		role: 'coach' as const
 	},
-	// Event 3 - Team 2 players
+	// Event 3 - Team 2 players (different roster from Event 1)
 	{
 		eventId: EVENTS[2].id,
 		teamId: TEAMS[1].id,
-		playerId: PLAYERS[0].id,
+		playerId: PLAYERS[8].id,
 		role: 'main' as const
 	},
 	{
 		eventId: EVENTS[2].id,
 		teamId: TEAMS[1].id,
-		playerId: PLAYERS[1].id,
+		playerId: PLAYERS[9].id,
 		role: 'main' as const
 	},
 	{
 		eventId: EVENTS[2].id,
 		teamId: TEAMS[1].id,
-		playerId: PLAYERS[2].id,
+		playerId: PLAYERS[10].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[2].id,
+		teamId: TEAMS[1].id,
+		playerId: PLAYERS[11].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[2].id,
+		teamId: TEAMS[1].id,
+		playerId: PLAYERS[12].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[2].id,
+		teamId: TEAMS[1].id,
+		playerId: PLAYERS[13].id,
 		role: 'sub' as const
 	},
 	{
 		eventId: EVENTS[2].id,
 		teamId: TEAMS[1].id,
-		playerId: PLAYERS[3].id,
+		playerId: PLAYERS[7].id,
+		role: 'coach' as const
+	},
+	// Event 4 - Team 3 players (different roster from Event 2)
+	{
+		eventId: EVENTS[3].id,
+		teamId: TEAMS[2].id,
+		playerId: PLAYERS[15].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[3].id,
+		teamId: TEAMS[2].id,
+		playerId: PLAYERS[16].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[3].id,
+		teamId: TEAMS[2].id,
+		playerId: PLAYERS[17].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[3].id,
+		teamId: TEAMS[2].id,
+		playerId: PLAYERS[18].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[3].id,
+		teamId: TEAMS[2].id,
+		playerId: PLAYERS[19].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[3].id,
+		teamId: TEAMS[2].id,
+		playerId: PLAYERS[20].id,
+		role: 'sub' as const
+	},
+	{
+		eventId: EVENTS[3].id,
+		teamId: TEAMS[2].id,
+		playerId: PLAYERS[14].id,
+		role: 'coach' as const
+	},
+	// Event 4 - Team 4 players (different roster from Event 2)
+	{
+		eventId: EVENTS[3].id,
+		teamId: TEAMS[3].id,
+		playerId: PLAYERS[22].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[3].id,
+		teamId: TEAMS[3].id,
+		playerId: PLAYERS[23].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[3].id,
+		teamId: TEAMS[3].id,
+		playerId: PLAYERS[24].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[3].id,
+		teamId: TEAMS[3].id,
+		playerId: PLAYERS[25].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[3].id,
+		teamId: TEAMS[3].id,
+		playerId: PLAYERS[26].id,
+		role: 'main' as const
+	},
+	{
+		eventId: EVENTS[3].id,
+		teamId: TEAMS[3].id,
+		playerId: PLAYERS[27].id,
+		role: 'sub' as const
+	},
+	{
+		eventId: EVENTS[3].id,
+		teamId: TEAMS[3].id,
+		playerId: PLAYERS[21].id,
 		role: 'coach' as const
 	}
 ];
