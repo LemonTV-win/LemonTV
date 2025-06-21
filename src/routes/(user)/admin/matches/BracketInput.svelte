@@ -2,6 +2,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { m } from '$lib/paraglide/messages';
+	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import type { ActionResult } from '@sveltejs/kit';
 
 	let {
@@ -505,17 +506,17 @@
 	{/if}
 
 	{#if successMessage}
-		<div class="bg-green-900/50div4 mb-4 rounded-md text-green-200" role="alert">
+		<div class="mb-4 rounded-md bg-green-900/50 p-4 text-green-200" role="alert">
 			<span class="block sm:inline">{successMessage}</span>
 		</div>
 	{/if}
 
 	<div class="min-h-0 flex-1">
 		<div
-			class="h-full space-y-6 overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb]:hover:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800"
+			class="h-full space-y-4 overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800"
 		>
 			<!-- Stage Rounds Section -->
-			<div class="space-y-4">
+			<section class="space-y-4">
 				<div class="flex items-center justify-between">
 					<h4 class="text-lg font-medium text-white">Stage Rounds</h4>
 					<button
@@ -592,18 +593,19 @@
 						<div class="mt-3 flex justify-end">
 							<button
 								type="button"
-								class="rounded-md bg-red-600 px-4 py-2 font-medium text-white hover:bg-red-700"
+								class="text-red-500 hover:text-red-400"
 								onclick={() => removeRound(roundIndex)}
+								aria-label="Remove round"
 							>
-								Remove
+								<IconParkSolidDelete class="h-4 w-4" />
 							</button>
 						</div>
 					</div>
 				{/each}
-			</div>
+			</section>
 
 			<!-- Stage Nodes Section -->
-			<div class="space-y-4">
+			<section class="space-y-4">
 				<div class="flex items-center justify-between">
 					<h4 class="text-lg font-medium text-white">Stage Nodes</h4>
 					<button
@@ -668,10 +670,11 @@
 							<div class="flex items-end">
 								<button
 									type="button"
-									class="rounded-md bg-red-600 px-4 py-2 font-medium text-white hover:bg-red-700"
+									class="text-red-500 hover:text-red-400"
 									onclick={() => removeNode(nodeIndex)}
+									aria-label="Remove node"
 								>
-									Remove
+									<IconParkSolidDelete class="h-4 w-4" />
 								</button>
 							</div>
 						</div>
@@ -682,7 +685,7 @@
 								<span class="text-sm font-medium text-slate-300">Dependencies</span>
 								<button
 									type="button"
-									class="rounded-md bg-blue-600 px-2 py-1 text-xs font-medium text-white hover:bg-blue-700"
+									class="rounded-md bg-slate-600 px-2 py-1 text-xs font-medium text-slate-200 hover:bg-slate-500 focus:ring-2 focus:ring-slate-500 focus:outline-none"
 									onclick={() => addDependency(nodeIndex)}
 								>
 									Add Dependency
@@ -719,17 +722,18 @@
 
 									<button
 										type="button"
-										class="rounded-md bg-red-600 px-2 py-1 text-xs font-medium text-white hover:bg-red-700"
+										class="text-red-500 hover:text-red-400"
 										onclick={() => removeDependency(nodeIndex, depIndex)}
+										aria-label="Remove dependency"
 									>
-										×
+										<IconParkSolidDelete class="h-3 w-3" />
 									</button>
 								</div>
 							{/each}
 						</div>
 					</div>
 				{/each}
-			</div>
+			</section>
 		</div>
 	</div>
 
