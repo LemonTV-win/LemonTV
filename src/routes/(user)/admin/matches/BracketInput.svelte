@@ -415,9 +415,11 @@
 					<p>No rounds configured yet. Add rounds to see the bracket structure.</p>
 				</div>
 			{:else}
-				<div class="overflow-x-auto">
+				<div
+					class="overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb]:hover:bg-slate-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-800"
+				>
 					<div
-						class="inline-grid gap-4"
+						class="inline-grid gap-4 pr-2 pb-2"
 						style="grid-template-columns: repeat({rounds.length}, 200px);"
 					>
 						{#each rounds as round, roundIndex}
@@ -503,7 +505,7 @@
 	{/if}
 
 	{#if successMessage}
-		<div class="mb-4 rounded-md bg-green-900/50 p-4 text-green-200" role="alert">
+		<div class="bg-green-900/50div4 mb-4 rounded-md text-green-200" role="alert">
 			<span class="block sm:inline">{successMessage}</span>
 		</div>
 	{/if}
