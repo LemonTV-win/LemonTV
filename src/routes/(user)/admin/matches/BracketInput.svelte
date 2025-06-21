@@ -406,28 +406,95 @@
 </script>
 
 <div class="flex h-full flex-col">
-	<div class="mb-4 flex items-center justify-between">
-		<h3 class="text-xl font-semibold text-white">Edit Bracket Structure</h3>
-		<button
-			type="button"
-			class="rounded-full bg-gray-800 p-1 text-white shadow hover:bg-gray-700"
-			onclick={onCancel}
-			aria-label="Close"
-		>
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				class="h-5 w-5"
-				viewBox="0 0 20 20"
-				fill="currentColor"
-			>
-				<path
-					fill-rule="evenodd"
-					d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-					clip-rule="evenodd"
-				/>
-			</svg>
-		</button>
-	</div>
+	<section class="mb-4">
+		<h4 class="text-lg font-medium text-white">Bracket Structure Preview</h4>
+
+		<div class="mt-4 rounded-lg border border-slate-700 bg-slate-800/50 p-4">
+			{#if rounds.length === 0}
+				<div class="text-center text-slate-400">
+					<p>No rounds configured yet. Add rounds to see the bracket structure.</p>
+				</div>
+			{:else}
+				<div class="overflow-x-auto">
+					<div
+						class="inline-grid gap-4"
+						style="grid-template-columns: repeat({rounds.length}, 200px);"
+					>
+						{#each rounds as round, roundIndex}
+							<div class="flex flex-col items-center">
+								<div class="mb-2 text-center">
+									<span
+										class="inline-block rounded-full bg-yellow-500/20 px-3 py-1 text-xs font-medium text-yellow-300"
+									>
+										{round.title || round.type}
+									</span>
+									{#if round.parallelGroup !== undefined}
+										<span
+											class="ml-1 inline-block rounded-full bg-blue-500/20 px-2 py-1 text-xs text-blue-300"
+										>
+											Group {round.parallelGroup}
+										</span>
+									{/if}
+								</div>
+
+								<div class="flex w-full flex-col gap-2">
+									{#each nodes.filter((node) => node.roundId === (round.id || roundIndex)) as node, nodeIndex}
+										{@const match = matches.find((m: any) => m.id === node.matchId)}
+										<div class="relative">
+											<button
+												class="w-full rounded border border-slate-600 bg-slate-700 px-3 py-2 text-left text-sm text-white transition-colors hover:bg-slate-600"
+												class:border-yellow-500={match}
+												class:border-slate-500={!match}
+											>
+												{#if match}
+													<div class="flex items-center justify-between">
+														<span class="truncate">
+															{match.teams[0]?.team?.name || 'TBD'} vs {match.teams[1]?.team
+																?.name || 'TBD'}
+														</span>
+														<span class="text-xs text-slate-400">#{node.order}</span>
+													</div>
+												{:else}
+													<div class="flex items-center justify-between">
+														<span class="text-slate-400">No match assigned</span>
+														<span class="text-xs text-slate-500">#{node.order}</span>
+													</div>
+												{/if}
+											</button>
+
+											<!-- Dependencies indicator -->
+											{#if node.dependencies.length > 0}
+												<div class="absolute -top-1 -right-1">
+													<span
+														class="inline-flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-xs text-white"
+													>
+														{node.dependencies.length}
+													</span>
+												</div>
+											{/if}
+										</div>
+									{:else}
+										<div
+											class="rounded border border-dashed border-slate-600 px-3 py-2 text-center text-xs text-slate-500"
+										>
+											No nodes
+										</div>
+									{/each}
+								</div>
+							</div>
+						{/each}
+					</div>
+				</div>
+
+				<!-- Summary stats -->
+				<div class="mt-4 flex justify-between text-xs text-slate-400">
+					<span>Total Rounds: {rounds.length}</span>
+					<span>Total Nodes: {nodes.length}</span>
+					<span>Assigned Matches: {nodes.filter((n) => n.matchId).length}</span>
+				</div>
+			{/if}
+		</div>
+	</section>
 
 	{#if errorMessage}
 		<div class="mb-4 rounded-md bg-red-900/50 p-4 text-red-200" role="alert">
