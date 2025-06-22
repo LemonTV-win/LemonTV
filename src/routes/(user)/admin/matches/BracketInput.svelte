@@ -581,12 +581,18 @@
 									for="round-parallel-group-{roundIndex}"
 									class="block text-sm font-medium text-slate-300">Parallel Group</label
 								>
-								<input
+								<select
 									id="round-parallel-group-{roundIndex}"
-									type="number"
 									bind:value={round.parallelGroup}
 									class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-								/>
+								>
+									<option value={undefined}>None</option>
+									{#each rounds.filter((r) => r.parallelGroup === undefined && r.id !== round.id) as availableRound}
+										<option value={availableRound.id}
+											>{availableRound.title || availableRound.type}</option
+										>
+									{/each}
+								</select>
 							</div>
 						</div>
 
