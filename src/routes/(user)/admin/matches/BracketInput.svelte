@@ -94,6 +94,8 @@
 		}>
 	>([]);
 
+	let selectedRoundIndex = $state<number>(-1);
+
 	let errorMessage = $state('');
 	let successMessage = $state('');
 
@@ -132,8 +134,10 @@
 					parallelGroup: round.parallelGroup || undefined,
 					isNew: false
 				}));
+				selectedRoundIndex = 0; // Select first round by default
 			} else {
 				rounds = [];
+				selectedRoundIndex = -1;
 			}
 
 			// Load existing nodes from props
@@ -160,6 +164,7 @@
 	}
 
 	function addRound() {
+		const newRoundIndex = rounds.length;
 		rounds = [
 			...rounds,
 			{
@@ -169,12 +174,20 @@
 				isNew: true
 			}
 		];
+		selectedRoundIndex = newRoundIndex;
 	}
 
 	function removeRound(index: number) {
 		rounds = rounds.filter((_, i) => i !== index);
 		// Also remove nodes that reference this round
 		nodes = nodes.filter((node) => node.roundId !== rounds[index]?.id);
+
+		// Update selection
+		if (selectedRoundIndex === index) {
+			selectedRoundIndex = rounds.length > 0 ? 0 : -1;
+		} else if (selectedRoundIndex > index) {
+			selectedRoundIndex--;
+		}
 	}
 
 	function addNode() {
@@ -426,11 +439,20 @@
 						{#each rounds as round, roundIndex}
 							<div class="flex flex-col items-center">
 								<div class="mb-2 text-center">
-									<span
-										class="inline-block rounded-full bg-yellow-500/20 px-3 py-1 text-xs font-medium text-yellow-300"
+									<button
+										type="button"
+										class={[
+											'rounded-full px-3 py-1 text-xs font-medium transition-colors *:inline-block',
+											{
+												'bg-yellow-500/20 text-yellow-300': selectedRoundIndex === roundIndex,
+												'bg-slate-600/20 text-slate-300 hover:bg-yellow-500/30':
+													selectedRoundIndex !== roundIndex
+											}
+										]}
+										onclick={() => (selectedRoundIndex = roundIndex)}
 									>
 										{round.title || round.type}
-									</span>
+									</button>
 									{#if round.parallelGroup !== undefined}
 										<span
 											class="ml-1 inline-block rounded-full bg-blue-500/20 px-2 py-1 text-xs text-blue-300"
@@ -558,7 +580,9 @@
 					</button>
 				</div>
 
-				{#each rounds as round, roundIndex (round.id || roundIndex)}
+				{#if selectedRoundIndex >= 0 && rounds[selectedRoundIndex]}
+					{@const round = rounds[selectedRoundIndex]}
+					{@const roundIndex = selectedRoundIndex}
 					<div class="rounded-lg border border-slate-700 bg-slate-800/50 p-4">
 						<div class="grid grid-cols-2 gap-4 md:grid-cols-4">
 							<div>
@@ -618,9 +642,9 @@
 								>
 									<option value={undefined}>None</option>
 									{#each rounds.filter((r) => r.parallelGroup === undefined && r.id !== round.id) as availableRound}
-										<option value={availableRound.id}
-											>{availableRound.title || availableRound.type}</option
-										>
+										<option value={availableRound.id}>
+											{availableRound.title || availableRound.type}
+										</option>
 									{/each}
 								</select>
 							</div>
@@ -637,7 +661,13 @@
 							</button>
 						</div>
 					</div>
-				{/each}
+				{:else}
+					<div class="rounded-lg border border-slate-700 bg-slate-800/50 p-8 text-center">
+						<p class="text-slate-400">
+							Select a round from the preview above to edit its properties
+						</p>
+					</div>
+				{/if}
 			</section>
 
 			<!-- Stage Nodes Section -->
