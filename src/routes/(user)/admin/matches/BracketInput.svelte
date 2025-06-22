@@ -95,6 +95,7 @@
 	>([]);
 
 	let selectedRoundIndex = $state<number>(-1);
+	let selectedNodeIndex = $state<number>(-1);
 
 	let errorMessage = $state('');
 	let successMessage = $state('');
@@ -161,8 +162,10 @@
 					})),
 					isNew: false
 				}));
+				selectedNodeIndex = 0; // Select first node by default
 			} else {
 				nodes = [];
+				selectedNodeIndex = -1;
 			}
 		} catch (error) {
 			console.error('Failed to load existing bracket data:', error);
@@ -203,6 +206,7 @@
 			return;
 		}
 
+		const newNodeIndex = nodes.length;
 		nodes = [
 			...nodes,
 			{
@@ -213,7 +217,15 @@
 				isNew: true
 			}
 		];
+		selectedNodeIndex = newNodeIndex;
 	}
+
+	// Auto-create new node when "New Node" is selected
+	$effect(() => {
+		if (selectedNodeIndex === -1 && selectedRoundIndex >= 0) {
+			addNode();
+		}
+	});
 
 	function removeNode(index: number) {
 		const nodeToRemove = nodes[index];
@@ -225,6 +237,13 @@
 				(dep) => dep.dependencyMatchId !== nodeToRemove?.matchId
 			);
 		});
+
+		// Update selection
+		if (selectedNodeIndex === index) {
+			selectedNodeIndex = nodes.length > 0 ? 0 : -1;
+		} else if (selectedNodeIndex > index) {
+			selectedNodeIndex--;
+		}
 	}
 
 	function addDependency(nodeIndex: number) {
@@ -512,6 +531,31 @@
 											No nodes
 										</div>
 									{/each}
+
+									<!-- Add Node Pseudo Element -->
+									<button
+										type="button"
+										class="rounded border-2 border-dashed border-slate-600 bg-slate-700/30 px-3 py-2 text-center text-xs text-slate-400 transition-colors hover:border-slate-500 hover:bg-slate-700/50 hover:text-slate-300"
+										onclick={() => {
+											addNode();
+											// Set the new node's roundId to the current round
+											if (nodes.length > 0) {
+												nodes[nodes.length - 1].roundId = round.id || roundIndex;
+											}
+										}}
+									>
+										<div class="flex items-center justify-center gap-1">
+											<svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													stroke-width="2"
+													d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+												/>
+											</svg>
+											<span>Add Node</span>
+										</div>
+									</button>
 								</div>
 							</div>
 						{/each}
@@ -683,17 +727,28 @@
 			<!-- Stage Nodes Section -->
 			<section class="space-y-4">
 				<div class="flex items-center justify-between">
-					<h4 class="text-lg font-medium text-white">Stage Nodes</h4>
-					<button
-						type="button"
-						class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-						onclick={addNode}
+					<h4 class="text-lg font-medium text-white">Selected Stage Node</h4>
+					<select
+						bind:value={selectedNodeIndex}
+						class="mt-1 block w-64 rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 					>
-						Add Node
-					</button>
+						{#each nodes as node, nodeIndex}
+							{@const match = matches.find((m: any) => m.id === node.matchId)}
+							{@const round = rounds.find((r) => r.id === node.roundId || r.id === node.roundId)}
+							<option value={nodeIndex}>
+								{round?.title || round?.type || 'Unknown Round'} - {match
+									? `${match.teams[0]?.team?.name || 'TBD'} vs ${match.teams[1]?.team?.name || 'TBD'}`
+									: 'No match'} (#{node.order})
+							</option>
+						{/each}
+						<option disabled>──────────</option>
+						<option value={-1}>New Node</option>
+					</select>
 				</div>
 
-				{#each nodes as node, nodeIndex (node.id || nodeIndex)}
+				{#if selectedNodeIndex >= 0 && nodes[selectedNodeIndex]}
+					{@const node = nodes[selectedNodeIndex]}
+					{@const nodeIndex = selectedNodeIndex}
 					<div class="rounded-lg border border-slate-700 bg-slate-800/50 p-4">
 						<div class="grid grid-cols-2 gap-4 md:grid-cols-4">
 							<div>
@@ -808,7 +863,13 @@
 							{/each}
 						</div>
 					</div>
-				{/each}
+				{:else}
+					<div class="rounded-lg border border-slate-700 bg-slate-800/50 p-8 text-center">
+						<p class="text-slate-400">
+							Select a node from the dropdown above to edit its properties
+						</p>
+					</div>
+				{/if}
 			</section>
 		</div>
 	</div>
