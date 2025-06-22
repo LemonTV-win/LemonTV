@@ -122,6 +122,13 @@
 		}
 	});
 
+	// Auto-create new round when "New Round" is selected
+	$effect(() => {
+		if (selectedRoundIndex === -1) {
+			addRound();
+		}
+	});
+
 	async function loadExistingData() {
 		try {
 			// Load existing rounds from props
@@ -570,14 +577,17 @@
 			<!-- Stage Rounds Section -->
 			<section class="space-y-4">
 				<div class="flex items-center justify-between">
-					<h4 class="text-lg font-medium text-white">Stage Rounds</h4>
-					<button
-						type="button"
-						class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-						onclick={addRound}
+					<h4 class="text-lg font-medium text-white">Selected Stage Round</h4>
+					<select
+						bind:value={selectedRoundIndex}
+						class="mt-1 block w-64 rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 					>
-						Add Round
-					</button>
+						{#each rounds as round, roundIndex}
+							<option value={roundIndex}>{round.title || round.type}</option>
+						{/each}
+						<option disabled>──────────</option>
+						<option value={-1}>New Round</option>
+					</select>
 				</div>
 
 				{#if selectedRoundIndex >= 0 && rounds[selectedRoundIndex]}
