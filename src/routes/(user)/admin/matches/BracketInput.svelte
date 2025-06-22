@@ -421,7 +421,7 @@
 				>
 					<div
 						class="inline-grid gap-4 pr-2 pb-2"
-						style="grid-template-columns: repeat({rounds.length}, 200px);"
+						style="grid-template-columns: repeat({rounds.length + 1}, 200px);"
 					>
 						{#each rounds as round, roundIndex}
 							<div class="flex flex-col items-center">
@@ -486,6 +486,36 @@
 								</div>
 							</div>
 						{/each}
+
+						<!-- Add Round Pseudo Column -->
+						<div class="flex flex-col items-center">
+							<div class="mb-2 text-center">
+								<span
+									class="inline-block rounded-full bg-slate-500/20 px-3 py-1 text-xs font-medium text-slate-300"
+								>
+									New Round
+								</span>
+							</div>
+							<div class="flex w-full flex-col gap-2">
+								<button
+									type="button"
+									class="rounded border-2 border-dashed border-slate-600 bg-slate-700/30 px-3 py-8 text-center text-sm text-slate-400 transition-colors hover:border-slate-500 hover:bg-slate-700/50 hover:text-slate-300"
+									onclick={addRound}
+								>
+									<div class="flex flex-col items-center gap-2">
+										<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+											/>
+										</svg>
+										<span>Add Round</span>
+									</div>
+								</button>
+							</div>
+						</div>
 					</div>
 				</div>
 
