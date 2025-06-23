@@ -97,6 +97,10 @@
 	let selectedRoundIndex = $state<number>(-1);
 	let selectedNodeIndex = $state<number>(-1);
 
+	// Delete confirmation state
+	let showRoundDeleteConfirm = $state<number | null>(null);
+	let showNodeDeleteConfirm = $state<number | null>(null);
+
 	let errorMessage = $state('');
 	let successMessage = $state('');
 
@@ -200,6 +204,14 @@
 		}
 	}
 
+	function confirmRemoveRound(index: number) {
+		showRoundDeleteConfirm = index;
+	}
+
+	function cancelRemoveRound() {
+		showRoundDeleteConfirm = null;
+	}
+
 	function addNode() {
 		if (rounds.length === 0) {
 			errorMessage = 'Please add at least one round before adding nodes';
@@ -250,6 +262,14 @@
 		} else if (selectedNodeIndex > index) {
 			selectedNodeIndex--;
 		}
+	}
+
+	function confirmRemoveNode(index: number) {
+		showNodeDeleteConfirm = index;
+	}
+
+	function cancelRemoveNode() {
+		showNodeDeleteConfirm = null;
 	}
 
 	function addDependency(nodeIndex: number) {
@@ -733,7 +753,7 @@
 							<button
 								type="button"
 								class="text-red-500 hover:text-red-400"
-								onclick={() => removeRound(roundIndex)}
+								onclick={() => confirmRemoveRound(roundIndex)}
 								aria-label="Remove round"
 							>
 								<IconParkSolidDelete class="h-4 w-4" />
@@ -830,7 +850,7 @@
 									<button
 										type="button"
 										class="text-red-500 hover:text-red-400"
-										onclick={() => removeNode(nodeIndex)}
+										onclick={() => confirmRemoveNode(nodeIndex)}
 										aria-label="Remove node"
 									>
 										<IconParkSolidDelete class="h-4 w-4" />
@@ -902,6 +922,69 @@
 			</section>
 		</div>
 	</div>
+
+	<!-- Delete Confirmation Dialogs -->
+	{#if showRoundDeleteConfirm !== null}
+		<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+			<div class="rounded-lg border border-slate-700 bg-slate-800 p-6 shadow-xl">
+				<h3 class="mb-4 text-lg font-medium text-white">Confirm Delete Round</h3>
+				<p class="mb-6 text-slate-300">
+					Are you sure you want to delete the round "{rounds[showRoundDeleteConfirm]?.title ||
+						rounds[showRoundDeleteConfirm]?.type}"? This will also remove all nodes associated with
+					this round.
+				</p>
+				<div class="flex justify-end gap-3">
+					<button
+						type="button"
+						class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-700"
+						onclick={cancelRemoveRound}
+					>
+						Cancel
+					</button>
+					<button
+						type="button"
+						class="rounded-md bg-red-600 px-4 py-2 font-medium text-white hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:outline-none"
+						onclick={() => {
+							removeRound(showRoundDeleteConfirm!);
+							showRoundDeleteConfirm = null;
+						}}
+					>
+						Delete Round
+					</button>
+				</div>
+			</div>
+		</div>
+	{/if}
+
+	{#if showNodeDeleteConfirm !== null}
+		<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+			<div class="rounded-lg border border-slate-700 bg-slate-800 p-6 shadow-xl">
+				<h3 class="mb-4 text-lg font-medium text-white">Confirm Delete Node</h3>
+				<p class="mb-6 text-slate-300">
+					Are you sure you want to delete this node? This action cannot be undone.
+				</p>
+				<div class="flex justify-end gap-3">
+					<button
+						type="button"
+						class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-700"
+						onclick={cancelRemoveNode}
+					>
+						Cancel
+					</button>
+					<button
+						type="button"
+						class="rounded-md bg-red-600 px-4 py-2 font-medium text-white hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:outline-none"
+						onclick={() => {
+							removeNode(showNodeDeleteConfirm!);
+							showNodeDeleteConfirm = null;
+						}}
+					>
+						Delete Node
+					</button>
+				</div>
+			</div>
+		</div>
+	{/if}
 
 	<div class="mt-6 flex justify-end gap-4 border-t border-slate-700 pt-4">
 		<button
