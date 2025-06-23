@@ -759,7 +759,7 @@
 					{@const node = nodes[selectedNodeIndex]}
 					{@const nodeIndex = selectedNodeIndex}
 					<div class="rounded-lg border border-slate-700 bg-slate-800/50 p-4">
-						<div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+						<div class="space-y-4">
 							<div>
 								<label for="node-match-{nodeIndex}" class="block text-sm font-medium text-slate-300"
 									>Match</label
@@ -778,44 +778,48 @@
 								</select>
 							</div>
 
-							<div>
-								<label for="node-round-{nodeIndex}" class="block text-sm font-medium text-slate-300"
-									>Round</label
-								>
-								<select
-									id="node-round-{nodeIndex}"
-									bind:value={node.roundId}
-									class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-								>
-									{#each rounds as round, roundIndex}
-										<option value={round.id || roundIndex}>
-											{round.title || round.type}
-										</option>
-									{/each}
-								</select>
-							</div>
+							<div class="grid grid-cols-2 gap-4 md:grid-cols-3">
+								<div>
+									<label
+										for="node-round-{nodeIndex}"
+										class="block text-sm font-medium text-slate-300">Round</label
+									>
+									<select
+										id="node-round-{nodeIndex}"
+										bind:value={node.roundId}
+										class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+									>
+										{#each rounds as round, roundIndex}
+											<option value={round.id || roundIndex}>
+												{round.title || round.type}
+											</option>
+										{/each}
+									</select>
+								</div>
 
-							<div>
-								<label for="node-order-{nodeIndex}" class="block text-sm font-medium text-slate-300"
-									>Order</label
-								>
-								<input
-									id="node-order-{nodeIndex}"
-									type="number"
-									bind:value={node.order}
-									class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-								/>
-							</div>
+								<div>
+									<label
+										for="node-order-{nodeIndex}"
+										class="block text-sm font-medium text-slate-300">Order</label
+									>
+									<input
+										id="node-order-{nodeIndex}"
+										type="number"
+										bind:value={node.order}
+										class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+									/>
+								</div>
 
-							<div class="flex items-end">
-								<button
-									type="button"
-									class="text-red-500 hover:text-red-400"
-									onclick={() => removeNode(nodeIndex)}
-									aria-label="Remove node"
-								>
-									<IconParkSolidDelete class="h-4 w-4" />
-								</button>
+								<div class="flex items-end">
+									<button
+										type="button"
+										class="text-red-500 hover:text-red-400"
+										onclick={() => removeNode(nodeIndex)}
+										aria-label="Remove node"
+									>
+										<IconParkSolidDelete class="h-4 w-4" />
+									</button>
+								</div>
 							</div>
 						</div>
 
