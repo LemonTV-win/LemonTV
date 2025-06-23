@@ -782,7 +782,7 @@
 							{@const round = rounds.find((r) => r.id === node.roundId || r.id === node.roundId)}
 							<option value={nodeIndex}>
 								{round?.title || round?.type || 'Unknown Round'} - {match
-									? `${match.teams[0]?.team?.name || 'TBD'} vs ${match.teams[1]?.team?.name || 'TBD'}`
+									? `${match.teams[0]?.team?.name || 'TBD'} vs ${match.teams[1]?.team?.name || 'TBD'} (${match.id})`
 									: 'No match'} (#{node.order})
 							</option>
 						{/each}
@@ -809,6 +809,7 @@
 									{#each matches as match}
 										<option value={match.id}>
 											{match.teams[0]?.team?.name || 'TBD'} vs {match.teams[1]?.team?.name || 'TBD'}
+											({match.id})
 										</option>
 									{/each}
 								</select>
@@ -885,7 +886,7 @@
 										{#each matches as match}
 											<option value={match.id}>
 												{match.teams[0]?.team?.name || 'TBD'} vs {match.teams[1]?.team?.name ||
-													'TBD'}
+													'TBD'} ({match.id})
 											</option>
 										{/each}
 									</select>
