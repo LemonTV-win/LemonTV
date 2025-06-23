@@ -1,6 +1,8 @@
 <!-- src/routes/(user)/admin/matches/BracketInput.svelte -->
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
+	import { applyAction, deserialize } from '$app/forms';
 	import { m } from '$lib/paraglide/messages';
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import type { ActionResult } from '@sveltejs/kit';
@@ -191,10 +193,40 @@
 		selectedRoundIndex = newRoundIndex;
 	}
 
-	function removeRound(index: number) {
+	async function removeRound(index: number) {
+		const roundToRemove = rounds[index];
+
+		// If the round has an ID (exists in database), delete it via API
+		if (roundToRemove.id && !roundToRemove.isNew) {
+			try {
+				const formData = new FormData();
+				formData.append('action', 'deleteStageRound');
+				formData.append('id', roundToRemove.id.toString());
+				formData.append('stageId', stage.id.toString());
+
+				const response = await fetch('?/deleteStageRound', {
+					method: 'POST',
+					body: formData
+				});
+
+				if (!response.ok) {
+					throw new Error('Failed to delete stage round');
+				}
+
+				const result: ActionResult = deserialize(await response.text());
+				applyAction(result);
+			} catch (error) {
+				console.error('Failed to delete stage round:', error);
+				errorMessage = 'Failed to delete stage round';
+				return;
+			}
+		}
+
+		// Remove from local state
 		rounds = rounds.filter((_, i) => i !== index);
+
 		// Also remove nodes that reference this round
-		nodes = nodes.filter((node) => node.roundId !== rounds[index]?.id);
+		nodes = nodes.filter((node) => node.roundId !== roundToRemove?.id);
 
 		// Update selection
 		if (selectedRoundIndex === index) {
@@ -245,8 +277,36 @@
 		}
 	});
 
-	function removeNode(index: number) {
+	async function removeNode(index: number) {
 		const nodeToRemove = nodes[index];
+
+		// If the node has an ID (exists in database), delete it via API
+		if (nodeToRemove.id && !nodeToRemove.isNew) {
+			try {
+				const formData = new FormData();
+				formData.append('action', 'deleteStageNode');
+				formData.append('id', nodeToRemove.id.toString());
+				formData.append('stageId', stage.id.toString());
+
+				const response = await fetch('?/deleteStageNode', {
+					method: 'POST',
+					body: formData
+				});
+
+				if (!response.ok) {
+					throw new Error('Failed to delete stage node');
+				}
+
+				const result: ActionResult = deserialize(await response.text());
+				applyAction(result);
+			} catch (error) {
+				console.error('Failed to delete stage node:', error);
+				errorMessage = 'Failed to delete stage node';
+				return;
+			}
+		}
+
+		// Remove from local state
 		nodes = nodes.filter((_, i) => i !== index);
 
 		// Remove dependencies that reference this node
@@ -349,6 +409,7 @@
 				if (round.isNew) {
 					// Create new round
 					const formData = new FormData();
+					formData.append('action', 'createStageRound');
 					formData.append('stageId', stage.id.toString());
 					formData.append('type', round.type);
 					formData.append('title', round.title);
@@ -366,7 +427,9 @@
 						throw new Error('Failed to create stage round');
 					}
 
-					const result = await response.json();
+					const result: ActionResult = deserialize(await response.text());
+					applyAction(result);
+
 					if (result.type === 'success') {
 						round.id = result.data?.roundId;
 						round.isNew = false;
@@ -374,6 +437,7 @@
 				} else if (round.id) {
 					// Update existing round
 					const formData = new FormData();
+					formData.append('action', 'updateStageRound');
 					formData.append('id', round.id.toString());
 					formData.append('stageId', stage.id.toString());
 					formData.append('type', round.type);
@@ -391,6 +455,9 @@
 					if (!response.ok) {
 						throw new Error('Failed to update stage round');
 					}
+
+					const result: ActionResult = deserialize(await response.text());
+					applyAction(result);
 				}
 			}
 
@@ -399,6 +466,7 @@
 				if (node.isNew) {
 					// Create new node
 					const formData = new FormData();
+					formData.append('action', 'createStageNode');
 					formData.append('stageId', stage.id.toString());
 					formData.append('matchId', node.matchId);
 					formData.append('roundId', node.roundId.toString());
@@ -413,7 +481,9 @@
 						throw new Error('Failed to create stage node');
 					}
 
-					const result = await response.json();
+					const result: ActionResult = deserialize(await response.text());
+					applyAction(result);
+
 					if (result.type === 'success') {
 						node.id = result.data?.nodeId;
 						node.isNew = false;
@@ -421,6 +491,7 @@
 				} else if (node.id) {
 					// Update existing node
 					const formData = new FormData();
+					formData.append('action', 'updateStageNode');
 					formData.append('id', node.id.toString());
 					formData.append('stageId', stage.id.toString());
 					formData.append('matchId', node.matchId);
@@ -435,6 +506,9 @@
 					if (!response.ok) {
 						throw new Error('Failed to update stage node');
 					}
+
+					const result: ActionResult = deserialize(await response.text());
+					applyAction(result);
 				}
 
 				// Save dependencies
@@ -443,6 +517,7 @@
 						if (!dep.id) {
 							// Create new dependency
 							const formData = new FormData();
+							formData.append('action', 'createStageNodeDependency');
 							formData.append('nodeId', node.id.toString());
 							formData.append('dependencyMatchId', dep.dependencyMatchId);
 							formData.append('outcome', dep.outcome);
@@ -455,10 +530,16 @@
 							if (!response.ok) {
 								throw new Error('Failed to create stage node dependency');
 							}
+
+							const result: ActionResult = deserialize(await response.text());
+							applyAction(result);
 						}
 					}
 				}
 			}
+
+			// Invalidate all data to refresh the page
+			await invalidateAll();
 
 			successMessage = 'Bracket structure saved successfully';
 			setTimeout(() => {
@@ -945,8 +1026,8 @@
 					<button
 						type="button"
 						class="rounded-md bg-red-600 px-4 py-2 font-medium text-white hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:outline-none"
-						onclick={() => {
-							removeRound(showRoundDeleteConfirm!);
+						onclick={async () => {
+							await removeRound(showRoundDeleteConfirm!);
 							showRoundDeleteConfirm = null;
 						}}
 					>
@@ -975,8 +1056,8 @@
 					<button
 						type="button"
 						class="rounded-md bg-red-600 px-4 py-2 font-medium text-white hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:outline-none"
-						onclick={() => {
-							removeNode(showNodeDeleteConfirm!);
+						onclick={async () => {
+							await removeNode(showNodeDeleteConfirm!);
 							showNodeDeleteConfirm = null;
 						}}
 					>
