@@ -207,12 +207,18 @@
 		}
 
 		const newNodeIndex = nodes.length;
+		const targetRoundId = rounds[0]?.id || 0;
+
+		// Find the largest order within the target round
+		const roundNodes = nodes.filter((node) => node.roundId === targetRoundId);
+		const maxOrder = roundNodes.length > 0 ? Math.max(...roundNodes.map((node) => node.order)) : 0;
+
 		nodes = [
 			...nodes,
 			{
 				matchId: '',
-				roundId: rounds[0]?.id || 0,
-				order: nodes.length,
+				roundId: targetRoundId,
+				order: maxOrder + 1,
 				dependencies: [],
 				isNew: true
 			}
@@ -546,10 +552,20 @@
 										type="button"
 										class="rounded border-2 border-dashed border-slate-600 bg-slate-700/30 px-3 py-2 text-center text-xs text-slate-400 transition-colors hover:border-slate-500 hover:bg-slate-700/50 hover:text-slate-300"
 										onclick={() => {
+											const targetRoundId = round.id || roundIndex;
+
+											// Find the largest order within the target round
+											const roundNodes = nodes.filter((node) => node.roundId === targetRoundId);
+											const maxOrder =
+												roundNodes.length > 0
+													? Math.max(...roundNodes.map((node) => node.order))
+													: 0;
+
 											addNode();
-											// Set the new node's roundId to the current round
+											// Set the new node's roundId and order
 											if (nodes.length > 0) {
-												nodes[nodes.length - 1].roundId = round.id || roundIndex;
+												nodes[nodes.length - 1].roundId = targetRoundId;
+												nodes[nodes.length - 1].order = maxOrder + 1;
 											}
 										}}
 									>
