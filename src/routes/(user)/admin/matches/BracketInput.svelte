@@ -491,11 +491,20 @@
 								<div class="flex w-full flex-col gap-2">
 									{#each nodes.filter((node) => node.roundId === (round.id || roundIndex)) as node, nodeIndex}
 										{@const match = matches.find((m: any) => m.id === node.matchId)}
+										{@const globalNodeIndex = nodes.findIndex((n) => n === node)}
 										<div class="relative">
 											<button
-												class="w-full rounded border border-slate-600 bg-slate-700 px-3 py-2 text-left text-sm text-white transition-colors hover:bg-slate-600"
-												class:border-yellow-500={match}
-												class:border-slate-500={!match}
+												class={[
+													'w-full rounded border px-3 py-2 text-left text-sm text-white transition-colors',
+													{
+														'border-yellow-500': match,
+														'border-slate-500': !match,
+														'border-2 border-yellow-400 bg-yellow-500/30 font-medium shadow-lg shadow-yellow-500/25 hover:bg-yellow-500/40':
+															selectedNodeIndex === globalNodeIndex,
+														'bg-slate-700 hover:bg-slate-600': selectedNodeIndex !== globalNodeIndex
+													}
+												]}
+												onclick={() => (selectedNodeIndex = globalNodeIndex)}
 											>
 												{#if match}
 													<div class="flex items-center justify-between">
