@@ -4,6 +4,7 @@
 	import IconTwitch from '~icons/simple-icons/twitch';
 	import IconX from '~icons/simple-icons/x';
 	import IconYoutube from '~icons/simple-icons/youtube';
+	import IconLinktree from '~icons/simple-icons/linktree';
 	import * as m from '$lib/paraglide/messages';
 </script>
 
@@ -125,6 +126,28 @@
 								class="text-blue-400 hover:underline"
 							>
 								<IconTwitch class="h-6 w-6" />
+							</a>
+						</div>
+					</div>
+					<div class="glass-card p-6">
+						<h3 class="mb-2 text-xl font-semibold">Eaterrius</h3>
+						<p class="mb-4 text-slate-300">Editor & Translator</p>
+						<div class="flex justify-center gap-4">
+							<a
+								href="https://linktr.ee/eaterrius"
+								target="_blank"
+								rel="noopener noreferrer"
+								class="text-blue-400 hover:underline"
+							>
+								<IconLinktree class="h-6 w-6" />
+							</a>
+							<a
+								href="https://x.com/eaterrius"
+								target="_blank"
+								rel="noopener noreferrer"
+								class="text-blue-400 hover:underline"
+							>
+								<IconX class="h-6 w-6" />
 							</a>
 						</div>
 					</div>
