@@ -504,6 +504,7 @@ export async function updatePlayer(
 			.update(player)
 			.set({
 				name: data.name,
+				slug: data.slug,
 				nationality: primaryNationality,
 				userId: data.user?.id
 			})
@@ -518,6 +519,18 @@ export async function updatePlayer(
 				fieldName: 'name',
 				oldValue: currentPlayer.name?.toString() || null,
 				newValue: data.name?.toString() || null,
+				editedBy
+			});
+		}
+
+		if (data.slug !== currentPlayer.slug) {
+			await tx.insert(editHistory).values({
+				id: randomUUID(),
+				tableName: 'player',
+				recordId: data.id,
+				fieldName: 'slug',
+				oldValue: currentPlayer.slug?.toString() || null,
+				newValue: data.slug?.toString() || null,
 				editedBy
 			});
 		}
