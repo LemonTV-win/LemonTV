@@ -39,7 +39,8 @@
 		fr: 'Français',
 		ru: 'Русский',
 		vi: 'Tiếng Việt',
-		id: 'Bahasa Indonesia'
+		id: 'Bahasa Indonesia',
+		'uk-ua': 'Українська'
 	};
 
 	let locale = $state(getLocale());
