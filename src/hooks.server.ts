@@ -7,6 +7,7 @@ import { db } from '$lib/server/db';
 import { dev } from '$app/environment';
 import { seed } from '$lib/server/db/seed';
 import * as schema from '$lib/server/db/schema';
+import { LEMON_PUBLIC_JWK_BASE64 } from '$env/static/private';
 
 export const init: ServerInit = async () => {
 	console.info('[ServerInit] Syncing database enum tables...');
@@ -56,6 +57,22 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
+const handleJWKS: Handle = ({ event, resolve }) => {
+	if (event.url.pathname === '/.well-known/jwks.json') {
+		const raw = Buffer.from(LEMON_PUBLIC_JWK_BASE64, 'base64url').toString('utf-8');
+		const jwk = JSON.parse(raw);
+
+		return new Response(JSON.stringify({ keys: [jwk] }), {
+			headers: {
+				'Content-Type': 'application/json',
+				'Cache-Control': 'public, max-age=3600' // Cache for 1 hour
+			}
+		});
+	}
+
+	return resolve(event);
+};
+
 const handleChromeDevTools: Handle = ({ event, resolve }) => {
 	if (event.url.pathname.startsWith('/.well-known/appspecific/com.chrome.devtools')) {
 		return new Response(null, { status: 204 });
@@ -64,4 +81,9 @@ const handleChromeDevTools: Handle = ({ event, resolve }) => {
 	return resolve(event);
 };
 
-export const handle: Handle = sequence(handleParaglide, handleAuth, handleChromeDevTools);
+export const handle: Handle = sequence(
+	handleParaglide,
+	handleAuth,
+	handleJWKS,
+	handleChromeDevTools
+);
