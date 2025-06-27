@@ -3,13 +3,15 @@ import { SignJWT } from 'jose';
 import { Buffer } from 'node:buffer';
 import { importJWK } from 'jose';
 import { dev } from '$app/environment';
+import { LEMON_PRIVATE_JWK_BASE64 } from '$env/static/private';
+import { SITE_CANONICAL_HOST } from '$lib/consts.js';
 
 const ALLOWED_REDIRECTS = [
 	'https://lemonade.strinova.win/auth/callback',
 	'https://slice.lemontv.win/auth/callback'
 ];
 
-export async function GET({ url, locals, cookies }) {
+export async function GET({ url, locals }) {
 	const redirect_uri = url.searchParams.get('redirect_uri');
 	const next = url.searchParams.get('next') ?? '/';
 
@@ -35,7 +37,7 @@ export async function GET({ url, locals, cookies }) {
 	}
 
 	// Active session found, generate JWT
-	const base64 = process.env.LEMON_PRIVATE_JWK_BASE64!;
+	const base64 = LEMON_PRIVATE_JWK_BASE64;
 	const raw = Buffer.from(base64, 'base64url').toString('utf8');
 	const jwk = JSON.parse(raw);
 	const privateKey = await importJWK(jwk, 'ES256');
@@ -47,7 +49,7 @@ export async function GET({ url, locals, cookies }) {
 		roles: user.roles
 	})
 		.setProtectedHeader({ alg: 'ES256', kid: 'lemon-key' })
-		.setIssuer('https://lemontv.com')
+		.setIssuer(SITE_CANONICAL_HOST)
 		.setAudience(new URL(redirect_uri).origin)
 		.setIssuedAt()
 		.setExpirationTime('7d') // Longer lifespan OK if HttpOnly and domain-scoped
