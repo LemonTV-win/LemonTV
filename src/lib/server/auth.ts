@@ -32,14 +32,15 @@ import { encodeBase64url, encodeHexLowerCase } from '@oslojs/encoding';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { hash, verify } from '@node-rs/argon2';
+import { dev } from '$app/environment';
 
 const HOUR_IN_MS = 1000 * 60 * 60;
 const DAY_IN_MS = HOUR_IN_MS * 24;
 
 // Session duration constants following security best practices
-const REGULAR_SESSION_DURATION = HOUR_IN_MS * 4; // 4 hours for regular sessions
-const REMEMBER_ME_SESSION_DURATION = DAY_IN_MS * 14; // 14 days for remember me
-const SESSION_RENEWAL_THRESHOLD = HOUR_IN_MS * 2; // Renew session if less than 2 hours remaining
+const REGULAR_SESSION_DURATION = dev ? 30 * 1000 : HOUR_IN_MS * 4; // 30s in dev, 4h in prod
+const REMEMBER_ME_SESSION_DURATION = DAY_IN_MS * 14; // 14 days for remember me (unchanged)
+const SESSION_RENEWAL_THRESHOLD = dev ? 10 * 1000 : HOUR_IN_MS * 2; // 10s in dev, 2h in prod
 
 export const sessionCookieName = 'auth-session';
 
@@ -60,6 +61,11 @@ export async function createSession(token: string, userId: string, rememberMe: b
 		userId,
 		expiresAt: new Date(Date.now() + sessionDuration)
 	};
+
+	console.info(
+		`[Auth] Creating session for user ${userId}: ${rememberMe ? 'remember me' : 'regular'} (${sessionDuration / 1000}s duration, expires at ${session.expiresAt.toISOString()})`
+	);
+
 	await db.insert(table.session).values(session);
 	return session;
 }
@@ -82,6 +88,7 @@ export async function validateSessionToken(token: string) {
 		.where(eq(table.session.id, sessionId));
 
 	if (!result) {
+		console.info('[Auth] No session found for token');
 		return { session: null, user: null };
 	}
 	const { session, user } = result;
@@ -98,7 +105,14 @@ export async function validateSessionToken(token: string) {
 		roles: roles.map((r) => r.roleId)
 	};
 
-	const sessionExpired = Date.now() >= session.expiresAt.getTime();
+	const now = Date.now();
+	const sessionExpired = now >= session.expiresAt.getTime();
+	const timeUntilExpiration = session.expiresAt.getTime() - now;
+
+	console.info(
+		`[Auth] Validating session for user ${user.username}: expires at ${session.expiresAt.toISOString()}, ${Math.round(timeUntilExpiration / 1000)}s remaining`
+	);
+
 	if (sessionExpired) {
 		console.info(`[Auth] Session expired for user ${user.username}, cleaning up`);
 		await db.delete(table.session).where(eq(table.session.id, session.id));
@@ -106,26 +120,28 @@ export async function validateSessionToken(token: string) {
 	}
 
 	// Implement sliding expiration - renew session if close to expiration
-	const timeUntilExpiration = session.expiresAt.getTime() - Date.now();
 	const shouldRenewSession = timeUntilExpiration < SESSION_RENEWAL_THRESHOLD;
 
 	if (shouldRenewSession) {
 		// Determine if this was originally a remember me session (long duration)
-		const originalDuration = session.expiresAt.getTime() - (Date.now() - timeUntilExpiration);
+		const originalDuration = session.expiresAt.getTime() - (now - timeUntilExpiration);
 		const wasRememberMe = originalDuration > REGULAR_SESSION_DURATION;
 
 		// Renew with the same duration type
 		const newDuration = wasRememberMe ? REMEMBER_ME_SESSION_DURATION : REGULAR_SESSION_DURATION;
-		session.expiresAt = new Date(Date.now() + newDuration);
+		const oldExpiresAt = session.expiresAt;
+		session.expiresAt = new Date(now + newDuration);
 
 		console.info(
-			`[Auth] Renewing session for user ${user.username} (${wasRememberMe ? 'remember me' : 'regular'})`
+			`[Auth] Renewing session for user ${user.username} (${wasRememberMe ? 'remember me' : 'regular'}): ${oldExpiresAt.toISOString()} → ${session.expiresAt.toISOString()}`
 		);
 
 		await db
 			.update(table.session)
 			.set({ expiresAt: session.expiresAt })
 			.where(eq(table.session.id, session.id));
+	} else {
+		console.info(`[Auth] Session for user ${user.username} is still valid, no renewal needed`);
 	}
 
 	return { session, user: userWithRoles };

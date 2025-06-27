@@ -5,6 +5,7 @@ import * as auth from '$lib/server/auth';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { LOGIN_SCHEMA, REGISTER_SCHEMA } from '$lib/validations/auth';
+import { dev } from '$app/environment';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
@@ -61,7 +62,9 @@ export const actions: Actions = {
 		const session = await auth.createSession(sessionToken, existingUser.id, result.data.rememberMe);
 		auth.setSessionTokenCookie(event, sessionToken, session.expiresAt);
 
-		const sessionType = result.data.rememberMe ? 'remember me (14 days)' : 'regular (4 hours)';
+		const sessionType = result.data.rememberMe
+			? 'remember me (14 days)'
+			: `regular (${dev ? '30s' : '4h'})`;
 		console.info(
 			`[Login] Successfully logged in user: ${result.data.username} with ${sessionType} session`
 		);
