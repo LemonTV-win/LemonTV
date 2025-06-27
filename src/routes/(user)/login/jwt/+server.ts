@@ -2,7 +2,7 @@ import { redirect, json } from '@sveltejs/kit';
 import { SignJWT } from 'jose';
 import { Buffer } from 'node:buffer';
 import { importJWK } from 'jose';
-import * as auth from '$lib/server/auth';
+import { dev } from '$app/environment';
 
 const ALLOWED_REDIRECTS = [
 	'https://lemonade.strinova.win/auth/callback',
@@ -13,7 +13,13 @@ export async function GET({ url, locals, cookies }) {
 	const redirect_uri = url.searchParams.get('redirect_uri');
 	const next = url.searchParams.get('next') ?? '/';
 
-	if (!redirect_uri || !ALLOWED_REDIRECTS.includes(redirect_uri)) {
+	if (!redirect_uri) {
+		return json({ error: 'Missing redirect_uri' }, { status: 400 });
+	}
+
+	const isAllowedRedirect = dev ? true : ALLOWED_REDIRECTS.includes(redirect_uri);
+
+	if (!isAllowedRedirect) {
 		return json({ error: 'Invalid redirect URI' }, { status: 400 });
 	}
 
