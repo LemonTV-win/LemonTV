@@ -5,9 +5,10 @@ import { eq } from 'drizzle-orm';
 import * as table from '$lib/server/db/schema';
 import * as auth from '$lib/server/auth';
 
-export const load: PageServerLoad = async ({ locals: { user } }) => {
+export const load: PageServerLoad = async ({ locals: { user }, url }) => {
 	if (!user) {
-		throw redirect(302, '/login');
+		const fullUrl = url.pathname + url.search;
+		throw redirect(302, `/login?redirect=${encodeURIComponent(fullUrl)}`);
 	}
 
 	return {

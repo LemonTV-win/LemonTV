@@ -6,7 +6,8 @@ import { and, eq } from 'drizzle-orm';
 
 export const load: PageServerLoad = async (event) => {
 	if (!event.locals.user || !event.locals.user.roles.includes('admin')) {
-		throw redirect(302, '/login');
+		const fullUrl = event.url.pathname + event.url.search;
+		throw redirect(302, `/login?redirect=${encodeURIComponent(fullUrl)}`);
 	}
 
 	const users = await db.select().from(table.user);

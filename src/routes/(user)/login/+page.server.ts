@@ -10,8 +10,13 @@ import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
 	if (event.locals.user) {
-		console.info('[Login] User already authenticated, redirecting to profile');
-		return redirect(302, '/profile');
+		console.info('[Login] User already authenticated, redirecting to intended destination');
+		const redirectTo = event.url.searchParams.get('redirect') || '/';
+
+		// If there's a redirect parameter, use it directly (it should contain the full URL)
+		// Otherwise, redirect to home
+		const targetUrl = redirectTo || '/';
+		return redirect(302, targetUrl);
 	}
 
 	return {
@@ -68,7 +73,10 @@ export const actions: Actions = {
 		console.info(
 			`[Login] Successfully logged in user: ${result.data.username} with ${sessionType} session`
 		);
-		return { success: true };
+
+		// Return success with redirect information
+		const redirectTo = event.url.searchParams.get('redirect') || '/';
+		return { success: true, redirect: redirectTo };
 	},
 	register: async (event) => {
 		console.info('[Register] ====== Attempting registration ======');
@@ -132,7 +140,10 @@ export const actions: Actions = {
 		} finally {
 			console.info('[Register] ====== Registration complete ======');
 		}
-		return { success: true };
+
+		// Return success with redirect information
+		const redirectTo = event.url.searchParams.get('redirect') || '/';
+		return { success: true, redirect: redirectTo };
 	}
 };
 

@@ -32,7 +32,8 @@ const serverSchema = z.object({
 export const load: PageServerLoad = async ({ locals, url }) => {
 	const user = locals.user;
 	if (!user?.roles) {
-		throw redirect(302, '/login');
+		const fullUrl = url.pathname + url.search;
+		throw redirect(302, `/login?redirect=${encodeURIComponent(fullUrl)}`);
 	}
 
 	const searchParams = url.searchParams;

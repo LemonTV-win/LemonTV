@@ -226,7 +226,7 @@
 					</select>
 				</div>
 				<a
-					href="/login?redirect={page.url.pathname}"
+					href="/login?redirect={encodeURIComponent(page.url.pathname + page.url.search)}"
 					class="rounded-md border-1 border-gray-500 bg-gray-800 px-4 py-1 text-white transition-colors duration-300 hover:bg-gray-700"
 					>{m.sign_in()}</a
 				>
@@ -327,7 +327,7 @@
 						</div>
 					</div>
 					<a
-						href="/login?redirect={page.url.pathname}"
+						href="/login?redirect={encodeURIComponent(page.url.pathname + page.url.search)}"
 						class="flex w-full items-center justify-center rounded-md border-1 border-gray-500 bg-gray-700 px-4 py-2 text-lg text-white transition-colors duration-300 hover:bg-gray-600"
 						onclick={toggleMobileMenu}>{m.sign_in()}</a
 					>

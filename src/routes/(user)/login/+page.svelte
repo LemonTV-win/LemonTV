@@ -11,8 +11,8 @@
 	import { LOGIN_SCHEMA, REGISTER_SCHEMA } from '$lib/validations/auth';
 	import InlineAlert from '$lib/components/InlineAlert.svelte';
 
-	type FormData = { message: string; success?: never } | { success: true; message?: never };
-	let { form, data }: { form: FormData | null; data: PageServerData } = $props();
+	type FormData = { message?: string; success?: boolean; redirect?: string } | null;
+	let { form, data }: { form: FormData; data: PageServerData } = $props();
 	let activeTab = $state(data.tab || 'login');
 	let showPassword = $state(false);
 	let showConfirmPassword = $state(false);
@@ -81,10 +81,11 @@
 	});
 
 	$effect(() => {
-		if (form?.success) {
+		if (form && form.success === true && form.redirect && typeof form.redirect === 'string') {
+			const redirectUrl = form.redirect;
 			successMessage = activeTab === 'login' ? m.login_success() : m.register_success();
 			setTimeout(() => {
-				window.location.href = data.redirect || '/';
+				window.location.href = redirectUrl;
 			}, 1000);
 		}
 	});
