@@ -22,7 +22,8 @@ const EMAIL_SCHEMA = z
 
 export const LOGIN_SCHEMA = z.object({
 	username: USERNAME_SCHEMA,
-	password: PASSWORD_SCHEMA
+	password: PASSWORD_SCHEMA,
+	rememberMe: z.boolean().optional()
 });
 
 export const REGISTER_SCHEMA = z

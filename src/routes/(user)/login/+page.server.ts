@@ -25,7 +25,8 @@ export const actions: Actions = {
 		const formData = await event.request.formData();
 		const data = {
 			username: formData.get('username'),
-			password: formData.get('password')
+			password: formData.get('password'),
+			rememberMe: formData.get('rememberMe') === 'on'
 		};
 
 		const result = LOGIN_SCHEMA.safeParse(data);
@@ -57,10 +58,13 @@ export const actions: Actions = {
 		}
 
 		const sessionToken = auth.generateSessionToken();
-		const session = await auth.createSession(sessionToken, existingUser.id);
+		const session = await auth.createSession(sessionToken, existingUser.id, result.data.rememberMe);
 		auth.setSessionTokenCookie(event, sessionToken, session.expiresAt);
 
-		console.info('[Login] Successfully logged in user:', result.data.username);
+		const sessionType = result.data.rememberMe ? 'remember me (14 days)' : 'regular (4 hours)';
+		console.info(
+			`[Login] Successfully logged in user: ${result.data.username} with ${sessionType} session`
+		);
 		return { success: true };
 	},
 	register: async (event) => {
@@ -115,7 +119,7 @@ export const actions: Actions = {
 			}
 
 			const sessionToken = auth.generateSessionToken();
-			const session = await auth.createSession(sessionToken, userId);
+			const session = await auth.createSession(sessionToken, userId, true);
 			auth.setSessionTokenCookie(event, sessionToken, session.expiresAt);
 
 			console.info('[Register] Successfully registered user:', result.data.username);

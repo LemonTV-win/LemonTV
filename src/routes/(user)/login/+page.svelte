@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import type { ActionData } from './$types';
 	import Eye from '~icons/lucide/eye';
 	import EyeOff from '~icons/lucide/eye-off';
 	import Lock from '~icons/lucide/lock';
@@ -40,7 +39,8 @@
 
 		const loginData = {
 			username: loginUsername,
-			password: loginPassword
+			password: loginPassword,
+			rememberMe
 		};
 
 		const result = LOGIN_SCHEMA.safeParse(loginData);
@@ -189,7 +189,7 @@
 							<input
 								type="checkbox"
 								id="remember"
-								name="remember"
+								name="rememberMe"
 								bind:checked={rememberMe}
 								class="rounded border-slate-700 bg-slate-800 text-yellow-500 focus:ring-yellow-500"
 							/>
