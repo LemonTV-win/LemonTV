@@ -2,7 +2,6 @@
 	import type { PageProps } from './$types';
 
 	import { m } from '$lib/paraglide/messages.js';
-	import { onMount } from 'svelte';
 	import CharacterIcon from '$lib/components/CharacterIcon.svelte';
 	import TypcnArrowUnsorted from '~icons/typcn/arrow-unsorted';
 	import TypcnArrowSortedDown from '~icons/typcn/arrow-sorted-down';
@@ -17,8 +16,8 @@
 	let { data }: PageProps = $props();
 
 	let search = $state(data.search || '');
-	let selectedNationalities = $state<string[]>([]);
-	let selectedSuperstrings = $state<string[]>([]);
+	let selectedNationalities = $state<string[]>(data.nationalities || []);
+	let selectedSuperstrings = $state<string[]>(data.superstrings || []);
 	let filtersExpanded = $state(false);
 
 	let sortBy:
@@ -33,7 +32,7 @@
 		| 'team-asc'
 		| 'team-desc'
 		| 'kd-asc'
-		| 'kd-desc' = $state('name-abc');
+		| 'kd-desc' = $state(data.sortBy || 'name-abc');
 
 	let sorted = $derived(
 		data.players.toSorted((a, b) => {
@@ -96,36 +95,6 @@
 		if (selectedNationalities.length) params.set('nationalities', selectedNationalities.join(','));
 		if (selectedSuperstrings.length) params.set('superstrings', selectedSuperstrings.join(','));
 		window.history.replaceState({}, '', `/players?${params.toString()}`);
-	});
-
-	onMount(() => {
-		const url = new URL(window.location.href);
-		const urlSortBy = url.searchParams.get('sortBy');
-		const urlSearch = url.searchParams.get('search');
-		const urlNationalities = url.searchParams.get('nationalities');
-		const urlSuperstrings = url.searchParams.get('superstrings');
-
-		if (urlSearch) search = urlSearch;
-		if (urlNationalities) selectedNationalities = urlNationalities.split(',');
-		if (urlSuperstrings) selectedSuperstrings = urlSuperstrings.split(',');
-
-		if (
-			urlSortBy &&
-			(urlSortBy === 'name-abc' ||
-				urlSortBy === 'name-cba' ||
-				urlSortBy === 'wins-asc' ||
-				urlSortBy === 'wins-desc' ||
-				urlSortBy === 'rating-asc' ||
-				urlSortBy === 'rating-desc' ||
-				urlSortBy === 'region-asc' ||
-				urlSortBy === 'region-desc' ||
-				urlSortBy === 'team-asc' ||
-				urlSortBy === 'team-desc' ||
-				urlSortBy === 'kd-asc' ||
-				urlSortBy === 'kd-desc')
-		) {
-			sortBy = urlSortBy;
-		}
 	});
 
 	// Get unique nationalities and superstrings for filter options
