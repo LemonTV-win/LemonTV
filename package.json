@@ -21,7 +21,8 @@
 		"db:dev:studio": "drizzle-kit studio --config drizzle-dev.config.ts",
 		"i18n:check": "bun scripts/check-messages.ts",
 		"knip": "knip",
-		"changelog": "bun scripts/generate-changelog.ts"
+		"changelog": "bun scripts/generate-changelog.ts",
+		"jwt:generate": "bun scripts/generate-jwt-keys.ts"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.9",
@@ -70,6 +71,7 @@
 		"dotenv": "^16.5.0",
 		"drizzle-orm": "^0.43.1",
 		"gravatar": "^1.8.2",
+		"jose": "^6.0.11",
 		"zod": "^3.24.4"
 	}
 }
