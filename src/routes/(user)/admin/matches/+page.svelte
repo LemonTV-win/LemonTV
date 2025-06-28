@@ -19,6 +19,59 @@
 
 	let { data }: PageProps = $props();
 
+	// Handle URL parameters for modal state
+	$effect(() => {
+		if (data.action === 'editMatch' && data.id) {
+			// Find the match to edit
+			if (selectedEventData) {
+				for (const stageData of Object.values(selectedEventData.stages)) {
+					const match = stageData.matches.find((m) => m.id === data.id);
+					if (match) {
+						editingMatch = {
+							match,
+							matchTeams: match.teams.map((t) => ({
+								matchId: match.id,
+								teamId: t.teamId,
+								position: t.position,
+								score: t.score
+							})),
+							matchMaps: match.maps.map((m) => ({
+								...m,
+								action: m.action as 'ban' | 'pick' | 'decider' | null
+							}))
+						};
+
+						// Check if we should show delete modal
+						if (data.delete === 'true') {
+							showDeleteModal = true;
+						}
+						break;
+					}
+				}
+			}
+		} else if (data.action === 'editStage' && data.id) {
+			// Find the stage to edit
+			if (selectedEventData) {
+				const stageId = parseInt(data.id);
+				const stageData = selectedEventData.stages[stageId];
+				if (stageData) {
+					editingStage = { stage: stageData.stage };
+				}
+			}
+		} else if (data.action === 'newMatch') {
+			editingMatch = {
+				match: {
+					format: 'bo1',
+					stageId: null
+				},
+				matchTeams: [],
+				matchMaps: []
+			};
+		} else if (data.action === 'newStage') {
+			editingStage = {};
+		}
+	});
+
 	type EventData = {
 		event: {
 			id: string;
@@ -280,12 +333,17 @@
 	function closeDeleteModal() {
 		showDeleteModal = false;
 		editingMatch = null;
+		// Clear the delete parameter but keep the edit state
+		const url = new URL(window.location.href);
+		url.searchParams.delete('delete');
+		goto(url.pathname + url.search, { replaceState: true });
 	}
 
 	function handleDeleteSubmit() {
 		return async ({ update }: { update: () => Promise<void> }) => {
 			await update();
 			closeDeleteModal();
+			goto(`/admin/matches?event=${selectedEventId}`, { replaceState: true });
 			window.location.reload();
 		};
 	}
@@ -475,7 +533,7 @@
 				</div>
 				<button
 					onclick={() => {
-						editingStage = {};
+						goto(`/admin/matches?event=${selectedEventId}&action=newStage`, { replaceState: true });
 					}}
 					class="rounded-md bg-yellow-500 px-4 py-2 text-sm font-medium text-black hover:bg-yellow-400 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 				>
@@ -483,14 +541,7 @@
 				</button>
 				<button
 					onclick={() => {
-						editingMatch = {
-							match: {
-								format: 'bo1',
-								stageId: null
-							},
-							matchTeams: [],
-							matchMaps: []
-						};
+						goto(`/admin/matches?event=${selectedEventId}&action=newMatch`, { replaceState: true });
 					}}
 					class="rounded-md bg-yellow-500 px-4 py-2 text-sm font-medium text-black hover:bg-yellow-400 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 				>
@@ -518,7 +569,9 @@
 						</button>
 						<button
 							onclick={() => {
-								editingStage = { stage };
+								goto(`/admin/matches?event=${selectedEventId}&action=editStage&id=${stage.id}`, {
+									replaceState: true
+								});
 							}}
 							class="text-yellow-500 hover:text-yellow-400"
 							title="Edit Stage"
@@ -713,19 +766,10 @@
 										<div class="flex h-full items-center gap-2 border-l border-gray-700 px-4 py-1">
 											<button
 												onclick={() => {
-													editingMatch = {
-														match,
-														matchTeams: match.teams.map((t) => ({
-															matchId: match.id,
-															teamId: t.teamId,
-															position: t.position,
-															score: t.score
-														})),
-														matchMaps: match.maps.map((m) => ({
-															...m,
-															action: m.action as 'ban' | 'pick' | 'decider' | null
-														}))
-													};
+													goto(
+														`/admin/matches?event=${selectedEventId}&action=editMatch&id=${match.id}`,
+														{ replaceState: true }
+													);
 												}}
 												class="flex items-center gap-1 text-yellow-500 hover:text-yellow-400"
 												title="Edit Match"
@@ -734,20 +778,10 @@
 											</button>
 											<button
 												onclick={() => {
-													editingMatch = {
-														match,
-														matchTeams: match.teams.map((t) => ({
-															matchId: match.id,
-															teamId: t.teamId,
-															position: t.position,
-															score: t.score
-														})),
-														matchMaps: match.maps.map((m) => ({
-															...m,
-															action: m.action as 'ban' | 'pick' | 'decider' | null
-														}))
-													};
-													showDeleteModal = true;
+													goto(
+														`/admin/matches?event=${selectedEventId}&action=editMatch&id=${match.id}&delete=true`,
+														{ replaceState: true }
+													);
 												}}
 												class="flex items-center gap-1 text-red-500 hover:text-red-400"
 												title="Delete Match"
@@ -778,9 +812,13 @@
 			<StageEdit
 				stage={editingStage.stage}
 				eventId={selectedEventId!}
-				onCancel={() => (editingStage = null)}
+				onCancel={() => {
+					editingStage = null;
+					goto(`/admin/matches?event=${selectedEventId}`, { replaceState: true });
+				}}
 				onSuccess={() => {
 					editingStage = null;
+					goto(`/admin/matches?event=${selectedEventId}`, { replaceState: true });
 					// Refresh the page to show updated data
 					window.location.reload();
 				}}
@@ -812,9 +850,13 @@
 						}))
 					)
 					.filter((stage, index, self) => index === self.findIndex((s) => s.id === stage.id))}
-				onCancel={() => (editingMatch = null)}
+				onCancel={() => {
+					editingMatch = null;
+					goto(`/admin/matches?event=${selectedEventId}`, { replaceState: true });
+				}}
 				onSuccess={() => {
 					editingMatch = null;
+					goto(`/admin/matches?event=${selectedEventId}`, { replaceState: true });
 					// Refresh the page to show updated data
 					window.location.reload();
 				}}

@@ -86,6 +86,11 @@ export async function load({ locals, url }) {
 	// Get event ID from URL if present
 	const eventId = url.searchParams.get('event');
 
+	// Get action and id parameters for modal state
+	const action = url.searchParams.get('action');
+	const id = url.searchParams.get('id');
+	const deleteParam = url.searchParams.get('delete');
+
 	// Load all events with their stages, matches, match teams, and match maps
 	const events = await db
 		.select({
@@ -382,7 +387,10 @@ export async function load({ locals, url }) {
 		events: serializedEvents,
 		event: eventId,
 		teams: await db.select().from(table.team),
-		maps: await db.select().from(table.map)
+		maps: await db.select().from(table.map),
+		action,
+		id,
+		delete: deleteParam
 	};
 }
 
