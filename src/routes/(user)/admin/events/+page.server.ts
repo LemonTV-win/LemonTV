@@ -2,19 +2,16 @@ import { fail, error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { eq, inArray, and } from 'drizzle-orm';
-import { processImageURL, uploadImage } from '$lib/server/storage';
+import { eq } from 'drizzle-orm';
+import { uploadImage } from '$lib/server/storage';
 import {
 	type CreateEventData,
 	type UpdateEventData,
-	type EventWithOrganizers,
 	type EventTeamPlayerData,
 	toDatabaseEvent,
 	toDatabaseEventOrganizers,
 	toDatabaseEventVideos,
 	getEventChanges,
-	getOrganizerChanges,
-	toEventWithOrganizers,
 	getEvents,
 	updateEventTeamPlayers,
 	updateEventCasters

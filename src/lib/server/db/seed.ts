@@ -1,6 +1,5 @@
 import * as schema from '$lib/server/db/schema';
 import { db } from '$lib/server/db';
-import { randomUUID } from 'node:crypto';
 import { PLAYER_ADDITIONAL_NATIONALITIES, PLAYERS } from './seeds/players';
 import { TEAMS, TEAM_PLAYERS } from './seeds/teams';
 import { ORGANIZERS } from './seeds/organizers';

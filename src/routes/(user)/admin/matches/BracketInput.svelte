@@ -1,6 +1,5 @@
 <!-- src/routes/(user)/admin/matches/BracketInput.svelte -->
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import { applyAction, deserialize } from '$app/forms';
 	import { m } from '$lib/paraglide/messages';

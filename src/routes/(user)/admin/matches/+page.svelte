@@ -12,7 +12,7 @@
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import { goto } from '$app/navigation';
 	import MatchEdit from './MatchEdit.svelte';
-	import type { Match, MatchTeam, MatchMap, Team, Map } from '$lib/server/db/schema';
+	import type { Match, MatchTeam, MatchMap } from '$lib/server/db/schema';
 	import StageEdit from './StageEdit.svelte';
 	import Modal from '$lib/components/Modal.svelte';
 	import BracketInput from './BracketInput.svelte';

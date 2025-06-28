@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { sqliteTable, text, integer, primaryKey, check } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, check } from 'drizzle-orm/sqlite-core';
 import { event } from './event';
 import { match } from './match';
 

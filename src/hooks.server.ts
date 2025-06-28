@@ -3,10 +3,8 @@ import * as auth from '$lib/server/auth.js';
 import type { Handle, ServerInit } from '@sveltejs/kit';
 import { paraglideMiddleware } from '$lib/paraglide/server';
 import { syncAll } from '$lib/server/db/sync';
-import { db } from '$lib/server/db';
 import { dev } from '$app/environment';
 import { seed } from '$lib/server/db/seed';
-import * as schema from '$lib/server/db/schema';
 import { LEMON_PUBLIC_JWK_BASE64 } from '$env/static/private';
 
 export const init: ServerInit = async () => {

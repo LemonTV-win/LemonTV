@@ -1,6 +1,6 @@
 import type { Character, Region } from '$lib/data/game';
 import { calculateWinnerIndex, getMatches } from '$lib/data';
-import { calculatePlayerKD, calculatePlayerRating, getPlayerAgents, getPlayers } from './players';
+import { calculatePlayerKD, calculatePlayerRating, getPlayerAgents } from './players';
 
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';

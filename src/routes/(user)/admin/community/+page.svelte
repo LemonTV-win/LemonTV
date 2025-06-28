@@ -34,10 +34,8 @@
 	let isEditing = $state(false);
 	let isAddingTag = $state(false);
 	let isEditingTag = $state(false);
-	let showHistoryModal = $state(false);
 	let showDeleteModal = $state(false);
 	let showDeleteTagModal = $state(false);
-	let isDeleting = $state(false);
 
 	let filteredServers = $derived(
 		discordServers
@@ -153,11 +151,6 @@
 	function closeDeleteTagModal() {
 		showDeleteTagModal = false;
 		selectedTag = null;
-	}
-
-	function closeHistoryModal() {
-		showHistoryModal = false;
-		selectedServer = null;
 	}
 </script>
 

@@ -16,8 +16,6 @@
 			.filter((team) => team.name.toLowerCase().includes(search.toLowerCase()))
 	);
 
-	let expanded = $state(false);
-
 	$effect(() => {
 		window.history.replaceState(
 			{},

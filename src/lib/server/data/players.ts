@@ -8,7 +8,7 @@ import {
 	editHistory,
 	playerAdditionalNationality
 } from '$lib/server/db/schema';
-import { eq, inArray, or } from 'drizzle-orm';
+import { eq, or } from 'drizzle-orm';
 import type { Player } from '$lib/data/players';
 import { randomUUID } from 'crypto';
 import { calculateWinnerIndex, getEvents, getMatches, identifyPlayer } from '$lib/data';
