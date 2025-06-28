@@ -382,6 +382,14 @@
 				>
 					Lemonade
 				</a>
+				<a
+					href="https://slice.lemontv.win/"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="text-yellow-300 hover:text-yellow-400"
+				>
+					LemonSlice
+				</a>
 			</div>
 			<p class="text-xs text-gray-400">
 				{@html m.footer_trademark({
