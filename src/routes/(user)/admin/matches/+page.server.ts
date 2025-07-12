@@ -100,7 +100,10 @@ export async function load({ locals, url }) {
 			match_team: table.matchTeam,
 			teams: table.team,
 			match_map: table.matchMap,
-			map: table.map
+			map: table.map,
+			game: table.game,
+			game_team: table.gameTeam,
+			game_player_score: table.gamePlayerScore
 		})
 		.from(table.event)
 		.leftJoin(table.stage, eq(table.event.id, table.stage.eventId))
@@ -109,6 +112,9 @@ export async function load({ locals, url }) {
 		.leftJoin(table.team, eq(table.matchTeam.teamId, table.team.id))
 		.leftJoin(table.matchMap, eq(table.match.id, table.matchMap.matchId))
 		.leftJoin(table.map, eq(table.matchMap.mapId, table.map.id))
+		.leftJoin(table.game, eq(table.match.id, table.game.matchId))
+		.leftJoin(table.gameTeam, eq(table.game.id, table.gameTeam.gameId))
+		.leftJoin(table.gamePlayerScore, eq(table.game.id, table.gamePlayerScore.gameId))
 		.orderBy(desc(table.event.createdAt));
 
 	// Load bracket structure data
@@ -148,6 +154,17 @@ export async function load({ locals, url }) {
 		maps: Array<
 			(typeof processedEvents)[number]['match_map'] & {
 				map: (typeof processedEvents)[number]['map'];
+			}
+		>;
+		games: Array<
+			(typeof processedEvents)[number]['game'] & {
+				map: (typeof processedEvents)[number]['map'];
+				teams: Array<
+					(typeof processedEvents)[number]['game_team'] & {
+						team: (typeof processedEvents)[number]['teams'];
+					}
+				>;
+				playerScores: Array<(typeof processedEvents)[number]['game_player_score']>;
 			}
 		>;
 	};
@@ -191,7 +208,8 @@ export async function load({ locals, url }) {
 								format: row.match.format,
 								stageId: row.match.stageId,
 								teams: [],
-								maps: []
+								maps: [],
+								games: []
 							});
 						}
 
@@ -233,6 +251,64 @@ export async function load({ locals, url }) {
 										side_picker_position: matchMap.side_picker_position ?? 0,
 										map: row.map
 									});
+								}
+							}
+						}
+
+						// If there's a game, add it to the match's games
+						if (row.game && row.map) {
+							const matchData = stageData.matches.get(matchId);
+							const game = row.game;
+							if (matchData && game.id && game.matchId) {
+								// Check if game already exists to avoid duplicates
+								const gameExists = matchData.games.some((g) => g.id === game.id);
+								if (!gameExists) {
+									matchData.games.push({
+										id: game.id,
+										matchId: game.matchId,
+										mapId: game.mapId,
+										duration: game.duration,
+										winner: game.winner,
+										map: row.map,
+										teams: [],
+										playerScores: []
+									});
+								}
+
+								// Find the game to add teams and player scores
+								const gameData = matchData.games.find((g) => g.id === game.id);
+								if (gameData) {
+									// If there's a game team, add it to the game's teams
+									if (row.game_team && row.teams) {
+										const gameTeam = row.game_team;
+										if (gameTeam.gameId && gameTeam.teamId) {
+											// Check if team already exists to avoid duplicates
+											const teamExists = gameData.teams.some((t) => t.teamId === gameTeam.teamId);
+											if (!teamExists) {
+												gameData.teams.push({
+													gameId: gameTeam.gameId,
+													teamId: gameTeam.teamId,
+													position: gameTeam.position,
+													score: gameTeam.score,
+													team: row.teams
+												});
+											}
+										}
+									}
+
+									// If there's a game player score, add it to the game's player scores
+									if (row.game_player_score) {
+										const playerScore = row.game_player_score;
+										if (playerScore.gameId) {
+											// Check if player score already exists to avoid duplicates
+											const scoreExists = gameData.playerScores.some(
+												(s) => s && s.id === playerScore.id
+											);
+											if (!scoreExists) {
+												gameData.playerScores.push(playerScore);
+											}
+										}
+									}
 								}
 							}
 						}
@@ -319,6 +395,22 @@ export async function load({ locals, url }) {
 								map_picker_position: map.map_picker_position ?? 0,
 								side_picker_position: map.side_picker_position ?? 0,
 								map: map.map
+							})),
+							games: match.games.map((game) => ({
+								id: game.id,
+								matchId: game.matchId,
+								mapId: game.mapId,
+								duration: game.duration,
+								winner: game.winner,
+								map: game.map,
+								teams: game.teams.map((team) => ({
+									gameId: team.gameId,
+									teamId: team.teamId,
+									position: team.position,
+									score: team.score,
+									team: team.team
+								})),
+								playerScores: game.playerScores
 							}))
 						}));
 						return [
@@ -369,6 +461,22 @@ export async function load({ locals, url }) {
 								map_picker_position: number;
 								side_picker_position: number;
 								map: (typeof processedEvents)[number]['map'];
+							}>;
+							games: Array<{
+								id: number;
+								matchId: string;
+								mapId: string;
+								duration: number;
+								winner: number;
+								map: (typeof processedEvents)[number]['map'];
+								teams: Array<{
+									gameId: number;
+									teamId: string;
+									position: number;
+									score: number;
+									team: (typeof processedEvents)[number]['teams'];
+								}>;
+								playerScores: Array<(typeof processedEvents)[number]['game_player_score']>;
 							}>;
 						}>;
 						rounds: Array<(typeof stageRounds)[number]>;
@@ -1364,6 +1472,209 @@ export const actions = {
 			);
 			return fail(500, {
 				error: 'Failed to delete stage node dependency'
+			});
+		}
+	},
+
+	// Game management actions
+	createGame: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
+			});
+		}
+
+		const formData = await request.formData();
+		const gameData = {
+			matchId: formData.get('matchId') as string,
+			mapId: formData.get('mapId') as string,
+			duration: parseInt(formData.get('duration') as string),
+			winner: parseInt(formData.get('winner') as string)
+		};
+
+		if (
+			!gameData.matchId ||
+			!gameData.mapId ||
+			!gameData.duration ||
+			gameData.winner === undefined
+		) {
+			return fail(400, {
+				error: 'Match ID, map ID, duration, and winner are required'
+			});
+		}
+
+		try {
+			// Create the game
+			const [newGame] = await db
+				.insert(table.game)
+				.values({
+					matchId: gameData.matchId,
+					mapId: gameData.mapId,
+					duration: gameData.duration,
+					winner: gameData.winner
+				})
+				.returning();
+
+			// Add edit history
+			await db.insert(table.editHistory).values({
+				id: crypto.randomUUID(),
+				tableName: 'game',
+				recordId: newGame.id.toString(),
+				fieldName: 'creation',
+				oldValue: null,
+				newValue: 'created',
+				editedBy: result.userId,
+				editedAt: new Date()
+			});
+
+			return {
+				success: true,
+				gameId: newGame.id
+			};
+		} catch (e) {
+			console.error('[Admin][Games][Create] Failed to create game:', e);
+			return fail(500, {
+				error: 'Failed to create game'
+			});
+		}
+	},
+
+	updateGame: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
+			});
+		}
+
+		const formData = await request.formData();
+		const gameData = {
+			id: parseInt(formData.get('id') as string),
+			matchId: formData.get('matchId') as string,
+			mapId: formData.get('mapId') as string,
+			duration: parseInt(formData.get('duration') as string),
+			winner: parseInt(formData.get('winner') as string)
+		};
+
+		if (
+			!gameData.id ||
+			!gameData.matchId ||
+			!gameData.mapId ||
+			!gameData.duration ||
+			gameData.winner === undefined
+		) {
+			return fail(400, {
+				error: 'ID, match ID, map ID, duration, and winner are required'
+			});
+		}
+
+		try {
+			// Get the current game data for comparison
+			const currentGame = await db
+				.select()
+				.from(table.game)
+				.where(eq(table.game.id, gameData.id))
+				.limit(1);
+
+			if (!currentGame.length) {
+				return fail(404, {
+					error: 'Game not found'
+				});
+			}
+
+			// Update the game
+			await db
+				.update(table.game)
+				.set({
+					matchId: gameData.matchId,
+					mapId: gameData.mapId,
+					duration: gameData.duration,
+					winner: gameData.winner
+				})
+				.where(eq(table.game.id, gameData.id));
+
+			// Add edit history
+			await db.insert(table.editHistory).values({
+				id: crypto.randomUUID(),
+				tableName: 'game',
+				recordId: gameData.id.toString(),
+				fieldName: 'update',
+				oldValue: JSON.stringify(currentGame[0]),
+				newValue: JSON.stringify({
+					matchId: gameData.matchId,
+					mapId: gameData.mapId,
+					duration: gameData.duration,
+					winner: gameData.winner
+				}),
+				editedBy: result.userId,
+				editedAt: new Date()
+			});
+
+			return {
+				success: true
+			};
+		} catch (e) {
+			console.error('[Admin][Games][Update] Failed to update game:', e);
+			return fail(500, {
+				error: 'Failed to update game'
+			});
+		}
+	},
+
+	deleteGame: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
+			});
+		}
+
+		const formData = await request.formData();
+		const id = parseInt(formData.get('id') as string);
+
+		if (!id) {
+			return fail(400, {
+				error: 'ID is required'
+			});
+		}
+
+		try {
+			// Get the game data before deletion for history
+			const game = await db.select().from(table.game).where(eq(table.game.id, id)).limit(1);
+
+			if (!game.length) {
+				return fail(404, {
+					error: 'Game not found'
+				});
+			}
+
+			// Delete related records first
+			await db.delete(table.gameTeam).where(eq(table.gameTeam.gameId, id));
+			await db.delete(table.gamePlayerScore).where(eq(table.gamePlayerScore.gameId, id));
+
+			// Delete the game
+			await db.delete(table.game).where(eq(table.game.id, id));
+
+			// Add edit history
+			await db.insert(table.editHistory).values({
+				id: crypto.randomUUID(),
+				tableName: 'game',
+				recordId: id.toString(),
+				fieldName: 'deletion',
+				oldValue: JSON.stringify(game[0]),
+				newValue: 'deleted',
+				editedBy: result.userId,
+				editedAt: new Date()
+			});
+
+			return {
+				success: true
+			};
+		} catch (e) {
+			console.error('[Admin][Games][Delete] Failed to delete game:', e);
+			return fail(500, {
+				error: 'Failed to delete game'
 			});
 		}
 	}
