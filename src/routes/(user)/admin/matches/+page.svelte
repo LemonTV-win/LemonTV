@@ -19,6 +19,8 @@
 
 	let { data }: PageProps = $props();
 
+	$inspect('[admin/matches] data', data);
+
 	// Handle URL parameters for modal state
 	$effect(() => {
 		if (data.action === 'editMatch' && data.id) {
@@ -127,6 +129,46 @@
 						};
 						action?: string;
 					}>;
+					games: Array<{
+						id: number;
+						matchId: string;
+						mapId: string;
+						duration: number;
+						winner: number;
+						map: {
+							id: string;
+						};
+						teams: Array<{
+							gameId: number;
+							teamId: string;
+							position: number;
+							score: number;
+							team: {
+								id: string;
+								name: string;
+								slug: string;
+								abbr: string;
+								logo: string;
+								region: string;
+							};
+						}>;
+						playerScores: Array<{
+							id: number;
+							gameId: number;
+							teamId: string;
+							accountId: number;
+							player: string;
+							characterFirstHalf: string | null;
+							characterSecondHalf: string | null;
+							score: number;
+							damageScore: number;
+							kills: number;
+							knocks: number;
+							deaths: number;
+							assists: number;
+							damage: number;
+						}>;
+					}>;
 				}>;
 				rounds: Array<{
 					id: number;
@@ -208,6 +250,21 @@
 			: 0
 	);
 
+	// Get total games count for the selected event
+	let totalGames = $derived(
+		selectedEventData
+			? Object.values(selectedEventData.stages).reduce(
+					(total, stageData) =>
+						total +
+						stageData.matches.reduce(
+							(matchTotal, match) => matchTotal + (match.games?.length || 0),
+							0
+						),
+					0
+				)
+			: 0
+	);
+
 	// Get sorted matches for a stage
 	function getSortedMatches(
 		matches: Array<{
@@ -240,6 +297,46 @@
 					id: string;
 				};
 				action?: string;
+			}>;
+			games: Array<{
+				id: number;
+				matchId: string;
+				mapId: string;
+				duration: number;
+				winner: number;
+				map: {
+					id: string;
+				};
+				teams: Array<{
+					gameId: number;
+					teamId: string;
+					position: number;
+					score: number;
+					team: {
+						id: string;
+						name: string;
+						slug: string;
+						abbr: string;
+						logo: string;
+						region: string;
+					};
+				}>;
+				playerScores: Array<{
+					id: number;
+					gameId: number;
+					teamId: string;
+					accountId: number;
+					player: string;
+					characterFirstHalf: string | null;
+					characterSecondHalf: string | null;
+					score: number;
+					damageScore: number;
+					kills: number;
+					knocks: number;
+					deaths: number;
+					assists: number;
+					damage: number;
+				}>;
 			}>;
 		}>
 	) {
@@ -280,6 +377,18 @@
 	// Helper function to get side text
 	function getSideText(side: number) {
 		return side === 0 ? 'Attack' : 'Defense';
+	}
+
+	// Helper function to format duration
+	function formatDuration(seconds: number): string {
+		const minutes = Math.floor(seconds / 60);
+		const remainingSeconds = seconds % 60;
+		return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+	}
+
+	// Helper function to get map name
+	function getMapName(mapId: string): string {
+		return MAP_2_NAME[mapId] || mapId;
 	}
 
 	// Helper function to determine score color
@@ -529,7 +638,7 @@
 			<h2 class="text-xl font-semibold">Matches for {selectedEventData.event.name}</h2>
 			<div class="flex items-center gap-4">
 				<div class="text-sm text-gray-400">
-					Total matches: {totalMatches}
+					{totalMatches} matches, {totalGames} games
 				</div>
 				<button
 					onclick={() => {
@@ -557,6 +666,9 @@
 					</h3>
 					<div class="flex items-center gap-4">
 						<span class="text-sm text-gray-400">{matches.length} matches</span>
+						<span class="text-sm text-gray-400">
+							{matches.reduce((total, match) => total + (match.games?.length || 0), 0)} games
+						</span>
 						<button
 							onclick={() => {
 								selectedStage = stage;
@@ -640,6 +752,7 @@
 								</th>
 								<th class="px-4 py-1 text-center">Matchup</th>
 								<th class="px-4 py-1">Maps</th>
+								<th class="px-4 py-1">Games</th>
 								<th class="sticky right-0 z-10 h-12 bg-gray-800 px-4 py-1">Actions</th>
 							</tr>
 						</thead>
@@ -762,6 +875,56 @@
 											{/each}
 										</div>
 									</td>
+									<td class="px-4 py-2">
+										<div class="flex flex-col gap-1.5">
+											{#each match.games.sort((a, b) => a.id - b.id) as game}
+												<div
+													class="flex items-center justify-between gap-2 rounded-lg bg-gray-700/50 px-3 py-1"
+												>
+													<div class="flex items-center gap-2">
+														<img
+															src={MAP_2_IMAGE[game.map.id]}
+															alt={getMapName(game.map.id)}
+															class="h-4 w-6 rounded object-cover"
+														/>
+														<span class="text-xs text-gray-300">{getMapName(game.map.id)}</span>
+														<span class="text-xs text-gray-500"
+															>({formatDuration(game.duration)})</span
+														>
+													</div>
+													<div class="flex items-center gap-2">
+														<span
+															class="text-xs font-semibold {getScoreColor(
+																game.teams[0]?.score ?? null,
+																game.teams[1]?.score ?? null,
+																0
+															)}">{game.teams[0]?.score ?? '-'}</span
+														>
+														<span class="text-xs text-gray-500">vs</span>
+														<span
+															class="text-xs font-semibold {getScoreColor(
+																game.teams[0]?.score ?? null,
+																game.teams[1]?.score ?? null,
+																1
+															)}">{game.teams[1]?.score ?? '-'}</span
+														>
+														{#if game.winner !== null}
+															<span
+																class="text-xs font-medium {game.winner === 0
+																	? 'text-yellow-500'
+																	: 'text-yellow-500'}"
+															>
+																({game.winner === 0 ? 'A' : 'B'} wins)
+															</span>
+														{/if}
+													</div>
+												</div>
+											{/each}
+											{#if match.games.length === 0}
+												<span class="text-xs text-gray-500 italic">No games recorded</span>
+											{/if}
+										</div>
+									</td>
 									<td class="sticky right-0 z-10 h-12 min-w-max bg-gray-800 whitespace-nowrap">
 										<div class="flex h-full items-center gap-2 border-l border-gray-700 px-4 py-1">
 											<button
@@ -775,6 +938,25 @@
 												title="Edit Match"
 											>
 												<IconParkSolidEdit class="h-4 w-4" />
+											</button>
+											<button
+												onclick={() => {
+													goto(
+														`/admin/matches?event=${selectedEventId}&action=newGame&matchId=${match.id}`,
+														{ replaceState: true }
+													);
+												}}
+												class="flex items-center gap-1 text-green-500 hover:text-green-400"
+												title="Add Game"
+											>
+												<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+													<path
+														stroke-linecap="round"
+														stroke-linejoin="round"
+														stroke-width="2"
+														d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+													></path>
+												</svg>
 											</button>
 											<button
 												onclick={() => {
