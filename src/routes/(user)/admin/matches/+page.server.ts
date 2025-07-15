@@ -502,7 +502,7 @@ export async function load({ locals, url }) {
 	};
 }
 
-export const actions = {
+const MATCH_ACTIONS = {
 	create: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
 		if (result.status === 'error') {
@@ -742,8 +742,10 @@ export const actions = {
 				error: 'Failed to delete match'
 			});
 		}
-	},
+	}
+};
 
+const STAGE_ACTIONS = {
 	createStage: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
 		if (result.status === 'error') {
@@ -939,8 +941,10 @@ export const actions = {
 				error: 'Failed to delete stage'
 			});
 		}
-	},
+	}
+};
 
+const STAGE_ROUND_ACTIONS = {
 	// New bracket structure actions
 	createStageRound: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
@@ -1141,8 +1145,10 @@ export const actions = {
 				error: 'Failed to delete stage round'
 			});
 		}
-	},
+	}
+};
 
+const STAGE_NODE_ACTIONS = {
 	createStageNode: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
 		if (result.status === 'error') {
@@ -1344,8 +1350,10 @@ export const actions = {
 				error: 'Failed to delete stage node'
 			});
 		}
-	},
+	}
+};
 
+const STAGE_NODE_DEPENDENCY_ACTIONS = {
 	createStageNodeDependency: async ({
 		request,
 		locals
@@ -1474,8 +1482,10 @@ export const actions = {
 				error: 'Failed to delete stage node dependency'
 			});
 		}
-	},
+	}
+};
 
+const GAME_ACTIONS = {
 	// Game management actions
 	createGame: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
@@ -1678,4 +1688,13 @@ export const actions = {
 			});
 		}
 	}
+};
+
+export const actions = {
+	...MATCH_ACTIONS,
+	...STAGE_ACTIONS,
+	...STAGE_ROUND_ACTIONS,
+	...STAGE_NODE_ACTIONS,
+	...STAGE_NODE_DEPENDENCY_ACTIONS,
+	...GAME_ACTIONS
 };
