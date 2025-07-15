@@ -923,6 +923,17 @@
 											{#if match.games.length === 0}
 												<span class="text-xs text-gray-500 italic">No games recorded</span>
 											{/if}
+											<!-- Add game area -->
+											<button
+												onclick={() =>
+													goto(
+														`/admin/matches?event=${selectedEventId}&action=newGame&matchId=${match.id}`,
+														{ replaceState: true }
+													)}
+												class="mt-2 w-full rounded-lg border border-emerald-500/30 bg-emerald-500/10 py-2 text-xs font-medium text-emerald-400 transition-all hover:bg-emerald-500/20 hover:text-emerald-300 active:scale-[0.98]"
+											>
+												+ Add game
+											</button>
 										</div>
 									</td>
 									<td class="sticky right-0 z-10 h-12 min-w-max bg-gray-800 whitespace-nowrap">
@@ -938,25 +949,6 @@
 												title="Edit Match"
 											>
 												<IconParkSolidEdit class="h-4 w-4" />
-											</button>
-											<button
-												onclick={() => {
-													goto(
-														`/admin/matches?event=${selectedEventId}&action=newGame&matchId=${match.id}`,
-														{ replaceState: true }
-													);
-												}}
-												class="flex items-center gap-1 text-green-500 hover:text-green-400"
-												title="Add Game"
-											>
-												<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-													<path
-														stroke-linecap="round"
-														stroke-linejoin="round"
-														stroke-width="2"
-														d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-													></path>
-												</svg>
 											</button>
 											<button
 												onclick={() => {
