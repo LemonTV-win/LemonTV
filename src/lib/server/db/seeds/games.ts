@@ -43,22 +43,27 @@ const GAME_CONFIG = {
 
 // Character pool for players
 const CHARACTERS = [
-	'Flavia',
-	'Ming',
-	'Celestia',
+	'Yvette',
 	'Nobunaga',
+	'Kokona',
+	'Michele',
+	'Flavia',
+	'Yugiri',
+	'Leona',
 	'Reiichi',
-	'Aria',
-	'Kai',
-	'Luna',
-	'Shadow',
-	'Phoenix',
-	'Void',
-	'Echo',
-	'Nova',
-	'Zen',
-	'Blitz',
-	'Frost'
+	'Lawine',
+	'Ming',
+	'Meredith',
+	'Eika',
+	'Kanami',
+	'Fragrans',
+	'Mara',
+	'Audrey',
+	'Celestia',
+	'Maddelena',
+	'Bai Mo',
+	'Fuschia',
+	'Galatea'
 ];
 
 // Player names for different teams
