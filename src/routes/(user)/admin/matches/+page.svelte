@@ -16,6 +16,7 @@
 	import StageEdit from './StageEdit.svelte';
 	import Modal from '$lib/components/Modal.svelte';
 	import BracketInput from './BracketInput.svelte';
+	import GameEdit from './GameEdit.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -227,6 +228,40 @@
 	let showBracketEdit = $state(false);
 	let errorMessage = $state('');
 	let successMessage = $state('');
+	let editingGame = $state<{
+		game?: any; // For editing, undefined for new
+		matchId: string;
+	} | null>(null);
+	let deletingGame = $state<{ game: any; matchId: string } | null>(null);
+	let isDeletingGame = $state(false);
+
+	function openGameModal(matchId: string, game?: any) {
+		editingGame = { game, matchId };
+	}
+	function closeGameModal() {
+		editingGame = null;
+	}
+
+	function openDeleteGameModal(game: any, matchId: string) {
+		deletingGame = { game, matchId };
+	}
+	function closeDeleteGameModal() {
+		deletingGame = null;
+		isDeletingGame = false;
+	}
+	async function handleDeleteGameSubmit() {
+		isDeletingGame = true;
+		try {
+			if (!deletingGame) return;
+			const formData = new FormData();
+			formData.append('id', deletingGame.game.id);
+			await fetch('?/deleteGame', { method: 'POST', body: formData });
+			closeDeleteGameModal();
+			window.location.reload();
+		} catch (e) {
+			isDeletingGame = false;
+		}
+	}
 
 	// Convert eventsByEvent to array and filter based on search query
 	let filteredEvents = $derived(
@@ -439,19 +474,10 @@
 		orcanus: m.orcanus()
 	};
 
-	function closeDeleteModal() {
-		showDeleteModal = false;
-		editingMatch = null;
-		// Clear the delete parameter but keep the edit state
-		const url = new URL(window.location.href);
-		url.searchParams.delete('delete');
-		goto(url.pathname + url.search, { replaceState: true });
-	}
-
 	function handleDeleteSubmit() {
 		return async ({ update }: { update: () => Promise<void> }) => {
 			await update();
-			closeDeleteModal();
+			closeDeleteGameModal();
 			goto(`/admin/matches?event=${selectedEventId}`, { replaceState: true });
 			window.location.reload();
 		};
@@ -878,8 +904,9 @@
 									<td class="px-4 py-2">
 										<div class="flex flex-col gap-1.5">
 											{#each match.games.sort((a, b) => a.id - b.id) as game}
-												<div
-													class="flex items-center justify-between gap-2 rounded-lg bg-gray-700/50 px-3 py-1"
+												<button
+													class="group flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg bg-gray-700/50 px-3 py-1 text-left transition-all hover:scale-[1.02] hover:bg-gray-600 hover:shadow-lg hover:shadow-gray-900/50"
+													onclick={() => openGameModal(match.id, game)}
 												>
 													<div class="flex items-center gap-2">
 														<img
@@ -918,18 +945,14 @@
 															</span>
 														{/if}
 													</div>
-												</div>
+												</button>
 											{/each}
 											{#if match.games.length === 0}
 												<span class="text-xs text-gray-500 italic">No games recorded</span>
 											{/if}
 											<!-- Add game area -->
 											<button
-												onclick={() =>
-													goto(
-														`/admin/matches?event=${selectedEventId}&action=newGame&matchId=${match.id}`,
-														{ replaceState: true }
-													)}
+												onclick={() => openGameModal(match.id)}
 												class="mt-2 w-full rounded-lg border border-emerald-500/30 bg-emerald-500/10 py-2 text-xs font-medium text-emerald-400 transition-all hover:bg-emerald-500/20 hover:text-emerald-300 active:scale-[0.98]"
 											>
 												+ Add game
@@ -1051,7 +1074,7 @@
 				<div class="flex justify-end gap-2">
 					<button
 						class="rounded-md bg-gray-700 px-4 py-2 font-medium text-white hover:bg-gray-600"
-						onclick={closeDeleteModal}
+						onclick={closeDeleteGameModal}
 					>
 						Cancel
 					</button>
@@ -1096,5 +1119,51 @@
 			onCancel={closeBracketEdit}
 			onSuccess={handleBracketSuccess}
 		/>
+	</Modal>
+{/if}
+
+<!-- Game Edit/Create Modal -->
+{#if editingGame}
+	<Modal
+		show={true}
+		title={editingGame.game ? 'Edit Game' : 'Add Game'}
+		onClose={closeGameModal}
+		dismissible={false}
+	>
+		<GameEdit
+			game={editingGame.game}
+			matchId={editingGame.matchId}
+			maps={data.maps.map((map) => ({ id: map.id, name: MAP_2_NAME[map.id] }))}
+			onCancel={closeGameModal}
+			onSuccess={closeGameModal}
+			teams={data.teams.map((team) => ({
+				id: team.id,
+				name: team.name,
+				logo: team.logo ?? undefined
+			}))}
+		/>
+	</Modal>
+{/if}
+
+<!-- Game Delete Modal -->
+{#if deletingGame}
+	<Modal show={true} title="Delete Game" onClose={closeDeleteGameModal} dismissible={false}>
+		<div class="p-4">
+			<p class="mb-4 text-slate-200">Are you sure you want to delete this game?</p>
+			<div class="flex justify-end gap-2">
+				<button
+					type="button"
+					class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
+					onclick={closeDeleteGameModal}
+					disabled={isDeletingGame}>Cancel</button
+				>
+				<button
+					type="button"
+					class="rounded-md bg-red-600 px-4 py-2 font-medium text-white hover:bg-red-700"
+					onclick={handleDeleteGameSubmit}
+					disabled={isDeletingGame}>{isDeletingGame ? 'Deleting...' : 'Delete'}</button
+				>
+			</div>
+		</div>
 	</Modal>
 {/if}

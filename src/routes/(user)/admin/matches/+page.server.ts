@@ -1503,6 +1503,45 @@ const GAME_ACTIONS = {
 			winner: parseInt(formData.get('winner') as string)
 		};
 
+		// Parse gameTeams
+		const gameTeams: Array<{ teamId: string; position: number; score: number }> = [];
+		for (let i = 0; i < 2; i++) {
+			const teamId = formData.get(`gameTeams[${i}].teamId`);
+			const position = formData.get(`gameTeams[${i}].position`);
+			const score = formData.get(`gameTeams[${i}].score`);
+			if (teamId && position !== null && score !== null) {
+				gameTeams.push({
+					teamId: String(teamId),
+					position: Number(position),
+					score: Number(score)
+				});
+			}
+		}
+
+		// Parse playerScores for both teams
+		const playerScores: any[] = [];
+		for (let t = 0; t < 2; t++) {
+			const prefix = t === 0 ? 'playerScoresA' : 'playerScoresB';
+			for (let i = 0; i < 5; i++) {
+				const player = formData.get(`${prefix}[${i}].player`);
+				if (!player) continue;
+				playerScores.push({
+					player: String(player),
+					characterFirstHalf: formData.get(`${prefix}[${i}].characterFirstHalf`) || '',
+					characterSecondHalf: formData.get(`${prefix}[${i}].characterSecondHalf`) || '',
+					score: Number(formData.get(`${prefix}[${i}].score`) || 0),
+					damageScore: Number(formData.get(`${prefix}[${i}].damageScore`) || 0),
+					kills: Number(formData.get(`${prefix}[${i}].kills`) || 0),
+					knocks: Number(formData.get(`${prefix}[${i}].knocks`) || 0),
+					deaths: Number(formData.get(`${prefix}[${i}].deaths`) || 0),
+					assists: Number(formData.get(`${prefix}[${i}].assists`) || 0),
+					damage: Number(formData.get(`${prefix}[${i}].damage`) || 0),
+					teamId: gameTeams[t]?.teamId || '',
+					gameId: undefined // will set after game insert
+				});
+			}
+		}
+
 		if (
 			!gameData.matchId ||
 			!gameData.mapId ||
@@ -1525,6 +1564,39 @@ const GAME_ACTIONS = {
 					winner: gameData.winner
 				})
 				.returning();
+
+			// Insert gameTeams
+			if (gameTeams.length) {
+				await db.insert(table.gameTeam).values(
+					gameTeams.map((gt) => ({
+						gameId: newGame.id,
+						teamId: gt.teamId,
+						position: gt.position,
+						score: gt.score
+					}))
+				);
+			}
+
+			// Insert playerScores
+			if (playerScores.length) {
+				await db.insert(table.gamePlayerScore).values(
+					playerScores.map((ps) => ({
+						gameId: newGame.id,
+						teamId: ps.teamId,
+						player: ps.player,
+						characterFirstHalf: ps.characterFirstHalf,
+						characterSecondHalf: ps.characterSecondHalf,
+						score: ps.score,
+						damageScore: ps.damageScore,
+						kills: ps.kills,
+						knocks: ps.knocks,
+						deaths: ps.deaths,
+						assists: ps.assists,
+						damage: ps.damage,
+						accountId: 0 // TODO: support accountId if needed
+					}))
+				);
+			}
 
 			// Add edit history
 			await db.insert(table.editHistory).values({
@@ -1567,6 +1639,45 @@ const GAME_ACTIONS = {
 			winner: parseInt(formData.get('winner') as string)
 		};
 
+		// Parse gameTeams
+		const gameTeams: Array<{ teamId: string; position: number; score: number }> = [];
+		for (let i = 0; i < 2; i++) {
+			const teamId = formData.get(`gameTeams[${i}].teamId`);
+			const position = formData.get(`gameTeams[${i}].position`);
+			const score = formData.get(`gameTeams[${i}].score`);
+			if (teamId && position !== null && score !== null) {
+				gameTeams.push({
+					teamId: String(teamId),
+					position: Number(position),
+					score: Number(score)
+				});
+			}
+		}
+
+		// Parse playerScores for both teams
+		const playerScores: any[] = [];
+		for (let t = 0; t < 2; t++) {
+			const prefix = t === 0 ? 'playerScoresA' : 'playerScoresB';
+			for (let i = 0; i < 5; i++) {
+				const player = formData.get(`${prefix}[${i}].player`);
+				if (!player) continue;
+				playerScores.push({
+					player: String(player),
+					characterFirstHalf: formData.get(`${prefix}[${i}].characterFirstHalf`) || '',
+					characterSecondHalf: formData.get(`${prefix}[${i}].characterSecondHalf`) || '',
+					score: Number(formData.get(`${prefix}[${i}].score`) || 0),
+					damageScore: Number(formData.get(`${prefix}[${i}].damageScore`) || 0),
+					kills: Number(formData.get(`${prefix}[${i}].kills`) || 0),
+					knocks: Number(formData.get(`${prefix}[${i}].knocks`) || 0),
+					deaths: Number(formData.get(`${prefix}[${i}].deaths`) || 0),
+					assists: Number(formData.get(`${prefix}[${i}].assists`) || 0),
+					damage: Number(formData.get(`${prefix}[${i}].damage`) || 0),
+					teamId: gameTeams[t]?.teamId || '',
+					gameId: gameData.id
+				});
+			}
+		}
+
 		if (
 			!gameData.id ||
 			!gameData.matchId ||
@@ -1604,6 +1715,43 @@ const GAME_ACTIONS = {
 				})
 				.where(eq(table.game.id, gameData.id));
 
+			// Delete existing gameTeams and playerScores
+			await db.delete(table.gameTeam).where(eq(table.gameTeam.gameId, gameData.id));
+			await db.delete(table.gamePlayerScore).where(eq(table.gamePlayerScore.gameId, gameData.id));
+
+			// Insert gameTeams
+			if (gameTeams.length) {
+				await db.insert(table.gameTeam).values(
+					gameTeams.map((gt) => ({
+						gameId: gameData.id,
+						teamId: gt.teamId,
+						position: gt.position,
+						score: gt.score
+					}))
+				);
+			}
+
+			// Insert playerScores
+			if (playerScores.length) {
+				await db.insert(table.gamePlayerScore).values(
+					playerScores.map((ps) => ({
+						gameId: gameData.id,
+						teamId: ps.teamId,
+						player: ps.player,
+						characterFirstHalf: ps.characterFirstHalf,
+						characterSecondHalf: ps.characterSecondHalf,
+						score: ps.score,
+						damageScore: ps.damageScore,
+						kills: ps.kills,
+						knocks: ps.knocks,
+						deaths: ps.deaths,
+						assists: ps.assists,
+						damage: ps.damage,
+						accountId: 0 // TODO: support accountId if needed
+					}))
+				);
+			}
+
 			// Add edit history
 			await db.insert(table.editHistory).values({
 				id: crypto.randomUUID(),
@@ -1615,7 +1763,9 @@ const GAME_ACTIONS = {
 					matchId: gameData.matchId,
 					mapId: gameData.mapId,
 					duration: gameData.duration,
-					winner: gameData.winner
+					winner: gameData.winner,
+					gameTeams,
+					playerScores
 				}),
 				editedBy: result.userId,
 				editedAt: new Date()
