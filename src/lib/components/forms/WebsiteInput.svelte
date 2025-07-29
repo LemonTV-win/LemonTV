@@ -22,7 +22,7 @@
 </script>
 
 <div class="space-y-4">
-	{#each websites as website, index}
+	{#each websites as website, index (website.url)}
 		<div class="flex items-center gap-4 rounded-lg border border-slate-700 bg-slate-800 p-4">
 			<div class="flex-1">
 				<label class="mb-2 block text-sm font-medium text-slate-300" for="website-url-{index}">

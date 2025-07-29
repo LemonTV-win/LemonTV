@@ -37,7 +37,7 @@
 	</div>
 
 	<ul>
-		{#each ongoingEvents as event}
+		{#each ongoingEvents as event (event.slug)}
 			<li>
 				<EventCard {event} detailed />
 			</li>
@@ -47,7 +47,7 @@
 	{#if upcomingEvents.length > 0}
 		<h2 class="my-4 text-xl font-bold">{m.upcoming()}</h2>
 		<ul class="flex flex-col gap-2">
-			{#each upcomingEvents as event}
+			{#each upcomingEvents as event (event.slug)}
 				<EventCard {event} detailed />
 			{/each}
 		</ul>
@@ -55,7 +55,7 @@
 
 	<h2 class="my-4 text-xl font-bold">{m.finished()}</h2>
 	<ul class="glass-card-container">
-		{#each finishedEvents as event}
+		{#each finishedEvents as event (event.slug)}
 			<li>
 				<EventCard {event} detailed />
 			</li>

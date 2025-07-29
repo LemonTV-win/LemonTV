@@ -81,7 +81,7 @@
 		<div class="flex items-center gap-2 py-2">
 			<IconRoles class="h-4 w-4 text-slate-400" />
 			<span class="text-slate-400">{m.roles()}:</span>
-			{#each data.user.roles as role}
+			{#each data.user.roles as role (role)}
 				{#if role === 'admin'}
 					<span class="ml-1 font-semibold text-yellow-400">{m.admin()}</span>
 				{:else if role === 'editor'}

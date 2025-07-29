@@ -35,7 +35,7 @@
 </script>
 
 <div class="flex flex-col gap-4">
-	{#each videos as video, i}
+	{#each videos as video, i (video.url)}
 		<div class="flex flex-col gap-2 rounded-lg border border-slate-700 bg-slate-800 p-4">
 			<div class="flex items-center justify-between">
 				<h4 class="text-lg font-medium text-slate-300">Video {i + 1}</h4>
@@ -56,7 +56,7 @@
 						bind:value={video.type}
 						class="rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 					>
-						{#each videoTypeOptions as type}
+						{#each videoTypeOptions as type (type)}
 							<option value={type}>{type}</option>
 						{/each}
 					</select>
@@ -71,7 +71,7 @@
 						bind:value={video.platform}
 						class="rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 					>
-						{#each videoPlatformOptions as platform}
+						{#each videoPlatformOptions as platform (platform)}
 							<option value={platform}>{platform}</option>
 						{/each}
 					</select>

@@ -5,7 +5,7 @@
 	import LogosBilibili from '~icons/ant-design/bilibili-outlined';
 	import LogosInstagram from '~icons/skill-icons/instagram';
 	import LogosTiktokIcon from '~icons/logos/tiktok-icon';
-	import LogosDiscord from '~icons/logos/discord-icon';
+	// TODO: import LogosDiscord from '~icons/logos/discord-icon';
 	import LogosFacebook from '~icons/logos/facebook';
 	import LogosLinkedin from '~icons/logos/linkedin-icon';
 	import LogosGithub from '~icons/logos/github-icon';
@@ -30,8 +30,8 @@
 
 {#if visibleSocialAccounts.length}
 	<div class="flex gap-0.5">
-		{#each visibleSocialAccounts as account}
-			{#each socialPlatforms as platform}
+		{#each visibleSocialAccounts as account (account.platformId)}
+			{#each socialPlatforms as platform (platform.id)}
 				{#if platform.id === account.platformId}
 					<a
 						href={platform.url_template

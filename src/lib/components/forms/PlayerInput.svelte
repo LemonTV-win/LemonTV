@@ -83,7 +83,7 @@
 				bind:value={newPlayer.role}
 				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 			>
-				{#each roles as role}
+				{#each roles as role (role)}
 					<option value={role}>{role}</option>
 				{/each}
 			</select>
@@ -127,7 +127,7 @@
 	{#if selectedPlayers.length > 0}
 		<div class="my-4 border-t border-slate-700"></div>
 		<div class="space-y-2">
-			{#each selectedPlayers as player}
+			{#each selectedPlayers as player (player.playerId)}
 				<div class="grid grid-cols-[auto_auto_auto_auto_auto] items-center gap-4">
 					<span class="text-sm text-slate-300">
 						{players.find((p) => p.id === player.playerId)?.name}

@@ -2,9 +2,9 @@ import { fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { eq } from 'drizzle-orm';
-import { processImageURL } from '$lib/server/storage';
 import { createTeam, updateTeam, deleteTeam } from '$lib/server/data/teams';
+import type { Region } from '$lib/data/game';
+import { processImageURL } from '$lib/server/storage';
 // import { importTeams } from '$lib/server/data/teams';
 
 export const load: PageServerLoad = async ({ url }) => {
@@ -65,7 +65,7 @@ export const actions = {
 				{
 					name,
 					logo: logo || undefined,
-					region: (region as any) || undefined,
+					region: region as Region | undefined,
 					slug: slug || undefined,
 					abbr: abbr || undefined,
 					aliases,
@@ -120,7 +120,7 @@ export const actions = {
 					id,
 					name,
 					logo: logo || undefined,
-					region: (region as any) || undefined,
+					region: region as Region | undefined,
 					slug: slug || undefined,
 					abbr: abbr || undefined,
 					aliases,
@@ -138,40 +138,6 @@ export const actions = {
 				error: 'Failed to update team'
 			});
 		}
-	},
-
-	import: async ({ request, locals }) => {
-		// if (!locals.user?.roles.includes('admin')) {
-		// 	return fail(403, {
-		// 		error: 'Insufficient permissions'
-		// 	});
-		// }
-		// const formData = await request.formData();
-		// const file = formData.get('file') as File;
-		// if (!file) {
-		// 	return fail(400, {
-		// 		error: 'No file provided'
-		// 	});
-		// }
-		// if (!locals.user?.id) {
-		// 	return fail(401, {
-		// 		error: 'Unauthorized'
-		// 	});
-		// }
-		// try {
-		// 	const text = await file.text();
-		// 	const teamsData = JSON.parse(text) as Record<string, import('$lib/data/teams').Team>;
-		// 	await importTeams(teamsData);
-		// 	return {
-		// 		success: true,
-		// 		message: `Successfully imported ${Object.keys(teamsData).length} teams`
-		// 	};
-		// } catch (e) {
-		// 	console.error('Error importing teams:', e);
-		// 	return fail(500, {
-		// 		error: 'Failed to import teams: ' + (e instanceof Error ? e.message : String(e))
-		// 	});
-		// }
 	},
 
 	delete: async ({ request, locals }) => {

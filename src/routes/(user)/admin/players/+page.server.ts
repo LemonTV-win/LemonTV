@@ -7,12 +7,10 @@ import {
 	deletePlayer,
 	getPlayersTeams
 } from '$lib/server/data/players';
-import type { Region } from '$lib/data/game';
 import type { Player } from '$lib/data/players';
 import type { TCountryCode } from 'countries-list';
-import { social_platform, player_social_account } from '$lib/server/db/schemas/game/social';
+import { social_platform } from '$lib/server/db/schemas/game/social';
 import { db } from '$lib/server/db';
-import { user } from '$lib/server/db/schemas/auth';
 import { getUsers } from '$lib/server/data/users';
 
 export const load: PageServerLoad = async ({ url }) => {
@@ -239,7 +237,7 @@ export const actions = {
 			}
 
 			// Import new players
-			for (const [id, playerData] of Object.entries(players)) {
+			for (const [_, playerData] of Object.entries(players)) {
 				await createPlayer(
 					{
 						name: playerData.name,

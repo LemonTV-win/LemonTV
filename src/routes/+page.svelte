@@ -21,9 +21,6 @@
 	let finishedEvents = $derived(
 		sortedEvents.filter((event) => event.status === 'finished').slice(0, 2)
 	);
-
-	// Get featured event (first ongoing event or first upcoming event)
-	let featuredEvent = $derived(ongoingEvents[0] || upcomingEvents[0]);
 </script>
 
 {#if !data.user}
@@ -70,7 +67,7 @@
 		<section class="flex flex-col gap-4">
 			{#if ongoingEvents.length > 0}
 				<ul class="flex flex-col gap-2">
-					{#each ongoingEvents as event}
+					{#each ongoingEvents as event, i (i)}
 						<EventCard {event} />
 					{/each}
 				</ul>
@@ -79,7 +76,7 @@
 			{#if upcomingEvents.length > 0}
 				<h3 class="mb-4 text-xl font-bold">{m.upcoming()}</h3>
 				<ul class="flex flex-col gap-2">
-					{#each upcomingEvents as event}
+					{#each upcomingEvents as event, i (i)}
 						<EventCard {event} />
 					{/each}
 				</ul>
@@ -88,7 +85,7 @@
 			<section>
 				<h3 class="mb-4 text-xl font-bold">{m.finished()}</h3>
 				<ul class="glass-card-container">
-					{#each finishedEvents as event}
+					{#each finishedEvents as event, i (i)}
 						<li>
 							<EventCard {event} />
 						</li>
@@ -106,7 +103,9 @@
 		<section class="flex flex-col">
 			<h3 class="mb-4 text-xl font-bold">{m.teams()}</h3>
 			<ul class="glass-card-container">
-				{#each data.teams.toSorted((a, b) => (b.wins ?? 0) - (a.wins ?? 0)).slice(0, 5) as team}
+				{#each data.teams
+					.toSorted((a, b) => (b.wins ?? 0) - (a.wins ?? 0))
+					.slice(0, 5) as team (team.id)}
 					<li>
 						<a
 							class={['grid grid-cols-[1fr_auto] items-center gap-2 px-4 py-2', 'glass-card']}
@@ -139,14 +138,16 @@
 		<div class="mt-4 flex flex-col">
 			<h3 class="my-4 text-xl font-bold">{m.players()}</h3>
 			<ul class="glass-card-container">
-				{#each data.players.toSorted((a, b) => b.rating - a.rating).slice(0, 5) as player}
+				{#each data.players
+					.toSorted((a, b) => b.rating - a.rating)
+					.slice(0, 5) as player (player.id)}
 					<li>
 						<a
 							href={`/players/${player.id}`}
 							class={['grid grid-cols-[1fr_auto] items-center gap-2 px-4 py-2', 'glass-card']}
 						>
 							<span class="flex items-baseline gap-2 text-white">
-								{#each player.nationalities as nationality}
+								{#each player.nationalities as nationality (nationality)}
 									<NationalityFlag {nationality} />
 								{/each}
 								{player.name}

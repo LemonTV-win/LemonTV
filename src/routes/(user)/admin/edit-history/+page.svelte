@@ -153,7 +153,7 @@
 				<div
 					class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-slate-700 bg-slate-800 py-1 shadow-lg"
 				>
-					{#each filteredUsers as user}
+					{#each filteredUsers as user (user.id)}
 						<button
 							class="w-full px-4 py-2 text-left text-white hover:bg-slate-700"
 							onmousedown={() => selectUser(user.username)}
@@ -279,7 +279,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each filteredRecords as record}
+				{#each filteredRecords as record, idx (idx)}
 					<tr>
 						<td class="px-4 py-1 text-white">{record.editHistory.tableName}</td>
 						<td class="max-w-32 truncate px-4 py-1 text-xs text-gray-300">
@@ -325,7 +325,7 @@
 
 	{#if data.totalCount > data.limit}
 		<div class="mt-4 flex justify-center gap-2">
-			{#each Array.from({ length: Math.ceil(data.totalCount / data.limit) }, (_, i) => i + 1) as pageNum}
+			{#each Array.from({ length: Math.ceil(data.totalCount / data.limit) }, (_, i) => i + 1) as pageNum (pageNum)}
 				<button
 					class="rounded-md px-3 py-1 text-sm {pageNum === currentPage
 						? 'bg-yellow-500 text-black'

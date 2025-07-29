@@ -5,7 +5,7 @@ const USERNAME_SCHEMA = z
 	.min(3, 'Username must be at least 3 characters')
 	.max(31, 'Username must be at most 31 characters')
 	.regex(
-		/^[\p{L}\p{N}_\-]+$/u,
+		/^[\p{L}\p{N}_-]+$/u,
 		'Username can only contain letters, numbers, punctuation, and underscores'
 	);
 

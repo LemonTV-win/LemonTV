@@ -84,7 +84,7 @@
 	>
 		<div class="flex items-center justify-between">
 			<nav class="m-2 flex gap-4 rounded-sm">
-				{#each data.match.maps as map, index}
+				{#each data.match.maps as map, index (index)}
 					<button
 						class="overflow-clip rounded-sm bg-gray-200/50"
 						onclick={() => (currentMapID = index)}

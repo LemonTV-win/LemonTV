@@ -31,7 +31,7 @@
 						<h1 class="flex flex-col items-center gap-2 text-center text-2xl font-bold">
 							<span class="text-white">{data.player.name}</span>
 							<span class="inline-flex flex-col gap-2">
-								{#each getAllNames(data.player).filter((name) => name !== data.player.name) as name}
+								{#each getAllNames(data.player).filter((name) => name !== data.player.name) as name (name)}
 									<span class="text-gray-400">({name})</span>
 								{/each}
 							</span>
@@ -45,7 +45,7 @@
 					</div>
 					{#if data.player.nationalities.length}
 						<p class="text-center text-gray-400">
-							{#each data.player.nationalities as nationality}
+							{#each data.player.nationalities as nationality (nationality)}
 								<NationalityFlag {nationality} showLabel />
 							{/each}
 						</p>
@@ -63,7 +63,7 @@
 						<div class="grid grid-cols-1 gap-4 py-4 sm:grid-cols-[auto_1fr]">
 							<h3 class="text-lg font-bold">{m.teams()}</h3>
 							<ul class="text-right">
-								{#each data.playerTeams as team}
+								{#each data.playerTeams as team (team.teams.slug)}
 									{#if team}
 										<li>
 											<a
@@ -99,7 +99,7 @@
 				<h3 class="mb-4 text-lg font-bold">{m.superstrings()}</h3>
 				<ul class="flex list-none flex-col gap-4">
 					{#if data.playerAgents.length > 0}
-						{#each data.playerAgents.toSorted((a, b) => b[1] - a[1]) as [character, count]}
+						{#each data.playerAgents.toSorted((a, b) => b[1] - a[1]) as [character, count] (character)}
 							{@const percentage =
 								(count / data.playerAgents.reduce((acc, [_, count]) => acc + count, 0)) * 100}
 							<li
@@ -131,7 +131,7 @@
 					<h2 class="my-5 text-xl font-bold">{m.attended_events()}</h2>
 					<ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
 						{#if data.playerEvents.length > 0}
-							{#each data.playerEvents as event}
+							{#each data.playerEvents as event (event.slug)}
 								{#if event}
 									<li
 										class="grid grid-rows-[auto] gap-2 overflow-hidden rounded-sm bg-gray-800 shadow-2xl"
@@ -156,7 +156,7 @@
 				<h2 class="my-5 text-xl font-bold">{m.recent_matches()}</h2>
 				<ul class="flex flex-col gap-2">
 					{#if data.playerMatches.length > 0}
-						{#each data.playerMatches.toSorted((a, b) => new Date(b.event.date).getTime() - new Date(a.event.date).getTime()) as match}
+						{#each data.playerMatches.toSorted((a, b) => new Date(b.event.date).getTime() - new Date(a.event.date).getTime()) as match (match.id)}
 							{#if match}
 								<MatchCard
 									{match}

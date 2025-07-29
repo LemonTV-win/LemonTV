@@ -163,7 +163,7 @@
 							>{m.region()}</label
 						>
 						<div id="nationality-filters" class="flex flex-wrap gap-2">
-							{#each uniqueNationalities as nationality}
+							{#each uniqueNationalities as nationality (nationality)}
 								{#if nationality}
 									<button
 										class={[
@@ -196,7 +196,7 @@
 							>{m.superstrings()}</label
 						>
 						<div id="superstring-filters" class="flex flex-wrap gap-2">
-							{#each uniqueSuperstrings as superstring}
+							{#each uniqueSuperstrings as superstring (superstring)}
 								<button
 									class={[
 										'flex items-center gap-1 rounded-full border-1 px-2 py-1 text-sm transition-colors',
@@ -327,23 +327,23 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each filtered as player}
+				{#each filtered as player (player.id)}
 					<tr>
 						<td class=" py-1 text-center">
-							{#each player.nationalities as nationality}
+							{#each player.nationalities as nationality (nationality)}
 								<NationalityFlag {nationality} />
 							{/each}
 						</td>
 						<td class="px-4 py-1">
 							<a class="flex items-baseline gap-1" href={`/players/${player.slug ?? player.id}`}
 								>{player.name}
-								{#each getAllNames(player).filter((name) => name !== player.name) as name}
+								{#each getAllNames(player).filter((name) => name !== player.name) as name (name)}
 									<span class="text-xs text-gray-400">({name})</span>
 								{/each}
 							</a>
 						</td>
 						<td class="px-4 py-1 text-sm">
-							{#each data.playersTeams[player.id ?? ''] as team, i}
+							{#each data.playersTeams[player.id ?? ''] as team, i (team.id)}
 								<a href={`/teams/${team.slug}`}>{team.name}</a
 								>{#if i < data.playersTeams[player.id ?? ''].length - 1}
 									<span class="mx-1 text-gray-400">|</span>
@@ -351,7 +351,7 @@
 							{/each}
 						</td>
 						<td class="hidden flex-wrap gap-1 sm:flex">
-							{#each data.playersAgents[player.id ?? ''] as superstring}
+							{#each data.playersAgents[player.id ?? ''] as superstring (superstring)}
 								<CharacterIcon character={superstring[0]} />
 							{/each}
 						</td>
@@ -384,7 +384,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					{#each countryStats as stat}
+					{#each countryStats as stat (stat.nationality)}
 						<tr>
 							<td class="px-4 py-2">
 								<div class="flex items-center gap-2">

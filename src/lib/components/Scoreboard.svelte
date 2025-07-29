@@ -20,7 +20,7 @@
 </script>
 
 {#snippet playerscores(scores: PlayerScore[], winner: boolean)}
-	{#each scores as score}
+	{#each scores as score (score.player)}
 		<tr>
 			<td class="max-w-5 text-center font-bold">
 				{#if mvps[0] === score.player || mvps[1] === score.player}
@@ -33,7 +33,7 @@
 			</td>
 			<td class="text-center">
 				<div class="flex items-center justify-center gap-2">
-					{#each score.characters as character}
+					{#each score.characters as character (character)}
 						<CharacterIcon {character} />
 					{/each}
 				</div>

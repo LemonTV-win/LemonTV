@@ -1,6 +1,8 @@
 import { TEAMS } from './teams';
 import { MATCHES } from './stages';
 import { GAME_ACCOUNTS } from './game-accounts';
+import type { GameTeam } from '../schema';
+import type { GamePlayerScore } from '../schema';
 
 // Game metadata and configuration
 const GAME_CONFIG = {
@@ -215,9 +217,15 @@ function getUniqueMapsForMatch(stageType: string, numGames: number): string[] {
 
 // Enhanced game generation function
 export function generateGames() {
-	const games: any[] = [];
-	const gameTeams: any[] = [];
-	const gamePlayerScores: any[] = [];
+	const games: {
+		id: number;
+		matchId: string;
+		mapId: string;
+		duration: number;
+		winner: number;
+	}[] = [];
+	const gameTeams: GameTeam[] = [];
+	const gamePlayerScores: GamePlayerScore[] = [];
 	let gameId = 1;
 	let playerScoreId = 1; // Global counter for unique player score IDs
 
@@ -324,7 +332,7 @@ function generatePlayerScore(
 	playerIndex: number,
 	isWinner: boolean,
 	uniqueId: number
-): any {
+) {
 	const baseScore = isWinner ? getRandomInt(200, 300) : getRandomInt(150, 250);
 	const kills = isWinner ? getRandomInt(12, 20) : getRandomInt(8, 15);
 	const deaths = isWinner ? getRandomInt(8, 14) : getRandomInt(12, 18);

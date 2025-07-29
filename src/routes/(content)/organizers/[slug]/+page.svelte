@@ -67,7 +67,7 @@
 		<div class="mt-8">
 			<h2 class="mb-4 text-2xl font-bold text-white">{m.organized_events()}</h2>
 			<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-				{#each events as event}
+				{#each events as event (event.slug)}
 					<a
 						href={`/events/${event.id}`}
 						class="glass-card group block overflow-hidden transition-transform hover:scale-[1.02]"

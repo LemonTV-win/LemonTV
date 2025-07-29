@@ -57,7 +57,7 @@
 			{m.no_casters()}
 		</div>
 	{:else}
-		{#each casters as caster, i}
+		{#each casters as caster, i (caster.playerId)}
 			<div class="flex flex-col gap-2 rounded-lg border border-slate-700 bg-slate-800 p-4">
 				<div class="flex items-center justify-between">
 					<h4 class="text-lg font-medium text-slate-300">Caster {i + 1}</h4>
@@ -99,7 +99,7 @@
 							onchange={(e) => updateCaster(i, 'role', e.currentTarget.value)}
 							class="rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 						>
-							{#each roleOptions as { value, label }}
+							{#each roleOptions as { value, label } (value)}
 								<option {value}>{label}</option>
 							{/each}
 						</select>

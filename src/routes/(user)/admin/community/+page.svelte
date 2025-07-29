@@ -186,7 +186,7 @@
 			</button>
 		</div>
 		<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-			{#each tagUsageCount as { tag, count }}
+			{#each tagUsageCount as { tag, count } (tag.id)}
 				<div
 					class="flex items-center justify-between rounded-lg border border-gray-700 bg-gray-800 p-4"
 				>
@@ -273,7 +273,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each filteredServers as server}
+				{#each filteredServers as server (server.id)}
 					<tr class="border-b border-gray-700 hover:bg-gray-700/50">
 						<td class="min-w-max overflow-hidden px-4 py-1">
 							<div class="flex items-center gap-3">
@@ -309,7 +309,7 @@
 						<td class="min-w-max overflow-hidden px-4 py-1">
 							{#if server.tags && server.tags.length > 0}
 								<div class="flex flex-wrap gap-2">
-									{#each server.tags as tag}
+									{#each server.tags as tag (tag.id)}
 										<CommunityTagComponent {tag} />
 									{/each}
 								</div>

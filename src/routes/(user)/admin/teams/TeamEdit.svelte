@@ -17,7 +17,6 @@
 	}>();
 
 	let newTeam = $state<Team>(team);
-	let isSubmitting = $state(false);
 	let errorMessage = $state('');
 	let successMessage = $state('');
 	let lastTeamName = $state(team.name || '');
@@ -62,18 +61,6 @@
 	);
 
 	let newAlias = $state('');
-	let newPlayer = $state<{
-		playerId: string;
-		role: string;
-		startedOn?: string;
-		endedOn?: string;
-		note?: string;
-	}>({
-		playerId: '',
-		role: 'active'
-	});
-
-	const roles = ['active', 'substitute', 'former', 'coach', 'manager', 'owner'];
 
 	function addAlias() {
 		if (newAlias && !aliases.includes(newAlias)) {
@@ -85,31 +72,12 @@
 	function removeAlias(alias: string) {
 		aliases = aliases.filter((a) => a !== alias);
 	}
-
-	function addPlayer() {
-		if (
-			newPlayer.playerId &&
-			!selectedPlayers.some((p: { playerId: string }) => p.playerId === newPlayer.playerId)
-		) {
-			selectedPlayers = [...selectedPlayers, { ...newPlayer }];
-			newPlayer = {
-				playerId: '',
-				role: 'active'
-			};
-		}
-	}
-
-	function removePlayer(playerId: string) {
-		selectedPlayers = selectedPlayers.filter((p: { playerId: string }) => p.playerId !== playerId);
-	}
 </script>
 
 <form
 	method="POST"
 	action={team.id ? '?/update' : '?/create'}
 	use:enhance={({ formData }) => {
-		isSubmitting = true;
-
 		// Add aliases data
 		formData.append('aliases', JSON.stringify(aliases));
 		// Add players data
@@ -118,7 +86,6 @@
 		console.log('[Admin][Teams][TeamEdit] Form data:', [...formData.entries()]);
 
 		return async ({ result }) => {
-			isSubmitting = false;
 			if (result.type === 'success') {
 				onCancel();
 			} else if (result.type === 'failure') {
@@ -127,7 +94,8 @@
 					'An error occurred';
 			} else if (result.type === 'error') {
 				errorMessage =
-					(result as { type: 'error'; error: any }).error?.message ?? 'An error occurred';
+					(result as { type: 'error'; error: { message: string } }).error?.message ??
+					'An error occurred';
 			}
 		};
 	}}
@@ -187,7 +155,7 @@
 					class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 				>
 					<option value="">{m.select_region()}</option>
-					{#each Object.entries( { NA: m.north_america(), EU: m.europe(), APAC: m.asia_pacific(), CN: m.china() } ) as [region, label]}
+					{#each Object.entries( { NA: m.north_america(), EU: m.europe(), APAC: m.asia_pacific(), CN: m.china() } ) as [region, label] (region)}
 						<option value={region}>{label}</option>
 					{/each}
 				</select>
@@ -236,7 +204,7 @@
 			</div>
 			<div id="aliases-section" class="mt-2 rounded-lg border border-slate-700 bg-slate-800 p-4">
 				<!-- <input type="hidden" id="aliases" name="aliases" value={aliases} /> -->
-				{#each aliases as alias, i}
+				{#each aliases as alias, i (i)}
 					<div
 						class="grid grid-cols-[1fr_auto] gap-4 {i > 0
 							? 'mt-4 border-t border-slate-700 pt-4'

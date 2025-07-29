@@ -5,6 +5,8 @@
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import type { ActionResult } from '@sveltejs/kit';
 	import Brackets from '$lib/components/Brackets.svelte';
+	import type { Team } from '$lib/data/teams';
+	import type { GameMap } from '$lib/data/game';
 
 	let {
 		stage,
@@ -29,7 +31,7 @@
 				teamId: string | null;
 				position: number;
 				score: number;
-				team: any;
+				team: Team;
 			}>;
 			maps: Array<{
 				id: number;
@@ -40,7 +42,9 @@
 				action: string | null;
 				map_picker_position: number;
 				side_picker_position: number;
-				map: any;
+				map: {
+					id: string;
+				};
 			}>;
 		}>;
 		rounds?: Array<{
@@ -107,7 +111,6 @@
 
 	// Available options
 	const roundTypes = [
-		'round',
 		'quarterfinals',
 		'semifinals',
 		'final',
@@ -223,7 +226,7 @@
 		rounds = [
 			...rounds,
 			{
-				type: 'round',
+				type: 'quarterfinals',
 				title: '',
 				bracket: 'upper',
 				isNew: true
@@ -612,10 +615,19 @@
 									team: match.teams[1]?.team?.name || '',
 									score: match.teams[1]?.score || 0
 								}
-							] as [any, any],
+							] as [
+								{
+									team: string;
+									score: number;
+								},
+								{
+									team: string;
+									score: number;
+								}
+							],
 							battleOf: (match.format as 'BO1' | 'BO3' | 'BO5') || 'BO1',
 							maps: match.maps.map((map) => ({
-								map: map.map,
+								map: map.map.id as GameMap,
 								pickerId: map.map_picker_position,
 								pickedSide: map.side === 0 ? 'Attack' : 'Defense'
 							}))
@@ -623,7 +635,15 @@
 						structure: {
 							rounds: rounds.map((round) => ({
 								id: round.id || 0,
-								type: round.type as any,
+								type: round.type as
+									| 'quarterfinals'
+									| 'semifinals'
+									| 'final'
+									| 'top16'
+									| 'group'
+									| 'thirdplace'
+									| 'lower'
+									| 'grandfinal',
 								title: round.title
 									? {
 											en: round.title,
@@ -674,7 +694,7 @@
 						class="inline-grid gap-4 pr-2 pb-2"
 						style="grid-template-columns: repeat({rounds.length + 1}, 200px);"
 					>
-						{#each rounds as round, roundIndex}
+						{#each rounds as round, roundIndex (round.id)}
 							<div class="flex flex-col items-center">
 								<div class="mb-2 text-center">
 									<button
@@ -701,8 +721,8 @@
 								</div>
 
 								<div class="flex w-full flex-col gap-2">
-									{#each nodes.filter((node) => node.roundId === (round.id || roundIndex)) as node, nodeIndex}
-										{@const match = matches.find((m: any) => m.id === node.matchId)}
+									{#each nodes.filter((node) => node.roundId === (round.id || roundIndex)) as node (node.id)}
+										{@const match = matches.find((m: (typeof matches)[0]) => m.id === node.matchId)}
 										{@const globalNodeIndex = nodes.findIndex((n) => n === node)}
 										<div class="relative">
 											<button
@@ -857,7 +877,7 @@
 						bind:value={selectedRoundIndex}
 						class="mt-1 block w-64 rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 					>
-						{#each rounds as round, roundIndex}
+						{#each rounds as round, roundIndex (round.id)}
 							<option value={roundIndex}>{round.title || round.type}</option>
 						{/each}
 						<option disabled>──────────</option>
@@ -880,7 +900,7 @@
 									bind:value={round.type}
 									class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 								>
-									{#each roundTypes as type}
+									{#each roundTypes as type (type)}
 										<option value={type}>{type}</option>
 									{/each}
 								</select>
@@ -909,7 +929,7 @@
 									bind:value={round.bracket}
 									class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 								>
-									{#each bracketTypes as bracket}
+									{#each bracketTypes as bracket (bracket)}
 										<option value={bracket}>{bracket}</option>
 									{/each}
 								</select>
@@ -926,7 +946,7 @@
 									class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 								>
 									<option value={undefined}>None</option>
-									{#each rounds.filter((r) => r.parallelGroup === undefined && r.id !== round.id) as availableRound}
+									{#each rounds.filter((r) => r.parallelGroup === undefined && r.id !== round.id) as availableRound (availableRound.id)}
 										<option value={availableRound.id}>
 											{availableRound.title || availableRound.type}
 										</option>
@@ -963,8 +983,8 @@
 						bind:value={selectedNodeIndex}
 						class="mt-1 block w-64 rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 					>
-						{#each nodes as node, nodeIndex}
-							{@const match = matches.find((m: any) => m.id === node.matchId)}
+						{#each nodes as node, nodeIndex (node.id)}
+							{@const match = matches.find((m: (typeof matches)[0]) => m.id === node.matchId)}
 							{@const round = rounds.find((r) => r.id === node.roundId || r.id === node.roundId)}
 							{@const team1Score = match?.teams[0]?.score || 0}
 							{@const team2Score = match?.teams[1]?.score || 0}
@@ -994,7 +1014,7 @@
 									class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 								>
 									<option value="">Select Match</option>
-									{#each getAvailableMatches(nodeIndex) as match}
+									{#each getAvailableMatches(nodeIndex) as match (match.id)}
 										{@const team1Score = match.teams[0]?.score || 0}
 										{@const team2Score = match.teams[1]?.score || 0}
 										<option value={match.id}>
@@ -1016,7 +1036,7 @@
 										bind:value={node.roundId}
 										class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 									>
-										{#each rounds as round, roundIndex}
+										{#each rounds as round, roundIndex (round.id)}
 											<option value={round.id || roundIndex}>
 												{round.title || round.type}
 											</option>
@@ -1063,7 +1083,7 @@
 								</button>
 							</div>
 
-							{#each node.dependencies as dep, depIndex}
+							{#each node.dependencies as dep, depIndex (dep.dependencyMatchId)}
 								<div
 									class="flex items-center gap-2 rounded border border-slate-600 bg-slate-700/50 p-2"
 								>
@@ -1073,7 +1093,7 @@
 										class="flex-1 rounded border border-slate-600 bg-slate-800 px-2 py-1 text-sm text-white"
 									>
 										<option value="">Select Match</option>
-										{#each getAvailableMatchesForDependencies(nodeIndex, depIndex) as match}
+										{#each getAvailableMatchesForDependencies(nodeIndex, depIndex) as match (match.id)}
 											{@const team1Score = match.teams[0]?.score || 0}
 											{@const team2Score = match.teams[1]?.score || 0}
 											<option value={match.id}>
@@ -1088,7 +1108,7 @@
 										bind:value={dep.outcome}
 										class="rounded border border-slate-600 bg-slate-800 px-2 py-1 text-sm text-white"
 									>
-										{#each outcomeTypes as outcome}
+										{#each outcomeTypes as outcome (outcome)}
 											<option value={outcome}>{outcome}</option>
 										{/each}
 									</select>

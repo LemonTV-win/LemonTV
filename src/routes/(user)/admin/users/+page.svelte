@@ -2,7 +2,6 @@
 	import type { PageServerData } from './$types';
 	import { m } from '$lib/paraglide/messages';
 	import { enhance } from '$app/forms';
-	import MaterialSymbolsCloseRounded from '~icons/material-symbols/close-rounded';
 	import type { Role } from '$lib/server/db/schema';
 	import { browser } from '$app/environment';
 
@@ -161,14 +160,14 @@
 							</tr>
 						</thead>
 						<tbody>
-							{#each filteredUsers as user}
+							{#each filteredUsers as user (user.id)}
 								<tr class="border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl">
 									<td class="px-4 py-1 text-white">{user.id}</td>
 									<td class="px-4 py-1 text-white">{user.username}</td>
 									<td class="px-4 py-1 text-white">{user.email}</td>
 									<td class="px-4 py-1">
 										<div class="flex flex-wrap gap-1.5 py-2">
-											{#each getUserRoles(user.id) as role}
+											{#each getUserRoles(user.id) as role (role.id)}
 												<form
 													method="POST"
 													action="?/updateRole"
@@ -206,7 +205,7 @@
 														name="roleId"
 														class="w-full min-w-30 rounded-md border border-slate-700 bg-slate-800 py-0.5 pl-2 text-sm text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 													>
-														{#each data.roles.filter((role) => !getUserRoles(user.id).some((r) => r.id === role.id)) as role}
+														{#each data.roles.filter((role) => !getUserRoles(user.id).some((r) => r.id === role.id)) as role (role.id)}
 															<option value={role.id}>{role.name}</option>
 														{/each}
 													</select>
@@ -313,7 +312,7 @@
 						<div class="mt-6">
 							<h4 class="mb-2 text-sm font-medium text-slate-300">{m.existing_roles()}</h4>
 							<div class="space-y-2">
-								{#each data.roles as role}
+								{#each data.roles as role (role.id)}
 									<div
 										class="flex items-center justify-between rounded-md border border-slate-700 bg-slate-800 p-2"
 									>

@@ -54,7 +54,7 @@
 			if (!response.ok) {
 				throw new Error(m.failed_to_load_history());
 			}
-			history = (await response.json()).map((entry: any) => ({
+			history = (await response.json()).map((entry: { editedAt: string }) => ({
 				...entry,
 				editedAt: new Date(Date.parse(entry.editedAt))
 			}));
@@ -193,7 +193,7 @@
 				<div class="mt-4">
 					<div class="mb-2 text-sm font-medium text-slate-400">{m.edit_types()}</div>
 					<div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-						{#each Object.entries(editTypes) as [type, count]}
+						{#each Object.entries(editTypes) as [type, count] (type)}
 							<div class="flex items-center justify-between rounded-md bg-slate-800/50 px-3 py-2">
 								<span class="text-sm text-slate-300">{type}</span>
 								<span class="text-sm font-medium text-slate-400">{count}</span>
@@ -206,13 +206,13 @@
 
 		<!-- Edit History Records -->
 		<div class="space-y-6">
-			{#each sortedDates as date}
+			{#each sortedDates as date (date)}
 				<div class="space-y-3">
 					<h3 class="text sticky top-0 z-10 bg-slate-900/95 py-2 font-medium text-slate-300">
 						{new Date(date).toLocaleDateString()}
 					</h3>
 					<div class="space-y-3">
-						{#each groupedHistory[date] as entry}
+						{#each groupedHistory[date] as entry (entry.id)}
 							<div class="rounded-lg border border-slate-800 bg-slate-900/95 p-4 shadow-lg">
 								<div
 									class="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"

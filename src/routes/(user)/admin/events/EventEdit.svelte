@@ -80,11 +80,6 @@
 
 	// Track selected teams
 	let selectedTeams = $state<string[]>([]);
-	// Track which teams are expanded
-	let expandedTeams = $state<Set<string>>(new Set());
-
-	// Group players by team
-	let playersByTeam = $state<Record<string, Player[]>>({});
 
 	// Load existing team players when editing an event
 	$effect(() => {
@@ -104,16 +99,6 @@
 					console.error('Failed to load team players:', e);
 				});
 		}
-	});
-
-	// Update playersByTeam when eventTeamPlayers changes
-	$effect(() => {
-		const grouped: Record<string, Player[]> = {};
-		teams.forEach((team) => {
-			// Get all players for this team
-			grouped[team.id] = players;
-		});
-		playersByTeam = grouped;
 	});
 
 	// Load existing casters when editing an event
@@ -157,79 +142,6 @@
 		}
 	});
 
-	function validateDateRange() {
-		if (!dateRange.start || !dateRange.end) {
-			errorMessage = 'Both start and end dates are required';
-			return false;
-		}
-		if (new Date(dateRange.start) > new Date(dateRange.end)) {
-			errorMessage = 'Start date must be before or equal to end date';
-			return false;
-		}
-		return true;
-	}
-
-	function addTeam(teamId: string) {
-		if (!selectedTeams.includes(teamId)) {
-			selectedTeams = [...selectedTeams, teamId];
-			// Add all players from the team by default, but only if they're not already assigned
-			const newTeamPlayers = teamPlayers
-				.filter((tp) => tp.teamId === teamId)
-				.filter(
-					(tp) =>
-						!eventTeamPlayers.some((etp) => etp.teamId === teamId && etp.playerId === tp.playerId)
-				)
-				.map((tp) => ({
-					teamId,
-					playerId: tp.playerId,
-					role: 'main' as const
-				}));
-			eventTeamPlayers = [...eventTeamPlayers, ...newTeamPlayers];
-			// Expand the team when adding it
-			expandedTeams.add(teamId);
-		}
-	}
-
-	function removeTeam(teamId: string) {
-		selectedTeams = selectedTeams.filter((id) => id !== teamId);
-		// Remove all players associated with this team
-		eventTeamPlayers = eventTeamPlayers.filter((tp) => tp.teamId !== teamId);
-		// Remove from expanded teams
-		expandedTeams.delete(teamId);
-	}
-
-	function toggleTeam(teamId: string) {
-		if (expandedTeams.has(teamId)) {
-			expandedTeams.delete(teamId);
-		} else {
-			expandedTeams.add(teamId);
-		}
-		expandedTeams = new Set(expandedTeams); // Trigger reactivity
-	}
-
-	function addTeamPlayer(teamId: string) {
-		eventTeamPlayers = [
-			...eventTeamPlayers,
-			{
-				teamId,
-				playerId: players?.length > 0 ? players[0].id : '',
-				role: 'main'
-			}
-		];
-	}
-
-	function removeTeamPlayer(teamPlayer: { teamId: string; playerId: string; role: string }) {
-		eventTeamPlayers = eventTeamPlayers.filter(
-			(tp) => !(tp.teamId === teamPlayer.teamId && tp.playerId === teamPlayer.playerId)
-		);
-	}
-
-	function updateTeamPlayer(index: number, field: 'teamId' | 'playerId' | 'role', value: string) {
-		eventTeamPlayers = eventTeamPlayers.map((tp, i) =>
-			i === index ? { ...tp, [field]: value } : tp
-		);
-	}
-
 	const statusOptions = ['upcoming', 'live', 'finished', 'cancelled', 'postponed'];
 	const serverOptions = {
 		strinova: 'Strinova',
@@ -237,50 +149,6 @@
 	};
 	const formatOptions = ['online', 'lan', 'hybrid'];
 	const regionOptions = ['Global', 'APAC', 'EU', 'CN', 'NA', 'SA', 'AF', 'OC'];
-	const roleOptions = ['main', 'sub', 'coach'];
-
-	// Helper function to get role counts for a team
-	function getTeamRoleCounts(teamId: string) {
-		const counts = { main: 0, sub: 0, coach: 0 };
-		eventTeamPlayers
-			.filter((tp) => tp.teamId === teamId)
-			.forEach((tp) => {
-				counts[tp.role as keyof typeof counts]++;
-			});
-		return counts;
-	}
-
-	// Helper function to check for duplicate players
-	function getPlayerValidationStatus(teamId: string, playerId: string) {
-		const sameTeamEntries = eventTeamPlayers.filter(
-			(tp) => tp.teamId === teamId && tp.playerId === playerId
-		);
-		const otherTeamEntries = eventTeamPlayers.filter(
-			(tp) => tp.teamId !== teamId && tp.playerId === playerId
-		);
-
-		const validations = [];
-
-		if (sameTeamEntries.length > 1) {
-			validations.push({
-				type: 'error',
-				message: 'This player appears multiple times in the same team'
-			});
-		}
-
-		if (otherTeamEntries.length > 0) {
-			const otherTeamNames = otherTeamEntries
-				.map((tp) => teams.find((t) => t.id === tp.teamId)?.name)
-				.filter(Boolean)
-				.join(', ');
-			validations.push({
-				type: 'warning',
-				message: `Player is already in other teams: ${otherTeamNames}`
-			});
-		}
-
-		return validations.length > 0 ? validations : null;
-	}
 
 	let results = $state<
 		Array<{
@@ -299,15 +167,12 @@
 			prizeCurrency: result.prizes[0]?.currency ?? 'Bablo'
 		}))
 	);
-
-	let isSubmitting = $state(false);
 </script>
 
 <form
 	method="POST"
 	action={event.id ? '?/update' : '?/create'}
 	use:enhance={({ formData }) => {
-		isSubmitting = true;
 		// Add results data
 		formData.append('results', JSON.stringify(results));
 		// Add websites data
@@ -319,7 +184,6 @@
 		// Add casters data
 		formData.append('casters', JSON.stringify(newEvent.casters));
 		return async ({ result }) => {
-			isSubmitting = false;
 			if (result.type === 'success') {
 				onsuccess();
 				onCancel();
@@ -397,7 +261,7 @@
 				required
 				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 			>
-				{#each Object.entries(serverOptions) as [server, label]}
+				{#each Object.entries(serverOptions) as [server, label] (server)}
 					<option value={server}>{label}</option>
 				{/each}
 			</select>
@@ -412,7 +276,7 @@
 				required
 				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 			>
-				{#each formatOptions as format}
+				{#each formatOptions as format (format)}
 					<option value={format}>{format}</option>
 				{/each}
 			</select>
@@ -427,7 +291,7 @@
 				required
 				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 			>
-				{#each regionOptions as region}
+				{#each regionOptions as region (region)}
 					<option value={region}>{region}</option>
 				{/each}
 			</select>
@@ -442,7 +306,7 @@
 				required
 				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 			>
-				{#each statusOptions as status}
+				{#each statusOptions as status (status)}
 					<option value={status}>{status}</option>
 				{/each}
 			</select>

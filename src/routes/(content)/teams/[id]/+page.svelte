@@ -57,13 +57,13 @@
 		</h2>
 		{#if data.team.players}
 			<ul class="flex flex-wrap gap-4">
-				{#each data.team.players.toSorted((a, b) => (data.teamMemberStatistics?.[b.id ?? '']?.rating ?? 0) - (data.teamMemberStatistics?.[a.id ?? '']?.rating ?? 0)) as player}
+				{#each data.team.players.toSorted((a, b) => (data.teamMemberStatistics?.[b.id ?? '']?.rating ?? 0) - (data.teamMemberStatistics?.[a.id ?? '']?.rating ?? 0)) as player (player.id)}
 					<li
 						class="gap-y- grid w-full min-w-32 grid-cols-[auto_1fr] grid-rows-[auto_auto] items-center gap-x-4 gap-y-2 rounded-sm bg-gray-800 px-2 py-2 sm:w-auto"
 					>
 						<PlayerAvatar {player} class="row-span-2 h-16 w-16 rounded-full" />
 						<a class="flex gap-1 px-1 text-lg font-semibold" href={`/players/${player.id}`}
-							>{player.name}{#each getAllNames(player).filter((name) => name !== player.name) as name}
+							>{player.name}{#each getAllNames(player).filter((name) => name !== player.name) as name (name)}
 								<span class="text-gray-400">
 									({name})
 								</span>
@@ -91,10 +91,10 @@
 									<div class="flex flex-wrap items-center justify-center -space-x-3">
 										{#each data.teamMemberStatistics[player.id].characters
 											.toSorted((a, b) => b[1] - a[1])
-											.map(([character, count]) => character)
+											.map(([character]) => character)
 											.slice(0, 3)
 											.concat(Array(3).fill(null))
-											.slice(0, 3) as character, i}
+											.slice(0, 3) as character, i (i)}
 											<CharacterIcon
 												{character}
 												class={`h-3 w-3 shadow-md ${i === 0 ? 'z-3' : i === 1 ? 'z-2' : 'z-1'}`}
@@ -117,7 +117,7 @@
 		</h2>
 		{#if data.teamMatches}
 			<ul class="grid grid-cols-1 gap-3">
-				{#each data.teamMatches.toSorted((a, b) => new Date(b.event.date).getTime() - new Date(a.event.date).getTime()) as match}
+				{#each data.teamMatches.toSorted((a, b) => new Date(b.event.date).getTime() - new Date(a.event.date).getTime()) as match (match.id)}
 					{#if match}
 						<MatchCard {match} event={match.event} teamIndex={match.teamIndex} teams={data.teams} />
 					{/if}

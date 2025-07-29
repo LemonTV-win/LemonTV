@@ -306,7 +306,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each filteredEvents as event}
+				{#each filteredEvents as event (event.id)}
 					<tr class="border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl">
 						<td class="min-w-max overflow-hidden px-4 py-1">
 							<div class="flex min-w-max items-center">
@@ -372,7 +372,7 @@
 						<td class="min-w-max px-4 py-1">
 							<div class="flex min-w-max flex-wrap gap-2">
 								{#if event.organizers.length}
-									{#each event.organizers as organizer}
+									{#each event.organizers as organizer (organizer.id)}
 										<OrganizerChip {organizer} />
 									{/each}
 								{:else}
@@ -383,7 +383,7 @@
 						<td class="min-w-max px-4 py-1">
 							<div class="flex min-w-max flex-wrap gap-2">
 								{#if event.websites?.length}
-									{#each event.websites as website}
+									{#each event.websites as website (website.url)}
 										<a
 											href={website.url}
 											target="_blank"

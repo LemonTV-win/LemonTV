@@ -70,7 +70,7 @@
 					</span>
 				</div>
 				<ul class="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
-					{#each team.players as player, i}
+					{#each team.players as player, i (player.id)}
 						<li in:fly={{ y: 20, duration: 300, delay: i * 50 }} out:fade={{ duration: 200 }}>
 							{#if player}
 								<a
@@ -83,7 +83,7 @@
 									>
 										{player.name}
 									</span>
-									{#each player.nationalities as nationality}
+									{#each player.nationalities as nationality (nationality)}
 										<NationalityFlag {nationality} class="h-5 w-5" />
 									{/each}
 									{#if player.rating}

@@ -9,7 +9,7 @@
 	import IconParkSolidSetting from '~icons/icon-park-solid/setting';
 	import type { Component } from 'svelte';
 
-	let { children, data }: LayoutProps = $props();
+	let { children }: LayoutProps = $props();
 	let isExpanded = $state(true);
 
 	function togglePanel() {

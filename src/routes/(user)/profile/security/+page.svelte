@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import type { PageServerData } from './$types';
 	import type { ActionResult } from '@sveltejs/kit';
 	import Eye from '~icons/lucide/eye';
 	import EyeOff from '~icons/lucide/eye-off';

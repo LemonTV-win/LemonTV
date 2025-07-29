@@ -142,7 +142,7 @@
 	<div class="mb-4">
 		<label class="block text-sm font-medium text-slate-300" for="tags-container">{m.tags()}</label>
 		<div id="tags-container" class="mt-2 flex flex-wrap gap-2">
-			{#each tags as tag}
+			{#each tags as tag (tag.id)}
 				<button
 					type="button"
 					class="rounded-full px-3 py-1 text-sm transition-colors"

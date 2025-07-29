@@ -8,7 +8,7 @@ import {
 	calculatePlayerKD
 } from '$lib/server/data/players';
 
-export const load: PageServerLoad = async ({ locals: { user }, url }) => {
+export const load: PageServerLoad = async ({ locals: { user } }) => {
 	const players = await getPlayers();
 
 	const playersTeams = await getPlayersTeams();

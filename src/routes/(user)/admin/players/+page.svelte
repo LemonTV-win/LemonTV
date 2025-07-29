@@ -439,7 +439,7 @@
 							>{m.region()}</label
 						>
 						<div id="nationality-filters" class="flex flex-wrap gap-2">
-							{#each uniqueNationalities as nationality}
+							{#each uniqueNationalities as nationality (nationality)}
 								{#if nationality}
 									<button
 										class={[
@@ -499,7 +499,7 @@
 				max-height: 240px;
 			"
 		>
-			{#each filteredTeams as team}
+			{#each filteredTeams as team (team)}
 				<button
 					class="w-full px-4 py-2 text-left text-sm text-gray-300 hover:bg-slate-700"
 					onmousedown={() => {
@@ -608,7 +608,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each filteredPlayers as player}
+				{#each filteredPlayers as player (player.id)}
 					<tr class="border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl">
 						<td
 							class="max-w-16 truncate px-4 py-1 font-mono text-xs text-gray-300"
@@ -628,21 +628,21 @@
 									class="flex flex-col text-sm whitespace-nowrap text-gray-400"
 									title={m.aliases()}
 								>
-									{#each player.aliases as alias}
+									{#each player.aliases as alias (alias)}
 										<span>{alias}</span>
 									{/each}
 								</div>
 							{/if}
 						</td>
 						<td class="max-w-6 px-4 py-1 text-gray-300">
-							{#each player.nationalities as nationality}
+							{#each player.nationalities as nationality (nationality)}
 								<NationalityFlag {nationality} />
 							{/each}
 						</td>
 						<td class="px-4 py-1 text-gray-300">
 							{#if player.gameAccounts?.length}
 								<ul>
-									{#each player.gameAccounts as account}
+									{#each player.gameAccounts as account (account.accountId)}
 										<li class="break-keep whitespace-nowrap">
 											<span class="text-xs text-gray-400">{account.accountId}</span>
 											{account.currentName}
@@ -669,7 +669,7 @@
 						<td class="px-4 py-1 text-gray-300">
 							{#if data.playersTeams[player.id ?? '']?.length}
 								<ul>
-									{#each data.playersTeams[player.id ?? ''] as team}
+									{#each data.playersTeams[player.id ?? ''] as team (team.id)}
 										<li class="break-keep whitespace-nowrap">
 											<a href={`/teams/${team.slug}`} class="text-yellow-500 hover:text-yellow-400">
 												{team.name}

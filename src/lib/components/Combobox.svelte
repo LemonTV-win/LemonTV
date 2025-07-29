@@ -151,14 +151,14 @@
 		<div
 			class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-slate-700 bg-slate-800 py-1 shadow-lg"
 		>
-			{#each currentItems as group}
+			{#each currentItems as group (group.id)}
 				{#if group.items && group.items.length > 0}
 					{#if group.label}
 						<div class="px-3 py-1 text-xs font-medium text-slate-400">
 							{group.label}
 						</div>
 					{/if}
-					{#each group.items as item}
+					{#each group.items as item (item.id)}
 						<button
 							type="button"
 							class="w-full px-4 py-2 text-left text-sm text-white hover:bg-slate-700"

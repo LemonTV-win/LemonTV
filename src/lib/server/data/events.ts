@@ -15,6 +15,7 @@ import type { UserRole } from '$lib/data/user';
 import type { TCountryCode } from 'countries-list';
 import type { Participant } from '$lib/data/matches';
 import type { EssentialEvent } from '$lib/components/EventCard.svelte';
+import type { GameMap } from '$lib/data/game';
 
 // Types for the application layer
 export interface EventWithOrganizers extends Event {
@@ -62,6 +63,28 @@ export interface EventCasterData {
 
 export interface UpdateEventTeamPlayerData extends EventTeamPlayerData {
 	id?: string;
+}
+
+// Type for event field changes
+export interface EventFieldChange {
+	from: Event[keyof Event];
+	to: Event[keyof Event];
+}
+
+// Type for match data structure
+export interface EventMatchData {
+	id: string;
+	teams: Array<{
+		team: string;
+		score: number;
+	} | null>;
+	maps: Array<{
+		map: string;
+		map_picker_position: number;
+		side: number;
+	}>;
+	format: string | null;
+	stageId: number | null;
 }
 
 // Convert database event to application event with organizers
@@ -127,8 +150,8 @@ export function toDatabaseEventVideos(
 export function getEventChanges(
 	oldEvent: Event,
 	newData: UpdateEventData
-): Record<string, { from: any; to: any }> {
-	const changes: Record<string, { from: any; to: any }> = {};
+): Record<string, EventFieldChange> {
+	const changes: Record<string, EventFieldChange> = {};
 
 	Object.entries(newData).forEach(([key, value]) => {
 		if (
@@ -138,7 +161,7 @@ export function getEventChanges(
 		) {
 			changes[key] = {
 				from: oldEvent[key as keyof Event],
-				to: value
+				to: value as Event[keyof Event]
 			};
 		}
 	});
@@ -535,7 +558,7 @@ export async function getEvents(
 				});
 
 				// Query all matches for this event
-				let eventMatches: any[] = [];
+				let eventMatches: EventMatchData[] = [];
 				if (allMatchIds.size > 0) {
 					const matchData = await db
 						.select({
@@ -545,11 +568,11 @@ export async function getEvents(
 						})
 						.from(table.match)
 						.leftJoin(table.matchTeam, eq(table.matchTeam.matchId, table.match.id))
-						.leftJoin(table.team, eq(table.matchTeam.teamId, table.team.id))
+						.leftJoin(table.team, eq(table.team.id, table.matchTeam.teamId))
 						.where(inArray(table.match.id, Array.from(allMatchIds)));
 
 					// Group match data by match ID
-					const matchMap = new Map<string, any>();
+					const matchMap = new Map<string, EventMatchData>();
 					matchData.forEach(({ match, matchTeam, team }) => {
 						if (!matchMap.has(match.id)) {
 							matchMap.set(match.id, {
@@ -561,10 +584,12 @@ export async function getEvents(
 						}
 						if (team && matchTeam && matchTeam.position !== null) {
 							const matchObj = matchMap.get(match.id);
-							matchObj.teams[matchTeam.position] = {
-								team: team.abbr || team.name,
-								score: matchTeam.score || 0
-							};
+							if (matchObj) {
+								matchObj.teams[matchTeam.position] = {
+									team: team.abbr || team.name,
+									score: matchTeam.score || 0
+								};
+							}
 						}
 					});
 					eventMatches = Array.from(matchMap.values());
@@ -632,14 +657,11 @@ export async function getEvents(
 											] as [Participant, Participant],
 											battleOf: match.format as 'BO1' | 'BO3' | 'BO5',
 											maps: (match.maps || []).map(
-												(map: { map: string; map_picker_position: number; side: number }) => ({
-													map: {
-														id: map.map,
-														name: map.map,
-														image: `/maps/${map.map}.png`
-													},
-													pickerId: map.map_picker_position,
-													pickedSide: map.side === 0 ? 'Attack' : 'Defense'
+												(mapData: { map: string; map_picker_position: number; side: number }) => ({
+													map: mapData.map as GameMap,
+													pickerId: mapData.map_picker_position,
+													pickedSide:
+														mapData.side === 0 ? ('Attack' as const) : ('Defense' as const)
 												})
 											)
 										}));

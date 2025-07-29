@@ -61,9 +61,7 @@
 	let successMessage = $state('');
 
 	const formatOptions = ['BO1', 'BO3', 'BO5'];
-	const sideOptions = ['Attack', 'Defense'];
 	const mapActionOptions = ['pick', 'ban', 'decider', 'set'] as const;
-	type MapAction = (typeof mapActionOptions)[number] | null;
 
 	const MAP_2_NAME: Record<string, string> = {
 		base_404: m.base_404(),
@@ -177,9 +175,9 @@
 				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 			>
 				<option value={null}>{m.select_stage()}</option>
-				{#each [...stagesByEvent] as [eventName, eventStages]}
+				{#each [...stagesByEvent] as [eventName, eventStages] (eventName)}
 					<optgroup label={eventName}>
-						{#each eventStages as stage}
+						{#each eventStages as stage (stage.id)}
 							<option value={stage.id}>{stage.name}</option>
 						{/each}
 					</optgroup>
@@ -197,7 +195,7 @@
 				bind:value={newMatch.format}
 				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 			>
-				{#each formatOptions as format}
+				{#each formatOptions as format (format)}
 					<option value={format}>{format}</option>
 				{/each}
 			</select>
@@ -206,7 +204,7 @@
 		<fieldset>
 			<legend class="block text-sm font-medium text-slate-300">{m.teams()}</legend>
 			<div class="mt-2 space-y-4">
-				{#each teamData as team, position}
+				{#each teamData as team, position (team.teamId)}
 					<div class="rounded-lg border border-slate-700 bg-slate-800 p-4">
 						<div class="grid grid-cols-[1fr_auto_auto] gap-4">
 							<div>
@@ -271,7 +269,7 @@
 		<fieldset>
 			<legend class="block text-sm font-medium text-slate-300">{m.maps()}</legend>
 			<div class="mt-2 space-y-4">
-				{#each mapData as map, index}
+				{#each mapData as map, index (map.mapId)}
 					<div class="rounded-lg border border-slate-700 bg-slate-800 p-4">
 						<div class="grid grid-cols-[1fr_1fr_1fr_auto] gap-4">
 							<div>
@@ -285,7 +283,7 @@
 									class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 								>
 									<option value={null}>{m.select_map()}</option>
-									{#each maps as mapOption}
+									{#each maps as mapOption (mapOption.id)}
 										<option value={mapOption.id}>{MAP_2_NAME[mapOption.id]}</option>
 									{/each}
 								</select>
@@ -301,7 +299,7 @@
 									class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 								>
 									<option value={null}>{m.none()}</option>
-									{#each mapActionOptions as action}
+									{#each mapActionOptions as action (action)}
 										<option value={action}>{action}</option>
 									{/each}
 								</select>

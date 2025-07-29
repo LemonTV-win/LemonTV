@@ -39,7 +39,7 @@
 		}
 	}
 
-	function getSegmentLabel(segment: string, index: number): string {
+	function getSegmentLabel(segment: string): string {
 		if (segment === pathSegments[0] && parentTitle) {
 			return parentTitle;
 		}
@@ -67,7 +67,7 @@
 		<MaterialSymbolsChevronRightRounded class="h-4 w-4" />
 	{/if}
 
-	{#each displaySegments as segment, i}
+	{#each displaySegments as segment, i (segment)}
 		{#if i === displaySegments.length - 1}
 			<span class="text-white">{currentTitle ?? getBreadcrumbLabel(segment)}</span>
 		{:else}
@@ -75,7 +75,7 @@
 				href={getSegmentUrl(displaySegments, i)}
 				class="transition-all duration-200 hover:text-white"
 			>
-				{getSegmentLabel(segment, i)}
+				{getSegmentLabel(segment)}
 			</a>
 			<MaterialSymbolsChevronRightRounded class="h-4 w-4" />
 		{/if}

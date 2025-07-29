@@ -4,7 +4,6 @@
 	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
 	import { invalidateAll } from '$app/navigation';
-	import MaterialSymbolsFilterListRounded from '~icons/material-symbols/filter-list-rounded';
 	import MaterialSymbolsSearchRounded from '~icons/material-symbols/search-rounded';
 	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
 	import TypcnArrowUnsorted from '~icons/typcn/arrow-unsorted';
@@ -13,7 +12,7 @@
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import { goto } from '$app/navigation';
 	import MatchEdit from './MatchEdit.svelte';
-	import type { Match, MatchTeam, MatchMap } from '$lib/server/db/schema';
+	import type { Match, MatchTeam, MatchMap, Team } from '$lib/server/db/schema';
 	import StageEdit from './StageEdit.svelte';
 	import Modal from '$lib/components/Modal.svelte';
 	import BracketEdit from './BracketEdit.svelte';
@@ -119,6 +118,8 @@
 							abbr: string;
 							logo: string;
 							region: string;
+							createdAt: Date | null;
+							updatedAt: Date | null;
 						};
 					}>;
 					maps: Array<{
@@ -233,7 +234,13 @@
 	let errorMessage = $state('');
 	let successMessage = $state('');
 	let editingGame = $state<{
-		game?: any; // For editing, undefined for new
+		game?: {
+			id: number;
+			matchId: string;
+			mapId: string;
+			duration: number;
+			winner: number;
+		}; // For editing, undefined for new
 		matchId: string;
 		matchTeamA: { id: string; name: string; logo?: string };
 		matchTeamB: { id: string; name: string; logo?: string };
@@ -273,9 +280,6 @@
 		invalidateAll();
 	}
 
-	function openDeleteGameModal(game: any, matchId: string) {
-		deletingGame = { game, matchId };
-	}
 	function closeDeleteGameModal() {
 		deletingGame = null;
 		isDeletingGame = false;
@@ -527,19 +531,6 @@
 		};
 	}
 
-	function handleEventChange(eventId: string) {
-		selectedEvent = eventId;
-		selectedStage = undefined;
-	}
-
-	function handleStageSelect(stage: { id: number; title: string; stage: string; format: string }) {
-		selectedStage = stage;
-	}
-
-	function openStageEdit() {
-		showStageEdit = true;
-	}
-
 	function closeStageEdit() {
 		showStageEdit = false;
 		successMessage = '';
@@ -586,7 +577,11 @@
 						teamId: team.teamId,
 						position: team.position ?? 0,
 						score: team.score ?? 0,
-						team: team.team
+						team: {
+							...team.team,
+							createdAt: team.team.createdAt || null,
+							updatedAt: team.team.updatedAt || null
+						} as Team
 					})),
 					maps: match.maps.map((map) => ({
 						id: map.id,
@@ -638,7 +633,7 @@
 	</div>
 
 	<div class="mb-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-		{#each filteredEvents as event}
+		{#each filteredEvents as event (event.id)}
 			<button
 				class="flex items-start gap-4 rounded-lg border p-4 text-left transition-all {selectedEventId ===
 				event.id
@@ -720,7 +715,7 @@
 				</button>
 			</div>
 		</div>
-		{#each Object.entries(selectedEventData.stages) as [stageId, { stage, matches }]}
+		{#each Object.entries(selectedEventData.stages) as [stageId, { stage, matches }] (stageId)}
 			<div class="mb-8">
 				<div class="mb-4 flex items-center justify-between">
 					<h3 class="text-lg font-semibold">
@@ -838,7 +833,7 @@
 							</tr>
 						</thead>
 						<tbody>
-							{#each getSortedMatches(matches) as match}
+							{#each getSortedMatches(matches) as match (match.id)}
 								<tr class="border-b border-gray-700 hover:bg-gray-700/50">
 									<td class="min-w-max px-4 py-1 whitespace-nowrap">
 										<a
@@ -907,7 +902,7 @@
 									<!-- Maps -->
 									<td class="min-w-64 px-4 py-2">
 										<div class="flex flex-col gap-1.5">
-											{#each match.maps.sort((a, b) => a.order - b.order) as map}
+											{#each match.maps.sort((a, b) => a.order - b.order) as map (map.id)}
 												<div class="flex items-center gap-2 whitespace-nowrap">
 													<div class="relative">
 														<img

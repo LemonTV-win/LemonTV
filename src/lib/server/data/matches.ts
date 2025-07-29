@@ -22,7 +22,7 @@ export async function getMatch(id: string): Promise<(AppMatch & { event: Event }
 		return null;
 	}
 
-	const { format, stageId } = match.match;
+	const { format } = match.match;
 
 	// Get teams data
 	const teams = await db

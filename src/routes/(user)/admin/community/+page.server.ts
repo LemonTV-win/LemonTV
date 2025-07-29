@@ -1,5 +1,4 @@
 import { fail, redirect } from '@sveltejs/kit';
-import { z } from 'zod';
 import {
 	getDiscordServers,
 	createDiscordServer,
@@ -16,18 +15,6 @@ import {
 import { randomUUID } from 'crypto';
 import type { PageServerLoad, Actions } from './$types';
 import type { DiscordServer, CommunityTag } from '$lib/server/db/schemas/about/community';
-
-const serverSchema = z.object({
-	id: z.string(),
-	title: z.string().min(1),
-	url: z.string().url(),
-	icon: z.string().url(),
-	description: z.string().min(1),
-	additionalLinkText: z.string().nullable(),
-	additionalLinkUrl: z.string().url().nullable(),
-	createdAt: z.date(),
-	updatedAt: z.date()
-});
 
 export const load: PageServerLoad = async ({ locals, url }) => {
 	const user = locals.user;

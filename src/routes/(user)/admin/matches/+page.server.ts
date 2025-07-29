@@ -1,7 +1,7 @@
 import { error, fail } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { desc, eq, inArray } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 import { processImageURL } from '$lib/server/storage';
 import type { TCountryCode } from 'countries-list';
 import type { Region } from '$lib/data/game';

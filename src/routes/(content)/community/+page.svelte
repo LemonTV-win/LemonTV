@@ -78,7 +78,7 @@
 
 	<h2 class="text-xl font-bold">Discord</h2>
 	<div class="m-4 grid grid-cols-1 gap-4 p-2 sm:grid-cols-2 lg:grid-cols-3">
-		{#each data.discordServers as link}
+		{#each data.discordServers as link (link.url)}
 			<div
 				class="glass-card group flex items-start gap-3 rounded-lg p-4 transition-all hover:bg-white/5"
 			>
@@ -100,7 +100,7 @@
 						{/if}
 						{#if link.tags && link.tags.length > 0}
 							<div class="mt-2 flex flex-wrap gap-2">
-								{#each sortTagsByCategory(link.tags) as tag}
+								{#each sortTagsByCategory(link.tags) as tag (tag.id)}
 									<CommunityTagComponent {tag} />
 								{/each}
 							</div>
@@ -127,7 +127,7 @@
 
 	<h2 class="text-xl font-bold">{m.tools_resources()}</h2>
 	<ul class="m-4 flex flex-col flex-wrap gap-4 p-2">
-		{#each toolsAndResources as resource}
+		{#each toolsAndResources as resource (resource.url)}
 			<li class="glass-card rounded-lg p-4">
 				<a
 					href={resource.url}
@@ -143,7 +143,7 @@
 
 	<h2 class="text-xl font-bold">Forums</h2>
 	<ul class="m-4 flex flex-col flex-wrap gap-4 p-2">
-		{#each forums as forum}
+		{#each forums as forum (forum.url)}
 			<li class="glass-card rounded-lg p-4">
 				<a
 					href={forum.url}
@@ -156,7 +156,7 @@
 
 	<h2 class="text-xl font-bold">Speedrun</h2>
 	<ul class="m-4 flex flex-col flex-wrap gap-4 p-2">
-		{#each speedrunLinks as link}
+		{#each speedrunLinks as link (link.url)}
 			<li class="glass-card rounded-lg p-4">
 				<a
 					href={link.url}

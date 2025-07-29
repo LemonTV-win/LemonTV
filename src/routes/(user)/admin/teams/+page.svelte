@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { Team, TeamPlayer, TeamAlias } from '$lib/server/db/schemas/game/team';
-	import type { Player } from '$lib/data/players';
 	import { goto } from '$app/navigation';
 	import { m } from '$lib/paraglide/messages';
 
@@ -139,16 +138,6 @@
 
 	function getTeamAliases(teamId: string) {
 		return data.teamAliases.filter((ta: TeamAlias) => ta.teamId === teamId);
-	}
-
-	function getPlayerName(playerId: string) {
-		const player = (data as any).players?.find((p: Player) => p.id === playerId);
-		return player?.name || playerId;
-	}
-
-	function getPlayerSlug(playerId: string) {
-		const player = (data as any).players?.find((p: Player) => p.id === playerId);
-		return player?.slug || playerId;
 	}
 
 	async function handleImport(event: Event) {
@@ -375,7 +364,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each filteredTeams as team}
+				{#each filteredTeams as team (team.id)}
 					<tr class="border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl">
 						<td class="max-w-32 truncate px-4 py-1 font-mono text-xs text-gray-300" title={team.id}>
 							{team.id}
@@ -405,7 +394,7 @@
 						<td class="px-4 py-1 text-gray-300">
 							{#if getTeamPlayers(team.id)?.length}
 								<ul class="list-inside">
-									{#each getTeamPlayers(team.id) as player}
+									{#each getTeamPlayers(team.id) as player (player.playerId)}
 										{@const playerObj = data.players?.find((p) => p.id === player.playerId)}
 										{#if playerObj}
 											<li>
@@ -429,7 +418,7 @@
 						<td class="px-4 py-1 text-gray-300">
 							{#if getTeamAliases(team.id)?.length}
 								<div class="flex flex-wrap gap-1">
-									{#each getTeamAliases(team.id) as alias}
+									{#each getTeamAliases(team.id) as alias (alias.alias)}
 										<span
 											class="inline-flex items-center rounded-full bg-gray-700 px-2 py-0.5 text-xs font-medium text-gray-200"
 										>

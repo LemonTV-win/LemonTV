@@ -5,7 +5,7 @@
 	import LogosBilibili from '~icons/ant-design/bilibili-outlined';
 	import LogosInstagram from '~icons/skill-icons/instagram';
 	import LogosTiktokIcon from '~icons/logos/tiktok-icon';
-	import LogosDiscord from '~icons/logos/discord-icon';
+	// TODO: import LogosDiscord from '~icons/logos/discord-icon';
 	import LogosFacebook from '~icons/logos/facebook';
 	import LogosLinkedin from '~icons/logos/linkedin-icon';
 	import LogosGithub from '~icons/logos/github-icon';
@@ -19,7 +19,7 @@
 		onChange
 	}: {
 		value?: string;
-		platforms?: Array<{ id: string; name: string }>;
+		platforms?: Array<{ id: string; name: string; url_template: string | null }>;
 		onChange: (platformId: string) => void;
 	} = $props();
 
@@ -86,7 +86,7 @@
 				{:else if value === 'homepage'}
 					<IconGlobe class="h-4 w-4 text-gray-400" />
 				{/if}
-				{#each visiblePlatforms as platform}
+				{#each visiblePlatforms as platform (platform.id)}
 					{#if platform.id === value}
 						<span>{platform.name}</span>
 					{/if}
@@ -119,7 +119,7 @@
 			>
 				<span class="text-gray-400">{m.select_platform()}</span>
 			</button>
-			{#each visiblePlatforms as platform}
+			{#each visiblePlatforms as platform (platform.id)}
 				<button
 					type="button"
 					class="flex w-full items-center gap-2 px-3 py-2 text-left text-white hover:bg-slate-700"

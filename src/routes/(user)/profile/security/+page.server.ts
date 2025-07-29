@@ -60,6 +60,7 @@ export const actions: Actions = {
 
 			return { success: true };
 		} catch (error) {
+			console.error(`Failed to change password: ${error}`);
 			return fail(400, { error: 'Failed to change password. Please check your current password.' });
 		}
 	}

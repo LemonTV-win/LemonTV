@@ -140,7 +140,7 @@
 			>
 				<span class="">None</span>
 			</button>
-			{#each filteredCharacters as character}
+			{#each filteredCharacters as character (character)}
 				<button
 					type="button"
 					class="flex w-full items-center gap-2 px-3 py-2 text-left hover:bg-slate-700"

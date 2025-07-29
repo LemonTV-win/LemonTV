@@ -1,4 +1,3 @@
-import type { Region } from './game';
 import type { Player } from './players';
 
 export interface Team {

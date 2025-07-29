@@ -73,7 +73,7 @@
 					{m.organized_by({ name: '' })}
 					<!-- TODO: Add appropriate locale insertion -->
 
-					{#each data.event.organizers as organizer}
+					{#each data.event.organizers as organizer (organizer.id)}
 						<OrganizerChip {organizer} />
 					{/each}
 				</span>
@@ -114,7 +114,7 @@
 			</div>
 			<div class="flex flex-wrap gap-2">
 				{#if data.event.websites}
-					{#each data.event.websites as website}
+					{#each data.event.websites as website (website.url)}
 						<a
 							href={website.url}
 							class="w-fit rounded-sm border-2 border-yellow-500 bg-yellow-500/10 px-2 py-1 text-yellow-500 hover:border-yellow-500 hover:bg-yellow-500 hover:text-white"
@@ -138,7 +138,7 @@
 
 			<!-- TODO: Results 1st place, 2nd place, 3rd place -->
 
-			{#each data.event.stages as stage}
+			{#each data.event.stages as stage (stage.id)}
 				<button
 					onclick={() => (activeStage = stage)}
 					class={[
@@ -162,7 +162,7 @@
 			</h2>
 			<BracketGraph stage={activeStage} teams={data.teams} />
 		{:else}
-			{#each data.event.stages as stage}
+			{#each data.event.stages as stage (stage.id)}
 				<h2 class="text-2xl font-bold text-white">
 					{stage.title === 'Main Bracket' ? m.main_bracket() : stage.title}
 				</h2>
@@ -172,7 +172,7 @@
 		{#if data.event.results}
 			<h2 class="my-4 text-2xl font-bold text-white">{m.results()}</h2>
 			<div class="flex h-100 items-end justify-center gap-6 px-4">
-				{#each podiumOrder as result}
+				{#each podiumOrder as result (result.team.id)}
 					<div
 						class="glass flex min-w-72 flex-col items-center justify-between gap-2 p-4 {result.rank ===
 						1
@@ -217,7 +217,7 @@
 								<div class="text-gray-400">({result.team.region})</div>
 							</div>
 							<div class="flex flex-col items-center gap-1">
-								{#each result.prizes as prize}
+								{#each result.prizes as prize, idx (idx)}
 									<div class="text-yellow-500">
 										{prize.amount.toLocaleString()}
 										{prize.currency}
@@ -229,7 +229,9 @@
 				{/each}
 			</div>
 			<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-				{#each data.event.results.sort((a, b) => a.rank - b.rank).slice(3) as result}
+				{#each data.event.results
+					.sort((a, b) => a.rank - b.rank)
+					.slice(3) as result (result.team.id)}
 					<div class="glass flex flex-col items-center gap-2 p-4">
 						<div class="text-4xl font-bold text-yellow-600">
 							#{result.rank}{result.rankTo ? `-${result.rankTo}` : ''}
@@ -252,7 +254,7 @@
 							<div class="text-gray-400">({result.team.region})</div>
 						</div>
 						<div class="flex flex-col items-center gap-1">
-							{#each result.prizes as prize}
+							{#each result.prizes as prize, idx (idx)}
 								<div class="text-yellow-500">
 									{prize.amount.toLocaleString()}
 									{prize.currency}
@@ -267,7 +269,7 @@
 			<section>
 				<h2 class="my-4 text-2xl font-bold text-white">{m.highlights()}</h2>
 				<ul class="flex flex-wrap gap-4">
-					{#each data.event.videos.filter((v) => v.type === 'clip') as video}
+					{#each data.event.videos.filter((v) => v.type === 'clip') as video (video.url)}
 						{#if video.platform === 'twitch'}
 							<li>
 								<iframe
@@ -290,9 +292,9 @@
 			<section>
 				<h2 class="my-4 text-2xl font-bold text-white">{m.casters()}</h2>
 				<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-					{#each data.event.casters as caster}
+					{#each data.event.casters as caster (caster.player.id)}
 						<div class="glass flex flex-col items-center gap-2 p-4">
-							{#each caster.player.nationalities as nationality}
+							{#each caster.player.nationalities as nationality (nationality)}
 								<NationalityFlag {nationality} />
 							{/each}
 							<a href={`/players/${caster.player.slug}`} class="text-center hover:text-yellow-500">
@@ -318,7 +320,7 @@
 			{#if data.event.capacity > 0}
 				<h2 class="my-4 text-2xl font-bold text-white">{m.attending_teams()}</h2>
 				<ul class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-					{#each [...data.event.participants, ...Array.from({ length: data.event.capacity - data.event.participants.length }, () => null)] as participant}
+					{#each [...data.event.participants, ...Array.from({ length: data.event.capacity - data.event.participants.length }, () => null)] as participant, idx (idx)}
 						{#if participant}
 							{#if isLegacyEventParticipant(participant)}
 								{@const { team, main, reserve, coach } = participant}
@@ -342,21 +344,21 @@
 											<span class="text-gray-400">({data.teams.get(team)?.region})</span>
 										</div>
 										<ul class="text-sm">
-											{#each main as player}
+											{#each main as player, idx (idx)}
 												{#if player}
 													<li>
 														<span>{player}</span>
 													</li>
 												{/if}
 											{/each}
-											{#each reserve as player}
+											{#each reserve as player, idx (idx)}
 												{#if player}
 													<li class="text-white/50">
 														<span>{player}</span>
 													</li>
 												{/if}
 											{/each}
-											{#each coach as player}
+											{#each coach as player, idx (idx)}
 												{#if player}
 													<li class="text-white/50">
 														<span>({player})</span>
@@ -386,10 +388,10 @@
 											<span class="text-gray-400">({team.region})</span>
 										</div>
 										<ul class="text-sm">
-											{#each main as player}
+											{#each main as player, idx (idx)}
 												{#if player}
 													<li>
-														{#each player.nationalities as nationality}
+														{#each player.nationalities as nationality, idx (idx)}
 															<NationalityFlag {nationality} />
 														{/each}
 														<a href={`/players/${player.slug}`} class="hover:text-yellow-500">
@@ -398,10 +400,10 @@
 													</li>
 												{/if}
 											{/each}
-											{#each reserve as player}
+											{#each reserve as player, idx (idx)}
 												{#if player}
 													<li class="text-white/50">
-														{#each player.nationalities as nationality}
+														{#each player.nationalities as nationality (nationality)}
 															<NationalityFlag {nationality} />
 														{/each}
 														<a href={`/players/${player.slug}`} class="hover:text-yellow-500">
@@ -410,10 +412,10 @@
 													</li>
 												{/if}
 											{/each}
-											{#each coach as player}
+											{#each coach as player, idx (idx)}
 												{#if player}
 													<li class="text-white/50">
-														{#each player.nationalities as nationality}
+														{#each player.nationalities as nationality, idx (idx)}
 															<NationalityFlag {nationality} />
 														{/each}
 														<a href={`/players/${player.slug}`} class="hover:text-yellow-500">

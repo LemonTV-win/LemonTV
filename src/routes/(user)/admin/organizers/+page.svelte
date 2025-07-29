@@ -137,35 +137,6 @@
 
 	$inspect('deleteDependencies', deleteDependencies);
 
-	async function handleDeleteClick(organizer: Organizer) {
-		selectedOrganizer = organizer;
-		isDeleting = true;
-
-		try {
-			const formData = new FormData();
-			formData.append('id', organizer.id);
-
-			const response = await fetch('?/checkDependencies', {
-				method: 'POST',
-				body: formData
-			});
-
-			const result = await response.json();
-
-			if (result.success) {
-				deleteDependencies = result.dependencies;
-				showDeleteModal = true;
-			} else {
-				alert(result.error || 'Failed to check dependencies');
-			}
-		} catch (e) {
-			console.error('Failed to check dependencies:', e);
-			alert('Failed to check dependencies');
-		} finally {
-			isDeleting = false;
-		}
-	}
-
 	function closeDeleteModal() {
 		showDeleteModal = false;
 		selectedOrganizer = null;
@@ -343,7 +314,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each filteredOrganizers as organizer}
+				{#each filteredOrganizers as organizer (organizer.id)}
 					<tr class="border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl">
 						<td class="min-w-max overflow-hidden px-4 py-1">
 							<div class="flex min-w-max items-center">

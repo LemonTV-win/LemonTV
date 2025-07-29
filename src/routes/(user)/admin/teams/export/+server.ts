@@ -31,7 +31,23 @@ export const GET: RequestHandler = async ({ locals }) => {
 				};
 				return acc;
 			},
-			{} as Record<string, any>
+			{} as Record<
+				string,
+				{
+					id: string;
+					name: string;
+					createdAt: string | null;
+					updatedAt: string | null;
+					aliases: string[];
+					players: {
+						playerId: string;
+						role: string | null;
+						startedOn: string | null;
+						endedOn: string | null;
+						note: string | null;
+					}[];
+				}
+			>
 		);
 
 		return json(teamsData);

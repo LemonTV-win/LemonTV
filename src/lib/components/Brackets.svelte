@@ -145,7 +145,7 @@
 	};
 </script>
 
-{#snippet matchContainer(match: Match, i: number)}
+{#snippet matchContainer(match: Match)}
 	<div
 		class="relative z-10 cursor-pointer bg-zinc-800 text-white decoration-0 shadow-md transition-shadow duration-200 hover:shadow-lg"
 		use:register={match.id}
@@ -197,8 +197,8 @@
 				class="absolute top-0 left-full grid h-full w-fit text-center"
 				style:grid-template-columns={`repeat(${results.length}, 1fr)`}
 			>
-				{#each [0, 1] as rowIndex}
-					{#each results as result, colIndex}
+				{#each [0, 1] as rowIndex (rowIndex)}
+					{#each results as result, colIndex (colIndex)}
 						<span
 							class="w-8 border-gray-500 p-1 text-white"
 							class:border-l={colIndex > 0}
@@ -223,24 +223,24 @@
 	class="relative grid auto-rows-min justify-items-center gap-x-8 gap-y-0 overflow-x-auto bg-zinc-900 px-4 py-8 [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-800"
 	style="grid-template-columns: repeat({gridColumns}, 1fr);"
 >
-	{#each rounds as r}
+	{#each rounds as r (r.id)}
 		<h4 class="mb-4">
 			{r.title?.[getLocale() as Locale] ??
 				ROUND_NAMES[r.type as keyof typeof ROUND_NAMES]?.() ??
 				r.type}
 		</h4>
 	{/each}
-	{#each rounds as r, i}
+	{#each rounds as r, i (r.id)}
 		<div class="flex flex-col items-center justify-center" style:grid-column={i + 1}>
 			<div class="flex flex-col gap-6">
 				{#each hasNodeMatches ? (matchesByRound.get(r.id) ?? []) : i === 0 ? matches : [] as match (match.id)}
-					{@render matchContainer(match, i)}
+					{@render matchContainer(match)}
 				{/each}
 			</div>
 		</div>
 	{/each}
 
-	{#each parallelRounds as r}
+	{#each parallelRounds as r (r.parallelGroup ?? 0)}
 		{@const [title, roundMatches] = hasNodeMatches
 			? (parallelMatchesByRound.get(r.parallelGroup ?? 0) ?? ['', []])
 			: [
@@ -253,16 +253,16 @@
 			<div class="flex flex-col gap-6">
 				<h4 class="text-center">{title}</h4>
 				{#each roundMatches as match (match.id)}
-					{@render matchContainer(match, targetColumn - 1)}
+					{@render matchContainer(match)}
 				{/each}
 			</div>
 		</div>
 	{/each}
 
 	<svg class="pointer-events-none absolute top-0 left-0 h-full w-full">
-		{#each stage.structure.nodes as node}
+		{#each stage.structure.nodes as node (node.matchId)}
 			{#if node.dependsOn}
-				{#each node.dependsOn as dep}
+				{#each node.dependsOn as dep (dep.matchId)}
 					{#if positions.has(dep.matchId) && positions.has(node.matchId)}
 						{@const from = positions.get(dep.matchId) ?? { x: 0, y: 0 }}
 						{@const to = positions.get(node.matchId) ?? { x: 0, y: 0 }}

@@ -6,12 +6,12 @@
 		name: string;
 		status: 'upcoming' | 'live' | 'finished' | 'cancelled' | 'postponed';
 		date: string;
-		participants: Array<any>; // Only needs length property
+		participants: Array<{ id: string }>; // Only needs length property
 		capacity: number;
 		region: string;
 		format: 'lan' | 'online' | 'hybrid';
 		official: boolean;
-		organizers?: Array<any>; // Only needs to be iterable
+		organizers?: Array<{ id: string; name: string; slug: string; logo: string }>; // Only needs to be iterable
 		videos?: Array<{
 			type: 'stream' | 'clip' | 'vod';
 			platform: 'twitch' | 'youtube' | 'bilibili';
@@ -100,7 +100,7 @@
 				</div>
 				{#if event.organizers?.length}
 					<div class="mt-2 flex flex-wrap gap-2">
-						{#each event.organizers as organizer}
+						{#each event.organizers as organizer (organizer.id)}
 							<OrganizerChip {organizer} />
 						{/each}
 					</div>
@@ -158,7 +158,7 @@
 					</div>
 					{#if event.organizers?.length}
 						<div class="flex flex-wrap gap-2">
-							{#each event.organizers as organizer}
+							{#each event.organizers as organizer (organizer.id)}
 								<OrganizerChip {organizer} />
 							{/each}
 						</div>
@@ -169,7 +169,7 @@
 	</a>
 
 	{#if live && event.videos?.some((v) => v.type === 'stream')}
-		{#each event.videos.filter((v) => v.type === 'stream') as stream}
+		{#each event.videos.filter((v) => v.type === 'stream') as stream (stream.url)}
 			{#if stream.platform === 'twitch'}
 				<iframe
 					src={`https://player.twitch.tv/?channel=${stream.url.split('/').pop()}&parent=${page.url.host}`}

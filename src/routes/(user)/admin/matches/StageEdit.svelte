@@ -98,7 +98,7 @@
 					required
 					class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 				>
-					{#each stageOptions as stageOption}
+					{#each stageOptions as stageOption (stageOption)}
 						<option value={stageOption}>{stageOption}</option>
 					{/each}
 				</select>
@@ -113,7 +113,7 @@
 					required
 					class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 				>
-					{#each formatOptions as formatOption}
+					{#each formatOptions as formatOption (formatOption)}
 						<option value={formatOption}>{formatOption}</option>
 					{/each}
 				</select>

@@ -290,7 +290,6 @@ export function calculatePlayerKD(player: Player): number {
 
 	return matches.reduce((acc, match) => {
 		const playerTeamIndex = match.playerTeamIndex;
-		const opponentTeamIndex = 1 - playerTeamIndex;
 
 		if (!match.games) {
 			return acc;

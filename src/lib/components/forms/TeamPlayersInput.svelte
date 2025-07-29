@@ -175,7 +175,7 @@
 
 	<!-- Team Players -->
 	<div class="mt-2 space-y-4">
-		{#each teams.filter((team) => selectedTeams.includes(team.id)) as team}
+		{#each teams.filter((team) => selectedTeams.includes(team.id)) as team (team.id)}
 			<div class="rounded-lg border border-slate-700 bg-slate-800">
 				<div
 					role="button"
@@ -187,7 +187,7 @@
 					<div class="flex items-center gap-2">
 						<h4 class="text-md font-medium text-slate-300">{team.name}</h4>
 						<div class="flex items-center gap-1.5">
-							{#each Object.entries(getTeamRoleCounts(team.id)) as [role, count]}
+							{#each Object.entries(getTeamRoleCounts(team.id)) as [role, count] (role)}
 								{#if count > 0}
 									<span
 										class="rounded-full px-1.5 py-0.5 text-xs font-medium {role === 'main'
@@ -260,7 +260,7 @@
 					<div class="border-t border-slate-700">
 						{#if eventTeamPlayers.filter((tp) => tp.teamId === team.id).length > 0}
 							<div class="divide-y divide-slate-700">
-								{#each eventTeamPlayers.filter((tp) => tp.teamId === team.id) as teamPlayer, index}
+								{#each eventTeamPlayers.filter((tp) => tp.teamId === team.id) as teamPlayer, index (teamPlayer.playerId)}
 									<div class="flex items-start gap-3 px-4 py-2 hover:bg-slate-800/50">
 										<div class="flex-1">
 											<label
@@ -295,7 +295,7 @@
 												{#if teamPlayer.playerId}
 													{#if getPlayerValidationStatus(team.id, teamPlayer.playerId)}
 														<div class="mt-1 space-y-1">
-															{#each getPlayerValidationStatus(team.id, teamPlayer.playerId) ?? [] as validation}
+															{#each getPlayerValidationStatus(team.id, teamPlayer.playerId) ?? [] as validation (validation.message)}
 																<div
 																	class="flex items-center gap-1 text-sm {validation.type ===
 																	'error'
@@ -328,7 +328,7 @@
 												bind:value={teamPlayer.role}
 												class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-2 py-1 text-sm text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 											>
-												{#each roleOptions as role}
+												{#each roleOptions as role (role)}
 													<option value={role}>{role}</option>
 												{/each}
 											</select>

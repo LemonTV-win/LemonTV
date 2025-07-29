@@ -100,7 +100,7 @@
 				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 			>
 				<option value="">({m.none()})</option>
-				{#each organizerTypes as type}
+				{#each organizerTypes as type (type.value)}
 					<option value={type.value}>{type.label}</option>
 				{/each}
 			</select>

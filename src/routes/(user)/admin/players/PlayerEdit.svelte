@@ -23,7 +23,7 @@
 		onSuccess: onsuccess
 	}: {
 		player: Partial<Player>;
-		socialPlatforms: any[];
+		socialPlatforms: { id: string; name: string; url_template: string | null }[];
 		topCountries: [string, number][];
 		users: { id: string; username: string }[];
 		onCancel: () => void;
@@ -32,7 +32,6 @@
 
 	let newPlayer = $state({ ...player });
 	let errorMessage = $state('');
-	let successMessage = $state('');
 	let copySuccess = $state(false);
 	let userId = $state(player.user?.id || '');
 	let userSearch = $state(users.find((user) => user.id === userId)?.username || '');
@@ -95,7 +94,10 @@
 		return undefined;
 	}
 
-	function handleSocialAccountInput(account: any, value: string) {
+	function handleSocialAccountInput(
+		account: { platformId: string; accountId: string },
+		value: string
+	) {
 		// Remove protocol and www. from the URL if present
 		value = value.replace(/^https?:\/\/(www\.)?/, '');
 
@@ -283,7 +285,7 @@
 				class="font-emoji mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 			>
 				<option value={undefined}>{m.select_nationality()}</option>
-				{#each topCountries as [code, _]}
+				{#each topCountries as [code, _] (code)}
 					<option value={code}>
 						{code} -
 						{countryCodeToFlagEmoji(code)} -
@@ -291,7 +293,7 @@
 					</option>
 				{/each}
 				<option disabled>―――</option>
-				{#each countryCodes as code}
+				{#each countryCodes as code (code)}
 					<option value={code}>
 						{code} -
 						{countryCodeToFlagEmoji(code)} -
@@ -302,7 +304,7 @@
 		</div>
 		<div>
 			<div class="mt-2 rounded-lg border border-slate-700 bg-slate-800 p-4">
-				{#each additionalNationalities as nationality, index}
+				{#each additionalNationalities as nationality, index (nationality)}
 					<div
 						class="grid grid-cols-[1fr_auto] gap-4 {index > 0
 							? 'mt-4 border-t border-slate-700 pt-4'
@@ -318,7 +320,7 @@
 								class="font-emoji mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 							>
 								<option value={undefined}>{m.select_nationality()}</option>
-								{#each countryCodes as code}
+								{#each countryCodes as code (code)}
 									<option value={code} disabled={code === primaryNationality}>
 										{code} - {countryCodeToFlagEmoji(code)} - {countryCodeToLocalizedName(
 											code,
@@ -366,7 +368,7 @@
 		<div>
 			<label class="block text-sm font-medium text-slate-300" for="aliases">{m.aliases()}</label>
 			<div class="mt-2 rounded-lg border border-slate-700 bg-slate-800 p-4">
-				{#each newPlayer.aliases || [] as alias, i}
+				{#each newPlayer.aliases || [] as alias, i (alias)}
 					<div
 						class="grid grid-cols-[1fr_auto] gap-4 {i > 0
 							? 'mt-4 border-t border-slate-700 pt-4'
@@ -415,7 +417,7 @@
 				{m.game_accounts()}
 			</label>
 			<div class="mt-2 rounded-lg border border-slate-700 bg-slate-800 p-4">
-				{#each newPlayer.gameAccounts || [] as account, i}
+				{#each newPlayer.gameAccounts || [] as account, i (account.accountId)}
 					<div
 						class="grid grid-cols-[1fr_1fr_1fr_auto] gap-4 {i > 0
 							? 'mt-4 border-t border-slate-700 pt-4'
@@ -491,7 +493,7 @@
 				{m.social_accounts()}
 			</label>
 			<div class="mt-2 rounded-lg border border-slate-700 bg-slate-800 p-4">
-				{#each newPlayer.socialAccounts || [] as account, i}
+				{#each newPlayer.socialAccounts || [] as account, i (account.platformId)}
 					<div
 						class="grid grid-cols-[1fr_1fr_auto] gap-4 {i > 0
 							? 'mt-4 border-t border-slate-700 pt-4'
@@ -520,7 +522,7 @@
 								placeholder={m.account_id()}
 							/>
 							{#if account.platformId}
-								{#each socialPlatforms as platform}
+								{#each socialPlatforms as platform (platform.id)}
 									{#if platform.id === account.platformId && platform.url_template && account.accountId}
 										<a
 											href={platform.url_template.replace('{accountId}', account.accountId)}
@@ -581,7 +583,7 @@
 					<div
 						class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-slate-700 bg-slate-800 py-1 shadow-lg"
 					>
-						{#each filteredUsers as user}
+						{#each filteredUsers as user (user.id)}
 							<button
 								type="button"
 								class="w-full px-4 py-2 text-left text-white hover:bg-slate-700"
