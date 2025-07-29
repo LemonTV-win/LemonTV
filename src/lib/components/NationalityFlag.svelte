@@ -27,5 +27,5 @@
 		</span>
 	{/if}
 {:else}
-	<span class="font-emoji {className}">-</span>
+	<span class="font-emoji {className}">{countryCodeToFlagEmoji('ZZ')}</span>
 {/if}
