@@ -1041,6 +1041,126 @@ export async function getEvent(id: string): Promise<AppEvent | undefined> {
 	return events[0];
 }
 
+export async function getEventsForAdminPage(): Promise<
+	Array<{
+		id: string;
+		slug: string;
+		name: string;
+		server: string;
+		capacity: number;
+		format: string;
+		region: string;
+		status: string;
+		official: boolean;
+		date: string;
+		imageURL?: string;
+		organizers: Array<{
+			id: string;
+			name: string;
+			description?: string;
+			url?: string;
+			type?: string;
+			logo?: string;
+		}>;
+		websites?: Array<{
+			url: string;
+			label?: string;
+		}>;
+	}>
+> {
+	const totalStart = performance.now();
+	console.info('[Events] Fetching events for admin page');
+
+	// Direct Drizzle query for admin page essential data only
+	const eventsQueryStart = performance.now();
+	const eventsWithOrganizers = await db
+		.select({
+			event: table.event,
+			organizer: table.organizer,
+			eventWebsite: table.eventWebsite
+		})
+		.from(table.event)
+		.leftJoin(table.eventOrganizer, eq(table.eventOrganizer.eventId, table.event.id))
+		.leftJoin(table.organizer, eq(table.organizer.id, table.eventOrganizer.organizerId))
+		.leftJoin(table.eventWebsite, eq(table.eventWebsite.eventId, table.event.id));
+	const eventsQueryDuration = performance.now() - eventsQueryStart;
+	console.info(`[Events] Admin events query took ${eventsQueryDuration.toFixed(2)}ms`);
+
+	// Group data by event
+	const dataProcessingStart = performance.now();
+	const eventsMap = new Map<
+		string,
+		{
+			event: Event;
+			organizers: Organizer[];
+			websites: Array<{
+				url: string;
+				label?: string;
+			}>;
+		}
+	>();
+
+	eventsWithOrganizers.forEach(({ event, organizer, eventWebsite }) => {
+		if (!eventsMap.has(event.id)) {
+			eventsMap.set(event.id, {
+				event,
+				organizers: [],
+				websites: []
+			});
+		}
+		const eventData = eventsMap.get(event.id)!;
+
+		if (organizer) {
+			// Only add the organizer if it's not already in the array
+			if (!eventData.organizers.some((o) => o.id === organizer.id)) {
+				eventData.organizers.push(organizer);
+			}
+		}
+
+		if (eventWebsite) {
+			// Only add the website if it's not already in the array
+			if (!eventData.websites.some((w) => w.url === eventWebsite.url)) {
+				eventData.websites.push({
+					url: eventWebsite.url,
+					label: eventWebsite.label || undefined
+				});
+			}
+		}
+	});
+	const dataProcessingDuration = performance.now() - dataProcessingStart;
+	console.info(`[Events] Admin data processing took ${dataProcessingDuration.toFixed(2)}ms`);
+
+	// Convert to admin page format
+	const finalProcessingStart = performance.now();
+	const result = await Promise.all(
+		Array.from(eventsMap.values()).map(async ({ event, organizers, websites }) => {
+			return {
+				id: event.id,
+				slug: event.slug,
+				name: event.name,
+				server: event.server,
+				capacity: event.capacity,
+				format: event.format,
+				region: event.region,
+				status: event.status,
+				official: event.official,
+				date: event.date,
+				imageURL: await processImageURL(event.image),
+				organizers:
+					organizers.length > 0 ? await Promise.all(organizers.map(convertOrganizer)) : [],
+				websites: websites.length > 0 ? websites : undefined
+			};
+		})
+	);
+	const finalProcessingDuration = performance.now() - finalProcessingStart;
+	console.info(`[Events] Admin final processing took ${finalProcessingDuration.toFixed(2)}ms`);
+
+	const totalDuration = performance.now() - totalStart;
+	console.info(`[Events] Total getEventsForAdminPage took ${totalDuration.toFixed(2)}ms`);
+
+	return result;
+}
+
 // Update event team players
 export async function updateEventTeamPlayers(
 	eventId: string,
