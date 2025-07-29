@@ -277,6 +277,15 @@
 					name={`playerScores${team}[${idx}].accountId`}
 					onchange={(value) => {
 						ps.accountId = value;
+						if (!ps.player) {
+							const roster = compiledGameAccountIDMaps[team === 'A' ? 0 : 1].get(value);
+							if (roster) {
+								const account = roster.player.gameAccounts.find((a) => a.accountId === value);
+								if (account) {
+									ps.player = account.currentName;
+								}
+							}
+						}
 					}}
 				/>
 				{#each rosters[team === 'A' ? 0 : 1] as roster}
