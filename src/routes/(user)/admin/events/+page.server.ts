@@ -37,6 +37,16 @@ function checkPermissions(locals: App.Locals, requiredRoles: string[]): Permissi
 	return { status: 'success', userId: locals.user.id };
 }
 
+function withTimer<T>(name: string, fn: () => Promise<T>): () => Promise<T> {
+	return async () => {
+		const start = performance.now();
+		const result = await fn();
+		const duration = performance.now() - start;
+		console.info(`[Timer] ${name} took ${duration.toFixed(2)}ms`);
+		return result;
+	};
+}
+
 export const load: PageServerLoad = async ({ locals, url }) => {
 	const result = checkPermissions(locals, ['admin', 'editor']);
 	if (result.status === 'error') {
@@ -44,12 +54,12 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	}
 
 	const [events, organizers, eventOrganizers, teams, players, teamPlayers] = await Promise.all([
-		getEvents(),
-		db.select().from(table.organizer),
-		db.select().from(table.eventOrganizer),
-		db.select().from(table.team),
-		db.select().from(table.player),
-		db.select().from(table.teamPlayer)
+		withTimer('getEvents', getEvents),
+		withTimer('getOrganizers', () => db.select().from(table.organizer)),
+		withTimer('getEventOrganizers', () => db.select().from(table.eventOrganizer)),
+		withTimer('getTeams', () => db.select().from(table.team)),
+		withTimer('getPlayers', () => db.select().from(table.player)),
+		withTimer('getTeamPlayers', () => db.select().from(table.teamPlayer))
 	]);
 
 	console.info('[Admin][Events][Load] Events:', events);
