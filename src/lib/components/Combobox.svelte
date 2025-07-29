@@ -38,6 +38,13 @@
 		}
 	});
 
+	// Open popup when value changes
+	$effect(() => {
+		if (value) {
+			isOpen = true;
+		}
+	});
+
 	function handleSelect(item: { id: string; name: string }) {
 		search = item.name;
 		value = item.id;
@@ -52,8 +59,7 @@
 
 	function handleFocus() {
 		isOpen = true;
-		// Clear search when opening to show all items
-		search = '';
+		// Don't clear search when opening to preserve current state
 	}
 
 	function handleBlur() {
