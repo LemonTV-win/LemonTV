@@ -1,5 +1,6 @@
 import { TEAMS } from './teams';
 import { MATCHES } from './stages';
+import { GAME_ACCOUNTS } from './game-accounts';
 
 // Game metadata and configuration
 const GAME_CONFIG = {
@@ -332,11 +333,15 @@ function generatePlayerScore(
 	const damage = kills * 150 + assists * 50 + getRandomInt(500, 1000);
 	const damageScore = Math.floor(damage * 0.8);
 
+	// Use actual account IDs from the game accounts seed
+	const availableAccountIds = GAME_ACCOUNTS.map((account) => account.accountId);
+	const accountId = availableAccountIds[uniqueId % availableAccountIds.length] || 100000 + uniqueId;
+
 	return {
 		id: uniqueId,
 		gameId,
 		teamId,
-		accountId: 100000 + uniqueId,
+		accountId,
 		player: TEAM_PLAYERS[teamId as keyof typeof TEAM_PLAYERS][playerIndex],
 		characterFirstHalf: getRandomCharacter(),
 		characterSecondHalf: getRandomCharacter(),
