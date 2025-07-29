@@ -37,6 +37,14 @@
 			.slice(0, 10);
 	}
 
+	function getCurrentPlayerName() {
+		const numValue = parseInt(inputValue);
+		if (!isNaN(numValue) && options.has(numValue)) {
+			return options.get(numValue);
+		}
+		return '';
+	}
+
 	function handleInputChange(event: Event) {
 		const target = event.target as HTMLInputElement;
 		inputValue = target.value;
@@ -66,18 +74,27 @@
 </script>
 
 <div class="relative">
-	<input
-		type="text"
-		{name}
-		{required}
-		{placeholder}
-		bind:value={inputValue}
-		oninput={handleInputChange}
-		onblur={handleBlur}
-		onfocus={handleFocus}
-		class="w-full rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200 {className}"
-		autocomplete="off"
-	/>
+	<div class="relative">
+		<input
+			type="text"
+			{name}
+			{required}
+			{placeholder}
+			bind:value={inputValue}
+			oninput={handleInputChange}
+			onblur={handleBlur}
+			onfocus={handleFocus}
+			class="w-full rounded border border-slate-700 bg-slate-800 px-2 py-1 pr-24 text-slate-200 {className}"
+			autocomplete="off"
+		/>
+		{#if getCurrentPlayerName()}
+			<div
+				class="absolute top-1/2 right-2 max-w-20 -translate-y-1/2 truncate text-sm text-slate-400"
+			>
+				{getCurrentPlayerName()}
+			</div>
+		{/if}
+	</div>
 
 	{#if showDropdown && getFilteredOptions().length > 0}
 		<div
