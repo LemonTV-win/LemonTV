@@ -83,7 +83,7 @@
 									>
 										{player.name}
 									</span>
-									{#each player.nationalities as nationality (nationality)}
+									{#each player.nationalities as nationality, idx (idx)}
 										<NationalityFlag {nationality} class="h-5 w-5" />
 									{/each}
 									{#if player.rating}

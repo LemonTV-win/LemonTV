@@ -45,7 +45,7 @@
 					</div>
 					{#if data.player.nationalities.length}
 						<p class="text-center text-gray-400">
-							{#each data.player.nationalities as nationality (nationality)}
+							{#each data.player.nationalities as nationality, idx (idx)}
 								<NationalityFlag {nationality} showLabel />
 							{/each}
 						</p>

@@ -105,7 +105,7 @@
 			<ul class="glass-card-container">
 				{#each data.teams
 					.toSorted((a, b) => (b.wins ?? 0) - (a.wins ?? 0))
-					.slice(0, 5) as team (team.id)}
+					.slice(0, 5) as team (team.slug)}
 					<li>
 						<a
 							class={['grid grid-cols-[1fr_auto] items-center gap-2 px-4 py-2', 'glass-card']}
@@ -147,7 +147,7 @@
 							class={['grid grid-cols-[1fr_auto] items-center gap-2 px-4 py-2', 'glass-card']}
 						>
 							<span class="flex items-baseline gap-2 text-white">
-								{#each player.nationalities as nationality (nationality)}
+								{#each player.nationalities as nationality, idx (idx)}
 									<NationalityFlag {nationality} />
 								{/each}
 								{player.name}

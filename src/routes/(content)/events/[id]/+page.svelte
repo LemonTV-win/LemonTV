@@ -172,7 +172,7 @@
 		{#if data.event.results}
 			<h2 class="my-4 text-2xl font-bold text-white">{m.results()}</h2>
 			<div class="flex h-100 items-end justify-center gap-6 px-4">
-				{#each podiumOrder as result (result.team.id)}
+				{#each podiumOrder as result, idx (idx)}
 					<div
 						class="glass flex min-w-72 flex-col items-center justify-between gap-2 p-4 {result.rank ===
 						1
@@ -229,9 +229,7 @@
 				{/each}
 			</div>
 			<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-				{#each data.event.results
-					.sort((a, b) => a.rank - b.rank)
-					.slice(3) as result (result.team.id)}
+				{#each data.event.results.sort((a, b) => a.rank - b.rank).slice(3) as result, idx (idx)}
 					<div class="glass flex flex-col items-center gap-2 p-4">
 						<div class="text-4xl font-bold text-yellow-600">
 							#{result.rank}{result.rankTo ? `-${result.rankTo}` : ''}
@@ -294,7 +292,7 @@
 				<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
 					{#each data.event.casters as caster (caster.player.id)}
 						<div class="glass flex flex-col items-center gap-2 p-4">
-							{#each caster.player.nationalities as nationality (nationality)}
+							{#each caster.player.nationalities as nationality, idx (idx)}
 								<NationalityFlag {nationality} />
 							{/each}
 							<a href={`/players/${caster.player.slug}`} class="text-center hover:text-yellow-500">
@@ -403,7 +401,7 @@
 											{#each reserve as player, idx (idx)}
 												{#if player}
 													<li class="text-white/50">
-														{#each player.nationalities as nationality (nationality)}
+														{#each player.nationalities as nationality, idx (idx)}
 															<NationalityFlag {nationality} />
 														{/each}
 														<a href={`/players/${player.slug}`} class="hover:text-yellow-500">

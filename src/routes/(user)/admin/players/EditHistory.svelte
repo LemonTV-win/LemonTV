@@ -156,7 +156,7 @@
 	<div class="rounded-lg border border-slate-800 bg-slate-900/95 p-4 shadow-lg">
 		<div class="flex items-center gap-2">
 			<h2 class="text-xl font-medium text-slate-200">{player.name}</h2>
-			{#each player.nationalities as nationality (nationality)}
+			{#each player.nationalities as nationality, idx (idx)}
 				<NationalityFlag {nationality} />
 			{/each}
 			{#if player.aliases && player.aliases.length > 0}

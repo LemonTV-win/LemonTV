@@ -439,7 +439,7 @@
 							>{m.region()}</label
 						>
 						<div id="nationality-filters" class="flex flex-wrap gap-2">
-							{#each uniqueNationalities as nationality (nationality)}
+							{#each uniqueNationalities as nationality, idx (idx)}
 								{#if nationality}
 									<button
 										class={[
@@ -635,7 +635,7 @@
 							{/if}
 						</td>
 						<td class="max-w-6 px-4 py-1 text-gray-300">
-							{#each player.nationalities as nationality (nationality)}
+							{#each player.nationalities as nationality, idx (idx)}
 								<NationalityFlag {nationality} />
 							{/each}
 						</td>
