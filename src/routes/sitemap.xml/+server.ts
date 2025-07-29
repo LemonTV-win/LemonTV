@@ -1,9 +1,6 @@
 import { locales } from '$lib/paraglide/runtime';
-import { getEvents } from '$lib/server/data/events';
-import { getOrganizers } from '$lib/server/data/organizers';
-import { getPlayers } from '$lib/server/data/players';
-import { getTeams } from '$lib/server/data/teams';
-
+import { db } from '$lib/server/db';
+import * as table from '$lib/server/db/schema';
 const HOSTNAME = 'https://lemontv.win';
 
 function generateSitemap(hostname: string, urls: string[]) {
@@ -30,10 +27,10 @@ function generateSitemap(hostname: string, urls: string[]) {
 }
 
 export async function GET() {
-	const players = await getPlayers();
-	const events = await getEvents();
-	const teams = await getTeams();
-	const organizers = await getOrganizers();
+	const players = await db.select({ slug: table.player.slug }).from(table.player);
+	const events = await db.select({ slug: table.event.slug }).from(table.event);
+	const teams = await db.select({ slug: table.team.slug }).from(table.team);
+	const organizers = await db.select({ slug: table.organizer.slug }).from(table.organizer);
 
 	const urls: Set<string> = new Set([
 		'/',
