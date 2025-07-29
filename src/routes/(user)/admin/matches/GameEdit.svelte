@@ -2,14 +2,16 @@
 	import { enhance } from '$app/forms';
 	import type { ActionResult } from '@sveltejs/kit';
 	import CharacterSelect from '$lib/components/CharacterSelect.svelte';
-
 	let { game, matchId, maps, onCancel, onSuccess, teams } = $props<{
 		game?: any;
 		matchId: string;
 		maps: Array<{ id: string; name?: string }>;
 		onCancel: () => void;
 		onSuccess: () => void;
-		teams: Array<{ id: string; name: string; logo?: string }>;
+		teams: [
+			{ id: string; name: string; logo?: string },
+			{ id: string; name: string; logo?: string }
+		];
 	}>();
 
 	let formData = $state({
@@ -181,12 +183,16 @@
 				{#each teamData as team, idx}
 					<div class="rounded-lg border border-slate-700 bg-slate-800 p-4">
 						<div class="mb-2 flex items-center gap-2 font-semibold text-slate-200">
-							{#if teams && teams[idx]?.logo}
-								<img src={teams[idx].logo} alt={teams[idx].name} class="h-6 w-6 rounded" />
+							{#if teams && teams[idx]?.team?.logo}
+								<img
+									src={teams[idx].team.logo}
+									alt={teams[idx].team.name}
+									class="h-6 w-6 rounded"
+								/>
 							{/if}
 							<span
-								>{teams && teams[idx]?.name
-									? teams[idx].name
+								>{teams && teams[idx]?.team?.name
+									? teams[idx].team.name
 									: `Team ${idx === 0 ? 'A' : 'B'}`}</span
 							>
 						</div>

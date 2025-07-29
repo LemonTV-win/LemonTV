@@ -231,12 +231,19 @@
 	let editingGame = $state<{
 		game?: any; // For editing, undefined for new
 		matchId: string;
+		matchTeamA: { id: string; name: string; logo?: string };
+		matchTeamB: { id: string; name: string; logo?: string };
 	} | null>(null);
 	let deletingGame = $state<{ game: any; matchId: string } | null>(null);
 	let isDeletingGame = $state(false);
 
-	function openGameModal(matchId: string, game?: any) {
-		editingGame = { game, matchId };
+	function openGameModal(
+		matchId: string,
+		matchTeamA: { id: string; name: string; logo?: string },
+		matchTeamB: { id: string; name: string; logo?: string },
+		game?: any
+	) {
+		editingGame = { game, matchId, matchTeamA, matchTeamB };
 	}
 	function closeGameModal() {
 		editingGame = null;
@@ -919,7 +926,8 @@
 											{#each match.games.sort((a, b) => a.id - b.id) as game}
 												<button
 													class="group flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg bg-gray-700/50 px-3 py-1 text-left transition-all hover:scale-[1.02] hover:bg-gray-600 hover:shadow-lg hover:shadow-gray-900/50"
-													onclick={() => openGameModal(match.id, game)}
+													onclick={() =>
+														openGameModal(match.id, match.teams[0].team, match.teams[1].team, game)}
 												>
 													<div class="flex items-center gap-2">
 														<img
@@ -965,7 +973,8 @@
 											{/if}
 											<!-- Add game area -->
 											<button
-												onclick={() => openGameModal(match.id)}
+												onclick={() =>
+													openGameModal(match.id, match.teams[0].team, match.teams[1].team)}
 												class="mt-2 w-full rounded-lg border border-emerald-500/30 bg-emerald-500/10 py-2 text-xs font-medium text-emerald-400 transition-all hover:bg-emerald-500/20 hover:text-emerald-300 active:scale-[0.98]"
 											>
 												+ Add game
@@ -1149,11 +1158,7 @@
 			maps={data.maps.map((map) => ({ id: map.id, name: MAP_2_NAME[map.id] }))}
 			onCancel={closeGameModal}
 			onSuccess={closeGameModal}
-			teams={data.teams.map((team) => ({
-				id: team.id,
-				name: team.name,
-				logo: team.logo ?? undefined
-			}))}
+			teams={[editingGame.matchTeamA, editingGame.matchTeamB]}
 		/>
 	</Modal>
 {/if}
