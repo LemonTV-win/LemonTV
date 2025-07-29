@@ -17,6 +17,7 @@
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 
 	import type { PageProps } from './$types';
+	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -403,21 +404,22 @@
 						</td>
 						<td class="px-4 py-1 text-gray-300">
 							{#if getTeamPlayers(team.id)?.length}
-								<ul class="list-inside list-disc">
+								<ul class="list-inside">
 									{#each getTeamPlayers(team.id) as player}
-										{@const playerObj = (data as any).players?.find(
-											(p: Player) => p.id === player.playerId
-										)}
-										<li>
-											<a
-												href="/players/{playerObj?.slug}"
-												class="text-sm text-white hover:text-yellow-400"
-												title={player.playerId}
-											>
-												{playerObj?.name}
-											</a>
-											<span class="text-gray-400">({player.role})</span>
-										</li>
+										{@const playerObj = data.players?.find((p) => p.id === player.playerId)}
+										{#if playerObj}
+											<li>
+												<NationalityFlag nationality={playerObj.nationality} />
+												<a
+													href="/players/{playerObj?.slug}"
+													class="text-sm text-white hover:text-yellow-400"
+													title={player.playerId}
+												>
+													{playerObj?.name}
+												</a>
+												<span class="text-gray-400">({player.role})</span>
+											</li>
+										{/if}
 									{/each}
 								</ul>
 							{:else}
