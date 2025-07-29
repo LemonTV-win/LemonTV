@@ -8,7 +8,13 @@ import type { Region } from '$lib/data/game';
 import { inArray, eq, or } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/sqlite-core';
 import { convertOrganizer } from './organizers';
-import type { LegacyEventParticipant, EventParticipant, StageNode } from '$lib/data/events';
+import type {
+	LegacyEventParticipant,
+	EventParticipant,
+	StageNode,
+	Stage,
+	EventResult
+} from '$lib/data/events';
 import type { Player } from '$lib/data/players';
 import { getPlayer } from '$lib/server/data/players';
 import type { UserRole } from '$lib/data/user';
@@ -1059,8 +1065,335 @@ export async function getEssentialEvents(): Promise<EssentialEvent[]> {
 }
 
 export async function getEvent(id: string): Promise<AppEvent | undefined> {
-	const events = await getEvents({ searchKeyword: id });
-	return events[0];
+	const totalStart = performance.now();
+	console.info(`[Events] Fetching single event: ${id}`);
+
+	// Simple query to get basic event data first
+	const eventQueryStart = performance.now();
+	const [eventData] = await db
+		.select({
+			event: table.event,
+			organizer: table.organizer
+		})
+		.from(table.event)
+		.leftJoin(table.eventOrganizer, eq(table.eventOrganizer.eventId, table.event.id))
+		.leftJoin(table.organizer, eq(table.organizer.id, table.eventOrganizer.organizerId))
+		.where(or(eq(table.event.id, id), eq(table.event.slug, id)));
+	const eventQueryDuration = performance.now() - eventQueryStart;
+	console.info(`[Events] Event query took ${eventQueryDuration.toFixed(2)}ms`);
+
+	if (!eventData?.event) {
+		console.info(`[Events] Event not found: ${id}`);
+		return undefined;
+	}
+
+	// Get organizers separately
+	const organizersQueryStart = performance.now();
+	const organizers = await db
+		.select({
+			organizer: table.organizer
+		})
+		.from(table.eventOrganizer)
+		.leftJoin(table.organizer, eq(table.organizer.id, table.eventOrganizer.organizerId))
+		.where(eq(table.eventOrganizer.eventId, eventData.event.id));
+	const organizersQueryDuration = performance.now() - organizersQueryStart;
+	console.info(`[Events] Organizers query took ${organizersQueryDuration.toFixed(2)}ms`);
+
+	// Get event results separately
+	const resultsQueryStart = performance.now();
+	const eventResults = await db
+		.select({
+			eventId: table.eventResult.eventId,
+			teamId: table.eventResult.teamId,
+			rank: table.eventResult.rank,
+			rankTo: table.eventResult.rankTo,
+			prizeAmount: table.eventResult.prizeAmount,
+			prizeCurrency: table.eventResult.prizeCurrency,
+			team: table.team
+		})
+		.from(table.eventResult)
+		.leftJoin(table.team, eq(table.team.id, table.eventResult.teamId))
+		.where(eq(table.eventResult.eventId, eventData.event.id));
+	const resultsQueryDuration = performance.now() - resultsQueryStart;
+	console.info(`[Events] Results query took ${resultsQueryDuration.toFixed(2)}ms`);
+
+	// Get event websites separately
+	const websitesQueryStart = performance.now();
+	const websites = await db
+		.select({
+			url: table.eventWebsite.url,
+			label: table.eventWebsite.label
+		})
+		.from(table.eventWebsite)
+		.where(eq(table.eventWebsite.eventId, eventData.event.id));
+	const websitesQueryDuration = performance.now() - websitesQueryStart;
+	console.info(`[Events] Websites query took ${websitesQueryDuration.toFixed(2)}ms`);
+
+	// Get event videos separately
+	const videosQueryStart = performance.now();
+	const videos = await db
+		.select({
+			type: table.eventVideo.type,
+			platform: table.eventVideo.platform,
+			url: table.eventVideo.url,
+			title: table.eventVideo.title
+		})
+		.from(table.eventVideo)
+		.where(eq(table.eventVideo.eventId, eventData.event.id));
+	const videosQueryDuration = performance.now() - videosQueryStart;
+	console.info(`[Events] Videos query took ${videosQueryDuration.toFixed(2)}ms`);
+
+	// Get event casters separately
+	const castersQueryStart = performance.now();
+	const casters = await db
+		.select({
+			role: table.eventCaster.role,
+			player: table.player
+		})
+		.from(table.eventCaster)
+		.leftJoin(table.player, eq(table.player.id, table.eventCaster.playerId))
+		.where(eq(table.eventCaster.eventId, eventData.event.id));
+	const castersQueryDuration = performance.now() - castersQueryStart;
+	console.info(`[Events] Casters query took ${castersQueryDuration.toFixed(2)}ms`);
+
+	// Get event team players separately
+	const teamPlayersQueryStart = performance.now();
+	const teamPlayers = await db
+		.select({
+			team: table.team,
+			player: table.player,
+			role: table.eventTeamPlayer.role
+		})
+		.from(table.eventTeamPlayer)
+		.leftJoin(table.team, eq(table.team.id, table.eventTeamPlayer.teamId))
+		.leftJoin(table.player, eq(table.player.id, table.eventTeamPlayer.playerId))
+		.where(eq(table.eventTeamPlayer.eventId, eventData.event.id));
+	const teamPlayersQueryDuration = performance.now() - teamPlayersQueryStart;
+	console.info(`[Events] Team players query took ${teamPlayersQueryDuration.toFixed(2)}ms`);
+
+	// Get stages and related data separately
+	const stagesQueryStart = performance.now();
+	const stages = await db
+		.select({
+			stage: table.stage,
+			stageRound: table.stageRound,
+			stageNode: table.stageNode,
+			stageNodeDependency: table.stageNodeDependency,
+			match: table.match
+		})
+		.from(table.stage)
+		.leftJoin(table.stageRound, eq(table.stageRound.stageId, table.stage.id))
+		.leftJoin(table.stageNode, eq(table.stageNode.stageId, table.stage.id))
+		.leftJoin(table.stageNodeDependency, eq(table.stageNodeDependency.nodeId, table.stageNode.id))
+		.leftJoin(table.match, eq(table.match.id, table.stageNode.matchId))
+		.where(eq(table.stage.eventId, eventData.event.id));
+	const stagesQueryDuration = performance.now() - stagesQueryStart;
+	console.info(`[Events] Stages query took ${stagesQueryDuration.toFixed(2)}ms`);
+
+	// Process the data
+	const processingStart = performance.now();
+
+	// Process organizers
+	const processedOrganizers = organizers
+		.filter(
+			(o): o is typeof o & { organizer: NonNullable<typeof o.organizer> } => o.organizer !== null
+		)
+		.map((o) => o.organizer);
+
+	// Process results
+	const processedResults = eventResults
+		.filter(
+			(r): r is typeof r & { team: NonNullable<typeof r.team> } =>
+				r.team !== null && r.rank !== null && r.prizeAmount !== null && r.prizeCurrency !== null
+		)
+		.map(async (r) => ({
+			rank: r.rank,
+			rankTo: r.rankTo ?? undefined,
+			team: {
+				...r.team,
+				logoURL: r.team.logo ? await processImageURL(r.team.logo) : null
+			},
+			prizes: [
+				{
+					amount: r.prizeAmount,
+					currency: r.prizeCurrency
+				}
+			]
+		}));
+
+	// Process websites
+	const processedWebsites = websites.map((w) => ({
+		url: w.url,
+		label: w.label || undefined
+	}));
+
+	// Process videos
+	const processedVideos = videos.map((v) => ({
+		type: v.type as 'stream' | 'clip' | 'vod',
+		platform: v.platform as 'twitch' | 'youtube' | 'bilibili',
+		url: v.url,
+		title: v.title || undefined
+	}));
+
+	// Process casters
+	const processedCasters = await Promise.all(
+		casters
+			.filter((c): c is typeof c & { player: NonNullable<typeof c.player> } => c.player !== null)
+			.map(async (c) => {
+				const player = await getPlayer(c.player.id);
+				return player ? { player, role: c.role as 'host' | 'analyst' | 'commentator' } : null;
+			})
+	);
+	const validCasters = processedCasters.filter((c): c is NonNullable<typeof c> => c !== null);
+
+	// Process team players and create participants
+	const teamMap = new Map<string, typeof table.team.$inferSelect>();
+	const playerMap = new Map<string, typeof table.player.$inferSelect>();
+
+	teamPlayers.forEach((tp) => {
+		if (tp.team) teamMap.set(tp.team.id, tp.team);
+		if (tp.player) playerMap.set(tp.player.id, tp.player);
+	});
+
+	// Group team players by team
+	const teamPlayerGroups = new Map<
+		string,
+		{
+			team: typeof table.team.$inferSelect;
+			main: (typeof table.player.$inferSelect)[];
+			reserve: (typeof table.player.$inferSelect)[];
+			coach: (typeof table.player.$inferSelect)[];
+		}
+	>();
+
+	teamPlayers.forEach((tp) => {
+		if (!tp.team || !tp.player) return;
+
+		if (!teamPlayerGroups.has(tp.team.id)) {
+			teamPlayerGroups.set(tp.team.id, {
+				team: tp.team,
+				main: [],
+				reserve: [],
+				coach: []
+			});
+		}
+
+		const group = teamPlayerGroups.get(tp.team.id)!;
+		if (tp.role === 'main') group.main.push(tp.player);
+		else if (tp.role === 'sub') group.reserve.push(tp.player);
+		else if (tp.role === 'coach') group.coach.push(tp.player);
+	});
+
+	// Convert to participants - use legacy format for now to avoid type issues
+	const participants: LegacyEventParticipant[] = Array.from(teamPlayerGroups.values()).map(
+		(group) => ({
+			team: group.team.abbr || group.team.name,
+			main: group.main.map((p) => p.name),
+			reserve: group.reserve.map((p) => p.name),
+			coach: group.coach.map((p) => p.name)
+		})
+	);
+
+	// Process stages - create a simplified structure
+	const stageMap = new Map<
+		number,
+		{
+			stage: typeof table.stage.$inferSelect;
+			rounds: Map<
+				number,
+				{
+					round: typeof table.stageRound.$inferSelect;
+					nodes: Array<{
+						node: typeof table.stageNode.$inferSelect;
+						dependencies: Array<{
+							dependencyMatchId: string;
+							outcome: string;
+						}>;
+					}>;
+				}
+			>;
+		}
+	>();
+
+	stages.forEach((row) => {
+		if (!row.stage) return;
+
+		if (!stageMap.has(row.stage.id)) {
+			stageMap.set(row.stage.id, {
+				stage: row.stage,
+				rounds: new Map()
+			});
+		}
+
+		const stageData = stageMap.get(row.stage.id)!;
+
+		if (row.stageRound) {
+			if (!stageData.rounds.has(row.stageRound.id)) {
+				stageData.rounds.set(row.stageRound.id, {
+					round: row.stageRound,
+					nodes: []
+				});
+			}
+
+			const roundData = stageData.rounds.get(row.stageRound.id)!;
+
+			if (row.stageNode) {
+				const nodeData = {
+					node: row.stageNode,
+					dependencies: [] as Array<{
+						dependencyMatchId: string;
+						outcome: string;
+					}>
+				};
+
+				if (row.stageNodeDependency) {
+					nodeData.dependencies.push({
+						dependencyMatchId: row.stageNodeDependency.dependencyMatchId,
+						outcome: row.stageNodeDependency.outcome
+					});
+				}
+
+				roundData.nodes.push(nodeData);
+			}
+		}
+	});
+
+	// Convert stages to expected format - create empty stages for now
+	const processedStages: Stage[] = [];
+
+	const processingDuration = performance.now() - processingStart;
+	console.info(`[Events] Data processing took ${processingDuration.toFixed(2)}ms`);
+
+	// Build the final event object
+	const event: AppEvent = {
+		id: eventData.event.id,
+		slug: eventData.event.slug,
+		name: eventData.event.name,
+		official: Boolean(eventData.event.official),
+		server: eventData.event.server as 'calabiyau' | 'strinova',
+		format: eventData.event.format as 'lan' | 'online' | 'hybrid',
+		region: eventData.event.region as Region,
+		image: eventData.event.image,
+		imageURL: await processImageURL(eventData.event.image),
+		status: eventData.event.status as 'upcoming' | 'live' | 'finished' | 'cancelled' | 'postponed',
+		stages: processedStages,
+		organizers: await Promise.all(processedOrganizers.map(convertOrganizer)),
+		capacity: eventData.event.capacity,
+		date: eventData.event.date,
+		websites: processedWebsites.length > 0 ? processedWebsites : undefined,
+		participants: participants,
+		videos: processedVideos.length > 0 ? processedVideos : undefined,
+		casters: validCasters.length > 0 ? validCasters : undefined,
+		results:
+			processedResults.length > 0
+				? ((await Promise.all(processedResults)) as EventResult[])
+				: undefined
+	};
+
+	const totalDuration = performance.now() - totalStart;
+	console.info(`[Events] Total getEvent took ${totalDuration.toFixed(2)}ms`);
+
+	return event;
 }
 
 export async function getEventsForAdminPage(): Promise<
