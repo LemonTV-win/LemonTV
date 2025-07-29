@@ -2,7 +2,9 @@
 	import { enhance } from '$app/forms';
 	import type { ActionResult } from '@sveltejs/kit';
 	import CharacterSelect from '$lib/components/CharacterSelect.svelte';
-	let { game, matchId, maps, onCancel, onSuccess, teams } = $props<{
+	import AccountIdCombobox from '$lib/components/AccountIdCombobox.svelte';
+	import type { GameParticipant } from './+page.server';
+	let { game, matchId, maps, onCancel, onSuccess, teams, rosters } = $props<{
 		game?: any;
 		matchId: string;
 		maps: Array<{ id: string; name?: string }>;
@@ -12,7 +14,20 @@
 			{ id: string; name: string; logo?: string },
 			{ id: string; name: string; logo?: string }
 		];
+		rosters: [
+			{
+				player: GameParticipant;
+				job: 'main' | 'sub' | 'coach';
+			}[],
+			{
+				player: GameParticipant;
+				job: 'main' | 'sub' | 'coach';
+			}[]
+		];
 	}>();
+
+	$inspect('[admin/matches/GameEdit] teams', teams);
+	$inspect('[admin/matches/GameEdit] rosters', rosters);
 
 	let formData = $state({
 		mapId: game?.mapId || '',
@@ -42,7 +57,9 @@
 			: { teamId: '', position: 1, score: 0 }
 	]);
 
-	let playerScoresA = $state(
+	$inspect('[admin/matches/GameEdit] teamData', teamData);
+
+	let playerScoresA: any[] = $state(
 		game?.playerScores?.filter((ps: any) => ps.teamId === teamData[0].teamId) ??
 			Array(5)
 				.fill(null)
@@ -114,6 +131,34 @@
 			showDeleteConfirm = false;
 		}
 	}
+
+	function rostersToGameAccountIDMap(
+		rosters: {
+			player: GameParticipant;
+			job: 'main' | 'sub' | 'coach';
+		}[]
+	) {
+		const map = new Map<
+			number,
+			{
+				player: GameParticipant;
+				job: 'main' | 'sub' | 'coach';
+			}
+		>();
+		for (const roster of rosters) {
+			for (const account of roster.player.gameAccounts) {
+				map.set(account.accountId, roster);
+			}
+		}
+		return map;
+	}
+
+	let compiledGameAccountIDMaps = $derived([
+		rostersToGameAccountIDMap(rosters[0]),
+		rostersToGameAccountIDMap(rosters[1])
+	]);
+
+	$inspect('[admin/matches/GameEdit] compiledGameAccountIDMaps', compiledGameAccountIDMaps);
 </script>
 
 <form
@@ -223,83 +268,98 @@
 			</div>
 		</div>
 		<!-- Player scores editing -->
+		{#snippet playerScoreInput(team: 'A' | 'B', ps: any, idx: number)}
+			<div class="flex flex-col gap-1 rounded bg-slate-900 p-2">
+				<AccountIdCombobox
+					value={ps.accountId}
+					options={compiledGameAccountIDMaps[team === 'A' ? 0 : 1]}
+					placeholder="Enter or select account ID"
+					name={`playerScores${team}[${idx}].accountId`}
+					onchange={(value) => {
+						ps.accountId = value;
+					}}
+				/>
+				{#each rosters[team === 'A' ? 0 : 1] as roster}
+					<p>{roster.player.name}</p>
+				{/each}
+				<div class="flex gap-1">
+					<input
+						type="text"
+						name={`playerScores${team}[${idx}].player`}
+						bind:value={ps.player}
+						placeholder="Player"
+						class="col-span-2 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
+						required
+					/>
+					<CharacterSelect
+						value={ps.characterFirstHalf}
+						onChange={(v) => (ps.characterFirstHalf = v)}
+						class="col-span-1"
+					/>
+					<CharacterSelect
+						value={ps.characterSecondHalf}
+						onChange={(v) => (ps.characterSecondHalf = v)}
+						class="col-span-1"
+					/>
+				</div>
+				<div class="grid grid-cols-7 gap-1">
+					<input
+						type="number"
+						name={`playerScores${team}[${idx}].score`}
+						bind:value={ps.score}
+						placeholder="Score"
+						class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
+					/>
+					<input
+						type="number"
+						name={`playerScores${team}[${idx}].damageScore`}
+						bind:value={ps.damageScore}
+						placeholder="DmgScore"
+						class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
+					/>
+					<input
+						type="number"
+						name={`playerScores${team}[${idx}].kills`}
+						bind:value={ps.kills}
+						placeholder="Kills"
+						class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
+					/>
+					<input
+						type="number"
+						name={`playerScores${team}[${idx}].knocks`}
+						bind:value={ps.knocks}
+						placeholder="Knocks"
+						class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
+					/>
+					<input
+						type="number"
+						name={`playerScores${team}[${idx}].deaths`}
+						bind:value={ps.deaths}
+						placeholder="Deaths"
+						class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
+					/>
+					<input
+						type="number"
+						name={`playerScores${team}[${idx}].assists`}
+						bind:value={ps.assists}
+						placeholder="Assists"
+						class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
+					/>
+					<input
+						type="number"
+						name={`playerScores${team}[${idx}].damage`}
+						bind:value={ps.damage}
+						placeholder="Damage"
+						class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
+					/>
+				</div>
+			</div>
+		{/snippet}
 		<div>
 			<label class="block text-sm font-medium text-slate-300">Player Scores (Team A)</label>
 			<div class="mt-2 grid grid-cols-1 gap-2">
 				{#each playerScoresA as ps, idx}
-					<div class="flex flex-col gap-1 rounded bg-slate-900 p-2">
-						<div class="flex gap-1">
-							<input
-								type="text"
-								name={`playerScoresA[${idx}].player`}
-								bind:value={ps.player}
-								placeholder="Player"
-								class="col-span-2 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-								required
-							/>
-							<CharacterSelect
-								value={ps.characterFirstHalf}
-								onChange={(v) => (ps.characterFirstHalf = v)}
-								class="col-span-1"
-							/>
-							<CharacterSelect
-								value={ps.characterSecondHalf}
-								onChange={(v) => (ps.characterSecondHalf = v)}
-								class="col-span-1"
-							/>
-						</div>
-						<div class="grid grid-cols-7 gap-1">
-							<input
-								type="number"
-								name={`playerScoresA[${idx}].score`}
-								bind:value={ps.score}
-								placeholder="Score"
-								class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-							/>
-							<input
-								type="number"
-								name={`playerScoresA[${idx}].damageScore`}
-								bind:value={ps.damageScore}
-								placeholder="DmgScore"
-								class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-							/>
-							<input
-								type="number"
-								name={`playerScoresA[${idx}].kills`}
-								bind:value={ps.kills}
-								placeholder="Kills"
-								class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-							/>
-							<input
-								type="number"
-								name={`playerScoresA[${idx}].knocks`}
-								bind:value={ps.knocks}
-								placeholder="Knocks"
-								class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-							/>
-							<input
-								type="number"
-								name={`playerScoresA[${idx}].deaths`}
-								bind:value={ps.deaths}
-								placeholder="Deaths"
-								class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-							/>
-							<input
-								type="number"
-								name={`playerScoresA[${idx}].assists`}
-								bind:value={ps.assists}
-								placeholder="Assists"
-								class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-							/>
-							<input
-								type="number"
-								name={`playerScoresA[${idx}].damage`}
-								bind:value={ps.damage}
-								placeholder="Damage"
-								class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-							/>
-						</div>
-					</div>
+					{@render playerScoreInput('A', ps, idx)}
 				{/each}
 			</div>
 		</div>
@@ -307,80 +367,7 @@
 			<label class="block text-sm font-medium text-slate-300">Player Scores (Team B)</label>
 			<div class="mt-2 grid grid-cols-1 gap-2">
 				{#each playerScoresB as ps, idx}
-					<div class="flex flex-col gap-1 rounded bg-slate-900 p-2">
-						<div class="flex gap-1">
-							<input
-								type="text"
-								name={`playerScoresB[${idx}].player`}
-								bind:value={ps.player}
-								placeholder="Player"
-								class="col-span-2 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-								required
-							/>
-							<CharacterSelect
-								value={ps.characterFirstHalf}
-								onChange={(v) => (ps.characterFirstHalf = v)}
-								class="col-span-1"
-							/>
-							<CharacterSelect
-								value={ps.characterSecondHalf}
-								onChange={(v) => (ps.characterSecondHalf = v)}
-								class="col-span-1"
-							/>
-						</div>
-
-						<div class="grid grid-cols-7 gap-1">
-							<input
-								type="number"
-								name={`playerScoresB[${idx}].score`}
-								bind:value={ps.score}
-								placeholder="Score"
-								class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-							/>
-							<input
-								type="number"
-								name={`playerScoresB[${idx}].damageScore`}
-								bind:value={ps.damageScore}
-								placeholder="DmgScore"
-								class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-							/>
-							<input
-								type="number"
-								name={`playerScoresB[${idx}].kills`}
-								bind:value={ps.kills}
-								placeholder="Kills"
-								class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-							/>
-							<input
-								type="number"
-								name={`playerScoresB[${idx}].knocks`}
-								bind:value={ps.knocks}
-								placeholder="Knocks"
-								class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-							/>
-							<input
-								type="number"
-								name={`playerScoresB[${idx}].deaths`}
-								bind:value={ps.deaths}
-								placeholder="Deaths"
-								class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-							/>
-							<input
-								type="number"
-								name={`playerScoresB[${idx}].assists`}
-								bind:value={ps.assists}
-								placeholder="Assists"
-								class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-							/>
-							<input
-								type="number"
-								name={`playerScoresB[${idx}].damage`}
-								bind:value={ps.damage}
-								placeholder="Damage"
-								class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-							/>
-						</div>
-					</div>
+					{@render playerScoreInput('B', ps, idx)}
 				{/each}
 			</div>
 		</div>

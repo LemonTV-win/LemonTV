@@ -17,6 +17,7 @@
 	import Modal from '$lib/components/Modal.svelte';
 	import BracketInput from './BracketInput.svelte';
 	import GameEdit from './GameEdit.svelte';
+	import type { GameParticipant } from './+page.server';
 
 	let { data }: PageProps = $props();
 
@@ -233,18 +234,36 @@
 		matchId: string;
 		matchTeamA: { id: string; name: string; logo?: string };
 		matchTeamB: { id: string; name: string; logo?: string };
+		rosters: [
+			{
+				player: GameParticipant;
+				job: 'main' | 'sub' | 'coach';
+			}[],
+			{
+				player: GameParticipant;
+				job: 'main' | 'sub' | 'coach';
+			}[]
+		];
 	} | null>(null);
+	$inspect('[admin/matches] editingGame', editingGame);
+
 	let deletingGame = $state<{ game: any; matchId: string } | null>(null);
 	let isDeletingGame = $state(false);
 
-	function openGameModal(
-		matchId: string,
-		matchTeamA: { id: string; name: string; logo?: string },
-		matchTeamB: { id: string; name: string; logo?: string },
-		game?: any
-	) {
-		editingGame = { game, matchId, matchTeamA, matchTeamB };
+	function openGameModal(match: StageMatch, eventData: EventData, game?: any) {
+		editingGame = {
+			game,
+			matchId: match.id,
+			matchTeamA: match.teams[0].team,
+			matchTeamB: match.teams[1].team,
+			rosters: [
+				// data.teamRoasters: Map<string, Map<string, { player: GameParticipant; job: 'main' | 'sub' | 'coach' }[]>
+				data.teamRosters.get(eventData.event.id)?.get(match.teams[0].team.id) ?? [],
+				data.teamRosters.get(eventData.event.id)?.get(match.teams[1].team.id) ?? []
+			]
+		};
 	}
+
 	function closeGameModal() {
 		editingGame = null;
 	}
@@ -307,17 +326,51 @@
 			: 0
 	);
 
-	// Get sorted matches for a stage
-	function getSortedMatches(
-		matches: Array<{
-			id: string;
-			format: string | null;
-			stageId: number | null;
+	type StageMatch = {
+		id: string;
+		format: string | null;
+		stageId: number | null;
+		teams: Array<{
+			matchId: string | null;
+			teamId: string | null;
+			position: number | null;
+			score: number | null;
+			team: {
+				id: string;
+				name: string;
+				slug: string;
+				abbr: string;
+				logo: string;
+				region: string;
+			};
+		}>;
+		maps: Array<{
+			id: number;
+			matchId: string;
+			mapId: string;
+			order: number;
+			side: number;
+			map_picker_position: number;
+			side_picker_position: number;
+			map: {
+				id: string;
+			};
+			action?: string;
+		}>;
+		games: Array<{
+			id: number;
+			matchId: string;
+			mapId: string;
+			duration: number;
+			winner: number;
+			map: {
+				id: string;
+			};
 			teams: Array<{
-				matchId: string | null;
-				teamId: string | null;
-				position: number | null;
-				score: number | null;
+				gameId: number;
+				teamId: string;
+				position: number;
+				score: number;
 				team: {
 					id: string;
 					name: string;
@@ -327,61 +380,27 @@
 					region: string;
 				};
 			}>;
-			maps: Array<{
+			playerScores: Array<{
 				id: number;
-				matchId: string;
-				mapId: string;
-				order: number;
-				side: number;
-				map_picker_position: number;
-				side_picker_position: number;
-				map: {
-					id: string;
-				};
-				action?: string;
+				gameId: number;
+				teamId: string;
+				accountId: number;
+				player: string;
+				characterFirstHalf: string | null;
+				characterSecondHalf: string | null;
+				score: number;
+				damageScore: number;
+				kills: number;
+				knocks: number;
+				deaths: number;
+				assists: number;
+				damage: number;
 			}>;
-			games: Array<{
-				id: number;
-				matchId: string;
-				mapId: string;
-				duration: number;
-				winner: number;
-				map: {
-					id: string;
-				};
-				teams: Array<{
-					gameId: number;
-					teamId: string;
-					position: number;
-					score: number;
-					team: {
-						id: string;
-						name: string;
-						slug: string;
-						abbr: string;
-						logo: string;
-						region: string;
-					};
-				}>;
-				playerScores: Array<{
-					id: number;
-					gameId: number;
-					teamId: string;
-					accountId: number;
-					player: string;
-					characterFirstHalf: string | null;
-					characterSecondHalf: string | null;
-					score: number;
-					damageScore: number;
-					kills: number;
-					knocks: number;
-					deaths: number;
-					assists: number;
-					damage: number;
-				}>;
-			}>;
-		}>
-	) {
+		}>;
+	};
+
+	// Get sorted matches for a stage
+	function getSortedMatches(matches: StageMatch[]) {
 		return matches.toSorted((a, b) => {
 			if (sortBy === 'id-asc') {
 				return a.id.localeCompare(b.id);
@@ -926,8 +945,7 @@
 											{#each match.games.sort((a, b) => a.id - b.id) as game}
 												<button
 													class="group flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg bg-gray-700/50 px-3 py-1 text-left transition-all hover:scale-[1.02] hover:bg-gray-600 hover:shadow-lg hover:shadow-gray-900/50"
-													onclick={() =>
-														openGameModal(match.id, match.teams[0].team, match.teams[1].team, game)}
+													onclick={() => openGameModal(match, selectedEventData, game)}
 												>
 													<div class="flex items-center gap-2">
 														<img
@@ -973,8 +991,7 @@
 											{/if}
 											<!-- Add game area -->
 											<button
-												onclick={() =>
-													openGameModal(match.id, match.teams[0].team, match.teams[1].team)}
+												onclick={() => openGameModal(match, selectedEventData)}
 												class="mt-2 w-full rounded-lg border border-emerald-500/30 bg-emerald-500/10 py-2 text-xs font-medium text-emerald-400 transition-all hover:bg-emerald-500/20 hover:text-emerald-300 active:scale-[0.98]"
 											>
 												+ Add game
@@ -1159,6 +1176,7 @@
 			onCancel={closeGameModal}
 			onSuccess={closeGameModal}
 			teams={[editingGame.matchTeamA, editingGame.matchTeamB]}
+			rosters={editingGame.rosters}
 		/>
 	</Modal>
 {/if}

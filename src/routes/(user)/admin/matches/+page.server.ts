@@ -1,14 +1,29 @@
 import { error, fail } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { desc, eq } from 'drizzle-orm';
+import { desc, eq, inArray } from 'drizzle-orm';
 import { processImageURL } from '$lib/server/storage';
+import type { TCountryCode } from 'countries-list';
+import type { Region } from '$lib/data/game';
+import type { PageServerLoad } from './$types';
 
 type PermissionResult =
 	| { status: 'success'; userId: string }
 	| { status: 'error'; error: string; statusCode: 401 | 403 };
 
 type MapAction = 'ban' | 'pick' | 'decider' | 'set' | null;
+
+export type GameParticipant = {
+	id: string;
+	name: string;
+	nationalities: TCountryCode[];
+	gameAccounts: Array<{
+		server: 'Strinova' | 'CalabiYau';
+		accountId: number;
+		currentName: string;
+		region?: Region;
+	}>;
+};
 
 function checkPermissions(locals: App.Locals, requiredRoles: string[]): PermissionResult {
 	if (!locals.user?.id) {
@@ -77,7 +92,7 @@ function parseFormData(formData: FormData) {
 	};
 }
 
-export async function load({ locals, url }) {
+export const load: PageServerLoad = async ({ locals, url }) => {
 	const result = checkPermissions(locals, ['admin', 'editor']);
 	if (result.status === 'error') {
 		throw error(result.statusCode, result.error);
@@ -127,6 +142,25 @@ export async function load({ locals, url }) {
 		.from(table.stageNodeDependency)
 		.orderBy(table.stageNodeDependency.id);
 
+	// Load team rosters from eventTeamPlayer table
+	const teamRosters = await db
+		.select({
+			eventId: table.eventTeamPlayer.eventId,
+			teamId: table.eventTeamPlayer.teamId,
+			playerId: table.eventTeamPlayer.playerId,
+			role: table.eventTeamPlayer.role,
+			player: table.player,
+			playerAdditionalNationality: table.playerAdditionalNationality,
+			gameAccount: table.gameAccount
+		})
+		.from(table.eventTeamPlayer)
+		.leftJoin(table.player, eq(table.player.id, table.eventTeamPlayer.playerId))
+		.leftJoin(table.gameAccount, eq(table.gameAccount.playerId, table.player.id))
+		.leftJoin(
+			table.playerAdditionalNationality,
+			eq(table.playerAdditionalNationality.playerId, table.player.id)
+		);
+
 	// Process image URLs for teams
 	const processedEvents = await Promise.all(
 		events.map(async (row) => ({
@@ -144,6 +178,77 @@ export async function load({ locals, url }) {
 			map: row.map
 		}))
 	);
+
+	// Process team rosters
+	const teamRosterMap = new Map<
+		string,
+		Map<string, { player: GameParticipant; job: 'main' | 'sub' | 'coach' }[]>
+	>();
+
+	// Group player data by player ID
+	const playerMap = new Map<string, GameParticipant>();
+
+	for (const row of teamRosters) {
+		const p = row.player;
+		if (!p?.id) continue;
+
+		if (!playerMap.has(p.id)) {
+			playerMap.set(p.id, {
+				id: p.id,
+				name: p.name,
+				nationalities: p.nationality ? [p.nationality as TCountryCode] : [],
+				gameAccounts: []
+			});
+		}
+
+		const player = playerMap.get(p.id);
+		if (!player) continue;
+
+		// Add additional nationality
+		const additionalNationality = row.playerAdditionalNationality?.nationality;
+		if (
+			additionalNationality &&
+			!player.nationalities.includes(additionalNationality as TCountryCode)
+		) {
+			player.nationalities.push(additionalNationality as TCountryCode);
+		}
+
+		// Add game account
+		const ga = row.gameAccount;
+		if (
+			ga?.accountId &&
+			!player.gameAccounts.some((a) => a.accountId === ga.accountId && a.server === ga.server)
+		) {
+			player.gameAccounts.push({
+				server: ga.server as 'Strinova' | 'CalabiYau',
+				accountId: ga.accountId,
+				currentName: ga.currentName,
+				region: ga.region ? (ga.region as Region) : undefined
+			});
+		}
+	}
+
+	// Build the team roster map by event
+	for (const row of teamRosters) {
+		if (!row.eventId || !row.teamId || !row.playerId) continue;
+
+		const player = playerMap.get(row.playerId);
+		if (!player) continue;
+
+		// Create event map if it doesn't exist
+		if (!teamRosterMap.has(row.eventId)) {
+			teamRosterMap.set(row.eventId, new Map());
+		}
+
+		const eventMap = teamRosterMap.get(row.eventId)!;
+		if (!eventMap.has(row.teamId)) {
+			eventMap.set(row.teamId, []);
+		}
+		eventMap.get(row.teamId)!.push({
+			player,
+			job: row.role
+		});
+	}
 
 	type MatchWithTeams = (typeof processedEvents)[number]['match'] & {
 		teams: Array<
@@ -219,7 +324,7 @@ export async function load({ locals, url }) {
 							const matchTeam = row.match_team;
 							if (matchData && matchTeam.matchId && matchTeam.teamId) {
 								// Check if team already exists to avoid duplicates
-								const teamExists = matchData.teams.some((t) => t.teamId === matchTeam.teamId);
+								const teamExists = matchData.teams.some((t: any) => t.teamId === matchTeam.teamId);
 								if (!teamExists) {
 									matchData.teams.push({
 										matchId: matchTeam.matchId,
@@ -238,7 +343,7 @@ export async function load({ locals, url }) {
 							const matchMap = row.match_map;
 							if (matchData && matchMap.id && matchMap.matchId) {
 								// Check if map already exists to avoid duplicates
-								const mapExists = matchData.maps.some((m) => m.id === matchMap.id);
+								const mapExists = matchData.maps.some((m: any) => m.id === matchMap.id);
 								if (!mapExists) {
 									matchData.maps.push({
 										id: matchMap.id,
@@ -261,7 +366,7 @@ export async function load({ locals, url }) {
 							const game = row.game;
 							if (matchData && game.id && game.matchId) {
 								// Check if game already exists to avoid duplicates
-								const gameExists = matchData.games.some((g) => g.id === game.id);
+								const gameExists = matchData.games.some((g: any) => g.id === game.id);
 								if (!gameExists) {
 									matchData.games.push({
 										id: game.id,
@@ -276,14 +381,16 @@ export async function load({ locals, url }) {
 								}
 
 								// Find the game to add teams and player scores
-								const gameData = matchData.games.find((g) => g.id === game.id);
+								const gameData = matchData.games.find((g: any) => g.id === game.id);
 								if (gameData) {
 									// If there's a game team, add it to the game's teams
 									if (row.game_team && row.teams) {
 										const gameTeam = row.game_team;
 										if (gameTeam.gameId && gameTeam.teamId) {
 											// Check if team already exists to avoid duplicates
-											const teamExists = gameData.teams.some((t) => t.teamId === gameTeam.teamId);
+											const teamExists = gameData.teams.some(
+												(t: any) => t.teamId === gameTeam.teamId
+											);
 											if (!teamExists) {
 												gameData.teams.push({
 													gameId: gameTeam.gameId,
@@ -302,7 +409,7 @@ export async function load({ locals, url }) {
 										if (playerScore.gameId) {
 											// Check if player score already exists to avoid duplicates
 											const scoreExists = gameData.playerScores.some(
-												(s) => s && s.id === playerScore.id
+												(s: any) => s && s.id === playerScore.id
 											);
 											if (!scoreExists) {
 												gameData.playerScores.push(playerScore);
@@ -499,9 +606,10 @@ export async function load({ locals, url }) {
 		action,
 		id,
 		delete: deleteParam,
-		searchQuery: url.searchParams.get('search') ?? undefined
+		searchQuery: url.searchParams.get('search') ?? undefined,
+		teamRosters: teamRosterMap
 	};
-}
+};
 
 const MATCH_ACTIONS = {
 	create: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
