@@ -1057,6 +1057,7 @@ export async function getEventsForAdminPage(): Promise<
 		organizers: Array<{
 			id: string;
 			name: string;
+			slug: string;
 			description?: string;
 			url?: string;
 			type?: string;
