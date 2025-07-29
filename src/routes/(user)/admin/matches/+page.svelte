@@ -892,7 +892,7 @@
 										</div>
 									</td>
 									<!-- Maps -->
-									<td class="px-4 py-2">
+									<td class="min-w-64 px-4 py-2">
 										<div class="flex flex-col gap-1.5">
 											{#each match.maps.sort((a, b) => a.order - b.order) as map}
 												<div class="flex items-center gap-2 whitespace-nowrap">
