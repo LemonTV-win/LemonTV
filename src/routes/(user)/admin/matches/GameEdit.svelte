@@ -226,8 +226,8 @@
 			</select>
 		</div>
 		<!-- Teams editing -->
-		<div>
-			<label class="block text-sm font-medium text-slate-300">Teams</label>
+		<fieldset>
+			<legend class="block text-sm font-medium text-slate-300">Teams</legend>
 			<div class="mt-2 grid grid-cols-2 gap-4">
 				{#each teamData as team, idx}
 					<input type="hidden" name={`gameTeams[${idx}].teamId`} value={team.teamId} />
@@ -271,7 +271,7 @@
 					</div>
 				{/each}
 			</div>
-		</div>
+		</fieldset>
 		<!-- Player scores editing -->
 		{#snippet playerScoreInput(team: 'A' | 'B', ps: any, idx: number)}
 			<div class="flex flex-col gap-1 rounded bg-slate-900 p-2">

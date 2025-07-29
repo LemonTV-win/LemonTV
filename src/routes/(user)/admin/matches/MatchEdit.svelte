@@ -203,8 +203,8 @@
 			</select>
 		</div>
 
-		<div>
-			<label class="block text-sm font-medium text-slate-300">{m.teams()}</label>
+		<fieldset>
+			<legend class="block text-sm font-medium text-slate-300">{m.teams()}</legend>
 			<div class="mt-2 space-y-4">
 				{#each teamData as team, position}
 					<div class="rounded-lg border border-slate-700 bg-slate-800 p-4">
@@ -266,10 +266,10 @@
 					<span>{m.add_team()}</span>
 				</button>
 			</div>
-		</div>
+		</fieldset>
 
-		<div>
-			<label class="block text-sm font-medium text-slate-300">{m.maps()}</label>
+		<fieldset>
+			<legend class="block text-sm font-medium text-slate-300">{m.maps()}</legend>
 			<div class="mt-2 space-y-4">
 				{#each mapData as map, index}
 					<div class="rounded-lg border border-slate-700 bg-slate-800 p-4">
@@ -343,7 +343,7 @@
 					<span>{m.add_map()}</span>
 				</button>
 			</div>
-		</div>
+		</fieldset>
 	</div>
 
 	<div class="mt-6 flex justify-end gap-4 border-t border-slate-700 pt-4">
