@@ -1597,10 +1597,10 @@ const STAGE_NODE_DEPENDENCY_ACTIONS = {
 const GAME_ACTIONS = {
 	// Game management actions
 	createGame: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
-		const result = checkPermissions(locals, ['admin', 'editor']);
-		if (result.status === 'error') {
-			return fail(result.statusCode, {
-				error: result.error
+		const permissionResult = checkPermissions(locals, ['admin', 'editor']);
+		if (permissionResult.status === 'error') {
+			return fail(permissionResult.statusCode, {
+				error: permissionResult.error
 			});
 		}
 
@@ -1634,6 +1634,15 @@ const GAME_ACTIONS = {
 			for (let i = 0; i < 5; i++) {
 				const player = formData.get(`${prefix}[${i}].player`);
 				if (!player) continue;
+
+				// Ensure we have a valid teamId for this player score
+				const teamId = gameTeams[t]?.teamId;
+				if (!teamId) {
+					return fail(400, {
+						error: `Missing team data for team ${t === 0 ? 'A' : 'B'}`
+					});
+				}
+
 				playerScores.push({
 					player: String(player),
 					characterFirstHalf: formData.get(`${prefix}[${i}].characterFirstHalf`) || '',
@@ -1646,7 +1655,7 @@ const GAME_ACTIONS = {
 					assists: Number(formData.get(`${prefix}[${i}].assists`) || 0),
 					damage: Number(formData.get(`${prefix}[${i}].damage`) || 0),
 					accountId: Number(formData.get(`${prefix}[${i}].accountId`) || 0),
-					teamId: gameTeams[t]?.teamId || '',
+					teamId: teamId,
 					gameId: undefined // will set after game insert
 				});
 			}
@@ -1664,65 +1673,70 @@ const GAME_ACTIONS = {
 		}
 
 		try {
-			// Create the game
-			const [newGame] = await db
-				.insert(table.game)
-				.values({
-					matchId: gameData.matchId,
-					mapId: gameData.mapId,
-					duration: gameData.duration,
-					winner: gameData.winner
-				})
-				.returning();
+			// Use a transaction to ensure atomicity
+			const transactionResult = await db.transaction(async (tx) => {
+				// Create the game
+				const [newGame] = await tx
+					.insert(table.game)
+					.values({
+						matchId: gameData.matchId,
+						mapId: gameData.mapId,
+						duration: gameData.duration,
+						winner: gameData.winner
+					})
+					.returning();
 
-			// Insert gameTeams
-			if (gameTeams.length) {
-				await db.insert(table.gameTeam).values(
-					gameTeams.map((gt) => ({
-						gameId: newGame.id,
-						teamId: gt.teamId,
-						position: gt.position,
-						score: gt.score
-					}))
-				);
-			}
+				// Insert gameTeams
+				if (gameTeams.length) {
+					await tx.insert(table.gameTeam).values(
+						gameTeams.map((gt) => ({
+							gameId: newGame.id,
+							teamId: gt.teamId,
+							position: gt.position,
+							score: gt.score
+						}))
+					);
+				}
 
-			// Insert playerScores
-			if (playerScores.length) {
-				await db.insert(table.gamePlayerScore).values(
-					playerScores.map((ps) => ({
-						gameId: newGame.id,
-						teamId: ps.teamId,
-						player: ps.player,
-						characterFirstHalf: ps.characterFirstHalf,
-						characterSecondHalf: ps.characterSecondHalf,
-						score: ps.score,
-						damageScore: ps.damageScore,
-						kills: ps.kills,
-						knocks: ps.knocks,
-						deaths: ps.deaths,
-						assists: ps.assists,
-						damage: ps.damage,
-						accountId: ps.accountId
-					}))
-				);
-			}
+				// Insert playerScores
+				if (playerScores.length) {
+					await tx.insert(table.gamePlayerScore).values(
+						playerScores.map((ps) => ({
+							gameId: newGame.id,
+							teamId: ps.teamId,
+							player: ps.player,
+							characterFirstHalf: ps.characterFirstHalf,
+							characterSecondHalf: ps.characterSecondHalf,
+							score: ps.score,
+							damageScore: ps.damageScore,
+							kills: ps.kills,
+							knocks: ps.knocks,
+							deaths: ps.deaths,
+							assists: ps.assists,
+							damage: ps.damage,
+							accountId: ps.accountId
+						}))
+					);
+				}
 
-			// Add edit history
-			await db.insert(table.editHistory).values({
-				id: crypto.randomUUID(),
-				tableName: 'game',
-				recordId: newGame.id.toString(),
-				fieldName: 'creation',
-				oldValue: null,
-				newValue: 'created',
-				editedBy: result.userId,
-				editedAt: new Date()
+				// Add edit history
+				await tx.insert(table.editHistory).values({
+					id: crypto.randomUUID(),
+					tableName: 'game',
+					recordId: newGame.id.toString(),
+					fieldName: 'creation',
+					oldValue: null,
+					newValue: 'created',
+					editedBy: permissionResult.userId,
+					editedAt: new Date()
+				});
+
+				return newGame;
 			});
 
 			return {
 				success: true,
-				gameId: newGame.id
+				gameId: transactionResult.id
 			};
 		} catch (e) {
 			console.error('[Admin][Games][Create] Failed to create game:', e);
@@ -1733,10 +1747,10 @@ const GAME_ACTIONS = {
 	},
 
 	updateGame: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
-		const result = checkPermissions(locals, ['admin', 'editor']);
-		if (result.status === 'error') {
-			return fail(result.statusCode, {
-				error: result.error
+		const permissionResult = checkPermissions(locals, ['admin', 'editor']);
+		if (permissionResult.status === 'error') {
+			return fail(permissionResult.statusCode, {
+				error: permissionResult.error
 			});
 		}
 
@@ -1771,6 +1785,15 @@ const GAME_ACTIONS = {
 			for (let i = 0; i < 5; i++) {
 				const player = formData.get(`${prefix}[${i}].player`);
 				if (!player) continue;
+
+				// Ensure we have a valid teamId for this player score
+				const teamId = gameTeams[t]?.teamId;
+				if (!teamId) {
+					return fail(400, {
+						error: `Missing team data for team ${t === 0 ? 'A' : 'B'}`
+					});
+				}
+
 				playerScores.push({
 					player: String(player),
 					characterFirstHalf: formData.get(`${prefix}[${i}].characterFirstHalf`) || '',
@@ -1783,7 +1806,7 @@ const GAME_ACTIONS = {
 					assists: Number(formData.get(`${prefix}[${i}].assists`) || 0),
 					damage: Number(formData.get(`${prefix}[${i}].damage`) || 0),
 					accountId: Number(formData.get(`${prefix}[${i}].accountId`) || 0),
-					teamId: gameTeams[t]?.teamId || '',
+					teamId: teamId,
 					gameId: gameData.id
 				});
 			}
@@ -1802,84 +1825,85 @@ const GAME_ACTIONS = {
 		}
 
 		try {
-			// Get the current game data for comparison
-			const currentGame = await db
-				.select()
-				.from(table.game)
-				.where(eq(table.game.id, gameData.id))
-				.limit(1);
+			// Use a transaction to ensure atomicity
+			await db.transaction(async (tx) => {
+				// Get the current game data for comparison
+				const currentGame = await tx
+					.select()
+					.from(table.game)
+					.where(eq(table.game.id, gameData.id))
+					.limit(1);
 
-			if (!currentGame.length) {
-				return fail(404, {
-					error: 'Game not found'
+				if (!currentGame.length) {
+					throw new Error('Game not found');
+				}
+
+				// Update the game
+				await tx
+					.update(table.game)
+					.set({
+						matchId: gameData.matchId,
+						mapId: gameData.mapId,
+						duration: gameData.duration,
+						winner: gameData.winner
+					})
+					.where(eq(table.game.id, gameData.id));
+
+				// Delete existing gameTeams and playerScores
+				await tx.delete(table.gameTeam).where(eq(table.gameTeam.gameId, gameData.id));
+				await tx.delete(table.gamePlayerScore).where(eq(table.gamePlayerScore.gameId, gameData.id));
+
+				// Insert gameTeams
+				if (gameTeams.length) {
+					await tx.insert(table.gameTeam).values(
+						gameTeams.map((gt) => ({
+							gameId: gameData.id,
+							teamId: gt.teamId,
+							position: gt.position,
+							score: gt.score
+						}))
+					);
+				}
+
+				// Insert playerScores
+				if (playerScores.length) {
+					await tx.insert(table.gamePlayerScore).values(
+						playerScores.map((ps) => ({
+							gameId: gameData.id,
+							teamId: ps.teamId,
+							player: ps.player,
+							characterFirstHalf: ps.characterFirstHalf,
+							characterSecondHalf: ps.characterSecondHalf,
+							score: ps.score,
+							damageScore: ps.damageScore,
+							kills: ps.kills,
+							knocks: ps.knocks,
+							deaths: ps.deaths,
+							assists: ps.assists,
+							damage: ps.damage,
+							accountId: ps.accountId
+						}))
+					);
+				}
+
+				// Add edit history
+				await tx.insert(table.editHistory).values({
+					id: crypto.randomUUID(),
+					tableName: 'game',
+					recordId: gameData.id.toString(),
+					fieldName: 'update',
+					oldValue: JSON.stringify(currentGame[0]),
+					newValue: JSON.stringify({
+						matchId: gameData.matchId,
+						mapId: gameData.mapId,
+						duration: gameData.duration,
+						winner: gameData.winner,
+						gameTeams,
+						playerScores
+					}),
+					editedBy: permissionResult.userId,
+					editedAt: new Date()
 				});
-			}
-
-			// Update the game
-			await db
-				.update(table.game)
-				.set({
-					matchId: gameData.matchId,
-					mapId: gameData.mapId,
-					duration: gameData.duration,
-					winner: gameData.winner
-				})
-				.where(eq(table.game.id, gameData.id));
-
-			// Delete existing gameTeams and playerScores
-			await db.delete(table.gameTeam).where(eq(table.gameTeam.gameId, gameData.id));
-			await db.delete(table.gamePlayerScore).where(eq(table.gamePlayerScore.gameId, gameData.id));
-
-			// Insert gameTeams
-			if (gameTeams.length) {
-				await db.insert(table.gameTeam).values(
-					gameTeams.map((gt) => ({
-						gameId: gameData.id,
-						teamId: gt.teamId,
-						position: gt.position,
-						score: gt.score
-					}))
-				);
-			}
-
-			// Insert playerScores
-			if (playerScores.length) {
-				await db.insert(table.gamePlayerScore).values(
-					playerScores.map((ps) => ({
-						gameId: gameData.id,
-						teamId: ps.teamId,
-						player: ps.player,
-						characterFirstHalf: ps.characterFirstHalf,
-						characterSecondHalf: ps.characterSecondHalf,
-						score: ps.score,
-						damageScore: ps.damageScore,
-						kills: ps.kills,
-						knocks: ps.knocks,
-						deaths: ps.deaths,
-						assists: ps.assists,
-						damage: ps.damage,
-						accountId: ps.accountId
-					}))
-				);
-			}
-
-			// Add edit history
-			await db.insert(table.editHistory).values({
-				id: crypto.randomUUID(),
-				tableName: 'game',
-				recordId: gameData.id.toString(),
-				fieldName: 'update',
-				oldValue: JSON.stringify(currentGame[0]),
-				newValue: JSON.stringify({
-					matchId: gameData.matchId,
-					mapId: gameData.mapId,
-					duration: gameData.duration,
-					winner: gameData.winner,
-					gameTeams,
-					playerScores
-				}),
-				editedBy: result.userId,
-				editedAt: new Date()
 			});
 
 			return {
@@ -1887,6 +1911,11 @@ const GAME_ACTIONS = {
 			};
 		} catch (e) {
 			console.error('[Admin][Games][Update] Failed to update game:', e);
+			if (e instanceof Error && e.message === 'Game not found') {
+				return fail(404, {
+					error: 'Game not found'
+				});
+			}
 			return fail(500, {
 				error: 'Failed to update game'
 			});
