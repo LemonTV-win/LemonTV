@@ -436,6 +436,7 @@
 	"tags": "標籤",
 	"category": "類別",
 	"select_category": "選擇類別",
+	"select_character": "選擇角色...",
 	"value": "數值",
 	"add_tag": "新增標籤",
 	"edit_tag": "編輯標籤",

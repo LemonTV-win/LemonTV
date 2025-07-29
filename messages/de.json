@@ -436,6 +436,7 @@
 	"tags": "Tags",
 	"category": "Kategorie",
 	"select_category": "Kategorie auswählen",
+	"select_character": "Charakter auswählen...",
 	"value": "Wert",
 	"add_tag": "Tag hinzufügen",
 	"edit_tag": "Tag bearbeiten",

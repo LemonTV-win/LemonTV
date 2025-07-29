@@ -110,7 +110,7 @@
 			<CharacterIcon character={value} class="h-6 w-6" />
 			<span>{CHARACTER_NAMES[value as Character] ?? value}</span>
 		{:else}
-			<span class="text-gray-400">Select character</span>
+			<span class="text-gray-400">{m.select_character()}</span>
 		{/if}
 		<span class="ml-auto text-gray-400">▼</span>
 	</button>
@@ -120,7 +120,7 @@
 		>
 			<input
 				type="text"
-				placeholder="Search character..."
+				placeholder={m.select_character()}
 				bind:value={search}
 				class="mb-1 w-full rounded border border-slate-700 bg-slate-900 px-3 py-1 text-white focus:border-yellow-500 focus:outline-none"
 			/>
