@@ -1046,7 +1046,7 @@
 {#if editingStage}
 	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
 		<div
-			class="mx-auto flex h-[90vh] w-full max-w-3xl flex-col rounded-lg border border-slate-700 bg-slate-800 p-6"
+			class="mx-auto flex h-[90vh] w-full max-w-3xl flex-col rounded-lg border border-slate-800 bg-slate-900/95 p-6"
 		>
 			<StageEdit
 				stage={editingStage.stage}
@@ -1069,7 +1069,7 @@
 {#if editingMatch}
 	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
 		<div
-			class="mx-auto flex h-[90vh] w-full max-w-3xl flex-col rounded-lg border border-slate-700 bg-slate-800 p-6"
+			class="mx-auto flex h-[90vh] w-full max-w-3xl flex-col rounded-lg border border-slate-800 bg-slate-900/95 p-6"
 		>
 			<MatchEdit
 				match={editingMatch.match}

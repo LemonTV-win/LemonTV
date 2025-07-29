@@ -45,31 +45,6 @@
 	}}
 	class="flex h-full flex-col"
 >
-	<div class="mb-4 flex items-center justify-between">
-		<h3 class="text-xl font-semibold text-white">
-			{stage ? 'Edit Stage' : 'Add Stage'}
-		</h3>
-		<button
-			type="button"
-			class="rounded-full bg-gray-800 p-1 text-white shadow hover:bg-gray-700"
-			onclick={onCancel}
-			aria-label="Close"
-		>
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				class="h-5 w-5"
-				viewBox="0 0 20 20"
-				fill="currentColor"
-			>
-				<path
-					fill-rule="evenodd"
-					d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-					clip-rule="evenodd"
-				/>
-			</svg>
-		</button>
-	</div>
-
 	{#if errorMessage}
 		<div class="mb-4 rounded-md bg-red-900/50 p-4 text-red-200" role="alert">
 			<span class="block sm:inline">{errorMessage}</span>
@@ -84,7 +59,7 @@
 
 	<div class="min-h-0 flex-1">
 		<div
-			class="h-full space-y-4 overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb]:hover:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800"
+			class="h-full space-y-4 overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800"
 		>
 			{#if stage?.id}
 				<div>

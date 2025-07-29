@@ -4,6 +4,7 @@
 	import type { Match, MatchTeam, MatchMap, Team, Map as GameMap } from '$lib/server/db/schema';
 	import { m } from '$lib/paraglide/messages';
 	import type { ActionResult } from '@sveltejs/kit';
+	import Combobox from '$lib/components/Combobox.svelte';
 
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import IconParkSolidAdd from '~icons/icon-park-solid/add';
@@ -87,17 +88,36 @@
 		return groups;
 	});
 
-	// Prepare form data before submission
-	function prepareFormData() {
-		return {
-			...newMatch,
-			teams: teamData.map((team, index) => ({
-				teamId: team.teamId,
-				position: index,
-				score: team.score
-			})),
-			maps: mapData
-		};
+	function addTeam() {
+		teamData = [
+			...teamData,
+			{
+				teamId: '',
+				score: 0
+			}
+		];
+	}
+
+	function removeTeam(index: number) {
+		teamData = teamData.filter((_, i) => i !== index);
+	}
+
+	function addMap() {
+		mapData = [
+			...mapData,
+			{
+				mapId: '',
+				order: mapData.length,
+				side: 0,
+				action: null,
+				map_picker_position: null,
+				side_picker_position: null
+			}
+		];
+	}
+
+	function removeMap(index: number) {
+		mapData = mapData.filter((_, i) => i !== index);
 	}
 </script>
 
@@ -129,87 +149,85 @@
 		</div>
 	{/if}
 
-	<div class="min-h-0 flex-1">
-		<div
-			class="h-full space-y-4 overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb]:hover:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800"
-		>
-			{#if match.id}
-				<div>
-					<label class="block text-sm font-medium text-slate-300" for="matchId">ID</label>
-					<input
-						type="text"
-						id="matchId"
-						name="id"
-						value={match.id}
-						readonly
-						class="block w-full rounded-md border border-slate-700 bg-slate-800/50 px-3 py-2 text-slate-400 placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none [&:read-only]:cursor-default [&:read-only]:opacity-75 [&:read-only]:select-none"
-					/>
-				</div>
-			{/if}
-
+	<div
+		class="flex-1 space-y-4 overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800"
+	>
+		{#if match.id}
 			<div>
-				<label class="block text-sm font-medium text-slate-300" for="matchStage">
-					{m.stage()}
-				</label>
-				<select
-					id="matchStage"
-					name="stageId"
-					bind:value={newMatch.stageId}
-					class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-				>
-					<option value={null}>{m.select_stage()}</option>
-					{#each [...stagesByEvent] as [eventName, eventStages]}
-						<optgroup label={eventName}>
-							{#each eventStages as stage}
-								<option value={stage.id}>{stage.name}</option>
-							{/each}
-						</optgroup>
-					{/each}
-				</select>
+				<label class="block text-sm font-medium text-slate-300" for="matchId">ID</label>
+				<input
+					type="text"
+					id="matchId"
+					name="id"
+					value={match.id}
+					readonly
+					class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800/50 px-3 py-2 text-slate-400 placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none [&:read-only]:cursor-default [&:read-only]:opacity-75 [&:read-only]:select-none"
+				/>
 			</div>
+		{/if}
 
-			<div>
-				<label class="block text-sm font-medium text-slate-300" for="matchFormat">
-					{m.match_format()}
-				</label>
-				<select
-					id="matchFormat"
-					name="format"
-					bind:value={newMatch.format}
-					class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-				>
-					{#each formatOptions as format}
-						<option value={format}>{format}</option>
-					{/each}
-				</select>
-			</div>
+		<div>
+			<label class="block text-sm font-medium text-slate-300" for="matchStage">
+				{m.stage()}
+			</label>
+			<select
+				id="matchStage"
+				name="stageId"
+				bind:value={newMatch.stageId}
+				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+			>
+				<option value={null}>{m.select_stage()}</option>
+				{#each [...stagesByEvent] as [eventName, eventStages]}
+					<optgroup label={eventName}>
+						{#each eventStages as stage}
+							<option value={stage.id}>{stage.name}</option>
+						{/each}
+					</optgroup>
+				{/each}
+			</select>
+		</div>
 
-			<div>
-				<label class="block text-sm font-medium text-slate-300" for="matchTeams">
-					{m.teams()}
-				</label>
-				<div class="mt-2 rounded-lg border border-slate-700 bg-slate-800 p-4">
-					{#each teamData as team, position}
-						<div
-							class="grid grid-cols-[1fr_1fr_auto] gap-4 {position > 0
-								? 'mt-4 border-t border-slate-700 pt-4'
-								: ''}"
-						>
+		<div>
+			<label class="block text-sm font-medium text-slate-300" for="matchFormat">
+				{m.match_format()}
+			</label>
+			<select
+				id="matchFormat"
+				name="format"
+				bind:value={newMatch.format}
+				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+			>
+				{#each formatOptions as format}
+					<option value={format}>{format}</option>
+				{/each}
+			</select>
+		</div>
+
+		<div>
+			<label class="block text-sm font-medium text-slate-300">{m.teams()}</label>
+			<div class="mt-2 space-y-4">
+				{#each teamData as team, position}
+					<div class="rounded-lg border border-slate-700 bg-slate-800 p-4">
+						<div class="grid grid-cols-[1fr_auto_auto] gap-4">
 							<div>
 								<label class="block text-sm font-medium text-slate-300" for="team-{position}">
 									{m.team()}
 								</label>
-								<select
+								<Combobox
 									id="team-{position}"
-									name="teams[{position}].teamId"
+									items={teams.map((t) => ({
+										id: t.id,
+										name: t.name,
+										group: teamData.some((td) => td.teamId === t.id) ? 'selected' : 'available'
+									}))}
 									bind:value={team.teamId}
-									class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-								>
-									<option value="">{m.select_team()}</option>
-									{#each teams as teamOption}
-										<option value={teamOption.id}>{teamOption.name}</option>
-									{/each}
-								</select>
+									placeholder={m.select_team()}
+									groups={[
+										{ id: 'selected', label: m.attending_teams() },
+										{ id: 'available', label: m.other_teams() }
+									]}
+									class="mt-1 px-3 py-2"
+								/>
 							</div>
 							<div>
 								<label class="block text-sm font-medium text-slate-300" for="score-{position}">
@@ -228,49 +246,32 @@
 								<button
 									type="button"
 									class="mt-[1.625rem] text-red-400 hover:text-red-300"
-									onclick={() => {
-										teamData = teamData.filter((_, index) => index !== position);
-									}}
+									onclick={() => removeTeam(position)}
 									title={m.remove_team()}
 								>
 									<IconParkSolidDelete class="h-5 w-5" />
 								</button>
 							</div>
 						</div>
-					{/each}
-					{#if teamData.length > 0}
-						<div class="my-4 border-t border-slate-700"></div>
-					{/if}
-					<button
-						type="button"
-						class="flex w-full items-center justify-center gap-2 rounded-md border border-dashed border-slate-700 bg-slate-800/50 px-4 py-2 text-yellow-500 transition-colors hover:border-yellow-500 hover:bg-slate-800"
-						onclick={() => {
-							teamData = [
-								...teamData,
-								{
-									teamId: '',
-									score: 0
-								}
-							];
-						}}
-					>
-						<IconParkSolidAdd class="h-5 w-5" />
-						<span>{m.add_team()}</span>
-					</button>
-				</div>
+					</div>
+				{/each}
+				<button
+					type="button"
+					class="flex w-full items-center justify-center gap-2 rounded-md border border-dashed border-slate-700 bg-slate-800/50 px-4 py-2 text-yellow-500 transition-colors hover:border-yellow-500 hover:bg-slate-800"
+					onclick={addTeam}
+				>
+					<IconParkSolidAdd class="h-5 w-5" />
+					<span>{m.add_team()}</span>
+				</button>
 			</div>
+		</div>
 
-			<div>
-				<label class="block text-sm font-medium text-slate-300" for="matchMaps">
-					{m.maps()}
-				</label>
-				<div class="mt-2 rounded-lg border border-slate-700 bg-slate-800 p-4">
-					{#each mapData as map, index}
-						<div
-							class="grid grid-cols-[1fr_1fr_1fr_auto] gap-4 {index > 0
-								? 'mt-4 border-t border-slate-700 pt-4'
-								: ''}"
-						>
+		<div>
+			<label class="block text-sm font-medium text-slate-300">{m.maps()}</label>
+			<div class="mt-2 space-y-4">
+				{#each mapData as map, index}
+					<div class="rounded-lg border border-slate-700 bg-slate-800 p-4">
+						<div class="grid grid-cols-[1fr_1fr_1fr_auto] gap-4">
 							<div>
 								<label class="block text-sm font-medium text-slate-300" for="map-{index}">
 									{m.map()}
@@ -322,40 +323,23 @@
 								<button
 									type="button"
 									class="mt-[1.625rem] text-red-400 hover:text-red-300"
-									onclick={() => {
-										mapData = mapData.filter((_, index) => index !== index);
-									}}
+									onclick={() => removeMap(index)}
 									title={m.remove_map()}
 								>
 									<IconParkSolidDelete class="h-5 w-5" />
 								</button>
 							</div>
 						</div>
-					{/each}
-					{#if mapData.length > 0}
-						<div class="my-4 border-t border-slate-700"></div>
-					{/if}
-					<button
-						type="button"
-						class="flex w-full items-center justify-center gap-2 rounded-md border border-dashed border-slate-700 bg-slate-800/50 px-4 py-2 text-yellow-500 transition-colors hover:border-yellow-500 hover:bg-slate-800"
-						onclick={() => {
-							mapData = [
-								...mapData,
-								{
-									mapId: '',
-									order: mapData.length,
-									side: 0,
-									action: null,
-									map_picker_position: null,
-									side_picker_position: null
-								}
-							];
-						}}
-					>
-						<IconParkSolidAdd class="h-5 w-5" />
-						<span>{m.add_map()}</span>
-					</button>
-				</div>
+					</div>
+				{/each}
+				<button
+					type="button"
+					class="flex w-full items-center justify-center gap-2 rounded-md border border-dashed border-slate-700 bg-slate-800/50 px-4 py-2 text-yellow-500 transition-colors hover:border-yellow-500 hover:bg-slate-800"
+					onclick={addMap}
+				>
+					<IconParkSolidAdd class="h-5 w-5" />
+					<span>{m.add_map()}</span>
+				</button>
 			</div>
 		</div>
 	</div>
