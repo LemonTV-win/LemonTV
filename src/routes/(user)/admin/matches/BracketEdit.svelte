@@ -859,9 +859,11 @@
 						{#each nodes as node, nodeIndex}
 							{@const match = matches.find((m: any) => m.id === node.matchId)}
 							{@const round = rounds.find((r) => r.id === node.roundId || r.id === node.roundId)}
+							{@const team1Score = match?.teams[0]?.score || 0}
+							{@const team2Score = match?.teams[1]?.score || 0}
 							<option value={nodeIndex}>
 								{round?.title || round?.type || 'Unknown Round'} - {match
-									? `${match.teams[0]?.team?.name || 'TBD'} vs ${match.teams[1]?.team?.name || 'TBD'} (${match.id})`
+									? `${match.teams[0]?.team?.name || 'TBD'} vs ${match.teams[1]?.team?.name || 'TBD'} (${team1Score}-${team2Score}) - ${match.id}`
 									: 'No match'} (#{node.order})
 							</option>
 						{/each}
@@ -886,9 +888,11 @@
 								>
 									<option value="">Select Match</option>
 									{#each matches as match}
+										{@const team1Score = match.teams[0]?.score || 0}
+										{@const team2Score = match.teams[1]?.score || 0}
 										<option value={match.id}>
 											{match.teams[0]?.team?.name || 'TBD'} vs {match.teams[1]?.team?.name || 'TBD'}
-											({match.id})
+											({team1Score}-{team2Score}) - {match.id}
 										</option>
 									{/each}
 								</select>
@@ -963,9 +967,11 @@
 									>
 										<option value="">Select Match</option>
 										{#each matches as match}
+											{@const team1Score = match.teams[0]?.score || 0}
+											{@const team2Score = match.teams[1]?.score || 0}
 											<option value={match.id}>
 												{match.teams[0]?.team?.name || 'TBD'} vs {match.teams[1]?.team?.name ||
-													'TBD'} ({match.id})
+													'TBD'} ({team1Score}-{team2Score}) - {match.id}
 											</option>
 										{/each}
 									</select>
