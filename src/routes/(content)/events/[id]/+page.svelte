@@ -59,6 +59,11 @@
 			{data.event.name}
 			{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
 				<ContentActionLink href={`/admin/events?action=edit&id=${data.event.id}`} type="edit" />
+				<ContentActionLink
+					href={`/admin/matches?event=${data.event.id}`}
+					type="edit"
+					title="Matches"
+				/>
 			{/if}
 		</h1>
 		<div class="flex flex-col gap-2 py-2">
