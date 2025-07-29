@@ -64,10 +64,12 @@
 				}
 			}
 		} else if (data.action === 'newMatch') {
+			// Pre-populate stageId if provided in URL
+			const stageId = data.stageId ? parseInt(data.stageId) : null;
 			editingMatch = {
 				match: {
 					format: 'bo1',
-					stageId: null
+					stageId: stageId
 				},
 				matchTeams: [],
 				matchMaps: []
@@ -716,14 +718,6 @@
 				>
 					Add Stage
 				</button>
-				<button
-					onclick={() => {
-						goto(`/admin/matches?event=${selectedEventId}&action=newMatch`, { replaceState: true });
-					}}
-					class="rounded-md bg-yellow-500 px-4 py-2 text-sm font-medium text-black hover:bg-yellow-400 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-				>
-					Add Match
-				</button>
 			</div>
 		</div>
 		{#each Object.entries(selectedEventData.stages) as [stageId, { stage, matches }]}
@@ -737,6 +731,20 @@
 						<span class="text-sm text-gray-400">
 							{matches.reduce((total, match) => total + (match.games?.length || 0), 0)} games
 						</span>
+						<button
+							onclick={() => {
+								goto(
+									`/admin/matches?event=${selectedEventId}&action=newMatch&stageId=${stage.id}`,
+									{
+										replaceState: true
+									}
+								);
+							}}
+							class="rounded-md bg-yellow-500 px-2 py-1 text-xs font-medium text-black hover:bg-yellow-400"
+							title="Add Match to this Stage"
+						>
+							Add Match
+						</button>
 						<button
 							onclick={() => {
 								selectedStage = stage;
