@@ -133,6 +133,23 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		.leftJoin(table.gamePlayerScore, eq(table.game.id, table.gamePlayerScore.gameId))
 		.orderBy(desc(table.event.createdAt));
 
+	// Load game maps separately to avoid cartesian product issues
+	const gameMaps = await db
+		.select({
+			gameId: table.game.id,
+			map: table.map
+		})
+		.from(table.game)
+		.leftJoin(table.map, eq(table.game.mapId, table.map.id));
+
+	// Create a map of game maps for quick lookup
+	const gameMapLookup = new Map<number, (typeof gameMaps)[number]['map']>();
+	for (const gameMap of gameMaps) {
+		if (gameMap.gameId && gameMap.map) {
+			gameMapLookup.set(gameMap.gameId, gameMap.map);
+		}
+	}
+
 	// Load bracket structure data
 	const stageRounds = await db.select().from(table.stageRound).orderBy(table.stageRound.id);
 
@@ -362,20 +379,22 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 						}
 
 						// If there's a game, add it to the match's games
-						if (row.game && row.map) {
+						if (row.game) {
 							const matchData = stageData.matches.get(matchId);
 							const game = row.game;
 							if (matchData && game.id && game.matchId) {
 								// Check if game already exists to avoid duplicates
 								const gameExists = matchData.games.some((g: any) => g.id === game.id);
 								if (!gameExists) {
+									// Get the correct map for this game
+									const gameMap = gameMapLookup.get(game.id);
 									matchData.games.push({
 										id: game.id,
 										matchId: game.matchId,
 										mapId: game.mapId,
 										duration: game.duration,
 										winner: game.winner,
-										map: row.map,
+										map: gameMap || { id: game.mapId }, // Use game map or fallback
 										teams: [],
 										playerScores: []
 									});
