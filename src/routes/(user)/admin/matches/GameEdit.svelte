@@ -288,9 +288,6 @@
 						}
 					}}
 				/>
-				{#each rosters[team === 'A' ? 0 : 1] as roster}
-					<p>{roster.player.name}</p>
-				{/each}
 				<div class="flex gap-1">
 					<input
 						type="text"
