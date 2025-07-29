@@ -120,6 +120,46 @@
 	const bracketTypes = ['upper', 'lower', 'group'] as const;
 	const outcomeTypes = ['winner', 'loser'] as const;
 
+	// Helper function to get available matches for a specific node
+	function getAvailableMatches(currentNodeIndex: number) {
+		// Get all match IDs that are already assigned to other nodes
+		const assignedMatchIds = new Set(
+			nodes
+				.map((node, index) => ({ node, index }))
+				.filter(({ index }) => index !== currentNodeIndex) // Exclude current node
+				.map(({ node }) => node.matchId)
+				.filter((matchId) => matchId) // Filter out empty strings
+		);
+
+		// Return matches that are not already assigned
+		return matches.filter((match: (typeof matches)[0]) => !assignedMatchIds.has(match.id));
+	}
+
+	// Helper function to get available matches for dependencies
+	function getAvailableMatchesForDependencies(currentNodeIndex: number, currentDepIndex: number) {
+		// Get all match IDs that are already assigned to other nodes
+		const assignedMatchIds = new Set(
+			nodes
+				.map((node, index) => ({ node, index }))
+				.filter(({ index }) => index !== currentNodeIndex) // Exclude current node
+				.map(({ node }) => node.matchId)
+				.filter((matchId) => matchId) // Filter out empty strings
+		);
+
+		// Also exclude matches that are already used as dependencies in the current node
+		const currentNode = nodes[currentNodeIndex];
+		if (currentNode) {
+			currentNode.dependencies.forEach((dep, depIndex) => {
+				if (depIndex !== currentDepIndex && dep.dependencyMatchId) {
+					assignedMatchIds.add(dep.dependencyMatchId);
+				}
+			});
+		}
+
+		// Return matches that are not already assigned
+		return matches.filter((match: (typeof matches)[0]) => !assignedMatchIds.has(match.id));
+	}
+
 	// Initialize with existing data if available
 	$effect(() => {
 		if (stage) {
@@ -887,7 +927,7 @@
 									class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 								>
 									<option value="">Select Match</option>
-									{#each matches as match}
+									{#each getAvailableMatches(nodeIndex) as match}
 										{@const team1Score = match.teams[0]?.score || 0}
 										{@const team2Score = match.teams[1]?.score || 0}
 										<option value={match.id}>
@@ -966,7 +1006,7 @@
 										class="flex-1 rounded border border-slate-600 bg-slate-800 px-2 py-1 text-sm text-white"
 									>
 										<option value="">Select Match</option>
-										{#each matches as match}
+										{#each getAvailableMatchesForDependencies(nodeIndex, depIndex) as match}
 											{@const team1Score = match.teams[0]?.score || 0}
 											{@const team2Score = match.teams[1]?.score || 0}
 											<option value={match.id}>
