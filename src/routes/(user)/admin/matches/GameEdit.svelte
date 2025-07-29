@@ -369,7 +369,7 @@
 			</div>
 		{/snippet}
 		<div>
-			<label class="block text-sm font-medium text-slate-300">Player Scores (Team A)</label>
+			<h3 class="block text-sm font-medium text-slate-300">Player Scores ({teams[0].name})</h3>
 			<div class="mt-2 grid grid-cols-1 gap-2">
 				{#each playerScoresA as ps, idx}
 					{@render playerScoreInput('A', ps, idx)}
@@ -377,7 +377,7 @@
 			</div>
 		</div>
 		<div>
-			<label class="block text-sm font-medium text-slate-300">Player Scores (Team B)</label>
+			<h3 class="block text-sm font-medium text-slate-300">Player Scores ({teams[1].name})</h3>
 			<div class="mt-2 grid grid-cols-1 gap-2">
 				{#each playerScoresB as ps, idx}
 					{@render playerScoreInput('B', ps, idx)}
