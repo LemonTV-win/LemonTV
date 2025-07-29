@@ -26,6 +26,7 @@
 		];
 	}>();
 
+	$inspect('[admin/matches/GameEdit] game', game);
 	$inspect('[admin/matches/GameEdit] teams', teams);
 	$inspect('[admin/matches/GameEdit] rosters', rosters);
 
@@ -168,6 +169,9 @@
 	class="flex h-full flex-col"
 >
 	<input type="hidden" name="matchId" value={matchId} />
+	{#if game}
+		<input type="hidden" name="id" value={game.id} />
+	{/if}
 
 	{#if errorMessage}
 		<div class="mb-4 rounded-md bg-red-900/50 p-4 text-red-200" role="alert">
