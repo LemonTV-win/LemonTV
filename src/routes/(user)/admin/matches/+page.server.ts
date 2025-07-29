@@ -1665,7 +1665,9 @@ const GAME_ACTIONS = {
 			!gameData.matchId ||
 			!gameData.mapId ||
 			!gameData.duration ||
-			gameData.winner === undefined
+			isNaN(gameData.duration) ||
+			gameData.winner === undefined ||
+			isNaN(gameData.winner)
 		) {
 			return fail(400, {
 				error: 'Match ID, map ID, duration, and winner are required'
