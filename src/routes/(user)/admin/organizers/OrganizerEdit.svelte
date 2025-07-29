@@ -62,80 +62,84 @@
 		<div class="mb-4 rounded-md bg-green-900/50 p-4 text-green-200">{successMessage}</div>
 	{/if}
 
-	<input type="hidden" name="id" value={newOrganizer.id} />
+	<div
+		class="flex-1 space-y-4 overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800"
+	>
+		<input type="hidden" name="id" value={newOrganizer.id} />
 
-	<div class="mb-4">
-		<label class="block text-sm font-medium text-slate-300" for="name">{m.name()}</label>
-		<input
-			type="text"
-			id="name"
-			name="name"
-			bind:value={newOrganizer.name}
-			required
-			class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-		/>
+		<div class="mb-4">
+			<label class="block text-sm font-medium text-slate-300" for="name">{m.name()}</label>
+			<input
+				type="text"
+				id="name"
+				name="name"
+				bind:value={newOrganizer.name}
+				required
+				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+			/>
+		</div>
+
+		<div class="mb-4">
+			<label class="block text-sm font-medium text-slate-300" for="slug">{m.slug()}</label>
+			<input
+				type="text"
+				id="slug"
+				name="slug"
+				bind:value={newOrganizer.slug}
+				required
+				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+			/>
+		</div>
+
+		<div class="mb-4">
+			<label class="block text-sm font-medium text-slate-300" for="type">Type</label>
+			<select
+				id="type"
+				name="type"
+				bind:value={newOrganizer.type}
+				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+			>
+				<option value="">({m.none()})</option>
+				{#each organizerTypes as type}
+					<option value={type.value}>{type.label}</option>
+				{/each}
+			</select>
+		</div>
+
+		<div class="mb-4">
+			<label class="block text-sm font-medium text-slate-300" for="logo">{m.logo()}</label>
+			<ImageUpload bind:value={newOrganizer.logo} prefix="organizers" />
+			<input type="hidden" name="logo" value={newOrganizer.logo} />
+		</div>
+
+		<div class="mb-4">
+			<label class="block text-sm font-medium text-slate-300" for="description"
+				>{m.description()}</label
+			>
+			<textarea
+				id="description"
+				name="description"
+				bind:value={newOrganizer.description}
+				required
+				rows="4"
+				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+			></textarea>
+		</div>
+
+		<div class="mb-4">
+			<label class="block text-sm font-medium text-slate-300" for="url">{m.url()}</label>
+			<input
+				type="url"
+				id="url"
+				name="url"
+				bind:value={newOrganizer.url}
+				required
+				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+			/>
+		</div>
 	</div>
 
-	<div class="mb-4">
-		<label class="block text-sm font-medium text-slate-300" for="slug">{m.slug()}</label>
-		<input
-			type="text"
-			id="slug"
-			name="slug"
-			bind:value={newOrganizer.slug}
-			required
-			class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-		/>
-	</div>
-
-	<div class="mb-4">
-		<label class="block text-sm font-medium text-slate-300" for="type">Type</label>
-		<select
-			id="type"
-			name="type"
-			bind:value={newOrganizer.type}
-			class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-		>
-			<option value="">({m.none()})</option>
-			{#each organizerTypes as type}
-				<option value={type.value}>{type.label}</option>
-			{/each}
-		</select>
-	</div>
-
-	<div class="mb-4">
-		<label class="block text-sm font-medium text-slate-300" for="logo">{m.logo()}</label>
-		<ImageUpload bind:value={newOrganizer.logo} prefix="organizers" />
-		<input type="hidden" name="logo" value={newOrganizer.logo} />
-	</div>
-
-	<div class="mb-4">
-		<label class="block text-sm font-medium text-slate-300" for="description"
-			>{m.description()}</label
-		>
-		<textarea
-			id="description"
-			name="description"
-			bind:value={newOrganizer.description}
-			required
-			rows="4"
-			class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-		></textarea>
-	</div>
-
-	<div class="mb-4">
-		<label class="block text-sm font-medium text-slate-300" for="url">{m.url()}</label>
-		<input
-			type="url"
-			id="url"
-			name="url"
-			bind:value={newOrganizer.url}
-			required
-			class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-		/>
-	</div>
-
-	<div class="mt-auto flex justify-end gap-4">
+	<div class="mt-6 flex justify-end gap-4 border-t border-slate-700 pt-4">
 		<button
 			type="button"
 			onclick={onCancel}
