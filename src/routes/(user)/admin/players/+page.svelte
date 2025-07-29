@@ -89,9 +89,12 @@
 					player.name.toLowerCase().includes(searchLower) ||
 					player.id.toLowerCase().includes(searchLower) ||
 					player.aliases?.some((alias) => alias.toLowerCase().includes(searchLower)) ||
-					player.gameAccounts?.some((account) =>
-						account.currentName.toLowerCase().includes(searchLower)
+					player.gameAccounts?.some(
+						(account) =>
+							account.currentName.toLowerCase().includes(searchLower) ||
+							account.accountId.toString().toLowerCase().includes(searchLower)
 					);
+
 				const matchesNationality =
 					selectedNationalities.length === 0 ||
 					player.nationalities.some((nationality) => selectedNationalities.includes(nationality));
