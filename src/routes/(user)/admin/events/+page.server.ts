@@ -54,7 +54,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	}
 
 	const [events, organizers, eventOrganizers, teams, players, teamPlayers] = await Promise.all([
-		withTimer('getEvents', getEvents),
+		withTimer('getEvents', () => getEvents()),
 		withTimer('getOrganizers', () => db.select().from(table.organizer)),
 		withTimer('getEventOrganizers', () => db.select().from(table.eventOrganizer)),
 		withTimer('getTeams', () => db.select().from(table.team)),
