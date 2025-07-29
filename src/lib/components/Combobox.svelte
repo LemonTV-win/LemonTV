@@ -10,6 +10,7 @@
 		groups = [],
 		disabled = false,
 		class: className = '',
+		name = '',
 		onChange
 	}: {
 		id?: string;
@@ -19,6 +20,7 @@
 		groups: Array<{ id: string; label: string }>;
 		disabled?: boolean;
 		class: string;
+		name?: string;
 		onChange?: (item: { id: string; name: string }) => void;
 	} = $props();
 
@@ -119,6 +121,9 @@
 </script>
 
 <div class="combobox relative">
+	{#if name}
+		<input type="hidden" {name} {value} />
+	{/if}
 	<input
 		{id}
 		bind:this={inputElement}

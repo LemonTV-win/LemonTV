@@ -213,8 +213,10 @@
 								<label class="block text-sm font-medium text-slate-300" for="team-{position}">
 									{m.team()}
 								</label>
+								<input type="hidden" name="teams[{position}].position" value={position} />
 								<Combobox
 									id="team-{position}"
+									name="teams[{position}].teamId"
 									items={teams.map((t) => ({
 										id: t.id,
 										name: t.name,
