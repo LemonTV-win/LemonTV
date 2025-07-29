@@ -498,7 +498,8 @@ export async function load({ locals, url }) {
 		maps: await db.select().from(table.map),
 		action,
 		id,
-		delete: deleteParam
+		delete: deleteParam,
+		searchQuery: url.searchParams.get('search') ?? undefined
 	};
 }
 

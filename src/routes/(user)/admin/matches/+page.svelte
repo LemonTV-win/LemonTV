@@ -196,7 +196,7 @@
 		>;
 	};
 
-	let searchQuery = $state('');
+	let searchQuery = $state(data.searchQuery ?? '');
 	let selectedEventId = $state<string | null>(null);
 	let sortBy: 'id-asc' | 'id-desc' | 'format-asc' | 'format-desc' = $state('id-asc');
 	let editingMatch = $state<{
@@ -406,6 +406,19 @@
 		const eventParam = page.url.searchParams.get('event');
 		if (eventParam && eventParam !== selectedEventId) {
 			selectedEventId = eventParam;
+		}
+	});
+
+	// Sync searchQuery changes to URL
+	$effect(() => {
+		if (searchQuery) {
+			const url = new URL(window.location.href);
+			url.searchParams.set('search', searchQuery);
+			goto(url.pathname + url.search, { replaceState: true });
+		} else {
+			const url = new URL(window.location.href);
+			url.searchParams.delete('search');
+			goto(url.pathname + url.search, { replaceState: true });
 		}
 	});
 
