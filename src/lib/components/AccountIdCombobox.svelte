@@ -7,7 +7,7 @@
 		name,
 		required = false,
 		onchange
-	} = $props<{
+	}: {
 		value: number | string;
 		options: Map<number, string>;
 		placeholder?: string;
@@ -15,7 +15,7 @@
 		name?: string;
 		required?: boolean;
 		onchange?: (value: number) => void;
-	}>();
+	} = $props();
 
 	let inputValue = $state(value?.toString() || '');
 	let showDropdown = $state(false);
@@ -25,10 +25,9 @@
 	});
 
 	function getFilteredOptions() {
-		const entries: [number, any][] = Array.from(options.entries());
 		const searchTerm = inputValue.toLowerCase();
 
-		return entries
+		return [...options.entries()]
 			.filter(([accountId, playerName]) => {
 				return (
 					accountId.toString().includes(searchTerm) || playerName.toLowerCase().includes(searchTerm)
@@ -51,15 +50,15 @@
 		showDropdown = true;
 
 		const numValue = parseInt(inputValue);
-		const newValue = isNaN(numValue) ? inputValue : numValue;
-
-		onchange(newValue);
+		if (!isNaN(numValue)) {
+			onchange?.(numValue);
+		}
 	}
 
 	function handleOptionSelect(accountId: number) {
 		inputValue = accountId.toString();
 		showDropdown = false;
-		onchange(accountId);
+		onchange?.(accountId);
 	}
 
 	function handleBlur() {
@@ -100,7 +99,7 @@
 		<div
 			class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-slate-700 bg-slate-800 shadow-lg"
 		>
-			{#each getFilteredOptions() as [accountId, playerName]}
+			{#each getFilteredOptions() as [accountId, playerName] (accountId)}
 				<button
 					type="button"
 					class="w-full px-3 py-2 text-left text-slate-200 hover:bg-slate-700 focus:bg-slate-700 focus:outline-none"
