@@ -1645,6 +1645,7 @@ const GAME_ACTIONS = {
 					deaths: Number(formData.get(`${prefix}[${i}].deaths`) || 0),
 					assists: Number(formData.get(`${prefix}[${i}].assists`) || 0),
 					damage: Number(formData.get(`${prefix}[${i}].damage`) || 0),
+					accountId: Number(formData.get(`${prefix}[${i}].accountId`) || 0),
 					teamId: gameTeams[t]?.teamId || '',
 					gameId: undefined // will set after game insert
 				});
@@ -1702,7 +1703,7 @@ const GAME_ACTIONS = {
 						deaths: ps.deaths,
 						assists: ps.assists,
 						damage: ps.damage,
-						accountId: 0 // TODO: support accountId if needed
+						accountId: ps.accountId
 					}))
 				);
 			}
@@ -1781,6 +1782,7 @@ const GAME_ACTIONS = {
 					deaths: Number(formData.get(`${prefix}[${i}].deaths`) || 0),
 					assists: Number(formData.get(`${prefix}[${i}].assists`) || 0),
 					damage: Number(formData.get(`${prefix}[${i}].damage`) || 0),
+					accountId: Number(formData.get(`${prefix}[${i}].accountId`) || 0),
 					teamId: gameTeams[t]?.teamId || '',
 					gameId: gameData.id
 				});
@@ -1856,7 +1858,7 @@ const GAME_ACTIONS = {
 						deaths: ps.deaths,
 						assists: ps.assists,
 						damage: ps.damage,
-						accountId: 0 // TODO: support accountId if needed
+						accountId: ps.accountId
 					}))
 				);
 			}
