@@ -47,14 +47,14 @@
 					position: 0,
 					score: game.teams[0].score
 				}
-			: { teamId: '', position: 0, score: 0 },
+			: { teamId: teams[0].id, position: 0, score: 0 },
 		game?.teams?.[1]
 			? {
 					teamId: game.teams[1].teamId,
 					position: 1,
 					score: game.teams[1].score
 				}
-			: { teamId: '', position: 1, score: 0 }
+			: { teamId: teams[1].id, position: 1, score: 0 }
 	]);
 
 	$inspect('[admin/matches/GameEdit] teamData', teamData);
@@ -226,6 +226,7 @@
 			<label class="block text-sm font-medium text-slate-300">Teams</label>
 			<div class="mt-2 grid grid-cols-2 gap-4">
 				{#each teamData as team, idx}
+					<input type="hidden" name={`gameTeams[${idx}].teamId`} value={team.teamId} />
 					<div class="rounded-lg border border-slate-700 bg-slate-800 p-4">
 						<div class="mb-2 flex items-center gap-2 font-semibold text-slate-200">
 							{#if teams && teams[idx]?.logo}
