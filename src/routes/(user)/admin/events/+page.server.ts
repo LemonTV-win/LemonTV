@@ -62,8 +62,6 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		withTimer('getTeamPlayers', () => db.select().from(table.teamPlayer))()
 	]);
 
-	console.info('[Admin][Events][Load] Events:', events);
-
 	return {
 		events,
 		organizers,
