@@ -216,7 +216,7 @@ function getUniqueMapsForMatch(stageType: string, numGames: number): string[] {
 }
 
 // Enhanced game generation function
-export function generateGames() {
+function generateGames() {
 	const games: {
 		id: number;
 		matchId: string;
