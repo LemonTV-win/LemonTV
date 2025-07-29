@@ -159,6 +159,8 @@ export function getOrganizerChanges(
 export async function getEvents(
 	conditions: { organizerIds?: string[]; searchKeyword?: string } = {}
 ): Promise<AppEvent[]> {
+	const totalStart = performance.now();
+
 	if (conditions.organizerIds || conditions.searchKeyword) {
 		console.info('[Events] Fetching events with conditions: ', conditions);
 	} else {
@@ -169,6 +171,7 @@ export async function getEvents(
 	const casterPlayer = alias(table.player, 'casterPlayer');
 
 	// First get the event results separately
+	const eventResultsStart = performance.now();
 	const eventResults = await db
 		.select({
 			eventId: table.eventResult.eventId,
@@ -194,8 +197,11 @@ export async function getEvents(
 						)
 					: undefined
 		);
+	const eventResultsDuration = performance.now() - eventResultsStart;
+	console.info(`[Events] Event results query took ${eventResultsDuration.toFixed(2)}ms`);
 
 	// Then get the main event data
+	const mainQueryStart = performance.now();
 	const eventsWithOrganizers = await db
 		.select({
 			event: table.event,
@@ -238,8 +244,11 @@ export async function getEvents(
 						)
 					: undefined
 		);
+	const mainQueryDuration = performance.now() - mainQueryStart;
+	console.info(`[Events] Main query took ${mainQueryDuration.toFixed(2)}ms`);
 
 	// Group organizers and team players by event
+	const dataProcessingStart = performance.now();
 	const eventsMap = new Map<
 		string,
 		{
@@ -505,7 +514,10 @@ export async function getEvents(
 			}
 		}
 	);
+	const dataProcessingDuration = performance.now() - dataProcessingStart;
+	console.info(`[Events] Data processing took ${dataProcessingDuration.toFixed(2)}ms`);
 
+	const eventsProcessingStart = performance.now();
 	const events = await Promise.all(
 		Array.from(eventsMap.values()).map(
 			async ({ event, organizers, teamPlayers, results, websites, videos, casters, stages }) => {
@@ -695,8 +707,11 @@ export async function getEvents(
 			}
 		)
 	);
+	const eventsProcessingDuration = performance.now() - eventsProcessingStart;
+	console.info(`[Events] Events processing took ${eventsProcessingDuration.toFixed(2)}ms`);
 
-	return await Promise.all(
+	const finalProcessingStart = performance.now();
+	const result = await Promise.all(
 		events.map(async (event) => {
 			// Fetch full Player objects for all unique player IDs
 			const uniquePlayerIds = Array.from(new Set(event.teamPlayers.map((tp) => tp.player.id)));
@@ -903,6 +918,13 @@ export async function getEvents(
 			};
 		})
 	);
+	const finalProcessingDuration = performance.now() - finalProcessingStart;
+	console.info(`[Events] Final processing took ${finalProcessingDuration.toFixed(2)}ms`);
+
+	const totalDuration = performance.now() - totalStart;
+	console.info(`[Events] Total getEvents took ${totalDuration.toFixed(2)}ms`);
+
+	return result;
 }
 
 export async function getEvent(id: string): Promise<AppEvent | undefined> {
