@@ -1,4 +1,3 @@
-<!-- src/routes/(user)/admin/matches/BracketInput.svelte -->
 <script lang="ts">
 	import { invalidateAll } from '$app/navigation';
 	import { applyAction, deserialize } from '$app/forms';

@@ -16,7 +16,7 @@
 	import type { Match, MatchTeam, MatchMap } from '$lib/server/db/schema';
 	import StageEdit from './StageEdit.svelte';
 	import Modal from '$lib/components/Modal.svelte';
-	import BracketInput from './BracketInput.svelte';
+	import BracketEdit from './BracketEdit.svelte';
 	import GameEdit from './GameEdit.svelte';
 	import type { GameParticipant } from './+page.server';
 
@@ -1167,7 +1167,7 @@
 <!-- Bracket Edit Modal -->
 {#if showBracketEdit && selectedStage}
 	<Modal show={true} title="Edit Bracket" onClose={closeBracketEdit}>
-		<BracketInput
+		<BracketEdit
 			stage={selectedStage}
 			matches={stageMatches}
 			rounds={stageRounds}
