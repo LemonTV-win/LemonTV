@@ -71,6 +71,7 @@
 
 	function toggle() {
 		isOpen = !isOpen;
+		searchInput?.focus();
 	}
 
 	function select(character: Character | '') {
@@ -94,6 +95,8 @@
 			window.removeEventListener('click', handleClickOutside);
 		};
 	});
+
+	let searchInput: HTMLInputElement | null = $state(null);
 
 	const filteredCharacters: Character[] = $derived(
 		search ? CHARACTERS.filter((c) => c.toLowerCase().includes(search.toLowerCase())) : CHARACTERS
@@ -122,6 +125,7 @@
 				type="text"
 				placeholder={m.select_character()}
 				bind:value={search}
+				bind:this={searchInput}
 				class="mb-1 w-full rounded border border-slate-700 bg-slate-900 px-3 py-1 text-white focus:border-yellow-500 focus:outline-none"
 			/>
 			<button
