@@ -141,27 +141,17 @@
 
 	// Helper function to get available matches for dependencies
 	function getAvailableMatchesForDependencies(currentNodeIndex: number, currentDepIndex: number) {
-		// Get all match IDs that are already assigned to other nodes
-		const assignedMatchIds = new Set(
-			nodes
-				.map((node, index) => ({ node, index }))
-				.filter(({ index }) => index !== currentNodeIndex) // Exclude current node
-				.map(({ node }) => node.matchId)
-				.filter((matchId) => matchId) // Filter out empty strings
+		const currentNode = nodes[currentNodeIndex];
+		if (!currentNode) return matches;
+
+		// Get matches that aren't already dependencies for this node
+		const usedMatchIds = new Set(
+			currentNode.dependencies
+				.filter((_, i) => i !== currentDepIndex)
+				.map((d) => d.dependencyMatchId)
 		);
 
-		// Also exclude matches that are already used as dependencies in the current node
-		const currentNode = nodes[currentNodeIndex];
-		if (currentNode) {
-			currentNode.dependencies.forEach((dep, depIndex) => {
-				if (depIndex !== currentDepIndex && dep.dependencyMatchId) {
-					assignedMatchIds.add(dep.dependencyMatchId);
-				}
-			});
-		}
-
-		// Return matches that are not already assigned
-		return matches.filter((match: (typeof matches)[0]) => !assignedMatchIds.has(match.id));
+		return matches.filter((match) => !usedMatchIds.has(match.id));
 	}
 
 	// Initialize with existing data if available
