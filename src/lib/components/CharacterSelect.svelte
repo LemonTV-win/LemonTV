@@ -59,11 +59,13 @@
 	let {
 		value = '',
 		onChange,
-		class: className = ''
+		class: className = '',
+		name = ''
 	} = $props<{
 		value?: Character | '';
 		onChange?: (character: Character | '') => void;
 		class?: string;
+		name?: string;
 	}>();
 
 	let isOpen = $state(false);
@@ -104,6 +106,9 @@
 </script>
 
 <div class={['character-select relative w-full', className]}>
+	{#if name}
+		<input type="hidden" {name} {value} />
+	{/if}
 	<button
 		type="button"
 		class="flex w-full items-center gap-2 rounded border border-slate-700 bg-slate-800 px-3 py-2 text-left text-white hover:border-yellow-500 focus:border-yellow-500 focus:outline-none"

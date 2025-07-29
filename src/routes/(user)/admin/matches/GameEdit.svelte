@@ -305,11 +305,13 @@
 					<CharacterSelect
 						value={ps.characterFirstHalf}
 						onChange={(v) => (ps.characterFirstHalf = v)}
+						name={`playerScores${team}[${idx}].characterFirstHalf`}
 						class="col-span-1"
 					/>
 					<CharacterSelect
 						value={ps.characterSecondHalf}
 						onChange={(v) => (ps.characterSecondHalf = v)}
+						name={`playerScores${team}[${idx}].characterSecondHalf`}
 						class="col-span-1"
 					/>
 				</div>
