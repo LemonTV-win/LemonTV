@@ -947,7 +947,7 @@
 										<div class="flex flex-col gap-1.5">
 											{#each match.games.sort((a, b) => a.id - b.id) as game, idx (idx)}
 												<button
-													class="group flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg bg-gray-700/50 px-3 py-1 text-left transition-all hover:scale-[1.02] hover:bg-gray-600 hover:shadow-lg hover:shadow-gray-900/50"
+													class="group flex w-full min-w-72 cursor-pointer items-center justify-between gap-2 rounded-lg bg-gray-700/50 px-3 py-1 text-left transition-all hover:scale-[1.02] hover:bg-gray-600 hover:shadow-lg hover:shadow-gray-900/50"
 													onclick={() => openGameModal(match, selectedEventData, game)}
 												>
 													<div class="flex items-center gap-2">
