@@ -277,7 +277,11 @@
 			<div class="flex flex-col gap-1 rounded bg-slate-900 p-2">
 				<AccountIdCombobox
 					value={ps.accountId}
-					options={compiledGameAccountIDMaps[team === 'A' ? 0 : 1]}
+					options={new Map(
+						Array.from(compiledGameAccountIDMaps[team === 'A' ? 0 : 1].entries()).map(
+							([accountId, roster]) => [accountId, roster.player.name]
+						)
+					)}
 					placeholder="Enter or select account ID"
 					name={`playerScores${team}[${idx}].accountId`}
 					onchange={(value) => {
