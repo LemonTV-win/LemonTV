@@ -65,7 +65,7 @@
 			}));
 		} catch (e) {
 			error = e instanceof Error ? e.message : m.failed_to_load_history();
-			console.error('Error loading history:', e);
+			console.error('Error loading history:', error);
 		} finally {
 			loading = false;
 		}

@@ -98,9 +98,7 @@
 		};
 	});
 
-	// Get filtered and grouped items
-	function getFilteredAndGroupedItems() {
-		// First, filter items based on search
+	let currentItems = $derived.by(() => {
 		const filtered = search
 			? items.filter((item) => item.name.toLowerCase().includes(search.toLowerCase()))
 			: items;
@@ -115,14 +113,6 @@
 		}
 
 		return [{ id: 'all-last', label: '', items: filtered }];
-	}
-
-	// Get the current filtered and grouped items
-	let currentItems = $state(getFilteredAndGroupedItems());
-
-	// Update items when search changes
-	$effect(() => {
-		currentItems = getFilteredAndGroupedItems();
 	});
 </script>
 

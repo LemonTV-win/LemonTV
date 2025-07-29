@@ -8,7 +8,7 @@
 
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import IconParkSolidAdd from '~icons/icon-park-solid/add';
-
+	import { SvelteMap } from 'svelte/reactivity';
 	let {
 		match,
 		matchTeams,
@@ -75,8 +75,8 @@
 	};
 
 	// Group stages by event
-	let stagesByEvent: Map<string, { id: string; name: string }[]> = $derived.by(() => {
-		const groups = new Map<string, { id: string; name: string }[]>();
+	let stagesByEvent: SvelteMap<string, { id: string; name: string }[]> = $derived.by(() => {
+		const groups = new SvelteMap<string, { id: string; name: string }[]>();
 		stages.forEach((stage) => {
 			if (!groups.has(stage.eventName)) {
 				groups.set(stage.eventName, []);

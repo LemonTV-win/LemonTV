@@ -185,7 +185,8 @@ export const actions = {
 				.where(eq(table.organizer.id, organizerData.id));
 
 			// Add edit history for each changed field
-			const changes: Record<string, { from: any; to: any }> = {};
+			type OrganizerFieldValue = string | null;
+			const changes: Record<string, { from: OrganizerFieldValue; to: OrganizerFieldValue }> = {};
 			Object.entries(organizerData).forEach(([key, value]) => {
 				if (
 					key !== 'id' &&
@@ -193,8 +194,10 @@ export const actions = {
 						JSON.stringify(value)
 				) {
 					changes[key] = {
-						from: currentOrganizer[0][key as keyof (typeof currentOrganizer)[0]],
-						to: value
+						from: currentOrganizer[0][
+							key as keyof (typeof currentOrganizer)[0]
+						] as OrganizerFieldValue,
+						to: value as OrganizerFieldValue
 					};
 				}
 			});

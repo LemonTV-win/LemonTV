@@ -237,7 +237,7 @@ export const actions = {
 			}
 
 			// Import new players
-			for (const [_, playerData] of Object.entries(players)) {
+			for (const playerData of Object.values(players)) {
 				await createPlayer(
 					{
 						name: playerData.name,

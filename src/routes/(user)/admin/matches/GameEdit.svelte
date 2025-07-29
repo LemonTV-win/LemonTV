@@ -5,6 +5,7 @@
 	import AccountIdCombobox from '$lib/components/AccountIdCombobox.svelte';
 	import type { GameParticipant } from './+page.server';
 	import type { GamePlayerScore } from '$lib/server/db/schemas';
+	import type { Character } from '$lib/data/game';
 	let { game, matchId, maps, onCancel, onSuccess, teams, rosters } = $props<{
 		game?: any;
 		matchId: string;
@@ -275,7 +276,23 @@
 			</div>
 		</fieldset>
 		<!-- Player scores editing -->
-		{#snippet playerScoreInput(team: 'A' | 'B', ps: any, idx: number)}
+		{#snippet playerScoreInput(
+			team: 'A' | 'B',
+			ps: {
+				accountId: number;
+				player: string;
+				characterFirstHalf: string | null;
+				characterSecondHalf: string | null;
+				score: number;
+				damageScore: number;
+				kills: number;
+				knocks: number;
+				deaths: number;
+				assists: number;
+				damage: number;
+			},
+			idx: number
+		)}
 			<div class="flex flex-col gap-1 rounded bg-slate-900 p-2">
 				<AccountIdCombobox
 					value={ps.accountId}
@@ -309,13 +326,13 @@
 						required
 					/>
 					<CharacterSelect
-						value={ps.characterFirstHalf}
+						value={ps.characterFirstHalf as Character | null}
 						onChange={(v) => (ps.characterFirstHalf = v)}
 						name={`playerScores${team}[${idx}].characterFirstHalf`}
 						class="col-span-1"
 					/>
 					<CharacterSelect
-						value={ps.characterSecondHalf}
+						value={ps.characterSecondHalf as Character | null}
 						onChange={(v) => (ps.characterSecondHalf = v)}
 						name={`playerScores${team}[${idx}].characterSecondHalf`}
 						class="col-span-1"

@@ -293,7 +293,8 @@
 			await fetch('?/deleteGame', { method: 'POST', body: formData });
 			closeDeleteGameModal();
 			invalidateAll();
-		} catch (e) {
+		} catch (error) {
+			console.error('Error deleting game:', error);
 			isDeletingGame = false;
 		}
 	}

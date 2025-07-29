@@ -13,6 +13,7 @@
 	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
 	import IconChevronDown from '~icons/mdi/chevron-down';
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
+	import { SvelteURLSearchParams } from 'svelte/reactivity';
 	let { data }: PageProps = $props();
 
 	let search = $state(data.search || '');
@@ -89,7 +90,7 @@
 	);
 
 	$effect(() => {
-		const params = new URLSearchParams();
+		const params = new SvelteURLSearchParams();
 		if (sortBy) params.set('sortBy', sortBy);
 		if (search) params.set('search', search);
 		if (selectedNationalities.length) params.set('nationalities', selectedNationalities.join(','));

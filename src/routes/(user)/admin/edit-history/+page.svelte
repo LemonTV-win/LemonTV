@@ -7,6 +7,7 @@
 	import TypcnArrowUnsorted from '~icons/typcn/arrow-unsorted';
 	import TypcnArrowSortedDown from '~icons/typcn/arrow-sorted-down';
 	import TypcnArrowSortedUp from '~icons/typcn/arrow-sorted-up';
+	import { SvelteURLSearchParams } from 'svelte/reactivity';
 
 	let { data }: { data: PageData } = $props();
 
@@ -42,7 +43,7 @@
 	}
 
 	function applyFilters() {
-		const params = new URLSearchParams();
+		const params = new SvelteURLSearchParams();
 		if (tableName) params.set('tableName', tableName);
 		if (recordId) params.set('recordId', recordId);
 		if (fieldName) params.set('fieldName', fieldName);

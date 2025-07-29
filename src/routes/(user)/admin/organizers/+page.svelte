@@ -34,22 +34,6 @@
 	} | null = $state(null);
 	let isDeleting = $state(false);
 
-	const typeColors: Record<string, string> = {
-		individual: 'bg-blue-500/10 text-blue-500',
-		organization: 'bg-purple-500/10 text-purple-500',
-		community: 'bg-green-500/10 text-green-500',
-		tournament_series: 'bg-yellow-500/10 text-yellow-500',
-		league: 'bg-red-500/10 text-red-500'
-	};
-
-	const typeLabels: Record<string, string> = {
-		individual: m.individual(),
-		organization: m.organization(),
-		community: m.community(),
-		tournament_series: m.tournament_series(),
-		league: m.league()
-	};
-
 	let filteredOrganizers = $derived(
 		organizers
 			.filter((organizer) => {

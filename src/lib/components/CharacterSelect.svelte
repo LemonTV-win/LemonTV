@@ -57,13 +57,13 @@
 	});
 
 	let {
-		value = '',
+		value = null,
 		onChange,
 		class: className = '',
 		name = ''
 	} = $props<{
-		value?: Character | '';
-		onChange?: (character: Character | '') => void;
+		value?: Character | null;
+		onChange?: (character: Character | null) => void;
 		class?: string;
 		name?: string;
 	}>();
@@ -76,7 +76,7 @@
 		searchInput?.focus();
 	}
 
-	function select(character: Character | '') {
+	function select(character: Character | null) {
 		value = character;
 		onChange?.(character);
 		isOpen = false;
@@ -136,7 +136,7 @@
 			<button
 				type="button"
 				class="flex w-full items-center gap-2 px-3 py-2 text-left text-gray-400 hover:bg-slate-700"
-				onclick={() => select('')}
+				onclick={() => select(null)}
 			>
 				<span class="">None</span>
 			</button>

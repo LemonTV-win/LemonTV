@@ -6,6 +6,7 @@
 	import { m } from '$lib/paraglide/messages';
 	import Combobox from '$lib/components/Combobox.svelte';
 	import type { Team, Player } from '$lib/server/db/schema';
+	import { SvelteSet } from 'svelte/reactivity';
 
 	interface Props {
 		teams: Team[];
@@ -34,7 +35,7 @@
 	$inspect('eventTeamPlayers', eventTeamPlayers);
 
 	// Track which teams are expanded
-	let expandedTeams = $state<Set<string>>(new Set());
+	let expandedTeams = new SvelteSet<string>();
 
 	const roleOptions = ['main', 'sub', 'coach'];
 
@@ -77,7 +78,6 @@
 		} else {
 			expandedTeams.add(teamId);
 		}
-		expandedTeams = new Set(expandedTeams); // Trigger reactivity
 	}
 
 	function addTeamPlayer(teamId: string) {
@@ -230,7 +230,6 @@
 								e.stopPropagation();
 								addTeamPlayer(team.id);
 								expandedTeams.add(team.id);
-								expandedTeams = new Set(expandedTeams);
 							}}
 						>
 							<IconParkSolidAdd class="h-4 w-4" />
