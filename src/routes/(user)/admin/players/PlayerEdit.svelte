@@ -53,7 +53,7 @@
 		showUserDropdown = false;
 	}
 
-	const countryCodes = Object.keys(countries);
+	const countryCodes = [...Object.keys(countries), 'ZZ'];
 
 	function extractAccountId(url: string, platformId: string): string {
 		const platform = socialPlatforms.find((p) => p.id === platformId);
