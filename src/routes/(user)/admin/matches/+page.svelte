@@ -724,7 +724,10 @@
 			<div class="mb-8">
 				<div class="mb-4 flex items-center justify-between">
 					<h3 class="text-lg font-semibold">
-						<a href={`/events/${selectedEventId}?stage=${stageId}`} class="hover:text-yellow-500">
+						<a
+							href={`/events/${selectedEventData.event.slug}?stage=${stageId}`}
+							class="hover:text-yellow-500"
+						>
 							{stage.title} ({stage.stage} - {stage.format})
 						</a>
 					</h3>
