@@ -6,6 +6,7 @@ import { processImageURL } from '$lib/server/storage';
 import type { TCountryCode } from 'countries-list';
 import type { Region } from '$lib/data/game';
 import type { PageServerLoad } from './$types';
+import { dev } from '$app/environment';
 
 type PermissionResult =
 	| { status: 'success'; userId: string }
@@ -1605,6 +1606,9 @@ const GAME_ACTIONS = {
 		}
 
 		const formData = await request.formData();
+		if (dev) {
+			console.log(JSON.stringify(Object.fromEntries(formData.entries()), null, 2));
+		}
 		const gameData = {
 			matchId: formData.get('matchId') as string,
 			mapId: formData.get('mapId') as string,
@@ -1757,6 +1761,9 @@ const GAME_ACTIONS = {
 		}
 
 		const formData = await request.formData();
+		if (dev) {
+			console.log(JSON.stringify(Object.fromEntries(formData.entries()), null, 2));
+		}
 		const gameData = {
 			id: parseInt(formData.get('id') as string),
 			matchId: formData.get('matchId') as string,
