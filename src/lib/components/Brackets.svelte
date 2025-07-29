@@ -133,6 +133,14 @@
 	let tooltipID = $state<string>();
 
 	let highlightingTeam = $state<string>();
+
+	const ROUND_NAMES = {
+		thirdplace: m.thirdplace,
+		semifinals: m.semifinals,
+		final: m.final,
+		quarterfinals: m.quarterfinals,
+		top16: m.top16
+	};
 </script>
 
 {#snippet matchContainer(match: Match, i: number)}
@@ -216,7 +224,8 @@
 	{#each rounds as r}
 		<h4 class="mb-4">
 			{r.title?.[getLocale() as Locale] ??
-				m[r.type as 'thirdplace' | 'semifinals' | 'final' | 'quarterfinals' | 'top16']()}
+				ROUND_NAMES[r.type as keyof typeof ROUND_NAMES]?.() ??
+				r.type}
 		</h4>
 	{/each}
 	{#each rounds as r, i}
