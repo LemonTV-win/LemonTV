@@ -37,9 +37,9 @@ export const actions: Actions = {
 
 		const result = LOGIN_SCHEMA.safeParse(data);
 		if (!result.success) {
-			console.warn('[Login] Validation failed:', result.error.errors[0].message);
+			console.warn('[Login] Validation failed:', result.error.issues[0].message);
 			return fail(400, {
-				message: result.error.errors[0].message
+				message: result.error.issues[0].message
 			});
 		}
 
@@ -91,9 +91,9 @@ export const actions: Actions = {
 
 		const result = REGISTER_SCHEMA.safeParse(data);
 		if (!result.success) {
-			console.warn('[Register] Validation failed:', result.error.errors[0].message);
+			console.warn('[Register] Validation failed:', result.error.issues[0].message);
 			return fail(400, {
-				message: result.error.errors[0].message
+				message: result.error.issues[0].message
 			});
 		}
 

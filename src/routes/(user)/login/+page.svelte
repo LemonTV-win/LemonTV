@@ -45,7 +45,7 @@
 
 		const result = LOGIN_SCHEMA.safeParse(loginData);
 		if (!result.success) {
-			form = { message: result.error.errors[0].message };
+			form = { message: result.error.issues[0].message };
 			isLoading = false;
 			cancel();
 			return;
@@ -67,7 +67,7 @@
 
 		const result = REGISTER_SCHEMA.safeParse(registerData);
 		if (!result.success) {
-			form = { message: result.error.errors[0].message };
+			form = { message: result.error.issues[0].message };
 			isLoading = false;
 			cancel();
 			return;
