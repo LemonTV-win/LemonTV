@@ -216,9 +216,9 @@
 				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-slate-300 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 				required
 			>
-				<option value="">Select winner</option>
-				<option value="0">{teams[0].name}</option>
-				<option value="1">{teams[1].name}</option>
+				<option value={undefined}>Select winner</option>
+				<option value={0}>{teams[0].name}</option>
+				<option value={1}>{teams[1].name}</option>
 			</select>
 		</div>
 		<!-- Teams editing -->
