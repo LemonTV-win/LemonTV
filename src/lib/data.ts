@@ -20,7 +20,7 @@ export function getMatches(): (Match & { event: Event })[] {
 	);
 }
 
-export function getMatch(id: number) {
+export function getMatch(id: string) {
 	return getMatches().find((match) => match.id === id);
 }
 

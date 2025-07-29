@@ -6,7 +6,7 @@ import { error } from '@sveltejs/kit';
 import { getTeam } from '$lib/server/data/teams';
 
 export const load: PageServerLoad = async ({ params }) => {
-	let match = getMatch(Number(params.id)) ?? null;
+	let match = getMatch(params.id) ?? null;
 	if (!match) {
 		match = (await getServerMatch(params.id)) ?? null;
 	}

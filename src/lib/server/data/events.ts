@@ -1053,6 +1053,7 @@ export async function getEventsForAdminPage(): Promise<
 		status: string;
 		official: boolean;
 		date: string;
+		image: string;
 		imageURL?: string;
 		organizers: Array<{
 			id: string;
@@ -1061,7 +1062,7 @@ export async function getEventsForAdminPage(): Promise<
 			description?: string;
 			url?: string;
 			type?: string;
-			logo?: string;
+			logo: string;
 		}>;
 		websites?: Array<{
 			url: string;
@@ -1146,6 +1147,7 @@ export async function getEventsForAdminPage(): Promise<
 				status: event.status,
 				official: event.official,
 				date: event.date,
+				image: event.image,
 				imageURL: await processImageURL(event.image),
 				organizers:
 					organizers.length > 0 ? await Promise.all(organizers.map(convertOrganizer)) : [],
