@@ -10,7 +10,7 @@ import {
 } from '$lib/server/db/schema';
 import { eq, or } from 'drizzle-orm';
 import type { Player } from '$lib/data/players';
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 import { calculateWinnerIndex, getEvents, getMatches, identifyPlayer } from '$lib/data';
 import type { Team } from '$lib/data/teams';
 import type { Character, Region } from '$lib/data/game';

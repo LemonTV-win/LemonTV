@@ -13,7 +13,7 @@ import type { TCountryCode } from 'countries-list';
 import type { Match } from '$lib/data/matches';
 import type { Event } from '$lib/data/events';
 
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 import { editHistory } from '$lib/server/db/schemas/edit-history';
 import { processImageURL } from '../storage';
 

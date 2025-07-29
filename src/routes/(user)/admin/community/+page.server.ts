@@ -12,7 +12,7 @@ import {
 	getTags,
 	getServerTags
 } from '$lib/server/data/community';
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 import type { PageServerLoad, Actions } from './$types';
 import type { DiscordServer, CommunityTag } from '$lib/server/db/schemas/about/community';
 
