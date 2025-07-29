@@ -837,9 +837,12 @@
 									</td>
 									<td class="min-w-max px-4 py-1 whitespace-nowrap text-gray-300">{match.format}</td
 									>
+									<!-- Matchup -->
 									<td class="px-4 py-1">
 										<div class="flex items-center justify-center gap-4">
-											<div class="flex items-center gap-2 rounded-lg bg-gray-700/50 px-3 py-1">
+											<div
+												class="flex min-w-32 items-center gap-2 rounded-lg bg-gray-700/50 px-3 py-1 text-nowrap break-keep"
+											>
 												{#if match.teams[0]}
 													{#if match.teams[0].team.logo}
 														<img
@@ -870,7 +873,9 @@
 													)}">{match.teams[1]?.score ?? '-'}</span
 												>
 											</div>
-											<div class="flex items-center gap-2 rounded-lg bg-gray-700/50 px-3 py-1">
+											<div
+												class="flex min-w-32 items-center gap-2 rounded-lg bg-gray-700/50 px-3 py-1 text-nowrap break-keep"
+											>
 												{#if match.teams[1]}
 													{#if match.teams[1].team.logo}
 														<img
@@ -886,6 +891,7 @@
 											</div>
 										</div>
 									</td>
+									<!-- Maps -->
 									<td class="px-4 py-2">
 										<div class="flex flex-col gap-1.5">
 											{#each match.maps.sort((a, b) => a.order - b.order) as map}
