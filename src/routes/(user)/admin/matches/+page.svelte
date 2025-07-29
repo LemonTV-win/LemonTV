@@ -724,7 +724,9 @@
 			<div class="mb-8">
 				<div class="mb-4 flex items-center justify-between">
 					<h3 class="text-lg font-semibold">
-						{stage.title} ({stage.stage} - {stage.format})
+						<a href={`/events/${selectedEventId}?stage=${stageId}`} class="hover:text-yellow-500">
+							{stage.title} ({stage.stage} - {stage.format})
+						</a>
 					</h3>
 					<div class="flex items-center gap-4">
 						<span class="text-sm text-gray-400">{matches.length} matches</span>
