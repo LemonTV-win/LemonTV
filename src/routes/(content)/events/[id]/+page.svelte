@@ -25,7 +25,22 @@
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
 	import { page } from '$app/state';
-	let activeStage = $state<Stage | null>(null);
+	import { goto } from '$app/navigation';
+
+	let activeStage = $state<Stage | null>(data.initialStage ?? null);
+
+	// Update URL when activeStage changes
+	$effect(() => {
+		if (activeStage) {
+			const url = new URL(window.location.href);
+			url.searchParams.set('stage', activeStage.id.toString());
+			goto(url.pathname + url.search, { replaceState: true });
+		} else {
+			const url = new URL(window.location.href);
+			url.searchParams.delete('stage');
+			goto(url.pathname + url.search, { replaceState: true });
+		}
+	});
 
 	$inspect(activeStage);
 
