@@ -14,6 +14,7 @@ import { getPlayer } from '$lib/server/data/players';
 import type { UserRole } from '$lib/data/user';
 import type { TCountryCode } from 'countries-list';
 import type { Participant } from '$lib/data/matches';
+import type { EssentialEvent } from '$lib/components/EventCard.svelte';
 
 // Types for the application layer
 export interface EventWithOrganizers extends Event {
@@ -674,7 +675,8 @@ export async function getEvents(
 															'zh-tw': round.title,
 															vi: round.title,
 															id: round.title,
-															fr: round.title
+															fr: round.title,
+															'uk-ua': round.title
 														}
 													: undefined,
 												parallelGroup: round.parallelGroup
@@ -923,6 +925,113 @@ export async function getEvents(
 
 	const totalDuration = performance.now() - totalStart;
 	console.info(`[Events] Total getEvents took ${totalDuration.toFixed(2)}ms`);
+
+	return result;
+}
+
+export async function getEssentialEvents(): Promise<EssentialEvent[]> {
+	const totalStart = performance.now();
+	console.info('[Events] Fetching essential events');
+
+	// Simple query to get only essential event data
+	const eventsQueryStart = performance.now();
+	const eventsWithOrganizers = await db
+		.select({
+			event: table.event,
+			organizer: table.organizer,
+			eventVideo: table.eventVideo,
+			eventTeamPlayer: table.eventTeamPlayer
+		})
+		.from(table.event)
+		.leftJoin(table.eventOrganizer, eq(table.eventOrganizer.eventId, table.event.id))
+		.leftJoin(table.organizer, eq(table.organizer.id, table.eventOrganizer.organizerId))
+		.leftJoin(table.eventVideo, eq(table.eventVideo.eventId, table.event.id))
+		.leftJoin(table.eventTeamPlayer, eq(table.eventTeamPlayer.eventId, table.event.id));
+	const eventsQueryDuration = performance.now() - eventsQueryStart;
+	console.info(`[Events] Essential events query took ${eventsQueryDuration.toFixed(2)}ms`);
+
+	// Group data by event
+	const dataProcessingStart = performance.now();
+	const eventsMap = new Map<
+		string,
+		{
+			event: Event;
+			organizers: Organizer[];
+			videos: Array<{
+				type: 'stream' | 'clip' | 'vod';
+				platform: 'twitch' | 'youtube' | 'bilibili';
+				url: string;
+				title?: string;
+			}>;
+			uniqueTeams: Set<string>;
+		}
+	>();
+
+	eventsWithOrganizers.forEach(({ event, organizer, eventVideo, eventTeamPlayer }) => {
+		if (!eventsMap.has(event.id)) {
+			eventsMap.set(event.id, {
+				event,
+				organizers: [],
+				videos: [],
+				uniqueTeams: new Set()
+			});
+		}
+		const eventData = eventsMap.get(event.id)!;
+
+		if (organizer) {
+			// Only add the organizer if it's not already in the array
+			if (!eventData.organizers.some((o) => o.id === organizer.id)) {
+				eventData.organizers.push(organizer);
+			}
+		}
+
+		if (eventVideo) {
+			// Only add the video if it's not already in the array
+			if (!eventData.videos.some((v) => v.url === eventVideo.url)) {
+				eventData.videos.push({
+					type: eventVideo.type as 'stream' | 'clip' | 'vod',
+					platform: eventVideo.platform as 'twitch' | 'youtube' | 'bilibili',
+					url: eventVideo.url,
+					title: eventVideo.title || undefined
+				});
+			}
+		}
+
+		// Track unique teams
+		if (eventTeamPlayer) {
+			eventData.uniqueTeams.add(eventTeamPlayer.teamId);
+		}
+	});
+	const dataProcessingDuration = performance.now() - dataProcessingStart;
+	console.info(`[Events] Essential data processing took ${dataProcessingDuration.toFixed(2)}ms`);
+
+	// Convert to EssentialEvent format
+	const finalProcessingStart = performance.now();
+	const result = await Promise.all(
+		Array.from(eventsMap.values()).map(async ({ event, organizers, videos, uniqueTeams }) => {
+			return {
+				slug: event.slug,
+				imageURL: await processImageURL(event.image),
+				image: event.image,
+				name: event.name,
+				status: event.status as 'upcoming' | 'live' | 'finished' | 'cancelled' | 'postponed',
+				date: event.date,
+				participants: Array(uniqueTeams.size).fill(null), // Create array with actual team count
+				capacity: event.capacity,
+				region: event.region,
+				format: event.format as 'lan' | 'online' | 'hybrid',
+				official: event.official,
+				organizers:
+					organizers.length > 0 ? await Promise.all(organizers.map(convertOrganizer)) : undefined,
+				videos: videos.length > 0 ? videos : undefined
+			};
+		})
+	);
+	const finalProcessingDuration = performance.now() - finalProcessingStart;
+	console.info(`[Events] Essential final processing took ${finalProcessingDuration.toFixed(2)}ms`);
+
+	const totalDuration = performance.now() - totalStart;
+	console.info(`[Events] Total getEssentialEvents took ${totalDuration.toFixed(2)}ms`);
 
 	return result;
 }

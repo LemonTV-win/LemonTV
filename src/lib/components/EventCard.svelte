@@ -1,3 +1,26 @@
+<script module>
+	export type EssentialEvent = {
+		slug: string;
+		imageURL?: string;
+		image: string;
+		name: string;
+		status: 'upcoming' | 'live' | 'finished' | 'cancelled' | 'postponed';
+		date: string;
+		participants: Array<any>; // Only needs length property
+		capacity: number;
+		region: string;
+		format: 'lan' | 'online' | 'hybrid';
+		official: boolean;
+		organizers?: Array<any>; // Only needs to be iterable
+		videos?: Array<{
+			type: 'stream' | 'clip' | 'vod';
+			platform: 'twitch' | 'youtube' | 'bilibili';
+			url: string;
+			title?: string;
+		}>;
+	};
+</script>
+
 <script lang="ts">
 	import type { Event } from '$lib/data/events';
 	import { m } from '$lib/paraglide/messages';
@@ -10,7 +33,9 @@
 	import OrganizerChip from '$lib/components/OrganizerChip.svelte';
 	import { page } from '$app/state';
 
-	let { event, detailed = false }: { event: Event; detailed?: boolean } = $props();
+	// Essential fields that EventCard component actually uses
+
+	let { event, detailed = false }: { event: Event | EssentialEvent; detailed?: boolean } = $props();
 
 	let live = $derived(event.status === 'live');
 	let showPopup = $state(false);
