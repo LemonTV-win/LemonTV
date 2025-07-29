@@ -217,8 +217,8 @@
 				required
 			>
 				<option value="">Select winner</option>
-				<option value="0">Team A</option>
-				<option value="1">Team B</option>
+				<option value="0">{teams[0].name}</option>
+				<option value="1">{teams[1].name}</option>
 			</select>
 		</div>
 		<!-- Teams editing -->
