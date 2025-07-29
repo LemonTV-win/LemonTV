@@ -12,6 +12,8 @@
 
 	if (!stage) console.error('Stage is required');
 
+	$inspect('[Brackets] stage', stage);
+
 	let rounds = $derived(
 		stage.structure.rounds
 			.filter((r) => r.parallelGroup === undefined)

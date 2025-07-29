@@ -4,6 +4,7 @@
 	import { m } from '$lib/paraglide/messages';
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import type { ActionResult } from '@sveltejs/kit';
+	import Brackets from '$lib/components/Brackets.svelte';
 
 	let {
 		stage,
@@ -592,7 +593,73 @@
 
 <div class="flex h-full flex-col">
 	<section class="mb-4">
-		<h4 class="text-lg font-medium text-white">Bracket Structure Preview</h4>
+		<details>
+			<summary class="text-lg font-medium text-white">Preview</summary>
+			{#if stage}
+				<Brackets
+					stage={{
+						...stage,
+						stage: stage.stage as 'qualifier' | 'playoff' | 'group' | 'showmatch',
+						format: stage.format as 'single' | 'double' | 'swiss' | 'round-robin',
+						matches: matches.map((match) => ({
+							id: match.id,
+							teams: [
+								{
+									team: match.teams[0]?.team?.name || '',
+									score: match.teams[0]?.score || 0
+								},
+								{
+									team: match.teams[1]?.team?.name || '',
+									score: match.teams[1]?.score || 0
+								}
+							] as [any, any],
+							battleOf: (match.format as 'BO1' | 'BO3' | 'BO5') || 'BO1',
+							maps: match.maps.map((map) => ({
+								map: map.map,
+								pickerId: map.map_picker_position,
+								pickedSide: map.side === 0 ? 'Attack' : 'Defense'
+							}))
+						})),
+						structure: {
+							rounds: rounds.map((round) => ({
+								id: round.id || 0,
+								type: round.type as any,
+								title: round.title
+									? {
+											en: round.title,
+											es: round.title,
+											zh: round.title,
+											ko: round.title,
+											ja: round.title,
+											'pt-br': round.title,
+											de: round.title,
+											ru: round.title,
+											'zh-tw': round.title,
+											vi: round.title,
+											id: round.title,
+											fr: round.title,
+											'uk-ua': round.title
+										}
+									: undefined,
+								parallelGroup: round.parallelGroup
+							})),
+							nodes: nodes.map((node) => ({
+								matchId: node.matchId,
+								round: node.roundId,
+								dependsOn: node.dependencies.map((dep) => ({
+									matchId: dep.dependencyMatchId,
+									outcome: dep.outcome
+								})),
+								order: node.order
+							}))
+						}
+					}}
+					teams={new Map()}
+				/>
+			{/if}
+		</details>
+
+		<h4 class="text-lg font-medium text-white">Bracket Structure</h4>
 
 		<div class="mt-4 rounded-lg border border-slate-700 bg-slate-800/50 p-4">
 			{#if rounds.length === 0}
