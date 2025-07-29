@@ -12,7 +12,7 @@
 		nodes: initialNodes,
 		onCancel,
 		onSuccess
-	} = $props<{
+	}: {
 		stage: {
 			id: number;
 			title: string;
@@ -65,7 +65,7 @@
 		}>;
 		onCancel: () => void;
 		onSuccess: () => void;
-	}>();
+	} = $props();
 
 	// State for managing rounds, nodes, and dependencies
 	let rounds = $state<
