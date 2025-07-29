@@ -183,23 +183,22 @@
 				{#each teamData as team, idx}
 					<div class="rounded-lg border border-slate-700 bg-slate-800 p-4">
 						<div class="mb-2 flex items-center gap-2 font-semibold text-slate-200">
-							{#if teams && teams[idx]?.team?.logo}
-								<img
-									src={teams[idx].team.logo}
-									alt={teams[idx].team.name}
-									class="h-6 w-6 rounded"
-								/>
+							{#if teams && teams[idx]?.logo}
+								<img src={teams[idx].logo} alt={teams[idx].name} class="h-6 w-6 rounded" />
 							{/if}
 							<span
-								>{teams && teams[idx]?.team?.name
-									? teams[idx].team.name
+								>{teams && teams[idx]?.name
+									? teams[idx].name
 									: `Team ${idx === 0 ? 'A' : 'B'}`}</span
 							>
 						</div>
 						<div class="mb-2">
-							<label class="block text-xs text-slate-400">Position</label>
+							<label class="block text-xs text-slate-400" for={`gameTeams[${idx}].position`}>
+								Position
+							</label>
 							<input
 								type="number"
+								id={`gameTeams[${idx}].position`}
 								name={`gameTeams[${idx}].position`}
 								value={team.position}
 								readonly
@@ -207,9 +206,12 @@
 							/>
 						</div>
 						<div>
-							<label class="block text-xs text-slate-400">Score</label>
+							<label class="block text-xs text-slate-400" for={`gameTeams[${idx}].score`}>
+								Score
+							</label>
 							<input
 								type="number"
+								id={`gameTeams[${idx}].score`}
 								name={`gameTeams[${idx}].score`}
 								bind:value={team.score}
 								class="mt-1 block w-full rounded border border-slate-700 bg-slate-900 px-2 py-1 text-slate-200"
