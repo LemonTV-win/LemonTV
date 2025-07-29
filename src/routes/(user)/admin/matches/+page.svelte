@@ -3,6 +3,7 @@
 	import type { PageProps } from './$types';
 	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
+	import { invalidateAll } from '$app/navigation';
 	import MaterialSymbolsFilterListRounded from '~icons/material-symbols/filter-list-rounded';
 	import MaterialSymbolsSearchRounded from '~icons/material-symbols/search-rounded';
 	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
@@ -266,6 +267,8 @@
 
 	function closeGameModal() {
 		editingGame = null;
+		// Invalidate the page data to refresh the games list
+		invalidateAll();
 	}
 
 	function openDeleteGameModal(game: any, matchId: string) {
@@ -283,7 +286,7 @@
 			formData.append('id', deletingGame.game.id);
 			await fetch('?/deleteGame', { method: 'POST', body: formData });
 			closeDeleteGameModal();
-			window.location.reload();
+			invalidateAll();
 		} catch (e) {
 			isDeletingGame = false;
 		}
@@ -518,7 +521,7 @@
 			await update();
 			closeDeleteGameModal();
 			goto(`/admin/matches?event=${selectedEventId}`, { replaceState: true });
-			window.location.reload();
+			invalidateAll();
 		};
 	}
 
@@ -559,14 +562,14 @@
 		successMessage = 'Stage updated successfully';
 		closeStageEdit();
 		// Refresh the page to get updated data
-		window.location.reload();
+		invalidateAll();
 	}
 
 	function handleBracketSuccess() {
 		successMessage = 'Bracket structure updated successfully';
 		closeBracketEdit();
 		// Refresh the page to get updated data
-		window.location.reload();
+		invalidateAll();
 	}
 
 	// Get matches for selected stage
@@ -1056,7 +1059,7 @@
 					editingStage = null;
 					goto(`/admin/matches?event=${selectedEventId}`, { replaceState: true });
 					// Refresh the page to show updated data
-					window.location.reload();
+					invalidateAll();
 				}}
 			/>
 		</div>
@@ -1094,7 +1097,7 @@
 					editingMatch = null;
 					goto(`/admin/matches?event=${selectedEventId}`, { replaceState: true });
 					// Refresh the page to show updated data
-					window.location.reload();
+					invalidateAll();
 				}}
 			/>
 		</div>
