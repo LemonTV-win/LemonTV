@@ -460,5 +460,7 @@
 	"event_page_description": "探索{name}的所有資訊：比賽結果、時間表、參賽隊伍、選手名單與賽事細節。",
 	"organizer_page_description": "深入了解{name}：他們舉辦的活動、對社群的貢獻、背景，以及在卡拉彼丘電競生態中的角色。",
 	"team_page_description": "認識{name}：隊伍歷史、成員陣容、過往表現與在卡拉彼丘賽事中的成績。",
-	"player_page_description": "了解{name}：他的技能、成就以及對卡拉彼丘電競社群的貢獻。"
+	"player_page_description": "了解{name}：他的技能、成就以及對卡拉彼丘電競社群的貢獻。",
+	"strinova_team_overview": "卡拉彼丘團隊概覽",
+	"strinova_player_profile": "卡拉彼丘玩家信息"
 }

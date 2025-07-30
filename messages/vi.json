@@ -457,8 +457,10 @@
 	"teams_description": "Khám phá các đội tuyển tạo nên sân chơi Strinova Esports. Tìm hiểu lịch sử, đội hình và thành tích của họ.",
 	"players_description": "Làm quen với các tuyển thủ đóng góp vào Strinova Esports. Khám phá kỹ năng, chiến lược và vai trò của họ trong cộng đồng.",
 	"community_description": "Kết nối với những người chơi Strinova khác và chia sẻ trải nghiệm của bạn. Tham gia Discord của chúng tôi để không bỏ lỡ thông tin mới nhất.",
-	"event_page_description": "Khám phá mọi thứ về {name} — kết quả trận đấu, lịch thi đấu, đội tham gia, tuyển thủ và chi tiết giải đấu.",
-	"organizer_page_description": "Tìm hiểu thêm về {name} — các sự kiện tổ chức, đóng góp cho cộng đồng, hành trình và vai trò trong hệ sinh thái Strinova Esports.",
-	"team_page_description": "Khám phá {name} — lịch sử đội, danh sách thành viên, thành tích và kết quả giải đấu trong hệ sinh thái Strinova.",
-	"player_page_description": "Tìm hiểu về {name} — kỹ năng, thành tích và đóng góp của họ cho cộng đồng Strinova Esports."
+	"event_page_description": "Khám phá tất cả về {name} — kết quả trận đấu, lịch trình, đội tuyển, người chơi và chi tiết giải đấu.",
+	"organizer_page_description": "Tìm hiểu thêm về {name} — các sự kiện, đóng góp cho cộng đồng, lý lịch và vai trò trong hệ sinh thái Strinova Esports.",
+	"team_page_description": "Khám phá {name} — lịch sử đội tuyển, danh sách người chơi, thành tích trong quá khứ và kết quả giải đấu trong bối cảnh Strinova.",
+	"player_page_description": "Tìm hiểu về {name} — kỹ năng, thành tựu và đóng góp cho cộng đồng Strinova Esports.",
+	"strinova_team_overview": "Tổng Quan Đội Tuyển Strinova",
+	"strinova_player_profile": "Hồ Sơ Người Chơi Strinova"
 }

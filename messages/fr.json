@@ -457,8 +457,10 @@
 	"teams_description": "Explorez les équipes qui composent la scène Strinova Esports. Découvrez leur histoire, leurs joueurs et leurs succès.",
 	"players_description": "Faites connaissance avec les joueurs de Strinova Esports. Apprenez-en plus sur leurs compétences, leur style de jeu et leur contribution à la communauté.",
 	"community_description": "Rejoignez d'autres joueurs de Strinova et partagez votre expérience. Venez sur notre Discord pour rester connecté.",
-	"event_page_description": "Découvrez tout sur {name} : résultats, calendrier, équipes, joueurs et détails du tournoi.",
-	"organizer_page_description": "En savoir plus sur {name} : ses événements, sa contribution à la communauté, son parcours et son rôle dans l’écosystème Esports de Strinova.",
-	"team_page_description": "Découvrez {name} : son histoire, son roster, ses performances passées et ses résultats dans la scène Strinova.",
-	"player_page_description": "Apprenez-en plus sur {name} : ses compétences, ses succès et sa contribution à la communauté Esports Strinova."
+	"event_page_description": "Explorez tout sur {name} — résultats de matchs, horaires, équipes, joueurs et détails du tournoi.",
+	"organizer_page_description": "En savoir plus sur {name} — leurs événements, contributions à la communauté, parcours et rôle dans l'écosystème Strinova Esports.",
+	"team_page_description": "Découvrez {name} — histoire de l'équipe, effectif, performances passées et résultats de tournois dans la scène Strinova.",
+	"player_page_description": "En savoir plus sur {name} — leurs compétences, réalisations et contributions à la communauté Strinova Esports.",
+	"strinova_team_overview": "Aperçu de l'Équipe Strinova",
+	"strinova_player_profile": "Profil du Joueur Strinova"
 }

@@ -460,5 +460,7 @@
 	"event_page_description": "Entdecke alles über {name} – Ergebnisse, Zeitpläne, Teams, Spieler und Turnierinfos.",
 	"organizer_page_description": "Erfahre mehr über {name} – ihre Events, Beiträge zur Community, Hintergründe und Rolle in der Strinova-Esports-Szene.",
 	"team_page_description": "Lerne {name} kennen – Teamgeschichte, Kader, frühere Leistungen und Turnierergebnisse in der Strinova-Szene.",
-	"player_page_description": "Erfahre mehr über {name} – ihre Fähigkeiten, Erfolge und Beiträge zur Strinova-Esports-Community."
+	"player_page_description": "Erfahre mehr über {name} – ihre Fähigkeiten, Erfolge und Beiträge zur Strinova-Esports-Community.",
+	"strinova_team_overview": "Strinova Team Übersicht",
+	"strinova_player_profile": "Strinova Spieler Profil"
 }

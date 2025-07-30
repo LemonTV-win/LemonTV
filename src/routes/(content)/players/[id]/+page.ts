@@ -6,7 +6,7 @@ export const load: PageLoad = async ({ data }) => {
 	return {
 		...data,
 		metadata: {
-			title: `${data.player.name} | LemonTV`,
+			title: `${data.player.name} | ${m.strinova_player_profile()} | LemonTV`,
 			description: m.player_page_description({ name: data.player.name })
 		} as PageMetadata
 	};

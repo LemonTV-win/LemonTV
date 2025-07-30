@@ -457,8 +457,10 @@
 	"teams_description": "Temukan tim-tim yang membentuk skena Strinova Esports. Pelajari sejarah, pemain, dan pencapaian mereka.",
 	"players_description": "Kenali para pemain yang membangun Strinova Esports. Pelajari keterampilan, strategi, dan kontribusi mereka terhadap komunitas.",
 	"community_description": "Terhubung dengan sesama pemain Strinova dan bagikan pengalamanmu. Bergabunglah dengan komunitas Discord kami untuk tetap mendapat informasi.",
-	"event_page_description": "Temukan semua informasi tentang {name}：hasil pertandingan, jadwal, tim peserta, dan detail pertandingan lainnya.",
-	"organizer_page_description": "Temukan semua informasi tentang {name}：acara yang mereka selenggarakan, kontribusi mereka terhadap komunitas, latar belakang, dan peran mereka dalam ekosistem e-sports Strinova.",
-	"team_page_description": "Temukan semua informasi tentang {name}：sejarah tim, komposisi pemain, prestasi sebelumnya, dan hasil pertandingan di e-sports Strinova.",
-	"player_page_description": "Temukan semua informasi tentang {name}：kemampuan mereka, prestasi, dan kontribusi terhadap komunitas e-sports Strinova."
+	"event_page_description": "Jelajahi semua tentang {name} — hasil pertandingan, jadwal, tim, pemain, dan detail turnamen.",
+	"organizer_page_description": "Pelajari lebih lanjut tentang {name} — acara mereka, kontribusi komunitas, latar belakang, dan peran dalam ekosistem Strinova Esports.",
+	"team_page_description": "Temukan {name} — riwayat tim, daftar pemain, performa masa lalu, dan hasil turnamen dalam adegan Strinova.",
+	"player_page_description": "Pelajari tentang {name} — keterampilan, pencapaian, dan kontribusi mereka kepada komunitas Strinova Esports.",
+	"strinova_team_overview": "Ikhtisar Tim Strinova",
+	"strinova_player_profile": "Profil Pemain Strinova"
 }
