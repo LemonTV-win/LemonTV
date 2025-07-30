@@ -38,7 +38,7 @@
     {
       "accountId": 2017921,
       "player": "iYu",
-      "characters": ["Fuschia", "Ming"],
+      "characters": ["Fuchsia", "Ming"],
       "score": 204,
       "damageScore": 172,
       "kills": 10,
@@ -70,7 +70,7 @@
     {
       accountId: 2017921,
       player: 'iYu',
-      characters: ['Fuschia', 'Ming'],
+      characters: ['Fuchsia', 'Ming'],
       score: 204,
       damageScore: 172,
       kills: 10,

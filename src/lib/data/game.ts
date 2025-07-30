@@ -47,7 +47,7 @@ export const URBINO_CHARACTERS = [
 	'Celestia',
 	'Maddelena',
 	'Bai Mo',
-	'Fuschia',
+	'Fuchsia',
 	'Galatea'
 ] as const;
 
@@ -84,7 +84,7 @@ export const CHARACTER_NAMES: Record<Character, () => string> = {
 	Audrey: m.Audrey,
 	Maddelena: m.Maddelena,
 	'Bai Mo': m['Bai Mo'],
-	Fuschia: m.Fuschia,
+	Fuchsia: m.Fuchsia,
 	Galatea: m.Galatea,
 	Celestia: m.Celestia
 };

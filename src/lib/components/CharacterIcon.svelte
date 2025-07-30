@@ -32,7 +32,7 @@
 		Maddelena:
 			'https://static.wikitide.net/strinovawiki/thumb/0/03/Maddelena_Profile.png/150px-Maddelena_Profile.png',
 		'Bai Mo': 'https://static.wikitide.net/strinovawiki/b/ba/Bai_Mo_Profile.png',
-		Fuschia: 'https://static.wikitide.net/strinovawiki/a/ad/Fuchsia_Profile.png',
+		Fuchsia: 'https://static.wikitide.net/strinovawiki/a/ad/Fuchsia_Profile.png',
 		Galatea: 'https://static.wikitide.net/strinovawiki/f/ff/Galatea_Profile.png',
 		Chiyo: 'https://static.wikitide.net/strinovawiki/9/93/Chiyo_Profile.png'
 	};

@@ -185,7 +185,7 @@ export const events: Event[] = [
 										{
 											accountId: 2017921,
 											player: 'iYu',
-											characters: ['Fuschia', 'Ming'],
+											characters: ['Fuchsia', 'Ming'],
 											score: 204,
 											damageScore: 172,
 											kills: 10,
@@ -259,7 +259,7 @@ export const events: Event[] = [
 										{
 											accountId: 2988260,
 											player: '箱子箱',
-											characters: ['Lawine', 'Fuschia'],
+											characters: ['Lawine', 'Fuchsia'],
 											score: 232,
 											damageScore: 164,
 											kills: 11,
@@ -331,7 +331,7 @@ export const events: Event[] = [
 										{
 											accountId: 2988260,
 											player: '箱子箱',
-											characters: ['Fuschia', 'Michele'],
+											characters: ['Fuchsia', 'Michele'],
 											score: 252,
 											damageScore: 189,
 											kills: 12,
@@ -760,7 +760,7 @@ export const events: Event[] = [
 										{
 											accountId: 2088110,
 											player: 'Vampire',
-											characters: ['Reiichi', 'Fuschia'],
+											characters: ['Reiichi', 'Fuchsia'],
 											score: 79,
 											damageScore: 62,
 											kills: 1,
@@ -808,7 +808,7 @@ export const events: Event[] = [
 										{
 											accountId: 2088110,
 											player: 'Vampire',
-											characters: ['Reiichi', 'Fuschia'],
+											characters: ['Reiichi', 'Fuchsia'],
 											score: 109,
 											damageScore: 80,
 											kills: 6,
@@ -980,7 +980,7 @@ export const events: Event[] = [
 										{
 											accountId: 2988260,
 											player: '箱子箱',
-											characters: ['Lawine', 'Fuschia'],
+											characters: ['Lawine', 'Fuchsia'],
 											score: 188,
 											damageScore: 126,
 											kills: 6,
@@ -1102,7 +1102,7 @@ export const events: Event[] = [
 										{
 											accountId: 2988260,
 											player: '箱子箱',
-											characters: ['Fuschia', 'Celestia'],
+											characters: ['Fuchsia', 'Celestia'],
 											score: 203,
 											damageScore: 162,
 											kills: 15,
@@ -1164,7 +1164,7 @@ export const events: Event[] = [
 										{
 											accountId: 2003112,
 											player: 'FOX1Yukino',
-											characters: ['Ming', 'Fuschia'],
+											characters: ['Ming', 'Fuchsia'],
 											score: 160,
 											damageScore: 135,
 											kills: 7,
@@ -1421,7 +1421,7 @@ export const events: Event[] = [
 										{
 											accountId: 2003944,
 											player: 'grustleking',
-											characters: ['Celestia', 'Fuschia'],
+											characters: ['Celestia', 'Fuchsia'],
 											score: 172,
 											damageScore: 114,
 											kills: 9,
@@ -1459,7 +1459,7 @@ export const events: Event[] = [
 										{
 											accountId: 2988260,
 											player: '箱子箱',
-											characters: ['Fuschia', 'Lawine'],
+											characters: ['Fuchsia', 'Lawine'],
 											score: 182,
 											damageScore: 151,
 											kills: 12,

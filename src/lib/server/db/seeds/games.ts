@@ -65,7 +65,7 @@ const CHARACTERS = [
 	'Celestia',
 	'Maddelena',
 	'Bai Mo',
-	'Fuschia',
+	'Fuchsia',
 	'Galatea',
 	'Chiyo'
 ];
