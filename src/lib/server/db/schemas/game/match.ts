@@ -2,6 +2,7 @@ import { sql } from 'drizzle-orm';
 import { sqliteTable, text, integer, check, primaryKey } from 'drizzle-orm/sqlite-core';
 import { team } from './team';
 import { map } from './game';
+import type { GameMap } from '$lib/data/game';
 
 export const match = sqliteTable(
 	'match',
@@ -49,6 +50,7 @@ export const game = sqliteTable('game', {
 		.references(() => match.id)
 		.notNull(),
 	mapId: text('map_id')
+		.$type<GameMap>()
 		.references(() => map.id)
 		.notNull(),
 	duration: integer('duration').notNull(),

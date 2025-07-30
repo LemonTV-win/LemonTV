@@ -11,6 +11,7 @@
 	import { getAllNames } from '$lib/data/players';
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
+	import { MAP_NAMES } from '$lib/data/game';
 
 	let { data }: PageProps = $props();
 
@@ -141,7 +142,7 @@
 								<MapIcon mapId={mapStat.mapId as import('$lib/data/game').GameMap} />
 								<div class="flex flex-col gap-1">
 									<div class="flex justify-between text-xs">
-										<span class="text-white">{mapStat.mapId}</span>
+										<span class="text-white">{MAP_NAMES[mapStat.mapId]()}</span>
 										<span class="text-slate-400">{mapStat.winrate.toFixed(0)}% ({total})</span>
 									</div>
 									<div class="h-1.5 w-full overflow-hidden rounded-full bg-slate-600">

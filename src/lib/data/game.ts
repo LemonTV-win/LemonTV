@@ -9,15 +9,30 @@ export type Region =
 	| 'WA' // Western Asia
 	| 'Global';
 
-export type GameMap =
-	| 'base_404'
-	| 'space_lab'
-	| 'windy_town'
-	| 'area_88'
-	| 'port_euler'
-	| 'cosmite'
-	| 'orcanus'
-	| 'cauchy_district';
+// #region Maps
+export const MAPS = [
+	'base_404',
+	'area_88',
+	'port_euler',
+	'windy_town',
+	'space_lab',
+	'cauchy_district',
+	'cosmite',
+	'orcanus'
+] as const;
+export type GameMap = (typeof MAPS)[number];
+
+export const MAP_NAMES: Record<GameMap, () => string> = {
+	base_404: m.base_404,
+	area_88: m.area_88,
+	port_euler: m.port_euler,
+	space_lab: m.space_lab,
+	windy_town: m.windy_town,
+	cauchy_district: m.cauchy_district,
+	cosmite: m.cosmite,
+	orcanus: m.orcanus
+};
+// #endregion
 
 // #region Characters
 export const PUS_CHARACTERS = [

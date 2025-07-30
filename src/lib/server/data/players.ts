@@ -13,7 +13,7 @@ import type { Player } from '$lib/data/players';
 import { randomUUID } from 'node:crypto';
 import { calculateWinnerIndex, getEvents, getMatches, identifyPlayer } from '$lib/data';
 import type { Team } from '$lib/data/teams';
-import type { Character, Region } from '$lib/data/game';
+import type { Character, GameMap, Region } from '$lib/data/game';
 import type { TCountryCode } from 'countries-list';
 
 import * as schema from '$lib/server/db/schema';
@@ -369,7 +369,7 @@ export async function getServerPlayersAgents(
 
 export async function getServerPlayerMapStats(playerId: string): Promise<
 	{
-		mapId: string;
+		mapId: GameMap;
 		wins: number;
 		losses: number;
 		winrate: number;
@@ -405,7 +405,7 @@ export async function getServerPlayerMapStats(playerId: string): Promise<
 		.where(inArray(schema.gamePlayerScore.accountId, accountIds));
 
 	// Group games by map and calculate wins/losses
-	const mapStats = new Map<string, { wins: number; losses: number }>();
+	const mapStats = new Map<GameMap, { wins: number; losses: number }>();
 
 	for (const game of playerGames) {
 		if (!mapStats.has(game.mapId)) {
