@@ -17,6 +17,7 @@ type MapAction = 'ban' | 'pick' | 'decider' | 'set' | null;
 export type GameParticipant = {
 	id: string;
 	name: string;
+	aliases: string[];
 	nationalities: TCountryCode[];
 	gameAccounts: Array<{
 		server: 'Strinova' | 'CalabiYau';
@@ -169,6 +170,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 			role: table.eventTeamPlayer.role,
 			player: table.player,
 			playerAdditionalNationality: table.playerAdditionalNationality,
+			playerAlias: table.playerAlias,
 			gameAccount: table.gameAccount
 		})
 		.from(table.eventTeamPlayer)
@@ -177,7 +179,8 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		.leftJoin(
 			table.playerAdditionalNationality,
 			eq(table.playerAdditionalNationality.playerId, table.player.id)
-		);
+		)
+		.leftJoin(table.playerAlias, eq(table.playerAlias.playerId, table.player.id));
 
 	// Process image URLs for teams
 	const processedEvents = await Promise.all(
@@ -214,6 +217,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 			playerMap.set(p.id, {
 				id: p.id,
 				name: p.name,
+				aliases: [],
 				nationalities: p.nationality ? [p.nationality as TCountryCode] : [],
 				gameAccounts: []
 			});

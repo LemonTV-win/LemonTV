@@ -307,7 +307,10 @@
 					value={ps.accountId}
 					options={new Map(
 						Array.from(compiledGameAccountIDMaps[team === 'A' ? 0 : 1].entries()).map(
-							([accountId, roster]) => [accountId, roster.player.name]
+							([accountId, roster]) => [
+								accountId,
+								`${roster.player.name} ${roster.player.aliases.map((a) => `(${a})`).join(' ')}`
+							]
 						)
 					)}
 					placeholder="Enter or select account ID"
