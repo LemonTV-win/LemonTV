@@ -447,15 +447,13 @@
 
 	// Sync searchQuery changes to URL
 	$effect(() => {
+		const url = new URL(window.location.href);
 		if (searchQuery) {
-			const url = new URL(window.location.href);
-			url.searchParams.set('search', searchQuery);
-			goto(url.pathname + url.search, { replaceState: true });
+			url.searchParams.set('searchQuery', searchQuery);
 		} else {
-			const url = new URL(window.location.href);
-			url.searchParams.delete('search');
-			goto(url.pathname + url.search, { replaceState: true });
+			url.searchParams.delete('searchQuery');
 		}
+		goto(url.toString(), { replaceState: true });
 	});
 
 	// Helper function to get side text

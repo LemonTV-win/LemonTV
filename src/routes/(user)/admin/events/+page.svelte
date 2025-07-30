@@ -18,12 +18,19 @@
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 
 	let { data }: { data: PageData } = $props();
-	let { events, action, id, organizers, eventOrganizers } = $derived(data);
+	let {
+		events,
+		action,
+		id,
+		organizers,
+		eventOrganizers,
+		searchQuery: initialSearchQuery
+	} = $derived(data);
 
 	$inspect('[admin/events] data', data);
 
 	let selectedEvent: EventWithOrganizers | null = $state(null);
-	let searchQuery = $state('');
+	let searchQuery = $state(initialSearchQuery || '');
 	let sortBy:
 		| 'name-asc'
 		| 'name-desc'
@@ -38,6 +45,16 @@
 	let isAddingNew = $state(false);
 	let isEditing = $state(false);
 	let showHistoryModal = $state(false);
+
+	$effect(() => {
+		const url = new URL(window.location.href);
+		if (searchQuery) {
+			url.searchParams.set('searchQuery', searchQuery);
+		} else {
+			url.searchParams.delete('searchQuery');
+		}
+		goto(url.toString(), { replaceState: true });
+	});
 
 	let filteredEvents = $derived(
 		events

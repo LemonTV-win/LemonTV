@@ -14,10 +14,13 @@ export const load: PageServerLoad = async (event) => {
 	const roles = await db.select().from(table.role);
 	const userRoles = await db.select().from(table.userRole);
 
+	const searchQuery = event.url.searchParams.get('searchQuery');
+
 	return {
 		users,
 		roles,
-		userRoles
+		userRoles,
+		searchQuery
 	};
 };
 

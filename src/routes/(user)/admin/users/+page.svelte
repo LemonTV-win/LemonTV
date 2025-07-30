@@ -2,6 +2,7 @@
 	import type { PageServerData } from './$types';
 	import { m } from '$lib/paraglide/messages';
 	import { enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
 	import type { Role } from '$lib/server/db/schema';
 	import { browser } from '$app/environment';
 
@@ -9,7 +10,7 @@
 	import IconParkSolidDeleteFive from '~icons/icon-park-solid/delete-five';
 
 	let { data }: { data: PageServerData } = $props();
-	let searchQuery = $state('');
+	let searchQuery = $state(data.searchQuery || '');
 	let errorMessage = $state('');
 	let successMessage = $state('');
 	let editingRole: Role | null = $state(null);
@@ -17,6 +18,16 @@
 	let newRoleId = $state('');
 	let innerWidth = $state(browser ? window.innerWidth : 0);
 	let showRolePanel = $derived(innerWidth >= 1024);
+
+	$effect(() => {
+		const url = new URL(window.location.href);
+		if (searchQuery) {
+			url.searchParams.set('searchQuery', searchQuery);
+		} else {
+			url.searchParams.delete('searchQuery');
+		}
+		goto(url.toString(), { replaceState: true });
+	});
 
 	let filteredUsers = $derived(
 		data.users.filter((user) => {

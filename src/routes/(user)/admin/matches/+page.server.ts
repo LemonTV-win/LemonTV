@@ -627,7 +627,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		id,
 		delete: deleteParam,
 		stageId: url.searchParams.get('stageId') ?? undefined,
-		searchQuery: url.searchParams.get('search') ?? undefined,
+		searchQuery: url.searchParams.get('searchQuery') ?? undefined,
 		teamRosters: teamRosterMap
 	};
 };

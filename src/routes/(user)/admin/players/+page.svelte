@@ -23,7 +23,9 @@
 	import { getLocale } from '$lib/paraglide/runtime';
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 
-	let searchQuery = $state('');
+	let { data }: PageProps = $props();
+
+	let searchQuery = $state(data.searchQuery || '');
 	let selectedPlayer: Player | null = $state(null);
 	let isAddingNew = $state(false);
 	let isEditing = $state(false);
@@ -49,7 +51,15 @@
 		| 'gameAccount-asc'
 		| 'gameAccount-desc' = $state('name-asc');
 
-	let { data }: PageProps = $props();
+	$effect(() => {
+		const url = new URL(window.location.href);
+		if (searchQuery) {
+			url.searchParams.set('searchQuery', searchQuery);
+		} else {
+			url.searchParams.delete('searchQuery');
+		}
+		goto(url.toString(), { replaceState: true });
+	});
 
 	// Handle URL parameters
 	$effect(() => {

@@ -26,6 +26,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	const searchParams = url.searchParams;
 	const action = searchParams.get('action');
 	const id = searchParams.get('id');
+	const searchQuery = searchParams.get('searchQuery');
 
 	if (!['admin', 'editor'].some((role) => user.roles.includes(role))) {
 		throw redirect(302, '/');
@@ -35,7 +36,8 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		discordServers: await getDiscordServers(),
 		tags: await getTags(),
 		action,
-		id
+		id,
+		searchQuery
 	};
 };
 

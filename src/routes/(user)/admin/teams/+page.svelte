@@ -20,7 +20,7 @@
 
 	let { data }: PageProps = $props();
 
-	let searchQuery = $state('');
+	let searchQuery = $state(data.searchQuery || '');
 	let selectedTeam: Team | null = $state(null);
 	let isAddingNew = $state(false);
 	let isEditing = $state(false);
@@ -40,6 +40,16 @@
 		| 'created-desc'
 		| 'slug-asc'
 		| 'slug-desc' = $state('name-asc');
+
+	$effect(() => {
+		const url = new URL(window.location.href);
+		if (searchQuery) {
+			url.searchParams.set('searchQuery', searchQuery);
+		} else {
+			url.searchParams.delete('searchQuery');
+		}
+		goto(url.toString(), { replaceState: true });
+	});
 
 	let filteredTeams = $derived(
 		data.teams

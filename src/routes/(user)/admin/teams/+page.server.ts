@@ -15,7 +15,7 @@ export const load: PageServerLoad = async ({ url }) => {
 
 	const action = url.searchParams.get('action');
 	const id = url.searchParams.get('id');
-
+	const searchQuery = url.searchParams.get('searchQuery');
 	return {
 		teams: await Promise.all(
 			teamsList.map(async (team) => ({
@@ -27,7 +27,8 @@ export const load: PageServerLoad = async ({ url }) => {
 		teamAliases,
 		players,
 		action,
-		id
+		id,
+		searchQuery
 	};
 };
 

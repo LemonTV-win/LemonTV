@@ -22,7 +22,7 @@
 	let { organizers, action, id } = $derived(data);
 
 	let selectedOrganizer: Organizer | null = $state(null);
-	let searchQuery = $state('');
+	let searchQuery = $state(data.searchQuery || '');
 	let sortBy: 'name-asc' | 'name-desc' | 'date-asc' | 'date-desc' = $state('name-asc');
 	let isAddingNew = $state(false);
 	let isEditing = $state(false);
@@ -33,6 +33,15 @@
 		users: { count: number; users: string };
 	} | null = $state(null);
 	let isDeleting = $state(false);
+
+	$effect(() => {
+		const url = new URL(window.location.href);
+		if (searchQuery) {
+			url.searchParams.set('searchQuery', searchQuery);
+		} else {
+			url.searchParams.delete('searchQuery');
+		}
+	});
 
 	let filteredOrganizers = $derived(
 		organizers

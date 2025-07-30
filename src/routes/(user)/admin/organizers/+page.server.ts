@@ -37,6 +37,7 @@ export const load: PageServerLoad = async ({ url }) => {
 
 	const action = url.searchParams.get('action');
 	const id = url.searchParams.get('id');
+	const searchQuery = url.searchParams.get('searchQuery');
 
 	return {
 		organizers: await Promise.all(
@@ -46,7 +47,8 @@ export const load: PageServerLoad = async ({ url }) => {
 			}))
 		),
 		action,
-		id
+		id,
+		searchQuery
 	};
 };
 

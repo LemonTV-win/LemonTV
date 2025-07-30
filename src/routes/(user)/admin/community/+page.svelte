@@ -16,7 +16,7 @@
 	import CommunityTagComponent from '$lib/components/tags/CommunityTag.svelte';
 
 	let { data }: { data: PageData } = $props();
-	let { discordServers, tags } = $derived(data);
+	let { discordServers, tags, searchQuery: initialSearchQuery } = $derived(data);
 	let { action, id } = $derived(data);
 
 	let tagUsageCount = $derived(
@@ -28,7 +28,7 @@
 
 	let selectedServer: DiscordServer | null = $state(null);
 	let selectedTag: CommunityTag | null = $state(null);
-	let searchQuery = $state('');
+	let searchQuery = $state(initialSearchQuery || '');
 	let sortBy: 'title-asc' | 'title-desc' | 'date-asc' | 'date-desc' = $state('title-asc');
 	let isAddingNew = $state(false);
 	let isEditing = $state(false);
@@ -36,6 +36,16 @@
 	let isEditingTag = $state(false);
 	let showDeleteModal = $state(false);
 	let showDeleteTagModal = $state(false);
+
+	$effect(() => {
+		const url = new URL(window.location.href);
+		if (searchQuery) {
+			url.searchParams.set('searchQuery', searchQuery);
+		} else {
+			url.searchParams.delete('searchQuery');
+		}
+		goto(url.toString(), { replaceState: true });
+	});
 
 	let filteredServers = $derived(
 		discordServers

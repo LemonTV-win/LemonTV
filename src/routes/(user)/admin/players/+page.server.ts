@@ -21,6 +21,7 @@ export const load: PageServerLoad = async ({ url }) => {
 
 	const action = url.searchParams.get('action');
 	const id = url.searchParams.get('id');
+	const searchQuery = url.searchParams.get('searchQuery');
 
 	return {
 		players: players.map((player) => ({
@@ -31,7 +32,8 @@ export const load: PageServerLoad = async ({ url }) => {
 		playersTeams,
 		users,
 		action,
-		id
+		id,
+		searchQuery
 	};
 };
 

@@ -62,6 +62,10 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		withTimer('getTeamPlayers', () => db.select().from(table.teamPlayer))()
 	]);
 
+	const action = url.searchParams.get('action');
+	const id = url.searchParams.get('id');
+	const searchQuery = url.searchParams.get('searchQuery');
+
 	return {
 		events,
 		organizers,
@@ -69,8 +73,9 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		teams,
 		players,
 		teamPlayers,
-		action: url.searchParams.get('action'),
-		id: url.searchParams.get('id')
+		action,
+		id,
+		searchQuery
 	};
 };
 
