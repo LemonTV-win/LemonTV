@@ -2,17 +2,20 @@ import type { PageServerLoad } from './$types';
 import {
 	getPlayers,
 	getPlayersTeams,
-	getPlayersAgents,
+	getServerPlayersAgents,
 	getAllPlayersEssentialStats
 } from '$lib/server/data/players';
 
 export const load: PageServerLoad = async ({ locals: { user } }) => {
 	const players = await getPlayers();
 	const playersTeams = await getPlayersTeams();
-	const playersAgents = getPlayersAgents(players);
 
 	// Get essential stats for all players (optimized)
 	const playersEssentialStats = await getAllPlayersEssentialStats();
+
+	// Get server-side agents for all players (optimized)
+	const playerIds = players.map((p) => p.id);
+	const playersAgents = await getServerPlayersAgents(playerIds, 3);
 
 	// Create a map for quick lookup
 	const statsByPlayerId = new Map(playersEssentialStats.map((stats) => [stats.playerId, stats]));
