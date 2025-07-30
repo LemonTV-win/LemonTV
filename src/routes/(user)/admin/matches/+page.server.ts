@@ -4,7 +4,8 @@ import * as table from '$lib/server/db/schema';
 import { desc, eq } from 'drizzle-orm';
 import { processImageURL } from '$lib/server/storage';
 import type { TCountryCode } from 'countries-list';
-import type { Region } from '$lib/data/game';
+import type { Region, GameMap } from '$lib/data/game';
+import { MAPS } from '$lib/data/game';
 import type { PageServerLoad } from './$types';
 import { dev } from '$app/environment';
 
@@ -233,6 +234,12 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 			!player.nationalities.includes(additionalNationality as TCountryCode)
 		) {
 			player.nationalities.push(additionalNationality as TCountryCode);
+		}
+
+		// Add alias
+		const alias = row.playerAlias?.alias;
+		if (alias && !player.aliases.includes(alias)) {
+			player.aliases.push(alias);
 		}
 
 		// Add game account
@@ -1702,6 +1709,13 @@ const GAME_ACTIONS = {
 			});
 		}
 
+		// Validate mapId is a valid GameMap
+		if (!MAPS.includes(gameData.mapId as GameMap)) {
+			return fail(400, {
+				error: `Invalid map ID: ${gameData.mapId}. Valid maps are: ${MAPS.join(', ')}`
+			});
+		}
+
 		try {
 			// Use a transaction to ensure atomicity
 			const transactionResult = await db.transaction(async (tx) => {
@@ -1710,7 +1724,7 @@ const GAME_ACTIONS = {
 					.insert(table.game)
 					.values({
 						matchId: gameData.matchId,
-						mapId: gameData.mapId,
+						mapId: gameData.mapId as GameMap,
 						duration: gameData.duration,
 						winner: gameData.winner
 					})
@@ -1857,6 +1871,13 @@ const GAME_ACTIONS = {
 			});
 		}
 
+		// Validate mapId is a valid GameMap
+		if (!MAPS.includes(gameData.mapId as GameMap)) {
+			return fail(400, {
+				error: `Invalid map ID: ${gameData.mapId}. Valid maps are: ${MAPS.join(', ')}`
+			});
+		}
+
 		try {
 			// Use a transaction to ensure atomicity
 			await db.transaction(async (tx) => {
@@ -1876,7 +1897,7 @@ const GAME_ACTIONS = {
 					.update(table.game)
 					.set({
 						matchId: gameData.matchId,
-						mapId: gameData.mapId,
+						mapId: gameData.mapId as GameMap,
 						duration: gameData.duration,
 						winner: gameData.winner
 					})
