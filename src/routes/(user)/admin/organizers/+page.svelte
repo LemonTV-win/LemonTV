@@ -41,6 +41,7 @@
 		} else {
 			url.searchParams.delete('searchQuery');
 		}
+		goto(url.toString(), { replaceState: true, noScroll: true, keepFocus: true });
 	});
 
 	let filteredOrganizers = $derived(
@@ -95,21 +96,21 @@
 		isAddingNew = false;
 		isEditing = false;
 		selectedOrganizer = null;
-		goto('/admin/organizers', { replaceState: true });
+		goto('/admin/organizers', { replaceState: true, noScroll: true, keepFocus: true });
 	}
 
 	function handleSuccess() {
 		isAddingNew = false;
 		isEditing = false;
 		selectedOrganizer = null;
-		goto('/admin/organizers', { invalidateAll: true });
+		goto('/admin/organizers', { invalidateAll: true, noScroll: true, keepFocus: true });
 	}
 
 	function handleDeleteSubmit() {
 		return async ({ update }: { update: () => Promise<void> }) => {
 			await update();
 			closeDeleteModal();
-			goto('/admin/organizers', { invalidateAll: true });
+			goto('/admin/organizers', { invalidateAll: true, noScroll: true, keepFocus: true });
 		};
 	}
 

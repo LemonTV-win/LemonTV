@@ -427,7 +427,11 @@
 
 	function handleEventSelect(eventId: string) {
 		selectedEventId = eventId;
-		goto(`/admin/matches?event=${eventId}`, { replaceState: true });
+		goto(`/admin/matches?event=${eventId}`, {
+			replaceState: true,
+			noScroll: true,
+			keepFocus: true
+		});
 	}
 
 	// Handle URL parameters
@@ -453,7 +457,7 @@
 		} else {
 			url.searchParams.delete('searchQuery');
 		}
-		goto(url.toString(), { replaceState: true });
+		goto(url.toString(), { replaceState: true, noScroll: true, keepFocus: true });
 	});
 
 	// Helper function to get side text
@@ -525,7 +529,11 @@
 		return async ({ update }: { update: () => Promise<void> }) => {
 			await update();
 			closeDeleteGameModal();
-			goto(`/admin/matches?event=${selectedEventId}`, { replaceState: true });
+			goto(`/admin/matches?event=${selectedEventId}`, {
+				replaceState: true,
+				noScroll: true,
+				keepFocus: true
+			});
 			invalidateAll();
 		};
 	}
@@ -706,7 +714,11 @@
 				</div>
 				<button
 					onclick={() => {
-						goto(`/admin/matches?event=${selectedEventId}&action=newStage`, { replaceState: true });
+						goto(`/admin/matches?event=${selectedEventId}&action=newStage`, {
+							replaceState: true,
+							noScroll: true,
+							keepFocus: true
+						});
 					}}
 					class="rounded-md bg-yellow-500 px-4 py-2 text-sm font-medium text-black hover:bg-yellow-400 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 				>
@@ -735,7 +747,9 @@
 								goto(
 									`/admin/matches?event=${selectedEventId}&action=newMatch&stageId=${stage.id}`,
 									{
-										replaceState: true
+										replaceState: true,
+										noScroll: true,
+										keepFocus: true
 									}
 								);
 							}}
@@ -757,7 +771,9 @@
 						<button
 							onclick={() => {
 								goto(`/admin/matches?event=${selectedEventId}&action=editStage&id=${stage.id}`, {
-									replaceState: true
+									replaceState: true,
+									noScroll: true,
+									keepFocus: true
 								});
 							}}
 							class="text-yellow-500 hover:text-yellow-400"
@@ -1020,7 +1036,7 @@
 												onclick={() => {
 													goto(
 														`/admin/matches?event=${selectedEventId}&action=editMatch&id=${match.id}`,
-														{ replaceState: true }
+														{ replaceState: true, noScroll: true, keepFocus: true }
 													);
 												}}
 												class="flex items-center gap-1 text-yellow-500 hover:text-yellow-400"
@@ -1032,7 +1048,7 @@
 												onclick={() => {
 													goto(
 														`/admin/matches?event=${selectedEventId}&action=editMatch&id=${match.id}&delete=true`,
-														{ replaceState: true }
+														{ replaceState: true, noScroll: true, keepFocus: true }
 													);
 												}}
 												class="flex items-center gap-1 text-red-500 hover:text-red-400"
@@ -1066,11 +1082,19 @@
 				eventId={selectedEventId!}
 				onCancel={() => {
 					editingStage = null;
-					goto(`/admin/matches?event=${selectedEventId}`, { replaceState: true });
+					goto(`/admin/matches?event=${selectedEventId}`, {
+						replaceState: true,
+						noScroll: true,
+						keepFocus: true
+					});
 				}}
 				onSuccess={() => {
 					editingStage = null;
-					goto(`/admin/matches?event=${selectedEventId}`, { replaceState: true });
+					goto(`/admin/matches?event=${selectedEventId}`, {
+						replaceState: true,
+						noScroll: true,
+						keepFocus: true
+					});
 					// Refresh the page to show updated data
 					invalidateAll();
 				}}
@@ -1104,11 +1128,19 @@
 					.filter((stage, index, self) => index === self.findIndex((s) => s.id === stage.id))}
 				onCancel={() => {
 					editingMatch = null;
-					goto(`/admin/matches?event=${selectedEventId}`, { replaceState: true });
+					goto(`/admin/matches?event=${selectedEventId}`, {
+						replaceState: true,
+						noScroll: true,
+						keepFocus: true
+					});
 				}}
 				onSuccess={() => {
 					editingMatch = null;
-					goto(`/admin/matches?event=${selectedEventId}`, { replaceState: true });
+					goto(`/admin/matches?event=${selectedEventId}`, {
+						replaceState: true,
+						noScroll: true,
+						keepFocus: true
+					});
 					// Refresh the page to show updated data
 					invalidateAll();
 				}}

@@ -48,7 +48,7 @@
 		} else {
 			url.searchParams.delete('searchQuery');
 		}
-		goto(url.toString(), { replaceState: true });
+		goto(url.toString(), { replaceState: true, noScroll: true, keepFocus: true });
 	});
 
 	let filteredTeams = $derived(
@@ -97,21 +97,25 @@
 		isAddingNew = true;
 		isEditing = false;
 		selectedTeam = null;
-		goto('/admin/teams?action=new', { replaceState: true });
+		goto('/admin/teams?action=new', { replaceState: true, noScroll: true, keepFocus: true });
 	}
 
 	function handleEditTeam(team: Team) {
 		selectedTeam = team;
 		isEditing = true;
 		isAddingNew = false;
-		goto(`/admin/teams?action=edit&id=${team.id}`, { replaceState: true });
+		goto(`/admin/teams?action=edit&id=${team.id}`, {
+			replaceState: true,
+			noScroll: true,
+			keepFocus: true
+		});
 	}
 
 	function handleCancel() {
 		isAddingNew = false;
 		isEditing = false;
 		selectedTeam = null;
-		goto('/admin/teams', { replaceState: true });
+		goto('/admin/teams', { replaceState: true, noScroll: true, keepFocus: true });
 	}
 
 	async function handleDeleteTeam(team: Team) {
@@ -133,7 +137,7 @@
 			} else {
 				isDeleting = false;
 				teamToDelete = null;
-				await goto('/admin/teams', { invalidateAll: true });
+				await goto('/admin/teams', { invalidateAll: true, noScroll: true, keepFocus: true });
 				successMessage = 'Team deleted successfully';
 			}
 		} catch (e) {
@@ -176,7 +180,7 @@
 				errorMessage = result.error;
 			} else {
 				successMessage = result.message || 'Teams imported successfully';
-				goto('/admin/teams', { invalidateAll: true });
+				goto('/admin/teams', { invalidateAll: true, noScroll: true, keepFocus: true });
 			}
 		} catch (e) {
 			errorMessage = 'Failed to import teams';

@@ -53,7 +53,7 @@
 		} else {
 			url.searchParams.delete('searchQuery');
 		}
-		goto(url.toString(), { replaceState: true });
+		goto(url.toString(), { replaceState: true, noScroll: true, keepFocus: true });
 	});
 
 	let filteredEvents = $derived(
@@ -140,14 +140,14 @@
 		isAddingNew = false;
 		isEditing = false;
 		selectedEvent = null;
-		goto('/admin/events', { replaceState: true });
+		goto('/admin/events', { replaceState: true, noScroll: true, keepFocus: true });
 	}
 
 	function handleSuccess() {
 		isAddingNew = false;
 		isEditing = false;
 		selectedEvent = null;
-		goto('/admin/events', { invalidateAll: true });
+		goto('/admin/events', { invalidateAll: true, noScroll: true, keepFocus: true });
 	}
 
 	function handleDelete(event: SubmitEvent) {

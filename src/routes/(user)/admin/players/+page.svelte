@@ -58,7 +58,7 @@
 		} else {
 			url.searchParams.delete('searchQuery');
 		}
-		goto(url.toString(), { replaceState: true });
+		goto(url.toString(), { replaceState: true, noScroll: true, keepFocus: true });
 	});
 
 	// Handle URL parameters
@@ -173,21 +173,25 @@
 		isAddingNew = true;
 		isEditing = false;
 		selectedPlayer = null;
-		goto('/admin/players?action=new', { replaceState: true });
+		goto('/admin/players?action=new', { replaceState: true, noScroll: true, keepFocus: true });
 	}
 
 	function handleEditPlayer(player: Player) {
 		selectedPlayer = player;
 		isEditing = true;
 		isAddingNew = false;
-		goto(`/admin/players?action=edit&id=${player.id}`, { replaceState: true });
+		goto(`/admin/players?action=edit&id=${player.id}`, {
+			replaceState: true,
+			noScroll: true,
+			keepFocus: true
+		});
 	}
 
 	function handleCancel() {
 		isAddingNew = false;
 		isEditing = false;
 		selectedPlayer = null;
-		goto('/admin/players', { replaceState: true });
+		goto('/admin/players', { replaceState: true, noScroll: true, keepFocus: true });
 	}
 
 	async function handleImport(event: Event) {
@@ -216,7 +220,7 @@
 				errorMessage = result.error;
 			} else {
 				successMessage = result.message || m.player_imported_successfully();
-				goto('/admin/players', { invalidateAll: true });
+				goto('/admin/players', { invalidateAll: true, noScroll: true, keepFocus: true });
 			}
 		} catch (e) {
 			errorMessage = m.failed_to_import_players();
@@ -277,7 +281,7 @@
 				successMessage = m.player_deleted_successfully();
 				playerToDelete = null;
 				isDeleting = false;
-				goto('/admin/players', { invalidateAll: true });
+				goto('/admin/players', { invalidateAll: true, noScroll: true, keepFocus: true });
 			}
 		} catch (e) {
 			errorMessage = m.failed_to_delete_player();

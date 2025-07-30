@@ -44,7 +44,7 @@
 		} else {
 			url.searchParams.delete('searchQuery');
 		}
-		goto(url.toString(), { replaceState: true });
+		goto(url.toString(), { replaceState: true, noScroll: true, keepFocus: true });
 	});
 
 	let filteredServers = $derived(
