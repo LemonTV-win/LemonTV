@@ -30,7 +30,12 @@
 		showModal: boolean;
 		onClose: () => void;
 		onSuccess: (message: string) => void;
-		existingPlayers: Array<{ id: string; name: string; slug: string }>;
+		existingPlayers: Array<{
+			id: string;
+			name: string;
+			slug: string;
+			gameAccounts?: Array<{ accountId: number; server: string }>;
+		}>;
 	}>();
 
 	let importJsonData = $state('');
@@ -163,6 +168,171 @@
 
 		return 'Unknown duplicate';
 	}
+
+	// Get all existing account IDs for comparison
+	let existingAccountIds = $derived(() => {
+		const accountIds = new Set<number>();
+		existingPlayers.forEach(
+			(player: {
+				id: string;
+				name: string;
+				slug: string;
+				gameAccounts?: Array<{ accountId: number; server: string }>;
+			}) => {
+				player.gameAccounts?.forEach((account: { accountId: number; server: string }) => {
+					accountIds.add(account.accountId);
+				});
+			}
+		);
+		return accountIds;
+	});
+
+	// Check for duplicate account IDs in parsed data (including against existing players)
+	let duplicateAccountIds = $derived.by(() => {
+		if (!parsedPlayers) return [];
+
+		const accountIdCounts = new Map<number, string[]>();
+		const existingAccountIdSet = existingAccountIds();
+
+		// Count account IDs within the parsed data
+		parsedPlayers.forEach((player) => {
+			player.gameAccounts?.forEach((account) => {
+				if (!accountIdCounts.has(account.accountId)) {
+					accountIdCounts.set(account.accountId, []);
+				}
+				accountIdCounts.get(account.accountId)!.push(`${player.name} (${account.server})`);
+			});
+		});
+
+		const duplicates: string[] = [];
+
+		// Check for duplicates within parsed data
+		accountIdCounts.forEach((names, accountId) => {
+			if (names.length > 1) {
+				duplicates.push(`Account ID ${accountId} (${names.join(', ')})`);
+			}
+		});
+
+		// Check for conflicts with existing players
+		parsedPlayers.forEach((player) => {
+			player.gameAccounts?.forEach((account) => {
+				if (existingAccountIdSet.has(account.accountId)) {
+					const existingPlayer = existingPlayers.find(
+						(p: {
+							id: string;
+							name: string;
+							slug: string;
+							gameAccounts?: Array<{ accountId: number; server: string }>;
+						}) =>
+							p.gameAccounts?.some(
+								(ga: { accountId: number; server: string }) => ga.accountId === account.accountId
+							)
+					);
+					duplicates.push(
+						`Account ID ${account.accountId} (${player.name} conflicts with existing: ${existingPlayer?.name || 'Unknown'})`
+					);
+				}
+			});
+		});
+
+		return duplicates;
+	});
+
+	let hasDuplicateAccountIds = $derived(duplicateAccountIds.length > 0);
+
+	// Get duplicate account ID values for highlighting
+	let duplicateAccountIdValues = $derived(() => {
+		if (!parsedPlayers) return new Set<number>();
+
+		const accountIdCounts = new Map<number, number>();
+		const existingAccountIdSet = existingAccountIds();
+
+		// Count account IDs within parsed data
+		parsedPlayers.forEach((player) => {
+			player.gameAccounts?.forEach((account) => {
+				accountIdCounts.set(account.accountId, (accountIdCounts.get(account.accountId) || 0) + 1);
+			});
+		});
+
+		const duplicates = new Set<number>();
+
+		// Check for duplicates within parsed data
+		accountIdCounts.forEach((count, accountId) => {
+			if (count > 1) {
+				duplicates.add(accountId);
+			}
+		});
+
+		// Check for conflicts with existing players
+		parsedPlayers.forEach((player) => {
+			player.gameAccounts?.forEach((account) => {
+				if (existingAccountIdSet.has(account.accountId)) {
+					duplicates.add(account.accountId);
+				}
+			});
+		});
+
+		return duplicates;
+	});
+
+	// Check if a player has a duplicate account ID
+	function isDuplicateAccountId(player: PlayerImportData): boolean {
+		if (!player.gameAccounts) return false;
+		return player.gameAccounts.some((account) => duplicateAccountIdValues().has(account.accountId));
+	}
+
+	// Get the reason for account ID duplicate
+	function getDuplicateAccountIdReason(player: PlayerImportData): string {
+		if (!player.gameAccounts) return '';
+
+		const reasons: string[] = [];
+		const existingAccountIdSet = existingAccountIds();
+
+		player.gameAccounts.forEach((account) => {
+			if (duplicateAccountIdValues().has(account.accountId)) {
+				// Check if it conflicts with existing players
+				if (existingAccountIdSet.has(account.accountId)) {
+					const existingPlayer = existingPlayers.find(
+						(p: {
+							id: string;
+							name: string;
+							slug: string;
+							gameAccounts?: Array<{ accountId: number; server: string }>;
+						}) =>
+							p.gameAccounts?.some(
+								(ga: { accountId: number; server: string }) => ga.accountId === account.accountId
+							)
+					);
+					reasons.push(
+						`Account ID ${account.accountId} conflicts with existing player: ${existingPlayer?.name || 'Unknown'}`
+					);
+				} else {
+					// Check if it's duplicate within parsed data
+					const accountIdCounts = new Map<number, string[]>();
+					parsedPlayers?.forEach((p: PlayerImportData) => {
+						p.gameAccounts?.forEach((ga) => {
+							if (!accountIdCounts.has(ga.accountId)) {
+								accountIdCounts.set(ga.accountId, []);
+							}
+							accountIdCounts.get(ga.accountId)!.push(`${p.name} (${ga.server})`);
+						});
+					});
+
+					const names = accountIdCounts.get(account.accountId) || [];
+					if (names.length > 1) {
+						const otherNames = names.filter((n) => n !== `${player.name} (${account.server})`);
+						reasons.push(
+							`Account ID ${account.accountId} duplicate within import: ${otherNames.join(', ')}`
+						);
+					}
+				}
+			}
+		});
+
+		return reasons.join('; ');
+	}
+
+	let hasAnyDuplicates = $derived(hasDuplicateSlugs || hasDuplicateAccountIds);
 
 	const TYPESCRIPT_SCHEMA = `// TypeScript schema for player data
 interface PlayerImportData {
@@ -402,6 +572,26 @@ const players: PlayerImportData[] = [
 		parsedPlayers = null;
 		importResults = null;
 	}
+
+	// Check if a player has any duplicates (slug or account ID)
+	function hasAnyDuplicate(player: PlayerImportData): boolean {
+		return isDuplicateSlug(player) || isDuplicateAccountId(player);
+	}
+
+	// Get all duplicate reasons for a player
+	function getAllDuplicateReasons(player: PlayerImportData): string {
+		const reasons: string[] = [];
+
+		if (isDuplicateSlug(player)) {
+			reasons.push(getDuplicateReason(player));
+		}
+
+		if (isDuplicateAccountId(player)) {
+			reasons.push(getDuplicateAccountIdReason(player));
+		}
+
+		return reasons.join('; ');
+	}
 </script>
 
 {#if showModal}
@@ -515,7 +705,14 @@ const players: PlayerImportData[] = [
 												-
 											{/if}
 										</td>
-										<td class="px-4 py-1 text-gray-300">
+										<td
+											class="px-4 py-1 text-gray-300 {isDuplicateAccountId(player)
+												? 'bg-red-900/30'
+												: ''}"
+											title={isDuplicateAccountId(player)
+												? getDuplicateAccountIdReason(player)
+												: ''}
+										>
 											{#if player.gameAccounts && player.gameAccounts.length > 0}
 												<ul>
 													{#each player.gameAccounts as account}
@@ -576,6 +773,35 @@ const players: PlayerImportData[] = [
 								Please resolve the duplicate slugs highlighted in red above before importing. Each
 								player must have a unique slug (either provided explicitly or auto-generated from
 								name).
+							</p>
+						</div>
+					</div>
+				</div>
+			{/if}
+
+			{#if parsedPlayers && hasDuplicateAccountIds}
+				<div class="mb-4 rounded-md border border-red-700 bg-red-900/50 p-3">
+					<div class="flex items-start gap-2">
+						<div class="mt-0.5 h-4 w-4 flex-shrink-0 rounded-full bg-red-500"></div>
+						<div class="flex-1">
+							<p class="mb-1 text-sm font-medium text-red-200">Duplicate account IDs detected</p>
+							<p class="text-xs text-red-300">
+								Please resolve the duplicate account IDs highlighted in red above before importing.
+								Each player must have a unique account ID.
+							</p>
+						</div>
+					</div>
+				</div>
+			{/if}
+
+			{#if parsedPlayers && hasAnyDuplicates}
+				<div class="mb-4 rounded-md border border-red-700 bg-red-900/50 p-3">
+					<div class="flex items-start gap-2">
+						<div class="mt-0.5 h-4 w-4 flex-shrink-0 rounded-full bg-red-500"></div>
+						<div class="flex-1">
+							<p class="mb-1 text-sm font-medium text-red-200">Duplicate issues detected</p>
+							<p class="text-xs text-red-300">
+								Please resolve the duplicate issues highlighted in red above before importing.
 							</p>
 						</div>
 					</div>
@@ -660,12 +886,12 @@ const players: PlayerImportData[] = [
 						type="button"
 						class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600 disabled:opacity-50"
 						onclick={handleImportJson}
-						disabled={isImporting || hasDuplicateSlugs}
+						disabled={isImporting || hasAnyDuplicates}
 					>
 						{#if isImporting}
 							Importing...
-						{:else if hasDuplicateSlugs}
-							Fix Duplicate Slugs First
+						{:else if hasAnyDuplicates}
+							Fix Duplicates First
 						{:else}
 							Import Players
 						{/if}

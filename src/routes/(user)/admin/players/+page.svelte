@@ -392,7 +392,15 @@
 			showModal={true}
 			onClose={handleBatchImportClose}
 			onSuccess={handleBatchImportSuccess}
-			existingPlayers={data.players.map((p) => ({ id: p.id, name: p.name, slug: p.slug }))}
+			existingPlayers={data.players.map((p) => ({
+				id: p.id,
+				name: p.name,
+				slug: p.slug,
+				gameAccounts: p.gameAccounts?.map((ga) => ({
+					accountId: ga.accountId,
+					server: ga.server
+				}))
+			}))}
 		/>
 	{/if}
 
