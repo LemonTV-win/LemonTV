@@ -8,7 +8,7 @@ import {
 	editHistory,
 	playerAdditionalNationality
 } from '$lib/server/db/schema';
-import { eq, or } from 'drizzle-orm';
+import { eq, or, and } from 'drizzle-orm';
 import type { Player } from '$lib/data/players';
 import { randomUUID } from 'node:crypto';
 import { calculateWinnerIndex, getEvents, getMatches, identifyPlayer } from '$lib/data';
@@ -284,6 +284,65 @@ export async function getServerPlayerEvents(id: string): Promise<
 		.from(schema.eventTeamPlayer)
 		.innerJoin(schema.event, eq(schema.eventTeamPlayer.eventId, schema.event.id))
 		.where(eq(schema.eventTeamPlayer.playerId, id));
+}
+
+export async function getServerPlayerMatches(id: string): Promise<
+	{
+		id: string;
+		format: string | null;
+		stageId: number | null;
+		// Event data
+		eventId: string;
+		eventSlug: string;
+		eventName: string;
+		eventImage: string;
+		eventDate: string;
+		eventRegion: string;
+		eventFormat: string;
+		eventStatus: string;
+		eventServer: string;
+		eventCapacity: number;
+		eventOfficial: boolean;
+		// Stage data
+		stageTitle: string;
+		stageStage: string;
+		stageFormat: string;
+		// Player's role in the event
+		role: string;
+	}[]
+> {
+	return await db
+		.select({
+			// Match data
+			id: schema.match.id,
+			format: schema.match.format,
+			stageId: schema.match.stageId,
+			// Event data
+			eventId: schema.event.id,
+			eventSlug: schema.event.slug,
+			eventName: schema.event.name,
+			eventImage: schema.event.image,
+			eventDate: schema.event.date,
+			eventRegion: schema.event.region,
+			eventFormat: schema.event.format,
+			eventStatus: schema.event.status,
+			eventServer: schema.event.server,
+			eventCapacity: schema.event.capacity,
+			eventOfficial: schema.event.official,
+			// Stage data
+			stageTitle: schema.stage.title,
+			stageStage: schema.stage.stage,
+			stageFormat: schema.stage.format,
+			// Player's role in the event
+			role: schema.eventTeamPlayer.role
+		})
+		.from(schema.gamePlayerScore)
+		.innerJoin(schema.game, eq(schema.gamePlayerScore.gameId, schema.game.id))
+		.innerJoin(schema.match, eq(schema.game.matchId, schema.match.id))
+		.innerJoin(schema.stage, eq(schema.match.stageId, schema.stage.id))
+		.innerJoin(schema.event, eq(schema.stage.eventId, schema.event.id))
+		.innerJoin(schema.eventTeamPlayer, eq(schema.eventTeamPlayer.eventId, schema.event.id))
+		.where(and(eq(schema.eventTeamPlayer.playerId, id), eq(schema.gamePlayerScore.player, id)));
 }
 
 export function calculatePlayerRating(player: Player) {
