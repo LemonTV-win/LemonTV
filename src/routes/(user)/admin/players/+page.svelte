@@ -17,6 +17,7 @@
 	import Modal from '$lib/components/Modal.svelte';
 	import EditHistory from '../EditHistory.svelte';
 	import PlayerEdit from './PlayerEdit.svelte';
+	import PlayerBatchImport from './PlayerBatchImport.svelte';
 
 	import type { PageProps } from './$types';
 	import { countryCodeToLocalizedName } from '$lib/utils/strings';
@@ -31,7 +32,6 @@
 	let isEditing = $state(false);
 	let errorMessage = $state('');
 	let successMessage = $state('');
-	let isImporting = $state(false);
 	let isDeleting = $state(false);
 	let playerToDelete: Player | null = $state(null);
 	let selectedNationalities = $state<string[]>([]);
@@ -39,6 +39,7 @@
 	let selectedTeam = $state('');
 	let isTeamComboboxOpen = $state(false);
 	let teamInputRect = $state<DOMRect | null>(null);
+	let showBatchImportModal = $state(false);
 	let sortBy:
 		| 'id-asc'
 		| 'id-desc'
@@ -194,40 +195,17 @@
 		goto('/admin/players', { replaceState: true, noScroll: true, keepFocus: true });
 	}
 
-	async function handleImport(event: Event) {
-		errorMessage = '';
-		successMessage = '';
-		isImporting = true;
+	function handleBatchImport() {
+		showBatchImportModal = true;
+	}
 
-		const formData = new FormData();
-		const fileInput = event.target as HTMLInputElement;
-		if (!fileInput.files?.length) {
-			isImporting = false;
-			return;
-		}
+	function handleBatchImportClose() {
+		showBatchImportModal = false;
+	}
 
-		formData.append('file', fileInput.files[0]);
-
-		try {
-			const response = await fetch('?/import', {
-				method: 'POST',
-				body: formData
-			});
-
-			const result = await response.json();
-
-			if (result.error) {
-				errorMessage = result.error;
-			} else {
-				successMessage = result.message || m.player_imported_successfully();
-				goto('/admin/players', { invalidateAll: true, noScroll: true, keepFocus: true });
-			}
-		} catch (e) {
-			errorMessage = m.failed_to_import_players();
-			console.error('Error importing players:', e);
-		} finally {
-			isImporting = false;
-		}
+	function handleBatchImportSuccess(message: string) {
+		successMessage = message;
+		goto('/admin/players', { invalidateAll: true, noScroll: true, keepFocus: true });
 	}
 
 	async function handleExport() {
@@ -302,23 +280,12 @@
 		</div>
 		<div class="flex gap-2">
 			{#if data.user?.roles.includes('admin')}
-				<label
-					class="cursor-pointer rounded-md bg-slate-700 px-4 py-2 font-medium text-white hover:bg-slate-600 disabled:cursor-not-allowed disabled:opacity-50"
-					class:opacity-50={isImporting}
+				<button
+					class="rounded-md bg-slate-700 px-4 py-2 font-medium text-white hover:bg-slate-600"
+					onclick={handleBatchImport}
 				>
-					{#if isImporting}
-						{m.importing()}
-					{:else}
-						{m.import_json()}
-					{/if}
-					<input
-						type="file"
-						accept=".json"
-						class="hidden"
-						onchange={handleImport}
-						disabled={isImporting}
-					/>
-				</label>
+					{m.import_json()}
+				</button>
 			{/if}
 			<button
 				class="rounded-md bg-slate-700 px-4 py-2 font-medium text-white hover:bg-slate-600"
@@ -418,6 +385,14 @@
 				<EditHistory recordType="player" record={selectedPlayer} />
 			{/if}
 		</Modal>
+	{/if}
+
+	{#if showBatchImportModal}
+		<PlayerBatchImport
+			showModal={true}
+			onClose={handleBatchImportClose}
+			onSuccess={handleBatchImportSuccess}
+		/>
 	{/if}
 
 	<div class="mb-4">

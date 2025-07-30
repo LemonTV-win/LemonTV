@@ -9,6 +9,7 @@ import {
 } from '$lib/server/data/players';
 import type { Player } from '$lib/data/players';
 import type { TCountryCode } from 'countries-list';
+import type { User, UserRole } from '$lib/data/user';
 import { social_platform } from '$lib/server/db/schemas/game/social';
 import { db } from '$lib/server/db';
 import { getUsers } from '$lib/server/data/users';
@@ -205,65 +206,6 @@ export const actions = {
 		}
 	},
 
-	import: async ({ request, locals }) => {
-		const result = checkPermissions(locals, ['admin']);
-		if (result.status === 'error') {
-			return fail(result.statusCode, {
-				error: result.error
-			});
-		}
-
-		const formData = await request.formData();
-		const file = formData.get('file') as File;
-
-		if (!file) {
-			return fail(400, {
-				error: 'No file provided'
-			});
-		}
-
-		if (!locals.user?.id) {
-			return fail(401, {
-				error: 'Unauthorized'
-			});
-		}
-
-		try {
-			const text = await file.text();
-			const players = JSON.parse(text) as Record<string, Player>;
-
-			// Delete all existing players first
-			const existingPlayers = await getPlayers();
-			for (const player of existingPlayers) {
-				await deletePlayer(player.id, locals.user.id);
-			}
-
-			// Import new players
-			for (const playerData of Object.values(players)) {
-				await createPlayer(
-					{
-						name: playerData.name,
-						nationalities: playerData.nationalities,
-						aliases: playerData.aliases || [],
-						gameAccounts: playerData.gameAccounts,
-						slug: playerData.slug
-					},
-					locals.user.id
-				);
-			}
-
-			return {
-				success: true,
-				message: `Successfully imported ${Object.keys(players).length} players`
-			};
-		} catch (e) {
-			console.error('Error importing players:', e);
-			return fail(500, {
-				error: 'Failed to import players: ' + (e instanceof Error ? e.message : String(e))
-			});
-		}
-	},
-
 	delete: async ({ request, locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
 		if (result.status === 'error') {
@@ -305,6 +247,147 @@ export const actions = {
 			console.error('Error deleting player:', e);
 			return fail(500, {
 				error: 'Failed to delete player'
+			});
+		}
+	},
+
+	batchCreate: async ({ request, locals }) => {
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
+			});
+		}
+
+		const formData = await request.formData();
+		const playersJson = formData.get('players') as string;
+
+		if (!playersJson) {
+			return fail(400, {
+				error: 'No players data provided'
+			});
+		}
+
+		try {
+			const players = JSON.parse(playersJson) as Array<{
+				name: string;
+				slug?: string;
+				nationalities: TCountryCode[];
+				aliases?: string[];
+				gameAccounts?: Player['gameAccounts'];
+				socialAccounts?: Player['socialAccounts'];
+				user?: {
+					id: string;
+					username: string;
+					email: string;
+					roles: UserRole[];
+				};
+			}>;
+
+			if (!Array.isArray(players)) {
+				return fail(400, {
+					error: 'Players data must be an array'
+				});
+			}
+
+			const createdPlayers: string[] = [];
+			const errors: string[] = [];
+			const duplicates: string[] = [];
+			const validationErrors: string[] = [];
+
+			for (const playerData of players) {
+				try {
+					// Validation checks
+					if (!playerData.name) {
+						validationErrors.push(`Player missing name`);
+						continue;
+					}
+
+					if (!playerData.nationalities || playerData.nationalities.length === 0) {
+						validationErrors.push(`Player "${playerData.name}" missing nationalities`);
+						continue;
+					}
+
+					const playerId = await createPlayer(
+						{
+							name: playerData.name,
+							slug: playerData.slug || playerData.name.toLowerCase().replace(/[^a-z0-9]/g, '-'),
+							nationalities: playerData.nationalities,
+							aliases: playerData.aliases || [],
+							gameAccounts: playerData.gameAccounts || [],
+							socialAccounts: playerData.socialAccounts || [],
+							user: playerData.user
+								? ({
+										id: playerData.user.id,
+										username: playerData.user.username,
+										email: playerData.user.email,
+										roles: playerData.user.roles
+									} as User)
+								: undefined
+						},
+						result.userId
+					);
+
+					createdPlayers.push(playerId);
+				} catch (e) {
+					const errorMessage = e instanceof Error ? e.message : String(e);
+
+					// Check if it's a duplicate error
+					if (
+						errorMessage.includes('duplicate') ||
+						errorMessage.includes('already exists') ||
+						errorMessage.includes('SQLITE_CONSTRAINT')
+					) {
+						duplicates.push(`"${playerData.name}" (${errorMessage})`);
+					} else {
+						errors.push(`Failed to create player "${playerData.name}": ${errorMessage}`);
+					}
+				}
+			}
+
+			// Build response message
+			let message = '';
+			if (createdPlayers.length > 0) {
+				message += `Successfully created ${createdPlayers.length} players`;
+			}
+
+			if (duplicates.length > 0) {
+				if (message) message += '. ';
+				message += `Skipped ${duplicates.length} duplicate players`;
+			}
+
+			if (validationErrors.length > 0) {
+				if (message) message += '. ';
+				message += `Skipped ${validationErrors.length} players with validation errors`;
+			}
+
+			if (errors.length > 0) {
+				if (message) message += '. ';
+				message += `Failed to create ${errors.length} players due to errors`;
+			}
+
+			// If no players were created at all, return an error
+			if (createdPlayers.length === 0 && duplicates.length === 0 && validationErrors.length === 0) {
+				return fail(400, {
+					error: `Failed to create any players. Errors: ${errors.join('; ')}`
+				});
+			}
+
+			return {
+				success: true,
+				message,
+				createdCount: createdPlayers.length,
+				duplicateCount: duplicates.length,
+				validationErrorCount: validationErrors.length,
+				errorCount: errors.length,
+				duplicates,
+				validationErrors,
+				errors
+			};
+		} catch (e) {
+			console.error('Error batch creating players:', e);
+			return fail(500, {
+				error: 'Failed to batch create players: ' + (e instanceof Error ? e.message : String(e))
 			});
 		}
 	}
