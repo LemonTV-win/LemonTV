@@ -24,7 +24,8 @@ export type PUSCharacter =
 	| 'Michele'
 	| 'Flavia'
 	| 'Yugiri'
-	| 'Leona';
+	| 'Leona'
+	| 'Chiyo';
 export type ScissorsCharacter =
 	| 'Reiichi'
 	| 'Lawine'

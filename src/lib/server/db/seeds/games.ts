@@ -66,7 +66,8 @@ const CHARACTERS = [
 	'Maddelena',
 	'Bai Mo',
 	'Fuschia',
-	'Galatea'
+	'Galatea',
+	'Chiyo'
 ];
 
 // Player names for different teams

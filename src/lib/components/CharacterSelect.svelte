@@ -52,8 +52,8 @@
 		Maddelena: m.Maddelena(),
 		'Bai Mo': m['Bai Mo'](),
 		Fuschia: m.Fuschia(),
-		Galatea: m.Galatea()
-		// Chiyo: 'Chiyo'
+		Galatea: m.Galatea(),
+		Chiyo: m.Chiyo()
 	});
 
 	let {
