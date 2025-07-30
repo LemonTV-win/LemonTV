@@ -232,7 +232,7 @@
 		<fieldset>
 			<legend class="block text-sm font-medium text-slate-300">Teams</legend>
 			<div class="mt-2 grid grid-cols-2 gap-4">
-				{#each teamData as team, idx (team.teamId)}
+				{#each teamData as team, idx (idx)}
 					<input type="hidden" name={`gameTeams[${idx}].teamId`} value={team.teamId} />
 					<div class="rounded-lg border border-slate-700 bg-slate-800 p-4">
 						<div class="mb-2 flex items-center gap-2 font-semibold text-slate-200">
@@ -394,7 +394,7 @@
 		<div>
 			<h3 class="block text-sm font-medium text-slate-300">Player Scores ({teams[0].name})</h3>
 			<div class="mt-2 grid grid-cols-1 gap-2">
-				{#each playerScoresA as ps, idx (ps.accountId)}
+				{#each playerScoresA as ps, idx (idx)}
 					{@render playerScoreInput('A', ps, idx)}
 				{/each}
 			</div>
@@ -402,7 +402,7 @@
 		<div>
 			<h3 class="block text-sm font-medium text-slate-300">Player Scores ({teams[1].name})</h3>
 			<div class="mt-2 grid grid-cols-1 gap-2">
-				{#each playerScoresB as ps, idx (ps.accountId)}
+				{#each playerScoresB as ps, idx (idx)}
 					{@render playerScoreInput('B', ps, idx)}
 				{/each}
 			</div>
