@@ -19,6 +19,7 @@ import type { TCountryCode } from 'countries-list';
 import * as schema from '$lib/server/db/schema';
 import type { Match, PlayerScore } from '$lib/data/matches';
 import type { Event } from '$lib/data/events';
+import { inArray } from 'drizzle-orm';
 
 export async function getPlayer(keyword: string): Promise<Player | null> {
 	console.info('[Players] Attempting to get player:', keyword);
@@ -223,6 +224,147 @@ export function getPlayerAgents(player: Player): [Character, number][] {
 
 	// Convert to array of tuples
 	return Array.from(characterCounts.entries());
+}
+
+export async function getServerPlayerAgents(playerId: string): Promise<[Character, number][]> {
+	console.info('[Players] Fetching server player agents for:', playerId);
+
+	// Get the player's game accounts
+	const playerAccounts = await db
+		.select()
+		.from(gameAccount)
+		.where(eq(gameAccount.playerId, playerId));
+
+	if (playerAccounts.length === 0) {
+		console.warn('[Players] No game accounts found for player:', playerId);
+		return [];
+	}
+
+	// Get all account IDs for this player
+	const accountIds = playerAccounts.map((acc) => acc.accountId);
+
+	// Find all games where this player participated
+	const playerScores = await db
+		.select({
+			characterFirstHalf: schema.gamePlayerScore.characterFirstHalf,
+			characterSecondHalf: schema.gamePlayerScore.characterSecondHalf
+		})
+		.from(schema.gamePlayerScore)
+		.where(inArray(schema.gamePlayerScore.accountId, accountIds));
+
+	// Count occurrences of each character (both first and second half)
+	const characterCounts = new Map<Character, number>();
+
+	for (const score of playerScores) {
+		// Count first half character
+		if (score.characterFirstHalf) {
+			const character = score.characterFirstHalf as Character;
+			characterCounts.set(character, (characterCounts.get(character) ?? 0) + 1);
+		}
+
+		// Count second half character
+		if (score.characterSecondHalf) {
+			const character = score.characterSecondHalf as Character;
+			characterCounts.set(character, (characterCounts.get(character) ?? 0) + 1);
+		}
+	}
+
+	// Convert to array of tuples and sort by count (descending)
+	const result = Array.from(characterCounts.entries()).sort((a, b) => b[1] - a[1]);
+
+	console.info('[Players] Found', result.length, 'unique characters for player:', playerId);
+	return result;
+}
+
+export async function getServerPlayersAgents(
+	playerIds: string[],
+	limit: number = 3
+): Promise<Record<string, [Character, number][]>> {
+	console.info('[Players] Fetching server players agents for:', playerIds.length, 'players');
+
+	if (playerIds.length === 0) {
+		return {};
+	}
+
+	// Get all game accounts for these players
+	const allPlayerAccounts = await db
+		.select()
+		.from(gameAccount)
+		.where(inArray(gameAccount.playerId, playerIds));
+
+	// Group accounts by player ID
+	const accountsByPlayer = new Map<string, number[]>();
+	for (const account of allPlayerAccounts) {
+		if (!accountsByPlayer.has(account.playerId)) {
+			accountsByPlayer.set(account.playerId, []);
+		}
+		accountsByPlayer.get(account.playerId)!.push(account.accountId);
+	}
+
+	// Get all account IDs
+	const allAccountIds = allPlayerAccounts.map((acc) => acc.accountId);
+
+	if (allAccountIds.length === 0) {
+		console.warn('[Players] No game accounts found for any of the players');
+		return Object.fromEntries(playerIds.map((id) => [id, []]));
+	}
+
+	// Find all games where these players participated
+	const allPlayerScores = await db
+		.select({
+			accountId: schema.gamePlayerScore.accountId,
+			characterFirstHalf: schema.gamePlayerScore.characterFirstHalf,
+			characterSecondHalf: schema.gamePlayerScore.characterSecondHalf
+		})
+		.from(schema.gamePlayerScore)
+		.where(inArray(schema.gamePlayerScore.accountId, allAccountIds));
+
+	// Group scores by player ID
+	const scoresByPlayer = new Map<string, typeof allPlayerScores>();
+	for (const score of allPlayerScores) {
+		// Find which player this account belongs to
+		for (const [playerId, accountIds] of accountsByPlayer.entries()) {
+			if (accountIds.includes(score.accountId)) {
+				if (!scoresByPlayer.has(playerId)) {
+					scoresByPlayer.set(playerId, []);
+				}
+				scoresByPlayer.get(playerId)!.push(score);
+				break;
+			}
+		}
+	}
+
+	// Calculate character counts for each player
+	const result: Record<string, [Character, number][]> = {};
+
+	for (const playerId of playerIds) {
+		const playerScores = scoresByPlayer.get(playerId) || [];
+		const characterCounts = new Map<Character, number>();
+
+		for (const score of playerScores) {
+			// Count first half character
+			if (score.characterFirstHalf) {
+				const character = score.characterFirstHalf as Character;
+				characterCounts.set(character, (characterCounts.get(character) ?? 0) + 1);
+			}
+
+			// Count second half character
+			if (score.characterSecondHalf) {
+				const character = score.characterSecondHalf as Character;
+				characterCounts.set(character, (characterCounts.get(character) ?? 0) + 1);
+			}
+		}
+
+		// Convert to array of tuples, sort by count (descending), and limit
+		const sortedCharacters = Array.from(characterCounts.entries())
+			.sort((a, b) => b[1] - a[1])
+			.slice(0, limit);
+
+		result[playerId] = sortedCharacters;
+	}
+
+	console.info('[Players] Found agents for', Object.keys(result).length, 'players');
+	return result;
 }
 
 export function getPlayersAgents(

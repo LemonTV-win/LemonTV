@@ -4,6 +4,7 @@ import {
 	getPlayer,
 	getPlayerTeams,
 	getPlayerAgents,
+	getServerPlayerAgents,
 	getSocialPlatforms,
 	getPlayerMatches,
 	getPlayerWins,
@@ -14,6 +15,7 @@ import {
 } from '$lib/server/data/players';
 import { getTeams } from '$lib/server/data/teams';
 import { processImageURL } from '$lib/server/storage';
+import type { Character } from '$lib/data/game';
 
 export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 	const player = await getPlayer(params.id);
@@ -38,13 +40,27 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 	const legacyPlayerMatches =
 		getPlayerMatches(params.id) || getPlayerMatches(player.slug ?? player.name);
 
+	const playerAgents = await getServerPlayerAgents(playerID);
+	const legacyPlayerAgents = getPlayerAgents(player);
+
 	return {
 		player,
 		playerTeams: await getPlayerTeams(params.id),
 		playerEvents: [...playerEvents, ...legacyPlayerEvents],
 		playerMatches: [...playerMatches, ...legacyPlayerMatches],
 		playerWins: getPlayerWins(params.id) || getPlayerWins(player.slug ?? player.name),
-		playerAgents: getPlayerAgents(player),
+		playerAgents: [...playerAgents, ...legacyPlayerAgents].reduce(
+			(acc, [character, count]) => {
+				const existing = acc.find(([c]) => c === character);
+				if (existing) {
+					existing[1] += count;
+				} else {
+					acc.push([character, count]);
+				}
+				return acc;
+			},
+			[] as [Character, number][]
+		),
 		playerKD: calculatePlayerKD(player),
 		socialPlatforms: await getSocialPlatforms(),
 		teams: new Map(teams.map((team) => [team.abbr ?? team.id ?? team.name ?? team.slug, team])), // TODO: remove this
