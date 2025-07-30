@@ -138,7 +138,7 @@
 									>
 										<a href="/events/{event.slug}" class="contents">
 											<div class="flex h-full w-full items-center justify-center bg-gray-700">
-												<img src={event.image} alt={event.name} class="w-full object-cover" />
+												<img src={event.imageURL} alt={event.name} class="w-full object-cover" />
 											</div>
 											<div class="h-full p-4 text-white">{event.name}</div>
 										</a>

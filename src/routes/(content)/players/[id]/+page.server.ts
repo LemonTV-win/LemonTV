@@ -13,6 +13,7 @@ import {
 	getServerPlayerMatches
 } from '$lib/server/data/players';
 import { getTeams } from '$lib/server/data/teams';
+import { processImageURL } from '$lib/server/storage';
 
 export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 	const player = await getPlayer(params.id);
@@ -24,7 +25,12 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 
 	const playerID = player.id;
 
-	const playerEvents = await getServerPlayerEvents(playerID);
+	const playerEvents = await Promise.all(
+		(await getServerPlayerEvents(playerID)).map(async (event) => ({
+			...event,
+			imageURL: await processImageURL(event.image)
+		}))
+	);
 	const legacyPlayerEvents =
 		getPlayerEvents(params.id) || getPlayerEvents(player.slug ?? player.name);
 
