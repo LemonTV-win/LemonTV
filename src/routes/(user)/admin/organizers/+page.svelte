@@ -4,7 +4,7 @@
 	import { goto } from '$app/navigation';
 	import type { PageData } from './$types';
 	import OrganizerEdit from './OrganizerEdit.svelte';
-	import UnifiedEditHistory from '../UnifiedEditHistory.svelte';
+	import EditHistory from '../EditHistory.svelte';
 	import Modal from '$lib/components/Modal.svelte';
 	import { m } from '$lib/paraglide/messages';
 	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
@@ -173,7 +173,7 @@
 	{#if showHistoryModal}
 		<Modal show={true} title={m.history()} onClose={closeHistoryModal}>
 			{#if selectedOrganizer}
-				<UnifiedEditHistory recordType="organizer" record={selectedOrganizer} />
+				<EditHistory recordType="organizer" record={selectedOrganizer} />
 			{/if}
 		</Modal>
 	{/if}

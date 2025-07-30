@@ -15,7 +15,7 @@
 	import SocialLinks from '$lib/components/SocialLinks.svelte';
 	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
 	import Modal from '$lib/components/Modal.svelte';
-	import UnifiedEditHistory from '../UnifiedEditHistory.svelte';
+	import EditHistory from '../EditHistory.svelte';
 	import PlayerEdit from './PlayerEdit.svelte';
 
 	import type { PageProps } from './$types';
@@ -401,7 +401,7 @@
 	{#if showHistoryModal}
 		<Modal show={true} title="Edit History" onClose={closeHistoryModal}>
 			{#if selectedPlayer}
-				<UnifiedEditHistory recordType="player" record={selectedPlayer} />
+				<EditHistory recordType="player" record={selectedPlayer} />
 			{/if}
 		</Modal>
 	{/if}
