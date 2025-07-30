@@ -78,42 +78,32 @@ export const actions: Actions = {
 			});
 		}
 
-		try {
-			// Validate the token again (in case it expired during form submission)
-			const userId = await validatePasswordResetToken(token);
-			console.info('[Reset Password Action] Token validation result - userId:', userId);
+		// Validate the token again (in case it expired during form submission)
+		const userId = await validatePasswordResetToken(token);
+		console.info('[Reset Password Action] Token validation result - userId:', userId);
 
-			if (!userId) {
-				console.info('[Reset Password Action] Token validation failed in action');
-				return fail(400, {
-					message: 'Invalid or expired reset token'
-				});
-			}
-
-			// Hash the new password
-			const newPasswordHash = await hashPassword(result.data.password);
-
-			// Update the user's password
-			await db
-				.update(table.user)
-				.set({ passwordHash: newPasswordHash })
-				.where(eq(table.user.id, userId));
-
-			// Invalidate the reset token
-			await invalidatePasswordResetToken(token);
-
-			console.info('[Reset Password Action] Password successfully reset for user:', userId);
-
-			// Redirect to login page with success message
-			throw redirect(302, '/login?message=password_reset_success');
-		} catch (error) {
-			if (error instanceof Response) {
-				throw error; // Re-throw redirects
-			}
-			console.error('[Reset Password Action] Error:', error);
-			return fail(500, {
-				message: 'Failed to reset password. Please try again.'
+		if (!userId) {
+			console.info('[Reset Password Action] Token validation failed in action');
+			return fail(400, {
+				message: 'Invalid or expired reset token'
 			});
 		}
+
+		// Hash the new password
+		const newPasswordHash = await hashPassword(result.data.password);
+
+		// Update the user's password
+		await db
+			.update(table.user)
+			.set({ passwordHash: newPasswordHash })
+			.where(eq(table.user.id, userId));
+
+		// Invalidate the reset token
+		await invalidatePasswordResetToken(token);
+
+		console.info('[Reset Password Action] Password successfully reset for user:', userId);
+
+		// Redirect to login page with success message
+		throw redirect(302, '/login?message=password_reset_success');
 	}
 };
