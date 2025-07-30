@@ -8,7 +8,8 @@ import {
 	getPlayerMatches,
 	getPlayerWins,
 	getPlayerEvents,
-	calculatePlayerKD
+	calculatePlayerKD,
+	getServerPlayerEvents
 } from '$lib/server/data/players';
 import { getTeams } from '$lib/server/data/teams';
 
@@ -20,10 +21,16 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 
 	const teams = await getTeams();
 
+	const playerID = player.id;
+
+	const playerEvents = await getServerPlayerEvents(playerID);
+	const legacyPlayerEvents =
+		getPlayerEvents(params.id) || getPlayerEvents(player.slug ?? player.name);
+
 	return {
 		player,
 		playerTeams: await getPlayerTeams(params.id),
-		playerEvents: getPlayerEvents(params.id) || getPlayerEvents(player.slug ?? player.name),
+		playerEvents: [...playerEvents, ...legacyPlayerEvents],
 		playerMatches: getPlayerMatches(params.id) || getPlayerMatches(player.slug ?? player.name),
 		playerWins: getPlayerWins(params.id) || getPlayerWins(player.slug ?? player.name),
 		playerAgents: getPlayerAgents(player),

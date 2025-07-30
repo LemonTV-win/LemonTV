@@ -248,6 +248,44 @@ export function getPlayerEvents(id: string) {
 	);
 }
 
+export async function getServerPlayerEvents(id: string): Promise<
+	{
+		id: string;
+		slug: string;
+		name: string;
+		image: string;
+		date: string;
+		region: string;
+		format: string;
+		status: string;
+		server: string;
+		capacity: number;
+		official: boolean;
+		role: string;
+	}[]
+> {
+	return await db
+		.select({
+			// Event data
+			id: schema.event.id,
+			slug: schema.event.slug,
+			name: schema.event.name,
+			image: schema.event.image,
+			date: schema.event.date,
+			region: schema.event.region,
+			format: schema.event.format,
+			status: schema.event.status,
+			server: schema.event.server,
+			capacity: schema.event.capacity,
+			official: schema.event.official,
+			// Player's role in this event
+			role: schema.eventTeamPlayer.role
+		})
+		.from(schema.eventTeamPlayer)
+		.innerJoin(schema.event, eq(schema.eventTeamPlayer.eventId, schema.event.id))
+		.where(eq(schema.eventTeamPlayer.playerId, id));
+}
+
 export function calculatePlayerRating(player: Player) {
 	if (!player.slug && !player.name) {
 		return 0;
