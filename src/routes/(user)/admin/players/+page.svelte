@@ -392,6 +392,7 @@
 			showModal={true}
 			onClose={handleBatchImportClose}
 			onSuccess={handleBatchImportSuccess}
+			existingPlayers={data.players.map((p) => ({ id: p.id, name: p.name, slug: p.slug }))}
 		/>
 	{/if}
 

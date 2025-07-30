@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { Player } from '$lib/data/players';
 	import type { TCountryCode } from 'countries-list';
 	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
 
@@ -27,10 +26,11 @@
 		};
 	}
 
-	let { showModal, onClose, onSuccess } = $props<{
+	let { showModal, onClose, onSuccess, existingPlayers } = $props<{
 		showModal: boolean;
 		onClose: () => void;
 		onSuccess: (message: string) => void;
+		existingPlayers: Array<{ id: string; name: string; slug: string }>;
 	}>();
 
 	let importJsonData = $state('');
@@ -47,6 +47,122 @@
 		validationErrors: string[];
 		errors: string[];
 	} | null>(null);
+
+	// Get all existing slugs for comparison
+	let existingSlugs = $derived(() => {
+		return new Set(
+			existingPlayers.map((player: { id: string; name: string; slug: string }) => player.slug)
+		);
+	});
+
+	// Check for duplicate slugs in parsed data (including against existing players)
+	let duplicateSlugs = $derived.by(() => {
+		if (!parsedPlayers) return [];
+
+		const slugCounts = new Map<string, string[]>();
+		const existingSlugSet = existingSlugs();
+
+		// Count slugs within the parsed data
+		parsedPlayers.forEach((player, index) => {
+			const slug = player.slug || player.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+			if (!slugCounts.has(slug)) {
+				slugCounts.set(slug, []);
+			}
+			slugCounts.get(slug)!.push(player.name);
+		});
+
+		const duplicates: string[] = [];
+
+		// Check for duplicates within parsed data
+		slugCounts.forEach((names, slug) => {
+			if (names.length > 1) {
+				duplicates.push(`${slug} (${names.join(', ')})`);
+			}
+		});
+
+		// Check for conflicts with existing players
+		parsedPlayers.forEach((player) => {
+			const slug = player.slug || player.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+			if (existingSlugSet.has(slug)) {
+				const existingPlayer = existingPlayers.find(
+					(p: { id: string; name: string; slug: string }) => p.slug === slug
+				);
+				duplicates.push(`${slug} (conflicts with existing: ${existingPlayer?.name || 'Unknown'})`);
+			}
+		});
+
+		return duplicates;
+	});
+
+	let hasDuplicateSlugs = $derived(duplicateSlugs.length > 0);
+
+	// Get duplicate slug values for highlighting (including existing players)
+	let duplicateSlugValues = $derived(() => {
+		if (!parsedPlayers) return new Set<string>();
+
+		const slugCounts = new Map<string, number>();
+
+		// Count slugs within parsed data
+		parsedPlayers.forEach((player) => {
+			const slug = player.slug || player.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+			slugCounts.set(slug, (slugCounts.get(slug) || 0) + 1);
+		});
+
+		const duplicates = new Set<string>();
+
+		// Check for duplicates within parsed data
+		slugCounts.forEach((count, slug) => {
+			if (count > 1) {
+				duplicates.add(slug);
+			}
+		});
+
+		// Check for conflicts with existing players
+		parsedPlayers.forEach((player: PlayerImportData) => {
+			const slug = player.slug || player.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+			if (existingSlugs().has(slug)) {
+				duplicates.add(slug);
+			}
+		});
+
+		return duplicates;
+	});
+
+	// Check if a player has a duplicate slug (including against existing players)
+	function isDuplicateSlug(player: PlayerImportData): boolean {
+		const slug = player.slug || player.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+		return duplicateSlugValues().has(slug);
+	}
+
+	// Get the reason for duplicate (internal or existing conflict)
+	function getDuplicateReason(player: PlayerImportData): string {
+		const slug = player.slug || player.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+
+		// Check if it conflicts with existing players
+		if (existingSlugs().has(slug)) {
+			const existingPlayer = existingPlayers.find(
+				(p: { id: string; name: string; slug: string }) => p.slug === slug
+			);
+			return `Conflicts with existing player: ${existingPlayer?.name || 'Unknown'}`;
+		}
+
+		// Check if it's duplicate within parsed data
+		const slugCounts = new Map<string, string[]>();
+		parsedPlayers?.forEach((p: PlayerImportData) => {
+			const pSlug = p.slug || p.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+			if (!slugCounts.has(pSlug)) {
+				slugCounts.set(pSlug, []);
+			}
+			slugCounts.get(pSlug)!.push(p.name);
+		});
+
+		const names = slugCounts.get(slug) || [];
+		if (names.length > 1) {
+			return `Duplicate within import: ${names.filter((n) => n !== player.name).join(', ')}`;
+		}
+
+		return 'Unknown duplicate';
+	}
 
 	const TYPESCRIPT_SCHEMA = `// TypeScript schema for player data
 interface PlayerImportData {
@@ -355,6 +471,7 @@ const players: PlayerImportData[] = [
 			{#if parsedPlayers}
 				<div class="mb-4 rounded-md border border-slate-600 bg-slate-900 p-4">
 					<h4 class="mb-3 text-sm font-medium text-slate-200">Parsed Players</h4>
+
 					<div
 						class="overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-800"
 					>
@@ -376,7 +493,12 @@ const players: PlayerImportData[] = [
 										<td class="px-4 py-1 text-white">
 											{player.name}
 										</td>
-										<td class="max-w-32 truncate px-4 py-1 text-white">
+										<td
+											class="max-w-32 truncate px-4 py-1 text-white {isDuplicateSlug(player)
+												? 'bg-red-900/30'
+												: ''}"
+											title={isDuplicateSlug(player) ? getDuplicateReason(player) : ''}
+										>
 											{player.slug || player.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}
 										</td>
 										<td class="max-w-6 px-4 py-1 text-gray-300">
@@ -440,6 +562,22 @@ const players: PlayerImportData[] = [
 								{/each}
 							</tbody>
 						</table>
+					</div>
+				</div>
+			{/if}
+
+			{#if parsedPlayers && hasDuplicateSlugs}
+				<div class="mb-4 rounded-md border border-red-700 bg-red-900/50 p-3">
+					<div class="flex items-start gap-2">
+						<div class="mt-0.5 h-4 w-4 flex-shrink-0 rounded-full bg-red-500"></div>
+						<div class="flex-1">
+							<p class="mb-1 text-sm font-medium text-red-200">Duplicate slugs detected</p>
+							<p class="text-xs text-red-300">
+								Please resolve the duplicate slugs highlighted in red above before importing. Each
+								player must have a unique slug (either provided explicitly or auto-generated from
+								name).
+							</p>
+						</div>
 					</div>
 				</div>
 			{/if}
@@ -522,9 +660,15 @@ const players: PlayerImportData[] = [
 						type="button"
 						class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600 disabled:opacity-50"
 						onclick={handleImportJson}
-						disabled={isImporting}
+						disabled={isImporting || hasDuplicateSlugs}
 					>
-						{isImporting ? 'Importing...' : 'Import Players'}
+						{#if isImporting}
+							Importing...
+						{:else if hasDuplicateSlugs}
+							Fix Duplicate Slugs First
+						{:else}
+							Import Players
+						{/if}
 					</button>
 				{:else}
 					<button
