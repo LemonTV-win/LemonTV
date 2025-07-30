@@ -33,7 +33,9 @@
 		| 'team-asc'
 		| 'team-desc'
 		| 'kd-asc'
-		| 'kd-desc' = $state(data.sortBy || 'name-abc');
+		| 'kd-desc'
+		| 'events-asc'
+		| 'events-desc' = $state(data.sortBy || 'name-abc');
 
 	let sorted = $derived(
 		data.players.toSorted((a, b) => {
@@ -65,6 +67,10 @@
 				return a.kd - b.kd;
 			} else if (sortBy === 'kd-desc') {
 				return b.kd - a.kd;
+			} else if (sortBy === 'events-asc') {
+				return a.eventsCount - b.eventsCount;
+			} else if (sortBy === 'events-desc') {
+				return b.eventsCount - a.eventsCount;
 			}
 			return 0;
 		})
@@ -325,6 +331,22 @@
 							{/if}
 						</button>
 					</th>
+					<th class="px-4 py-1">
+						<button
+							class="flex items-center gap-1 text-left"
+							class:text-white={sortBy === 'events-asc' || sortBy === 'events-desc'}
+							onclick={() => (sortBy = sortBy === 'events-asc' ? 'events-desc' : 'events-asc')}
+						>
+							{m.events()}
+							{#if sortBy === 'events-asc'}
+								<TypcnArrowSortedUp class="inline-block" />
+							{:else if sortBy === 'events-desc'}
+								<TypcnArrowSortedDown class="inline-block" />
+							{:else}
+								<TypcnArrowUnsorted class="inline-block" />
+							{/if}
+						</button>
+					</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -363,6 +385,7 @@
 						<td class="px-4 py-1 text-gray-300" title="Kill/Death Ratio">
 							{player.kd.toFixed(2)}
 						</td>
+						<td class="px-4 py-1 text-gray-300">{player.eventsCount}</td>
 					</tr>
 				{/each}
 			</tbody>
