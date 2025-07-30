@@ -36,6 +36,7 @@
 	let importError = $state('');
 	let isImporting = $state(false);
 	let showSchema = $state(false);
+	let parsedPlayers = $state<PlayerImportData[] | null>(null);
 	let importResults = $state<{
 		createdCount: number;
 		duplicateCount: number;
@@ -171,11 +172,11 @@ const players: PlayerImportData[] = [
   }
 ]`;
 
-	async function handleImportJson() {
+	async function handleParseJson() {
 		try {
 			importError = '';
+			parsedPlayers = null;
 			importResults = null;
-			isImporting = true;
 
 			// Clean the data by removing comments and fixing common issues
 			let cleanedData = importJsonData
@@ -216,9 +217,26 @@ const players: PlayerImportData[] = [
 				}
 			}
 
+			parsedPlayers = parsedData;
+		} catch (error) {
+			importError =
+				error instanceof Error
+					? error.message
+					: 'Invalid format. Please check your data. The import supports both JSON and TypeScript object literal formats.';
+			console.error('Parse error:', error);
+		}
+	}
+
+	async function handleImportJson() {
+		if (!parsedPlayers) return;
+
+		try {
+			importError = '';
+			isImporting = true;
+
 			// Send to server
 			const formData = new FormData();
-			formData.append('players', JSON.stringify(parsedData));
+			formData.append('players', JSON.stringify(parsedPlayers));
 
 			const response = await fetch('?/batchCreate', {
 				method: 'POST',
@@ -239,14 +257,12 @@ const players: PlayerImportData[] = [
 					validationErrors: result.validationErrors || [],
 					errors: result.errors || []
 				};
-				onSuccess(result.message || `Successfully imported ${parsedData.length} players`);
+				onSuccess(result.message || `Successfully imported ${parsedPlayers.length} players`);
 			}
 		} catch (error) {
 			importError =
-				error instanceof Error
-					? error.message
-					: 'Invalid format. Please check your data. The import supports both JSON and TypeScript object literal formats.';
-			console.error('Parse error:', error);
+				error instanceof Error ? error.message : 'Failed to import players. Please try again.';
+			console.error('Import error:', error);
 		} finally {
 			isImporting = false;
 		}
@@ -255,6 +271,7 @@ const players: PlayerImportData[] = [
 	function handleClose() {
 		importJsonData = '';
 		importError = '';
+		parsedPlayers = null;
 		importResults = null;
 		showSchema = false;
 		onClose();
@@ -262,6 +279,11 @@ const players: PlayerImportData[] = [
 
 	function copySchema() {
 		navigator.clipboard.writeText(TYPESCRIPT_SCHEMA);
+	}
+
+	function goBackToEdit() {
+		parsedPlayers = null;
+		importResults = null;
 	}
 </script>
 
@@ -326,6 +348,114 @@ const players: PlayerImportData[] = [
 			{#if importError}
 				<div class="mb-4 rounded-md bg-red-900/50 p-3 text-sm text-red-200">
 					{importError}
+				</div>
+			{/if}
+
+			{#if parsedPlayers}
+				<div class="mb-4 rounded-md border border-slate-600 bg-slate-900 p-4">
+					<h4 class="mb-3 text-sm font-medium text-slate-200">Parsed Players</h4>
+					<div class="overflow-x-auto">
+						<table class="min-w-full divide-y divide-slate-700">
+							<thead class="bg-slate-800">
+								<tr>
+									<th
+										class="px-6 py-3 text-left text-xs font-medium tracking-wider text-slate-300 uppercase"
+									>
+										Name
+									</th>
+									<th
+										class="px-6 py-3 text-left text-xs font-medium tracking-wider text-slate-300 uppercase"
+									>
+										Slug
+									</th>
+									<th
+										class="px-6 py-3 text-left text-xs font-medium tracking-wider text-slate-300 uppercase"
+									>
+										Nationalities
+									</th>
+									<th
+										class="px-6 py-3 text-left text-xs font-medium tracking-wider text-slate-300 uppercase"
+									>
+										Aliases
+									</th>
+									<th
+										class="px-6 py-3 text-left text-xs font-medium tracking-wider text-slate-300 uppercase"
+									>
+										Game Accounts
+									</th>
+									<th
+										class="px-6 py-3 text-left text-xs font-medium tracking-wider text-slate-300 uppercase"
+									>
+										Social Accounts
+									</th>
+									<th
+										class="px-6 py-3 text-left text-xs font-medium tracking-wider text-slate-300 uppercase"
+									>
+										User
+									</th>
+								</tr>
+							</thead>
+							<tbody class="divide-y divide-slate-700">
+								{#each parsedPlayers as player}
+									<tr class="hover:bg-slate-700">
+										<td class="px-6 py-4 text-sm whitespace-nowrap text-slate-200">
+											{player.name}
+										</td>
+										<td class="px-6 py-4 text-sm whitespace-nowrap text-slate-200">
+											{player.slug || player.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}
+										</td>
+										<td class="px-6 py-4 text-sm whitespace-nowrap text-slate-200">
+											{#each player.nationalities as nationality}
+												{nationality},
+											{/each}
+										</td>
+										<td class="px-6 py-4 text-sm whitespace-nowrap text-slate-200">
+											{#if player.aliases && player.aliases.length > 0}
+												{#each player.aliases as alias}
+													{alias},
+												{/each}
+											{:else}
+												-
+											{/if}
+										</td>
+										<td class="px-6 py-4 text-sm whitespace-nowrap text-slate-200">
+											{#if player.gameAccounts && player.gameAccounts.length > 0}
+												<ul class="list-inside list-disc text-xs text-slate-300">
+													{#each player.gameAccounts as account}
+														<li>
+															{account.server} - {account.currentName} (ID: {account.accountId})
+															{#if account.region}
+																, Region: {account.region}
+															{/if}
+														</li>
+													{/each}
+												</ul>
+											{/if}
+										</td>
+										<td class="px-6 py-4 text-sm whitespace-nowrap text-slate-200">
+											{#if player.socialAccounts && player.socialAccounts.length > 0}
+												<ul class="list-inside list-disc text-xs text-slate-300">
+													{#each player.socialAccounts as account}
+														<li>
+															{account.platformId} - {account.accountId}
+															{#if account.overridingUrl}
+																, URL: {account.overridingUrl}
+															{/if}
+														</li>
+													{/each}
+												</ul>
+											{/if}
+										</td>
+										<td class="px-6 py-4 text-sm whitespace-nowrap text-slate-200">
+											{#if player.user}
+												{player.user.username} ({player.user.email})
+											{/if}
+										</td>
+									</tr>
+								{/each}
+							</tbody>
+						</table>
+					</div>
 				</div>
 			{/if}
 
@@ -395,14 +525,14 @@ const players: PlayerImportData[] = [
 			{/if}
 
 			<div class="flex justify-end gap-3">
-				<button
-					type="button"
-					class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
-					onclick={handleClose}
-				>
-					{importResults ? 'Close' : 'Cancel'}
-				</button>
-				{#if !importResults}
+				{#if parsedPlayers}
+					<button
+						type="button"
+						class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
+						onclick={goBackToEdit}
+					>
+						Back to Edit
+					</button>
 					<button
 						type="button"
 						class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600 disabled:opacity-50"
@@ -411,7 +541,23 @@ const players: PlayerImportData[] = [
 					>
 						{isImporting ? 'Importing...' : 'Import Players'}
 					</button>
+				{:else}
+					<button
+						type="button"
+						class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600 disabled:opacity-50"
+						onclick={handleParseJson}
+						disabled={isImporting}
+					>
+						{isImporting ? 'Parsing...' : 'Parse JSON'}
+					</button>
 				{/if}
+				<button
+					type="button"
+					class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
+					onclick={handleClose}
+				>
+					{importResults ? 'Close' : 'Cancel'}
+				</button>
 			</div>
 		</div>
 	</div>
