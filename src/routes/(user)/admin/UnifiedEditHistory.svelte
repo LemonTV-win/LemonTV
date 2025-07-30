@@ -13,7 +13,7 @@
 		record,
 		aliases
 	}: {
-		recordType: 'player' | 'team' | 'event';
+		recordType: 'player' | 'team' | 'event' | 'organizer';
 		record: Player | Team | { id: string; name: string };
 		aliases?: { alias: string }[] | string[];
 	} = $props();
@@ -203,6 +203,7 @@
 					aliases: aliases?.map((a) => (typeof a === 'string' ? a : a.alias))
 				};
 			case 'event':
+			case 'organizer':
 				return {
 					name: record.name
 				};

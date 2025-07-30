@@ -11,7 +11,7 @@
 	import TypcnArrowSortedUp from '~icons/typcn/arrow-sorted-up';
 
 	import Modal from '$lib/components/Modal.svelte';
-	import EditHistory from './EditHistory.svelte';
+	import UnifiedEditHistory from '../UnifiedEditHistory.svelte';
 	import TeamEdit from './TeamEdit.svelte';
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 
@@ -524,7 +524,11 @@
 {#if showHistoryModal}
 	<Modal show={true} title="Edit History" onClose={closeHistoryModal}>
 		{#if selectedTeam}
-			<EditHistory team={selectedTeam} aliases={getTeamAliases(selectedTeam.id)} />
+			<UnifiedEditHistory
+				recordType="team"
+				record={selectedTeam}
+				aliases={getTeamAliases(selectedTeam.id)}
+			/>
 		{/if}
 	</Modal>
 {/if}
