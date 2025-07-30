@@ -127,10 +127,12 @@ export async function getServerPlayerStats(playerId: string): Promise<PlayerStat
 			gameId: schema.game.id,
 			winner: schema.game.winner,
 			teamId: schema.gamePlayerScore.teamId,
-			accountId: schema.gamePlayerScore.accountId
+			accountId: schema.gamePlayerScore.accountId,
+			teamPosition: schema.gameTeam.position
 		})
 		.from(schema.game)
 		.innerJoin(schema.gamePlayerScore, eq(schema.game.id, schema.gamePlayerScore.gameId))
+		.innerJoin(schema.gameTeam, eq(schema.gamePlayerScore.teamId, schema.gameTeam.teamId))
 		.where(inArray(schema.gamePlayerScore.accountId, accountIds));
 
 	// Get all player scores for this player
@@ -156,13 +158,15 @@ export async function getServerPlayerStats(playerId: string): Promise<PlayerStat
 			continue;
 		}
 
-		const gameTeams = playerGames.filter((g) => g.gameId === game.gameId);
-		const uniqueTeams = [...new Set(gameTeams.map((gt) => gt.teamId))];
-		const playerTeam = gameTeams.find((gt) => accountIds.includes(gt.accountId));
+		// Find which team the player was on in this game
+		const playerTeam = playerGames.find(
+			(gt) => gt.gameId === game.gameId && accountIds.includes(gt.accountId)
+		);
 
 		if (playerTeam) {
-			const teamPosition = uniqueTeams.indexOf(playerTeam.teamId);
-			const playerWon = game.winner === teamPosition;
+			// Check if player's team won using the actual team position
+			// winner: 0 = team A won, 1 = team B won
+			const playerWon = game.winner === playerTeam.teamPosition;
 
 			if (playerWon) {
 				wins++;
@@ -615,10 +619,12 @@ export async function getServerPlayerMapStats(playerId: string): Promise<
 			mapId: schema.game.mapId,
 			winner: schema.game.winner,
 			teamId: schema.gamePlayerScore.teamId,
-			accountId: schema.gamePlayerScore.accountId
+			accountId: schema.gamePlayerScore.accountId,
+			teamPosition: schema.gameTeam.position
 		})
 		.from(schema.game)
 		.innerJoin(schema.gamePlayerScore, eq(schema.game.id, schema.gamePlayerScore.gameId))
+		.innerJoin(schema.gameTeam, eq(schema.gamePlayerScore.teamId, schema.gameTeam.teamId))
 		.where(inArray(schema.gamePlayerScore.accountId, accountIds));
 
 	// Group games by map and calculate wins/losses
@@ -631,27 +637,15 @@ export async function getServerPlayerMapStats(playerId: string): Promise<
 
 		const stats = mapStats.get(game.mapId)!;
 
-		// Determine if the player's team won this game
-		// winner: 0 = team A won, 1 = team B won
-		// We need to find which team the player was on
+		// Find which team the player was on in this game
 		const playerTeam = playerGames.find(
-			(g) => g.gameId === game.gameId && g.accountId === game.accountId
+			(gt) => gt.gameId === game.gameId && gt.accountId === game.accountId
 		);
 
 		if (playerTeam) {
-			// Find the team position for this player's team
-			const teamAGames = playerGames.filter(
-				(g) => g.gameId === game.gameId && g.teamId === playerTeam.teamId
-			);
-			const teamBGames = playerGames.filter(
-				(g) => g.gameId === game.gameId && g.teamId !== playerTeam.teamId
-			);
-
-			// Determine team position (0 for team A, 1 for team B)
-			const teamPosition = teamAGames.length > 0 ? 0 : 1;
-
-			// Check if player's team won
-			const playerWon = game.winner === teamPosition;
+			// Check if player's team won using the actual team position
+			// winner: 0 = team A won, 1 = team B won
+			const playerWon = game.winner === playerTeam.teamPosition;
 
 			if (playerWon) {
 				stats.wins++;
@@ -831,10 +825,12 @@ export async function getServerPlayerWins(playerId: string): Promise<number> {
 			gameId: schema.game.id,
 			winner: schema.game.winner,
 			teamId: schema.gamePlayerScore.teamId,
-			accountId: schema.gamePlayerScore.accountId
+			accountId: schema.gamePlayerScore.accountId,
+			teamPosition: schema.gameTeam.position
 		})
 		.from(schema.game)
 		.innerJoin(schema.gamePlayerScore, eq(schema.game.id, schema.gamePlayerScore.gameId))
+		.innerJoin(schema.gameTeam, eq(schema.gamePlayerScore.teamId, schema.gameTeam.teamId))
 		.where(inArray(schema.gamePlayerScore.accountId, accountIds));
 
 	// Count wins
@@ -847,21 +843,15 @@ export async function getServerPlayerWins(playerId: string): Promise<number> {
 			continue;
 		}
 
-		// Find all teams in this game
-		const gameTeams = playerGames.filter((g) => g.gameId === game.gameId);
-		const uniqueTeams = [...new Set(gameTeams.map((gt) => gt.teamId))];
-
 		// Find which team the player was on in this game
-		const playerTeam = gameTeams.find((gt) => accountIds.includes(gt.accountId));
+		const playerTeam = playerGames.find(
+			(gt) => gt.gameId === game.gameId && accountIds.includes(gt.accountId)
+		);
 
 		if (playerTeam) {
-			// Determine team position (0 for team A, 1 for team B)
-			// Team A is the first team, Team B is the second team
-			const teamPosition = uniqueTeams.indexOf(playerTeam.teamId);
-
-			// Check if player's team won
+			// Check if player's team won using the actual team position
 			// winner: 0 = team A won, 1 = team B won
-			const playerWon = game.winner === teamPosition;
+			const playerWon = game.winner === playerTeam.teamPosition;
 
 			if (playerWon) {
 				wins++;
@@ -1638,10 +1628,12 @@ export async function getAllPlayersEssentialStats(): Promise<PlayerEssentialStat
 			gameId: schema.game.id,
 			winner: schema.game.winner,
 			teamId: schema.gamePlayerScore.teamId,
-			accountId: schema.gamePlayerScore.accountId
+			accountId: schema.gamePlayerScore.accountId,
+			teamPosition: schema.gameTeam.position
 		})
 		.from(schema.game)
 		.innerJoin(schema.gamePlayerScore, eq(schema.game.id, schema.gamePlayerScore.gameId))
+		.innerJoin(schema.gameTeam, eq(schema.gamePlayerScore.teamId, schema.gameTeam.teamId))
 		.where(inArray(schema.gamePlayerScore.accountId, allAccountIds));
 
 	// Get all player scores for all players
@@ -1704,13 +1696,15 @@ export async function getAllPlayersEssentialStats(): Promise<PlayerEssentialStat
 				continue;
 			}
 
-			const gameTeams = playerGames.filter((g) => g.gameId === game.gameId);
-			const uniqueTeams = [...new Set(gameTeams.map((gt) => gt.teamId))];
-			const playerTeam = gameTeams.find((gt) => accountIds.includes(gt.accountId));
+			// Find which team the player was on in this game
+			const playerTeam = playerGames.find(
+				(gt) => gt.gameId === game.gameId && accountIds.includes(gt.accountId)
+			);
 
 			if (playerTeam) {
-				const teamPosition = uniqueTeams.indexOf(playerTeam.teamId);
-				const playerWon = game.winner === teamPosition;
+				// Check if player's team won using the actual team position
+				// winner: 0 = team A won, 1 = team B won
+				const playerWon = game.winner === playerTeam.teamPosition;
 
 				if (playerWon) {
 					wins++;
