@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Player } from '$lib/data/players';
 	import type { TCountryCode } from 'countries-list';
+	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
 
 	interface PlayerImportData {
 		name: string;
@@ -354,62 +355,36 @@ const players: PlayerImportData[] = [
 			{#if parsedPlayers}
 				<div class="mb-4 rounded-md border border-slate-600 bg-slate-900 p-4">
 					<h4 class="mb-3 text-sm font-medium text-slate-200">Parsed Players</h4>
-					<div class="overflow-x-auto">
-						<table class="min-w-full divide-y divide-slate-700">
-							<thead class="bg-slate-800">
-								<tr>
-									<th
-										class="px-6 py-3 text-left text-xs font-medium tracking-wider text-slate-300 uppercase"
-									>
-										Name
-									</th>
-									<th
-										class="px-6 py-3 text-left text-xs font-medium tracking-wider text-slate-300 uppercase"
-									>
-										Slug
-									</th>
-									<th
-										class="px-6 py-3 text-left text-xs font-medium tracking-wider text-slate-300 uppercase"
-									>
-										Nationalities
-									</th>
-									<th
-										class="px-6 py-3 text-left text-xs font-medium tracking-wider text-slate-300 uppercase"
-									>
-										Aliases
-									</th>
-									<th
-										class="px-6 py-3 text-left text-xs font-medium tracking-wider text-slate-300 uppercase"
-									>
-										Game Accounts
-									</th>
-									<th
-										class="px-6 py-3 text-left text-xs font-medium tracking-wider text-slate-300 uppercase"
-									>
-										Social Accounts
-									</th>
-									<th
-										class="px-6 py-3 text-left text-xs font-medium tracking-wider text-slate-300 uppercase"
-									>
-										User
-									</th>
+					<div
+						class="overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-800"
+					>
+						<table class="w-full table-auto border-collapse border-y-2 border-gray-500 bg-gray-800">
+							<thead>
+								<tr class="border-b-2 border-gray-500 text-left text-sm text-gray-400">
+									<th class="px-4 py-1">Name</th>
+									<th class="px-4 py-1">Slug</th>
+									<th class="px-4 py-1">Nationalities</th>
+									<th class="px-4 py-1">Aliases</th>
+									<th class="px-4 py-1">Game Accounts</th>
+									<th class="px-4 py-1">Social Accounts</th>
+									<th class="px-4 py-1">User</th>
 								</tr>
 							</thead>
-							<tbody class="divide-y divide-slate-700">
+							<tbody>
 								{#each parsedPlayers as player}
-									<tr class="hover:bg-slate-700">
-										<td class="px-6 py-4 text-sm whitespace-nowrap text-slate-200">
+									<tr class="border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl">
+										<td class="px-4 py-1 text-white">
 											{player.name}
 										</td>
-										<td class="px-6 py-4 text-sm whitespace-nowrap text-slate-200">
+										<td class="max-w-32 truncate px-4 py-1 text-white">
 											{player.slug || player.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}
 										</td>
-										<td class="px-6 py-4 text-sm whitespace-nowrap text-slate-200">
-											{#each player.nationalities as nationality}
-												{nationality},
+										<td class="max-w-6 px-4 py-1 text-gray-300">
+											{#each player.nationalities as nationality, idx (idx)}
+												<NationalityFlag {nationality} />
 											{/each}
 										</td>
-										<td class="px-6 py-4 text-sm whitespace-nowrap text-slate-200">
+										<td class="px-4 py-1 text-gray-300">
 											{#if player.aliases && player.aliases.length > 0}
 												{#each player.aliases as alias}
 													{alias},
@@ -418,37 +393,47 @@ const players: PlayerImportData[] = [
 												-
 											{/if}
 										</td>
-										<td class="px-6 py-4 text-sm whitespace-nowrap text-slate-200">
+										<td class="px-4 py-1 text-gray-300">
 											{#if player.gameAccounts && player.gameAccounts.length > 0}
-												<ul class="list-inside list-disc text-xs text-slate-300">
+												<ul>
 													{#each player.gameAccounts as account}
-														<li>
-															{account.server} - {account.currentName} (ID: {account.accountId})
+														<li class="break-keep whitespace-nowrap">
+															<span class="text-xs text-gray-400">{account.accountId}</span>
+															{account.currentName}
 															{#if account.region}
-																, Region: {account.region}
+																<span class="text-xs text-gray-400">({account.region})</span>
 															{/if}
 														</li>
 													{/each}
 												</ul>
+											{:else}
+												-
 											{/if}
 										</td>
-										<td class="px-6 py-4 text-sm whitespace-nowrap text-slate-200">
+										<td class="px-4 py-1 text-gray-300">
 											{#if player.socialAccounts && player.socialAccounts.length > 0}
-												<ul class="list-inside list-disc text-xs text-slate-300">
+												<ul>
 													{#each player.socialAccounts as account}
-														<li>
+														<li class="break-keep whitespace-nowrap">
 															{account.platformId} - {account.accountId}
 															{#if account.overridingUrl}
-																, URL: {account.overridingUrl}
+																<span class="text-xs text-gray-400">({account.overridingUrl})</span>
 															{/if}
 														</li>
 													{/each}
 												</ul>
+											{:else}
+												-
 											{/if}
 										</td>
-										<td class="px-6 py-4 text-sm whitespace-nowrap text-slate-200">
+										<td class="px-4 py-1 text-gray-300">
 											{#if player.user}
-												{player.user.username} ({player.user.email})
+												<div class="flex flex-col">
+													<span class="text-xs text-gray-400">{player.user.id}</span>
+													<span>{player.user.username}</span>
+												</div>
+											{:else}
+												-
 											{/if}
 										</td>
 									</tr>
