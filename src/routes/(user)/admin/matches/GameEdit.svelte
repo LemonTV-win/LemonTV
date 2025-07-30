@@ -3,6 +3,7 @@
 	import type { ActionResult } from '@sveltejs/kit';
 	import CharacterSelect from '$lib/components/CharacterSelect.svelte';
 	import AccountIdCombobox from '$lib/components/AccountIdCombobox.svelte';
+	import PlayerScoreJsonInput from './PlayerScoreJsonInput.svelte';
 	import type { GameParticipant } from './+page.server';
 	import type { GamePlayerScore } from '$lib/server/db/schemas';
 	import type { Character } from '$lib/data/game';
@@ -41,6 +42,7 @@
 	let errorMessage = $state('');
 	let showDeleteConfirm = $state(false);
 	let isDeleting = $state(false);
+	let showImportModal = $state(false);
 
 	// Add state for teams and player scores
 	let teamData = $state([
@@ -276,6 +278,16 @@
 			</div>
 		</fieldset>
 		<!-- Player scores editing -->
+		<div class="mb-4 flex items-center justify-between">
+			<h3 class="text-sm font-medium text-slate-300">Player Scores</h3>
+			<button
+				type="button"
+				class="rounded-md border border-slate-600 bg-slate-800 px-3 py-1 text-sm text-slate-300 hover:bg-slate-700"
+				onclick={() => (showImportModal = true)}
+			>
+				Import JSON Data
+			</button>
+		</div>
 		{#snippet playerScoreInput(
 			team: 'A' | 'B',
 			ps: {
@@ -457,4 +469,14 @@
 			</button>
 		{/if}
 	</div>
+{/if}
+
+{#if showImportModal}
+	<PlayerScoreJsonInput
+		showModal={showImportModal}
+		{playerScoresA}
+		{playerScoresB}
+		{teamData}
+		onClose={() => (showImportModal = false)}
+	/>
 {/if}
