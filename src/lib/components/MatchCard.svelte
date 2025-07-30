@@ -39,8 +39,18 @@
 		>
 		<span
 			class="mx-auto grid w-18 grid-cols-[1fr_auto_1fr] items-center justify-center gap-1 p-4 text-center text-white"
-			class:bg-green-500={calculateWinnerIndex(match) === teamIndex + 1}
-			class:bg-red-500={calculateWinnerIndex(match) !== teamIndex + 1}
+			class:bg-green-500={(() => {
+				const winnerIndex = calculateWinnerIndex(match);
+				return winnerIndex !== null && winnerIndex === teamIndex + 1;
+			})()}
+			class:bg-red-500={(() => {
+				const winnerIndex = calculateWinnerIndex(match);
+				return winnerIndex !== null && winnerIndex !== teamIndex + 1;
+			})()}
+			class:bg-gray-500={(() => {
+				const winnerIndex = calculateWinnerIndex(match);
+				return winnerIndex === null; // Draw
+			})()}
 		>
 			<span>
 				{match.teams[0].score}

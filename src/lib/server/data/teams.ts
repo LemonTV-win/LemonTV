@@ -321,15 +321,21 @@ export function getTeamMatches(
 
 export function getTeamWins(team: Pick<Team, 'id' | 'name' | 'slug' | 'abbr'>): number {
 	const matches = getTeamMatches(team);
-	return matches.filter(
-		(match) =>
-			calculateWinnerIndex(match) ===
-			match.teams.findIndex(
-				(t) =>
-					t.team === team.id || t.team === team.slug || t.team === team.abbr || t.team === team.name
-			) +
-				1
-	).length;
+	return matches.filter((match) => {
+		const winnerIndex = calculateWinnerIndex(match);
+		return (
+			winnerIndex !== null &&
+			winnerIndex ===
+				match.teams.findIndex(
+					(t) =>
+						t.team === team.id ||
+						t.team === team.slug ||
+						t.team === team.abbr ||
+						t.team === team.name
+				) +
+					1
+		);
+	}).length;
 }
 
 export async function getTeamStatistics(team: Team): Promise<{

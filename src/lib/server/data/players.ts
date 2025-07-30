@@ -693,7 +693,8 @@ export function getPlayersAgents(
 
 export function getPlayerWins(id: string): number {
 	return getPlayerMatches(id).filter((match) => {
-		return calculateWinnerIndex(match) === match.playerTeamIndex + 1;
+		const winnerIndex = calculateWinnerIndex(match);
+		return winnerIndex !== null && winnerIndex === match.playerTeamIndex + 1;
 	}).length;
 }
 

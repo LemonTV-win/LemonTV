@@ -41,17 +41,43 @@ export function identifyPlayer(id: string, player: Player | string): boolean {
 	);
 }
 
-export function calculateWinnerIndex(match: Match): number {
+export function calculateMatchScoreFromGames(match: Match): [number, number] {
+	if (!match.games || match.games.length === 0) {
+		return [0, 0];
+	}
+
+	let team1Wins = 0;
+	let team2Wins = 0;
+
+	for (const game of match.games) {
+		if (game.winner === 0) {
+			team1Wins++;
+		} else if (game.winner === 1) {
+			team2Wins++;
+		}
+	}
+
+	return [team1Wins, team2Wins];
+}
+
+export function calculateWinnerIndex(match: Match): number | null {
 	if (match.teams.length !== 2) {
 		throw new Error('Match must have 2 and only 2 teams');
 	}
 
-	const team1 = match.teams[0];
-	const team2 = match.teams[1];
+	// If match scores are not set, calculate them from games
+	let team1Score = match.teams[0].score;
+	let team2Score = match.teams[1].score;
 
-	if (team1.score === team2.score) {
-		throw new Error('Match cannot be a draw');
+	if (team1Score === undefined || team2Score === undefined) {
+		const [score1, score2] = calculateMatchScoreFromGames(match);
+		team1Score = score1;
+		team2Score = score2;
 	}
 
-	return team1.score > team2.score ? 1 : 2;
+	if (team1Score === team2Score) {
+		return null; // Draw - no winner
+	}
+
+	return team1Score > team2Score ? 1 : 2;
 }

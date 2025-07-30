@@ -125,10 +125,14 @@
 	});
 
 	function isWinner(match: Match, team: Team | undefined) {
-		if (!team || !calculateWinnerIndex(match)) return false;
+		if (!team) return false;
+
+		const winnerIndex = calculateWinnerIndex(match);
+		if (winnerIndex === null) return false; // Draw - no winner
+
 		return (
-			(calculateWinnerIndex(match) === 1 && team.abbr === match.teams[0].team) ||
-			(calculateWinnerIndex(match) === 2 && team.abbr === match.teams[1].team)
+			(winnerIndex === 1 && team.abbr === match.teams[0].team) ||
+			(winnerIndex === 2 && team.abbr === match.teams[1].team)
 		);
 	}
 

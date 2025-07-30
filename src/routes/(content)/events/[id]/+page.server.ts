@@ -194,6 +194,22 @@ export const load: PageServerLoad = async ({ params }) => {
 				] as [[any, any, any, any, any], [any, any, any, any, any]],
 				winner: game.winner
 			}));
+
+			// Calculate match scores from games
+			let team1Wins = 0;
+			let team2Wins = 0;
+
+			for (const game of match.games) {
+				if (game.winner === 0) {
+					team1Wins++;
+				} else if (game.winner === 1) {
+					team2Wins++;
+				}
+			}
+
+			// Set match scores
+			match.teams[0].score = team1Wins;
+			match.teams[1].score = team2Wins;
 		});
 	});
 
