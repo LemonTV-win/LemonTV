@@ -94,6 +94,32 @@
 						<div class="text-sm text-gray-400">KD</div>
 						<div class="text-2xl font-bold text-white">{data.playerKD.toFixed(2)}</div>
 					</div>
+					<div class="rounded-lg bg-slate-800/50 p-4">
+						<div class="text-sm text-gray-400">Win Rate</div>
+						<div class="text-2xl font-bold text-white">{data.playerStats.winRate.toFixed(1)}%</div>
+					</div>
+					<div class="rounded-lg bg-slate-800/50 p-4">
+						<div class="text-sm text-gray-400">Games</div>
+						<div class="text-2xl font-bold text-white">{data.playerStats.totalGames}</div>
+					</div>
+					<div class="rounded-lg bg-slate-800/50 p-4">
+						<div class="text-sm text-gray-400">Kills</div>
+						<div class="text-2xl font-bold text-white">{data.playerStats.totalKills}</div>
+					</div>
+					<div class="rounded-lg bg-slate-800/50 p-4">
+						<div class="text-sm text-gray-400">Deaths</div>
+						<div class="text-2xl font-bold text-white">{data.playerStats.totalDeaths}</div>
+					</div>
+					<div class="rounded-lg bg-slate-800/50 p-4">
+						<div class="text-sm text-gray-400">Assists</div>
+						<div class="text-2xl font-bold text-white">{data.playerStats.totalAssists}</div>
+					</div>
+					<div class="rounded-lg bg-slate-800/50 p-4">
+						<div class="text-sm text-gray-400">Avg Score</div>
+						<div class="text-2xl font-bold text-white">
+							{data.playerStats.averageScore.toFixed(0)}
+						</div>
+					</div>
 				</div>
 			</div>
 

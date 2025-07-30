@@ -24,7 +24,15 @@ import { inArray } from 'drizzle-orm';
 // Unified player statistics interface
 export interface PlayerStats {
 	wins: number;
+	losses: number;
+	totalGames: number;
+	winRate: number;
 	kd: number;
+	totalKills: number;
+	totalDeaths: number;
+	totalAssists: number;
+	totalDamage: number;
+	averageScore: number;
 	agents: [Character, number][];
 	mapStats: {
 		mapId: GameMap;
@@ -85,7 +93,15 @@ export async function getServerPlayerStats(playerId: string): Promise<PlayerStat
 		console.warn('[Players] No game accounts found for player:', playerId);
 		return {
 			wins: 0,
+			losses: 0,
+			totalGames: 0,
+			winRate: 0,
 			kd: 0,
+			totalKills: 0,
+			totalDeaths: 0,
+			totalAssists: 0,
+			totalDamage: 0,
+			averageScore: 0,
 			agents: [],
 			mapStats: [],
 			events: [],
@@ -114,7 +130,10 @@ export async function getServerPlayerStats(playerId: string): Promise<PlayerStat
 			characterFirstHalf: schema.gamePlayerScore.characterFirstHalf,
 			characterSecondHalf: schema.gamePlayerScore.characterSecondHalf,
 			kills: schema.gamePlayerScore.kills,
-			deaths: schema.gamePlayerScore.deaths
+			deaths: schema.gamePlayerScore.deaths,
+			assists: schema.gamePlayerScore.assists,
+			damage: schema.gamePlayerScore.damage,
+			score: schema.gamePlayerScore.score
 		})
 		.from(schema.gamePlayerScore)
 		.where(inArray(schema.gamePlayerScore.accountId, accountIds));
@@ -144,16 +163,26 @@ export async function getServerPlayerStats(playerId: string): Promise<PlayerStat
 		}
 	}
 
-	// Calculate KD
+	// Calculate KD and other stats
 	let totalKills = 0;
 	let totalDeaths = 0;
+	let totalAssists = 0;
+	let totalDamage = 0;
+	let totalScore = 0;
 
 	for (const score of playerScores) {
 		totalKills += score.kills;
 		totalDeaths += score.deaths;
+		totalAssists += score.assists;
+		totalDamage += score.damage;
+		totalScore += score.score;
 	}
 
 	const kd = totalDeaths > 0 ? totalKills / totalDeaths : totalKills;
+	const averageScore = playerScores.length > 0 ? totalScore / playerScores.length : 0;
+	const totalGames = processedGames.size;
+	const losses = totalGames - wins;
+	const winRate = totalGames > 0 ? (wins / totalGames) * 100 : 0;
 
 	// Calculate agents
 	const characterCounts = new Map<Character, number>();
@@ -184,7 +213,15 @@ export async function getServerPlayerStats(playerId: string): Promise<PlayerStat
 	console.info('[Players] Successfully retrieved unified stats for player:', playerId);
 	return {
 		wins,
+		losses, // Total games - wins
+		totalGames,
+		winRate,
 		kd,
+		totalKills,
+		totalDeaths,
+		totalAssists,
+		totalDamage,
+		averageScore,
 		agents,
 		mapStats,
 		events,

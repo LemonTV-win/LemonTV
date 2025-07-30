@@ -70,9 +70,22 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 		playerEvents,
 		playerMatches,
 		playerWins,
+		playerKD,
+		// Additional stats
+		playerStats: {
+			wins: serverStats.wins,
+			losses: serverStats.losses,
+			totalGames: serverStats.totalGames,
+			winRate: serverStats.winRate,
+			kd: serverStats.kd,
+			totalKills: serverStats.totalKills,
+			totalDeaths: serverStats.totalDeaths,
+			totalAssists: serverStats.totalAssists,
+			totalDamage: serverStats.totalDamage,
+			averageScore: serverStats.averageScore
+		},
 		playerAgents,
 		playerMapStats: serverStats.mapStats,
-		playerKD,
 		socialPlatforms: await getSocialPlatforms(),
 		teams: new Map(teams.map((team) => [team.abbr ?? team.id ?? team.name ?? team.slug, team])), // TODO: remove this
 		user
