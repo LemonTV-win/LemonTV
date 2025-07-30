@@ -204,7 +204,7 @@
 				class="inline-grid gap-4 pr-2 pb-2"
 				style="grid-template-columns: repeat({rounds.length + 1}, 200px);"
 			>
-				{#each rounds as round, roundIndex (round.id)}
+				{#each rounds as round, roundIndex (roundIndex)}
 					<div class="flex flex-col items-center">
 						<div class="mb-2 text-center">
 							<button
@@ -231,7 +231,7 @@
 						</div>
 
 						<div class="flex w-full flex-col gap-2">
-							{#each nodes.filter((node) => node.roundId === (round.id || roundIndex)) as node (node.id)}
+							{#each nodes.filter((node) => node.roundId === (round.id || roundIndex)) as node, idx (`${roundIndex}-${idx}`)}
 								{@render nodeElement(node)}
 							{:else}
 								<div
