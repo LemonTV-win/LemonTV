@@ -205,6 +205,7 @@
 
 	function handleBatchImportSuccess(message: string) {
 		successMessage = message;
+		showBatchImportModal = false;
 		goto('/admin/players', { invalidateAll: true, noScroll: true, keepFocus: true });
 	}
 

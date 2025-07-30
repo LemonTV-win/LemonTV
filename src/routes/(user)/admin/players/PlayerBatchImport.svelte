@@ -2,6 +2,8 @@
 	import type { TCountryCode } from 'countries-list';
 	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
 
+	import { deserialize } from '$app/forms';
+
 	interface PlayerImportData {
 		name: string;
 		slug?: string;
@@ -530,21 +532,19 @@ const players: PlayerImportData[] = [
 				body: formData
 			});
 
-			const result = await response.json();
+			const result = deserialize(await response.text());
+			console.log('Import result:', result); // Debug log
 
-			if (result.error) {
-				importError = result.error;
+			if (result.type === 'failure') {
+				importError = result.data?.error || 'Failed to import players';
+			} else if (result.type === 'success') {
+				// Close the dialog and show success message
+				handleClose();
+				const createdCount = result.data?.createdCount || 0;
+				console.log('Created count:', createdCount); // Debug log
+				onSuccess(`Successfully imported ${createdCount} players`);
 			} else {
-				importResults = {
-					createdCount: result.createdCount || 0,
-					duplicateCount: result.duplicateCount || 0,
-					validationErrorCount: result.validationErrorCount || 0,
-					errorCount: result.errorCount || 0,
-					duplicates: result.duplicates || [],
-					validationErrors: result.validationErrors || [],
-					errors: result.errors || []
-				};
-				onSuccess(result.message || `Successfully imported ${parsedPlayers.length} players`);
+				importError = 'Unexpected response from server';
 			}
 		} catch (error) {
 			importError =

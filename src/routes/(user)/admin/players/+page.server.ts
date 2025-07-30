@@ -284,6 +284,8 @@ export const actions = {
 				};
 			}>;
 
+			console.log('Batch create - received players:', players.length); // Debug log
+
 			if (!Array.isArray(players)) {
 				return fail(400, {
 					error: 'Players data must be an array'
@@ -329,8 +331,10 @@ export const actions = {
 					);
 
 					createdPlayers.push(playerId);
+					console.log('Created player:', playerData.name, 'with ID:', playerId); // Debug log
 				} catch (e) {
 					const errorMessage = e instanceof Error ? e.message : String(e);
+					console.log('Error creating player:', playerData.name, errorMessage); // Debug log
 
 					// Check if it's a duplicate error
 					if (
@@ -344,6 +348,14 @@ export const actions = {
 					}
 				}
 			}
+
+			console.log('Batch create results:', {
+				// Debug log
+				createdCount: createdPlayers.length,
+				duplicateCount: duplicates.length,
+				validationErrorCount: validationErrors.length,
+				errorCount: errors.length
+			});
 
 			// Build response message
 			let message = '';
@@ -373,7 +385,7 @@ export const actions = {
 				});
 			}
 
-			return {
+			const response = {
 				success: true,
 				message,
 				createdCount: createdPlayers.length,
@@ -384,6 +396,9 @@ export const actions = {
 				validationErrors,
 				errors
 			};
+
+			console.log('Returning response:', response); // Debug log
+			return response;
 		} catch (e) {
 			console.error('Error batch creating players:', e);
 			return fail(500, {
