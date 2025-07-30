@@ -591,6 +591,126 @@ export async function getServerPlayerMatches(id: string): Promise<
 		.where(and(eq(schema.eventTeamPlayer.playerId, id), eq(schema.gamePlayerScore.player, id)));
 }
 
+export async function getServerPlayerWins(playerId: string): Promise<number> {
+	console.info('[Players] Fetching server player wins for:', playerId);
+
+	// Get the player's game accounts
+	const playerAccounts = await db
+		.select()
+		.from(gameAccount)
+		.where(eq(gameAccount.playerId, playerId));
+
+	if (playerAccounts.length === 0) {
+		console.warn('[Players] No game accounts found for player:', playerId);
+		return 0;
+	}
+
+	// Get all account IDs for this player
+	const accountIds = playerAccounts.map((acc) => acc.accountId);
+
+	// Find all games where this player participated with winner information
+	const playerGames = await db
+		.select({
+			gameId: schema.game.id,
+			winner: schema.game.winner,
+			teamId: schema.gamePlayerScore.teamId,
+			accountId: schema.gamePlayerScore.accountId
+		})
+		.from(schema.game)
+		.innerJoin(schema.gamePlayerScore, eq(schema.game.id, schema.gamePlayerScore.gameId))
+		.where(inArray(schema.gamePlayerScore.accountId, accountIds));
+
+	// Count wins
+	let wins = 0;
+	const processedGames = new Set<number>();
+
+	for (const game of playerGames) {
+		// Skip if we've already processed this game
+		if (processedGames.has(game.gameId)) {
+			continue;
+		}
+
+		// Find all teams in this game
+		const gameTeams = playerGames.filter((g) => g.gameId === game.gameId);
+		const uniqueTeams = [...new Set(gameTeams.map((gt) => gt.teamId))];
+
+		// Find which team the player was on in this game
+		const playerTeam = gameTeams.find((gt) => accountIds.includes(gt.accountId));
+
+		if (playerTeam) {
+			// Determine team position (0 for team A, 1 for team B)
+			// Team A is the first team, Team B is the second team
+			const teamPosition = uniqueTeams.indexOf(playerTeam.teamId);
+
+			// Check if player's team won
+			// winner: 0 = team A won, 1 = team B won
+			const playerWon = game.winner === teamPosition;
+
+			if (playerWon) {
+				wins++;
+			}
+
+			// Mark this game as processed
+			processedGames.add(game.gameId);
+		}
+	}
+
+	console.info('[Players] Player', playerId, 'has', wins, 'wins');
+	return wins;
+}
+
+export async function getServerPlayerKD(playerId: string): Promise<number> {
+	console.info('[Players] Fetching server player KD for:', playerId);
+
+	// Get the player's game accounts
+	const playerAccounts = await db
+		.select()
+		.from(gameAccount)
+		.where(eq(gameAccount.playerId, playerId));
+
+	if (playerAccounts.length === 0) {
+		console.warn('[Players] No game accounts found for player:', playerId);
+		return 0;
+	}
+
+	// Get all account IDs for this player
+	const accountIds = playerAccounts.map((acc) => acc.accountId);
+
+	// Find all player scores for this player
+	const playerScores = await db
+		.select({
+			kills: schema.gamePlayerScore.kills,
+			deaths: schema.gamePlayerScore.deaths
+		})
+		.from(schema.gamePlayerScore)
+		.where(inArray(schema.gamePlayerScore.accountId, accountIds));
+
+	// Calculate total kills and deaths
+	let totalKills = 0;
+	let totalDeaths = 0;
+
+	for (const score of playerScores) {
+		totalKills += score.kills;
+		totalDeaths += score.deaths;
+	}
+
+	// Calculate KD ratio
+	const kdRatio = totalDeaths > 0 ? totalKills / totalDeaths : totalKills;
+
+	console.info(
+		'[Players] Player',
+		playerId,
+		'KD ratio:',
+		kdRatio,
+		'(kills:',
+		totalKills,
+		'deaths:',
+		totalDeaths,
+		')'
+	);
+	return kdRatio;
+}
+
 export function calculatePlayerRating(player: Player) {
 	if (!player.slug && !player.name) {
 		return 0;

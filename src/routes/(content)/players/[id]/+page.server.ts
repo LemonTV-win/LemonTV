@@ -12,7 +12,9 @@ import {
 	getPlayerEvents,
 	calculatePlayerKD,
 	getServerPlayerEvents,
-	getServerPlayerMatches
+	getServerPlayerMatches,
+	getServerPlayerWins,
+	getServerPlayerKD
 } from '$lib/server/data/players';
 import { getTeams } from '$lib/server/data/teams';
 import { processImageURL } from '$lib/server/storage';
@@ -46,12 +48,20 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 
 	const playerMapStats = await getServerPlayerMapStats(playerID);
 
+	// Get server-side wins and KD
+	const serverPlayerWins = await getServerPlayerWins(playerID);
+	const serverPlayerKD = await getServerPlayerKD(playerID);
+
+	// Fallback to legacy functions if server functions return 0
+	const legacyPlayerWins = getPlayerWins(params.id) || getPlayerWins(player.slug ?? player.name);
+	const legacyPlayerKD = calculatePlayerKD(player);
+
 	return {
 		player,
 		playerTeams: await getPlayerTeams(params.id),
 		playerEvents: [...playerEvents, ...legacyPlayerEvents],
 		playerMatches: [...playerMatches, ...legacyPlayerMatches],
-		playerWins: getPlayerWins(params.id) || getPlayerWins(player.slug ?? player.name),
+		playerWins: serverPlayerWins > 0 ? serverPlayerWins : legacyPlayerWins,
 		playerAgents: [...playerAgents, ...legacyPlayerAgents].reduce(
 			(acc, [character, count]) => {
 				const existing = acc.find(([c]) => c === character);
@@ -65,7 +75,7 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 			[] as [Character, number][]
 		),
 		playerMapStats,
-		playerKD: calculatePlayerKD(player),
+		playerKD: serverPlayerKD > 0 ? serverPlayerKD : legacyPlayerKD,
 		socialPlatforms: await getSocialPlatforms(),
 		teams: new Map(teams.map((team) => [team.abbr ?? team.id ?? team.name ?? team.slug, team])), // TODO: remove this
 		user
