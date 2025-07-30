@@ -1,60 +1,10 @@
 <script lang="ts">
 	import { m } from '$lib/paraglide/messages';
 	import CharacterIcon from './CharacterIcon.svelte';
-	import type { Character } from '$lib/data/game';
+	import { CHARACTERS, CHARACTER_NAMES, type Character } from '$lib/data/game';
 
 	// TODO: Add side filter (attacker/defender)
 	// TODO: Add character organization (PUS/Scissors/Urbino)
-
-	const CHARACTERS: Character[] = [
-		'Yvette',
-		'Nobunaga',
-		'Kokona',
-		'Michele',
-		'Flavia',
-		'Yugiri',
-		'Leona',
-		'Reiichi',
-		'Lawine',
-		'Ming',
-		'Meredith',
-		'Eika',
-		'Kanami',
-		'Fragrans',
-		'Mara',
-		'Audrey',
-		'Celestia',
-		'Maddelena',
-		'Bai Mo',
-		'Fuschia',
-		'Galatea'
-		// 'Chiyo'
-	];
-
-	let CHARACTER_NAMES: Record<Character, string> = $derived({
-		Yvette: m.Yvette(),
-		Nobunaga: m.Nobunaga(),
-		Kokona: m.Kokona(),
-		Michele: m.Michele(),
-		Flavia: m.Flavia(),
-		Yugiri: m.Yugiri(),
-		Leona: m.Leona(),
-		Reiichi: m.Reiichi(),
-		Lawine: m.Lawine(),
-		Ming: m.Ming(),
-		Meredith: m.Meredith(),
-		Eika: m.Eika(),
-		Kanami: m.Kanami(),
-		Fragrans: m.Fragrans(),
-		Mara: m.Mara(),
-		Audrey: m.Audrey(),
-		Celestia: m.Celestia(),
-		Maddelena: m.Maddelena(),
-		'Bai Mo': m['Bai Mo'](),
-		Fuschia: m.Fuschia(),
-		Galatea: m.Galatea(),
-		Chiyo: m.Chiyo()
-	});
 
 	let {
 		value = null,
@@ -100,7 +50,7 @@
 
 	let searchInput: HTMLInputElement | null = $state(null);
 
-	const filteredCharacters: Character[] = $derived(
+	const filteredCharacters: readonly Character[] = $derived(
 		search ? CHARACTERS.filter((c) => c.toLowerCase().includes(search.toLowerCase())) : CHARACTERS
 	);
 </script>
@@ -116,7 +66,7 @@
 	>
 		{#if value}
 			<CharacterIcon character={value} class="h-6 w-6" />
-			<span>{CHARACTER_NAMES[value as Character] ?? value}</span>
+			<span>{CHARACTER_NAMES[value as Character]() ?? value}</span>
 		{:else}
 			<span class="text-gray-400">{m.select_character()}</span>
 		{/if}
@@ -147,7 +97,7 @@
 					onclick={() => select(character)}
 				>
 					<CharacterIcon {character} class="h-6 w-6" />
-					<span>{CHARACTER_NAMES[character as Character] ?? character}</span>
+					<span>{CHARACTER_NAMES[character as Character]() ?? character}</span>
 				</button>
 			{/each}
 		</div>
