@@ -7,6 +7,7 @@
 	import type { GameParticipant } from './+page.server';
 	import type { GamePlayerScore } from '$lib/server/db/schemas';
 	import type { Character } from '$lib/data/game';
+	import IconTrophy from '~icons/icon-park-solid/trophy';
 	let { game, matchId, maps, onCancel, onSuccess, teams, rosters } = $props<{
 		game?: any;
 		matchId: string;
@@ -37,6 +38,17 @@
 		mapId: game?.mapId || '',
 		duration: game?.duration || '',
 		winner: game?.winner ?? ''
+	});
+
+	// Automatically calculate winner based on team score difference
+	let calculatedWinner = $derived.by(() => {
+		if (teamData[0].score > teamData[1].score) {
+			return '0'; // Team A wins
+		} else if (teamData[1].score > teamData[0].score) {
+			return '1'; // Team B wins
+		} else {
+			return ''; // Tie or no winner
+		}
 	});
 
 	let errorMessage = $state('');
@@ -216,20 +228,7 @@
 				required
 			/>
 		</div>
-		<div>
-			<label class="block text-sm font-medium text-slate-300" for="winner">Winner</label>
-			<select
-				id="winner"
-				name="winner"
-				bind:value={formData.winner}
-				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-slate-300 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-				required
-			>
-				<option value={undefined}>Select winner</option>
-				<option value={0}>{teams[0].name}</option>
-				<option value={1}>{teams[1].name}</option>
-			</select>
-		</div>
+		<input type="hidden" name="winner" value={calculatedWinner} />
 		<!-- Teams editing -->
 		<fieldset>
 			<legend class="block text-sm font-medium text-slate-300">Teams</legend>
@@ -246,6 +245,9 @@
 									? teams[idx].name
 									: `Team ${idx === 0 ? 'A' : 'B'}`}</span
 							>
+							{#if calculatedWinner === idx.toString()}
+								<IconTrophy class="h-4 w-4 text-yellow-500" />
+							{/if}
 						</div>
 						<div class="mb-2">
 							<label class="block text-xs text-slate-400" for={`gameTeams[${idx}].position`}>
@@ -269,7 +271,14 @@
 								id={`gameTeams[${idx}].score`}
 								name={`gameTeams[${idx}].score`}
 								bind:value={team.score}
-								class="mt-1 block w-full rounded border border-slate-700 bg-slate-900 px-2 py-1 text-slate-200"
+								class={[
+									'mt-1 block w-full rounded border px-2 py-1 text-slate-200 ',
+									calculatedWinner === idx.toString()
+										? 'border-yellow-500 bg-yellow-500/10'
+										: calculatedWinner !== '' && calculatedWinner !== idx.toString()
+											? 'border-red-500 bg-red-500/10'
+											: 'border-slate-700 bg-slate-900'
+								]}
 								required
 							/>
 						</div>
