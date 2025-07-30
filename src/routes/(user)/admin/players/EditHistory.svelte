@@ -21,8 +21,34 @@
 	let loading = $state(true);
 	let error: string | null = $state(null);
 
-	let groupedHistory = $state<Record<string, EditHistoryWithEditor[]>>({});
-	let sortedDates = $derived(Object.keys(groupedHistory).sort((a, b) => b.localeCompare(a)));
+	let groupedHistory = $derived(() => {
+		const grouped = history.reduce(
+			(acc, entry) => {
+				// Convert Unix timestamp (seconds) to milliseconds for Date constructor
+				const date = new Date(entry.editedAt);
+				if (isNaN(date.getTime())) {
+					console.error('Invalid date created from timestamp:', date);
+					return acc;
+				}
+				const dateKey = date.toISOString().split('T')[0];
+				if (!acc[dateKey]) {
+					acc[dateKey] = [];
+				}
+				acc[dateKey].push(entry);
+				return acc;
+			},
+			{} as Record<string, EditHistoryWithEditor[]>
+		);
+
+		// Sort entries within each date group by time in descending order
+		Object.keys(grouped).forEach((dateKey) => {
+			grouped[dateKey].sort((a, b) => b.editedAt.getTime() - a.editedAt.getTime());
+		});
+
+		return grouped;
+	});
+
+	let sortedDates = $derived(Object.keys(groupedHistory()).sort((a, b) => b.localeCompare(a)));
 
 	// Overview statistics
 	let totalEdits = $derived(history.length);
@@ -77,32 +103,6 @@
 		if (player.id) {
 			loadHistory();
 		}
-	});
-
-	// Initialize groupedHistory
-	$effect(() => {
-		groupedHistory = history.reduce(
-			(acc, entry) => {
-				// Convert Unix timestamp (seconds) to milliseconds for Date constructor
-				const date = new Date(entry.editedAt);
-				if (isNaN(date.getTime())) {
-					console.error('Invalid date created from timestamp:', date);
-					return acc;
-				}
-				const dateKey = date.toISOString().split('T')[0];
-				if (!acc[dateKey]) {
-					acc[dateKey] = [];
-				}
-				acc[dateKey].push(entry);
-				return acc;
-			},
-			{} as Record<string, EditHistory[]>
-		);
-
-		// Sort entries within each date group by time in descending order
-		Object.keys(groupedHistory).forEach((dateKey) => {
-			groupedHistory[dateKey].sort((a, b) => b.editedAt.getTime() - a.editedAt.getTime());
-		});
 	});
 
 	function formatValue(value: string | null) {
@@ -233,7 +233,7 @@
 					{new Date(date).toLocaleDateString()}
 				</h3>
 				<div class="space-y-3">
-					{#each groupedHistory[date] as entry (entry.id)}
+					{#each groupedHistory()[date] as entry (entry.id)}
 						<div class="rounded-lg border border-slate-800 bg-slate-900/95 p-4 shadow-lg">
 							<div class="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
 								<div class="flex flex-col gap-1">
