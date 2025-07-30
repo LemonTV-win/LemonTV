@@ -8,6 +8,7 @@
 	import TypcnArrowSortedDown from '~icons/typcn/arrow-sorted-down';
 	import TypcnArrowSortedUp from '~icons/typcn/arrow-sorted-up';
 	import { SvelteURLSearchParams } from 'svelte/reactivity';
+	import PageNavigator from '$lib/components/PageNavigator.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -77,6 +78,11 @@
 		} catch {
 			return value;
 		}
+	}
+
+	function handlePageChange(page: number) {
+		currentPage = page;
+		applyFilters();
 	}
 
 	let filteredRecords = $derived(
@@ -325,20 +331,12 @@
 	</div>
 
 	{#if data.totalCount > data.limit}
-		<div class="mt-4 flex justify-center gap-2">
-			{#each Array.from({ length: Math.ceil(data.totalCount / data.limit) }, (_, i) => i + 1) as pageNum (pageNum)}
-				<button
-					class="rounded-md px-3 py-1 text-sm {pageNum === currentPage
-						? 'bg-yellow-500 text-black'
-						: 'bg-slate-700 text-white hover:bg-slate-600'}"
-					onclick={() => {
-						currentPage = pageNum;
-						applyFilters();
-					}}
-				>
-					{pageNum}
-				</button>
-			{/each}
+		<div class="mt-4">
+			<PageNavigator
+				{currentPage}
+				totalPages={Math.ceil(data.totalCount / data.limit)}
+				onPageChange={handlePageChange}
+			/>
 		</div>
 	{/if}
 </main>
