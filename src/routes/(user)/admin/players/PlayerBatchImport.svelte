@@ -536,7 +536,7 @@ const players: PlayerImportData[] = [
 			console.log('Import result:', result); // Debug log
 
 			if (result.type === 'failure') {
-				importError = result.data?.error || 'Failed to import players';
+				importError = (result.data?.error as string) || 'Failed to import players';
 			} else if (result.type === 'success') {
 				// Close the dialog and show success message
 				handleClose();
