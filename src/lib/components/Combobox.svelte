@@ -11,10 +11,11 @@
 		disabled = false,
 		class: className = '',
 		name = '',
-		onChange
+		onChange,
+		searchLabels = []
 	}: {
 		id?: string;
-		items: Array<{ id: string; name: string; group?: string }>;
+		items: Array<{ id: string; name: string; group?: string; [key: string]: any }>;
 		value: string;
 		placeholder: string;
 		groups: Array<{ id: string; label: string }>;
@@ -22,6 +23,7 @@
 		class: string;
 		name?: string;
 		onChange?: (item: { id: string; name: string }) => void;
+		searchLabels?: string[];
 	} = $props();
 
 	let isOpen = $state(false);
@@ -168,6 +170,41 @@
 			: null;
 	}
 
+	// Enhanced search function that checks multiple labels
+	function matchesSearch(item: any, searchTerm: string): boolean {
+		if (!searchTerm) return true;
+
+		const searchLower = searchTerm.toLowerCase();
+
+		// Always check the name field
+		if (item.name?.toLowerCase().includes(searchLower)) {
+			return true;
+		}
+
+		// Check additional search labels if provided
+		for (const label of searchLabels) {
+			const value = item[label];
+			if (value) {
+				// Handle array fields (like aliases)
+				if (Array.isArray(value)) {
+					if (
+						value.some(
+							(v: any) => v && typeof v === 'string' && v.toLowerCase().includes(searchLower)
+						)
+					) {
+						return true;
+					}
+				}
+				// Handle string fields
+				else if (typeof value === 'string' && value.toLowerCase().includes(searchLower)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
 	$effect(() => {
 		if (isOpen) {
 			window.addEventListener('click', handleClickOutside);
@@ -178,9 +215,7 @@
 	});
 
 	let currentItems = $derived.by(() => {
-		const filtered = search
-			? items.filter((item) => item.name.toLowerCase().includes(search.toLowerCase()))
-			: items;
+		const filtered = search ? items.filter((item) => matchesSearch(item, search)) : items;
 
 		// Then, group them if groups are provided
 		if (groups.length > 0) {

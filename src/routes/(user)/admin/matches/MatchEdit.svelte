@@ -218,10 +218,13 @@
 									items={teams.map((t) => ({
 										id: t.id,
 										name: t.name,
+										slug: t.slug,
+										abbr: t.abbr,
 										group: teamData.some((td) => td.teamId === t.id) ? 'selected' : 'available'
 									}))}
 									bind:value={team.teamId}
 									placeholder={m.select_team()}
+									searchLabels={['slug', 'abbr', 'aliases']}
 									groups={[
 										{ id: 'selected', label: m.attending_teams() },
 										{ id: 'available', label: m.other_teams() }
