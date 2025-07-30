@@ -79,6 +79,15 @@ export interface PlayerStats {
 	}[];
 }
 
+// Simplified essential player statistics for lists
+export interface PlayerEssentialStats {
+	playerId: string;
+	wins: number;
+	rating: number;
+	kd: number;
+	eventsCount: number;
+}
+
 // Unified function to get all player statistics
 export async function getServerPlayerStats(playerId: string): Promise<PlayerStats> {
 	console.info('[Players] Fetching unified stats for player:', playerId);
@@ -1583,4 +1592,159 @@ export async function getPlayerEditHistory(playerId: string) {
 		.orderBy(editHistory.editedAt);
 
 	return history;
+}
+
+// Get essential stats for all players (optimized for lists)
+export async function getAllPlayersEssentialStats(): Promise<PlayerEssentialStats[]> {
+	console.info('[Players] Fetching essential stats for all players');
+
+	// Get all players
+	const players = await db.select().from(player);
+
+	if (players.length === 0) {
+		console.warn('[Players] No players found');
+		return [];
+	}
+
+	// Get all game accounts for all players
+	const allPlayerAccounts = await db.select().from(gameAccount);
+
+	// Group accounts by player ID
+	const accountsByPlayer = new Map<string, number[]>();
+	for (const account of allPlayerAccounts) {
+		if (!accountsByPlayer.has(account.playerId)) {
+			accountsByPlayer.set(account.playerId, []);
+		}
+		accountsByPlayer.get(account.playerId)!.push(account.accountId);
+	}
+
+	// Get all account IDs
+	const allAccountIds = allPlayerAccounts.map((acc) => acc.accountId);
+
+	if (allAccountIds.length === 0) {
+		console.warn('[Players] No game accounts found for any players');
+		return players.map((p) => ({
+			playerId: p.id,
+			wins: 0,
+			rating: 0,
+			kd: 0,
+			eventsCount: 0
+		}));
+	}
+
+	// Get all games where players participated
+	const allPlayerGames = await db
+		.select({
+			gameId: schema.game.id,
+			winner: schema.game.winner,
+			teamId: schema.gamePlayerScore.teamId,
+			accountId: schema.gamePlayerScore.accountId
+		})
+		.from(schema.game)
+		.innerJoin(schema.gamePlayerScore, eq(schema.game.id, schema.gamePlayerScore.gameId))
+		.where(inArray(schema.gamePlayerScore.accountId, allAccountIds));
+
+	// Get all player scores for all players
+	const allPlayerScores = await db
+		.select({
+			accountId: schema.gamePlayerScore.accountId,
+			kills: schema.gamePlayerScore.kills,
+			deaths: schema.gamePlayerScore.deaths,
+			score: schema.gamePlayerScore.score
+		})
+		.from(schema.gamePlayerScore)
+		.where(inArray(schema.gamePlayerScore.accountId, allAccountIds));
+
+	// Get events count for all players
+	const allPlayerEvents = await db
+		.select({
+			playerId: schema.eventTeamPlayer.playerId,
+			eventId: schema.eventTeamPlayer.eventId
+		})
+		.from(schema.eventTeamPlayer);
+
+	// Group events by player
+	const eventsByPlayer = new Map<string, Set<string>>();
+	for (const event of allPlayerEvents) {
+		if (!eventsByPlayer.has(event.playerId)) {
+			eventsByPlayer.set(event.playerId, new Set());
+		}
+		eventsByPlayer.get(event.playerId)!.add(event.eventId);
+	}
+
+	// Calculate stats for each player
+	const result: PlayerEssentialStats[] = [];
+
+	for (const player of players) {
+		const accountIds = accountsByPlayer.get(player.id) || [];
+
+		if (accountIds.length === 0) {
+			result.push({
+				playerId: player.id,
+				wins: 0,
+				rating: 0,
+				kd: 0,
+				eventsCount: eventsByPlayer.get(player.id)?.size || 0
+			});
+			continue;
+		}
+
+		// Get games for this player
+		const playerGames = allPlayerGames.filter((game) => accountIds.includes(game.accountId));
+
+		// Get scores for this player
+		const playerScores = allPlayerScores.filter((score) => accountIds.includes(score.accountId));
+
+		// Calculate wins
+		let wins = 0;
+		const processedGames = new Set<number>();
+
+		for (const game of playerGames) {
+			if (processedGames.has(game.gameId)) {
+				continue;
+			}
+
+			const gameTeams = playerGames.filter((g) => g.gameId === game.gameId);
+			const uniqueTeams = [...new Set(gameTeams.map((gt) => gt.teamId))];
+			const playerTeam = gameTeams.find((gt) => accountIds.includes(gt.accountId));
+
+			if (playerTeam) {
+				const teamPosition = uniqueTeams.indexOf(playerTeam.teamId);
+				const playerWon = game.winner === teamPosition;
+
+				if (playerWon) {
+					wins++;
+				}
+
+				processedGames.add(game.gameId);
+			}
+		}
+
+		// Calculate KD
+		let totalKills = 0;
+		let totalDeaths = 0;
+		let totalScore = 0;
+
+		for (const score of playerScores) {
+			totalKills += score.kills;
+			totalDeaths += score.deaths;
+			totalScore += score.score;
+		}
+
+		const kd = totalDeaths > 0 ? totalKills / totalDeaths : totalKills;
+		const averageScore = playerScores.length > 0 ? totalScore / playerScores.length : 0;
+		const rating = averageScore / 200; // Simple rating calculation
+		const eventsCount = eventsByPlayer.get(player.id)?.size || 0;
+
+		result.push({
+			playerId: player.id,
+			wins,
+			rating,
+			kd,
+			eventsCount
+		});
+	}
+
+	console.info('[Players] Successfully calculated essential stats for', result.length, 'players');
+	return result;
 }
