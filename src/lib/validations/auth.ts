@@ -41,5 +41,19 @@ export const REGISTER_SCHEMA = z
 		path: ['confirmPassword']
 	});
 
+export const FORGOT_PASSWORD_SCHEMA = z.object({
+	email: EMAIL_SCHEMA
+});
+
+export const RESET_PASSWORD_SCHEMA = z
+	.object({
+		password: PASSWORD_SCHEMA,
+		confirmPassword: z.string()
+	})
+	.refine((data) => data.password === data.confirmPassword, {
+		message: "Passwords don't match",
+		path: ['confirmPassword']
+	});
+
 export type LoginFormData = z.infer<typeof LOGIN_SCHEMA>;
 export type RegisterFormData = z.infer<typeof REGISTER_SCHEMA>;

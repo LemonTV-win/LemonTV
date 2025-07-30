@@ -21,7 +21,8 @@ export const load: PageServerLoad = async (event) => {
 
 	return {
 		redirect: event.url.searchParams.get('redirect') || '/',
-		tab: event.url.searchParams.get('tab') === 'register' ? 'register' : 'login'
+		tab: event.url.searchParams.get('tab') === 'register' ? 'register' : 'login',
+		message: event.url.searchParams.get('message')
 	};
 };
 

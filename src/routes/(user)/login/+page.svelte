@@ -32,6 +32,13 @@
 	let isLoading = $state(false);
 	let successMessage = $state('');
 
+	// Handle password reset success message from URL
+	$effect(() => {
+		if (data.message === 'password_reset_success') {
+			successMessage = m.password_reset_success();
+		}
+	});
+
 	function handleLoginSubmit({ cancel }: { cancel: () => void }) {
 		isLoading = true;
 		form = null;
