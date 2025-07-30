@@ -142,13 +142,6 @@
 				}
 			});
 
-			// Calculate team scores
-			const teamAScore = teamAData.reduce((sum, player) => sum + player.score, 0);
-			const teamBScore = teamBData.reduce((sum, player) => sum + player.score, 0);
-
-			teamData[0].score = teamAScore;
-			teamData[1].score = teamBScore;
-
 			handleClose();
 		} catch (error) {
 			importError = 'Failed to import data. Please check the JSON format.';
