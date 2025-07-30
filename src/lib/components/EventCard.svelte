@@ -1,4 +1,4 @@
-<script module>
+<script module lang="ts">
 	export type EssentialEvent = {
 		slug: string;
 		imageURL?: string;
