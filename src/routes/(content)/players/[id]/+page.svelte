@@ -98,13 +98,13 @@
 
 			<div class="glass rounded-2xl p-6">
 				<h3 class="mb-4 text-lg font-bold">{m.superstrings()}</h3>
-				<ul class="flex list-none flex-col gap-4">
+				<ul class="flex list-none flex-col gap-2">
 					{#if data.playerAgents.length > 0}
 						{#each data.playerAgents.toSorted((a, b) => b[1] - a[1]) as [character, count] (character)}
 							{@const percentage =
 								(count / data.playerAgents.reduce((acc, [_, count]) => acc + count, 0)) * 100}
 							<li
-								class="grid grid-cols-[auto_1fr] items-center gap-2 rounded-lg bg-slate-800/50 p-4"
+								class="grid grid-cols-[auto_1fr] items-center gap-2 rounded-lg bg-slate-800/50 p-3"
 							>
 								<CharacterIcon {character} />
 								<div class="flex flex-col gap-1">
@@ -129,22 +129,22 @@
 
 			<div class="glass rounded-2xl p-6">
 				<h3 class="mb-4 text-lg font-bold">{m.maps()}</h3>
-				<ul class="flex list-none flex-col gap-4">
+				<ul class="flex list-none flex-col gap-2">
 					{#if data.playerMapStats.length > 0}
 						{#each data.playerMapStats as mapStat (mapStat.mapId)}
 							{@const total = mapStat.wins + mapStat.losses}
 							{@const winPercentage = (mapStat.wins / total) * 100}
 							{@const lossPercentage = (mapStat.losses / total) * 100}
 							<li
-								class="grid grid-cols-[auto_1fr] items-center gap-2 rounded-lg bg-slate-800/50 p-4"
+								class="grid grid-cols-[auto_1fr] items-center gap-2 rounded-lg bg-slate-800/50 p-2"
 							>
 								<MapIcon mapId={mapStat.mapId as import('$lib/data/game').GameMap} />
 								<div class="flex flex-col gap-1">
-									<div class="flex justify-between text-sm">
+									<div class="flex justify-between text-xs">
 										<span class="text-white">{mapStat.mapId}</span>
 										<span class="text-slate-400">{mapStat.winrate.toFixed(0)}% ({total})</span>
 									</div>
-									<div class="h-2 w-full overflow-hidden rounded-full bg-slate-600">
+									<div class="h-1.5 w-full overflow-hidden rounded-full bg-slate-600">
 										<div class="flex h-full">
 											<div
 												class="h-full bg-green-500"
