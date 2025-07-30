@@ -91,31 +91,31 @@
 						<div class="text-2xl font-bold text-white">{data.playerWins}</div>
 					</div>
 					<div class="rounded-lg bg-slate-800/50 p-4">
-						<div class="text-sm text-gray-400">KD</div>
+						<div class="text-sm text-gray-400">{m.kd_ratio()}</div>
 						<div class="text-2xl font-bold text-white">{data.playerKD.toFixed(2)}</div>
 					</div>
 					<div class="rounded-lg bg-slate-800/50 p-4">
-						<div class="text-sm text-gray-400">Win Rate</div>
+						<div class="text-sm text-gray-400">{m.win_rate()}</div>
 						<div class="text-2xl font-bold text-white">{data.playerStats.winRate.toFixed(1)}%</div>
 					</div>
 					<div class="rounded-lg bg-slate-800/50 p-4">
-						<div class="text-sm text-gray-400">Games</div>
+						<div class="text-sm text-gray-400">{m.games()}</div>
 						<div class="text-2xl font-bold text-white">{data.playerStats.totalGames}</div>
 					</div>
 					<div class="rounded-lg bg-slate-800/50 p-4">
-						<div class="text-sm text-gray-400">Kills</div>
+						<div class="text-sm text-gray-400">{m.kills()}</div>
 						<div class="text-2xl font-bold text-white">{data.playerStats.totalKills}</div>
 					</div>
 					<div class="rounded-lg bg-slate-800/50 p-4">
-						<div class="text-sm text-gray-400">Deaths</div>
+						<div class="text-sm text-gray-400">{m.deaths()}</div>
 						<div class="text-2xl font-bold text-white">{data.playerStats.totalDeaths}</div>
 					</div>
 					<div class="rounded-lg bg-slate-800/50 p-4">
-						<div class="text-sm text-gray-400">Assists</div>
+						<div class="text-sm text-gray-400">{m.assists()}</div>
 						<div class="text-2xl font-bold text-white">{data.playerStats.totalAssists}</div>
 					</div>
 					<div class="rounded-lg bg-slate-800/50 p-4">
-						<div class="text-sm text-gray-400">Avg Score</div>
+						<div class="text-sm text-gray-400">{m.avg_score()}</div>
 						<div class="text-2xl font-bold text-white">
 							{data.playerStats.averageScore.toFixed(0)}
 						</div>
@@ -186,8 +186,8 @@
 										</div>
 									</div>
 									<div class="flex justify-between text-xs text-gray-400">
-										<span>W: {mapStat.wins}</span>
-										<span>L: {mapStat.losses}</span>
+										<span>{m.wins_label()}: {mapStat.wins}</span>
+										<span>{m.losses_label()}: {mapStat.losses}</span>
 									</div>
 								</div>
 							</li>
@@ -249,7 +249,9 @@
 												<div class="text-sm text-gray-400">{match.eventName}</div>
 												<div class="text-sm text-gray-400">{match.eventDate}</div>
 											</div>
-											<div class="text-sm text-gray-400">Match #{match.id}</div>
+											<div class="text-sm text-gray-400">
+												{m.match_number({ number: match.id })}
+											</div>
 										</div>
 									</div>
 								{/if}
