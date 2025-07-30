@@ -21,6 +21,177 @@ import type { Match, PlayerScore } from '$lib/data/matches';
 import type { Event } from '$lib/data/events';
 import { inArray } from 'drizzle-orm';
 
+// Unified player statistics interface
+export interface PlayerStats {
+	wins: number;
+	kd: number;
+	agents: [Character, number][];
+	mapStats: {
+		mapId: GameMap;
+		wins: number;
+		losses: number;
+		winrate: number;
+	}[];
+	events: {
+		id: string;
+		slug: string;
+		name: string;
+		image: string;
+		date: string;
+		region: string;
+		format: string;
+		status: string;
+		server: string;
+		capacity: number;
+		official: boolean;
+		role: string;
+	}[];
+	matches: {
+		id: string;
+		format: string | null;
+		stageId: number | null;
+		// Event data
+		eventId: string;
+		eventSlug: string;
+		eventName: string;
+		eventImage: string;
+		eventDate: string;
+		eventRegion: string;
+		eventFormat: string;
+		eventStatus: string;
+		eventServer: string;
+		eventCapacity: number;
+		eventOfficial: boolean;
+		// Stage data
+		stageTitle: string;
+		stageStage: string;
+		stageFormat: string;
+		// Player's role in the event
+		role: string;
+	}[];
+}
+
+// Unified function to get all player statistics
+export async function getServerPlayerStats(playerId: string): Promise<PlayerStats> {
+	console.info('[Players] Fetching unified stats for player:', playerId);
+
+	// Get the player's game accounts
+	const playerAccounts = await db
+		.select()
+		.from(gameAccount)
+		.where(eq(gameAccount.playerId, playerId));
+
+	if (playerAccounts.length === 0) {
+		console.warn('[Players] No game accounts found for player:', playerId);
+		return {
+			wins: 0,
+			kd: 0,
+			agents: [],
+			mapStats: [],
+			events: [],
+			matches: []
+		};
+	}
+
+	// Get all account IDs for this player
+	const accountIds = playerAccounts.map((acc) => acc.accountId);
+
+	// Get all games where this player participated
+	const playerGames = await db
+		.select({
+			gameId: schema.game.id,
+			winner: schema.game.winner,
+			teamId: schema.gamePlayerScore.teamId,
+			accountId: schema.gamePlayerScore.accountId
+		})
+		.from(schema.game)
+		.innerJoin(schema.gamePlayerScore, eq(schema.game.id, schema.gamePlayerScore.gameId))
+		.where(inArray(schema.gamePlayerScore.accountId, accountIds));
+
+	// Get all player scores for this player
+	const playerScores = await db
+		.select({
+			characterFirstHalf: schema.gamePlayerScore.characterFirstHalf,
+			characterSecondHalf: schema.gamePlayerScore.characterSecondHalf,
+			kills: schema.gamePlayerScore.kills,
+			deaths: schema.gamePlayerScore.deaths
+		})
+		.from(schema.gamePlayerScore)
+		.where(inArray(schema.gamePlayerScore.accountId, accountIds));
+
+	// Calculate wins
+	let wins = 0;
+	const processedGames = new Set<number>();
+
+	for (const game of playerGames) {
+		if (processedGames.has(game.gameId)) {
+			continue;
+		}
+
+		const gameTeams = playerGames.filter((g) => g.gameId === game.gameId);
+		const uniqueTeams = [...new Set(gameTeams.map((gt) => gt.teamId))];
+		const playerTeam = gameTeams.find((gt) => accountIds.includes(gt.accountId));
+
+		if (playerTeam) {
+			const teamPosition = uniqueTeams.indexOf(playerTeam.teamId);
+			const playerWon = game.winner === teamPosition;
+
+			if (playerWon) {
+				wins++;
+			}
+
+			processedGames.add(game.gameId);
+		}
+	}
+
+	// Calculate KD
+	let totalKills = 0;
+	let totalDeaths = 0;
+
+	for (const score of playerScores) {
+		totalKills += score.kills;
+		totalDeaths += score.deaths;
+	}
+
+	const kd = totalDeaths > 0 ? totalKills / totalDeaths : totalKills;
+
+	// Calculate agents
+	const characterCounts = new Map<Character, number>();
+
+	for (const score of playerScores) {
+		if (score.characterFirstHalf) {
+			const character = score.characterFirstHalf as Character;
+			characterCounts.set(character, (characterCounts.get(character) ?? 0) + 1);
+		}
+
+		if (score.characterSecondHalf) {
+			const character = score.characterSecondHalf as Character;
+			characterCounts.set(character, (characterCounts.get(character) ?? 0) + 1);
+		}
+	}
+
+	const agents = Array.from(characterCounts.entries()).sort((a, b) => b[1] - a[1]);
+
+	// Get map stats
+	const mapStats = await getServerPlayerMapStats(playerId);
+
+	// Get events
+	const events = await getServerPlayerEvents(playerId);
+
+	// Get matches
+	const matches = await getServerPlayerMatches(playerId);
+
+	console.info('[Players] Successfully retrieved unified stats for player:', playerId);
+	return {
+		wins,
+		kd,
+		agents,
+		mapStats,
+		events,
+		matches
+	};
+}
+
 export async function getPlayer(keyword: string): Promise<Player | null> {
 	console.info('[Players] Attempting to get player:', keyword);
 	const [playerData] = await db

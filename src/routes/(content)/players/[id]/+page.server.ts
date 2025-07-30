@@ -4,17 +4,12 @@ import {
 	getPlayer,
 	getPlayerTeams,
 	getPlayerAgents,
-	getServerPlayerAgents,
-	getServerPlayerMapStats,
+	getServerPlayerStats,
 	getSocialPlatforms,
 	getPlayerMatches,
 	getPlayerWins,
 	getPlayerEvents,
-	calculatePlayerKD,
-	getServerPlayerEvents,
-	getServerPlayerMatches,
-	getServerPlayerWins,
-	getServerPlayerKD
+	calculatePlayerKD
 } from '$lib/server/data/players';
 import { getTeams } from '$lib/server/data/teams';
 import { processImageURL } from '$lib/server/storage';
@@ -27,55 +22,57 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 	}
 
 	const teams = await getTeams();
-
 	const playerID = player.id;
 
-	const playerEvents = await Promise.all(
-		(await getServerPlayerEvents(playerID)).map(async (event) => ({
+	// Get unified server stats
+	const serverStats = await getServerPlayerStats(playerID);
+
+	// Get legacy data for fallback
+	const legacyPlayerEvents =
+		getPlayerEvents(params.id) || getPlayerEvents(player.slug ?? player.name);
+	const legacyPlayerMatches =
+		getPlayerMatches(params.id) || getPlayerMatches(player.slug ?? player.name);
+	const legacyPlayerAgents = getPlayerAgents(player);
+	const legacyPlayerWins = getPlayerWins(params.id) || getPlayerWins(player.slug ?? player.name);
+	const legacyPlayerKD = calculatePlayerKD(player);
+
+	// Process server events with image URLs
+	const serverEvents = await Promise.all(
+		serverStats.events.map(async (event) => ({
 			...event,
 			imageURL: await processImageURL(event.image)
 		}))
 	);
-	const legacyPlayerEvents =
-		getPlayerEvents(params.id) || getPlayerEvents(player.slug ?? player.name);
 
-	const playerMatches = await getServerPlayerMatches(playerID);
-	const legacyPlayerMatches =
-		getPlayerMatches(params.id) || getPlayerMatches(player.slug ?? player.name);
+	// Merge server and legacy data
+	const playerEvents = [...serverEvents, ...legacyPlayerEvents];
+	const playerMatches = [...serverStats.matches, ...legacyPlayerMatches];
+	const playerAgents = [...serverStats.agents, ...legacyPlayerAgents].reduce(
+		(acc, [character, count]) => {
+			const existing = acc.find(([c]) => c === character);
+			if (existing) {
+				existing[1] += count;
+			} else {
+				acc.push([character, count]);
+			}
+			return acc;
+		},
+		[] as [Character, number][]
+	);
 
-	const playerAgents = await getServerPlayerAgents(playerID);
-	const legacyPlayerAgents = getPlayerAgents(player);
-
-	const playerMapStats = await getServerPlayerMapStats(playerID);
-
-	// Get server-side wins and KD
-	const serverPlayerWins = await getServerPlayerWins(playerID);
-	const serverPlayerKD = await getServerPlayerKD(playerID);
-
-	// Fallback to legacy functions if server functions return 0
-	const legacyPlayerWins = getPlayerWins(params.id) || getPlayerWins(player.slug ?? player.name);
-	const legacyPlayerKD = calculatePlayerKD(player);
+	// Use server stats with fallback to legacy
+	const playerWins = serverStats.wins > 0 ? serverStats.wins : legacyPlayerWins;
+	const playerKD = serverStats.kd > 0 ? serverStats.kd : legacyPlayerKD;
 
 	return {
 		player,
 		playerTeams: await getPlayerTeams(params.id),
-		playerEvents: [...playerEvents, ...legacyPlayerEvents],
-		playerMatches: [...playerMatches, ...legacyPlayerMatches],
-		playerWins: serverPlayerWins > 0 ? serverPlayerWins : legacyPlayerWins,
-		playerAgents: [...playerAgents, ...legacyPlayerAgents].reduce(
-			(acc, [character, count]) => {
-				const existing = acc.find(([c]) => c === character);
-				if (existing) {
-					existing[1] += count;
-				} else {
-					acc.push([character, count]);
-				}
-				return acc;
-			},
-			[] as [Character, number][]
-		),
-		playerMapStats,
-		playerKD: serverPlayerKD > 0 ? serverPlayerKD : legacyPlayerKD,
+		playerEvents,
+		playerMatches,
+		playerWins,
+		playerAgents,
+		playerMapStats: serverStats.mapStats,
+		playerKD,
 		socialPlatforms: await getSocialPlatforms(),
 		teams: new Map(teams.map((team) => [team.abbr ?? team.id ?? team.name ?? team.slug, team])), // TODO: remove this
 		user
