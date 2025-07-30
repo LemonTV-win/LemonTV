@@ -367,6 +367,110 @@ export async function getServerPlayersAgents(
 	return result;
 }
 
+export async function getServerPlayerMapStats(playerId: string): Promise<
+	{
+		mapId: string;
+		wins: number;
+		losses: number;
+		winrate: number;
+	}[]
+> {
+	console.info('[Players] Fetching server player map stats for:', playerId);
+
+	// Get the player's game accounts
+	const playerAccounts = await db
+		.select()
+		.from(gameAccount)
+		.where(eq(gameAccount.playerId, playerId));
+
+	if (playerAccounts.length === 0) {
+		console.warn('[Players] No game accounts found for player:', playerId);
+		return [];
+	}
+
+	// Get all account IDs for this player
+	const accountIds = playerAccounts.map((acc) => acc.accountId);
+
+	// Find all games where this player participated with map and team information
+	const playerGames = await db
+		.select({
+			gameId: schema.game.id,
+			mapId: schema.game.mapId,
+			winner: schema.game.winner,
+			teamId: schema.gamePlayerScore.teamId,
+			accountId: schema.gamePlayerScore.accountId
+		})
+		.from(schema.game)
+		.innerJoin(schema.gamePlayerScore, eq(schema.game.id, schema.gamePlayerScore.gameId))
+		.where(inArray(schema.gamePlayerScore.accountId, accountIds));
+
+	// Group games by map and calculate wins/losses
+	const mapStats = new Map<string, { wins: number; losses: number }>();
+
+	for (const game of playerGames) {
+		if (!mapStats.has(game.mapId)) {
+			mapStats.set(game.mapId, { wins: 0, losses: 0 });
+		}
+
+		const stats = mapStats.get(game.mapId)!;
+
+		// Determine if the player's team won this game
+		// winner: 0 = team A won, 1 = team B won
+		// We need to find which team the player was on
+		const playerTeam = playerGames.find(
+			(g) => g.gameId === game.gameId && g.accountId === game.accountId
+		);
+
+		if (playerTeam) {
+			// Find the team position for this player's team
+			const teamAGames = playerGames.filter(
+				(g) => g.gameId === game.gameId && g.teamId === playerTeam.teamId
+			);
+			const teamBGames = playerGames.filter(
+				(g) => g.gameId === game.gameId && g.teamId !== playerTeam.teamId
+			);
+
+			// Determine team position (0 for team A, 1 for team B)
+			const teamPosition = teamAGames.length > 0 ? 0 : 1;
+
+			// Check if player's team won
+			const playerWon = game.winner === teamPosition;
+
+			if (playerWon) {
+				stats.wins++;
+			} else {
+				stats.losses++;
+			}
+		}
+	}
+
+	// Convert to array with winrate calculation
+	const result = Array.from(mapStats.entries()).map(([mapId, stats]) => {
+		const total = stats.wins + stats.losses;
+		const winrate = total > 0 ? (stats.wins / total) * 100 : 0;
+
+		return {
+			mapId,
+			wins: stats.wins,
+			losses: stats.losses,
+			winrate
+		};
+	});
+
+	// Sort by total games played (descending), then by winrate (descending)
+	result.sort((a, b) => {
+		const totalA = a.wins + a.losses;
+		const totalB = b.wins + b.losses;
+		if (totalA !== totalB) {
+			return totalB - totalA;
+		}
+		return b.winrate - a.winrate;
+	});
+
+	console.info('[Players] Found map stats for', result.length, 'maps for player:', playerId);
+	return result;
+}
+
 export function getPlayersAgents(
 	players: Player[],
 	limit: number = 3

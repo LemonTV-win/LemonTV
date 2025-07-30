@@ -5,6 +5,7 @@ import {
 	getPlayerTeams,
 	getPlayerAgents,
 	getServerPlayerAgents,
+	getServerPlayerMapStats,
 	getSocialPlatforms,
 	getPlayerMatches,
 	getPlayerWins,
@@ -43,6 +44,8 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 	const playerAgents = await getServerPlayerAgents(playerID);
 	const legacyPlayerAgents = getPlayerAgents(player);
 
+	const playerMapStats = await getServerPlayerMapStats(playerID);
+
 	return {
 		player,
 		playerTeams: await getPlayerTeams(params.id),
@@ -61,6 +64,7 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 			},
 			[] as [Character, number][]
 		),
+		playerMapStats,
 		playerKD: calculatePlayerKD(player),
 		socialPlatforms: await getSocialPlatforms(),
 		teams: new Map(teams.map((team) => [team.abbr ?? team.id ?? team.name ?? team.slug, team])), // TODO: remove this

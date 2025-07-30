@@ -3,6 +3,7 @@
 	import type { PageProps } from './$types';
 	import { m } from '$lib/paraglide/messages.js';
 	import CharacterIcon from '$lib/components/CharacterIcon.svelte';
+	import MapIcon from '$lib/components/MapIcon.svelte';
 	import PlayerAvatar from '$lib/components/PlayerAvatar.svelte';
 	import MatchCard from '$lib/components/MatchCard.svelte';
 	import SocialLinks from '$lib/components/SocialLinks.svelte';
@@ -126,6 +127,50 @@
 				</ul>
 			</div>
 
+			<div class="glass rounded-2xl p-6">
+				<h3 class="mb-4 text-lg font-bold">{m.maps()}</h3>
+				<ul class="flex list-none flex-col gap-4">
+					{#if data.playerMapStats.length > 0}
+						{#each data.playerMapStats as mapStat (mapStat.mapId)}
+							{@const total = mapStat.wins + mapStat.losses}
+							{@const winPercentage = (mapStat.wins / total) * 100}
+							{@const lossPercentage = (mapStat.losses / total) * 100}
+							<li
+								class="grid grid-cols-[auto_1fr] items-center gap-2 rounded-lg bg-slate-800/50 p-4"
+							>
+								<MapIcon mapId={mapStat.mapId as import('$lib/data/game').GameMap} />
+								<div class="flex flex-col gap-1">
+									<div class="flex justify-between text-sm">
+										<span class="text-white">{mapStat.mapId}</span>
+										<span class="text-slate-400">{mapStat.winrate.toFixed(0)}% ({total})</span>
+									</div>
+									<div class="h-2 w-full overflow-hidden rounded-full bg-slate-600">
+										<div class="flex h-full">
+											<div
+												class="h-full bg-green-500"
+												style="width: {winPercentage.toFixed(0)}%;"
+												title="{mapStat.wins} wins"
+											></div>
+											<div
+												class="h-full bg-red-500"
+												style="width: {lossPercentage.toFixed(0)}%;"
+												title="{mapStat.losses} losses"
+											></div>
+										</div>
+									</div>
+									<div class="flex justify-between text-xs text-gray-400">
+										<span>W: {mapStat.wins}</span>
+										<span>L: {mapStat.losses}</span>
+									</div>
+								</div>
+							</li>
+						{/each}
+					{:else}
+						<li class="text-center text-gray-400">{m.no_data()}</li>
+					{/if}
+				</ul>
+			</div>
+
 			{#if data.playerEvents}
 				<div class="md:col-span-3">
 					<h2 class="my-5 text-xl font-bold">{m.attended_events()}</h2>
@@ -156,14 +201,31 @@
 				<h2 class="my-5 text-xl font-bold">{m.recent_matches()}</h2>
 				<ul class="flex flex-col gap-2">
 					{#if data.playerMatches.length > 0}
-						{#each data.playerMatches.toSorted((a, b) => new Date(b.event.date).getTime() - new Date(a.event.date).getTime()) as match (match.id)}
+						{#each data.playerMatches.toSorted((a, b) => {
+							const dateA = 'event' in a ? new Date(a.event.date).getTime() : new Date(a.eventDate).getTime();
+							const dateB = 'event' in b ? new Date(b.event.date).getTime() : new Date(b.eventDate).getTime();
+							return dateB - dateA;
+						}) as match (match.id)}
 							{#if match}
-								<MatchCard
-									{match}
-									teamIndex={match.playerTeamIndex}
-									event={match.event}
-									teams={data.teams}
-								/>
+								{#if 'event' in match}
+									<MatchCard
+										{match}
+										teamIndex={match.playerTeamIndex}
+										event={match.event}
+										teams={data.teams}
+									/>
+								{:else}
+									<!-- Handle server match data structure -->
+									<div class="glass rounded-lg p-4">
+										<div class="flex items-center justify-between">
+											<div class="flex items-center gap-4">
+												<div class="text-sm text-gray-400">{match.eventName}</div>
+												<div class="text-sm text-gray-400">{match.eventDate}</div>
+											</div>
+											<div class="text-sm text-gray-400">Match #{match.id}</div>
+										</div>
+									</div>
+								{/if}
 							{/if}
 						{/each}
 					{:else}
