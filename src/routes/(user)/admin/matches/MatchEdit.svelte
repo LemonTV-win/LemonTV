@@ -71,7 +71,7 @@
 		space_lab: m.space_lab(),
 		cauchy_district: m.cauchy_district(),
 		cosmite: m.cosmite(),
-		orcanus: m.orcanus()
+		ocarnus: m.ocarnus()
 	};
 
 	// Group stages by event

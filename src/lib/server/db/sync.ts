@@ -44,7 +44,7 @@ const MAPS = [
 	{ id: 'space_lab' },
 	{ id: 'cauchy_district' },
 	{ id: 'cosmite' },
-	{ id: 'orcanus' }
+	{ id: 'ocarnus' }
 ];
 
 async function syncMaps() {

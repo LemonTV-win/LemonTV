@@ -18,7 +18,7 @@ const GAME_CONFIG = {
 			'space_lab',
 			'cauchy_district',
 			'cosmite',
-			'orcanus'
+			'ocarnus'
 		],
 		showmatch: [
 			'base_404',
@@ -28,7 +28,7 @@ const GAME_CONFIG = {
 			'space_lab',
 			'cauchy_district',
 			'cosmite',
-			'orcanus'
+			'ocarnus'
 		]
 	},
 	// Duration ranges for different map types (in seconds)
@@ -40,7 +40,7 @@ const GAME_CONFIG = {
 		space_lab: { min: 1500, max: 2100 },
 		cauchy_district: { min: 2000, max: 2800 },
 		cosmite: { min: 1700, max: 2300 },
-		orcanus: { min: 1900, max: 2500 }
+		ocarnus: { min: 1900, max: 2500 }
 	}
 };
 

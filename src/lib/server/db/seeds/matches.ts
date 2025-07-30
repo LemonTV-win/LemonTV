@@ -613,7 +613,7 @@ export const MATCH_MAPS = [
 	{
 		id: 10,
 		matchId: MATCHES[10].id,
-		mapId: 'orcanus',
+		mapId: 'ocarnus',
 		order: 2,
 		side: 0,
 		action: 'pick' as const,
@@ -735,7 +735,7 @@ export const MATCH_MAPS = [
 	{
 		id: 22,
 		matchId: MATCHES[2].id,
-		mapId: 'orcanus',
+		mapId: 'ocarnus',
 		order: 2,
 		side: 0,
 		action: 'set' as const,
@@ -837,7 +837,7 @@ export const MATCH_MAPS = [
 	{
 		id: 34,
 		matchId: MATCHES[6].id,
-		mapId: 'orcanus',
+		mapId: 'ocarnus',
 		order: 4,
 		side: 0,
 		action: 'pick' as const,

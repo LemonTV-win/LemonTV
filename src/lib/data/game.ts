@@ -18,7 +18,7 @@ export const MAPS = [
 	'space_lab',
 	'cauchy_district',
 	'cosmite',
-	'orcanus'
+	'ocarnus'
 ] as const;
 export type GameMap = (typeof MAPS)[number];
 
@@ -30,7 +30,7 @@ export const MAP_NAMES: Record<GameMap, () => string> = {
 	windy_town: m.windy_town,
 	cauchy_district: m.cauchy_district,
 	cosmite: m.cosmite,
-	orcanus: m.orcanus
+	ocarnus: m.ocarnus
 };
 // #endregion
 
