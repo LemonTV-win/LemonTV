@@ -29,7 +29,7 @@
 	let inputElement: HTMLInputElement | null = $state(null);
 	let selectedIndex = $state(-1);
 	let listboxElement: HTMLDivElement | null = $state(null);
-
+	let isFocused = $state(false);
 	// Set initial search value without triggering filter
 	$effect(() => {
 		if (value) {
@@ -42,7 +42,7 @@
 
 	// Open popup when value changes
 	$effect(() => {
-		if (value) {
+		if (value && isFocused) {
 			isOpen = true;
 		}
 	});
@@ -67,12 +67,14 @@
 	}
 
 	function handleFocus() {
+		isFocused = true;
 		isOpen = true;
 		selectedIndex = -1;
 		// Don't clear search when opening to preserve current state
 	}
 
 	function handleBlur() {
+		isFocused = false;
 		setTimeout(() => {
 			isOpen = false;
 			selectedIndex = -1;
