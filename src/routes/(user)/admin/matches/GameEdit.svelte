@@ -235,6 +235,7 @@
 			<div class="mt-2 grid grid-cols-2 gap-4">
 				{#each teamData as team, idx (idx)}
 					<input type="hidden" name={`gameTeams[${idx}].teamId`} value={team.teamId} />
+					<input type="hidden" name={`gameTeams[${idx}].position`} value={team.position} />
 					<div class="rounded-lg border border-slate-700 bg-slate-800 p-4">
 						<div class="mb-2 flex items-center gap-2 font-semibold text-slate-200">
 							{#if teams && teams[idx]?.logo}
@@ -248,19 +249,6 @@
 							{#if calculatedWinner === idx.toString()}
 								<IconTrophy class="h-4 w-4 text-yellow-500" />
 							{/if}
-						</div>
-						<div class="mb-2">
-							<label class="block text-xs text-slate-400" for={`gameTeams[${idx}].position`}>
-								Position
-							</label>
-							<input
-								type="number"
-								id={`gameTeams[${idx}].position`}
-								name={`gameTeams[${idx}].position`}
-								value={team.position}
-								readonly
-								class="mt-1 block w-full rounded border border-slate-700 bg-slate-900 px-2 py-1 text-slate-400"
-							/>
 						</div>
 						<div>
 							<label class="block text-xs text-slate-400" for={`gameTeams[${idx}].score`}>
