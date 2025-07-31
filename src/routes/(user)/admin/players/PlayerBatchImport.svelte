@@ -49,7 +49,66 @@
 	let importError = $state('');
 	let isImporting = $state(false);
 	let showSchema = $state(false);
-	let parsedPlayers = $state<PlayerImportData[] | null>(null);
+
+	type ParsedPlayers =
+		| {
+				type: 'success';
+				data: PlayerImportData[];
+		  }
+		| {
+				type: 'error';
+				error: string;
+		  }
+		| null;
+	let parsedPlayers: ParsedPlayers = $derived.by(() => {
+		try {
+			// Clean the data by removing comments and fixing common issues
+			let cleanedData = importJsonData
+				.replace(/\/\/.*$/gm, '') // Remove single-line comments
+				.replace(/\/\*[\s\S]*?\*\//g, '') // Remove multi-line comments
+				.trim();
+
+			// Convert TypeScript object literal syntax to JSON
+			// Replace property names without quotes to quoted property names
+			cleanedData = cleanedData
+				.replace(/(\w+):/g, '"$1":') // Convert property names to quoted
+				.replace(/'/g, '"') // Replace single quotes with double quotes
+				.replace(/(\w+):\s*\[/g, '"$1": [') // Handle array properties
+				.replace(/(\w+):\s*\{/g, '"$1": {') // Handle object properties
+				.replace(/(\w+):\s*(\d+)/g, '"$1": $2') // Handle numeric properties
+				.replace(/(\w+):\s*"([^"]*)"/g, '"$1": "$2"') // Handle string properties
+				.replace(/(\w+):\s*true/g, '"$1": true') // Handle boolean true
+				.replace(/(\w+):\s*false/g, '"$1": false'); // Handle boolean false
+
+			const parsedData = JSON.parse(cleanedData) as PlayerImportData[];
+
+			// Validate the data
+			if (!Array.isArray(parsedData)) {
+				throw new Error('Data must be an array of players');
+			}
+
+			// Validate each player
+			for (const player of parsedData) {
+				if (!player.name) {
+					throw new Error('Each player must have a name');
+				}
+			}
+			return {
+				type: 'success',
+				data: parsedData
+			};
+		} catch (error) {
+			console.error('Parse error:', error);
+
+			return {
+				type: 'error',
+				error:
+					error instanceof Error
+						? error.message
+						: 'Invalid format. Please check your data. The import supports both JSON and TypeScript object literal formats.'
+			};
+		}
+	});
 
 	// Get all existing slugs for comparison
 	let existingSlugs = $derived(
@@ -60,12 +119,12 @@
 
 	// Check for duplicate slugs in parsed data (including against existing players)
 	let duplicateSlugs = $derived.by(() => {
-		if (!parsedPlayers) return [];
+		if (!parsedPlayers || parsedPlayers.type !== 'success') return [];
 
 		const slugCounts = new Map<string, string[]>();
 
 		// Count slugs within the parsed data
-		parsedPlayers.forEach((player, index) => {
+		parsedPlayers.data.forEach((player, index) => {
 			const slug = player.slug || formatSlug(player.name);
 			if (!slugCounts.has(slug)) {
 				slugCounts.set(slug, []);
@@ -83,7 +142,7 @@
 		});
 
 		// Check for conflicts with existing players
-		parsedPlayers.forEach((player) => {
+		parsedPlayers.data.forEach((player) => {
 			const slug = player.slug || formatSlug(player.name);
 			if (existingSlugs.has(slug)) {
 				const existingPlayer = existingPlayers.find(
@@ -100,12 +159,12 @@
 
 	// Get duplicate slug values for highlighting (including existing players)
 	let duplicateSlugValues = $derived.by(() => {
-		if (!parsedPlayers) return new Set<string>();
+		if (!parsedPlayers || parsedPlayers.type !== 'success') return new Set<string>();
 
 		const slugCounts = new Map<string, number>();
 
 		// Count slugs within parsed data
-		parsedPlayers.forEach((player) => {
+		parsedPlayers.data.forEach((player) => {
 			const slug = player.slug || formatSlug(player.name);
 			slugCounts.set(slug, (slugCounts.get(slug) || 0) + 1);
 		});
@@ -120,7 +179,7 @@
 		});
 
 		// Check for conflicts with existing players
-		parsedPlayers.forEach((player: PlayerImportData) => {
+		parsedPlayers.data.forEach((player: PlayerImportData) => {
 			const slug = player.slug || formatSlug(player.name);
 			if (existingSlugs.has(slug)) {
 				duplicates.add(slug);
@@ -138,6 +197,7 @@
 
 	// Get the reason for duplicate (internal or existing conflict)
 	function getDuplicateReason(player: PlayerImportData): string {
+		if (!parsedPlayers || parsedPlayers.type !== 'success') return '';
 		const slug = player.slug || formatSlug(player.name);
 
 		// Check if it conflicts with existing players
@@ -150,7 +210,7 @@
 
 		// Check if it's duplicate within parsed data
 		const slugCounts = new Map<string, string[]>();
-		parsedPlayers?.forEach((p: PlayerImportData) => {
+		parsedPlayers.data.forEach((p: PlayerImportData) => {
 			const pSlug = p.slug || formatSlug(p.name);
 			if (!slugCounts.has(pSlug)) {
 				slugCounts.set(pSlug, []);
@@ -186,12 +246,12 @@
 
 	// Check for duplicate account IDs in parsed data (including against existing players)
 	let duplicateAccountIds = $derived.by(() => {
-		if (!parsedPlayers) return [];
+		if (!parsedPlayers || parsedPlayers.type !== 'success') return [];
 
 		const accountIdCounts = new Map<number, string[]>();
 
 		// Count account IDs within the parsed data
-		parsedPlayers.forEach((player) => {
+		parsedPlayers.data.forEach((player) => {
 			player.gameAccounts?.forEach((account) => {
 				if (!accountIdCounts.has(account.accountId)) {
 					accountIdCounts.set(account.accountId, []);
@@ -210,7 +270,7 @@
 		});
 
 		// Check for conflicts with existing players
-		parsedPlayers.forEach((player) => {
+		parsedPlayers.data.forEach((player) => {
 			player.gameAccounts?.forEach((account) => {
 				if (existingAccountIds.has(account.accountId)) {
 					const existingPlayer = existingPlayers.find(
@@ -238,12 +298,12 @@
 
 	// Get duplicate account ID values for highlighting
 	let duplicateAccountIdValues = $derived.by(() => {
-		if (!parsedPlayers) return new Set<number>();
+		if (!parsedPlayers || parsedPlayers.type !== 'success') return new Set<number>();
 
 		const accountIdCounts = new Map<number, number>();
 
 		// Count account IDs within parsed data
-		parsedPlayers.forEach((player) => {
+		parsedPlayers.data.forEach((player) => {
 			player.gameAccounts?.forEach((account) => {
 				accountIdCounts.set(account.accountId, (accountIdCounts.get(account.accountId) || 0) + 1);
 			});
@@ -259,7 +319,7 @@
 		});
 
 		// Check for conflicts with existing players
-		parsedPlayers.forEach((player) => {
+		parsedPlayers.data.forEach((player) => {
 			player.gameAccounts?.forEach((account) => {
 				if (existingAccountIds.has(account.accountId)) {
 					duplicates.add(account.accountId);
@@ -303,7 +363,8 @@
 				} else {
 					// Check if it's duplicate within parsed data
 					const accountIdCounts = new Map<number, string[]>();
-					parsedPlayers?.forEach((p: PlayerImportData) => {
+					if (!parsedPlayers || parsedPlayers.type !== 'success') return '';
+					parsedPlayers.data.forEach((p: PlayerImportData) => {
 						p.gameAccounts?.forEach((ga) => {
 							if (!accountIdCounts.has(ga.accountId)) {
 								accountIdCounts.set(ga.accountId, []);
@@ -453,55 +514,8 @@ const players: PlayerImportData[] = [
   }
 ]`;
 
-	async function handleParseJson() {
-		try {
-			importError = '';
-			parsedPlayers = null;
-
-			// Clean the data by removing comments and fixing common issues
-			let cleanedData = importJsonData
-				.replace(/\/\/.*$/gm, '') // Remove single-line comments
-				.replace(/\/\*[\s\S]*?\*\//g, '') // Remove multi-line comments
-				.trim();
-
-			// Convert TypeScript object literal syntax to JSON
-			// Replace property names without quotes to quoted property names
-			cleanedData = cleanedData
-				.replace(/(\w+):/g, '"$1":') // Convert property names to quoted
-				.replace(/'/g, '"') // Replace single quotes with double quotes
-				.replace(/(\w+):\s*\[/g, '"$1": [') // Handle array properties
-				.replace(/(\w+):\s*\{/g, '"$1": {') // Handle object properties
-				.replace(/(\w+):\s*(\d+)/g, '"$1": $2') // Handle numeric properties
-				.replace(/(\w+):\s*"([^"]*)"/g, '"$1": "$2"') // Handle string properties
-				.replace(/(\w+):\s*true/g, '"$1": true') // Handle boolean true
-				.replace(/(\w+):\s*false/g, '"$1": false'); // Handle boolean false
-
-			const parsedData = JSON.parse(cleanedData) as PlayerImportData[];
-
-			// Validate the data
-			if (!Array.isArray(parsedData)) {
-				throw new Error('Data must be an array of players');
-			}
-
-			// Validate each player
-			for (const player of parsedData) {
-				if (!player.name) {
-					throw new Error('Each player must have a name');
-				}
-			}
-
-			parsedPlayers = parsedData;
-		} catch (error) {
-			importError =
-				error instanceof Error
-					? error.message
-					: 'Invalid format. Please check your data. The import supports both JSON and TypeScript object literal formats.';
-			console.error('Parse error:', error);
-		}
-	}
-
 	async function handleImportJson() {
-		if (!parsedPlayers) return;
+		if (!parsedPlayers || parsedPlayers.type !== 'success') return;
 
 		try {
 			importError = '';
@@ -509,7 +523,7 @@ const players: PlayerImportData[] = [
 
 			// Send to server
 			const formData = new FormData();
-			formData.append('players', JSON.stringify(parsedPlayers));
+			formData.append('players', JSON.stringify(parsedPlayers.data));
 
 			const response = await fetch('?/batchCreate', {
 				method: 'POST',
@@ -648,7 +662,7 @@ const players: PlayerImportData[] = [
 				</div>
 			{/if}
 
-			{#if parsedPlayers}
+			{#if parsedPlayers && parsedPlayers.type === 'success'}
 				<div class="mb-4 rounded-md border border-slate-600 bg-slate-900 p-4">
 					<h4 class="mb-3 text-sm font-medium text-slate-200">Parsed Players</h4>
 
@@ -668,7 +682,7 @@ const players: PlayerImportData[] = [
 								</tr>
 							</thead>
 							<tbody>
-								{#each parsedPlayers as player}
+								{#each parsedPlayers.data as player}
 									<tr class="border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl">
 										<td class="px-4 py-1 text-white">
 											{player.name}
@@ -801,7 +815,7 @@ const players: PlayerImportData[] = [
 			{/if}
 
 			<div class="flex justify-end gap-3">
-				{#if parsedPlayers}
+				{#if parsedPlayers && parsedPlayers.type === 'success'}
 					<button
 						type="button"
 						class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
@@ -822,15 +836,6 @@ const players: PlayerImportData[] = [
 						{:else}
 							Import Players
 						{/if}
-					</button>
-				{:else}
-					<button
-						type="button"
-						class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600 disabled:opacity-50"
-						onclick={handleParseJson}
-						disabled={isImporting}
-					>
-						{isImporting ? 'Parsing...' : 'Parse JSON'}
 					</button>
 				{/if}
 				<button
