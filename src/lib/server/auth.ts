@@ -325,3 +325,67 @@ export async function sendPasswordResetEmail(
 		throw new Error('Failed to send password reset email');
 	}
 }
+
+export async function sendWelcomeEmail(
+	email: string,
+	username: string,
+	baseUrl: string
+): Promise<void> {
+	const resend = new Resend('**REDACTED_API_KEY**');
+	const loginUrl = `${baseUrl}/login`;
+	const logoUrl = `${baseUrl}/favicon-96x96.png`;
+
+	try {
+		await resend.emails.send({
+			from: 'support@lemontv.win',
+			to: email,
+			subject: 'Welcome to LemonTV! 🍋',
+			html: `
+				<body style="background: #18181b; margin: 0; padding: 0; font-family: 'Inter', Arial, sans-serif;">
+					<table width="100%" bgcolor="#18181b" cellpadding="0" cellspacing="0" style="padding: 0; margin: 0;">
+						<tr>
+							<td align="center" style="padding: 40px 0;">
+								<table width="100%" style="max-width: 480px; background: #23232b; border-radius: 18px; box-shadow: 0 4px 32px 0 rgba(0,0,0,0.18); overflow: hidden;">
+									<tr>
+										<td align="center" style="background: #18181b; padding: 32px 0 16px 0;">
+											<img src="${logoUrl}" alt="LemonTV Logo" style="height: 56px; margin-bottom: 8px; display: block;" />
+											<h1 style="color: #fbbf24; font-size: 2rem; font-weight: 800; margin: 0; letter-spacing: 1px;">LemonTV</h1>
+										</td>
+									</tr>
+									<tr>
+										<td style="padding: 32px 32px 24px 32px;">
+											<h2 style="color: #fff; font-size: 1.25rem; font-weight: 700; margin-bottom: 18px;">Welcome to LemonTV, ${username}! 🎉</h2>
+											<p style="color: #d1d5db; font-size: 1rem; line-height: 1.7; margin-bottom: 28px;">
+												Thank you for joining LemonTV! Your account has been successfully created and you're now ready to explore our platform.
+											</p>
+											<div style="text-align: center; margin: 32px 0;">
+												<a href="${loginUrl}"
+												   style="background: #fbbf24; color: #18181b; padding: 14px 36px; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 1.1rem; box-shadow: 0 2px 8px 0 rgba(251,191,36,0.10); display: inline-block; letter-spacing: 0.5px;">
+													Start Exploring
+												</a>
+											</div>
+											<p style="color: #d1d5db; font-size: 0.98rem; margin-bottom: 18px;">
+												You can now log in to your account and start enjoying all the features LemonTV has to offer.
+											</p>
+											<p style="color: #a1a1aa; font-size: 0.92rem; margin-top: 32px; border-top: 1px solid #2d2d36; padding-top: 18px;">
+												If you have any questions or need assistance, feel free to reach out to our support team.
+											</p>
+											<p style="color: #a1a1aa; font-size: 0.92rem;">
+												Welcome aboard! 🚀
+											</p>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</table>
+				</body>
+			`
+		});
+
+		console.info('[Auth] Welcome email sent successfully to:', email);
+	} catch (error) {
+		console.error('[Auth] Failed to send welcome email:', error);
+		throw new Error('Failed to send welcome email');
+	}
+}

@@ -130,6 +130,15 @@ export const actions: Actions = {
 				console.info('[Register] Successfully assigned admin role to user:', userId);
 			}
 
+			// Send welcome email
+			try {
+				await auth.sendWelcomeEmail(result.data.email, result.data.username, event.url.origin);
+				console.info('[Register] Welcome email sent to:', result.data.email);
+			} catch (emailError) {
+				console.error('[Register] Failed to send welcome email:', emailError);
+				// Don't fail registration if email fails, just log the error
+			}
+
 			const sessionToken = auth.generateSessionToken();
 			const session = await auth.createSession(sessionToken, userId, true);
 			auth.setSessionTokenCookie(event, sessionToken, session.expiresAt);
