@@ -31,7 +31,7 @@
 </script>
 
 <main class="mx-auto max-w-screen-lg md:px-4">
-	<h1 class="mx-0 my-10 flex items-center gap-4 text-2xl font-bold md:mx-4">
+	<h1 class="my-10 flex items-center gap-4 text-2xl font-bold">
 		{m.organizers()}
 		{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
 			<ContentActionLink href="/admin/organizers" type="edit" />

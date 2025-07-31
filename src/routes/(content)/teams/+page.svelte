@@ -33,15 +33,15 @@
 	});
 </script>
 
-<main class="mx-auto max-w-screen-lg md:px-4">
-	<div class="flex items-center gap-4">
-		<h1 class="my-10 text-2xl font-bold md:mx-0">{m.teams()}</h1>
+<main class="mx-auto max-w-screen-lg px-4 md:px-4">
+	<h1 class="my-10 flex items-center gap-4 text-2xl font-bold">
+		{m.teams()}
 		{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
 			<ContentActionLink href="/admin/teams" type="edit" />
 		{/if}
-	</div>
+	</h1>
 
-	<div class="mb-4 flex flex-col items-center justify-end gap-2 md:flex-row">
+	<div class="mb-4 flex flex-col items-center justify-end gap-2 sm:flex-row">
 		<SearchInput bind:search filtered={filtered.length} total={data.teams.length} />
 	</div>
 

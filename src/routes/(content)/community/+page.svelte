@@ -69,12 +69,12 @@
 </script>
 
 <main class="mx-auto max-w-screen-lg">
-	<div class="flex items-center gap-4">
-		<h1 class="my-10 text-2xl font-bold">{m.community()}</h1>
+	<h1 class="my-10 flex items-center gap-4 text-2xl font-bold">
+		{m.community()}
 		{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
 			<ContentActionLink href="/admin/community" type="edit" />
 		{/if}
-	</div>
+	</h1>
 
 	<h2 class="text-xl font-bold">Discord</h2>
 	<div class="m-4 grid grid-cols-1 gap-4 p-2 sm:grid-cols-2 lg:grid-cols-3">
