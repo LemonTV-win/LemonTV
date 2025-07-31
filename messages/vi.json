@@ -491,5 +491,7 @@
 	"region_ranking": "Xếp hạng khu vực",
 	"teams_and_players": "Đội và người chơi",
 	"strinova_server": "Strinova",
-	"calabiyau_server": "CalabiYau"
+	"calabiyau_server": "CalabiYau",
+	"games_played": "Số trận đã chơi",
+	"superstring_power": "Sức mạnh Superstring"
 }

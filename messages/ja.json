@@ -7,7 +7,7 @@
 	"upcoming": "開催予定",
 	"attending_teams": "参加チーム",
 	"other_teams": "その他のチーム",
-	"superstrings": "スーパーストリングス",
+	"superstrings": "超弦体",
 	"stats": "統計",
 	"attended_events": "参加イベント",
 	"recent_matches": "最近の試合",
@@ -491,5 +491,7 @@
 	"region_ranking": "地域ランキング",
 	"teams_and_players": "チームとプレイヤー",
 	"strinova_server": "グロ版",
-	"calabiyau_server": "大陸版"
+	"calabiyau_server": "大陸版",
+	"games_played": "試合数",
+	"superstring_power": "超弦体パワー"
 }

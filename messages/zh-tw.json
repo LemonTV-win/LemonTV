@@ -491,5 +491,7 @@
 	"region_ranking": "地區排名",
 	"teams_and_players": "隊伍和玩家",
 	"strinova_server": "國際服",
-	"calabiyau_server": "國服"
+	"calabiyau_server": "國服",
+	"games_played": "遊戲次數",
+	"superstring_power": "超弦體能量"
 }

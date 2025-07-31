@@ -491,5 +491,7 @@
 	"region_ranking": "Регіональний рейтинг",
 	"teams_and_players": "Команди та гравці",
 	"strinova_server": "Strinova",
-	"calabiyau_server": "CalabiYau"
+	"calabiyau_server": "CalabiYau",
+	"games_played": "Кількість ігор",
+	"superstring_power": "Сила суперструн"
 }

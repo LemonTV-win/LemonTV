@@ -1837,3 +1837,234 @@ export async function getAllPlayersEssentialStats(): Promise<PlayerEssentialStat
 	console.info('[Players] Successfully calculated essential stats for', result.length, 'players');
 	return result;
 }
+
+// Superstring Power calculation function
+export function calculateSuperstringPower(
+	scores: number[],
+	wins: number = 0
+): { power: number; gamesPlayed: number; wins: number } {
+	if (scores.length === 0) {
+		return { power: 0, gamesPlayed: 0, wins: 0 };
+	}
+
+	const totalScore = scores.reduce((sum, score) => sum + score, 0);
+	const averageScore = totalScore / scores.length;
+
+	return {
+		power: averageScore * 10 + 2500,
+		gamesPlayed: scores.length,
+		wins
+	};
+}
+
+export async function getServerPlayerSuperstringPower(
+	playerId: string,
+	character: Character
+): Promise<{ power: number; gamesPlayed: number; wins: number }> {
+	console.info(
+		'[Players] Fetching Superstring Power for player:',
+		playerId,
+		'with character:',
+		character
+	);
+
+	// Get the player's game accounts
+	const playerAccounts = await db
+		.select()
+		.from(gameAccount)
+		.where(eq(gameAccount.playerId, playerId));
+
+	if (playerAccounts.length === 0) {
+		console.warn('[Players] No game accounts found for player:', playerId);
+		return { power: 0, gamesPlayed: 0, wins: 0 };
+	}
+
+	// Get all account IDs for this player
+	const accountIds = playerAccounts.map((acc) => acc.accountId);
+
+	// Find all games where this player used the specific character with game results
+	const playerGames = await db
+		.select({
+			score: schema.gamePlayerScore.score,
+			gameId: schema.gamePlayerScore.gameId,
+			teamId: schema.gamePlayerScore.teamId,
+			winner: schema.game.winner,
+			teamPosition: schema.gameTeam.position
+		})
+		.from(schema.gamePlayerScore)
+		.innerJoin(schema.game, eq(schema.game.id, schema.gamePlayerScore.gameId))
+		.innerJoin(schema.gameTeam, eq(schema.gamePlayerScore.teamId, schema.gameTeam.teamId))
+		.where(
+			and(
+				inArray(schema.gamePlayerScore.accountId, accountIds),
+				or(
+					eq(schema.gamePlayerScore.characterFirstHalf, character),
+					eq(schema.gamePlayerScore.characterSecondHalf, character)
+				)
+			)
+		);
+
+	if (playerGames.length === 0) {
+		console.info('[Players] Player', playerId, 'never used character:', character);
+		return { power: 0, gamesPlayed: 0, wins: 0 };
+	}
+
+	// Calculate wins
+	let wins = 0;
+	const processedGames = new Set<number>();
+
+	for (const game of playerGames) {
+		if (processedGames.has(game.gameId)) {
+			continue;
+		}
+
+		// Check if player's team won using the actual team position
+		// winner: 0 = team A won, 1 = team B won
+		const playerWon = game.winner === game.teamPosition;
+
+		if (playerWon) {
+			wins++;
+		}
+
+		processedGames.add(game.gameId);
+	}
+
+	// Extract scores and calculate power
+	const scores = playerGames.map((game) => game.score);
+	const result = calculateSuperstringPower(scores, wins);
+
+	console.info(
+		'[Players] Player',
+		playerId,
+		'Superstring Power for',
+		character,
+		':',
+		result.power,
+		'from',
+		result.gamesPlayed,
+		'games with',
+		result.wins,
+		'wins'
+	);
+	return result;
+}
+
+export async function getAllPlayersSuperstringPower(
+	character: Character
+): Promise<{ playerId: string; power: number; gamesPlayed: number; wins: number }[]> {
+	console.info('[Players] Fetching Superstring Power for all players with character:', character);
+
+	// Get all players
+	const allPlayers = await db.select().from(player);
+	const playerIds = allPlayers.map((p) => p.id);
+
+	// Get all game accounts for these players
+	const allPlayerAccounts = await db
+		.select()
+		.from(gameAccount)
+		.where(inArray(gameAccount.playerId, playerIds));
+
+	// Group accounts by player ID
+	const accountsByPlayer = new Map<string, number[]>();
+	for (const account of allPlayerAccounts) {
+		if (!accountsByPlayer.has(account.playerId)) {
+			accountsByPlayer.set(account.playerId, []);
+		}
+		accountsByPlayer.get(account.playerId)!.push(account.accountId);
+	}
+
+	// Get all account IDs
+	const allAccountIds = allPlayerAccounts.map((acc) => acc.accountId);
+
+	if (allAccountIds.length === 0) {
+		console.warn('[Players] No game accounts found for any players');
+		return [];
+	}
+
+	// Find all games where these players used the specific character with game results
+	const allPlayerGames = await db
+		.select({
+			accountId: schema.gamePlayerScore.accountId,
+			score: schema.gamePlayerScore.score,
+			gameId: schema.gamePlayerScore.gameId,
+			teamId: schema.gamePlayerScore.teamId,
+			winner: schema.game.winner,
+			teamPosition: schema.gameTeam.position
+		})
+		.from(schema.gamePlayerScore)
+		.innerJoin(schema.game, eq(schema.game.id, schema.gamePlayerScore.gameId))
+		.innerJoin(schema.gameTeam, eq(schema.gamePlayerScore.teamId, schema.gameTeam.teamId))
+		.where(
+			and(
+				inArray(schema.gamePlayerScore.accountId, allAccountIds),
+				or(
+					eq(schema.gamePlayerScore.characterFirstHalf, character),
+					eq(schema.gamePlayerScore.characterSecondHalf, character)
+				)
+			)
+		);
+
+	// Group games by player ID
+	const gamesByPlayer = new Map<string, typeof allPlayerGames>();
+	for (const game of allPlayerGames) {
+		// Find which player this account belongs to
+		for (const [playerId, accountIds] of accountsByPlayer.entries()) {
+			if (accountIds.includes(game.accountId)) {
+				if (!gamesByPlayer.has(playerId)) {
+					gamesByPlayer.set(playerId, []);
+				}
+				gamesByPlayer.get(playerId)!.push(game);
+				break;
+			}
+		}
+	}
+
+	// Calculate Superstring Power for each player
+	const result: { playerId: string; power: number; gamesPlayed: number; wins: number }[] = [];
+
+	for (const playerId of playerIds) {
+		const playerGames = gamesByPlayer.get(playerId);
+
+		if (playerGames && playerGames.length > 0) {
+			// Calculate wins for this player
+			let wins = 0;
+			const processedGames = new Set<number>();
+
+			for (const game of playerGames) {
+				if (processedGames.has(game.gameId)) {
+					continue;
+				}
+
+				// Check if player's team won using the actual team position
+				const playerWon = game.winner === game.teamPosition;
+
+				if (playerWon) {
+					wins++;
+				}
+
+				processedGames.add(game.gameId);
+			}
+
+			const scores = playerGames.map((game) => game.score);
+			const powerData = calculateSuperstringPower(scores, wins);
+
+			result.push({
+				playerId,
+				power: powerData.power,
+				gamesPlayed: powerData.gamesPlayed,
+				wins: powerData.wins
+			});
+		}
+	}
+
+	// Sort by power (descending)
+	result.sort((a, b) => b.power - a.power);
+
+	console.info(
+		'[Players] Found Superstring Power for',
+		result.length,
+		'players with character:',
+		character
+	);
+	return result;
+}

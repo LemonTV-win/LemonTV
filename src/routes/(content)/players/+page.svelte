@@ -7,6 +7,7 @@
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 	import { SvelteURLSearchParams } from 'svelte/reactivity';
 	import RegionRanking from './RegionRanking.svelte';
+	import SuperstringRanking from './SuperstringRanking.svelte';
 	import PlayerTable from './PlayerTable.svelte';
 	import PlayerFilters from './PlayerFilters.svelte';
 	import type { TCountryCode } from 'countries-list';
@@ -17,7 +18,7 @@
 	let search = $state(data.search || '');
 	let selectedNationalities = $state<TCountryCode[]>(data.nationalities || []);
 	let selectedSuperstrings = $state<Character[]>(data.superstrings || []);
-	let activeTab = $state<'players' | 'region-ranking'>(data.activeTab);
+	let activeTab = $state<'players' | 'region-ranking' | 'superstring-ranking'>(data.activeTab);
 
 	let sortBy:
 		| 'name-abc'
@@ -44,6 +45,16 @@
 		| 'wins-desc'
 		| 'rating-asc'
 		| 'rating-desc' = $state('players-desc');
+
+	let superstringSortBy:
+		| 'power-asc'
+		| 'power-desc'
+		| 'games-asc'
+		| 'games-desc'
+		| 'wins-asc'
+		| 'wins-desc'
+		| 'name-asc'
+		| 'name-desc' = $state('power-desc');
 
 	let sorted = $derived(
 		data.players.toSorted((a, b) => {
@@ -166,6 +177,11 @@
 			() => (activeTab = 'region-ranking'),
 			m.region_ranking()
 		)}
+		{@render tabButton(
+			activeTab === 'superstring-ranking',
+			() => (activeTab = 'superstring-ranking'),
+			m.superstring_power()
+		)}
 	</div>
 
 	{#if activeTab === 'players'}
@@ -186,5 +202,15 @@
 
 	{#if activeTab === 'region-ranking'}
 		<RegionRanking players={data.players} {uniqueNationalities} {regionSortBy} />
+	{/if}
+
+	{#if activeTab === 'superstring-ranking'}
+		<SuperstringRanking
+			players={data.players}
+			superstringPowerData={data.superstringPowerData}
+			playersTeams={data.playersTeams}
+			selectedCharacter={selectedSuperstrings[0]}
+			sortBy={superstringSortBy}
+		/>
 	{/if}
 </main>

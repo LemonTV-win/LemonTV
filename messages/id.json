@@ -491,5 +491,7 @@
 	"region_ranking": "Peringkat Wilayah",
 	"teams_and_players": "Tim dan Pemain",
 	"strinova_server": "Strinova",
-	"calabiyau_server": "CalabiYau"
+	"calabiyau_server": "CalabiYau",
+	"games_played": "Jumlah pertandingan",
+	"superstring_power": "Kekuatan Superstring"
 }

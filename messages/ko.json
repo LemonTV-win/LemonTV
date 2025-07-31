@@ -491,5 +491,7 @@
 	"region_ranking": "지역 순위",
 	"teams_and_players": "팀과 플레이어",
 	"strinova_server": "스토리노바",
-	"calabiyau_server": "칼라비야우"
+	"calabiyau_server": "칼라비야우",
+	"games_played": "게임 수",
+	"superstring_power": "슈퍼스트링 파워"
 }
