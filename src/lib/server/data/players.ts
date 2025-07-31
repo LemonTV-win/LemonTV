@@ -1006,7 +1006,7 @@ export async function createPlayer(
 		await tx.insert(player).values({
 			id,
 			name: data.name,
-			slug,
+			slug: slug,
 			nationality: primaryNationality,
 			userId
 		});

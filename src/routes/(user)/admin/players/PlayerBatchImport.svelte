@@ -4,6 +4,7 @@
 	import Highlight from 'svelte-highlight';
 	import typescript from 'svelte-highlight/languages/typescript';
 	import '$lib/highlight.css';
+	import { formatSlug } from '$lib/utils/strings';
 
 	import { deserialize } from '$app/forms';
 
@@ -74,7 +75,7 @@
 
 		// Count slugs within the parsed data
 		parsedPlayers.forEach((player, index) => {
-			const slug = player.slug || player.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+			const slug = player.slug || formatSlug(player.name);
 			if (!slugCounts.has(slug)) {
 				slugCounts.set(slug, []);
 			}
@@ -92,7 +93,7 @@
 
 		// Check for conflicts with existing players
 		parsedPlayers.forEach((player) => {
-			const slug = player.slug || player.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+			const slug = player.slug || formatSlug(player.name);
 			if (existingSlugSet.has(slug)) {
 				const existingPlayer = existingPlayers.find(
 					(p: { id: string; name: string; slug: string }) => p.slug === slug
@@ -114,7 +115,7 @@
 
 		// Count slugs within parsed data
 		parsedPlayers.forEach((player) => {
-			const slug = player.slug || player.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+			const slug = player.slug || formatSlug(player.name);
 			slugCounts.set(slug, (slugCounts.get(slug) || 0) + 1);
 		});
 
@@ -129,7 +130,7 @@
 
 		// Check for conflicts with existing players
 		parsedPlayers.forEach((player: PlayerImportData) => {
-			const slug = player.slug || player.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+			const slug = player.slug || formatSlug(player.name);
 			if (existingSlugs().has(slug)) {
 				duplicates.add(slug);
 			}
@@ -140,13 +141,13 @@
 
 	// Check if a player has a duplicate slug (including against existing players)
 	function isDuplicateSlug(player: PlayerImportData): boolean {
-		const slug = player.slug || player.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+		const slug = player.slug || formatSlug(player.name);
 		return duplicateSlugValues().has(slug);
 	}
 
 	// Get the reason for duplicate (internal or existing conflict)
 	function getDuplicateReason(player: PlayerImportData): string {
-		const slug = player.slug || player.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+		const slug = player.slug || formatSlug(player.name);
 
 		// Check if it conflicts with existing players
 		if (existingSlugs().has(slug)) {
@@ -159,7 +160,7 @@
 		// Check if it's duplicate within parsed data
 		const slugCounts = new Map<string, string[]>();
 		parsedPlayers?.forEach((p: PlayerImportData) => {
-			const pSlug = p.slug || p.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+			const pSlug = p.slug || formatSlug(p.name);
 			if (!slugCounts.has(pSlug)) {
 				slugCounts.set(pSlug, []);
 			}
@@ -688,7 +689,7 @@ const players: PlayerImportData[] = [
 												: ''}"
 											title={isDuplicateSlug(player) ? getDuplicateReason(player) : ''}
 										>
-											{player.slug || player.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}
+											{player.slug || formatSlug(player.name)}
 										</td>
 										<td class="max-w-6 px-4 py-1 text-gray-300">
 											{#each player.nationalities ?? [] as nationality, idx (idx)}

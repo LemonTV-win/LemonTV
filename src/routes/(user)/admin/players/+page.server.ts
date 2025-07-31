@@ -13,6 +13,7 @@ import type { User, UserRole } from '$lib/data/user';
 import { social_platform } from '$lib/server/db/schemas/game/social';
 import { db } from '$lib/server/db';
 import { getUsers } from '$lib/server/data/users';
+import { formatSlug } from '$lib/utils/strings';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const players = await getPlayers();
@@ -308,7 +309,7 @@ export const actions = {
 					const playerId = await createPlayer(
 						{
 							name: playerData.name,
-							slug: playerData.slug || playerData.name.toLowerCase().replace(/[^a-z0-9]/g, '-'),
+							slug: playerData.slug || formatSlug(playerData.name),
 							nationalities: playerData.nationalities || [],
 							aliases: playerData.aliases || [],
 							gameAccounts: playerData.gameAccounts || [],
