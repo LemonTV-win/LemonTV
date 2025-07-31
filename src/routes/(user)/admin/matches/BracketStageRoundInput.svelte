@@ -32,7 +32,7 @@
 			bind:value={selectedRoundIndex}
 			class="mt-1 block w-64 rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 		>
-			{#each rounds as round, roundIndex (round.id)}
+			{#each rounds as round, roundIndex (`round-#${roundIndex}`)}
 				<option value={roundIndex}>{roundIndex + 1}: {round.title || round.type}</option>
 			{/each}
 			<option disabled>──────────</option>
@@ -98,7 +98,7 @@
 						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 					>
 						<option value={undefined}>None</option>
-						{#each rounds.filter((r) => r.parallelGroup === undefined && r.id !== round.id) as availableRound (availableRound.id)}
+						{#each rounds.filter((r) => r.parallelGroup === undefined && r.id !== round.id) as availableRound (`available-round-#${availableRound.id}`)}
 							<option value={availableRound.id}>
 								{availableRound.title || availableRound.type}
 							</option>
