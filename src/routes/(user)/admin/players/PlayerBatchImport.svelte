@@ -642,7 +642,9 @@ const players: PlayerImportData[] = [
 								Copy Schema
 							</button>
 						</div>
-						<div class="max-h-100 overflow-x-auto overflow-y-auto text-xs">
+						<div
+							class="max-h-100 overflow-x-auto overflow-y-auto text-xs [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800"
+						>
 							<Highlight language={typescript} code={TYPESCRIPT_SCHEMA} />
 						</div>
 					</div>
@@ -652,7 +654,7 @@ const players: PlayerImportData[] = [
 					id="jsonData"
 					bind:value={importJsonData}
 					placeholder={`Paste your JSON data here. Example: \n${EXAMPLE_JSON_DATA}`}
-					class="h-64 w-full rounded-md border border-slate-700 bg-slate-900 p-3 font-mono text-sm text-slate-200 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+					class="h-64 w-full rounded-md border border-slate-700 bg-slate-900 p-3 font-mono text-sm text-slate-200 focus:ring-2 focus:ring-yellow-500 focus:outline-none [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800"
 				></textarea>
 			</div>
 
