@@ -64,11 +64,11 @@
 		class="flex w-full items-center gap-2 rounded border border-slate-700 bg-slate-800 px-3 py-2 text-left text-white hover:border-yellow-500 focus:border-yellow-500 focus:outline-none"
 		onclick={toggle}
 	>
+		<CharacterIcon character={value} class="h-6 w-6" />
 		{#if value}
-			<CharacterIcon character={value} class="h-6 w-6" />
 			<span>{CHARACTER_NAMES[value as Character]() ?? value}</span>
 		{:else}
-			<span class="text-gray-400">{m.select_character()}</span>
+			<span class="text-gray-400">{m.character()}...</span>
 		{/if}
 		<span class="ml-auto text-gray-400">▼</span>
 	</button>

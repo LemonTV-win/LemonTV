@@ -461,6 +461,7 @@
 	"category": "Category",
 	"select_category": "Select Category",
 	"select_character": "Select character...",
+	"character": "Character",
 	"value": "Value",
 	"add_tag": "Add Tag",
 	"edit_tag": "Edit Tag",

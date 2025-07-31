@@ -461,6 +461,7 @@
 	"category": "카테고리",
 	"select_category": "카테고리 선택",
 	"select_character": "캐릭터 선택...",
+	"character": "캐릭터",
 	"value": "값",
 	"add_tag": "태그 추가",
 	"edit_tag": "태그 수정",
