@@ -1109,7 +1109,7 @@ export async function createPlayer(
 			await tx.insert(gameAccount).values(
 				data.gameAccounts.map((account) => ({
 					playerId: id,
-					server: 'Strinova',
+					server: account.region === 'CN' ? 'CalabiYau' : 'Strinova',
 					accountId: account.accountId,
 					currentName: account.currentName,
 					region: account.region
@@ -1350,7 +1350,7 @@ export async function updatePlayer(
 			await tx.insert(gameAccount).values(
 				data.gameAccounts.map((account) => ({
 					playerId: data.id,
-					server: 'Strinova',
+					server: account.region === 'CN' ? 'CalabiYau' : 'Strinova',
 					accountId: account.accountId,
 					currentName: account.currentName,
 					region: account.region
