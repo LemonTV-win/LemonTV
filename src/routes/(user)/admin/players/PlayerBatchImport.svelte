@@ -52,18 +52,17 @@
 	let parsedPlayers = $state<PlayerImportData[] | null>(null);
 
 	// Get all existing slugs for comparison
-	let existingSlugs = $derived(() => {
-		return new Set(
+	let existingSlugs = $derived(
+		new Set(
 			existingPlayers.map((player: { id: string; name: string; slug: string }) => player.slug)
-		);
-	});
+		)
+	);
 
 	// Check for duplicate slugs in parsed data (including against existing players)
 	let duplicateSlugs = $derived.by(() => {
 		if (!parsedPlayers) return [];
 
 		const slugCounts = new Map<string, string[]>();
-		const existingSlugSet = existingSlugs();
 
 		// Count slugs within the parsed data
 		parsedPlayers.forEach((player, index) => {
@@ -86,7 +85,7 @@
 		// Check for conflicts with existing players
 		parsedPlayers.forEach((player) => {
 			const slug = player.slug || formatSlug(player.name);
-			if (existingSlugSet.has(slug)) {
+			if (existingSlugs.has(slug)) {
 				const existingPlayer = existingPlayers.find(
 					(p: { id: string; name: string; slug: string }) => p.slug === slug
 				);
@@ -123,7 +122,7 @@
 		// Check for conflicts with existing players
 		parsedPlayers.forEach((player: PlayerImportData) => {
 			const slug = player.slug || formatSlug(player.name);
-			if (existingSlugs().has(slug)) {
+			if (existingSlugs.has(slug)) {
 				duplicates.add(slug);
 			}
 		});
@@ -142,7 +141,7 @@
 		const slug = player.slug || formatSlug(player.name);
 
 		// Check if it conflicts with existing players
-		if (existingSlugs().has(slug)) {
+		if (existingSlugs.has(slug)) {
 			const existingPlayer = existingPlayers.find(
 				(p: { id: string; name: string; slug: string }) => p.slug === slug
 			);
