@@ -218,31 +218,50 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		`[Admin][Matches][Load] Team rosters query completed in ${rostersEndTime - rostersStartTime}ms, returned ${teamRosters.length} rows`
 	);
 
+	// #region Image URL processing
 	console.log('[Admin][Matches][Load] Starting image URL processing');
 	const imageProcessingStartTime = Date.now();
 
-	// Process image URLs for teams
-	const processedEvents = await Promise.all(
-		events.map(async (row) => ({
-			...row,
-			event: {
-				...row.event,
-				image: row.event.image ? await processImageURL(row.event.image) : null
-			},
-			teams: row.teams
-				? {
-						...row.teams,
-						logo: row.teams.logo ? await processImageURL(row.teams.logo) : null
-					}
-				: null,
-			map: row.map
-		}))
+	// Step 1: Collect unique image URLs
+	const uniqueImageUrls = new Set<string>();
+
+	for (const row of events) {
+		if (row.event.image) uniqueImageUrls.add(row.event.image);
+		if (row.teams?.logo) uniqueImageUrls.add(row.teams.logo);
+	}
+
+	// Step 2: Process all image URLs in parallel
+	const imageUrlMap = new Map<string, string>();
+
+	await Promise.all(
+		Array.from(uniqueImageUrls).map(async (url) => {
+			const processed = await processImageURL(url);
+			imageUrlMap.set(url, processed);
+		})
 	);
+
+	// Step 3: Apply processed URLs to the data
+	const processedEvents = events.map((row) => ({
+		...row,
+		event: {
+			...row.event,
+			image: row.event.image ? imageUrlMap.get(row.event.image) || null : null
+		},
+		teams: row.teams
+			? {
+					...row.teams,
+					logo: row.teams.logo ? imageUrlMap.get(row.teams.logo) || null : null
+				}
+			: null,
+		map: row.map
+	}));
 
 	const imageProcessingEndTime = Date.now();
 	console.log(
 		`[Admin][Matches][Load] Image URL processing completed in ${imageProcessingEndTime - imageProcessingStartTime}ms`
 	);
+
+	// #endregion
 
 	console.log('[Admin][Matches][Load] Starting team roster processing');
 	const rosterProcessingStartTime = Date.now();

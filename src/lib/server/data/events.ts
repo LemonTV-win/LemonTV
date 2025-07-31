@@ -248,11 +248,33 @@ export async function getEssentialEvents(): Promise<EssentialEvent[]> {
 
 	// Convert to EssentialEvent format
 	const finalProcessingStart = performance.now();
-	const result = await Promise.all(
-		Array.from(eventsMap.values()).map(async ({ event, organizers, videos, uniqueTeams }) => {
+
+	// Step 1: Collect unique image URLs
+	const uniqueImageUrls = new Set<string>();
+
+	for (const { event, organizers } of eventsMap.values()) {
+		if (event.image) uniqueImageUrls.add(event.image);
+		for (const organizer of organizers) {
+			if (organizer.logo) uniqueImageUrls.add(organizer.logo);
+		}
+	}
+
+	// Step 2: Process all image URLs in parallel
+	const imageUrlMap = new Map<string, string>();
+
+	await Promise.all(
+		Array.from(uniqueImageUrls).map(async (url) => {
+			const processed = await processImageURL(url);
+			imageUrlMap.set(url, processed);
+		})
+	);
+
+	// Step 3: Apply processed URLs to the data
+	const result = Array.from(eventsMap.values()).map(
+		({ event, organizers, videos, uniqueTeams }) => {
 			return {
 				slug: event.slug,
-				imageURL: await processImageURL(event.image),
+				imageURL: event.image ? imageUrlMap.get(event.image) || undefined : undefined,
 				image: event.image,
 				name: event.name,
 				status: event.status as 'upcoming' | 'live' | 'finished' | 'cancelled' | 'postponed',
@@ -263,10 +285,17 @@ export async function getEssentialEvents(): Promise<EssentialEvent[]> {
 				format: event.format as 'lan' | 'online' | 'hybrid',
 				official: event.official,
 				organizers:
-					organizers.length > 0 ? await Promise.all(organizers.map(convertOrganizer)) : undefined,
+					organizers.length > 0
+						? organizers.map((organizer) => ({
+								...organizer,
+								logo: organizer.logo
+									? imageUrlMap.get(organizer.logo) || organizer.logo
+									: organizer.logo
+							}))
+						: undefined,
 				videos: videos.length > 0 ? videos : undefined
 			};
-		})
+		}
 	);
 	const finalProcessingDuration = performance.now() - finalProcessingStart;
 	console.info(`[Events] Essential final processing took ${finalProcessingDuration.toFixed(2)}ms`);
@@ -827,6 +856,33 @@ export async function getEvent(id: string): Promise<AppEvent | undefined> {
 	const processingDuration = performance.now() - processingStart;
 	console.info(`[Events] Data processing took ${processingDuration.toFixed(2)}ms`);
 
+	// Step 1: Collect unique image URLs
+	const uniqueImageUrls = new Set<string>();
+
+	if (eventData.event.image) uniqueImageUrls.add(eventData.event.image);
+	for (const organizer of processedOrganizers) {
+		if (organizer.logo) uniqueImageUrls.add(organizer.logo);
+	}
+
+	// Step 2: Process all image URLs in parallel
+	const imageUrlMap = new Map<string, string>();
+
+	await Promise.all(
+		Array.from(uniqueImageUrls).map(async (url) => {
+			const processed = await processImageURL(url);
+			imageUrlMap.set(url, processed);
+		})
+	);
+
+	// Step 3: Apply processed URLs to the data
+	const processedOrganizersWithImages = processedOrganizers.map((organizer) => ({
+		...organizer,
+		logo: organizer.logo ? imageUrlMap.get(organizer.logo) || organizer.logo : organizer.logo,
+		description: organizer.description ?? undefined,
+		url: organizer.url ?? undefined,
+		type: organizer.type ?? undefined
+	}));
+
 	// Build the final event object
 	const event: AppEvent = {
 		id: eventData.event.id,
@@ -837,10 +893,12 @@ export async function getEvent(id: string): Promise<AppEvent | undefined> {
 		format: eventData.event.format as 'lan' | 'online' | 'hybrid',
 		region: eventData.event.region as Region,
 		image: eventData.event.image,
-		imageURL: await processImageURL(eventData.event.image),
+		imageURL: eventData.event.image
+			? imageUrlMap.get(eventData.event.image) || undefined
+			: undefined,
 		status: eventData.event.status as 'upcoming' | 'live' | 'finished' | 'cancelled' | 'postponed',
 		stages: processedStages,
-		organizers: await Promise.all(processedOrganizers.map(convertOrganizer)),
+		organizers: processedOrganizersWithImages,
 		capacity: eventData.event.capacity,
 		date: eventData.event.date,
 		websites: processedWebsites.length > 0 ? processedWebsites : undefined,
@@ -979,28 +1037,58 @@ export async function getEventsForAdminPage(): Promise<
 
 	// Convert to admin page format
 	const finalProcessingStart = performance.now();
-	const result = await Promise.all(
-		Array.from(eventsMap.values()).map(async ({ event, organizers, websites, videos }) => {
-			return {
-				id: event.id,
-				slug: event.slug,
-				name: event.name,
-				server: event.server,
-				capacity: event.capacity,
-				format: event.format,
-				region: event.region,
-				status: event.status,
-				official: event.official,
-				date: event.date,
-				image: event.image,
-				imageURL: await processImageURL(event.image),
-				organizers:
-					organizers.length > 0 ? await Promise.all(organizers.map(convertOrganizer)) : [],
-				websites: websites.length > 0 ? websites : undefined,
-				videos: videos.length > 0 ? videos : undefined
-			};
+
+	// Step 1: Collect unique image URLs
+	const uniqueImageUrls = new Set<string>();
+
+	for (const { event, organizers } of eventsMap.values()) {
+		if (event.image) uniqueImageUrls.add(event.image);
+		for (const organizer of organizers) {
+			if (organizer.logo) uniqueImageUrls.add(organizer.logo);
+		}
+	}
+
+	// Step 2: Process all image URLs in parallel
+	const imageUrlMap = new Map<string, string>();
+
+	await Promise.all(
+		Array.from(uniqueImageUrls).map(async (url) => {
+			const processed = await processImageURL(url);
+			imageUrlMap.set(url, processed);
 		})
 	);
+
+	// Step 3: Apply processed URLs to the data
+	const result = Array.from(eventsMap.values()).map(({ event, organizers, websites, videos }) => {
+		return {
+			id: event.id,
+			slug: event.slug,
+			name: event.name,
+			server: event.server,
+			capacity: event.capacity,
+			format: event.format,
+			region: event.region,
+			status: event.status,
+			official: event.official,
+			date: event.date,
+			image: event.image,
+			imageURL: event.image ? imageUrlMap.get(event.image) || undefined : undefined,
+			organizers:
+				organizers.length > 0
+					? organizers.map((organizer) => ({
+							...organizer,
+							logo: organizer.logo
+								? imageUrlMap.get(organizer.logo) || organizer.logo
+								: organizer.logo,
+							description: organizer.description ?? undefined,
+							url: organizer.url ?? undefined,
+							type: organizer.type ?? undefined
+						}))
+					: [],
+			websites: websites.length > 0 ? websites : undefined,
+			videos: videos.length > 0 ? videos : undefined
+		};
+	});
 	const finalProcessingDuration = performance.now() - finalProcessingStart;
 	console.info(`[Events] Admin final processing took ${finalProcessingDuration.toFixed(2)}ms`);
 
