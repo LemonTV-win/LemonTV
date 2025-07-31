@@ -32,7 +32,7 @@
 		bind:value={selectedNodeIndex}
 		class="mt-1 block w-64 rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 	>
-		{#each nodes as node, nodeIndex (nodeIndex)}
+		{#each nodes as node, nodeIndex (`node-#${nodeIndex}`)}
 			{@const match = matches.find((m: (typeof matches)[0]) => m.id === node.matchId)}
 			{@const round = rounds.find((r) => r.id === node.roundId || r.id === node.roundId)}
 			{@const team1Score = match?.teams[0]?.score || 0}
@@ -62,7 +62,7 @@
 						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 					>
 						<option value="">Select Match</option>
-						{#each getAvailableMatches(nodeIndex) as match (match.id)}
+						{#each getAvailableMatches(nodeIndex) as match (`match-#${match.id}`)}
 							{@const team1Score = match.teams[0]?.score || 0}
 							{@const team2Score = match.teams[1]?.score || 0}
 							<option value={match.id}>
@@ -83,7 +83,7 @@
 							bind:value={node.roundId}
 							class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 						>
-							{#each rounds as round, roundIndex (round.id)}
+							{#each rounds as round, roundIndex (`round-#${roundIndex}`)}
 								<option value={round.id || roundIndex}>
 									{round.title || round.type}
 								</option>
@@ -129,7 +129,7 @@
 					</button>
 				</div>
 
-				{#each node.dependencies as dep, depIndex (dep.dependencyMatchId)}
+				{#each node.dependencies as dep, depIndex (`dep-#${depIndex}`)}
 					<div class="flex items-center gap-2 rounded border border-slate-600 bg-slate-700/50 p-2">
 						<select
 							id="dep-match-{nodeIndex}-{depIndex}"
@@ -137,7 +137,7 @@
 							class="flex-1 rounded border border-slate-600 bg-slate-800 px-2 py-1 text-sm text-white"
 						>
 							<option value="">Select Match</option>
-							{#each getAvailableMatchesForDependencies(nodeIndex, depIndex) as match (match.id)}
+							{#each getAvailableMatchesForDependencies(nodeIndex, depIndex) as match (`match-#${match.id}`)}
 								{@const team1Score = match.teams[0]?.score || 0}
 								{@const team2Score = match.teams[1]?.score || 0}
 								<option value={match.id}>
