@@ -159,10 +159,10 @@
 	{#snippet tabButton(active: boolean, onclick: () => void, text: string)}
 		<button
 			class={[
-				'flex-1 border-b-2 px-4 py-2 text-center text-sm font-medium transition-colors',
+				'flex-1 cursor-pointer border-b-2 px-4 py-2 text-center text-sm font-medium transition-colors',
 				active
 					? 'border-blue-500 bg-slate-700/50 text-blue-400 backdrop-blur-md'
-					: 'border-transparent bg-transparent text-gray-400 backdrop-blur-md'
+					: 'border-white/30 bg-transparent text-gray-400 backdrop-blur-md'
 			]}
 			{onclick}
 		>
@@ -170,7 +170,9 @@
 		</button>
 	{/snippet}
 
-	<div class="mb-6 flex rounded-t-lg border-b border-white/20 bg-slate-800/30">
+	<div
+		class="mb-6 flex border border-white/30 border-b-transparent bg-slate-600/50 bg-gradient-to-br to-slate-800/50 backdrop-blur-lg"
+	>
 		{@render tabButton(activeTab === 'players', () => (activeTab = 'players'), m.players())}
 		{@render tabButton(
 			activeTab === 'region-ranking',
