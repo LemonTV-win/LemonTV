@@ -1,5 +1,10 @@
 <script lang="ts">
 	import type { GamePlayerScore } from '$lib/server/db/schemas';
+	import Highlight from 'svelte-highlight';
+	import json from 'svelte-highlight/languages/json';
+	import typescript from 'svelte-highlight/languages/typescript';
+	// import 'svelte-highlight/styles/github-dark.css';
+	import '$lib/highlight.css';
 
 	interface PlayerScore {
 		accountId: number;
@@ -33,7 +38,6 @@
 	} = $props();
 
 	let exportFormat = $state<'json' | 'typescript'>('json');
-	let includeComments = $state(true);
 
 	function convertToPlayerScoreData(): PlayerScoreData {
 		const teamA: PlayerScore[] = playerScoresA
@@ -175,7 +179,6 @@
 
 	function handleClose() {
 		exportFormat = 'json';
-		includeComments = true;
 		onClose();
 	}
 </script>
@@ -224,12 +227,14 @@
 				<label class="mb-2 block text-sm font-medium text-slate-300" for="exportedData"
 					>Exported Data</label
 				>
-				<textarea
-					id="exportedData"
-					value={generateExportData()}
-					readonly
-					class="h-64 w-full rounded-md border border-slate-600 bg-slate-800 p-3 font-mono text-sm text-slate-200 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-				></textarea>
+				<div
+					class="h-64 w-full overflow-auto rounded-md border border-slate-600 bg-slate-800 p-3 font-mono text-sm text-slate-200 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+				>
+					<Highlight
+						language={exportFormat === 'json' ? json : typescript}
+						code={generateExportData()}
+					/>
+				</div>
 			</div>
 
 			<div class="flex justify-end gap-3">
