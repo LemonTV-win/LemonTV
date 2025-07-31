@@ -254,8 +254,14 @@ export async function getPlayer(keyword: string): Promise<Player | null> {
 		return null;
 	}
 
-	const aliases = await db.select().from(playerAlias).where(eq(playerAlias.playerId, keyword));
-	const accounts = await db.select().from(gameAccount).where(eq(gameAccount.playerId, keyword));
+	const aliases = await db
+		.select()
+		.from(playerAlias)
+		.where(eq(playerAlias.playerId, playerData.id));
+	const accounts = await db
+		.select()
+		.from(gameAccount)
+		.where(eq(gameAccount.playerId, playerData.id));
 	const socialAccounts = await db
 		.select()
 		.from(player_social_account)
