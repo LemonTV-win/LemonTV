@@ -842,7 +842,7 @@ const players: PlayerImportData[] = [
 					class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
 					onclick={handleClose}
 				>
-					Cancel
+					{m.close()}
 				</button>
 			</div>
 		</div>
