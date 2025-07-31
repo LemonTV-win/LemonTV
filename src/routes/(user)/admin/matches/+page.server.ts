@@ -96,6 +96,9 @@ function parseFormData(formData: FormData) {
 }
 
 export const load: PageServerLoad = async ({ locals, url }) => {
+	const startTime = Date.now();
+	console.log('[Admin][Matches][Load] Starting load function');
+
 	const result = checkPermissions(locals, ['admin', 'editor']);
 	if (result.status === 'error') {
 		throw error(result.statusCode, result.error);
@@ -108,6 +111,9 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	const action = url.searchParams.get('action');
 	const id = url.searchParams.get('id');
 	const deleteParam = url.searchParams.get('delete');
+
+	console.log('[Admin][Matches][Load] Starting main database query');
+	const queryStartTime = Date.now();
 
 	// Load all events with their stages, matches, match teams, and match maps
 	const events = await db
@@ -135,6 +141,14 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		.leftJoin(table.gamePlayerScore, eq(table.game.id, table.gamePlayerScore.gameId))
 		.orderBy(desc(table.event.createdAt));
 
+	const queryEndTime = Date.now();
+	console.log(
+		`[Admin][Matches][Load] Main query completed in ${queryEndTime - queryStartTime}ms, returned ${events.length} rows`
+	);
+
+	console.log('[Admin][Matches][Load] Starting game maps query');
+	const gameMapsStartTime = Date.now();
+
 	// Load game maps separately to avoid cartesian product issues
 	const gameMaps = await db
 		.select({
@@ -144,6 +158,11 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		.from(table.game)
 		.leftJoin(table.map, eq(table.game.mapId, table.map.id));
 
+	const gameMapsEndTime = Date.now();
+	console.log(
+		`[Admin][Matches][Load] Game maps query completed in ${gameMapsEndTime - gameMapsStartTime}ms, returned ${gameMaps.length} rows`
+	);
+
 	// Create a map of game maps for quick lookup
 	const gameMapLookup = new Map<number, (typeof gameMaps)[number]['map']>();
 	for (const gameMap of gameMaps) {
@@ -151,6 +170,9 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 			gameMapLookup.set(gameMap.gameId, gameMap.map);
 		}
 	}
+
+	console.log('[Admin][Matches][Load] Starting bracket structure queries');
+	const bracketStartTime = Date.now();
 
 	// Load bracket structure data
 	const stageRounds = await db.select().from(table.stageRound).orderBy(table.stageRound.id);
@@ -161,6 +183,14 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		.select()
 		.from(table.stageNodeDependency)
 		.orderBy(table.stageNodeDependency.id);
+
+	const bracketEndTime = Date.now();
+	console.log(
+		`[Admin][Matches][Load] Bracket structure queries completed in ${bracketEndTime - bracketStartTime}ms`
+	);
+
+	console.log('[Admin][Matches][Load] Starting team rosters query');
+	const rostersStartTime = Date.now();
 
 	// Load team rosters from eventTeamPlayer table
 	const teamRosters = await db
@@ -183,6 +213,14 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		)
 		.leftJoin(table.playerAlias, eq(table.playerAlias.playerId, table.player.id));
 
+	const rostersEndTime = Date.now();
+	console.log(
+		`[Admin][Matches][Load] Team rosters query completed in ${rostersEndTime - rostersStartTime}ms, returned ${teamRosters.length} rows`
+	);
+
+	console.log('[Admin][Matches][Load] Starting image URL processing');
+	const imageProcessingStartTime = Date.now();
+
 	// Process image URLs for teams
 	const processedEvents = await Promise.all(
 		events.map(async (row) => ({
@@ -200,6 +238,14 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 			map: row.map
 		}))
 	);
+
+	const imageProcessingEndTime = Date.now();
+	console.log(
+		`[Admin][Matches][Load] Image URL processing completed in ${imageProcessingEndTime - imageProcessingStartTime}ms`
+	);
+
+	console.log('[Admin][Matches][Load] Starting team roster processing');
+	const rosterProcessingStartTime = Date.now();
 
 	// Process team rosters
 	const teamRosterMap = new Map<
@@ -278,6 +324,14 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 			job: row.role
 		});
 	}
+
+	const rosterProcessingEndTime = Date.now();
+	console.log(
+		`[Admin][Matches][Load] Team roster processing completed in ${rosterProcessingEndTime - rosterProcessingStartTime}ms`
+	);
+
+	console.log('[Admin][Matches][Load] Starting data transformation');
+	const transformationStartTime = Date.now();
 
 	type MatchWithTeams = (typeof processedEvents)[number]['match'] & {
 		teams: Array<
@@ -453,7 +507,6 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 					}
 				}
 			}
-
 			return acc;
 		},
 		{} as Record<
@@ -482,15 +535,13 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		>
 	);
 
-	// Add bracket structure data to stages
-	stageRounds.forEach((round) => {
-		Object.values(eventsByEvent).forEach((eventData) => {
-			const stageData = eventData.stages.get(round.stageId);
-			if (stageData) {
-				stageData.rounds.push(round);
-			}
-		});
-	});
+	const transformationEndTime = Date.now();
+	console.log(
+		`[Admin][Matches][Load] Data transformation completed in ${transformationEndTime - transformationStartTime}ms`
+	);
+
+	console.log('[Admin][Matches][Load] Starting stage node dependency processing');
+	const nodeDependencyStartTime = Date.now();
 
 	stageNodes.forEach((node) => {
 		Object.values(eventsByEvent).forEach((eventData) => {
@@ -505,7 +556,13 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		});
 	});
 
+	const nodeDependencyEndTime = Date.now();
+	console.log(
+		`[Admin][Matches][Load] Stage node dependency processing completed in ${nodeDependencyEndTime - nodeDependencyStartTime}ms`
+	);
+
 	// Convert Map to object for serialization
+	const serializationStartTime = Date.now();
 	const serializedEvents = Object.entries(eventsByEvent).reduce(
 		(acc, [eventId, eventData]) => {
 			acc[eventId] = {
@@ -628,12 +685,33 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 			}
 		>
 	);
+	const serializationEndTime = Date.now();
+	console.log(
+		`[Admin][Matches][Load] Serialization completed in ${serializationEndTime - serializationStartTime}ms`
+	);
+
+	const totalEndTime = Date.now();
+	console.log(`[Admin][Matches][Load] Total load function time: ${totalEndTime - startTime}ms`);
+
+	const teamsQueryStart = Date.now();
+	const teams = await db.select().from(table.team);
+	const teamsQueryEnd = Date.now();
+	console.log(
+		`[Admin][Matches][Load] Teams query completed in ${teamsQueryEnd - teamsQueryStart}ms, returned ${teams.length} rows`
+	);
+
+	const mapsQueryStart = Date.now();
+	const maps = await db.select().from(table.map);
+	const mapsQueryEnd = Date.now();
+	console.log(
+		`[Admin][Matches][Load] Maps query completed in ${mapsQueryEnd - mapsQueryStart}ms, returned ${maps.length} rows`
+	);
 
 	return {
 		events: serializedEvents,
 		event: eventId,
-		teams: await db.select().from(table.team),
-		maps: await db.select().from(table.map),
+		teams,
+		maps,
 		action,
 		id,
 		delete: deleteParam,
