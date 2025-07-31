@@ -487,5 +487,6 @@
 	"team_page_description": "Découvrez {name} — histoire de l'équipe, effectif, performances passées et résultats de tournois dans la scène Strinova.",
 	"player_page_description": "En savoir plus sur {name} — leurs compétences, réalisations et contributions à la communauté Strinova Esports.",
 	"strinova_team_overview": "Aperçu de l'Équipe Strinova",
-	"strinova_player_profile": "Profil du Joueur Strinova"
+	"strinova_player_profile": "Profil du Joueur Strinova",
+	"region_ranking": "Classement Régional"
 }

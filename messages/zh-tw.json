@@ -487,5 +487,6 @@
 	"team_page_description": "認識{name}：隊伍歷史、成員陣容、過往表現與在卡拉彼丘賽事中的成績。",
 	"player_page_description": "了解{name}：他的技能、成就以及對卡拉彼丘電競社群的貢獻。",
 	"strinova_team_overview": "卡拉彼丘團隊概覽",
-	"strinova_player_profile": "卡拉彼丘玩家信息"
+	"strinova_player_profile": "卡拉彼丘玩家信息",
+	"region_ranking": "地區排名"
 }

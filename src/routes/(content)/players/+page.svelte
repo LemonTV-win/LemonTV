@@ -14,12 +14,14 @@
 	import IconChevronDown from '~icons/mdi/chevron-down';
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 	import { SvelteURLSearchParams } from 'svelte/reactivity';
+
 	let { data }: PageProps = $props();
 
 	let search = $state(data.search || '');
 	let selectedNationalities = $state<string[]>(data.nationalities || []);
 	let selectedSuperstrings = $state<string[]>(data.superstrings || []);
 	let filtersExpanded = $state(false);
+	let activeTab = $state<'players' | 'region-ranking'>('players');
 
 	let sortBy:
 		| 'name-abc'
@@ -146,255 +148,279 @@
 		<SearchInput bind:search filtered={filtered.length} total={sorted.length} />
 	</div>
 
-	<div class="mb-4 flex flex-col">
+	<!-- Tab Navigation -->
+	{#snippet tabButton(active: boolean, onclick: () => void, text: string)}
 		<button
-			class="flex items-center justify-between rounded-t-lg border border-white/30 bg-gradient-to-br from-slate-600/60 to-slate-800 px-4 py-2 text-left text-sm font-medium text-gray-300 backdrop-blur-lg transition-colors hover:bg-white/10"
-			onclick={() => (filtersExpanded = !filtersExpanded)}
+			class={[
+				'flex-1 border-b-2 px-4 py-2 text-center text-sm font-medium transition-colors',
+				active
+					? 'border-blue-500 bg-slate-700/50 text-blue-400 backdrop-blur-md'
+					: 'border-transparent bg-transparent text-gray-400 backdrop-blur-md'
+			]}
+			{onclick}
 		>
-			<span>{m.filters()}</span>
-			<IconChevronDown
-				class="h-4 w-4 transition-transform duration-200 {filtersExpanded ? 'rotate-180' : ''}"
-			/>
+			{text}
 		</button>
-		<div
-			class="grid transition-all duration-200"
-			class:grid-rows-[1fr]={filtersExpanded}
-			class:grid-rows-[0fr]={!filtersExpanded}
-		>
-			<div class="overflow-hidden">
-				<div
-					class="flex flex-col gap-4 rounded-b-lg border border-t-0 border-white/30 bg-gradient-to-br from-slate-600/60 to-slate-800 p-4 shadow-2xl ring-1 ring-white/30 backdrop-blur-lg"
-				>
-					<div class="flex flex-col gap-2">
-						<label for="nationality-filters" class="text-sm font-medium text-gray-300"
-							>{m.region()}</label
-						>
-						<div id="nationality-filters" class="flex flex-wrap gap-2">
-							{#each uniqueNationalities as nationality, idx (idx)}
-								{#if nationality}
+	{/snippet}
+
+	<div class="mb-6 flex rounded-t-lg border-b border-white/20 bg-slate-800/30">
+		{@render tabButton(activeTab === 'players', () => (activeTab = 'players'), m.players())}
+		{@render tabButton(
+			activeTab === 'region-ranking',
+			() => (activeTab = 'region-ranking'),
+			m.region_ranking()
+		)}
+	</div>
+
+	{#if activeTab === 'players'}
+		<div class="mb-4 flex flex-col">
+			<button
+				class="flex items-center justify-between rounded-t-lg border border-white/30 bg-gradient-to-br from-slate-600/60 to-slate-800 px-4 py-2 text-left text-sm font-medium text-gray-300 backdrop-blur-lg transition-colors hover:bg-white/10"
+				onclick={() => (filtersExpanded = !filtersExpanded)}
+			>
+				<span>{m.filters()}</span>
+				<IconChevronDown
+					class="h-4 w-4 transition-transform duration-200 {filtersExpanded ? 'rotate-180' : ''}"
+				/>
+			</button>
+			<div
+				class="grid transition-all duration-200"
+				class:grid-rows-[1fr]={filtersExpanded}
+				class:grid-rows-[0fr]={!filtersExpanded}
+			>
+				<div class="overflow-hidden">
+					<div
+						class="flex flex-col gap-4 rounded-b-lg border border-t-0 border-white/30 bg-gradient-to-br from-slate-600/60 to-slate-800 p-4 shadow-2xl ring-1 ring-white/30 backdrop-blur-lg"
+					>
+						<div class="flex flex-col gap-2">
+							<label for="nationality-filters" class="text-sm font-medium text-gray-300"
+								>{m.region()}</label
+							>
+							<div id="nationality-filters" class="flex flex-wrap gap-2">
+								{#each uniqueNationalities as nationality, idx (idx)}
+									{#if nationality}
+										<button
+											class={[
+												'flex items-center gap-1 rounded-full border-1 px-2 py-1 text-sm transition-colors',
+												selectedNationalities.includes(nationality)
+													? 'border-blue-500 bg-blue-500 text-white'
+													: 'border-white/30 bg-transparent text-gray-400'
+											]}
+											onclick={() => {
+												selectedNationalities = selectedNationalities.includes(nationality)
+													? selectedNationalities.filter((n) => n !== nationality)
+													: [...selectedNationalities, nationality];
+											}}
+										>
+											<NationalityFlag {nationality} />
+											<span
+												class:text-white={selectedNationalities.includes(nationality)}
+												class:text-gray-400={!selectedNationalities.includes(nationality)}
+											>
+												{countryCodeToLocalizedName(nationality, getLocale())}
+											</span>
+										</button>
+									{/if}
+								{/each}
+							</div>
+						</div>
+
+						<div class="flex flex-col gap-2">
+							<label for="superstring-filters" class="text-sm font-medium text-gray-300"
+								>{m.superstrings()}</label
+							>
+							<div id="superstring-filters" class="flex flex-wrap gap-2">
+								{#each uniqueSuperstrings as superstring (superstring)}
 									<button
 										class={[
 											'flex items-center gap-1 rounded-full border-1 px-2 py-1 text-sm transition-colors',
-											selectedNationalities.includes(nationality)
+											selectedSuperstrings.includes(superstring)
 												? 'border-blue-500 bg-blue-500 text-white'
 												: 'border-white/30 bg-transparent text-gray-400'
 										]}
 										onclick={() => {
-											selectedNationalities = selectedNationalities.includes(nationality)
-												? selectedNationalities.filter((n) => n !== nationality)
-												: [...selectedNationalities, nationality];
+											selectedSuperstrings = selectedSuperstrings.includes(superstring)
+												? selectedSuperstrings.filter((s) => s !== superstring)
+												: [...selectedSuperstrings, superstring];
 										}}
 									>
-										<NationalityFlag {nationality} />
+										<CharacterIcon character={superstring} />
 										<span
-											class:text-white={selectedNationalities.includes(nationality)}
-											class:text-gray-400={!selectedNationalities.includes(nationality)}
+											class:text-white={selectedSuperstrings.includes(superstring)}
+											class:text-gray-400={!selectedSuperstrings.includes(superstring)}
 										>
-											{countryCodeToLocalizedName(nationality, getLocale())}
+											{superstring}
 										</span>
 									</button>
-								{/if}
-							{/each}
-						</div>
-					</div>
-
-					<div class="flex flex-col gap-2">
-						<label for="superstring-filters" class="text-sm font-medium text-gray-300"
-							>{m.superstrings()}</label
-						>
-						<div id="superstring-filters" class="flex flex-wrap gap-2">
-							{#each uniqueSuperstrings as superstring (superstring)}
-								<button
-									class={[
-										'flex items-center gap-1 rounded-full border-1 px-2 py-1 text-sm transition-colors',
-										selectedSuperstrings.includes(superstring)
-											? 'border-blue-500 bg-blue-500 text-white'
-											: 'border-white/30 bg-transparent text-gray-400'
-									]}
-									onclick={() => {
-										selectedSuperstrings = selectedSuperstrings.includes(superstring)
-											? selectedSuperstrings.filter((s) => s !== superstring)
-											: [...selectedSuperstrings, superstring];
-									}}
-								>
-									<CharacterIcon character={superstring} />
-									<span
-										class:text-white={selectedSuperstrings.includes(superstring)}
-										class:text-gray-400={!selectedSuperstrings.includes(superstring)}
-									>
-										{superstring}
-									</span>
-								</button>
-							{/each}
+								{/each}
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 
-	<div
-		class="glass-card-container overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-800"
-	>
-		<table class="glass-table w-full table-auto">
-			<thead>
-				<tr>
-					<th class="px-4 py-1">
-						<button
-							class="flex items-center gap-1 text-left"
-							class:text-white={sortBy === 'region-asc' || sortBy === 'region-desc'}
-							onclick={() => (sortBy = sortBy === 'region-asc' ? 'region-desc' : 'region-asc')}
-						>
-							{m.region()}
-							{#if sortBy === 'region-asc'}
-								<TypcnArrowSortedUp class="inline-block" />
-							{:else if sortBy === 'region-desc'}
-								<TypcnArrowSortedDown class="inline-block" />
-							{:else}
-								<TypcnArrowUnsorted class="inline-block" />
-							{/if}</button
-						></th
-					>
-					<th class="px-4 py-1">
-						<button
-							class="flex items-center gap-1 text-left"
-							class:text-white={sortBy === 'name-abc' || sortBy === 'name-cba'}
-							onclick={() => (sortBy = sortBy === 'name-abc' ? 'name-cba' : 'name-abc')}
-							>{m.name()}
-							{#if sortBy === 'name-abc'}
-								<TypcnArrowSortedUp class="inline-block" />
-							{:else if sortBy === 'name-cba'}
-								<TypcnArrowSortedDown class="inline-block" />
-							{:else}
-								<TypcnArrowUnsorted class="inline-block" />
-							{/if}
-						</button>
-					</th>
-					<th class="px-4 py-1">
-						<button
-							class="flex items-center gap-1 text-left"
-							class:text-white={sortBy === 'team-asc' || sortBy === 'team-desc'}
-							onclick={() => (sortBy = sortBy === 'team-asc' ? 'team-desc' : 'team-asc')}
-							>{m.teams()}
-							{#if sortBy === 'team-asc'}
-								<TypcnArrowSortedUp class="inline-block" />
-							{:else if sortBy === 'team-desc'}
-								<TypcnArrowSortedDown class="inline-block" />
-							{:else}
-								<TypcnArrowUnsorted class="inline-block" />
-							{/if}
-						</button>
-					</th>
-					<th class="hidden px-4 py-1 sm:table-cell">{m.superstrings()}</th>
-					<th class="px-4 py-1">
-						<button
-							class="flex items-center gap-1 text-left"
-							class:text-white={sortBy === 'wins-asc' || sortBy === 'wins-desc'}
-							onclick={() => (sortBy = sortBy === 'wins-asc' ? 'wins-desc' : 'wins-asc')}
-							>{m.wins()}
-							{#if sortBy === 'wins-asc'}
-								<TypcnArrowSortedUp class="inline-block" />
-							{:else if sortBy === 'wins-desc'}
-								<TypcnArrowSortedDown class="inline-block" />
-							{:else}
-								<TypcnArrowUnsorted class="inline-block" />
-							{/if}
-						</button>
-					</th>
-					<th class="px-4 py-1">
-						<button
-							class="flex items-center gap-1 text-left"
-							class:text-white={sortBy === 'rating-asc' || sortBy === 'rating-desc'}
-							onclick={() => (sortBy = sortBy === 'rating-asc' ? 'rating-desc' : 'rating-asc')}
-							>{m.rating()}
-							{#if sortBy === 'rating-asc'}
-								<TypcnArrowSortedUp class="inline-block" />
-							{:else if sortBy === 'rating-desc'}
-								<TypcnArrowSortedDown class="inline-block" />
-							{:else}
-								<TypcnArrowUnsorted class="inline-block" />
-							{/if}
-						</button>
-					</th>
-					<th class="px-4 py-1">
-						<button
-							class="flex items-center gap-1 text-left"
-							class:text-white={sortBy === 'kd-asc' || sortBy === 'kd-desc'}
-							onclick={() => (sortBy = sortBy === 'kd-asc' ? 'kd-desc' : 'kd-asc')}
-							>K/D
-							{#if sortBy === 'kd-asc'}
-								<TypcnArrowSortedUp class="inline-block" />
-							{:else if sortBy === 'kd-desc'}
-								<TypcnArrowSortedDown class="inline-block" />
-							{:else}
-								<TypcnArrowUnsorted class="inline-block" />
-							{/if}
-						</button>
-					</th>
-					<th class="px-4 py-1">
-						<button
-							class="flex items-center gap-1 text-left"
-							class:text-white={sortBy === 'events-asc' || sortBy === 'events-desc'}
-							onclick={() => (sortBy = sortBy === 'events-asc' ? 'events-desc' : 'events-asc')}
-						>
-							{m.events()}
-							{#if sortBy === 'events-asc'}
-								<TypcnArrowSortedUp class="inline-block" />
-							{:else if sortBy === 'events-desc'}
-								<TypcnArrowSortedDown class="inline-block" />
-							{:else}
-								<TypcnArrowUnsorted class="inline-block" />
-							{/if}
-						</button>
-					</th>
-				</tr>
-			</thead>
-			<tbody>
-				{#each filtered as player (player.id)}
+		<div
+			class="glass-card-container overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-800"
+		>
+			<table class="glass-table w-full table-auto">
+				<thead>
 					<tr>
-						<td class=" py-1 text-center">
-							{#each player.nationalities as nationality, idx (idx)}
-								<NationalityFlag {nationality} />
-							{/each}
-						</td>
-						<td class="px-4 py-1">
-							<a class="flex items-baseline gap-1" href={`/players/${player.slug ?? player.id}`}
-								>{player.name}
-								{#each getAllNames(player).filter((name) => name !== player.name) as name (name)}
-									<span class="text-xs text-gray-400">({name})</span>
-								{/each}
-							</a>
-						</td>
-						<td class="px-4 py-1 text-sm">
-							{#each data.playersTeams[player.id ?? ''] as team, i (team.id)}
-								<a href={`/teams/${team.slug}`}>{team.name}</a
-								>{#if i < data.playersTeams[player.id ?? ''].length - 1}
-									<span class="mx-1 text-gray-400">|</span>
+						<th class="px-4 py-1">
+							<button
+								class="flex items-center gap-1 text-left"
+								class:text-white={sortBy === 'region-asc' || sortBy === 'region-desc'}
+								onclick={() => (sortBy = sortBy === 'region-asc' ? 'region-desc' : 'region-asc')}
+							>
+								{m.region()}
+								{#if sortBy === 'region-asc'}
+									<TypcnArrowSortedUp class="inline-block" />
+								{:else if sortBy === 'region-desc'}
+									<TypcnArrowSortedDown class="inline-block" />
+								{:else}
+									<TypcnArrowUnsorted class="inline-block" />
+								{/if}</button
+							></th
+						>
+						<th class="px-4 py-1">
+							<button
+								class="flex items-center gap-1 text-left"
+								class:text-white={sortBy === 'name-abc' || sortBy === 'name-cba'}
+								onclick={() => (sortBy = sortBy === 'name-abc' ? 'name-cba' : 'name-abc')}
+								>{m.name()}
+								{#if sortBy === 'name-abc'}
+									<TypcnArrowSortedUp class="inline-block" />
+								{:else if sortBy === 'name-cba'}
+									<TypcnArrowSortedDown class="inline-block" />
+								{:else}
+									<TypcnArrowUnsorted class="inline-block" />
 								{/if}
-							{/each}
-						</td>
-						<td class="hidden flex-wrap gap-1 sm:flex">
-							{#each data.playersAgents[player.id ?? ''] as superstring (superstring)}
-								<CharacterIcon character={superstring[0]} />
-							{/each}
-						</td>
-						<td class="px-4 py-1 text-gray-300">{player.wins}</td>
-						<td class="px-4 py-1 text-gray-300" title={m.rating() + ' ' + player.rating}>
-							{player.rating.toFixed(2)}
-						</td>
-						<td class="px-4 py-1 text-gray-300" title="Kill/Death Ratio">
-							{player.kd.toFixed(2)}
-						</td>
-						<td class="px-4 py-1 text-gray-300">{player.eventsCount}</td>
+							</button>
+						</th>
+						<th class="px-4 py-1">
+							<button
+								class="flex items-center gap-1 text-left"
+								class:text-white={sortBy === 'team-asc' || sortBy === 'team-desc'}
+								onclick={() => (sortBy = sortBy === 'team-asc' ? 'team-desc' : 'team-asc')}
+								>{m.teams()}
+								{#if sortBy === 'team-asc'}
+									<TypcnArrowSortedUp class="inline-block" />
+								{:else if sortBy === 'team-desc'}
+									<TypcnArrowSortedDown class="inline-block" />
+								{:else}
+									<TypcnArrowUnsorted class="inline-block" />
+								{/if}
+							</button>
+						</th>
+						<th class="hidden px-4 py-1 sm:table-cell">{m.superstrings()}</th>
+						<th class="px-4 py-1">
+							<button
+								class="flex items-center gap-1 text-left"
+								class:text-white={sortBy === 'wins-asc' || sortBy === 'wins-desc'}
+								onclick={() => (sortBy = sortBy === 'wins-asc' ? 'wins-desc' : 'wins-asc')}
+								>{m.wins()}
+								{#if sortBy === 'wins-asc'}
+									<TypcnArrowSortedUp class="inline-block" />
+								{:else if sortBy === 'wins-desc'}
+									<TypcnArrowSortedDown class="inline-block" />
+								{:else}
+									<TypcnArrowUnsorted class="inline-block" />
+								{/if}
+							</button>
+						</th>
+						<th class="px-4 py-1">
+							<button
+								class="flex items-center gap-1 text-left"
+								class:text-white={sortBy === 'rating-asc' || sortBy === 'rating-desc'}
+								onclick={() => (sortBy = sortBy === 'rating-asc' ? 'rating-desc' : 'rating-asc')}
+								>{m.rating()}
+								{#if sortBy === 'rating-asc'}
+									<TypcnArrowSortedUp class="inline-block" />
+								{:else if sortBy === 'rating-desc'}
+									<TypcnArrowSortedDown class="inline-block" />
+								{:else}
+									<TypcnArrowUnsorted class="inline-block" />
+								{/if}
+							</button>
+						</th>
+						<th class="px-4 py-1">
+							<button
+								class="flex items-center gap-1 text-left"
+								class:text-white={sortBy === 'kd-asc' || sortBy === 'kd-desc'}
+								onclick={() => (sortBy = sortBy === 'kd-asc' ? 'kd-desc' : 'kd-asc')}
+								>K/D
+								{#if sortBy === 'kd-asc'}
+									<TypcnArrowSortedUp class="inline-block" />
+								{:else if sortBy === 'kd-desc'}
+									<TypcnArrowSortedDown class="inline-block" />
+								{:else}
+									<TypcnArrowUnsorted class="inline-block" />
+								{/if}
+							</button>
+						</th>
+						<th class="px-4 py-1">
+							<button
+								class="flex items-center gap-1 text-left"
+								class:text-white={sortBy === 'events-asc' || sortBy === 'events-desc'}
+								onclick={() => (sortBy = sortBy === 'events-asc' ? 'events-desc' : 'events-asc')}
+							>
+								{m.events()}
+								{#if sortBy === 'events-asc'}
+									<TypcnArrowSortedUp class="inline-block" />
+								{:else if sortBy === 'events-desc'}
+									<TypcnArrowSortedDown class="inline-block" />
+								{:else}
+									<TypcnArrowUnsorted class="inline-block" />
+								{/if}
+							</button>
+						</th>
 					</tr>
-				{/each}
-			</tbody>
-		</table>
-	</div>
+				</thead>
+				<tbody>
+					{#each filtered as player (player.id)}
+						<tr>
+							<td class=" py-1 text-center">
+								{#each player.nationalities as nationality, idx (idx)}
+									<NationalityFlag {nationality} />
+								{/each}
+							</td>
+							<td class="px-4 py-1">
+								<a class="flex items-baseline gap-1" href={`/players/${player.slug ?? player.id}`}
+									>{player.name}
+									{#each getAllNames(player).filter((name) => name !== player.name) as name (name)}
+										<span class="text-xs text-gray-400">({name})</span>
+									{/each}
+								</a>
+							</td>
+							<td class="px-4 py-1 text-sm">
+								{#each data.playersTeams[player.id ?? ''] as team, i (team.id)}
+									<a href={`/teams/${team.slug}`}>{team.name}</a
+									>{#if i < data.playersTeams[player.id ?? ''].length - 1}
+										<span class="mx-1 text-gray-400">|</span>
+									{/if}
+								{/each}
+							</td>
+							<td class="hidden flex-wrap gap-1 sm:flex">
+								{#each data.playersAgents[player.id ?? ''] as superstring (superstring)}
+									<CharacterIcon character={superstring[0]} />
+								{/each}
+							</td>
+							<td class="px-4 py-1 text-gray-300">{player.wins}</td>
+							<td class="px-4 py-1 text-gray-300" title={m.rating() + ' ' + player.rating}>
+								{player.rating.toFixed(2)}
+							</td>
+							<td class="px-4 py-1 text-gray-300" title="Kill/Death Ratio">
+								{player.kd.toFixed(2)}
+							</td>
+							<td class="px-4 py-1 text-gray-300">{player.eventsCount}</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
+		</div>
+	{/if}
 
-	<!-- Country Ranking Section -->
-	<div class="mt-12">
-		<h2 class="mb-4 text-xl font-semibold text-gray-200">{m.region()} {m.rankings()}</h2>
+	{#if activeTab === 'region-ranking'}
 		<div
 			class="glass-card-container overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-800"
 		>
@@ -424,5 +450,5 @@
 				</tbody>
 			</table>
 		</div>
-	</div>
+	{/if}
 </main>
