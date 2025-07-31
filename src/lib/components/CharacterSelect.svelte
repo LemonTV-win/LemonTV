@@ -10,13 +10,15 @@
 		value = null,
 		onChange,
 		class: className = '',
-		name = ''
-	} = $props<{
+		name = '',
+		characters = CHARACTERS
+	}: {
 		value?: Character | null;
 		onChange?: (character: Character | null) => void;
 		class?: string;
 		name?: string;
-	}>();
+		characters?: readonly Character[];
+	} = $props();
 
 	let isOpen = $state(false);
 	let search = $state('');
@@ -51,7 +53,7 @@
 	let searchInput: HTMLInputElement | null = $state(null);
 
 	const filteredCharacters: readonly Character[] = $derived(
-		search ? CHARACTERS.filter((c) => c.toLowerCase().includes(search.toLowerCase())) : CHARACTERS
+		search ? characters.filter((c) => c.toLowerCase().includes(search.toLowerCase())) : characters
 	);
 </script>
 

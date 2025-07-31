@@ -7,6 +7,7 @@
 	import type { GameParticipant } from './+page.server';
 	import type { GamePlayerScore } from '$lib/server/db/schemas';
 	import type { Character } from '$lib/data/game';
+	import { CHARACTERS } from '$lib/data/game';
 	import IconTrophy from '~icons/icon-park-solid/trophy';
 	let { game, matchId, maps, onCancel, onSuccess, teams, rosters } = $props<{
 		game?: any;
@@ -300,7 +301,9 @@
 				assists: number;
 				damage: number;
 			},
-			idx: number
+			idx: number,
+			availableCharactersFirstHalf: readonly Character[],
+			availableCharactersSecondHalf: readonly Character[]
 		)}
 			<div class="flex flex-col gap-1 rounded bg-slate-900 p-2">
 				<AccountIdCombobox
@@ -342,12 +345,14 @@
 						onChange={(v) => (ps.characterFirstHalf = v)}
 						name={`playerScores${team}[${idx}].characterFirstHalf`}
 						class="col-span-1"
+						characters={availableCharactersFirstHalf}
 					/>
 					<CharacterSelect
 						value={ps.characterSecondHalf as Character | null}
 						onChange={(v) => (ps.characterSecondHalf = v)}
 						name={`playerScores${team}[${idx}].characterSecondHalf`}
 						class="col-span-1"
+						characters={availableCharactersSecondHalf}
 					/>
 				</div>
 				<div class="grid grid-cols-7 gap-1">
@@ -407,7 +412,25 @@
 			<h3 class="block text-sm font-medium text-slate-300">Player Scores ({teams[0].name})</h3>
 			<div class="mt-2 grid grid-cols-1 gap-2">
 				{#each playerScoresA as ps, idx (idx)}
-					{@render playerScoreInput('A', ps, idx)}
+					{@render playerScoreInput(
+						'A',
+						ps,
+						idx,
+						CHARACTERS.filter(
+							(char) =>
+								!playerScoresA.some(
+									(ps: GamePlayerScore, i: number) =>
+										i !== idx && ps.player && ps.characterFirstHalf === char
+								)
+						),
+						CHARACTERS.filter(
+							(char) =>
+								!playerScoresA.some(
+									(ps: GamePlayerScore, i: number) =>
+										i !== idx && ps.player && ps.characterSecondHalf === char
+								)
+						)
+					)}
 				{/each}
 			</div>
 		</div>
@@ -415,7 +438,25 @@
 			<h3 class="block text-sm font-medium text-slate-300">Player Scores ({teams[1].name})</h3>
 			<div class="mt-2 grid grid-cols-1 gap-2">
 				{#each playerScoresB as ps, idx (idx)}
-					{@render playerScoreInput('B', ps, idx)}
+					{@render playerScoreInput(
+						'B',
+						ps,
+						idx,
+						CHARACTERS.filter(
+							(char) =>
+								!playerScoresB.some(
+									(ps: GamePlayerScore, i: number) =>
+										i !== idx && ps.player && ps.characterFirstHalf === char
+								)
+						),
+						CHARACTERS.filter(
+							(char) =>
+								!playerScoresB.some(
+									(ps: GamePlayerScore, i: number) =>
+										i !== idx && ps.player && ps.characterSecondHalf === char
+								)
+						)
+					)}
 				{/each}
 			</div>
 		</div>
