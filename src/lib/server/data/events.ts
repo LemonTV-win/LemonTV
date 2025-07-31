@@ -886,6 +886,12 @@ export async function getEventsForAdminPage(): Promise<
 			url: string;
 			label?: string;
 		}>;
+		videos?: Array<{
+			type: 'stream' | 'clip' | 'vod';
+			platform: 'twitch' | 'youtube' | 'bilibili';
+			url: string;
+			title?: string;
+		}>;
 	}>
 > {
 	const totalStart = performance.now();
@@ -897,12 +903,14 @@ export async function getEventsForAdminPage(): Promise<
 		.select({
 			event: table.event,
 			organizer: table.organizer,
-			eventWebsite: table.eventWebsite
+			eventWebsite: table.eventWebsite,
+			eventVideo: table.eventVideo
 		})
 		.from(table.event)
 		.leftJoin(table.eventOrganizer, eq(table.eventOrganizer.eventId, table.event.id))
 		.leftJoin(table.organizer, eq(table.organizer.id, table.eventOrganizer.organizerId))
-		.leftJoin(table.eventWebsite, eq(table.eventWebsite.eventId, table.event.id));
+		.leftJoin(table.eventWebsite, eq(table.eventWebsite.eventId, table.event.id))
+		.leftJoin(table.eventVideo, eq(table.eventVideo.eventId, table.event.id));
 	const eventsQueryDuration = performance.now() - eventsQueryStart;
 	console.info(`[Events] Admin events query took ${eventsQueryDuration.toFixed(2)}ms`);
 
@@ -917,15 +925,22 @@ export async function getEventsForAdminPage(): Promise<
 				url: string;
 				label?: string;
 			}>;
+			videos: Array<{
+				type: 'stream' | 'clip' | 'vod';
+				platform: 'twitch' | 'youtube' | 'bilibili';
+				url: string;
+				title?: string;
+			}>;
 		}
 	>();
 
-	eventsWithOrganizers.forEach(({ event, organizer, eventWebsite }) => {
+	eventsWithOrganizers.forEach(({ event, organizer, eventWebsite, eventVideo }) => {
 		if (!eventsMap.has(event.id)) {
 			eventsMap.set(event.id, {
 				event,
 				organizers: [],
-				websites: []
+				websites: [],
+				videos: []
 			});
 		}
 		const eventData = eventsMap.get(event.id)!;
@@ -946,6 +961,18 @@ export async function getEventsForAdminPage(): Promise<
 				});
 			}
 		}
+
+		if (eventVideo) {
+			// Only add the video if it's not already in the array
+			if (!eventData.videos.some((v) => v.url === eventVideo.url)) {
+				eventData.videos.push({
+					type: eventVideo.type as 'stream' | 'clip' | 'vod',
+					platform: eventVideo.platform as 'twitch' | 'youtube' | 'bilibili',
+					url: eventVideo.url,
+					title: eventVideo.title || undefined
+				});
+			}
+		}
 	});
 	const dataProcessingDuration = performance.now() - dataProcessingStart;
 	console.info(`[Events] Admin data processing took ${dataProcessingDuration.toFixed(2)}ms`);
@@ -953,7 +980,7 @@ export async function getEventsForAdminPage(): Promise<
 	// Convert to admin page format
 	const finalProcessingStart = performance.now();
 	const result = await Promise.all(
-		Array.from(eventsMap.values()).map(async ({ event, organizers, websites }) => {
+		Array.from(eventsMap.values()).map(async ({ event, organizers, websites, videos }) => {
 			return {
 				id: event.id,
 				slug: event.slug,
@@ -969,7 +996,8 @@ export async function getEventsForAdminPage(): Promise<
 				imageURL: await processImageURL(event.image),
 				organizers:
 					organizers.length > 0 ? await Promise.all(organizers.map(convertOrganizer)) : [],
-				websites: websites.length > 0 ? websites : undefined
+				websites: websites.length > 0 ? websites : undefined,
+				videos: videos.length > 0 ? videos : undefined
 			};
 		})
 	);
