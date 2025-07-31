@@ -39,6 +39,7 @@ import * as table from '$lib/server/db/schema';
 import { hash, verify } from '@node-rs/argon2';
 import { dev } from '$app/environment';
 import { Resend } from 'resend';
+import { RESEND_API_KEY } from '$env/static/private';
 
 const HOUR_IN_MS = 1000 * 60 * 60;
 const DAY_IN_MS = HOUR_IN_MS * 24;
@@ -266,7 +267,7 @@ export async function sendPasswordResetEmail(
 	token: string,
 	baseUrl: string
 ): Promise<void> {
-	const resend = new Resend('**REDACTED_API_KEY**');
+	const resend = new Resend(RESEND_API_KEY);
 	const resetUrl = `${baseUrl}/reset-password?token=${encodeURIComponent(token)}`;
 	const logoUrl = `${baseUrl}/favicon-96x96.png`;
 
@@ -331,7 +332,7 @@ export async function sendWelcomeEmail(
 	username: string,
 	baseUrl: string
 ): Promise<void> {
-	const resend = new Resend('**REDACTED_API_KEY**');
+	const resend = new Resend(RESEND_API_KEY);
 	const loginUrl = `${baseUrl}/login`;
 	const logoUrl = `${baseUrl}/favicon-96x96.png`;
 
