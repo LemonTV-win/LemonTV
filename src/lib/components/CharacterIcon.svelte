@@ -42,7 +42,7 @@
 
 {#if character}
 	<img
-		class={['h-9 w-9 rounded-full', className]}
+		class={['h-9 min-h-9 w-9 min-w-9 flex-shrink-0 rounded-full object-contain', className]}
 		src={CHARACTER_2_IMAGE[character]}
 		alt={m[character]()}
 		title={m[character]()}
@@ -50,7 +50,7 @@
 {:else}
 	<div
 		class={[
-			'flex h-9 w-9 items-center justify-center rounded-full bg-gray-600 text-gray-400',
+			'flex h-9 min-h-9 w-9 min-w-9 flex-shrink-0 items-center justify-center rounded-full bg-gray-600 text-gray-400',
 			className
 		]}
 	>

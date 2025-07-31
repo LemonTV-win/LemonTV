@@ -396,8 +396,8 @@
 									{/if}
 								{/each}
 							</td>
-							<td class="hidden flex-wrap gap-1 sm:flex">
-								<div class="-gap-1 grid grid-cols-3">
+							<td class="hidden flex-wrap gap-1 text-center align-middle sm:table-cell">
+								<div class="flex items-center justify-center gap-1">
 									{#each data.playersAgents[player.id ?? ''] as superstring (superstring)}
 										<CharacterIcon character={superstring[0]} />
 									{/each}
