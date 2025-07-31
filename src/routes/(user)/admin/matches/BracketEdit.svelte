@@ -1,14 +1,81 @@
+<script module lang="ts">
+	export type InitialRound = {
+		id: number;
+		stageId: number;
+		type: string;
+		title: string | null;
+		bracket: string | null;
+		parallelGroup: number | null;
+	};
+
+	export type Round = {
+		id?: number;
+		type: string;
+		title: string;
+		bracket: string;
+		parallelGroup?: number;
+		isNew?: boolean;
+	};
+
+	export type InitialNode = {
+		id: number;
+		stageId: number;
+		matchId: string;
+		roundId: number;
+		order: number;
+	};
+
+	export type Node = {
+		id?: number;
+		matchId: string;
+		roundId: number;
+		order: number;
+		dependencies: Array<{
+			id?: number;
+			dependencyMatchId: string;
+			outcome: 'winner' | 'loser';
+		}>;
+		isNew?: boolean;
+	};
+
+	export type Match = {
+		id: string;
+		format: string | null;
+		stageId: number | null;
+		teams: Array<{
+			matchId: string | null;
+			teamId: string | null;
+			position: number;
+			score: number;
+			team: Team;
+		}>;
+		maps: Array<{
+			id: number;
+			matchId: string;
+			mapId: string;
+			order: number;
+			side: number;
+			action: string | null;
+			map_picker_position: number;
+			side_picker_position: number;
+			map: {
+				id: string;
+			};
+		}>;
+	};
+</script>
+
 <script lang="ts">
 	import { invalidateAll } from '$app/navigation';
 	import { applyAction, deserialize } from '$app/forms';
 	import { m } from '$lib/paraglide/messages';
-	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import type { ActionResult } from '@sveltejs/kit';
 	import Brackets from '$lib/components/Brackets.svelte';
 	import type { Team } from '$lib/data/teams';
 	import type { GameMap } from '$lib/data/game';
 	import BracketStructure from './BracketStructure.svelte';
-
+	import BracketStageRoundInput from './BracketStageRoundInput.svelte';
+	import BracketStageNodeInput from './BracketStageNodeInput.svelte';
 	let {
 		stage,
 		matches,
@@ -23,39 +90,8 @@
 			stage: string;
 			format: string;
 		};
-		matches: Array<{
-			id: string;
-			format: string | null;
-			stageId: number | null;
-			teams: Array<{
-				matchId: string | null;
-				teamId: string | null;
-				position: number;
-				score: number;
-				team: Team;
-			}>;
-			maps: Array<{
-				id: number;
-				matchId: string;
-				mapId: string;
-				order: number;
-				side: number;
-				action: string | null;
-				map_picker_position: number;
-				side_picker_position: number;
-				map: {
-					id: string;
-				};
-			}>;
-		}>;
-		rounds?: Array<{
-			id: number;
-			stageId: number;
-			type: string;
-			title: string | null;
-			bracket: string | null;
-			parallelGroup: number | null;
-		}>;
+		matches: Array<Match>;
+		rounds?: InitialRound[];
 		nodes?: Array<{
 			id: number;
 			stageId: number;
@@ -74,16 +110,7 @@
 	} = $props();
 
 	// State for managing rounds, nodes, and dependencies
-	let rounds = $state<
-		Array<{
-			id?: number;
-			type: string;
-			title: string;
-			bracket: string;
-			parallelGroup?: number;
-			isNew?: boolean;
-		}>
-	>([]);
+	let rounds = $state<Round[]>([]);
 
 	let nodes = $state<
 		Array<{
@@ -109,21 +136,6 @@
 
 	let errorMessage = $state('');
 	let successMessage = $state('');
-
-	// Available options
-	const roundTypes = [
-		'quarterfinals',
-		'semifinals',
-		'final',
-		'top16',
-		'group',
-		'thirdplace',
-		'lower',
-		'grandfinal'
-	] as const;
-
-	const bracketTypes = ['upper', 'lower', 'group'] as const;
-	const outcomeTypes = ['winner', 'loser'] as const;
 
 	// Helper function to get available matches for a specific node
 	function getAvailableMatches(currentNodeIndex: number) {
@@ -700,269 +712,20 @@
 			class="h-full space-y-4 overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800"
 		>
 			<!-- Stage Rounds Section -->
-			<section class="space-y-4">
-				<div class="flex items-center justify-between">
-					<h4 class="text-lg font-medium text-white">Selected Stage Round</h4>
-					<select
-						bind:value={selectedRoundIndex}
-						class="mt-1 block w-64 rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-					>
-						{#each rounds as round, roundIndex (round.id)}
-							<option value={roundIndex}>{roundIndex + 1}: {round.title || round.type}</option>
-						{/each}
-						<option disabled>──────────</option>
-						<option value={-1}>New Round</option>
-					</select>
-				</div>
-
-				{#if selectedRoundIndex >= 0 && rounds[selectedRoundIndex]}
-					{@const round = rounds[selectedRoundIndex]}
-					{@const roundIndex = selectedRoundIndex}
-					<div class="rounded-lg border border-slate-700 bg-slate-800/50 p-4">
-						<div class="grid grid-cols-2 gap-4 md:grid-cols-4">
-							<div>
-								<label
-									for="round-type-{roundIndex}"
-									class="block text-sm font-medium text-slate-300">Type</label
-								>
-								<select
-									id="round-type-{roundIndex}"
-									bind:value={round.type}
-									class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-								>
-									{#each roundTypes as type (type)}
-										<option value={type}>{type}</option>
-									{/each}
-								</select>
-							</div>
-
-							<div>
-								<label
-									for="round-title-{roundIndex}"
-									class="block text-sm font-medium text-slate-300">Title</label
-								>
-								<input
-									id="round-title-{roundIndex}"
-									type="text"
-									bind:value={round.title}
-									class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-								/>
-							</div>
-
-							<div>
-								<label
-									for="round-bracket-{roundIndex}"
-									class="block text-sm font-medium text-slate-300">Bracket</label
-								>
-								<select
-									id="round-bracket-{roundIndex}"
-									bind:value={round.bracket}
-									class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-								>
-									{#each bracketTypes as bracket (bracket)}
-										<option value={bracket}>{bracket}</option>
-									{/each}
-								</select>
-							</div>
-
-							<div>
-								<label
-									for="round-parallel-group-{roundIndex}"
-									class="block text-sm font-medium text-slate-300">Parallel Group</label
-								>
-								<select
-									id="round-parallel-group-{roundIndex}"
-									bind:value={round.parallelGroup}
-									class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-								>
-									<option value={undefined}>None</option>
-									{#each rounds.filter((r) => r.parallelGroup === undefined && r.id !== round.id) as availableRound (availableRound.id)}
-										<option value={availableRound.id}>
-											{availableRound.title || availableRound.type}
-										</option>
-									{/each}
-								</select>
-							</div>
-						</div>
-
-						<div class="mt-3 flex justify-end">
-							<button
-								type="button"
-								class="text-red-500 hover:text-red-400"
-								onclick={() => confirmRemoveRound(roundIndex)}
-								aria-label="Remove round"
-							>
-								<IconParkSolidDelete class="h-4 w-4" />
-							</button>
-						</div>
-					</div>
-				{:else}
-					<div class="rounded-lg border border-slate-700 bg-slate-800/50 p-8 text-center">
-						<p class="text-slate-400">
-							Select a round from the preview above to edit its properties
-						</p>
-					</div>
-				{/if}
-			</section>
+			<BracketStageRoundInput {rounds} bind:selectedRoundIndex {confirmRemoveRound} />
 
 			<!-- Stage Nodes Section -->
-			<section class="space-y-4">
-				<div class="flex items-center justify-between">
-					<h4 class="text-lg font-medium text-white">Selected Stage Node</h4>
-					<select
-						bind:value={selectedNodeIndex}
-						class="mt-1 block w-64 rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-					>
-						{#each nodes as node, nodeIndex (nodeIndex)}
-							{@const match = matches.find((m: (typeof matches)[0]) => m.id === node.matchId)}
-							{@const round = rounds.find((r) => r.id === node.roundId || r.id === node.roundId)}
-							{@const team1Score = match?.teams[0]?.score || 0}
-							{@const team2Score = match?.teams[1]?.score || 0}
-							<option value={nodeIndex}>
-								{round?.title || round?.type || 'Unknown Round'} - {match
-									? `${match.teams[0]?.team?.name || 'TBD'} vs ${match.teams[1]?.team?.name || 'TBD'} (${team1Score}-${team2Score}) - ${match.id}`
-									: 'No match'} (#{node.order})
-							</option>
-						{/each}
-						<option disabled>──────────</option>
-						<option value={-1}>New Node</option>
-					</select>
-				</div>
-
-				{#if selectedNodeIndex >= 0 && nodes[selectedNodeIndex]}
-					{@const node = nodes[selectedNodeIndex]}
-					{@const nodeIndex = selectedNodeIndex}
-					<div class="rounded-lg border border-slate-700 bg-slate-800/50 p-4">
-						<div class="space-y-4">
-							<div>
-								<label for="node-match-{nodeIndex}" class="block text-sm font-medium text-slate-300"
-									>Match</label
-								>
-								<select
-									id="node-match-{nodeIndex}"
-									bind:value={node.matchId}
-									class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-								>
-									<option value="">Select Match</option>
-									{#each getAvailableMatches(nodeIndex) as match (match.id)}
-										{@const team1Score = match.teams[0]?.score || 0}
-										{@const team2Score = match.teams[1]?.score || 0}
-										<option value={match.id}>
-											{match.teams[0]?.team?.name || 'TBD'} vs {match.teams[1]?.team?.name || 'TBD'}
-											({team1Score}-{team2Score}) - {match.id}
-										</option>
-									{/each}
-								</select>
-							</div>
-
-							<div class="grid grid-cols-2 gap-4 md:grid-cols-3">
-								<div>
-									<label
-										for="node-round-{nodeIndex}"
-										class="block text-sm font-medium text-slate-300">Round</label
-									>
-									<select
-										id="node-round-{nodeIndex}"
-										bind:value={node.roundId}
-										class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-									>
-										{#each rounds as round, roundIndex (round.id)}
-											<option value={round.id || roundIndex}>
-												{round.title || round.type}
-											</option>
-										{/each}
-									</select>
-								</div>
-
-								<div>
-									<label
-										for="node-order-{nodeIndex}"
-										class="block text-sm font-medium text-slate-300">Order</label
-									>
-									<input
-										id="node-order-{nodeIndex}"
-										type="number"
-										bind:value={node.order}
-										class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-									/>
-								</div>
-
-								<div class="flex items-end">
-									<button
-										type="button"
-										class="text-red-500 hover:text-red-400"
-										onclick={() => confirmRemoveNode(nodeIndex)}
-										aria-label="Remove node"
-									>
-										<IconParkSolidDelete class="h-4 w-4" />
-									</button>
-								</div>
-							</div>
-						</div>
-
-						<!-- Dependencies Section -->
-						<div class="mt-4 space-y-2">
-							<div class="flex items-center justify-between">
-								<span class="text-sm font-medium text-slate-300">Dependencies</span>
-								<button
-									type="button"
-									class="rounded-md bg-slate-600 px-2 py-1 text-xs font-medium text-slate-200 hover:bg-slate-500 focus:ring-2 focus:ring-slate-500 focus:outline-none"
-									onclick={() => addDependency(nodeIndex)}
-								>
-									Add Dependency
-								</button>
-							</div>
-
-							{#each node.dependencies as dep, depIndex (dep.dependencyMatchId)}
-								<div
-									class="flex items-center gap-2 rounded border border-slate-600 bg-slate-700/50 p-2"
-								>
-									<select
-										id="dep-match-{nodeIndex}-{depIndex}"
-										bind:value={dep.dependencyMatchId}
-										class="flex-1 rounded border border-slate-600 bg-slate-800 px-2 py-1 text-sm text-white"
-									>
-										<option value="">Select Match</option>
-										{#each getAvailableMatchesForDependencies(nodeIndex, depIndex) as match (match.id)}
-											{@const team1Score = match.teams[0]?.score || 0}
-											{@const team2Score = match.teams[1]?.score || 0}
-											<option value={match.id}>
-												{match.teams[0]?.team?.name || 'TBD'} vs {match.teams[1]?.team?.name ||
-													'TBD'} ({team1Score}-{team2Score}) - {match.id}
-											</option>
-										{/each}
-									</select>
-
-									<select
-										id="dep-outcome-{nodeIndex}-{depIndex}"
-										bind:value={dep.outcome}
-										class="rounded border border-slate-600 bg-slate-800 px-2 py-1 text-sm text-white"
-									>
-										{#each outcomeTypes as outcome (outcome)}
-											<option value={outcome}>{outcome}</option>
-										{/each}
-									</select>
-
-									<button
-										type="button"
-										class="text-red-500 hover:text-red-400"
-										onclick={() => removeDependency(nodeIndex, depIndex)}
-										aria-label="Remove dependency"
-									>
-										<IconParkSolidDelete class="h-3 w-3" />
-									</button>
-								</div>
-							{/each}
-						</div>
-					</div>
-				{:else}
-					<div class="rounded-lg border border-slate-700 bg-slate-800/50 p-8 text-center">
-						<p class="text-slate-400">
-							Select a node from the dropdown above to edit its properties
-						</p>
-					</div>
-				{/if}
-			</section>
+			<BracketStageNodeInput
+				{nodes}
+				{matches}
+				{rounds}
+				bind:selectedNodeIndex
+				{confirmRemoveNode}
+				{addDependency}
+				{removeDependency}
+				{getAvailableMatches}
+				{getAvailableMatchesForDependencies}
+			/>
 		</div>
 	</div>
 

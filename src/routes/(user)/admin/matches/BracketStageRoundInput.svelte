@@ -1,0 +1,126 @@
+<script lang="ts">
+	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
+	import type { Round } from './BracketEdit.svelte';
+
+	let {
+		rounds,
+		selectedRoundIndex = $bindable(0),
+		confirmRemoveRound
+	}: {
+		rounds: Round[];
+		selectedRoundIndex: number;
+		confirmRemoveRound: (roundIndex: number) => void;
+	} = $props();
+
+	const roundTypes = [
+		'quarterfinals',
+		'semifinals',
+		'final',
+		'top16',
+		'group',
+		'thirdplace',
+		'lower',
+		'grandfinal'
+	] as const;
+	const bracketTypes = ['upper', 'lower', 'group'] as const;
+</script>
+
+<section class="space-y-4">
+	<div class="flex items-center justify-between">
+		<h4 class="text-lg font-medium text-white">Selected Stage Round</h4>
+		<select
+			bind:value={selectedRoundIndex}
+			class="mt-1 block w-64 rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+		>
+			{#each rounds as round, roundIndex (round.id)}
+				<option value={roundIndex}>{roundIndex + 1}: {round.title || round.type}</option>
+			{/each}
+			<option disabled>──────────</option>
+			<option value={-1}>New Round</option>
+		</select>
+	</div>
+
+	{#if selectedRoundIndex >= 0 && rounds[selectedRoundIndex]}
+		{@const round = rounds[selectedRoundIndex]}
+		{@const roundIndex = selectedRoundIndex}
+		<div class="rounded-lg border border-slate-700 bg-slate-800/50 p-4">
+			<div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+				<div>
+					<label for="round-type-{roundIndex}" class="block text-sm font-medium text-slate-300"
+						>Type</label
+					>
+					<select
+						id="round-type-{roundIndex}"
+						bind:value={round.type}
+						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+					>
+						{#each roundTypes as type (type)}
+							<option value={type}>{type}</option>
+						{/each}
+					</select>
+				</div>
+
+				<div>
+					<label for="round-title-{roundIndex}" class="block text-sm font-medium text-slate-300"
+						>Title</label
+					>
+					<input
+						id="round-title-{roundIndex}"
+						type="text"
+						bind:value={round.title}
+						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+					/>
+				</div>
+
+				<div>
+					<label for="round-bracket-{roundIndex}" class="block text-sm font-medium text-slate-300"
+						>Bracket</label
+					>
+					<select
+						id="round-bracket-{roundIndex}"
+						bind:value={round.bracket}
+						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+					>
+						{#each bracketTypes as bracket (bracket)}
+							<option value={bracket}>{bracket}</option>
+						{/each}
+					</select>
+				</div>
+
+				<div>
+					<label
+						for="round-parallel-group-{roundIndex}"
+						class="block text-sm font-medium text-slate-300">Parallel Group</label
+					>
+					<select
+						id="round-parallel-group-{roundIndex}"
+						bind:value={round.parallelGroup}
+						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+					>
+						<option value={undefined}>None</option>
+						{#each rounds.filter((r) => r.parallelGroup === undefined && r.id !== round.id) as availableRound (availableRound.id)}
+							<option value={availableRound.id}>
+								{availableRound.title || availableRound.type}
+							</option>
+						{/each}
+					</select>
+				</div>
+			</div>
+
+			<div class="mt-3 flex justify-end">
+				<button
+					type="button"
+					class="text-red-500 hover:text-red-400"
+					onclick={() => confirmRemoveRound(roundIndex)}
+					aria-label="Remove round"
+				>
+					<IconParkSolidDelete class="h-4 w-4" />
+				</button>
+			</div>
+		</div>
+	{:else}
+		<div class="rounded-lg border border-slate-700 bg-slate-800/50 p-8 text-center">
+			<p class="text-slate-400">Select a round from the preview above to edit its properties</p>
+		</div>
+	{/if}
+</section>
