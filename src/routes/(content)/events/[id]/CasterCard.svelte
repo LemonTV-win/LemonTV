@@ -20,7 +20,7 @@
 	{#each caster.player.nationalities as nationality, idx (idx)}
 		<NationalityFlag {nationality} />
 	{/each}
-	<a href={`/players/${caster.player.slug}`} class="text-center hover:text-yellow-500">
+	<a href={`/players/${caster.player.slug}`} class="contents text-center hover:text-yellow-500">
 		<!-- TODO: Add image -->
 		<IconParkSolidPeoples class="h-16 w-16 text-gray-300" />
 		<div class="font-bold">{caster.player.name}</div>
