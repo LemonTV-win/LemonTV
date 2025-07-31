@@ -147,10 +147,21 @@
 			newPlayer.aliases = [];
 		}
 		newPlayer.aliases.push('');
+		// Focus on the newly added alias input
+		setTimeout(() => {
+			const inputs = document.querySelectorAll('input[id^="alias-"]');
+			const lastInput = inputs[inputs.length - 1];
+			if (lastInput instanceof HTMLInputElement) {
+				lastInput.focus();
+				lastInput.select();
+			}
+		}, 0);
 	}
 
 	function removeAlias(index: number) {
-		newPlayer.aliases?.splice(index, 1);
+		if (newPlayer.aliases) {
+			newPlayer.aliases = newPlayer.aliases.filter((_, i) => i !== index);
+		}
 	}
 
 	function addSocialAccount() {
@@ -368,7 +379,7 @@
 		<div>
 			<label class="block text-sm font-medium text-slate-300" for="aliases">{m.aliases()}</label>
 			<div class="mt-2 rounded-lg border border-slate-700 bg-slate-800 p-4">
-				{#each newPlayer.aliases || [] as alias, i (alias)}
+				{#each newPlayer.aliases || [] as alias, i (i)}
 					<div
 						class="grid grid-cols-[1fr_auto] gap-4 {i > 0
 							? 'mt-4 border-t border-slate-700 pt-4'
