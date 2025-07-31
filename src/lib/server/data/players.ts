@@ -1585,6 +1585,94 @@ export async function getPlayerEditHistory(playerId: string) {
 	return history;
 }
 
+// Optimized function for player ratings only
+export interface PlayerRating {
+	playerId: string;
+	rating: number;
+}
+
+export async function getAllPlayersRatings(limit?: number): Promise<PlayerRating[]> {
+	console.info('[Players] Fetching ratings for all players', limit ? `(limited to ${limit})` : '');
+
+	// Get all players
+	const players = await db.select().from(player);
+
+	if (players.length === 0) {
+		console.warn('[Players] No players found');
+		return [];
+	}
+
+	// Get all game accounts for all players
+	const allPlayerAccounts = await db.select().from(gameAccount);
+
+	// Group accounts by player ID
+	const accountsByPlayer = new Map<string, number[]>();
+	for (const account of allPlayerAccounts) {
+		if (!accountsByPlayer.has(account.playerId)) {
+			accountsByPlayer.set(account.playerId, []);
+		}
+		accountsByPlayer.get(account.playerId)!.push(account.accountId);
+	}
+
+	// Get all account IDs
+	const allAccountIds = allPlayerAccounts.map((acc) => acc.accountId);
+
+	if (allAccountIds.length === 0) {
+		console.warn('[Players] No game accounts found for any players');
+		return players.map((p) => ({
+			playerId: p.id,
+			rating: 0
+		}));
+	}
+
+	// Get all player scores for all players (only what we need for rating)
+	const allPlayerScores = await db
+		.select({
+			accountId: schema.gamePlayerScore.accountId,
+			score: schema.gamePlayerScore.score
+		})
+		.from(schema.gamePlayerScore)
+		.where(inArray(schema.gamePlayerScore.accountId, allAccountIds));
+
+	// Calculate ratings for each player
+	const result: PlayerRating[] = [];
+
+	for (const player of players) {
+		const accountIds = accountsByPlayer.get(player.id) || [];
+
+		if (accountIds.length === 0) {
+			result.push({
+				playerId: player.id,
+				rating: 0
+			});
+			continue;
+		}
+
+		// Get scores for this player
+		const playerScores = allPlayerScores.filter((score) => accountIds.includes(score.accountId));
+
+		// Calculate rating
+		let totalScore = 0;
+		for (const score of playerScores) {
+			totalScore += score.score;
+		}
+
+		const averageScore = playerScores.length > 0 ? totalScore / playerScores.length : 0;
+		const rating = averageScore / 200; // Same rating calculation as before
+
+		result.push({
+			playerId: player.id,
+			rating
+		});
+	}
+
+	// Sort by rating (descending) and apply limit if specified
+	const sortedResult = result.sort((a, b) => b.rating - a.rating).slice(0, limit);
+
+	console.info('[Players] Successfully calculated ratings for', sortedResult.length, 'players');
+	return sortedResult;
+}
+
 // Get essential stats for all players (optimized for lists)
 export async function getAllPlayersEssentialStats(): Promise<PlayerEssentialStats[]> {
 	console.info('[Players] Fetching essential stats for all players');

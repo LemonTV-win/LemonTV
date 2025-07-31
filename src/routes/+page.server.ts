@@ -1,7 +1,7 @@
 import { fail, type Actions } from '@sveltejs/kit';
 import * as auth from '$lib/server/auth';
 import type { PageServerLoad } from './$types';
-import { getPlayers, getPlayersTeams, getAllPlayersEssentialStats } from '$lib/server/data/players';
+import { getPlayers, getPlayersTeams, getAllPlayersRatings } from '$lib/server/data/players';
 import { getEvents } from '$lib/data';
 import { getEssentialEvents } from '$lib/server/data/events';
 import { getTeams } from '$lib/server/data/teams';
@@ -13,11 +13,13 @@ export const load: PageServerLoad = async () => {
 	const players = await getPlayers();
 	const playersTeams = await getPlayersTeams();
 
-	// Get essential stats for all players (optimized)
-	const playersEssentialStats = await getAllPlayersEssentialStats();
+	// Get top 5 player ratings (optimized)
+	const playersRatings = await getAllPlayersRatings(5);
 
 	// Create a map for quick lookup
-	const statsByPlayerId = new Map(playersEssentialStats.map((stats) => [stats.playerId, stats]));
+	const ratingsByPlayerId = new Map(
+		playersRatings.map((rating) => [rating.playerId, rating.rating])
+	);
 
 	return {
 		events: [...getEvents(), ...(await getEssentialEvents())] as (Event | EssentialEvent)[], // TODO: limit = 5
@@ -28,23 +30,14 @@ export const load: PageServerLoad = async () => {
 				rank: index + 1
 			})),
 		players: players
-			.map((player) => {
-				const stats = statsByPlayerId.get(player.id) || {
-					wins: 0,
-					rating: 0,
-					kd: 0,
-					eventsCount: 0
-				};
-
-				return {
-					...player,
-					teams:
-						playersTeams[player.id ?? '']?.map((team) => team?.name ?? undefined).filter(Boolean) ??
-						[],
-					rating: stats.rating
-				};
-			})
-			.toSorted((a, b) => b.rating - a.rating)
+			.filter((player) => ratingsByPlayerId.has(player.id)) // Only include players with ratings
+			.map((player) => ({
+				...player,
+				teams:
+					playersTeams[player.id ?? '']?.map((team) => team?.name ?? undefined).filter(Boolean) ??
+					[],
+				rating: ratingsByPlayerId.get(player.id) ?? 0
+			}))
 			.map((player, index) => ({
 				...player,
 				rank: index + 1
