@@ -7,6 +7,7 @@
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import ImageUpload from '$lib/components/ImageUpload.svelte';
 	import PlayerInput from '$lib/components/forms/PlayerInput.svelte';
+	import { formatSlug } from '$lib/utils/strings';
 
 	let { team, players, teamPlayers, teamAliases, onCancel } = $props<{
 		team: Partial<Team>;
@@ -21,21 +22,13 @@
 	let successMessage = $state('');
 	let lastTeamName = $state(team.name || '');
 
-	function formatSlug(name: string): string {
-		return name
-			.toLowerCase()
-			.replace(/[^a-z0-9]+/g, '-')
-			.replace(/^-+|-+$/g, '');
-	}
-
 	$effect(() => {
 		// Only update slug if:
 		// 1. Team name has changed AND
-		// 2. Either there's no slug yet OR the current slug matches the last generated slug
+		// 2. No slug exists yet
 		if (newTeam.name && newTeam.name !== lastTeamName) {
-			const generatedSlug = formatSlug(newTeam.name);
-			if (!newTeam.slug || newTeam.slug === formatSlug(lastTeamName)) {
-				newTeam.slug = generatedSlug;
+			if (!newTeam.slug) {
+				newTeam.slug = formatSlug(newTeam.name);
 			}
 			lastTeamName = newTeam.name;
 		}
