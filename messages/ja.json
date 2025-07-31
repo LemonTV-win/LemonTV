@@ -486,7 +486,8 @@
 	"organizer_page_description": "{name}の詳細情報：開催イベント、コミュニティへの貢献、背景、Strinova Esportsでの役割を紹介。",
 	"team_page_description": "{name}のチーム情報：歴史、メンバー構成、過去の実績、Strinovaでの戦績を確認。",
 	"player_page_description": "{name}のプロフィール：スキル、実績、Strinovaコミュニティへの貢献を紹介。",
-	"strinova_team_overview": "Strinovaチーム概要",
-	"strinova_player_profile": "Strinovaプレイヤー情報",
-	"region_ranking": "地域ランキング"
+	"strinova_team_overview": "Strinova チーム概要",
+	"strinova_player_profile": "Strinova プレイヤープロフィール",
+	"region_ranking": "地域ランキング",
+	"teams_and_players": "チームとプレイヤー"
 }

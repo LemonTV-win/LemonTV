@@ -486,7 +486,8 @@
 	"organizer_page_description": "Узнайте больше о {name} — их мероприятиях, вкладе в сообщество, истории и роли в экосистеме Strinova Esports.",
 	"team_page_description": "Откройте для себя {name} — историю команды, состав игроков, прошлые выступления и результаты турниров в сцене Strinova.",
 	"player_page_description": "Узнайте о {name} — их навыках, достижениях и вкладе в сообщество Strinova Esports.",
-	"strinova_team_overview": "Обзор Команды Strinova",
-	"strinova_player_profile": "Профиль Игрока Strinova",
-	"region_ranking": "Рейтинг Регионов"
+	"strinova_team_overview": "Обзор команды Strinova",
+	"strinova_player_profile": "Профиль игрока Strinova",
+	"region_ranking": "Региональный рейтинг",
+	"teams_and_players": "Команды и игроки"
 }

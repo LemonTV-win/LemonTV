@@ -331,7 +331,7 @@
 			<label class="block text-sm font-medium text-slate-300" for="date">{m.date()}</label>
 			<div class="mt-1 grid grid-cols-2 gap-4">
 				<div>
-					<label class="block text-sm text-slate-400" for="dateStart">Start Date</label>
+					<label class="block text-sm text-slate-400" for="dateStart">{m.start_date()}</label>
 					<input
 						type="date"
 						id="dateStart"
@@ -341,7 +341,7 @@
 					/>
 				</div>
 				<div>
-					<label class="block text-sm text-slate-400" for="dateEnd">End Date</label>
+					<label class="block text-sm text-slate-400" for="dateEnd">{m.end_date()}</label>
 					<input
 						type="date"
 						id="dateEnd"
@@ -361,7 +361,9 @@
 		</div>
 
 		<div>
-			<label class="block text-sm font-medium text-slate-300" for="organizers">Organizers</label>
+			<label class="block text-sm font-medium text-slate-300" for="organizers"
+				>{m.organizers()}</label
+			>
 			<OrganizerInput id="organizers" {organizers} bind:selectedOrganizers={newEvent.organizers} />
 		</div>
 
@@ -377,7 +379,7 @@
 		</div>
 
 		<section class="mb-6 flex flex-col gap-4">
-			<h3 class="text-lg font-semibold">Teams and Players</h3>
+			<h3 class="text-lg font-semibold">{m.teams_and_players()}</h3>
 			<TeamPlayersInput {teams} {players} {teamPlayers} bind:selectedTeams bind:eventTeamPlayers />
 		</section>
 

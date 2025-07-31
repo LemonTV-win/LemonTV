@@ -486,7 +486,8 @@
 	"organizer_page_description": "深入了解{name}：他们的赛事、对社区的贡献、背景，以及在卡拉彼丘电竞生态中的角色。",
 	"team_page_description": "探索{name}：战队历史、阵容、过往表现和在卡拉彼丘赛事中的成绩。",
 	"player_page_description": "认识{name}：他们的技术、成就以及在卡拉彼丘电竞社区中的贡献。",
-	"strinova_team_overview": "卡拉彼丘团队概览",
-	"strinova_player_profile": "卡拉彼丘玩家信息",
-	"region_ranking": "地区排名"
+	"strinova_team_overview": "Strinova 团队概览",
+	"strinova_player_profile": "Strinova 玩家档案",
+	"region_ranking": "地区排名",
+	"teams_and_players": "队伍和玩家"
 }

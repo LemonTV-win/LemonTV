@@ -488,5 +488,6 @@
 	"player_page_description": "Conoce a {name}: sus habilidades, logros y aportes a la comunidad de Strinova Esports.",
 	"strinova_team_overview": "Resumen del Equipo Strinova",
 	"strinova_player_profile": "Perfil del Jugador Strinova",
-	"region_ranking": "Clasificación Regional"
+	"region_ranking": "Clasificación Regional",
+	"teams_and_players": "Equipos y jugadores"
 }
