@@ -149,6 +149,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	console.log('[Admin][Matches][Load] Starting game maps query');
 	const gameMapsStartTime = Date.now();
 
+	// #region Game Maps Query
 	// Load game maps separately to avoid cartesian product issues
 	const gameMaps = await db
 		.select({
@@ -170,10 +171,12 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 			gameMapLookup.set(gameMap.gameId, gameMap.map);
 		}
 	}
+	// #endregion
 
 	console.log('[Admin][Matches][Load] Starting bracket structure queries');
 	const bracketStartTime = Date.now();
 
+	// #region Bracket Structure Queries
 	// Load bracket structure data
 	const stageRounds = await db.select().from(table.stageRound).orderBy(table.stageRound.id);
 
@@ -188,10 +191,12 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	console.log(
 		`[Admin][Matches][Load] Bracket structure queries completed in ${bracketEndTime - bracketStartTime}ms`
 	);
+	// #endregion
 
 	console.log('[Admin][Matches][Load] Starting team rosters query');
 	const rostersStartTime = Date.now();
 
+	// #region Team Rosters Query
 	// Load team rosters from eventTeamPlayer table
 	const teamRosters = await db
 		.select({
@@ -217,6 +222,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	console.log(
 		`[Admin][Matches][Load] Team rosters query completed in ${rostersEndTime - rostersStartTime}ms, returned ${teamRosters.length} rows`
 	);
+	// #endregion
 
 	// #region Image URL processing
 	console.log('[Admin][Matches][Load] Starting image URL processing');
@@ -266,6 +272,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	console.log('[Admin][Matches][Load] Starting team roster processing');
 	const rosterProcessingStartTime = Date.now();
 
+	// #region Team Roster Processing
 	// Process team rosters
 	const teamRosterMap = new Map<
 		string,
@@ -348,10 +355,12 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	console.log(
 		`[Admin][Matches][Load] Team roster processing completed in ${rosterProcessingEndTime - rosterProcessingStartTime}ms`
 	);
+	// #endregion
 
 	console.log('[Admin][Matches][Load] Starting data transformation');
 	const transformationStartTime = Date.now();
 
+	// #region Data Transformation
 	type MatchWithTeams = (typeof processedEvents)[number]['match'] & {
 		teams: Array<
 			(typeof processedEvents)[number]['match_team'] & {
@@ -558,10 +567,12 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	console.log(
 		`[Admin][Matches][Load] Data transformation completed in ${transformationEndTime - transformationStartTime}ms`
 	);
+	// #endregion
 
 	console.log('[Admin][Matches][Load] Starting stage node dependency processing');
 	const nodeDependencyStartTime = Date.now();
 
+	// #region Stage Node Dependency Processing
 	stageNodes.forEach((node) => {
 		Object.values(eventsByEvent).forEach((eventData) => {
 			const stageData = eventData.stages.get(node.stageId);
@@ -579,9 +590,12 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	console.log(
 		`[Admin][Matches][Load] Stage node dependency processing completed in ${nodeDependencyEndTime - nodeDependencyStartTime}ms`
 	);
+	// #endregion
 
 	// Convert Map to object for serialization
 	const serializationStartTime = Date.now();
+
+	// #region Serialization
 	const serializedEvents = Object.entries(eventsByEvent).reduce(
 		(acc, [eventId, eventData]) => {
 			acc[eventId] = {
@@ -708,10 +722,12 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	console.log(
 		`[Admin][Matches][Load] Serialization completed in ${serializationEndTime - serializationStartTime}ms`
 	);
+	// #endregion
 
 	const totalEndTime = Date.now();
 	console.log(`[Admin][Matches][Load] Total load function time: ${totalEndTime - startTime}ms`);
 
+	// #region Final Queries
 	const teamsQueryStart = Date.now();
 	const teams = await db.select().from(table.team);
 	const teamsQueryEnd = Date.now();
@@ -725,6 +741,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	console.log(
 		`[Admin][Matches][Load] Maps query completed in ${mapsQueryEnd - mapsQueryStart}ms, returned ${maps.length} rows`
 	);
+	// #endregion
 
 	return {
 		events: serializedEvents,
