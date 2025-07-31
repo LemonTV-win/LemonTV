@@ -4,6 +4,9 @@
 	import { getLocale } from '$lib/paraglide/runtime';
 	import { countryCodeToLocalizedName } from '$lib/utils/strings';
 	import type { TCountryCode } from 'countries-list';
+	import TypcnArrowUnsorted from '~icons/typcn/arrow-unsorted';
+	import TypcnArrowSortedDown from '~icons/typcn/arrow-sorted-down';
+	import TypcnArrowSortedUp from '~icons/typcn/arrow-sorted-up';
 
 	let {
 		players,
@@ -23,7 +26,16 @@
 		uniqueNationalities: TCountryCode[];
 	} = $props();
 
-	// Get unique nationalities and superstrings for filter options
+	// Sort state
+	let sortBy:
+		| 'region-asc'
+		| 'region-desc'
+		| 'players-asc'
+		| 'players-desc'
+		| 'wins-asc'
+		| 'wins-desc'
+		| 'rating-asc'
+		| 'rating-desc' = $state('players-desc');
 
 	// Calculate country statistics
 	let countryStats = $derived(
@@ -41,7 +53,34 @@
 					avgRating
 				};
 			})
-			.sort((a, b) => b.totalPlayers - a.totalPlayers)
+			.sort((a, b) => {
+				if (sortBy === 'region-asc') {
+					return (
+						countryCodeToLocalizedName(a.nationality ?? '', getLocale())?.localeCompare(
+							countryCodeToLocalizedName(b.nationality ?? '', getLocale()) ?? ''
+						) ?? 0
+					);
+				} else if (sortBy === 'region-desc') {
+					return (
+						countryCodeToLocalizedName(b.nationality ?? '', getLocale())?.localeCompare(
+							countryCodeToLocalizedName(a.nationality ?? '', getLocale()) ?? ''
+						) ?? 0
+					);
+				} else if (sortBy === 'players-asc') {
+					return a.totalPlayers - b.totalPlayers;
+				} else if (sortBy === 'players-desc') {
+					return b.totalPlayers - a.totalPlayers;
+				} else if (sortBy === 'wins-asc') {
+					return a.totalWins - b.totalWins;
+				} else if (sortBy === 'wins-desc') {
+					return b.totalWins - a.totalWins;
+				} else if (sortBy === 'rating-asc') {
+					return a.avgRating - b.avgRating;
+				} else if (sortBy === 'rating-desc') {
+					return b.avgRating - a.avgRating;
+				}
+				return 0;
+			})
 	);
 </script>
 
@@ -51,10 +90,70 @@
 	<table class="glass-table w-full table-auto">
 		<thead>
 			<tr>
-				<th class="px-4 py-2 text-left">{m.region()}</th>
-				<th class="px-4 py-2 text-left">{m.players()}</th>
-				<th class="px-4 py-2 text-left">{m.wins()}</th>
-				<th class="px-4 py-2 text-left">{m.rating()}</th>
+				<th class="px-4 py-2">
+					<button
+						class="flex items-center gap-1 text-left"
+						class:text-white={sortBy === 'region-asc' || sortBy === 'region-desc'}
+						onclick={() => (sortBy = sortBy === 'region-asc' ? 'region-desc' : 'region-asc')}
+					>
+						{m.region()}
+						{#if sortBy === 'region-asc'}
+							<TypcnArrowSortedUp class="inline-block" />
+						{:else if sortBy === 'region-desc'}
+							<TypcnArrowSortedDown class="inline-block" />
+						{:else}
+							<TypcnArrowUnsorted class="inline-block" />
+						{/if}
+					</button>
+				</th>
+				<th class="px-4 py-2">
+					<button
+						class="flex items-center gap-1 text-left"
+						class:text-white={sortBy === 'players-asc' || sortBy === 'players-desc'}
+						onclick={() => (sortBy = sortBy === 'players-asc' ? 'players-desc' : 'players-asc')}
+					>
+						{m.players()}
+						{#if sortBy === 'players-asc'}
+							<TypcnArrowSortedUp class="inline-block" />
+						{:else if sortBy === 'players-desc'}
+							<TypcnArrowSortedDown class="inline-block" />
+						{:else}
+							<TypcnArrowUnsorted class="inline-block" />
+						{/if}
+					</button>
+				</th>
+				<th class="px-4 py-2">
+					<button
+						class="flex items-center gap-1 text-left"
+						class:text-white={sortBy === 'wins-asc' || sortBy === 'wins-desc'}
+						onclick={() => (sortBy = sortBy === 'wins-asc' ? 'wins-desc' : 'wins-asc')}
+					>
+						{m.wins()}
+						{#if sortBy === 'wins-asc'}
+							<TypcnArrowSortedUp class="inline-block" />
+						{:else if sortBy === 'wins-desc'}
+							<TypcnArrowSortedDown class="inline-block" />
+						{:else}
+							<TypcnArrowUnsorted class="inline-block" />
+						{/if}
+					</button>
+				</th>
+				<th class="px-4 py-2">
+					<button
+						class="flex items-center gap-1 text-left"
+						class:text-white={sortBy === 'rating-asc' || sortBy === 'rating-desc'}
+						onclick={() => (sortBy = sortBy === 'rating-asc' ? 'rating-desc' : 'rating-asc')}
+					>
+						{m.rating()}
+						{#if sortBy === 'rating-asc'}
+							<TypcnArrowSortedUp class="inline-block" />
+						{:else if sortBy === 'rating-desc'}
+							<TypcnArrowSortedDown class="inline-block" />
+						{:else}
+							<TypcnArrowUnsorted class="inline-block" />
+						{/if}
+					</button>
+				</th>
 			</tr>
 		</thead>
 		<tbody>
