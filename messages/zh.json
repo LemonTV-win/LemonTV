@@ -377,7 +377,7 @@
 	"server": "服务器",
 	"format": "形式",
 	"status": "状态",
-	"capacity": "容量",
+	"capacity": "参赛队伍总数",
 	"date": "日期",
 	"image": "图片",
 	"delete_event_confirmation": "您确定要删除此赛事吗？",

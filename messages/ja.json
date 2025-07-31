@@ -314,7 +314,7 @@
 	"server": "サーバー",
 	"format": "形式",
 	"status": "状態",
-	"capacity": "定員",
+	"capacity": "参加チーム数",
 	"date": "日付",
 	"image": "画像",
 	"delete_event_confirmation": "このイベントを削除してもよろしいですか？",

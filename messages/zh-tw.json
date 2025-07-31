@@ -377,7 +377,7 @@
 	"server": "伺服器",
 	"format": "形式",
 	"status": "狀態",
-	"capacity": "容量",
+	"capacity": "參賽隊伍總數",
 	"date": "日期",
 	"image": "圖片",
 	"delete_event_confirmation": "您確定要刪除此賽事嗎？",

@@ -377,7 +377,7 @@
 	"server": "서버",
 	"format": "형식",
 	"status": "상태",
-	"capacity": "수용 인원",
+	"capacity": "참가 팀 수",
 	"date": "날짜",
 	"image": "이미지",
 	"delete_event_confirmation": "이 이벤트를 삭제하시겠습니까?",
