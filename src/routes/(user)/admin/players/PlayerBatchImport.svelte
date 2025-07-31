@@ -99,7 +99,7 @@
 	let hasDuplicateSlugs = $derived(duplicateSlugs.length > 0);
 
 	// Get duplicate slug values for highlighting (including existing players)
-	let duplicateSlugValues = $derived(() => {
+	let duplicateSlugValues = $derived.by(() => {
 		if (!parsedPlayers) return new Set<string>();
 
 		const slugCounts = new Map<string, number>();
@@ -133,7 +133,7 @@
 	// Check if a player has a duplicate slug (including against existing players)
 	function isDuplicateSlug(player: PlayerImportData): boolean {
 		const slug = player.slug || formatSlug(player.name);
-		return duplicateSlugValues().has(slug);
+		return duplicateSlugValues.has(slug);
 	}
 
 	// Get the reason for duplicate (internal or existing conflict)
@@ -167,7 +167,7 @@
 	}
 
 	// Get all existing account IDs for comparison
-	let existingAccountIds = $derived(() => {
+	let existingAccountIds = $derived.by(() => {
 		const accountIds = new Set<number>();
 		existingPlayers.forEach(
 			(player: {
@@ -189,7 +189,6 @@
 		if (!parsedPlayers) return [];
 
 		const accountIdCounts = new Map<number, string[]>();
-		const existingAccountIdSet = existingAccountIds();
 
 		// Count account IDs within the parsed data
 		parsedPlayers.forEach((player) => {
@@ -213,7 +212,7 @@
 		// Check for conflicts with existing players
 		parsedPlayers.forEach((player) => {
 			player.gameAccounts?.forEach((account) => {
-				if (existingAccountIdSet.has(account.accountId)) {
+				if (existingAccountIds.has(account.accountId)) {
 					const existingPlayer = existingPlayers.find(
 						(p: {
 							id: string;
@@ -238,11 +237,10 @@
 	let hasDuplicateAccountIds = $derived(duplicateAccountIds.length > 0);
 
 	// Get duplicate account ID values for highlighting
-	let duplicateAccountIdValues = $derived(() => {
+	let duplicateAccountIdValues = $derived.by(() => {
 		if (!parsedPlayers) return new Set<number>();
 
 		const accountIdCounts = new Map<number, number>();
-		const existingAccountIdSet = existingAccountIds();
 
 		// Count account IDs within parsed data
 		parsedPlayers.forEach((player) => {
@@ -263,7 +261,7 @@
 		// Check for conflicts with existing players
 		parsedPlayers.forEach((player) => {
 			player.gameAccounts?.forEach((account) => {
-				if (existingAccountIdSet.has(account.accountId)) {
+				if (existingAccountIds.has(account.accountId)) {
 					duplicates.add(account.accountId);
 				}
 			});
@@ -275,7 +273,7 @@
 	// Check if a player has a duplicate account ID
 	function isDuplicateAccountId(player: PlayerImportData): boolean {
 		if (!player.gameAccounts) return false;
-		return player.gameAccounts.some((account) => duplicateAccountIdValues().has(account.accountId));
+		return player.gameAccounts.some((account) => duplicateAccountIdValues.has(account.accountId));
 	}
 
 	// Get the reason for account ID duplicate
@@ -283,12 +281,11 @@
 		if (!player.gameAccounts) return '';
 
 		const reasons: string[] = [];
-		const existingAccountIdSet = existingAccountIds();
 
 		player.gameAccounts.forEach((account) => {
-			if (duplicateAccountIdValues().has(account.accountId)) {
+			if (duplicateAccountIdValues.has(account.accountId)) {
 				// Check if it conflicts with existing players
-				if (existingAccountIdSet.has(account.accountId)) {
+				if (existingAccountIds.has(account.accountId)) {
 					const existingPlayer = existingPlayers.find(
 						(p: {
 							id: string;
