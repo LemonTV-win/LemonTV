@@ -20,7 +20,7 @@
 
 <a
 	{href}
-	class="flex items-center gap-1 rounded-md border border-gray-500 bg-white/10 px-2 py-1 text-sm text-gray-400 backdrop-blur-lg transition-all duration-200 hover:bg-gray-700"
+	class="flex items-center gap-1.5 rounded-md border border-gray-500 bg-white/10 px-2 py-1 text-sm font-semibold text-gray-400 backdrop-blur-lg transition-all duration-200 hover:bg-gray-700"
 	{target}
 	rel={target === '_blank' ? 'noopener noreferrer' : undefined}
 	{title}
