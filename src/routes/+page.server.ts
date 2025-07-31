@@ -21,6 +21,22 @@ export const load: PageServerLoad = async () => {
 		playersRatings.map((rating) => [rating.playerId, rating.rating])
 	);
 
+	// Get players with ratings and limit to top 5
+	const playersWithRatings = players
+		.filter((player) => ratingsByPlayerId.has(player.id)) // Only include players with ratings
+		.map((player) => ({
+			...player,
+			teams:
+				playersTeams[player.id ?? '']?.map((team) => team?.name ?? undefined).filter(Boolean) ?? [],
+			rating: ratingsByPlayerId.get(player.id) ?? 0
+		}))
+		.toSorted((a, b) => b.rating - a.rating)
+		.slice(0, 5)
+		.map((player, index) => ({
+			...player,
+			rank: index + 1
+		}));
+
 	return {
 		events: [...getEvents(), ...(await getEssentialEvents())] as (Event | EssentialEvent)[], // TODO: limit = 5
 		teams: (await getTeams())
@@ -29,19 +45,8 @@ export const load: PageServerLoad = async () => {
 				...team,
 				rank: index + 1
 			})),
-		players: players
-			.filter((player) => ratingsByPlayerId.has(player.id)) // Only include players with ratings
-			.map((player) => ({
-				...player,
-				teams:
-					playersTeams[player.id ?? '']?.map((team) => team?.name ?? undefined).filter(Boolean) ??
-					[],
-				rating: ratingsByPlayerId.get(player.id) ?? 0
-			}))
-			.map((player, index) => ({
-				...player,
-				rank: index + 1
-			}))
+		players: playersWithRatings,
+		totalPlayers: players.length
 	};
 };
 

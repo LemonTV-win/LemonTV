@@ -229,7 +229,7 @@
 				class="absolute inset-0 bg-gradient-to-br from-yellow-500/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
 			></div>
 			<div class="relative">
-				<span class="block text-3xl font-bold text-yellow-400">{data.players.length}</span>
+				<span class="block text-3xl font-bold text-yellow-400">{data.totalPlayers}</span>
 				<span class="text-sm text-gray-400">{m.total_players()}</span>
 			</div>
 		</a>
