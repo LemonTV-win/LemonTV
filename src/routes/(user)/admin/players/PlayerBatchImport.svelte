@@ -1,6 +1,9 @@
 <script lang="ts">
 	import type { TCountryCode } from 'countries-list';
 	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
+	import Highlight from 'svelte-highlight';
+	import typescript from 'svelte-highlight/languages/typescript';
+	import '$lib/highlight.css';
 
 	import { deserialize } from '$app/forms';
 
@@ -639,8 +642,9 @@ const players: PlayerImportData[] = [
 								Copy Schema
 							</button>
 						</div>
-						<pre
-							class="max-h-100 overflow-x-auto overflow-y-auto text-xs whitespace-pre-wrap text-slate-300">{TYPESCRIPT_SCHEMA}</pre>
+						<div class="max-h-100 overflow-x-auto overflow-y-auto text-xs">
+							<Highlight language={typescript} code={TYPESCRIPT_SCHEMA} />
+						</div>
 					</div>
 				{/if}
 
