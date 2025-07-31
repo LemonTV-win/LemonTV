@@ -12,6 +12,7 @@
 	import CasterInput from '$lib/components/forms/CasterInput.svelte';
 	import type { EventResult } from '$lib/data/events';
 	import type { TCountryCode } from 'countries-list';
+	import { SITE_CANONICAL_HOST } from '$lib/consts';
 
 	let {
 		event,
@@ -246,6 +247,7 @@
 				type="text"
 				id="slug"
 				name="slug"
+				placeholder={`${SITE_CANONICAL_HOST}/events/⟨${m.slug().toLocaleLowerCase()}⟩`}
 				bind:value={newEvent.slug}
 				required
 				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
