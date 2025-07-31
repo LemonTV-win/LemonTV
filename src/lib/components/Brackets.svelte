@@ -5,9 +5,10 @@
 	import type { Team } from '$lib/data/teams';
 	import { m } from '$lib/paraglide/messages';
 	import { getLocale, type Locale } from '$lib/paraglide/runtime';
+	import { settings } from '$lib/settings.svelte';
 	import { onMount, tick } from 'svelte';
 	import { SvelteMap } from 'svelte/reactivity';
-
+	import IconEye from '~icons/mdi/eye';
 	let { stage, teams }: { stage: Stage; teams: Map<string, Team> } = $props();
 
 	if (!stage) console.error('Stage is required');
@@ -147,6 +148,8 @@
 		quarterfinals: m.quarterfinals,
 		top16: m.top16
 	};
+
+	let show = $state(false);
 </script>
 
 {#snippet matchContainer(match: Match)}
@@ -295,4 +298,24 @@
 			{/if}
 		{/each}
 	</svg>
+
+	{#if settings.spoilerMode}
+		<button
+			class={[
+				'absolute inset-0 z-10 grid cursor-pointer place-content-center',
+				{
+					'bg-black/30  text-gray-300  backdrop-blur-lg hover:bg-black/0 hover:text-white': !show,
+					'bg-transparent': show
+				}
+			]}
+			onclick={() => (show = true)}
+		>
+			{#if !show}
+				<div class="flex items-center justify-center gap-2">
+					<IconEye class="h-6 w-6" />
+					{m.show_brackets()}
+				</div>
+			{/if}
+		</button>
+	{/if}
 </div>
