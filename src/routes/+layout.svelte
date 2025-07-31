@@ -12,6 +12,8 @@
 	import IconDiscord from '~icons/simple-icons/discord';
 	import IconGithub from '~icons/simple-icons/github';
 	import UserAvatar from '$lib/components/UserAvatar.svelte';
+	import Switch from '$lib/components/ui/Switch.svelte';
+	import { settings } from '$lib/settings.svelte';
 	import type { LayoutProps } from './$types';
 	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
@@ -195,6 +197,9 @@
 									{/each}
 								</select>
 							</div>
+							<div class="mt-2 flex items-center gap-2">
+								<Switch label={m.spoiler_mode()} bind:checked={settings.spoilerMode} />
+							</div>
 						</div>
 						<hr class="border-gray-700" />
 						<form method="post" action="/?/logout" use:enhance>
@@ -294,6 +299,9 @@
 									{/each}
 								</select>
 							</div>
+							<div class="mt-2 flex items-center gap-2">
+								<Switch label={m.spoiler_mode()} bind:checked={settings.spoilerMode} />
+							</div>
 						</div>
 						<hr class="border-gray-700" />
 						<form method="post" action="/?/logout" use:enhance>
@@ -324,6 +332,9 @@
 									<option value={locale}>{label}</option>
 								{/each}
 							</select>
+						</div>
+						<div class="mt-2 flex items-center gap-2">
+							<Switch label={m.spoiler_mode()} bind:checked={settings.spoilerMode} />
 						</div>
 					</div>
 					<a
