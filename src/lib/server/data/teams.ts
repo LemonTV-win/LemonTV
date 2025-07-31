@@ -1,6 +1,6 @@
 import type { Character, Region } from '$lib/data/game';
 import { calculateWinnerIndex, getMatches } from '$lib/data';
-import { calculatePlayerKD, calculatePlayerRating, getPlayerAgents } from './players';
+import { getServerPlayerKD, getServerPlayerAgents, getAllPlayersRatings } from './players';
 
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
@@ -17,24 +17,53 @@ import { randomUUID } from 'node:crypto';
 import { editHistory } from '$lib/server/db/schemas/edit-history';
 import { processImageURL } from '../storage';
 
-export function getTeamMemberStatistics(team: Team): Record<
+export async function getTeamMemberStatistics(team: Team): Promise<Record<
 	string,
 	{
 		kd: number;
 		rating: number;
 		characters: [Character, number][];
 	}
-> | null {
-	return Object.fromEntries(
-		team.players?.filter(Boolean).map((player) => [
-			player.id ?? '',
-			{
-				kd: calculatePlayerKD(player),
-				rating: calculatePlayerRating(player),
-				characters: getPlayerAgents(player)
-			}
-		]) ?? []
+> | null> {
+	if (!team.players?.length) {
+		return null;
+	}
+
+	// Get player IDs for this team
+	const playerIds = team.players
+		.filter(Boolean)
+		.map((player) => player.id)
+		.filter(Boolean);
+
+	if (playerIds.length === 0) {
+		return null;
+	}
+
+	// Get all player ratings (optimized)
+	const allPlayerRatings = await getAllPlayersRatings();
+	const ratingsByPlayerId = new Map(
+		allPlayerRatings.map((rating) => [rating.playerId, rating.rating])
 	);
+
+	// Get KD and agents for each player
+	const result: Record<string, { kd: number; rating: number; characters: [Character, number][] }> =
+		{};
+
+	for (const player of team.players) {
+		if (!player.id) continue;
+
+		const kd = await getServerPlayerKD(player.id);
+		const characters = await getServerPlayerAgents(player.id);
+		const rating = ratingsByPlayerId.get(player.id) ?? 0;
+
+		result[player.id] = {
+			kd,
+			rating,
+			characters
+		};
+	}
+
+	return result;
 }
 
 export async function getTeam(slug: string): Promise<Team | null> {
