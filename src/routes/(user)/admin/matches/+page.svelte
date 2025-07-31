@@ -302,7 +302,13 @@
 	// Convert eventsByEvent to array and filter based on search query
 	let filteredEvents = $derived(
 		Object.values(data.events as Record<string, EventData>)
-			.filter((eventData) => eventData.event.name.toLowerCase().includes(searchQuery.toLowerCase()))
+			.filter((eventData) => {
+				const searchLower = searchQuery.toLowerCase();
+				return (
+					eventData.event.name.toLowerCase().includes(searchLower) ||
+					eventData.event.slug.toLowerCase().includes(searchLower)
+				);
+			})
 			.map((eventData) => eventData.event)
 	);
 
