@@ -57,7 +57,13 @@ function isValidRegionSortBy(
 	].includes(value);
 }
 
+function isValidActiveTab(value: string): value is 'players' | 'region-ranking' {
+	return ['players', 'region-ranking'].includes(value);
+}
+
 export const load: PageLoad = async ({ data, url }) => {
+	const activeTab = url.searchParams.get('activeTab') || 'players';
+
 	const search = url.searchParams.get('search') || '';
 	const sortBy = url.searchParams.get('sortBy') || 'rating-desc';
 	const regionSortBy = url.searchParams.get('regionSortBy') || 'players-desc';
@@ -67,6 +73,7 @@ export const load: PageLoad = async ({ data, url }) => {
 
 	return {
 		...data,
+		activeTab: isValidActiveTab(activeTab) ? activeTab : 'players',
 		search,
 		sortBy: isValidSortBy(sortBy) ? sortBy : 'rating-desc',
 		regionSortBy: isValidRegionSortBy(regionSortBy) ? regionSortBy : 'players-desc',

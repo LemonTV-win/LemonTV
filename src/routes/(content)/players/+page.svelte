@@ -22,7 +22,7 @@
 	let selectedNationalities = $state<string[]>(data.nationalities || []);
 	let selectedSuperstrings = $state<string[]>(data.superstrings || []);
 	let filtersExpanded = $state(false);
-	let activeTab = $state<'players' | 'region-ranking'>('players');
+	let activeTab = $state<'players' | 'region-ranking'>(data.activeTab);
 
 	let sortBy:
 		| 'name-abc'
@@ -112,6 +112,7 @@
 		const params = new SvelteURLSearchParams();
 		if (sortBy) params.set('sortBy', sortBy);
 		if (regionSortBy) params.set('regionSortBy', regionSortBy);
+		if (activeTab) params.set('activeTab', activeTab);
 		if (search) params.set('search', search);
 		if (selectedNationalities.length) params.set('nationalities', selectedNationalities.join(','));
 		if (selectedSuperstrings.length) params.set('superstrings', selectedSuperstrings.join(','));
