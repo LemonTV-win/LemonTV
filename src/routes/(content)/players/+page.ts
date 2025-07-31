@@ -1,6 +1,8 @@
 import type { PageMetadata } from '$lib/seo';
 import type { PageLoad } from './$types';
 import { m } from '$lib/paraglide/messages';
+import { countries, type TCountryCode } from 'countries-list';
+import { CHARACTERS, type Character } from '$lib/data/game';
 
 // Type guard for sortBy validation
 function isValidSortBy(
@@ -61,6 +63,14 @@ function isValidActiveTab(value: string): value is 'players' | 'region-ranking' 
 	return ['players', 'region-ranking'].includes(value);
 }
 
+function isValidNationality(value: string): value is TCountryCode {
+	return Object.keys(countries).includes(value);
+}
+
+function isValidSuperstring(value: string): value is Character {
+	return Object.keys(CHARACTERS).includes(value);
+}
+
 export const load: PageLoad = async ({ data, url }) => {
 	const activeTab = url.searchParams.get('activeTab') || 'players';
 
@@ -77,8 +87,8 @@ export const load: PageLoad = async ({ data, url }) => {
 		search,
 		sortBy: isValidSortBy(sortBy) ? sortBy : 'rating-desc',
 		regionSortBy: isValidRegionSortBy(regionSortBy) ? regionSortBy : 'players-desc',
-		nationalities: nationalities ? nationalities.split(',') : [],
-		superstrings: superstrings ? superstrings.split(',') : [],
+		nationalities: nationalities ? nationalities.split(',').filter(isValidNationality) : [],
+		superstrings: superstrings ? superstrings.split(',').filter(isValidSuperstring) : [],
 		metadata: {
 			title: `${m.players()} | LemonTV`,
 			description: m.players_description()
