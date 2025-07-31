@@ -3,7 +3,14 @@
 </script>
 
 <main class="mx-auto min-h-[calc(100dvh-20em)] max-w-screen-lg">
-	<h1 class="my-10 text-2xl font-bold">{m.news()}</h1>
+	<div
+		class="mt-6 mb-5 flex flex-col gap-3 px-2 sm:flex-row sm:items-center sm:justify-between sm:px-0"
+	>
+		<div class="flex items-center gap-3 text-white/80">
+			<h1 class="text-2xl font-semibold">{m.news()}</h1>
+		</div>
+	</div>
+
 	<div class="glass-card-container">
 		<div class="glass p-6 text-center">
 			<div class="mb-4 text-4xl">📰</div>

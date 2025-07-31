@@ -31,12 +31,16 @@
 </script>
 
 <main class="mx-auto max-w-screen-lg md:px-4">
-	<h1 class="my-10 flex items-center gap-4 text-2xl font-bold">
-		{m.organizers()}
-		{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
-			<ContentActionLink href="/admin/organizers" type="edit" />
-		{/if}
-	</h1>
+	<div
+		class="mt-6 mb-5 flex flex-col gap-3 px-2 sm:flex-row sm:items-center sm:justify-between sm:px-0"
+	>
+		<div class="flex items-center gap-3 text-white/80">
+			<h1 class="text-2xl font-semibold">{m.organizers()}</h1>
+			{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
+				<ContentActionLink href="/admin/organizers" type="edit" />
+			{/if}
+		</div>
+	</div>
 
 	<div class="mb-4 flex flex-col">
 		<button

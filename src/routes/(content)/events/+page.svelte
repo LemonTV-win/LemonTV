@@ -52,16 +52,20 @@
 </script>
 
 <main class="mx-auto max-w-screen-lg md:px-4">
-	<h1 class="my-10 flex items-center gap-4 text-2xl font-bold">
-		{m.events()}
-		{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
-			<ContentActionLink href="/admin/events" type="edit" />
-			<ContentActionLink href="/admin/matches" type="edit" title={m.matches()} />
-		{/if}
-	</h1>
+	<div
+		class="mt-6 mb-5 flex flex-col gap-3 px-2 sm:flex-row sm:items-center sm:justify-between sm:px-0"
+	>
+		<div class="flex items-center gap-3 text-white/80">
+			<h1 class="text-2xl font-semibold">{m.events()}</h1>
+			{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
+				<ContentActionLink href="/admin/events" type="edit" />
+				<ContentActionLink href="/admin/matches" type="edit" title={m.matches()} />
+			{/if}
+		</div>
 
-	<div class="mb-4 flex flex-col items-center justify-end gap-2 sm:flex-row">
-		<SearchInput bind:search filtered={filteredEvents.length} total={sortedEvents.length} />
+		<div class="flex w-full items-center justify-end sm:w-auto">
+			<SearchInput bind:search filtered={filteredEvents.length} total={sortedEvents.length} />
+		</div>
 	</div>
 
 	<div class="mb-6 flex justify-end">

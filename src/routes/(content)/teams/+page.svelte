@@ -34,16 +34,23 @@
 </script>
 
 <main class="mx-auto max-w-screen-lg px-4 md:px-4">
-	<h1 class="my-10 flex items-center gap-4 text-2xl font-bold">
-		{m.teams()}
-		{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
-			<ContentActionLink href="/admin/teams" type="edit" />
-		{/if}
-	</h1>
+	<div
+		class="mt-6 mb-5 flex flex-col gap-3 px-2 sm:flex-row sm:items-center sm:justify-between sm:px-0"
+	>
+		<div class="flex items-center gap-3 text-white/80">
+			<h1 class="text-2xl font-semibold">{m.teams()}</h1>
+			{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
+				<ContentActionLink href="/admin/teams" type="edit" />
+			{/if}
+		</div>
 
-	<div class="mb-4 flex flex-col items-center justify-end gap-2 sm:flex-row">
-		<SearchInput bind:search filtered={filtered.length} total={data.teams.length} />
+		<div class="flex w-full items-center justify-end sm:w-auto">
+			<SearchInput bind:search filtered={filtered.length} total={data.teams.length} />
+		</div>
 	</div>
+
+	<!-- Divider -->
+	<!-- <div class="my-4 h-px w-full bg-white/25"></div> -->
 
 	<ul class="glass-card-container">
 		{#each filtered as team (team.slug)}
