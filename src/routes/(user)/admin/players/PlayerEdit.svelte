@@ -466,11 +466,14 @@
 								class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 							>
 								<option value={undefined}>{m.select_region()}</option>
-								<option value="NA">{m.north_america()}</option>
-								<option value="APAC">{m.asia_pacific()}</option>
-								<option value="EU">{m.europe()}</option>
-								<option disabled>―――</option>
-								<option value="CN">{m.china()}</option>
+								<optgroup label={m.strinova_server()}>
+									<option value="NA">{m.north_america()}</option>
+									<option value="APAC">{m.asia_pacific()}</option>
+									<option value="EU">{m.europe()}</option>
+								</optgroup>
+								<optgroup label={m.calabiyau_server()}>
+									<option value="CN">{m.china()}</option>
+								</optgroup>
 							</select>
 						</div>
 						<div class="flex items-center">
