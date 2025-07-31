@@ -175,9 +175,9 @@
 				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 			>
 				<option value={null}>{m.select_stage()}</option>
-				{#each [...stagesByEvent] as [eventName, eventStages] (eventName)}
+				{#each [...stagesByEvent] as [eventName, eventStages], i (i)}
 					<optgroup label={eventName}>
-						{#each eventStages as stage (stage.id)}
+						{#each eventStages as stage, j (`${i}-${j}`)}
 							<option value={stage.id}>{stage.name}</option>
 						{/each}
 					</optgroup>
@@ -204,7 +204,7 @@
 		<fieldset>
 			<legend class="block text-sm font-medium text-slate-300">{m.teams()}</legend>
 			<div class="mt-2 space-y-4">
-				{#each teamData as team, position (team.teamId)}
+				{#each teamData as team, position (position)}
 					<div class="rounded-lg border border-slate-700 bg-slate-800 p-4">
 						<div class="grid grid-cols-[1fr_auto_auto] gap-4">
 							<div>
@@ -272,7 +272,7 @@
 		<fieldset>
 			<legend class="block text-sm font-medium text-slate-300">{m.maps()}</legend>
 			<div class="mt-2 space-y-4">
-				{#each mapData as map, index (map.mapId)}
+				{#each mapData as map, index (index)}
 					<div class="rounded-lg border border-slate-700 bg-slate-800 p-4">
 						<div class="grid grid-cols-[1fr_1fr_1fr_auto] gap-4">
 							<div>
