@@ -50,15 +50,6 @@
 	let isImporting = $state(false);
 	let showSchema = $state(false);
 	let parsedPlayers = $state<PlayerImportData[] | null>(null);
-	let importResults = $state<{
-		createdCount: number;
-		duplicateCount: number;
-		validationErrorCount: number;
-		errorCount: number;
-		duplicates: string[];
-		validationErrors: string[];
-		errors: string[];
-	} | null>(null);
 
 	// Get all existing slugs for comparison
 	let existingSlugs = $derived(() => {
@@ -470,7 +461,6 @@ const players: PlayerImportData[] = [
 		try {
 			importError = '';
 			parsedPlayers = null;
-			importResults = null;
 
 			// Clean the data by removing comments and fixing common issues
 			let cleanedData = importJsonData
@@ -557,7 +547,6 @@ const players: PlayerImportData[] = [
 		importJsonData = '';
 		importError = '';
 		parsedPlayers = null;
-		importResults = null;
 		showSchema = false;
 		onClose();
 	}
@@ -568,7 +557,6 @@ const players: PlayerImportData[] = [
 
 	function goBackToEdit() {
 		parsedPlayers = null;
-		importResults = null;
 	}
 
 	// Check if a player has any duplicates (slug or account ID)
@@ -816,71 +804,6 @@ const players: PlayerImportData[] = [
 				</div>
 			{/if}
 
-			{#if importResults}
-				<div class="mb-4 rounded-md border border-slate-600 bg-slate-900 p-4">
-					<h4 class="mb-3 text-sm font-medium text-slate-200">Import Results</h4>
-
-					<div class="space-y-3">
-						{#if importResults.createdCount > 0}
-							<div class="flex items-center gap-2">
-								<div class="h-2 w-2 rounded-full bg-green-500"></div>
-								<span class="text-sm text-green-400">
-									Successfully created {importResults.createdCount} players
-								</span>
-							</div>
-						{/if}
-
-						{#if importResults.duplicateCount > 0}
-							<div class="flex items-start gap-2">
-								<div class="mt-1.5 h-2 w-2 rounded-full bg-yellow-500"></div>
-								<div class="flex-1">
-									<span class="text-sm text-yellow-400">
-										Skipped {importResults.duplicateCount} duplicate players:
-									</span>
-									<ul class="mt-1 space-y-1">
-										{#each importResults.duplicates as duplicate}
-											<li class="ml-4 text-xs text-slate-300">• {duplicate}</li>
-										{/each}
-									</ul>
-								</div>
-							</div>
-						{/if}
-
-						{#if importResults.validationErrorCount > 0}
-							<div class="flex items-start gap-2">
-								<div class="mt-1.5 h-2 w-2 rounded-full bg-orange-500"></div>
-								<div class="flex-1">
-									<span class="text-sm text-orange-400">
-										Skipped {importResults.validationErrorCount} players with validation errors:
-									</span>
-									<ul class="mt-1 space-y-1">
-										{#each importResults.validationErrors as error}
-											<li class="ml-4 text-xs text-slate-300">• {error}</li>
-										{/each}
-									</ul>
-								</div>
-							</div>
-						{/if}
-
-						{#if importResults.errorCount > 0}
-							<div class="flex items-start gap-2">
-								<div class="mt-1.5 h-2 w-2 rounded-full bg-red-500"></div>
-								<div class="flex-1">
-									<span class="text-sm text-red-400">
-										Failed to create {importResults.errorCount} players due to errors:
-									</span>
-									<ul class="mt-1 space-y-1">
-										{#each importResults.errors as error}
-											<li class="ml-4 text-xs text-slate-300">• {error}</li>
-										{/each}
-									</ul>
-								</div>
-							</div>
-						{/if}
-					</div>
-				</div>
-			{/if}
-
 			<div class="flex justify-end gap-3">
 				{#if parsedPlayers}
 					<button
@@ -919,7 +842,7 @@ const players: PlayerImportData[] = [
 					class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
 					onclick={handleClose}
 				>
-					{importResults ? 'Close' : 'Cancel'}
+					Cancel
 				</button>
 			</div>
 		</div>
