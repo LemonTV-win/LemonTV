@@ -10,7 +10,8 @@
 
 	let {
 		players,
-		uniqueNationalities
+		uniqueNationalities,
+		regionSortBy: sortBy = $bindable('players-desc')
 	}: {
 		players: {
 			wins: number;
@@ -24,18 +25,16 @@
 			aliases?: string[];
 		}[];
 		uniqueNationalities: TCountryCode[];
+		regionSortBy:
+			| 'region-asc'
+			| 'region-desc'
+			| 'players-asc'
+			| 'players-desc'
+			| 'wins-asc'
+			| 'wins-desc'
+			| 'rating-asc'
+			| 'rating-desc';
 	} = $props();
-
-	// Sort state
-	let sortBy:
-		| 'region-asc'
-		| 'region-desc'
-		| 'players-asc'
-		| 'players-desc'
-		| 'wins-asc'
-		| 'wins-desc'
-		| 'rating-asc'
-		| 'rating-desc' = $state('players-desc');
 
 	// Calculate country statistics
 	let countryStats = $derived(

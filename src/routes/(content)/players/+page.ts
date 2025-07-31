@@ -34,9 +34,34 @@ function isValidSortBy(
 	].includes(value);
 }
 
+function isValidRegionSortBy(
+	value: string
+): value is
+	| 'region-asc'
+	| 'region-desc'
+	| 'players-asc'
+	| 'players-desc'
+	| 'wins-asc'
+	| 'wins-desc'
+	| 'rating-asc'
+	| 'rating-desc' {
+	return [
+		'region-asc',
+		'region-desc',
+		'players-asc',
+		'players-desc',
+		'wins-asc',
+		'wins-desc',
+		'rating-asc',
+		'rating-desc'
+	].includes(value);
+}
+
 export const load: PageLoad = async ({ data, url }) => {
 	const search = url.searchParams.get('search') || '';
 	const sortBy = url.searchParams.get('sortBy') || 'name-abc';
+	const regionSortBy = url.searchParams.get('regionSortBy') || 'players-desc';
+
 	const nationalities = url.searchParams.get('nationalities') || '';
 	const superstrings = url.searchParams.get('superstrings') || '';
 
@@ -44,6 +69,7 @@ export const load: PageLoad = async ({ data, url }) => {
 		...data,
 		search,
 		sortBy: isValidSortBy(sortBy) ? sortBy : 'name-abc',
+		regionSortBy: isValidRegionSortBy(regionSortBy) ? regionSortBy : 'players-desc',
 		nationalities: nationalities ? nationalities.split(',') : [],
 		superstrings: superstrings ? superstrings.split(',') : [],
 		metadata: {

@@ -40,6 +40,16 @@
 		| 'events-asc'
 		| 'events-desc' = $state(data.sortBy || 'rating-desc');
 
+	let regionSortBy:
+		| 'region-asc'
+		| 'region-desc'
+		| 'players-asc'
+		| 'players-desc'
+		| 'wins-asc'
+		| 'wins-desc'
+		| 'rating-asc'
+		| 'rating-desc' = $state('players-desc');
+
 	let sorted = $derived(
 		data.players.toSorted((a, b) => {
 			if (sortBy === 'name-abc') {
@@ -101,6 +111,7 @@
 	$effect(() => {
 		const params = new SvelteURLSearchParams();
 		if (sortBy) params.set('sortBy', sortBy);
+		if (regionSortBy) params.set('regionSortBy', regionSortBy);
 		if (search) params.set('search', search);
 		if (selectedNationalities.length) params.set('nationalities', selectedNationalities.join(','));
 		if (selectedSuperstrings.length) params.set('superstrings', selectedSuperstrings.join(','));
@@ -403,6 +414,6 @@
 	{/if}
 
 	{#if activeTab === 'region-ranking'}
-		<RegionRanking players={data.players} {uniqueNationalities} />
+		<RegionRanking players={data.players} {uniqueNationalities} {regionSortBy} />
 	{/if}
 </main>
