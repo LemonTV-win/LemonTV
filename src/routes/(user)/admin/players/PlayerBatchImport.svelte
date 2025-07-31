@@ -7,6 +7,7 @@
 	import { formatSlug } from '$lib/utils/strings';
 
 	import { deserialize } from '$app/forms';
+	import { m } from '$lib/paraglide/messages';
 
 	interface PlayerImportData {
 		name: string;
@@ -596,7 +597,12 @@ const players: PlayerImportData[] = [
 		<div class="w-full max-w-4xl rounded-lg bg-slate-800 p-6 shadow-xl">
 			<div class="mb-4 flex items-center justify-between">
 				<h3 class="text-lg font-semibold text-slate-200">Batch Import Players</h3>
-				<button type="button" class="text-slate-400 hover:text-slate-200" onclick={handleClose}>
+				<button
+					type="button"
+					class="text-slate-400 hover:text-slate-200"
+					onclick={handleClose}
+					aria-label={m.close()}
+				>
 					<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
 							stroke-linecap="round"
