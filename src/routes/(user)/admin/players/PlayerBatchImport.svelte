@@ -663,7 +663,7 @@ const players: PlayerImportData[] = [
 					<h4 class="mb-3 text-sm font-medium text-slate-200">Parsed Players</h4>
 
 					<div
-						class="overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-800"
+						class="max-h-128 overflow-x-auto overflow-y-auto rounded-md border border-slate-700 bg-slate-900 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800"
 					>
 						<table class="w-full table-auto border-collapse border-y-2 border-gray-500 bg-gray-800">
 							<thead>
