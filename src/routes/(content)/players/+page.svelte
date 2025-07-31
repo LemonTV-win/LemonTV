@@ -397,9 +397,9 @@
 								{/each}
 							</td>
 							<td class="hidden flex-wrap gap-1 text-center align-middle sm:table-cell">
-								<div class="flex items-center justify-center gap-1">
-									{#each data.playersAgents[player.id ?? ''] as superstring (superstring)}
-										<CharacterIcon character={superstring[0]} />
+								<div class="flex items-center justify-center gap-1 py-2">
+									{#each [...data.playersAgents[player.id ?? ''].map(([agent]) => agent), ...[null, null, null]].slice(0, 3) as superstring, i (i)}
+										<CharacterIcon character={superstring} />
 									{/each}
 								</div>
 							</td>
