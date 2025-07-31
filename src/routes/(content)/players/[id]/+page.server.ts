@@ -37,12 +37,28 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 	const legacyPlayerKD = calculatePlayerKD(player);
 
 	// Process server events with image URLs
-	const serverEvents = await Promise.all(
-		serverStats.events.map(async (event) => ({
-			...event,
-			imageURL: await processImageURL(event.image)
-		}))
+	// Collect unique image URLs
+	const uniqueImageUrls = new Set<string>();
+	for (const event of serverStats.events) {
+		if (event.image) {
+			uniqueImageUrls.add(event.image);
+		}
+	}
+
+	// Process all image URLs in parallel
+	const imageUrlMap = new Map<string, string>();
+	await Promise.all(
+		Array.from(uniqueImageUrls).map(async (url) => {
+			const processed = await processImageURL(url);
+			imageUrlMap.set(url, processed);
+		})
 	);
+
+	// Apply processed URLs to server events
+	const serverEvents = serverStats.events.map((event) => ({
+		...event,
+		imageURL: event.image ? imageUrlMap.get(event.image) || event.image : event.image
+	}));
 
 	// Merge server and legacy data
 	const playerEvents = [...serverEvents, ...legacyPlayerEvents];

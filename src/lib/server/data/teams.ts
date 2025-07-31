@@ -272,33 +272,29 @@ export async function getTeams(): Promise<(Team & { logoURL: string | null })[]>
 
 		const player = team.players.get(p.id)!;
 
-		// Add additional nationality
-		const additionalNationality = row.player_additional_nationality?.nationality;
-		if (
-			additionalNationality &&
-			!player.nationalities.includes(additionalNationality as TCountryCode)
-		) {
-			player.nationalities.push(additionalNationality as TCountryCode);
+		// Add player alias
+		const playerAlias = row.player_alias?.alias;
+		if (playerAlias && !player.aliases!.includes(playerAlias)) {
+			player.aliases!.push(playerAlias);
 		}
 
-		const alias = row.player_alias?.alias;
-		if (alias && !player.aliases!.includes(alias)) {
-			player.aliases!.push(alias);
-		}
-
-		const ga = row.game_account;
+		// Add game account
+		const gameAccount = row.game_account;
 		if (
-			ga?.accountId &&
-			!player.gameAccounts.some((a) => a.accountId === ga.accountId && a.server === ga.server)
+			gameAccount?.accountId &&
+			!player.gameAccounts.some(
+				(a) => a.accountId === gameAccount.accountId && a.server === gameAccount.server
+			)
 		) {
 			player.gameAccounts.push({
-				server: ga.server as 'Strinova' | 'CalabiYau',
-				accountId: ga.accountId,
-				currentName: ga.currentName,
-				region: (ga.region as Region) ?? undefined
+				server: gameAccount.server as 'Strinova' | 'CalabiYau',
+				accountId: gameAccount.accountId,
+				currentName: gameAccount.currentName,
+				region: (gameAccount.region as Region) ?? undefined
 			});
 		}
 
+		// Add social account
 		const sa = row.social_account;
 		if (
 			sa?.platformId &&
@@ -313,20 +309,46 @@ export async function getTeams(): Promise<(Team & { logoURL: string | null })[]>
 			});
 		}
 
+		// Add additional nationality
+		const additionalNationality = row.player_additional_nationality?.nationality;
+		if (
+			additionalNationality &&
+			!player.nationalities.includes(additionalNationality as TCountryCode)
+		) {
+			player.nationalities.push(additionalNationality as TCountryCode);
+		}
+
+		// Add user role
 		const role = row.user_role?.roleId as UserRole | undefined;
 		if (player.user && role && !player.user.roles.includes(role)) {
 			player.user.roles.push(role);
 		}
 	}
 
-	return await Promise.all(
-		Array.from(teamMap.values()).map(async (t) => ({
-			...t,
-			players: Array.from(t.players.values()),
-			aliases: Array.from(t.aliases),
-			logoURL: t.logo ? await processImageURL(t.logo) : null
-		}))
+	// Collect unique logo URLs
+	const uniqueLogoUrls = new Set<string>();
+	for (const team of teamMap.values()) {
+		if (team.logo) {
+			uniqueLogoUrls.add(team.logo);
+		}
+	}
+
+	// Process all logo URLs in parallel
+	const logoUrlMap = new Map<string, string>();
+	await Promise.all(
+		Array.from(uniqueLogoUrls).map(async (url) => {
+			const processed = await processImageURL(url);
+			logoUrlMap.set(url, processed);
+		})
 	);
+
+	// Apply processed URLs to teams
+	return Array.from(teamMap.values()).map((t) => ({
+		...t,
+		players: Array.from(t.players.values()),
+		aliases: Array.from(t.aliases),
+		logoURL: t.logo ? logoUrlMap.get(t.logo) || null : null
+	}));
 }
 
 export function getTeamMatches(

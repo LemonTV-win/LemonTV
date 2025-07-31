@@ -35,17 +35,35 @@ function checkPermissions(locals: App.Locals, requiredRoles: string[]): Permissi
 export const load: PageServerLoad = async ({ url }) => {
 	const organizersList = await db.select().from(table.organizer);
 
+	// Collect unique logo URLs
+	const uniqueLogoUrls = new Set<string>();
+	for (const organizer of organizersList) {
+		if (organizer.logo) {
+			uniqueLogoUrls.add(organizer.logo);
+		}
+	}
+
+	// Process all logo URLs in parallel
+	const logoUrlMap = new Map<string, string>();
+	await Promise.all(
+		Array.from(uniqueLogoUrls).map(async (url) => {
+			const processed = await processImageURL(url);
+			logoUrlMap.set(url, processed);
+		})
+	);
+
+	// Apply processed URLs to organizers
+	const organizersWithLogos = organizersList.map((organizer) => ({
+		...organizer,
+		logoURL: logoUrlMap.get(organizer.logo) || organizer.logo
+	}));
+
 	const action = url.searchParams.get('action');
 	const id = url.searchParams.get('id');
 	const searchQuery = url.searchParams.get('searchQuery');
 
 	return {
-		organizers: await Promise.all(
-			organizersList.map(async (organizer) => ({
-				...organizer,
-				logoURL: await processImageURL(organizer.logo)
-			}))
-		),
+		organizers: organizersWithLogos,
 		action,
 		id,
 		searchQuery

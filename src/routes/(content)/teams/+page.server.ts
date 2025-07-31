@@ -9,22 +9,40 @@ export const load: PageServerLoad = async ({ url }) => {
 	const teams = await getTeams();
 	const search = url.searchParams.get('search') || '';
 
+	// Collect unique logo URLs
+	const uniqueLogoUrls = new Set<string>();
+	for (const team of teams) {
+		if (team.logo) {
+			uniqueLogoUrls.add(team.logo);
+		}
+	}
+
+	// Process all logo URLs in parallel
+	const logoUrlMap = new Map<string, string>();
+	await Promise.all(
+		Array.from(uniqueLogoUrls).map(async (url) => {
+			const processed = await processImageURL(url);
+			logoUrlMap.set(url, processed);
+		})
+	);
+
+	// Apply processed URLs to teams
+	const teamsWithLogos = teams.map((team) => ({
+		...team,
+		logoURL: team.logo ? logoUrlMap.get(team.logo) || null : null,
+		wins: getTeamWins(team),
+		players: team.players?.map((player) => ({
+			...player,
+			rating: calculatePlayerRating(player)
+		}))
+	})) as (Team & {
+		wins: number;
+		players: (Player & { rating: number })[];
+		logoURL: string | null;
+	})[];
+
 	return {
-		teams: (await Promise.all(
-			teams.map(async (team) => ({
-				...team,
-				logoURL: team.logo ? await processImageURL(team.logo) : null,
-				wins: getTeamWins(team),
-				players: team.players?.map((player) => ({
-					...player,
-					rating: calculatePlayerRating(player)
-				}))
-			}))
-		)) as (Team & {
-			wins: number;
-			players: (Player & { rating: number })[];
-			logoURL: string | null;
-		})[],
+		teams: teamsWithLogos,
 		search
 	};
 };

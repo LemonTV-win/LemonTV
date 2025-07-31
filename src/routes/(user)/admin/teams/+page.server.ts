@@ -13,16 +13,34 @@ export const load: PageServerLoad = async ({ url }) => {
 	const teamAliases = await db.select().from(table.teamAlias);
 	const players = await db.select().from(table.player);
 
+	// Collect unique logo URLs
+	const uniqueLogoUrls = new Set<string>();
+	for (const team of teamsList) {
+		if (team.logo) {
+			uniqueLogoUrls.add(team.logo);
+		}
+	}
+
+	// Process all logo URLs in parallel
+	const logoUrlMap = new Map<string, string>();
+	await Promise.all(
+		Array.from(uniqueLogoUrls).map(async (url) => {
+			const processed = await processImageURL(url);
+			logoUrlMap.set(url, processed);
+		})
+	);
+
+	// Apply processed URLs to teams
+	const teamsWithLogos = teamsList.map((team) => ({
+		...team,
+		logoURL: team.logo ? logoUrlMap.get(team.logo) || null : null
+	}));
+
 	const action = url.searchParams.get('action');
 	const id = url.searchParams.get('id');
 	const searchQuery = url.searchParams.get('searchQuery');
 	return {
-		teams: await Promise.all(
-			teamsList.map(async (team) => ({
-				...team,
-				logoURL: team.logo ? await processImageURL(team.logo) : null
-			}))
-		),
+		teams: teamsWithLogos,
 		teamPlayers,
 		teamAliases,
 		players,

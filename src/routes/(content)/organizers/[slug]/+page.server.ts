@@ -45,12 +45,28 @@ export const load: PageServerLoad = async ({ params }) => {
 	);
 
 	// Process image URLs for server events
-	const processedServerEvents = await Promise.all(
-		serverEvents.map(async (event) => ({
-			...event,
-			imageURL: await processImageURL(event.image)
-		}))
+	// Collect unique image URLs
+	const uniqueImageUrls = new Set<string>();
+	for (const event of serverEvents) {
+		if (event.image) {
+			uniqueImageUrls.add(event.image);
+		}
+	}
+
+	// Process all image URLs in parallel
+	const imageUrlMap = new Map<string, string>();
+	await Promise.all(
+		Array.from(uniqueImageUrls).map(async (url) => {
+			const processed = await processImageURL(url);
+			imageUrlMap.set(url, processed);
+		})
 	);
+
+	// Apply processed URLs to server events
+	const processedServerEvents = serverEvents.map((event) => ({
+		...event,
+		imageURL: event.image ? imageUrlMap.get(event.image) || event.image : event.image
+	}));
 
 	const organizedEvents = [...legacyEvents, ...processedServerEvents];
 
