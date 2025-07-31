@@ -35,7 +35,7 @@
 		| 'kd-asc'
 		| 'kd-desc'
 		| 'events-asc'
-		| 'events-desc' = $state(data.sortBy || 'name-abc');
+		| 'events-desc' = $state(data.sortBy || 'rating-desc');
 
 	let sorted = $derived(
 		data.players.toSorted((a, b) => {
