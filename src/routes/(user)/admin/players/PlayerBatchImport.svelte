@@ -10,7 +10,7 @@
 	interface PlayerImportData {
 		name: string;
 		slug?: string;
-		nationalities: TCountryCode[];
+		nationalities?: TCountryCode[];
 		aliases?: string[];
 		gameAccounts?: {
 			server: 'Strinova' | 'CalabiYau';
@@ -343,7 +343,7 @@
 interface PlayerImportData {
   name: string;                    // Required: Player's display name
   slug?: string;                   // Optional: URL slug (auto-generated from name if not provided)
-  nationalities: TCountryCode[];   // Required: Array of country codes (e.g., ["US", "KR"])
+  nationalities?: TCountryCode[];  // Optional: Array of country codes (e.g., ["US", "KR"])
   aliases?: string[];              // Optional: Alternative names for the player
   gameAccounts?: GameAccount[];    // Optional: In-game accounts
   socialAccounts?: SocialAccount[]; // Optional: Social media accounts
@@ -499,13 +499,6 @@ const players: PlayerImportData[] = [
 			for (const player of parsedData) {
 				if (!player.name) {
 					throw new Error('Each player must have a name');
-				}
-				if (
-					!player.nationalities ||
-					!Array.isArray(player.nationalities) ||
-					player.nationalities.length === 0
-				) {
-					throw new Error('Each player must have at least one nationality');
 				}
 			}
 
@@ -698,8 +691,10 @@ const players: PlayerImportData[] = [
 											{player.slug || player.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}
 										</td>
 										<td class="max-w-6 px-4 py-1 text-gray-300">
-											{#each player.nationalities as nationality, idx (idx)}
+											{#each player.nationalities ?? [] as nationality, idx (idx)}
 												<NationalityFlag {nationality} />
+											{:else}
+												<NationalityFlag nationality={null} />
 											{/each}
 										</td>
 										<td class="px-4 py-1 text-gray-300">

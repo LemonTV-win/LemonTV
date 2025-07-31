@@ -272,7 +272,7 @@ export const actions = {
 			const players = JSON.parse(playersJson) as Array<{
 				name: string;
 				slug?: string;
-				nationalities: TCountryCode[];
+				nationalities?: TCountryCode[];
 				aliases?: string[];
 				gameAccounts?: Player['gameAccounts'];
 				socialAccounts?: Player['socialAccounts'];
@@ -305,16 +305,11 @@ export const actions = {
 						continue;
 					}
 
-					if (!playerData.nationalities || playerData.nationalities.length === 0) {
-						validationErrors.push(`Player "${playerData.name}" missing nationalities`);
-						continue;
-					}
-
 					const playerId = await createPlayer(
 						{
 							name: playerData.name,
 							slug: playerData.slug || playerData.name.toLowerCase().replace(/[^a-z0-9]/g, '-'),
-							nationalities: playerData.nationalities,
+							nationalities: playerData.nationalities || [],
 							aliases: playerData.aliases || [],
 							gameAccounts: playerData.gameAccounts || [],
 							socialAccounts: playerData.socialAccounts || [],
