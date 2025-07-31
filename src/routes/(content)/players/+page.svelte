@@ -379,7 +379,9 @@
 								{/each}
 							</td>
 							<td class="px-4 py-1">
-								<a class="flex items-baseline gap-1" href={`/players/${player.slug ?? player.id}`}
+								<a
+									class="flex flex-col items-baseline gap-1"
+									href={`/players/${player.slug ?? player.id}`}
 									>{player.name}
 									{#each getAllNames(player).filter((name) => name !== player.name) as name (name)}
 										<span class="text-xs text-gray-400">({name})</span>
@@ -395,9 +397,11 @@
 								{/each}
 							</td>
 							<td class="hidden flex-wrap gap-1 sm:flex">
-								{#each data.playersAgents[player.id ?? ''] as superstring (superstring)}
-									<CharacterIcon character={superstring[0]} />
-								{/each}
+								<div class="-gap-1 grid grid-cols-3">
+									{#each data.playersAgents[player.id ?? ''] as superstring (superstring)}
+										<CharacterIcon character={superstring[0]} />
+									{/each}
+								</div>
 							</td>
 							<td class="px-4 py-1 text-gray-300">{player.wins}</td>
 							<td class="px-4 py-1 text-gray-300" title={m.rating() + ' ' + player.rating}>
