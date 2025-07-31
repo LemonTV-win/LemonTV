@@ -708,7 +708,7 @@
 						class="mt-1 block w-64 rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 					>
 						{#each rounds as round, roundIndex (round.id)}
-							<option value={roundIndex}>{round.title || round.type}</option>
+							<option value={roundIndex}>{roundIndex + 1}: {round.title || round.type}</option>
 						{/each}
 						<option disabled>──────────</option>
 						<option value={-1}>New Round</option>
@@ -813,7 +813,7 @@
 						bind:value={selectedNodeIndex}
 						class="mt-1 block w-64 rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 					>
-						{#each nodes as node, nodeIndex (node.id)}
+						{#each nodes as node, nodeIndex (nodeIndex)}
 							{@const match = matches.find((m: (typeof matches)[0]) => m.id === node.matchId)}
 							{@const round = rounds.find((r) => r.id === node.roundId || r.id === node.roundId)}
 							{@const team1Score = match?.teams[0]?.score || 0}
