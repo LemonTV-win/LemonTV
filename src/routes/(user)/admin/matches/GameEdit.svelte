@@ -471,6 +471,39 @@
 				{/each}
 			</div>
 		</div>
+
+		{#if game}
+			<div class="mt-8 border-t border-slate-700 pt-6">
+				<h3 class="mb-2 text-sm font-semibold text-red-400">Danger Zone</h3>
+				{#if showDeleteConfirm}
+					<div class="mb-4 rounded-md bg-red-900/60 p-4 text-red-200">
+						<p>Are you sure you want to delete this game? This action cannot be undone.</p>
+						<div class="mt-4 flex justify-end gap-2">
+							<button
+								type="button"
+								class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
+								onclick={() => (showDeleteConfirm = false)}
+								disabled={isDeleting}>Cancel</button
+							>
+							<button
+								type="button"
+								class="rounded-md bg-red-600 px-4 py-2 font-medium text-white hover:bg-red-700"
+								onclick={handleDelete}
+								disabled={isDeleting}>{isDeleting ? 'Deleting...' : 'Delete Game'}</button
+							>
+						</div>
+					</div>
+				{:else}
+					<button
+						type="button"
+						class="rounded-md border border-red-700 bg-red-900/30 px-4 py-2 text-red-300 hover:bg-red-800/60"
+						onclick={() => (showDeleteConfirm = true)}
+					>
+						Delete Game
+					</button>
+				{/if}
+			</div>
+		{/if}
 	</div>
 
 	<div class="mt-6 flex justify-end gap-4 border-t border-slate-700 pt-4">
@@ -489,39 +522,6 @@
 		</button>
 	</div>
 </form>
-
-{#if game}
-	<div class="mt-8 border-t border-slate-700 pt-6">
-		<h3 class="mb-2 text-sm font-semibold text-red-400">Danger Zone</h3>
-		{#if showDeleteConfirm}
-			<div class="mb-4 rounded-md bg-red-900/60 p-4 text-red-200">
-				<p>Are you sure you want to delete this game? This action cannot be undone.</p>
-				<div class="mt-4 flex justify-end gap-2">
-					<button
-						type="button"
-						class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
-						onclick={() => (showDeleteConfirm = false)}
-						disabled={isDeleting}>Cancel</button
-					>
-					<button
-						type="button"
-						class="rounded-md bg-red-600 px-4 py-2 font-medium text-white hover:bg-red-700"
-						onclick={handleDelete}
-						disabled={isDeleting}>{isDeleting ? 'Deleting...' : 'Delete Game'}</button
-					>
-				</div>
-			</div>
-		{:else}
-			<button
-				type="button"
-				class="rounded-md border border-red-700 bg-red-900/30 px-4 py-2 text-red-300 hover:bg-red-800/60"
-				onclick={() => (showDeleteConfirm = true)}
-			>
-				Delete Game
-			</button>
-		{/if}
-	</div>
-{/if}
 
 {#if showImportModal}
 	<PlayerScoreJsonInput
