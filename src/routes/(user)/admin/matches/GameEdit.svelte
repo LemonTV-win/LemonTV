@@ -4,6 +4,7 @@
 	import CharacterSelect from '$lib/components/CharacterSelect.svelte';
 	import AccountIdCombobox from '$lib/components/AccountIdCombobox.svelte';
 	import PlayerScoreJsonInput from './PlayerScoreJsonInput.svelte';
+	import PlayerScoreJsonExport from './PlayerScoreJsonExport.svelte';
 	import type { GameParticipant } from './+page.server';
 	import type { GamePlayerScore } from '$lib/server/db/schemas';
 	import type { Character } from '$lib/data/game';
@@ -56,6 +57,7 @@
 	let showDeleteConfirm = $state(false);
 	let isDeleting = $state(false);
 	let showImportModal = $state(false);
+	let showExportModal = $state(false);
 
 	// Add state for teams and player scores
 	let teamData = $state([
@@ -278,13 +280,22 @@
 		<!-- Player scores editing -->
 		<div class="mb-4 flex items-center justify-between">
 			<h3 class="text-sm font-medium text-slate-300">Player Scores</h3>
-			<button
-				type="button"
-				class="rounded-md border border-slate-600 bg-slate-800 px-3 py-1 text-sm text-slate-300 hover:bg-slate-700"
-				onclick={() => (showImportModal = true)}
-			>
-				Import JSON Data
-			</button>
+			<div class="flex gap-2">
+				<button
+					type="button"
+					class="cursor-pointer rounded-md border border-slate-600 bg-slate-800 px-3 py-1 text-sm text-slate-300 hover:bg-slate-700"
+					onclick={() => (showImportModal = true)}
+				>
+					Import JSON Data
+				</button>
+				<button
+					type="button"
+					class="cursor-pointer rounded-md border border-slate-600 bg-slate-800 px-3 py-1 text-sm text-slate-300 hover:bg-slate-700"
+					onclick={() => (showExportModal = true)}
+				>
+					Export JSON Data
+				</button>
+			</div>
 		</div>
 		{#snippet playerScoreInput(
 			team: 'A' | 'B',
@@ -519,5 +530,15 @@
 		{playerScoresB}
 		{teamData}
 		onClose={() => (showImportModal = false)}
+	/>
+{/if}
+
+{#if showExportModal}
+	<PlayerScoreJsonExport
+		showModal={showExportModal}
+		{playerScoresA}
+		{playerScoresB}
+		{teamData}
+		onClose={() => (showExportModal = false)}
 	/>
 {/if}
