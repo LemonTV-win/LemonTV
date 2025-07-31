@@ -8,12 +8,12 @@
 		type,
 		target = '_blank',
 		title
-	} = $props<{
+	}: {
 		href: string;
 		type?: 'view' | 'edit';
 		target?: '_blank' | '_self';
 		title?: string;
-	}>();
+	} = $props();
 
 	let text = $derived(type === 'view' ? m.view_all() : m.edit());
 </script>

@@ -4,7 +4,12 @@
 	import { m } from '$lib/paraglide/messages';
 	import type { ActionResult } from '@sveltejs/kit';
 
-	let { stage, eventId, onCancel, onSuccess } = $props<{
+	let {
+		stage,
+		eventId,
+		onCancel,
+		onSuccess
+	}: {
 		stage?: {
 			id: number;
 			title: string;
@@ -14,7 +19,7 @@
 		eventId: string;
 		onCancel: () => void;
 		onSuccess: () => void;
-	}>();
+	} = $props();
 
 	let newStage = $state({
 		title: stage?.title || '',

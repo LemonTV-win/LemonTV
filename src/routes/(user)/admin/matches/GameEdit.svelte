@@ -10,7 +10,15 @@
 	import type { Character } from '$lib/data/game';
 	import { CHARACTERS } from '$lib/data/game';
 	import IconTrophy from '~icons/icon-park-solid/trophy';
-	let { game, matchId, maps, onCancel, onSuccess, teams, rosters } = $props<{
+	let {
+		game,
+		matchId,
+		maps,
+		onCancel,
+		onSuccess,
+		teams,
+		rosters
+	}: {
 		game?: any;
 		matchId: string;
 		maps: Array<{ id: string; name?: string }>;
@@ -30,7 +38,7 @@
 				job: 'main' | 'sub' | 'coach';
 			}[]
 		];
-	}>();
+	} = $props();
 
 	$inspect('[admin/matches/GameEdit] game', game);
 	$inspect('[admin/matches/GameEdit] teams', teams);

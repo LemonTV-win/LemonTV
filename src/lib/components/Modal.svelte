@@ -9,13 +9,13 @@
 		onClose = () => {},
 		children,
 		dismissible = true
-	} = $props<{
+	}: {
 		show: boolean;
 		title: string;
 		onClose: () => void;
 		children: Snippet;
 		dismissible?: boolean;
-	}>();
+	} = $props();
 
 	function handleBackdropClick(event: MouseEvent) {
 		if (dismissible && event.target === event.currentTarget) {

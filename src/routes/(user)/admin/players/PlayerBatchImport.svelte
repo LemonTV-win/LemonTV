@@ -33,7 +33,12 @@
 		};
 	}
 
-	let { showModal, onClose, onSuccess, existingPlayers } = $props<{
+	let {
+		showModal,
+		onClose,
+		onSuccess,
+		existingPlayers
+	}: {
 		showModal: boolean;
 		onClose: () => void;
 		onSuccess: (message: string) => void;
@@ -43,7 +48,7 @@
 			slug: string;
 			gameAccounts?: Array<{ accountId: number; server: string }>;
 		}>;
-	}>();
+	} = $props();
 
 	let importJsonData = $state('');
 	let importError = $state('');

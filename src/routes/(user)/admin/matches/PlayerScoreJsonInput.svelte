@@ -18,13 +18,19 @@
 		teamB: [PlayerScore, PlayerScore, PlayerScore, PlayerScore, PlayerScore]
 	];
 
-	let { showModal, playerScoresA, playerScoresB, teamData, onClose } = $props<{
+	let {
+		showModal,
+		playerScoresA,
+		playerScoresB,
+		teamData,
+		onClose
+	}: {
 		showModal: boolean;
 		playerScoresA: GamePlayerScore[];
 		playerScoresB: GamePlayerScore[];
 		teamData: Array<{ teamId: string; position: number; score: number }>;
 		onClose: () => void;
-	}>();
+	} = $props();
 
 	let importJsonData = $state('');
 	let importError = $state('');

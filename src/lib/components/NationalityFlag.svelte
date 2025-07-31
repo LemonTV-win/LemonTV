@@ -7,11 +7,11 @@
 		nationality,
 		showLabel = false,
 		class: className = ''
-	} = $props<{
+	}: {
 		nationality: string | null;
 		showLabel?: boolean;
 		class?: string;
-	}>();
+	} = $props();
 </script>
 
 {#if nationality}

@@ -9,13 +9,19 @@
 	import PlayerInput from '$lib/components/forms/PlayerInput.svelte';
 	import { formatSlug } from '$lib/utils/strings';
 
-	let { team, players, teamPlayers, teamAliases, onCancel } = $props<{
+	let {
+		team,
+		players,
+		teamPlayers,
+		teamAliases,
+		onCancel
+	}: {
 		team: Partial<Team>;
 		players: Player[];
 		teamPlayers: TeamPlayer[];
 		teamAliases: TeamAlias[];
 		onCancel: () => void;
-	}>();
+	} = $props();
 
 	let newTeam = $state<Team>(team);
 	let errorMessage = $state('');
