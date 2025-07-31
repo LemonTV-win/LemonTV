@@ -231,7 +231,7 @@
 						</div>
 
 						<div class="flex w-full flex-col gap-2">
-							{#each nodes.filter((node) => node.roundId === (round.id || roundIndex)) as node, idx (`${roundIndex}-${idx}`)}
+							{#each nodes.filter((node) => node.roundId === round.id) as node, idx (`${roundIndex}-${idx}`)}
 								{@render nodeElement(node)}
 							{:else}
 								<div

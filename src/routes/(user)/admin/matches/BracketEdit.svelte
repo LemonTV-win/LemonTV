@@ -226,9 +226,11 @@
 
 	function addRound() {
 		const newRoundIndex = rounds.length;
+		const maxRoundID = Math.max(...rounds.map((r) => r.id || 0));
 		rounds = [
 			...rounds,
 			{
+				id: maxRoundID + 1,
 				type: 'quarterfinals',
 				title: '',
 				bracket: 'upper',
@@ -237,6 +239,8 @@
 		];
 		selectedRoundIndex = newRoundIndex;
 	}
+
+	$inspect(`[BracketEdit] rounds`, rounds);
 
 	async function removeRound(index: number) {
 		const roundToRemove = rounds[index];
