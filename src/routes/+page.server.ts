@@ -1,7 +1,7 @@
 import { fail, type Actions } from '@sveltejs/kit';
 import * as auth from '$lib/server/auth';
 import type { PageServerLoad } from './$types';
-import { getPlayers, getPlayersTeams, calculatePlayerRating } from '$lib/server/data/players';
+import { getPlayers, getPlayersTeams, getAllPlayersEssentialStats } from '$lib/server/data/players';
 import { getEvents } from '$lib/data';
 import { getEssentialEvents } from '$lib/server/data/events';
 import { getTeams } from '$lib/server/data/teams';
@@ -13,6 +13,12 @@ export const load: PageServerLoad = async () => {
 	const players = await getPlayers();
 	const playersTeams = await getPlayersTeams();
 
+	// Get essential stats for all players (optimized)
+	const playersEssentialStats = await getAllPlayersEssentialStats();
+
+	// Create a map for quick lookup
+	const statsByPlayerId = new Map(playersEssentialStats.map((stats) => [stats.playerId, stats]));
+
 	return {
 		events: [...getEvents(), ...(await getEssentialEvents())] as (Event | EssentialEvent)[], // TODO: limit = 5
 		teams: (await getTeams())
@@ -22,13 +28,22 @@ export const load: PageServerLoad = async () => {
 				rank: index + 1
 			})),
 		players: players
-			.map((player) => ({
-				...player,
-				teams:
-					playersTeams[player.id ?? '']?.map((team) => team?.name ?? undefined).filter(Boolean) ??
-					[],
-				rating: calculatePlayerRating(player)
-			}))
+			.map((player) => {
+				const stats = statsByPlayerId.get(player.id) || {
+					wins: 0,
+					rating: 0,
+					kd: 0,
+					eventsCount: 0
+				};
+
+				return {
+					...player,
+					teams:
+						playersTeams[player.id ?? '']?.map((team) => team?.name ?? undefined).filter(Boolean) ??
+						[],
+					rating: stats.rating
+				};
+			})
 			.toSorted((a, b) => b.rating - a.rating)
 			.map((player, index) => ({
 				...player,
