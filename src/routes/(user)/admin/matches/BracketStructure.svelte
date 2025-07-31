@@ -219,7 +219,7 @@
 								]}
 								onclick={() => (selectedRoundIndex = roundIndex)}
 							>
-								{round.title || round.type}
+								{roundIndex + 1}: {round.title || round.type}
 							</button>
 							{#if round.parallelGroup !== undefined}
 								<span
