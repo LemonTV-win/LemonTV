@@ -19,7 +19,11 @@
 		class="font-emoji {className}"
 		title={`${nationality} - ${countryCodeToLocalizedName(nationality, getLocale())}`}
 	>
-		{countryCodeToFlagEmoji(nationality)}
+		{#if nationality === 'TW' && getLocale() === 'zh'}
+			TW
+		{:else}
+			{countryCodeToFlagEmoji(nationality)}
+		{/if}
 	</span>
 	{#if showLabel}
 		<span class=" text-gray-400">
