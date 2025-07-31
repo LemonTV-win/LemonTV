@@ -59,7 +59,7 @@ function isValidRegionSortBy(
 
 export const load: PageLoad = async ({ data, url }) => {
 	const search = url.searchParams.get('search') || '';
-	const sortBy = url.searchParams.get('sortBy') || 'name-abc';
+	const sortBy = url.searchParams.get('sortBy') || 'rating-desc';
 	const regionSortBy = url.searchParams.get('regionSortBy') || 'players-desc';
 
 	const nationalities = url.searchParams.get('nationalities') || '';
@@ -68,7 +68,7 @@ export const load: PageLoad = async ({ data, url }) => {
 	return {
 		...data,
 		search,
-		sortBy: isValidSortBy(sortBy) ? sortBy : 'name-abc',
+		sortBy: isValidSortBy(sortBy) ? sortBy : 'rating-desc',
 		regionSortBy: isValidRegionSortBy(regionSortBy) ? regionSortBy : 'players-desc',
 		nationalities: nationalities ? nationalities.split(',') : [],
 		superstrings: superstrings ? superstrings.split(',') : [],
