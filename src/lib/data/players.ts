@@ -27,14 +27,16 @@ export interface SocialAccount {
 	overridingUrl?: string;
 }
 
-export function getAllNames(player: Player) {
+export function getAllNames(player: Player): string[] {
 	return [
-		// player.slug,
-		player.name,
-		...(player.gameAccounts?.flatMap((account) => [
-			account.currentName,
-			...(account.names ?? [])
-		]) ?? []),
-		...(player.aliases ?? [])
+		...new Set([
+			// player.slug,
+			player.name,
+			...(player.gameAccounts?.flatMap((account) => [
+				account.currentName,
+				...(account.names ?? [])
+			]) ?? []),
+			...(player.aliases ?? [])
+		])
 	];
 }
