@@ -2,7 +2,6 @@
 	import { error } from '@sveltejs/kit';
 	import type { PageProps } from './$types';
 	import { m } from '$lib/paraglide/messages.js';
-	import CharacterIcon from '$lib/components/CharacterIcon.svelte';
 	import MapIcon from '$lib/components/MapIcon.svelte';
 	import PlayerAvatar from '$lib/components/PlayerAvatar.svelte';
 	import MatchCard from '$lib/components/MatchCard.svelte';
@@ -12,7 +11,7 @@
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 	import { MAP_NAMES } from '$lib/data/game';
-
+	import PlayerAgents from './PlayerAgents.svelte';
 	let { data }: PageProps = $props();
 
 	if (!data.player) {
@@ -129,27 +128,7 @@
 					class="flex max-h-100 list-none flex-col gap-2 overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb]:hover:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800"
 				>
 					{#if data.playerAgents.length > 0}
-						{#each data.playerAgents.toSorted((a, b) => b[1] - a[1]) as [character, count] (character)}
-							{@const percentage =
-								(count / data.playerAgents.reduce((acc, [_, count]) => acc + count, 0)) * 100}
-							<li
-								class="grid grid-cols-[auto_1fr] items-center gap-2 rounded-lg bg-slate-800/50 p-3"
-							>
-								<CharacterIcon {character} />
-								<div class="flex flex-col gap-1">
-									<div class="flex justify-between text-sm">
-										<span class="text-white">{m[character]()}</span>
-										<span class="text-slate-400">{percentage.toFixed(0)}% ({count})</span>
-									</div>
-									<div class="h-2 w-full overflow-hidden rounded-full bg-slate-600">
-										<div
-											class="h-full bg-yellow-500"
-											style="width: {percentage.toFixed(0)}%;"
-										></div>
-									</div>
-								</div>
-							</li>
-						{/each}
+						<PlayerAgents playerAgents={data.playerAgents} />
 					{:else}
 						<li class="text-center text-gray-400">{m.no_data()}</li>
 					{/if}
