@@ -106,7 +106,7 @@
 			<div class="mt-3 flex justify-end">
 				<button
 					type="button"
-					class="text-red-500 hover:text-red-400"
+					class="cursor-pointer text-red-500 hover:text-red-400"
 					onclick={() => confirmRemoveRound(roundIndex)}
 					aria-label="Remove round"
 				>

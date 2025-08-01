@@ -72,7 +72,7 @@
 		<div class="flex w-full flex-col gap-2">
 			<button
 				type="button"
-				class="rounded border-2 border-dashed border-slate-600 bg-slate-700/30 px-3 py-8 text-center text-sm text-slate-400 transition-colors hover:border-slate-500 hover:bg-slate-700/50 hover:text-slate-300"
+				class="cursor-pointer rounded border-2 border-dashed border-slate-600 bg-slate-700/30 px-3 py-8 text-center text-sm text-slate-400 transition-colors hover:border-slate-500 hover:bg-slate-700/50 hover:text-slate-300"
 				onclick={addRound}
 			>
 				<div class="flex flex-col items-center gap-2">
@@ -103,7 +103,7 @@
 )}
 	<button
 		type="button"
-		class="rounded border-2 border-dashed border-slate-600 bg-slate-700/30 px-3 py-2 text-center text-xs text-slate-400 transition-colors hover:border-slate-500 hover:bg-slate-700/50 hover:text-slate-300"
+		class="cursor-pointer rounded border-2 border-dashed border-slate-600 bg-slate-700/30 px-3 py-2 text-center text-xs text-slate-400 transition-colors hover:border-slate-500 hover:bg-slate-700/50 hover:text-slate-300"
 		onclick={() => {
 			const targetRoundId = round.id || roundIndex;
 
@@ -151,7 +151,7 @@
 	<div class="relative">
 		<button
 			class={[
-				'w-full rounded border px-3 py-2 text-left text-sm text-white transition-colors',
+				'w-full cursor-pointer rounded border px-3 py-2 text-left text-sm text-white transition-colors',
 				{
 					'border-yellow-500': match,
 					'border-slate-500': !match,
@@ -209,7 +209,7 @@
 							<button
 								type="button"
 								class={[
-									'rounded-full px-3 py-1 text-xs font-medium transition-colors *:inline-block',
+									'cursor-pointer rounded-full px-3 py-1 text-xs font-medium transition-colors *:inline-block',
 									{
 										'bg-yellow-500/20 text-yellow-300': selectedObject === `round-${roundIndex}`,
 										'bg-slate-600/20 text-slate-300 hover:bg-yellow-500/30':

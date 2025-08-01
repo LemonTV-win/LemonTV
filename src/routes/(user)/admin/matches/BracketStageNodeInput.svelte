@@ -93,7 +93,7 @@
 					<div class="flex items-end">
 						<button
 							type="button"
-							class="text-red-500 hover:text-red-400"
+							class="cursor-pointer text-red-500 hover:text-red-400"
 							onclick={() => confirmRemoveNode(nodeIndex)}
 							aria-label="Remove node"
 						>
@@ -109,7 +109,7 @@
 					<span class="text-sm font-medium text-slate-300">{m.dependencies()}</span>
 					<button
 						type="button"
-						class="rounded-md bg-slate-600 px-2 py-1 text-xs font-medium text-slate-200 hover:bg-slate-500 focus:ring-2 focus:ring-slate-500 focus:outline-none"
+						class="cursor-pointer rounded-md bg-slate-600 px-2 py-1 text-xs font-medium text-slate-200 hover:bg-slate-500 focus:ring-2 focus:ring-slate-500 focus:outline-none"
 						onclick={() => addDependency(nodeIndex)}
 					>
 						{m.add_dependency()}
@@ -146,7 +146,7 @@
 
 						<button
 							type="button"
-							class="text-red-500 hover:text-red-400"
+							class="cursor-pointer text-red-500 hover:text-red-400"
 							onclick={() => removeDependency(nodeIndex, depIndex)}
 							aria-label="Remove dependency"
 						>
