@@ -592,6 +592,25 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	);
 	// #endregion
 
+	console.log('[Admin][Matches][Load] Starting stage round processing');
+	const roundProcessingStartTime = Date.now();
+
+	// #region Stage Round Processing
+	stageRounds.forEach((round) => {
+		Object.values(eventsByEvent).forEach((eventData) => {
+			const stageData = eventData.stages.get(round.stageId);
+			if (stageData) {
+				stageData.rounds.push(round);
+			}
+		});
+	});
+
+	const roundProcessingEndTime = Date.now();
+	console.log(
+		`[Admin][Matches][Load] Stage round processing completed in ${roundProcessingEndTime - roundProcessingStartTime}ms`
+	);
+	// #endregion
+
 	// Convert Map to object for serialization
 	const serializationStartTime = Date.now();
 
