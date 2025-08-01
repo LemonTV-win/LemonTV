@@ -508,7 +508,7 @@
 	"total_nodes": "Total des Nœuds",
 	"assigned_matches": "Matchs Assignés",
 	"no_match_assigned": "Aucun match assigné",
-	"parallel_group": "Groupe Parallèle",
+	"parallel_group": "Parallèle à",
 	"select_round": "Sélectionnez un tour dans l'aperçu ci-dessus pour modifier ses propriétés",
 	"select_node": "Sélectionnez un nœud dans le menu déroulant ci-dessus pour modifier ses propriétés",
 	"match": "Match",

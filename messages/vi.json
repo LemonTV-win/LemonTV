@@ -508,7 +508,7 @@
 	"total_nodes": "Tổng Nút",
 	"assigned_matches": "Trận đấu đã gán",
 	"no_match_assigned": "Không có trận đấu được gán",
-	"parallel_group": "Nhóm Song song",
+	"parallel_group": "Song song với",
 	"select_round": "Chọn một vòng từ xem trước ở trên để chỉnh sửa thuộc tính của nó",
 	"select_node": "Chọn một nút từ menu thả xuống ở trên để chỉnh sửa thuộc tính của nó",
 	"match": "Trận đấu",

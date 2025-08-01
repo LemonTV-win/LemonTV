@@ -508,7 +508,7 @@
 	"total_nodes": "Total Nodes",
 	"assigned_matches": "Assigned Matches",
 	"no_match_assigned": "No match assigned",
-	"parallel_group": "Parallel Group",
+	"parallel_group": "Parallel to",
 	"select_round": "Select a round from the preview above to edit its properties",
 	"select_node": "Select a node from the dropdown above to edit its properties",
 	"match": "Match",

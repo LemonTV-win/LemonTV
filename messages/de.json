@@ -508,7 +508,7 @@
 	"total_nodes": "Gesamte Knoten",
 	"assigned_matches": "Zugewiesene Matches",
 	"no_match_assigned": "Kein Match zugewiesen",
-	"parallel_group": "Parallele Gruppe",
+	"parallel_group": "Parallel zu",
 	"select_round": "Wählen Sie eine Runde aus der Vorschau oben aus, um ihre Eigenschaften zu bearbeiten",
 	"select_node": "Wählen Sie einen Knoten aus dem Dropdown-Menü oben aus, um seine Eigenschaften zu bearbeiten",
 	"match": "Match",

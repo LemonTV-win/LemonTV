@@ -508,7 +508,7 @@
 	"total_nodes": "総対戦枠数",
 	"assigned_matches": "割り当て済みマッチ",
 	"no_match_assigned": "マッチが割り当てられていません",
-	"parallel_group": "並行グループ",
+	"parallel_group": "並行先",
 	"select_round": "上記のプレビューからラウンドを選択してプロパティを編集してください",
 	"select_node": "上記のドロップダウンから対戦枠を選択してプロパティを編集してください",
 	"match": "マッチ",

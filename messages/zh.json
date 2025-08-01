@@ -508,7 +508,7 @@
 	"total_nodes": "总节点",
 	"assigned_matches": "已分配比赛",
 	"no_match_assigned": "未分配比赛",
-	"parallel_group": "平行组别",
+	"parallel_group": "平行于轮次",
 	"select_round": "从上方预览中选择轮次以编辑其属性",
 	"select_node": "从上方下拉菜单中选择节点以编辑其属性",
 	"match": "比赛",

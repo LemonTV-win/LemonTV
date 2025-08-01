@@ -508,7 +508,7 @@
 	"total_nodes": "총 노드",
 	"assigned_matches": "할당된 매치",
 	"no_match_assigned": "할당된 매치 없음",
-	"parallel_group": "병렬 그룹",
+	"parallel_group": "병렬 대상",
 	"select_round": "위의 미리보기에서 라운드를 선택하여 속성을 편집하세요",
 	"select_node": "위의 드롭다운에서 노드를 선택하여 속성을 편집하세요",
 	"match": "매치",
