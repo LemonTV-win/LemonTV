@@ -76,6 +76,7 @@
 	import BracketStructure from './BracketStructure.svelte';
 	import BracketStageRoundInput from './BracketStageRoundInput.svelte';
 	import BracketStageNodeInput from './BracketStageNodeInput.svelte';
+	import Switch from '$lib/components/ui/Switch.svelte';
 	let {
 		stage,
 		matches,
@@ -135,6 +136,9 @@
 
 	let errorMessage = $state('');
 	let successMessage = $state('');
+
+	// Preview toggle state
+	let showPreview = $state(false);
 
 	// Helper function to get available matches for a specific node
 	function getAvailableMatches(currentNodeIndex: number) {
@@ -605,9 +609,13 @@
 
 <div class="flex h-full flex-col">
 	<section class="mb-4">
-		<details>
-			<summary class="text-lg font-medium text-white">Preview</summary>
-			{#if stage}
+		<div class="mb-4 flex items-center justify-between">
+			<h4 class="text-lg font-medium text-white">Bracket Structure</h4>
+			<Switch label="Show Preview" bind:checked={showPreview} />
+		</div>
+
+		{#if showPreview && stage}
+			<div class="mb-4 rounded-md border border-slate-700 bg-slate-800/50 p-4">
 				<Brackets
 					stage={{
 						...stage,
@@ -685,10 +693,8 @@
 					}}
 					teams={new Map()}
 				/>
-			{/if}
-		</details>
-
-		<h4 class="text-lg font-medium text-white">Bracket Structure</h4>
+			</div>
+		{/if}
 
 		<BracketStructure {rounds} {nodes} {matches} bind:selectedObject {addRound} {addNode} />
 	</section>
