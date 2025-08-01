@@ -3,6 +3,9 @@
 	import type { PlayerScore } from '$lib/data/matches';
 	import type { Team } from '$lib/data/teams';
 
+	import SVP from '$assets/svp.png';
+	import MVP from '$assets/mvp.png';
+
 	let {
 		scores,
 		winner,
@@ -20,13 +23,17 @@
 
 {#snippet playerscores(scores: PlayerScore[], winner: boolean)}
 	{#each scores as score (score.player)}
-		<tr>
-			<td class="max-w-5 text-center font-bold">
+		<tr class="bg-white/10 backdrop-blur-md">
+			<td class="w-auto px-4 text-center font-bold">
 				{#if mvps[0] === score.player || mvps[1] === score.player}
 					{#if winner}
-						<span class="text-yellow-300">MVP</span>
+						<span class="text-yellow-300" title="MVP">
+							<img src={MVP} alt="MVP" class="h-4" />
+						</span>
 					{:else}
-						<span class="text-neutral-300">SVP</span>
+						<span class="text-neutral-300" title="SVP">
+							<img src={SVP} alt="SVP" class="h-4" />
+						</span>
 					{/if}
 				{/if}
 			</td>
