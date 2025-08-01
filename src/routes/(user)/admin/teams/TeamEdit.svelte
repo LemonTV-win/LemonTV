@@ -23,7 +23,10 @@
 		onCancel: () => void;
 	} = $props();
 
-	let newTeam = $state<Team>(team);
+	let newTeam: Partial<Team> & { logo: string | null } = $state({
+		...team,
+		logo: team.logo ?? null
+	});
 	let errorMessage = $state('');
 	let successMessage = $state('');
 	let lastTeamName = $state(team.name || '');
