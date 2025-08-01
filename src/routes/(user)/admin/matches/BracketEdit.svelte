@@ -90,6 +90,7 @@
 	import BracketStageRoundInput from './BracketStageRoundInput.svelte';
 	import BracketStageNodeInput from './BracketStageNodeInput.svelte';
 	import Switch from '$lib/components/ui/Switch.svelte';
+	import BracketRoundNodeSelect from './BracketRoundNodeSelect.svelte';
 	let {
 		stage,
 		matches,
@@ -105,6 +106,9 @@
 		onCancel: () => void;
 		onSuccess: () => void;
 	} = $props();
+
+	$inspect(`[BracketEdit] initialRounds`, initialRounds);
+	$inspect(`[BracketEdit] initialNodes`, initialNodes);
 
 	// State for managing rounds, nodes, and dependencies
 	let rounds = $state<Round[]>([]);
@@ -588,8 +592,6 @@
 			errorMessage = m.failed_to_save_bracket_structure();
 		}
 	}
-
-	let orphanedNodes = $derived(nodes.filter((node) => !rounds.some((r) => r.id === node.roundId)));
 </script>
 
 <div class="flex h-full flex-col">
@@ -709,59 +711,7 @@
 						({m.stage_node()})
 					{/if}
 				</h4>
-				<select
-					bind:value={selectedObject}
-					class="mt-1 block w-64 rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-				>
-					{#each rounds as round, roundIndex (`round-#${roundIndex}`)}
-						<option value={`round-${roundIndex}`}>
-							{m.stage_round()}
-							{roundIndex + 1}: {round.title || round.type}
-						</option>
-						{#each nodes.filter((node) => node.roundId === round.id) as node, j (`node-${roundIndex}-${j}`)}
-							{@const nodeIndex = nodes.indexOf(node)}
-							{@const match = matches.find((m: (typeof matches)[0]) => m.id === node.matchId)}
-							{@const team1Score = match?.teams[0]?.score || 0}
-							{@const team2Score = match?.teams[1]?.score || 0}
-							<option value={`node-${nodeIndex}`}>
-								{m.stage_node()} #{nodeIndex + 1}: {round?.title || round?.type || 'Unknown Round'} -
-								{match
-									? `${match.teams[0]?.team?.name || 'TBD'} vs ${match.teams[1]?.team?.name || 'TBD'} (${team1Score}-${team2Score}) - ${match.id}`
-									: 'No match'} (#{node.order})
-							</option>
-						{/each}
-						<option disabled>──────────</option>
-					{/each}
-
-					{#if orphanedNodes.length > 0}
-						<optgroup label="Nodes without round">
-							{#each orphanedNodes as node, k (`node-#${k}`)}
-								{@const nodeIndex = nodes.indexOf(node)}
-								{@const match = matches.find((m: (typeof matches)[0]) => m.id === node.matchId)}
-								{@const team1Score = match?.teams[0]?.score || 0}
-								{@const team2Score = match?.teams[1]?.score || 0}
-								<option value={`node-${nodeIndex}`}>
-									{m.stage_node()} #{nodeIndex + 1}: {match
-										? `${match.teams[0]?.team?.name || 'TBD'} vs ${match.teams[1]?.team?.name || 'TBD'} (${team1Score}-${team2Score}) - ${match.id}`
-										: 'No match'} (#{node.order})
-								</option>
-							{/each}
-						</optgroup>
-						<option disabled>──────────</option>
-					{/if}
-					<option
-						value={{
-							type: 'round',
-							roundIndex: -1
-						}}>{m.new_round()}</option
-					>
-					<option
-						value={{
-							type: 'node',
-							nodeIndex: -1
-						}}>New Node</option
-					>
-				</select>
+				<BracketRoundNodeSelect {rounds} {nodes} {matches} bind:selectedObject />
 			</div>
 
 			{#if selectedObject}
