@@ -92,8 +92,10 @@ export async function getMatch(id: string): Promise<(AppMatch & { event: Event }
 		(t): t is typeof t & { team: NonNullable<typeof t.team> } => t.team !== null
 	);
 
+	// Filter out banned maps and null maps
 	const validMaps = maps.filter(
-		(m): m is typeof m & { map: NonNullable<typeof m.map> } => m.map !== null
+		(m): m is typeof m & { map: NonNullable<typeof m.map> } =>
+			m.map !== null && m.matchMap.action !== 'ban'
 	);
 
 	const validGames = games.filter(
