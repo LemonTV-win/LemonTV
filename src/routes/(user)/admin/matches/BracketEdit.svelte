@@ -725,12 +725,13 @@
 						<option value={`round-${roundIndex}`}>
 							Round {roundIndex + 1}: {round.title || round.type}
 						</option>
-						{#each nodes.filter((node) => node.roundId === round.id) as node, nodeIndex (`node-#${nodeIndex}`)}
+						{#each nodes.filter((node) => node.roundId === round.id) as node, j (`node-${roundIndex}-${j}`)}
+							{@const nodeIndex = nodes.indexOf(node)}
 							{@const match = matches.find((m: (typeof matches)[0]) => m.id === node.matchId)}
 							{@const team1Score = match?.teams[0]?.score || 0}
 							{@const team2Score = match?.teams[1]?.score || 0}
 							<option value={`node-${nodeIndex}`}>
-								Node: {round?.title || round?.type || 'Unknown Round'} - {match
+								Node #{nodeIndex + 1}: {round?.title || round?.type || 'Unknown Round'} - {match
 									? `${match.teams[0]?.team?.name || 'TBD'} vs ${match.teams[1]?.team?.name || 'TBD'} (${team1Score}-${team2Score}) - ${match.id}`
 									: 'No match'} (#{node.order})
 							</option>
@@ -738,21 +739,24 @@
 						<option disabled>──────────</option>
 					{/each}
 					<!-- Orphaned nodes -->
-					{#each nodes.filter((node) => !rounds.some((r) => r.id === node.roundId)) as node, nodeIndex (`node-#${nodeIndex}`)}
-						{@const match = matches.find((m: (typeof matches)[0]) => m.id === node.matchId)}
-						{@const team1Score = match?.teams[0]?.score || 0}
-						{@const team2Score = match?.teams[1]?.score || 0}
-						<option
-							value={{
-								type: 'node',
-								nodeIndex
-							}}
-						>
-							Node without round - {match
-								? `${match.teams[0]?.team?.name || 'TBD'} vs ${match.teams[1]?.team?.name || 'TBD'} (${team1Score}-${team2Score}) - ${match.id}`
-								: 'No match'} (#{node.order})
-						</option>
-					{/each}
+					<optgroup label="Nodes without round">
+						{#each nodes.filter((node) => !rounds.some((r) => r.id === node.roundId)) as node, k (`node-#${k}`)}
+							{@const nodeIndex = nodes.indexOf(node)}
+							{@const match = matches.find((m: (typeof matches)[0]) => m.id === node.matchId)}
+							{@const team1Score = match?.teams[0]?.score || 0}
+							{@const team2Score = match?.teams[1]?.score || 0}
+							<option
+								value={{
+									type: 'node',
+									nodeIndex
+								}}
+							>
+								Node #{nodeIndex + 1}: {match
+									? `${match.teams[0]?.team?.name || 'TBD'} vs ${match.teams[1]?.team?.name || 'TBD'} (${team1Score}-${team2Score}) - ${match.id}`
+									: 'No match'} (#{node.order})
+							</option>
+						{/each}
+					</optgroup>
 					<option disabled>──────────</option>
 					<option
 						value={{
