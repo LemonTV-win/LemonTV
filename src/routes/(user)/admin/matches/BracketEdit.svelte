@@ -745,12 +745,7 @@
 							{@const match = matches.find((m: (typeof matches)[0]) => m.id === node.matchId)}
 							{@const team1Score = match?.teams[0]?.score || 0}
 							{@const team2Score = match?.teams[1]?.score || 0}
-							<option
-								value={{
-									type: 'node',
-									nodeIndex
-								}}
-							>
+							<option value={`node-${nodeIndex}`}>
 								Node #{nodeIndex + 1}: {match
 									? `${match.teams[0]?.team?.name || 'TBD'} vs ${match.teams[1]?.team?.name || 'TBD'} (${team1Score}-${team2Score}) - ${match.id}`
 									: 'No match'} (#{node.order})
