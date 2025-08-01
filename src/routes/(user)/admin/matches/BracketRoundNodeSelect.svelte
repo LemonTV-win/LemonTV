@@ -19,7 +19,7 @@
 
 <select
 	bind:value={selectedObject}
-	class="mt-1 block w-64 rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+	class="mt-1 block w-72 rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 >
 	{#each rounds as round, roundIndex (`round-#${roundIndex}`)}
 		<option value={`round-${roundIndex}`}>
