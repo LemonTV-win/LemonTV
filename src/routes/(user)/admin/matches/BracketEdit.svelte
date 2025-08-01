@@ -23,6 +23,12 @@
 		matchId: string;
 		roundId: number;
 		order: number;
+		dependencies: Array<{
+			id: number;
+			nodeId: number;
+			dependencyMatchId: string;
+			outcome: string;
+		}>;
 	};
 
 	export type Node = {
@@ -63,6 +69,13 @@
 			};
 		}>;
 	};
+
+	export type Stage = {
+		id: number;
+		title: string;
+		stage: string;
+		format: string;
+	};
 </script>
 
 <script lang="ts">
@@ -85,27 +98,10 @@
 		onCancel,
 		onSuccess
 	}: {
-		stage: {
-			id: number;
-			title: string;
-			stage: string;
-			format: string;
-		};
-		matches: Array<Match>;
+		stage: Stage;
+		matches: Match[];
 		rounds?: InitialRound[];
-		nodes?: Array<{
-			id: number;
-			stageId: number;
-			matchId: string;
-			roundId: number;
-			order: number;
-			dependencies: Array<{
-				id: number;
-				nodeId: number;
-				dependencyMatchId: string;
-				outcome: string;
-			}>;
-		}>;
+		nodes?: InitialNode[];
 		onCancel: () => void;
 		onSuccess: () => void;
 	} = $props();
@@ -113,20 +109,7 @@
 	// State for managing rounds, nodes, and dependencies
 	let rounds = $state<Round[]>([]);
 
-	let nodes = $state<
-		Array<{
-			id?: number;
-			matchId: string;
-			roundId: number;
-			order: number;
-			dependencies: Array<{
-				id?: number;
-				dependencyMatchId: string;
-				outcome: 'winner' | 'loser';
-			}>;
-			isNew?: boolean;
-		}>
-	>([]);
+	let nodes = $state<Node[]>([]);
 
 	let selectedObject = $state<string>('');
 
