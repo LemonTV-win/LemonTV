@@ -33,7 +33,7 @@
 			</td>
 			<td class="text-center">
 				<div class="flex items-center justify-center gap-2">
-					{#each score.characters as character (character)}
+					{#each score.characters as character, index (index)}
 						<CharacterIcon {character} />
 					{/each}
 				</div>
