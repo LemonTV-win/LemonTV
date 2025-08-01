@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { m } from '$lib/paraglide/messages';
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import type { Match, Node, Round } from './BracketEdit.svelte';
 
@@ -40,14 +41,14 @@
 			<div class="space-y-4">
 				<div>
 					<label for="node-match-{nodeIndex}" class="block text-sm font-medium text-slate-300"
-						>Match</label
+						>{m.match()}</label
 					>
 					<select
 						id="node-match-{nodeIndex}"
 						bind:value={node.matchId}
 						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 					>
-						<option value="">Select Match</option>
+						<option value="">{m.select_match()}</option>
 						{#each getAvailableMatches(nodeIndex) as match (`match-#${match.id}`)}
 							{@const team1Score = match.teams[0]?.score || 0}
 							{@const team2Score = match.teams[1]?.score || 0}
@@ -62,7 +63,7 @@
 				<div class="grid grid-cols-2 gap-4 md:grid-cols-3">
 					<div>
 						<label for="node-round-{nodeIndex}" class="block text-sm font-medium text-slate-300"
-							>Round</label
+							>{m.round()}</label
 						>
 						<select
 							id="node-round-{nodeIndex}"
@@ -79,7 +80,7 @@
 
 					<div>
 						<label for="node-order-{nodeIndex}" class="block text-sm font-medium text-slate-300"
-							>Order</label
+							>{m.order()}</label
 						>
 						<input
 							id="node-order-{nodeIndex}"
@@ -105,13 +106,13 @@
 			<!-- Dependencies Section -->
 			<div class="mt-4 space-y-2">
 				<div class="flex items-center justify-between">
-					<span class="text-sm font-medium text-slate-300">Dependencies</span>
+					<span class="text-sm font-medium text-slate-300">{m.dependencies()}</span>
 					<button
 						type="button"
 						class="rounded-md bg-slate-600 px-2 py-1 text-xs font-medium text-slate-200 hover:bg-slate-500 focus:ring-2 focus:ring-slate-500 focus:outline-none"
 						onclick={() => addDependency(nodeIndex)}
 					>
-						Add Dependency
+						{m.add_dependency()}
 					</button>
 				</div>
 
@@ -122,7 +123,7 @@
 							bind:value={dep.dependencyMatchId}
 							class="flex-1 rounded border border-slate-600 bg-slate-800 px-2 py-1 text-sm text-white"
 						>
-							<option value="">Select Match</option>
+							<option value="">{m.select_match_dependency()}</option>
 							{#each getAvailableMatchesForDependencies(nodeIndex, depIndex) as match (`match-#${match.id}`)}
 								{@const team1Score = match.teams[0]?.score || 0}
 								{@const team2Score = match.teams[1]?.score || 0}
@@ -139,7 +140,7 @@
 							class="rounded border border-slate-600 bg-slate-800 px-2 py-1 text-sm text-white"
 						>
 							{#each outcomeTypes as outcome (outcome)}
-								<option value={outcome}>{outcome}</option>
+								<option value={outcome}>{m[outcome]()}</option>
 							{/each}
 						</select>
 
@@ -157,7 +158,7 @@
 		</div>
 	{:else}
 		<div class="rounded-lg border border-slate-700 bg-slate-800/50 p-8 text-center">
-			<p class="text-slate-400">Select a node from the dropdown above to edit its properties</p>
+			<p class="text-slate-400">{m.select_node()}</p>
 		</div>
 	{/if}
 </section>

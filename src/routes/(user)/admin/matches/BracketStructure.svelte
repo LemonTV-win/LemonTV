@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { m } from '$lib/paraglide/messages';
 	import type { Team } from '$lib/data/teams';
 	let {
 		rounds,
@@ -65,7 +66,7 @@
 			<span
 				class="inline-block rounded-full bg-slate-500/20 px-3 py-1 text-xs font-medium text-slate-300"
 			>
-				New Round
+				{m.new_round()}
 			</span>
 		</div>
 		<div class="flex w-full flex-col gap-2">
@@ -83,7 +84,7 @@
 							d="M12 6v6m0 0v6m0-6h6m-6 0H6"
 						/>
 					</svg>
-					<span>Add Round</span>
+					<span>{m.add_round()}</span>
 				</div>
 			</button>
 		</div>
@@ -128,7 +129,7 @@
 					d="M12 6v6m0 0v6m0-6h6m-6 0H6"
 				/>
 			</svg>
-			<span>Add Node</span>
+			<span>{m.add_node()}</span>
 		</div>
 	</button>
 {/snippet}
@@ -170,7 +171,7 @@
 				</div>
 			{:else}
 				<div class="flex items-center justify-between">
-					<span class="text-slate-400">No match assigned</span>
+					<span class="text-slate-400">{m.no_match_assigned()}</span>
 					<span class="text-xs text-slate-500">#{node.order}</span>
 				</div>
 			{/if}
@@ -192,7 +193,7 @@
 <div class="mt-4 rounded-lg border border-slate-700 bg-slate-800/50 p-4">
 	{#if rounds.length === 0}
 		<div class="text-center text-slate-400">
-			<p>No rounds configured yet. Add rounds to see the bracket structure.</p>
+			<p>{m.no_rounds_configured()}</p>
 		</div>
 	{:else}
 		<div
@@ -223,7 +224,8 @@
 								<span
 									class="ml-1 inline-block rounded-full bg-blue-500/20 px-2 py-1 text-xs text-blue-300"
 								>
-									Group {round.parallelGroup}
+									{m.group()}
+									{round.parallelGroup}
 								</span>
 							{/if}
 						</div>
@@ -235,7 +237,7 @@
 								<div
 									class="rounded border border-dashed border-slate-600 px-3 py-2 text-center text-xs text-slate-500"
 								>
-									No nodes
+									{m.no_nodes()}
 								</div>
 							{/each}
 
@@ -250,9 +252,9 @@
 
 		<!-- Summary stats -->
 		<div class="mt-4 flex justify-between text-xs text-slate-400">
-			<span>Total Rounds: {rounds.length}</span>
-			<span>Total Nodes: {nodes.length}</span>
-			<span>Assigned Matches: {nodes.filter((n) => n.matchId).length}</span>
+			<span>{m.total_rounds()}: {rounds.length}</span>
+			<span>{m.total_nodes()}: {nodes.length}</span>
+			<span>{m.assigned_matches()}: {nodes.filter((n) => n.matchId).length}</span>
 		</div>
 	{/if}
 </div>

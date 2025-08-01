@@ -222,7 +222,7 @@
 			}
 		} catch (error) {
 			console.error('Failed to load existing bracket data:', error);
-			errorMessage = 'Failed to load existing bracket data';
+			errorMessage = m.failed_to_load_bracket_data();
 		}
 	}
 
@@ -303,7 +303,7 @@
 
 	function addNode(select: boolean = true) {
 		if (rounds.length === 0) {
-			errorMessage = 'Please add at least one round before adding nodes';
+			errorMessage = m.please_add_round_first();
 			return;
 		}
 
@@ -408,19 +408,19 @@
 	function saveBracketStructure() {
 		// Validate data
 		if (rounds.length === 0) {
-			errorMessage = 'At least one round is required';
+			errorMessage = m.at_least_one_round_required();
 			return;
 		}
 
 		if (nodes.length === 0) {
-			errorMessage = 'At least one node is required';
+			errorMessage = m.at_least_one_node_required();
 			return;
 		}
 
 		// Check for circular dependencies
 		const hasCircularDependency = checkCircularDependencies();
 		if (hasCircularDependency) {
-			errorMessage = 'Circular dependencies detected';
+			errorMessage = m.circular_dependencies_detected();
 			return;
 		}
 
@@ -596,13 +596,13 @@
 			// Invalidate all data to refresh the page
 			await invalidateAll();
 
-			successMessage = 'Bracket structure saved successfully';
+			successMessage = m.bracket_structure_saved();
 			setTimeout(() => {
 				onSuccess();
 			}, 1000);
 		} catch (error) {
 			console.error('Failed to save bracket structure:', error);
-			errorMessage = 'Failed to save bracket structure';
+			errorMessage = m.failed_to_save_bracket_structure();
 		}
 	}
 </script>
@@ -610,8 +610,8 @@
 <div class="flex h-full flex-col">
 	<section class="mb-4">
 		<div class="mb-4 flex items-center justify-between">
-			<h4 class="text-lg font-medium text-white">Bracket Structure</h4>
-			<Switch label="Show Preview" bind:checked={showPreview} />
+			<h4 class="text-lg font-medium text-white">{m.bracket_structure()}</h4>
+			<Switch label={m.show_preview()} bind:checked={showPreview} />
 		</div>
 
 		{#if showPreview && stage}
@@ -625,11 +625,11 @@
 							id: match.id,
 							teams: [
 								{
-									team: match.teams[0]?.team?.name || '',
+									team: match.teams[0]?.team?.name || 'TBD',
 									score: match.teams[0]?.score || 0
 								},
 								{
-									team: match.teams[1]?.team?.name || '',
+									team: match.teams[1]?.team?.name || 'TBD',
 									score: match.teams[1]?.score || 0
 								}
 							] as [
@@ -717,11 +717,11 @@
 		>
 			<div class="flex items-center justify-between">
 				<h4 class="text-lg font-medium text-white">
-					Selected Item
+					{m.selected_item()}
 					{#if selectedObject?.startsWith('round')}
-						(Round)
+						({m.stage_round()})
 					{:else if selectedObject?.startsWith('node')}
-						(Node)
+						({m.stage_node()})
 					{/if}
 				</h4>
 				<select
@@ -730,7 +730,8 @@
 				>
 					{#each rounds as round, roundIndex (`round-#${roundIndex}`)}
 						<option value={`round-${roundIndex}`}>
-							Round {roundIndex + 1}: {round.title || round.type}
+							{m.stage_round()}
+							{roundIndex + 1}: {round.title || round.type}
 						</option>
 						{#each nodes.filter((node) => node.roundId === round.id) as node, j (`node-${roundIndex}-${j}`)}
 							{@const nodeIndex = nodes.indexOf(node)}
@@ -738,7 +739,8 @@
 							{@const team1Score = match?.teams[0]?.score || 0}
 							{@const team2Score = match?.teams[1]?.score || 0}
 							<option value={`node-${nodeIndex}`}>
-								Node #{nodeIndex + 1}: {round?.title || round?.type || 'Unknown Round'} - {match
+								{m.stage_node()} #{nodeIndex + 1}: {round?.title || round?.type || 'Unknown Round'} -
+								{match
 									? `${match.teams[0]?.team?.name || 'TBD'} vs ${match.teams[1]?.team?.name || 'TBD'} (${team1Score}-${team2Score}) - ${match.id}`
 									: 'No match'} (#{node.order})
 							</option>
@@ -753,7 +755,7 @@
 							{@const team1Score = match?.teams[0]?.score || 0}
 							{@const team2Score = match?.teams[1]?.score || 0}
 							<option value={`node-${nodeIndex}`}>
-								Node #{nodeIndex + 1}: {match
+								{m.stage_node()} #{nodeIndex + 1}: {match
 									? `${match.teams[0]?.team?.name || 'TBD'} vs ${match.teams[1]?.team?.name || 'TBD'} (${team1Score}-${team2Score}) - ${match.id}`
 									: 'No match'} (#{node.order})
 							</option>
@@ -764,7 +766,7 @@
 						value={{
 							type: 'round',
 							roundIndex: -1
-						}}>New Round</option
+						}}>{m.new_round()}</option
 					>
 					<option
 						value={{
@@ -802,11 +804,11 @@
 	{#if showRoundDeleteConfirm !== null}
 		<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
 			<div class="rounded-lg border border-slate-700 bg-slate-800 p-6 shadow-xl">
-				<h3 class="mb-4 text-lg font-medium text-white">Confirm Delete Round</h3>
+				<h3 class="mb-4 text-lg font-medium text-white">{m.confirm_delete_round()}</h3>
 				<p class="mb-6 text-slate-300">
-					Are you sure you want to delete the round "{rounds[showRoundDeleteConfirm]?.title ||
-						rounds[showRoundDeleteConfirm]?.type}"? This will also remove all nodes associated with
-					this round.
+					{m.confirm_delete_round_message({
+						title: rounds[showRoundDeleteConfirm]?.title || rounds[showRoundDeleteConfirm]?.type
+					})}
 				</p>
 				<div class="flex justify-end gap-3">
 					<button
@@ -814,7 +816,7 @@
 						class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-700"
 						onclick={cancelRemoveRound}
 					>
-						Cancel
+						{m.cancel()}
 					</button>
 					<button
 						type="button"
@@ -824,7 +826,7 @@
 							showRoundDeleteConfirm = null;
 						}}
 					>
-						Delete Round
+						{m.delete_round()}
 					</button>
 				</div>
 			</div>
@@ -834,9 +836,9 @@
 	{#if showNodeDeleteConfirm !== null}
 		<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
 			<div class="rounded-lg border border-slate-700 bg-slate-800 p-6 shadow-xl">
-				<h3 class="mb-4 text-lg font-medium text-white">Confirm Delete Node</h3>
+				<h3 class="mb-4 text-lg font-medium text-white">{m.confirm_delete_node()}</h3>
 				<p class="mb-6 text-slate-300">
-					Are you sure you want to delete this node? This action cannot be undone.
+					{m.confirm_delete_node_message()}
 				</p>
 				<div class="flex justify-end gap-3">
 					<button
@@ -844,7 +846,7 @@
 						class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-700"
 						onclick={cancelRemoveNode}
 					>
-						Cancel
+						{m.cancel()}
 					</button>
 					<button
 						type="button"
@@ -854,7 +856,7 @@
 							showNodeDeleteConfirm = null;
 						}}
 					>
-						Delete Node
+						{m.delete_node()}
 					</button>
 				</div>
 			</div>
@@ -874,7 +876,7 @@
 			class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 			onclick={saveBracketStructure}
 		>
-			Save Bracket Structure
+			{m.save_bracket_structure()}
 		</button>
 	</div>
 </div>

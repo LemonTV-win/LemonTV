@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { m } from '$lib/paraglide/messages';
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import type { Round } from './BracketEdit.svelte';
 
@@ -38,7 +39,7 @@
 			<div class="grid grid-cols-2 gap-4 md:grid-cols-4">
 				<div>
 					<label for="round-type-{roundIndex}" class="block text-sm font-medium text-slate-300"
-						>Type</label
+						>{m.type()}</label
 					>
 					<select
 						id="round-type-{roundIndex}"
@@ -81,7 +82,7 @@
 				<div>
 					<label
 						for="round-parallel-group-{roundIndex}"
-						class="block text-sm font-medium text-slate-300">Parallel Group</label
+						class="block text-sm font-medium text-slate-300">{m.parallel_group()}</label
 					>
 					<select
 						id="round-parallel-group-{roundIndex}"
@@ -111,7 +112,7 @@
 		</div>
 	{:else}
 		<div class="rounded-lg border border-slate-700 bg-slate-800/50 p-8 text-center">
-			<p class="text-slate-400">Select a round from the preview above to edit its properties</p>
+			<p class="text-slate-400">{m.select_round()}</p>
 		</div>
 	{/if}
 </section>
