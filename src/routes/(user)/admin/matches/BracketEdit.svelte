@@ -588,6 +588,8 @@
 			errorMessage = m.failed_to_save_bracket_structure();
 		}
 	}
+
+	let orphanedNodes = $derived(nodes.filter((node) => !rounds.some((r) => r.id === node.roundId)));
 </script>
 
 <div class="flex h-full flex-col">
@@ -730,21 +732,23 @@
 						{/each}
 						<option disabled>──────────</option>
 					{/each}
-					<!-- Orphaned nodes -->
-					<optgroup label="Nodes without round">
-						{#each nodes.filter((node) => !rounds.some((r) => r.id === node.roundId)) as node, k (`node-#${k}`)}
-							{@const nodeIndex = nodes.indexOf(node)}
-							{@const match = matches.find((m: (typeof matches)[0]) => m.id === node.matchId)}
-							{@const team1Score = match?.teams[0]?.score || 0}
-							{@const team2Score = match?.teams[1]?.score || 0}
-							<option value={`node-${nodeIndex}`}>
-								{m.stage_node()} #{nodeIndex + 1}: {match
-									? `${match.teams[0]?.team?.name || 'TBD'} vs ${match.teams[1]?.team?.name || 'TBD'} (${team1Score}-${team2Score}) - ${match.id}`
-									: 'No match'} (#{node.order})
-							</option>
-						{/each}
-					</optgroup>
-					<option disabled>──────────</option>
+
+					{#if orphanedNodes.length > 0}
+						<optgroup label="Nodes without round">
+							{#each orphanedNodes as node, k (`node-#${k}`)}
+								{@const nodeIndex = nodes.indexOf(node)}
+								{@const match = matches.find((m: (typeof matches)[0]) => m.id === node.matchId)}
+								{@const team1Score = match?.teams[0]?.score || 0}
+								{@const team2Score = match?.teams[1]?.score || 0}
+								<option value={`node-${nodeIndex}`}>
+									{m.stage_node()} #{nodeIndex + 1}: {match
+										? `${match.teams[0]?.team?.name || 'TBD'} vs ${match.teams[1]?.team?.name || 'TBD'} (${team1Score}-${team2Score}) - ${match.id}`
+										: 'No match'} (#{node.order})
+								</option>
+							{/each}
+						</optgroup>
+						<option disabled>──────────</option>
+					{/if}
 					<option
 						value={{
 							type: 'round',
