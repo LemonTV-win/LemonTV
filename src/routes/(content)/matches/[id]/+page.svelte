@@ -12,10 +12,33 @@
 		throw error(404, 'Event not found');
 	}
 
+	let sortBy:
+		| 'score-asc'
+		| 'score-desc'
+		| 'damageScore-asc'
+		| 'damageScore-desc'
+		| 'kills-asc'
+		| 'kills-desc'
+		| 'deaths-asc'
+		| 'deaths-desc'
+		| 'assists-asc'
+		| 'assists-desc'
+		| 'damage-asc'
+		| 'damage-desc'
+		| 'player-asc'
+		| 'player-desc' = $state(data.sortBy || 'score-desc');
+
+	$effect(() => {
+		const url = new URL(window.location.href);
+		url.searchParams.set('sortBy', sortBy);
+		goto(url.toString(), { replaceState: true, noScroll: true, keepFocus: true });
+	});
+
 	import Scoreboard from './Scoreboard.svelte';
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 	import { m } from '$lib/paraglide/messages';
+	import { goto } from '$app/navigation';
 
 	const MAP_2_IMAGE: Record<GameMap, string> = {
 		base_404:
@@ -110,6 +133,7 @@
 				scores={data.match.games?.[currentMapID].scores}
 				winner={data.match.games?.[currentMapID].winner}
 				teams={[data.match.teams[0].team, data.match.teams[1].team]}
+				bind:sortBy
 			/>
 		{/if}
 	</div>

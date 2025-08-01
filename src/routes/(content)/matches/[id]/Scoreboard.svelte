@@ -13,15 +13,28 @@
 	let {
 		scores,
 		winner,
-		teams
+		teams,
+		sortBy = $bindable('score-desc')
 	}: {
 		scores: [PlayerScore[], PlayerScore[]];
 		winner: number;
 		teams: [Team, Team];
+		sortBy:
+			| 'score-asc'
+			| 'score-desc'
+			| 'damageScore-asc'
+			| 'damageScore-desc'
+			| 'kills-asc'
+			| 'kills-desc'
+			| 'deaths-asc'
+			| 'deaths-desc'
+			| 'assists-asc'
+			| 'assists-desc'
+			| 'damage-asc'
+			| 'damage-desc'
+			| 'player-asc'
+			| 'player-desc';
 	} = $props();
-
-	// Sorting state
-	let sortBy = $state('score-desc'); // Default sort by performance score descending
 
 	let mvps: [string, string] = $derived([getMVP(scores[0]), getMVP(scores[1])]);
 
