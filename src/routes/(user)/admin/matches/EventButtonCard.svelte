@@ -20,10 +20,13 @@
 </script>
 
 <button
-	class="flex items-start gap-4 rounded-lg border p-4 text-left transition-all {selectedEventId ===
-	event.id
-		? 'border-yellow-500 bg-gray-700 shadow-lg shadow-yellow-500/10'
-		: 'border-gray-700 bg-gray-800 hover:border-gray-600 hover:bg-gray-700'}"
+	class={[
+		'flex items-start gap-4 rounded-lg border p-4 text-left transition-all',
+		'cursor-pointer',
+		selectedEventId === event.id
+			? 'border-yellow-500 bg-gray-700 shadow-lg shadow-yellow-500/10'
+			: 'border-gray-700 bg-gray-800 hover:border-gray-600 hover:bg-gray-700'
+	]}
 	onclick={() => handleEventSelect(event.id)}
 >
 	{#if event.image}
