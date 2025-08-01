@@ -428,7 +428,7 @@
 				{m.game_accounts()}
 			</label>
 			<div class="mt-2 rounded-lg border border-slate-700 bg-slate-800 p-4">
-				{#each newPlayer.gameAccounts || [] as account, i (account.accountId)}
+				{#each newPlayer.gameAccounts || [] as account, i (i)}
 					<div
 						class="grid grid-cols-[1fr_1fr_1fr_auto] gap-4 {i > 0
 							? 'mt-4 border-t border-slate-700 pt-4'
