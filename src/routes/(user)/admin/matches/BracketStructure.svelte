@@ -4,8 +4,7 @@
 		rounds,
 		nodes,
 		matches,
-		selectedRoundIndex = $bindable(0),
-		selectedNodeIndex = $bindable(0),
+		selectedObject = $bindable(''),
 		addRound,
 		addNode
 	}: {
@@ -54,8 +53,7 @@
 				};
 			}>;
 		}[];
-		selectedRoundIndex: number;
-		selectedNodeIndex: number;
+		selectedObject: string;
 		addRound: () => void;
 		addNode: () => void;
 	} = $props();
@@ -157,11 +155,11 @@
 					'border-yellow-500': match,
 					'border-slate-500': !match,
 					'border-2 border-yellow-400 bg-yellow-500/30 font-medium shadow-lg shadow-yellow-500/25 hover:bg-yellow-500/40':
-						selectedNodeIndex === globalNodeIndex,
-					'bg-slate-700 hover:bg-slate-600': selectedNodeIndex !== globalNodeIndex
+						selectedObject === `node-${globalNodeIndex}`,
+					'bg-slate-700 hover:bg-slate-600': selectedObject !== `node-${globalNodeIndex}`
 				}
 			]}
-			onclick={() => (selectedNodeIndex = globalNodeIndex)}
+			onclick={() => (selectedObject = `node-${globalNodeIndex}`)}
 		>
 			{#if match}
 				<div class="flex items-center justify-between">
@@ -212,12 +210,12 @@
 								class={[
 									'rounded-full px-3 py-1 text-xs font-medium transition-colors *:inline-block',
 									{
-										'bg-yellow-500/20 text-yellow-300': selectedRoundIndex === roundIndex,
+										'bg-yellow-500/20 text-yellow-300': selectedObject === `round-${roundIndex}`,
 										'bg-slate-600/20 text-slate-300 hover:bg-yellow-500/30':
-											selectedRoundIndex !== roundIndex
+											selectedObject !== `round-${roundIndex}`
 									}
 								]}
-								onclick={() => (selectedRoundIndex = roundIndex)}
+								onclick={() => (selectedObject = `round-${roundIndex}`)}
 							>
 								{roundIndex + 1}: {round.title || round.type}
 							</button>

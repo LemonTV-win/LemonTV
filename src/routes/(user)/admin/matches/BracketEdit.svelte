@@ -127,8 +127,7 @@
 		}>
 	>([]);
 
-	let selectedRoundIndex = $state<number>(-1);
-	let selectedNodeIndex = $state<number>(-1);
+	let selectedObject = $state<string>('');
 
 	// Delete confirmation state
 	let showRoundDeleteConfirm = $state<number | null>(null);
@@ -174,9 +173,9 @@
 		}
 	});
 
-	// Auto-create new round when "New Round" is selected
+	// Auto-create new round when no round is selected
 	$effect(() => {
-		if (selectedRoundIndex === -1) {
+		if (!selectedObject) {
 			addRound();
 		}
 	});
@@ -193,10 +192,10 @@
 					parallelGroup: round.parallelGroup || undefined,
 					isNew: false
 				}));
-				selectedRoundIndex = 0; // Select first round by default
+				selectedObject = 'round-0'; // Select first round by default
 			} else {
 				rounds = [];
-				selectedRoundIndex = -1;
+				selectedObject = '';
 			}
 
 			// Load existing nodes from props
@@ -213,10 +212,9 @@
 					})),
 					isNew: false
 				}));
-				selectedNodeIndex = 0; // Select first node by default
+				// Don't auto-select first node, let user choose
 			} else {
 				nodes = [];
-				selectedNodeIndex = -1;
 			}
 		} catch (error) {
 			console.error('Failed to load existing bracket data:', error);
@@ -225,6 +223,7 @@
 	}
 
 	function addRound() {
+		console.log('[BracketEdit] add round');
 		const newRoundIndex = rounds.length;
 		const maxRoundID = Math.max(...rounds.map((r) => r.id || 0));
 		rounds = [
@@ -237,10 +236,12 @@
 				isNew: true
 			}
 		];
-		selectedRoundIndex = newRoundIndex;
+		selectedObject = `round-${newRoundIndex}`;
+		addNode(false);
 	}
 
 	$inspect(`[BracketEdit] rounds`, rounds);
+	$inspect(`[BracketEdit] nodes`, nodes);
 
 	async function removeRound(index: number) {
 		const roundToRemove = rounds[index];
@@ -278,10 +279,13 @@
 		nodes = nodes.filter((node) => node.roundId !== roundToRemove?.id);
 
 		// Update selection
-		if (selectedRoundIndex === index) {
-			selectedRoundIndex = rounds.length > 0 ? 0 : -1;
-		} else if (selectedRoundIndex > index) {
-			selectedRoundIndex--;
+		if (selectedObject === `round-${index}`) {
+			selectedObject = rounds.length > 0 ? 'round-0' : '';
+		} else if (selectedObject.startsWith('round-')) {
+			const currentRoundIndex = parseInt(selectedObject.split('-')[1]);
+			if (currentRoundIndex > index) {
+				selectedObject = `round-${currentRoundIndex - 1}`;
+			}
 		}
 	}
 
@@ -293,7 +297,7 @@
 		showRoundDeleteConfirm = null;
 	}
 
-	function addNode() {
+	function addNode(select: boolean = true) {
 		if (rounds.length === 0) {
 			errorMessage = 'Please add at least one round before adding nodes';
 			return;
@@ -316,15 +320,10 @@
 				isNew: true
 			}
 		];
-		selectedNodeIndex = newNodeIndex;
-	}
-
-	// Auto-create new node when "New Node" is selected
-	$effect(() => {
-		if (selectedNodeIndex === -1 && selectedRoundIndex >= 0) {
-			addNode();
+		if (select) {
+			selectedObject = `node-${newNodeIndex}`;
 		}
-	});
+	}
 
 	async function removeNode(index: number) {
 		const nodeToRemove = nodes[index];
@@ -366,10 +365,13 @@
 		});
 
 		// Update selection
-		if (selectedNodeIndex === index) {
-			selectedNodeIndex = nodes.length > 0 ? 0 : -1;
-		} else if (selectedNodeIndex > index) {
-			selectedNodeIndex--;
+		if (selectedObject === `node-${index}`) {
+			selectedObject = nodes.length > 0 ? 'node-0' : '';
+		} else if (selectedObject.startsWith('node-')) {
+			const currentNodeIndex = parseInt(selectedObject.split('-')[1]);
+			if (currentNodeIndex > index) {
+				selectedObject = `node-${currentNodeIndex - 1}`;
+			}
 		}
 	}
 
@@ -688,15 +690,7 @@
 
 		<h4 class="text-lg font-medium text-white">Bracket Structure</h4>
 
-		<BracketStructure
-			{rounds}
-			{nodes}
-			{matches}
-			bind:selectedRoundIndex
-			bind:selectedNodeIndex
-			{addRound}
-			{addNode}
-		/>
+		<BracketStructure {rounds} {nodes} {matches} bind:selectedObject {addRound} {addNode} />
 	</section>
 
 	{#if errorMessage}
@@ -715,15 +709,69 @@
 		<div
 			class="h-full space-y-4 overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800"
 		>
+			<div class="flex items-center justify-between">
+				<h4 class="text-lg font-medium text-white">Selected Item</h4>
+				<select
+					value={selectedObject}
+					class="mt-1 block w-64 rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+				>
+					{#each rounds as round, roundIndex (`round-#${roundIndex}`)}
+						<option value={`round-${roundIndex}`}>
+							Round {roundIndex + 1}: {round.title || round.type}
+						</option>
+						{#each nodes.filter((node) => node.roundId === round.id) as node, nodeIndex (`node-#${nodeIndex}`)}
+							{@const match = matches.find((m: (typeof matches)[0]) => m.id === node.matchId)}
+							{@const team1Score = match?.teams[0]?.score || 0}
+							{@const team2Score = match?.teams[1]?.score || 0}
+							<option value={`node-${nodeIndex}`}>
+								Node: {round?.title || round?.type || 'Unknown Round'} - {match
+									? `${match.teams[0]?.team?.name || 'TBD'} vs ${match.teams[1]?.team?.name || 'TBD'} (${team1Score}-${team2Score}) - ${match.id}`
+									: 'No match'} (#{node.order})
+							</option>
+						{/each}
+						<option disabled>──────────</option>
+					{/each}
+					<!-- Orphaned nodes -->
+					{#each nodes.filter((node) => !rounds.some((r) => r.id === node.roundId)) as node, nodeIndex (`node-#${nodeIndex}`)}
+						{@const match = matches.find((m: (typeof matches)[0]) => m.id === node.matchId)}
+						{@const team1Score = match?.teams[0]?.score || 0}
+						{@const team2Score = match?.teams[1]?.score || 0}
+						<option
+							value={{
+								type: 'node',
+								nodeIndex
+							}}
+						>
+							Node without round - {match
+								? `${match.teams[0]?.team?.name || 'TBD'} vs ${match.teams[1]?.team?.name || 'TBD'} (${team1Score}-${team2Score}) - ${match.id}`
+								: 'No match'} (#{node.order})
+						</option>
+					{/each}
+					<option disabled>──────────</option>
+					<option
+						value={{
+							type: 'round',
+							roundIndex: -1
+						}}>New Round</option
+					>
+					<option
+						value={{
+							type: 'node',
+							nodeIndex: -1
+						}}>New Node</option
+					>
+				</select>
+			</div>
+
 			<!-- Stage Rounds Section -->
-			<BracketStageRoundInput {rounds} bind:selectedRoundIndex {confirmRemoveRound} />
+			<BracketStageRoundInput {rounds} {selectedObject} {confirmRemoveRound} />
 
 			<!-- Stage Nodes Section -->
 			<BracketStageNodeInput
 				{nodes}
 				{matches}
 				{rounds}
-				bind:selectedNodeIndex
+				{selectedObject}
 				{confirmRemoveNode}
 				{addDependency}
 				{removeDependency}

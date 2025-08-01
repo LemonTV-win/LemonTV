@@ -6,7 +6,7 @@
 		nodes,
 		matches,
 		rounds,
-		selectedNodeIndex = $bindable(0),
+		selectedObject,
 		confirmRemoveNode,
 		addDependency,
 		removeDependency,
@@ -14,7 +14,7 @@
 		getAvailableMatchesForDependencies
 	}: {
 		nodes: Node[];
-		selectedNodeIndex: number;
+		selectedObject: string;
 		confirmRemoveNode: (nodeIndex: number) => void;
 		addDependency: (nodeIndex: number) => void;
 		removeDependency: (nodeIndex: number, depIndex: number) => void;
@@ -25,28 +25,14 @@
 	} = $props();
 
 	const outcomeTypes = ['winner', 'loser'] as const;
+
+	// Computed property to get the selected node index
+	let selectedNodeIndex = $derived(
+		selectedObject.startsWith('node-') ? parseInt(selectedObject.split('-')[1]) : -1
+	);
 </script>
 
 <section class="space-y-4">
-	<select
-		bind:value={selectedNodeIndex}
-		class="mt-1 block w-64 rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-	>
-		{#each nodes as node, nodeIndex (`node-#${nodeIndex}`)}
-			{@const match = matches.find((m: (typeof matches)[0]) => m.id === node.matchId)}
-			{@const round = rounds.find((r) => r.id === node.roundId || r.id === node.roundId)}
-			{@const team1Score = match?.teams[0]?.score || 0}
-			{@const team2Score = match?.teams[1]?.score || 0}
-			<option value={nodeIndex}>
-				{round?.title || round?.type || 'Unknown Round'} - {match
-					? `${match.teams[0]?.team?.name || 'TBD'} vs ${match.teams[1]?.team?.name || 'TBD'} (${team1Score}-${team2Score}) - ${match.id}`
-					: 'No match'} (#{node.order})
-			</option>
-		{/each}
-		<option disabled>──────────</option>
-		<option value={-1}>New Node</option>
-	</select>
-
 	{#if selectedNodeIndex >= 0 && nodes[selectedNodeIndex]}
 		{@const node = nodes[selectedNodeIndex]}
 		{@const nodeIndex = selectedNodeIndex}

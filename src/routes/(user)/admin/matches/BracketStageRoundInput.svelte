@@ -4,11 +4,11 @@
 
 	let {
 		rounds,
-		selectedRoundIndex = $bindable(0),
+		selectedObject,
 		confirmRemoveRound
 	}: {
 		rounds: Round[];
-		selectedRoundIndex: number;
+		selectedObject: string;
 		confirmRemoveRound: (roundIndex: number) => void;
 	} = $props();
 
@@ -23,23 +23,14 @@
 		'grandfinal'
 	] as const;
 	const bracketTypes = ['upper', 'lower', 'group'] as const;
+
+	// Computed property to get the selected round index
+	let selectedRoundIndex = $derived(
+		selectedObject.startsWith('round-') ? parseInt(selectedObject.split('-')[1]) : -1
+	);
 </script>
 
 <section class="space-y-4">
-	<div class="flex items-center justify-between">
-		<h4 class="text-lg font-medium text-white">Selected Stage Round</h4>
-		<select
-			bind:value={selectedRoundIndex}
-			class="mt-1 block w-64 rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-		>
-			{#each rounds as round, roundIndex (`round-#${roundIndex}`)}
-				<option value={roundIndex}>{roundIndex + 1}: {round.title || round.type}</option>
-			{/each}
-			<option disabled>──────────</option>
-			<option value={-1}>New Round</option>
-		</select>
-	</div>
-
 	{#if selectedRoundIndex >= 0 && rounds[selectedRoundIndex]}
 		{@const round = rounds[selectedRoundIndex]}
 		{@const roundIndex = selectedRoundIndex}
