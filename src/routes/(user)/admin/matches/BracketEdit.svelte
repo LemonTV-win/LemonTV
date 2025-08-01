@@ -716,7 +716,14 @@
 			class="h-full space-y-4 overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800"
 		>
 			<div class="flex items-center justify-between">
-				<h4 class="text-lg font-medium text-white">Selected Item</h4>
+				<h4 class="text-lg font-medium text-white">
+					Selected Item
+					{#if selectedObject?.startsWith('round')}
+						(Round)
+					{:else if selectedObject?.startsWith('node')}
+						(Node)
+					{/if}
+				</h4>
 				<select
 					bind:value={selectedObject}
 					class="mt-1 block w-64 rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
