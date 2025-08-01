@@ -83,10 +83,10 @@
 		style:--banner-image={`url(${MAP_2_IMAGE[data.match.maps?.[currentMapID]?.map ?? 'base_404']})`}
 	>
 		<div class="flex items-center justify-between">
-			<nav class="m-2 flex gap-4 rounded-sm">
+			<nav class="my-2 flex gap-4 rounded-sm">
 				{#each data.match.maps as map, index (index)}
 					<button
-						class="overflow-clip rounded-sm bg-gray-200/50"
+						class="overflow-clip rounded-md bg-white/40 text-center backdrop-blur-sm"
 						onclick={() => (currentMapID = index)}
 						disabled={index >= (data.match.games?.length ?? 0)}
 						style:opacity={index >= (data.match.games?.length ?? 0) ? '0.5' : '1'}
