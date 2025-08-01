@@ -541,5 +541,9 @@
 	"new_node": "Neuer Knoten",
 	"no_match": "Kein Match",
 	"unknown_round": "Unbekannte Runde",
-	"nodes_without_round": "Knoten ohne Runde"
+	"nodes_without_round": "Knoten ohne Runde",
+	"performance_score": "Punktzahl",
+	"damage_score": "Schadenspunktzahl",
+	"knocks": "Niederlagen",
+	"damage": "Schaden"
 }
