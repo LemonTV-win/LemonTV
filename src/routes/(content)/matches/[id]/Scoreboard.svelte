@@ -52,6 +52,7 @@
 				>
 			</td>
 			<td class="text-center">{score.score}</td>
+			<td class="text-center">{score.damageScore}</td>
 			<td class="text-center">{score.kills} ({score.knocks}) / {score.deaths} / {score.assists}</td>
 			<td class="text-center">{score.damage}</td>
 		</tr>
@@ -65,6 +66,7 @@
 			<th class="py-3">Characters</th>
 			<th class="py-3">Player</th>
 			<th class="py-3">Score</th>
+			<th class="py-3">Damage Score</th>
 			<th class="py-3">K (KN) / D / A</th>
 			<th class="py-3">Damage</th>
 		</tr>
