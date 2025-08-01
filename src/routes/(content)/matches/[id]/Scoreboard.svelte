@@ -1,4 +1,5 @@
 <script lang="ts">
+	import CharacterIcon from '$lib/components/CharacterIcon.svelte';
 	import type { PlayerScore } from '$lib/data/matches';
 	import type { Team } from '$lib/data/teams';
 
@@ -7,8 +8,6 @@
 		winner,
 		teams
 	}: { scores: [PlayerScore[], PlayerScore[]]; winner: number; teams: [Team, Team] } = $props();
-
-	import CharacterIcon from './CharacterIcon.svelte';
 
 	let mvps: [string, string] = $derived([getMVP(scores[0]), getMVP(scores[1])]);
 

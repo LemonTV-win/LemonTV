@@ -12,7 +12,7 @@
 		throw error(404, 'Event not found');
 	}
 
-	import Scoreboard from '$lib/components/Scoreboard.svelte';
+	import Scoreboard from './Scoreboard.svelte';
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 	import { m } from '$lib/paraglide/messages';
