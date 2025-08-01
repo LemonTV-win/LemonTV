@@ -17,7 +17,7 @@ export const load: PageServerLoad = async ({ locals: { user } }) => {
 
 	// Get server-side agents for all players (optimized)
 	const playerIds = players.map((p) => p.id);
-	const playersAgents = await getServerPlayersAgents(playerIds, 3);
+	const playersAgents = await getServerPlayersAgents(playerIds, 0);
 
 	// Get Superstring Power for all characters
 	const superstringPowerData: Record<

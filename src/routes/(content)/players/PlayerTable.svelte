@@ -2,13 +2,13 @@
 	import type { Team } from '$lib/data/teams';
 	import type { Character } from '$lib/data/game';
 	import { m } from '$lib/paraglide/messages.js';
-	import CharacterIcon from '$lib/components/CharacterIcon.svelte';
 	import TypcnArrowUnsorted from '~icons/typcn/arrow-unsorted';
 	import TypcnArrowSortedDown from '~icons/typcn/arrow-sorted-down';
 	import TypcnArrowSortedUp from '~icons/typcn/arrow-sorted-up';
 	import { getAllNames } from '$lib/data/players';
 	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
 	import type { TCountryCode } from 'countries-list';
+	import PlayerFrequentAgents from './PlayerFrequentAgents.svelte';
 
 	let {
 		playersTeams,
@@ -36,6 +36,14 @@
 		}[];
 	} = $props();
 </script>
+
+<div
+	class="h-10 w-10 bg-red-500"
+	style:position-anchor={`--hello-${'world'}`}
+	style:position="fixed"
+>
+	ABC
+</div>
 
 <div
 	class="glass-card-container overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-800"
@@ -140,6 +148,7 @@
 						class="flex items-center gap-1 text-left"
 						class:text-white={sortBy === 'events-asc' || sortBy === 'events-desc'}
 						onclick={() => (sortBy = sortBy === 'events-asc' ? 'events-desc' : 'events-asc')}
+						style:anchor-name={`--hello-${'world'}`}
 					>
 						{m.events()}
 						{#if sortBy === 'events-asc'}
@@ -154,7 +163,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each players as player (player.id)}
+			{#each players as player, playerIndex (player.id)}
 				<tr>
 					<td class=" py-1 text-center">
 						{#each player.nationalities as nationality, idx (idx)}
@@ -180,11 +189,7 @@
 						{/each}
 					</td>
 					<td class="hidden flex-wrap gap-1 text-center align-middle sm:table-cell">
-						<div class="flex items-center justify-center gap-1 py-2">
-							{#each [...playersAgents[player.id ?? ''].map(([agent]) => agent), ...[null, null, null]].slice(0, 3) as superstring, i (i)}
-								<CharacterIcon character={superstring} />
-							{/each}
-						</div>
+						<PlayerFrequentAgents playerAgents={playersAgents[player.id ?? '']} {playerIndex} />
 					</td>
 					<td class="px-4 py-1 text-gray-300">{player.wins}</td>
 					<td class="px-4 py-1 text-gray-300" title={m.rating() + ' ' + player.rating}>

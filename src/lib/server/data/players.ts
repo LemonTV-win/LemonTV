@@ -583,11 +583,11 @@ export async function getServerPlayersAgents(
 		}
 
 		// Convert to array of tuples, sort by count (descending), and limit
-		const sortedCharacters = Array.from(characterCounts.entries())
-			.sort((a, b) => b[1] - a[1])
-			.slice(0, limit);
+		const sortedCharacters = Array.from(characterCounts.entries()).sort((a, b) => b[1] - a[1]);
 
-		result[playerId] = sortedCharacters;
+		const slicedCharacters = limit > 0 ? sortedCharacters.slice(0, limit) : sortedCharacters;
+
+		result[playerId] = slicedCharacters;
 	}
 
 	console.info('[Players] Found agents for', Object.keys(result).length, 'players');
