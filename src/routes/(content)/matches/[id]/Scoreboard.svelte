@@ -45,7 +45,11 @@
 				</div>
 			</td>
 			<td class="text-center">
-				<a href={`/players/${score.player}`} class="text-center">{score.player}</a>
+				<a
+					href={`/players/${score.player}`}
+					class="text-center transition-colors duration-200 hover:text-yellow-300 hover:underline"
+					>{score.player}</a
+				>
 			</td>
 			<td class="text-center">{score.score}</td>
 			<td class="text-center">{score.kills} ({score.knocks}) / {score.deaths} / {score.assists}</td>
@@ -70,7 +74,7 @@
 			<td colspan="6" class="h-6">
 				<a
 					href={`/teams/${teams[0].id}`}
-					class="flex items-center justify-center gap-2 p-2 font-bold"
+					class="flex items-center justify-center gap-2 p-2 font-bold transition-colors duration-200 hover:text-yellow-300 hover:underline"
 				>
 					{teams[0].name}
 				</a>
@@ -81,7 +85,7 @@
 			<td colspan="6" class="h-6">
 				<a
 					href={`/teams/${teams[1].id}`}
-					class="flex items-center justify-center gap-2 p-2 font-bold"
+					class="flex items-center justify-center gap-2 p-2 font-bold transition-colors duration-200 hover:text-yellow-300 hover:underline"
 				>
 					{teams[1].name}
 				</a>
