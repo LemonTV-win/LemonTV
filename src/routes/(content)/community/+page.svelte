@@ -33,6 +33,10 @@
 		{
 			title: 'Strinova Map Callouts (English, nbound version)',
 			url: 'https://drive.google.com/drive/folders/1S7XA8S66zZiliM5vBmeqdIPrXUKn6kWL'
+		},
+		{
+			title: 'Strinova Map Veto Tool',
+			url: 'https://strinova-veto.vercel.app/'
 		}
 	];
 
