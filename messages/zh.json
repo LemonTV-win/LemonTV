@@ -533,5 +533,9 @@
 	"circular_dependencies_detected": "检测到循环依赖关系",
 	"failed_to_load_bracket_data": "加载现有对阵数据失败",
 	"failed_to_save_bracket_structure": "保存对阵结构失败",
-	"please_add_round_first": "请先添加至少一个轮次再添加节点"
+	"please_add_round_first": "请先添加至少一个轮次再添加节点",
+	"bracket": "组别",
+	"upper_bracket": "胜者组",
+	"lower_bracket": "败者组",
+	"group_bracket": "小组赛"
 }

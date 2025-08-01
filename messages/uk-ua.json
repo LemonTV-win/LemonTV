@@ -533,5 +533,9 @@
 	"circular_dependencies_detected": "Виявлено циклічні залежності",
 	"failed_to_load_bracket_data": "Не вдалося завантажити існуючі дані турнірної сітки",
 	"failed_to_save_bracket_structure": "Не вдалося зберегти структуру турнірної сітки",
-	"please_add_round_first": "Будь ласка, додайте хоча б один раунд перед додаванням вузлів"
+	"please_add_round_first": "Будь ласка, додайте хоча б один раунд перед додаванням вузлів",
+	"bracket": "Сітка",
+	"upper_bracket": "Верхня",
+	"lower_bracket": "Нижня",
+	"group_bracket": "Група"
 }

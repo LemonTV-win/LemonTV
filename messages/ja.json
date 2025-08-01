@@ -533,5 +533,9 @@
 	"circular_dependencies_detected": "循環依存関係が検出されました",
 	"failed_to_load_bracket_data": "既存のブラケットデータの読み込みに失敗しました",
 	"failed_to_save_bracket_structure": "ブラケット構造の保存に失敗しました",
-	"please_add_round_first": "対戦枠を追加する前に、少なくとも1つのラウンドを追加してください"
+	"please_add_round_first": "対戦枠を追加する前に、少なくとも1つのラウンドを追加してください",
+	"bracket": "ブラケット",
+	"upper_bracket": "上位",
+	"lower_bracket": "下位",
+	"group_bracket": "グループ"
 }

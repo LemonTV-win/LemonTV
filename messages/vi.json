@@ -533,5 +533,9 @@
 	"circular_dependencies_detected": "Phát hiện phụ thuộc vòng tròn",
 	"failed_to_load_bracket_data": "Không thể tải dữ liệu bracket hiện có",
 	"failed_to_save_bracket_structure": "Không thể lưu cấu trúc bracket",
-	"please_add_round_first": "Vui lòng thêm ít nhất một vòng trước khi thêm nút"
+	"please_add_round_first": "Vui lòng thêm ít nhất một vòng trước khi thêm nút",
+	"bracket": "Nhánh",
+	"upper_bracket": "Nhánh trên",
+	"lower_bracket": "Nhánh dưới",
+	"group_bracket": "Nhánh nhóm"
 }

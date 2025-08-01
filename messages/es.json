@@ -533,5 +533,9 @@
 	"circular_dependencies_detected": "Se detectaron dependencias circulares",
 	"failed_to_load_bracket_data": "Error al cargar datos de bracket existentes",
 	"failed_to_save_bracket_structure": "Error al guardar estructura de bracket",
-	"please_add_round_first": "Por favor añade al menos una ronda antes de añadir nodos"
+	"please_add_round_first": "Por favor añade al menos una ronda antes de añadir nodos",
+	"bracket": "Llave",
+	"upper_bracket": "Superior",
+	"lower_bracket": "Inferior",
+	"group_bracket": "Grupo"
 }

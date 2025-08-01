@@ -23,7 +23,11 @@
 		'lower',
 		'grandfinal'
 	] as const;
-	const bracketTypes = ['upper', 'lower', 'group'] as const;
+	const bracketTypes = {
+		upper: m.upper_bracket,
+		lower: m.lower_bracket,
+		group: m.group_bracket
+	} as const;
 
 	// Computed property to get the selected round index
 	let selectedRoundIndex = $derived(
@@ -54,7 +58,7 @@
 
 				<div>
 					<label for="round-title-{roundIndex}" class="block text-sm font-medium text-slate-300"
-						>Title</label
+						>{m.label()}</label
 					>
 					<input
 						id="round-title-{roundIndex}"
@@ -66,15 +70,15 @@
 
 				<div>
 					<label for="round-bracket-{roundIndex}" class="block text-sm font-medium text-slate-300"
-						>Bracket</label
+						>{m.bracket()}</label
 					>
 					<select
 						id="round-bracket-{roundIndex}"
 						bind:value={round.bracket}
 						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 					>
-						{#each bracketTypes as bracket (bracket)}
-							<option value={bracket}>{bracket}</option>
+						{#each Object.entries(bracketTypes) as [bracket, bracketLabel]}
+							<option value={bracket}>{bracketLabel()}</option>
 						{/each}
 					</select>
 				</div>

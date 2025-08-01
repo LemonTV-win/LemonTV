@@ -533,5 +533,9 @@
 	"circular_dependencies_detected": "순환 의존성이 감지되었습니다",
 	"failed_to_load_bracket_data": "기존 브래킷 데이터 로드에 실패했습니다",
 	"failed_to_save_bracket_structure": "브래킷 구조 저장에 실패했습니다",
-	"please_add_round_first": "노드를 추가하기 전에 최소 하나의 라운드를 추가하세요"
+	"please_add_round_first": "노드를 추가하기 전에 최소 하나의 라운드를 추가하세요",
+	"bracket": "조",
+	"upper_bracket": "승자조",
+	"lower_bracket": "패자조",
+	"group_bracket": "그룹 리그"
 }
