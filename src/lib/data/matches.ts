@@ -42,6 +42,7 @@ export interface CompiledMatch extends Omit<Match, 'teams'> {
 export interface PlayerScore {
 	accountId: number;
 	player: string;
+	playerSlug?: string; // Optional for backward compatibility
 	characters: [firstHalf: Character | null, secondHalf: Character | null];
 	score: number;
 	damageScore: number;

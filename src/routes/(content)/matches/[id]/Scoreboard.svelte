@@ -11,7 +11,11 @@
 		scores,
 		winner,
 		teams
-	}: { scores: [PlayerScore[], PlayerScore[]]; winner: number; teams: [Team, Team] } = $props();
+	}: {
+		scores: [PlayerScore[], PlayerScore[]];
+		winner: number;
+		teams: [Team, Team];
+	} = $props();
 
 	let mvps: [string, string] = $derived([getMVP(scores[0]), getMVP(scores[1])]);
 
@@ -19,6 +23,11 @@
 		return scores.reduce((acc, score) => {
 			return score.score > acc.score ? score : acc;
 		}, scores[0]).player;
+	}
+
+	// Helper function to get player URL
+	function getPlayerUrl(score: PlayerScore): string {
+		return score.playerSlug ? `/players/${score.playerSlug}` : `/players/${score.player}`;
 	}
 </script>
 
@@ -49,7 +58,7 @@
 			</td>
 			<td class="py-2 text-center font-bold">
 				<a
-					href={`/players/${score.player}`}
+					href={getPlayerUrl(score)}
 					class="text-center font-medium transition-colors duration-200 hover:text-yellow-300 hover:underline"
 					>{score.player}</a
 				>

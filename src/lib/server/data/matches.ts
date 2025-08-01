@@ -5,6 +5,25 @@ import type { Match as AppMatch } from '$lib/data/matches';
 import type { Event } from '$lib/data/events';
 import type { GameMap, Region } from '$lib/data/game';
 import type { PlayerScore } from '$lib/data/matches';
+import { getPlayer } from './players';
+
+// Helper function to map player names to their slugs
+async function mapPlayerNamesToSlugs(playerNames: string[]): Promise<Record<string, string>> {
+	const playerSlugMap: Record<string, string> = {};
+
+	// Get unique player names to avoid duplicate lookups
+	const uniqueNames = [...new Set(playerNames)];
+
+	// Look up each player name to get their slug
+	for (const playerName of uniqueNames) {
+		const player = await getPlayer(playerName);
+		if (player) {
+			playerSlugMap[playerName] = player.slug;
+		}
+	}
+
+	return playerSlugMap;
+}
 
 export async function getMatch(id: string): Promise<(AppMatch & { event: Event }) | null> {
 	const [match] = await db
@@ -102,6 +121,15 @@ export async function getMatch(id: string): Promise<(AppMatch & { event: Event }
 		(g): g is typeof g & { map: NonNullable<typeof g.map> } => g.map !== null
 	);
 
+	// Extract all player names for slug mapping
+	const playerNames: string[] = [];
+	for (const ps of playerScores) {
+		playerNames.push(ps.gamePlayerScore.player);
+	}
+
+	// Map player names to their slugs
+	const playerSlugMap = await mapPlayerNamesToSlugs(playerNames);
+
 	// Transform database event to expected Event type
 	const event: Event = {
 		...match.event,
@@ -132,6 +160,7 @@ export async function getMatch(id: string): Promise<(AppMatch & { event: Event }
 			.map((ps) => ({
 				accountId: ps.gamePlayerScore.accountId,
 				player: ps.gamePlayerScore.player,
+				playerSlug: playerSlugMap[ps.gamePlayerScore.player],
 				characters: [
 					ps.gamePlayerScore.characterFirstHalf,
 					ps.gamePlayerScore.characterSecondHalf
@@ -150,6 +179,7 @@ export async function getMatch(id: string): Promise<(AppMatch & { event: Event }
 			.map((ps) => ({
 				accountId: ps.gamePlayerScore.accountId,
 				player: ps.gamePlayerScore.player,
+				playerSlug: playerSlugMap[ps.gamePlayerScore.player],
 				characters: [
 					ps.gamePlayerScore.characterFirstHalf,
 					ps.gamePlayerScore.characterSecondHalf
