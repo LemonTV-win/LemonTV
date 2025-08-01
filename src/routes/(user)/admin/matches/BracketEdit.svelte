@@ -775,21 +775,26 @@
 				</select>
 			</div>
 
-			<!-- Stage Rounds Section -->
-			<BracketStageRoundInput {rounds} {selectedObject} {confirmRemoveRound} />
-
-			<!-- Stage Nodes Section -->
-			<BracketStageNodeInput
-				{nodes}
-				{matches}
-				{rounds}
-				{selectedObject}
-				{confirmRemoveNode}
-				{addDependency}
-				{removeDependency}
-				{getAvailableMatches}
-				{getAvailableMatchesForDependencies}
-			/>
+			{#if selectedObject}
+				{#if selectedObject.startsWith('round-')}
+					<!-- Stage Rounds Section -->
+					<BracketStageRoundInput {rounds} {selectedObject} {confirmRemoveRound} />
+				{:else if selectedObject.startsWith('node-')}
+					<!-- Stage Nodes Section -->
+					<!-- Stage Nodes Section -->
+					<BracketStageNodeInput
+						{nodes}
+						{matches}
+						{rounds}
+						{selectedObject}
+						{confirmRemoveNode}
+						{addDependency}
+						{removeDependency}
+						{getAvailableMatches}
+						{getAvailableMatchesForDependencies}
+					/>
+				{/if}
+			{/if}
 		</div>
 	</div>
 
