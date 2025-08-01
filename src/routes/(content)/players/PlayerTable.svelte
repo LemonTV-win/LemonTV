@@ -163,7 +163,7 @@
 					</td>
 					<td class="px-4 py-1">
 						<a
-							class="flex flex-col items-baseline gap-1"
+							class="flex flex-col items-baseline gap-1 transition-all duration-200 hover:text-yellow-400"
 							href={`/players/${player.slug ?? player.id}`}
 							>{player.name}
 							{#each getAllNames(player).filter((name) => name !== player.name) as name (name)}
@@ -173,7 +173,9 @@
 					</td>
 					<td class="px-4 py-1 text-sm">
 						{#each playersTeams[player.id ?? ''] as team, i (team.id)}
-							<a href={`/teams/${team.slug}`}>{team.name}</a
+							<a
+								href={`/teams/${team.slug}`}
+								class="transition-all duration-200 hover:text-yellow-400">{team.name}</a
 							>{#if i < playersTeams[player.id ?? ''].length - 1}
 								<span class="mx-1 text-gray-400">|</span>
 							{/if}
