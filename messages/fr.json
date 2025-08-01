@@ -541,5 +541,9 @@
 	"new_node": "Nouveau Nœud",
 	"no_match": "Aucun match",
 	"unknown_round": "Tour inconnu",
-	"nodes_without_round": "Nœuds sans tour"
+	"nodes_without_round": "Nœuds sans tour",
+	"performance_score": "Score",
+	"damage_score": "Score de dégâts",
+	"knocks": "Défaites",
+	"damage": "Dégâts"
 }

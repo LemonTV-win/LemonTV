@@ -541,5 +541,9 @@
 	"new_node": "New Node",
 	"no_match": "No match",
 	"unknown_round": "Unknown Round",
-	"nodes_without_round": "Nodes without round"
+	"nodes_without_round": "Nodes without round",
+	"performance_score": "Score",
+	"damage_score": "Damage Score",
+	"knocks": "Knocks",
+	"damage": "Damage"
 }

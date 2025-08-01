@@ -541,5 +541,9 @@
 	"new_node": "Novo Nó",
 	"no_match": "Sem partida",
 	"unknown_round": "Rodada desconhecida",
-	"nodes_without_round": "Nós sem rodada"
+	"nodes_without_round": "Nós sem rodada",
+	"performance_score": "Pontuação de desempenho",
+	"damage_score": "Pontuação de dano",
+	"knocks": "Derrotas",
+	"damage": "Dano"
 }

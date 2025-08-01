@@ -58,8 +58,8 @@
 	"kd_ratio": "K/D",
 	"win_rate": "胜率",
 	"games": "游戏",
-	"kills": "击杀",
-	"deaths": "死亡",
+	"kills": "击败",
+	"deaths": "阵亡",
 	"assists": "助攻",
 	"avg_score": "平均分",
 	"wins_label": "胜",
@@ -541,5 +541,9 @@
 	"new_node": "新节点",
 	"no_match": "无比赛",
 	"unknown_round": "未知轮次",
-	"nodes_without_round": "无轮次节点"
+	"nodes_without_round": "无轮次节点",
+	"performance_score": "表现分",
+	"damage_score": "输出分",
+	"knocks": "击倒",
+	"damage": "伤害量"
 }

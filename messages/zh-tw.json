@@ -541,5 +541,9 @@
 	"new_node": "新節點",
 	"no_match": "無比賽",
 	"unknown_round": "未知輪次",
-	"nodes_without_round": "無輪次節點"
+	"nodes_without_round": "無輪次節點",
+	"performance_score": "表現分數",
+	"damage_score": "傷害分數",
+	"knocks": "擊倒",
+	"damage": "傷害"
 }

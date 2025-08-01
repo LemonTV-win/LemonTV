@@ -541,5 +541,9 @@
 	"new_node": "새 노드",
 	"no_match": "매치 없음",
 	"unknown_round": "알 수 없는 라운드",
-	"nodes_without_round": "라운드 없는 노드"
+	"nodes_without_round": "라운드 없는 노드",
+	"performance_score": "성적 점수",
+	"damage_score": "데미지 점수",
+	"knocks": "노킹",
+	"damage": "데미지"
 }

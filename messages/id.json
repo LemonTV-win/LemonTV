@@ -541,5 +541,9 @@
 	"new_node": "Node Baru",
 	"no_match": "Tidak ada pertandingan",
 	"unknown_round": "Putaran tidak diketahui",
-	"nodes_without_round": "Node tanpa putaran"
+	"nodes_without_round": "Node tanpa putaran",
+	"performance_score": "Skor",
+	"damage_score": "Skor Serangan",
+	"knocks": "Hancurkan",
+	"damage": "Serangan"
 }

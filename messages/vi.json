@@ -541,5 +541,9 @@
 	"new_node": "Nút mới",
 	"no_match": "Không có trận đấu",
 	"unknown_round": "Vòng không xác định",
-	"nodes_without_round": "Nút không có vòng"
+	"nodes_without_round": "Nút không có vòng",
+	"performance_score": "Điểm",
+	"damage_score": "Điểm sát thương",
+	"knocks": "Điểm",
+	"damage": "Điểm"
 }

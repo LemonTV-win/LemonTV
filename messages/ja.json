@@ -541,5 +541,9 @@
 	"new_node": "新しい対戦枠",
 	"no_match": "マッチなし",
 	"unknown_round": "不明なラウンド",
-	"nodes_without_round": "ラウンドなしの対戦枠"
+	"nodes_without_round": "ラウンドなしの対戦枠",
+	"performance_score": "スコア",
+	"damage_score": "ダメージスコア",
+	"knocks": "ノック",
+	"damage": "ダメージ"
 }

@@ -5,6 +5,7 @@
 
 	import SVP from '$assets/svp.png';
 	import MVP from '$assets/mvp.png';
+	import { m } from '$lib/paraglide/messages';
 
 	let {
 		scores,
@@ -47,7 +48,7 @@
 			<td class="text-center">
 				<a
 					href={`/players/${score.player}`}
-					class="text-center transition-colors duration-200 hover:text-yellow-300 hover:underline"
+					class="tra nsition-colors text-center duration-200 hover:text-yellow-300 hover:underline"
 					>{score.player}</a
 				>
 			</td>
@@ -63,12 +64,12 @@
 	<thead>
 		<tr class="rounded-full bg-gray-100/50 text-center">
 			<th></th>
-			<th class="py-3">Characters</th>
-			<th class="py-3">Player</th>
-			<th class="py-3">Score</th>
-			<th class="py-3">Damage Score</th>
-			<th class="py-3">K (KN) / D / A</th>
-			<th class="py-3">Damage</th>
+			<th class="py-3">{m.superstrings()}</th>
+			<th class="py-3">{m.player()}</th>
+			<th class="py-3">{m.performance_score()}</th>
+			<th class="py-3">{m.damage_score()}</th>
+			<th class="py-3">{m.kills()} ({m.knocks()}) / {m.deaths()} / {m.assists()}</th>
+			<th class="py-3">{m.damage()}</th>
 		</tr>
 	</thead>
 	<tbody>
