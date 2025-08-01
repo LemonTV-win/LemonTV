@@ -86,7 +86,7 @@
 			<nav class="my-2 flex gap-4 rounded-sm">
 				{#each data.match.maps as map, index (index)}
 					<button
-						class="overflow-clip rounded-md bg-white/40 text-center backdrop-blur-sm"
+						class="cursor-pointer overflow-clip rounded-md bg-white/40 text-center backdrop-blur-sm"
 						onclick={() => (currentMapID = index)}
 						disabled={index >= (data.match.games?.length ?? 0)}
 						style:opacity={index >= (data.match.games?.length ?? 0) ? '0.5' : '1'}
