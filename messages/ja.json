@@ -535,7 +535,11 @@
 	"failed_to_save_bracket_structure": "ブラケット構造の保存に失敗しました",
 	"please_add_round_first": "対戦枠を追加する前に、少なくとも1つのラウンドを追加してください",
 	"bracket": "ブラケット",
-	"upper_bracket": "上位",
-	"lower_bracket": "下位",
-	"group_bracket": "グループ"
+	"upper_bracket": "勝者",
+	"lower_bracket": "敗者",
+	"group_bracket": "グループ",
+	"new_node": "新しい対戦枠",
+	"no_match": "マッチなし",
+	"unknown_round": "不明なラウンド",
+	"nodes_without_round": "ラウンドなしの対戦枠"
 }

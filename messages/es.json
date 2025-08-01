@@ -534,8 +534,12 @@
 	"failed_to_load_bracket_data": "Error al cargar datos de bracket existentes",
 	"failed_to_save_bracket_structure": "Error al guardar estructura de bracket",
 	"please_add_round_first": "Por favor añade al menos una ronda antes de añadir nodos",
-	"bracket": "Llave",
+	"bracket": "Bracket",
 	"upper_bracket": "Superior",
 	"lower_bracket": "Inferior",
-	"group_bracket": "Grupo"
+	"group_bracket": "Grupo",
+	"new_node": "Nuevo Nodo",
+	"no_match": "Sin partido",
+	"unknown_round": "Ronda desconocida",
+	"nodes_without_round": "Nodos sin ronda"
 }

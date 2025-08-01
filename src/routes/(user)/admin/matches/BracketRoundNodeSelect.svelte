@@ -32,17 +32,17 @@
 			{@const team1Score = match?.teams[0]?.score || 0}
 			{@const team2Score = match?.teams[1]?.score || 0}
 			<option value={`node-${nodeIndex}`}>
-				{m.stage_node()} #{nodeIndex + 1}: {round?.title || round?.type || 'Unknown Round'} -
+				{m.stage_node()} #{nodeIndex + 1}: {round?.title || round?.type || m.unknown_round()} -
 				{match
 					? `${match.teams[0]?.team?.name || 'TBD'} vs ${match.teams[1]?.team?.name || 'TBD'} (${team1Score}-${team2Score}) - ${match.id}`
-					: 'No match'} (#{node.order})
+					: m.no_match()} (#{node.order})
 			</option>
 		{/each}
 		<option disabled>──────────</option>
 	{/each}
 
 	{#if orphanedNodes.length > 0}
-		<optgroup label="Nodes without round">
+		<optgroup label={m.nodes_without_round()}>
 			{#each orphanedNodes as node, k (`node-#${k}`)}
 				{@const nodeIndex = nodes.indexOf(node)}
 				{@const match = matches.find((m: (typeof matches)[0]) => m.id === node.matchId)}
@@ -51,7 +51,7 @@
 				<option value={`node-${nodeIndex}`}>
 					{m.stage_node()} #{nodeIndex + 1}: {match
 						? `${match.teams[0]?.team?.name || 'TBD'} vs ${match.teams[1]?.team?.name || 'TBD'} (${team1Score}-${team2Score}) - ${match.id}`
-						: 'No match'} (#{node.order})
+						: m.no_match()} (#{node.order})
 				</option>
 			{/each}
 		</optgroup>
@@ -67,6 +67,6 @@
 		value={{
 			type: 'node',
 			nodeIndex: -1
-		}}>New Node</option
+		}}>{m.new_node()}</option
 	>
 </select>

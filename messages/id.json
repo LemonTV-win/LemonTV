@@ -534,8 +534,12 @@
 	"failed_to_load_bracket_data": "Gagal memuat data bracket yang ada",
 	"failed_to_save_bracket_structure": "Gagal menyimpan struktur bracket",
 	"please_add_round_first": "Silakan tambahkan setidaknya satu putaran sebelum menambahkan node",
-	"bracket": "Jalur",
+	"bracket": "Bracket",
 	"upper_bracket": "Atas",
 	"lower_bracket": "Bawah",
-	"group_bracket": "Grup"
+	"group_bracket": "Grup",
+	"new_node": "Node Baru",
+	"no_match": "Tidak ada pertandingan",
+	"unknown_round": "Putaran tidak diketahui",
+	"nodes_without_round": "Node tanpa putaran"
 }

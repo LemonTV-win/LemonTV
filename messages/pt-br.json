@@ -537,5 +537,9 @@
 	"bracket": "Chave",
 	"upper_bracket": "Superior",
 	"lower_bracket": "Inferior",
-	"group_bracket": "Grupo"
+	"group_bracket": "Grupo",
+	"new_node": "Novo Nó",
+	"no_match": "Sem partida",
+	"unknown_round": "Rodada desconhecida",
+	"nodes_without_round": "Nós sem rodada"
 }

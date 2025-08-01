@@ -537,5 +537,9 @@
 	"bracket": "Bracket",
 	"upper_bracket": "Upper",
 	"lower_bracket": "Lower",
-	"group_bracket": "Group"
+	"group_bracket": "Group",
+	"new_node": "New Node",
+	"no_match": "No match",
+	"unknown_round": "Unknown Round",
+	"nodes_without_round": "Nodes without round"
 }

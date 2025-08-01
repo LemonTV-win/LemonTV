@@ -537,5 +537,9 @@
 	"bracket": "Bracket",
 	"upper_bracket": "Supérieur",
 	"lower_bracket": "Inférieur",
-	"group_bracket": "Groupe"
+	"group_bracket": "Groupe",
+	"new_node": "Nouveau Nœud",
+	"no_match": "Aucun match",
+	"unknown_round": "Tour inconnu",
+	"nodes_without_round": "Nœuds sans tour"
 }

@@ -534,8 +534,12 @@
 	"failed_to_load_bracket_data": "기존 브래킷 데이터 로드에 실패했습니다",
 	"failed_to_save_bracket_structure": "브래킷 구조 저장에 실패했습니다",
 	"please_add_round_first": "노드를 추가하기 전에 최소 하나의 라운드를 추가하세요",
-	"bracket": "조",
-	"upper_bracket": "승자조",
-	"lower_bracket": "패자조",
-	"group_bracket": "그룹 리그"
+	"bracket": "브래킷",
+	"upper_bracket": "상위",
+	"lower_bracket": "하위",
+	"group_bracket": "그룹",
+	"new_node": "새 노드",
+	"no_match": "매치 없음",
+	"unknown_round": "알 수 없는 라운드",
+	"nodes_without_round": "라운드 없는 노드"
 }

@@ -534,8 +534,12 @@
 	"failed_to_load_bracket_data": "Fehler beim Laden der vorhandenen Bracket-Daten",
 	"failed_to_save_bracket_structure": "Fehler beim Speichern der Bracket-Struktur",
 	"please_add_round_first": "Bitte fügen Sie mindestens eine Runde hinzu, bevor Sie Knoten hinzufügen",
-	"bracket": "Klammer",
-	"upper_bracket": "Ober",
-	"lower_bracket": "Unter",
-	"group_bracket": "Gruppe"
+	"bracket": "Bracket",
+	"upper_bracket": "Oberes",
+	"lower_bracket": "Unteres",
+	"group_bracket": "Gruppe",
+	"new_node": "Neuer Knoten",
+	"no_match": "Kein Match",
+	"unknown_round": "Unbekannte Runde",
+	"nodes_without_round": "Knoten ohne Runde"
 }

@@ -534,8 +534,12 @@
 	"failed_to_load_bracket_data": "載入現有對陣資料失敗",
 	"failed_to_save_bracket_structure": "儲存對陣結構失敗",
 	"please_add_round_first": "請先新增至少一個輪次再新增節點",
-	"bracket": "組別",
+	"bracket": "賽程",
 	"upper_bracket": "勝者組",
 	"lower_bracket": "敗者組",
-	"group_bracket": "小組賽"
+	"group_bracket": "小組",
+	"new_node": "新節點",
+	"no_match": "無比賽",
+	"unknown_round": "未知輪次",
+	"nodes_without_round": "無輪次節點"
 }

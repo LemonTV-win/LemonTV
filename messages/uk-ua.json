@@ -537,5 +537,9 @@
 	"bracket": "Сітка",
 	"upper_bracket": "Верхня",
 	"lower_bracket": "Нижня",
-	"group_bracket": "Група"
+	"group_bracket": "Група",
+	"new_node": "Новий вузол",
+	"no_match": "Немає матчу",
+	"unknown_round": "Невідомий раунд",
+	"nodes_without_round": "Вузли без раунду"
 }
