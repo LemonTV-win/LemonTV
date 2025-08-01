@@ -184,14 +184,14 @@
 					<td class="hidden flex-wrap gap-1 text-center align-middle sm:table-cell">
 						<PlayerFrequentAgents playerAgents={playersAgents[player.id ?? '']} {playerIndex} />
 					</td>
-					<td class="px-4 py-1 text-gray-300">{player.wins}</td>
-					<td class="px-4 py-1 text-gray-300" title={m.rating() + ' ' + player.rating}>
+					<td class="px-4 py-1 text-center text-gray-300">{player.wins}</td>
+					<td class="px-4 py-1 text-center text-gray-300" title={m.rating() + ' ' + player.rating}>
 						{player.rating.toFixed(2)}
 					</td>
-					<td class="px-4 py-1 text-gray-300" title="Kill/Death Ratio">
+					<td class="px-4 py-1 text-center text-gray-300" title="Kill/Death Ratio">
 						{player.kd.toFixed(2)}
 					</td>
-					<td class="px-4 py-1 text-gray-300">{player.eventsCount}</td>
+					<td class="px-4 py-1 text-center text-gray-300">{player.eventsCount}</td>
 				</tr>
 			{/each}
 		</tbody>
