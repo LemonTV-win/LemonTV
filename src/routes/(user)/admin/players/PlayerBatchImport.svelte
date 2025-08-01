@@ -66,6 +66,11 @@
 		  }
 		| null;
 	let parsedPlayers: ParsedPlayers = $derived.by(() => {
+		// Only parse if there's actual data
+		if (!importJsonData.trim()) {
+			return null;
+		}
+
 		try {
 			// Clean the data by removing comments and fixing common issues
 			let cleanedData = importJsonData
@@ -570,10 +575,6 @@ const players: PlayerImportData[] = [
 		navigator.clipboard.writeText(TYPESCRIPT_SCHEMA);
 	}
 
-	function goBackToEdit() {
-		parsedPlayers = null;
-	}
-
 	// Check if a player has any duplicates (slug or account ID)
 	function hasAnyDuplicate(player: PlayerImportData): boolean {
 		return isDuplicateSlug(player) || isDuplicateAccountId(player);
@@ -659,11 +660,27 @@ const players: PlayerImportData[] = [
 					placeholder={`Paste your JSON data here. Example: \n${EXAMPLE_JSON_DATA}`}
 					class="h-64 w-full rounded-md border border-slate-700 bg-slate-900 p-3 font-mono text-sm text-slate-200 focus:ring-2 focus:ring-yellow-500 focus:outline-none [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800"
 				></textarea>
+
+				{#if importJsonData.trim() && !parsedPlayers}
+					<div class="mt-2 flex items-center gap-2 text-sm text-yellow-400">
+						<div
+							class="h-4 w-4 animate-spin rounded-full border-2 border-yellow-400 border-t-transparent"
+						></div>
+						<span>Parsing data...</span>
+					</div>
+				{/if}
 			</div>
 
 			{#if importError}
 				<div class="mb-4 rounded-md bg-red-900/50 p-3 text-sm text-red-200">
 					{importError}
+				</div>
+			{/if}
+
+			{#if parsedPlayers && parsedPlayers.type === 'error'}
+				<div class="mb-4 rounded-md bg-red-900/50 p-3 text-sm text-red-200">
+					<strong>Parsing Error:</strong>
+					{parsedPlayers.error}
 				</div>
 			{/if}
 
@@ -821,13 +838,6 @@ const players: PlayerImportData[] = [
 
 			<div class="flex justify-end gap-3">
 				{#if parsedPlayers && parsedPlayers.type === 'success'}
-					<button
-						type="button"
-						class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
-						onclick={goBackToEdit}
-					>
-						Back to Edit
-					</button>
 					<button
 						type="button"
 						class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600 disabled:opacity-50"
