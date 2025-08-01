@@ -43,7 +43,14 @@
 				const playersInCountry = players.filter((p) => p.nationalities.includes(nationality));
 				const totalPlayers = playersInCountry.length;
 				const totalWins = playersInCountry.reduce((sum, p) => sum + p.wins, 0);
-				const avgRating = playersInCountry.reduce((sum, p) => sum + p.rating, 0) / totalPlayers;
+
+				// Filter out players with rating of 0 for average calculation
+				const playersWithValidRating = playersInCountry.filter((p) => p.rating > 0);
+				const avgRating =
+					playersWithValidRating.length > 0
+						? playersWithValidRating.reduce((sum, p) => sum + p.rating, 0) /
+							playersWithValidRating.length
+						: 0;
 
 				return {
 					nationality,
