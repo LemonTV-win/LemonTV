@@ -15,7 +15,7 @@
 		"db:prod:push": "bun run db:prod:dump && drizzle-kit push",
 		"db:prod:migrate": "drizzle-kit migrate",
 		"db:prod:studio": "drizzle-kit studio",
-		"db:prod:dump": "turso db shell lemon-tv .dump > dumps/prod-$(date -u +%Y-%m-%dT%H-%M-%SZ).sql",
+		"db:prod:dump": "source .env && echo Dumping... $DATABASE_NAME && turso db shell $DATABASE_NAME .dump > dumps/prod-$(date -u +%Y-%m-%dT%H-%M-%SZ).sql && echo Check the dump at dumps/prod-$(date -u +%Y-%m-%dT%H-%M-%SZ).sql, you may need to run again if your login session is expired.",
 		"db:dev:push": "drizzle-kit push --config drizzle-dev.config.ts",
 		"db:dev:migrate": "drizzle-kit migrate --config drizzle-dev.config.ts",
 		"db:dev:studio": "drizzle-kit studio --config drizzle-dev.config.ts",
