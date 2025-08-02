@@ -289,32 +289,31 @@
 			<label class="block text-sm font-medium text-slate-300" for="playerNationality">
 				{m.nationality()}
 			</label>
-			<select
-				id="playerNationality"
-				name="nationality"
-				bind:value={primaryNationality}
-				class="font-emoji mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-			>
-				<option value={undefined}>{m.select_nationality()}</option>
-				{#each topCountries as [code] (code)}
-					<option value={code}>
-						{code} -
-						{countryCodeToFlagEmoji(code)} -
-						{countryCodeToLocalizedName(code, getLocale())}
-					</option>
-				{/each}
-				<option disabled>―――</option>
-				{#each countryCodes as code (code)}
-					<option value={code}>
-						{code} -
-						{countryCodeToFlagEmoji(code)} -
-						{countryCodeToLocalizedName(code, getLocale())}
-					</option>
-				{/each}
-			</select>
-		</div>
-		<div>
 			<div class="mt-2 rounded-lg border border-slate-700 bg-slate-800 p-4">
+				<select
+					id="playerNationality"
+					name="nationality"
+					bind:value={primaryNationality}
+					class="font-emoji mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+				>
+					<option value={undefined}>{m.select_nationality()}</option>
+					{#each topCountries as [code] (code)}
+						<option value={code}>
+							{code} -
+							{countryCodeToFlagEmoji(code)} -
+							{countryCodeToLocalizedName(code, getLocale())}
+						</option>
+					{/each}
+					<option disabled>―――</option>
+					{#each countryCodes as code (code)}
+						<option value={code}>
+							{code} -
+							{countryCodeToFlagEmoji(code)} -
+							{countryCodeToLocalizedName(code, getLocale())}
+						</option>
+					{/each}
+				</select>
+				<div class="my-4 border-t border-slate-700"></div>
 				{#each additionalNationalities as nationality, index (nationality)}
 					<div
 						class="grid grid-cols-[1fr_auto] gap-4 {index > 0
@@ -344,7 +343,7 @@
 						<div class="flex items-center">
 							<button
 								type="button"
-								class="mt-[1.625rem] text-red-400 hover:text-red-300"
+								class="text-red-400 hover:text-red-300"
 								onclick={() =>
 									(additionalNationalities = additionalNationalities.filter((_, i) => i !== index))}
 								title={m.remove()}
@@ -369,14 +368,9 @@
 				</button>
 			</div>
 		</div>
-		<input type="hidden" name="aliases" value={JSON.stringify(newPlayer.aliases || [])} />
-		<input type="hidden" name="gameAccounts" value={JSON.stringify(newPlayer.gameAccounts || [])} />
-		<input
-			type="hidden"
-			name="socialAccounts"
-			value={JSON.stringify(newPlayer.socialAccounts || [])}
-		/>
+
 		<div>
+			<input type="hidden" name="aliases" value={JSON.stringify(newPlayer.aliases || [])} />
 			<label class="block text-sm font-medium text-slate-300" for="aliases">{m.aliases()}</label>
 			<div class="mt-2 rounded-lg border border-slate-700 bg-slate-800 p-4">
 				{#each newPlayer.aliases || [] as alias, i (i)}
@@ -424,6 +418,11 @@
 		</div>
 
 		<div>
+			<input
+				type="hidden"
+				name="gameAccounts"
+				value={JSON.stringify(newPlayer.gameAccounts || [])}
+			/>
 			<label class="block text-sm font-medium text-slate-300" for="gameAccounts">
 				{m.game_accounts()}
 			</label>
@@ -503,6 +502,11 @@
 		</div>
 
 		<div>
+			<input
+				type="hidden"
+				name="socialAccounts"
+				value={JSON.stringify(newPlayer.socialAccounts || [])}
+			/>
 			<label class="block text-sm font-medium text-slate-300" for="socialAccounts">
 				{m.social_accounts()}
 			</label>
