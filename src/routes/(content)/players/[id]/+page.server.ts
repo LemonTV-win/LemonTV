@@ -9,7 +9,7 @@ import {
 	getPlayerMatches,
 	getPlayerWins,
 	getPlayerEvents,
-	calculatePlayerKD
+	getServerPlayerKD
 } from '$lib/server/data/players';
 import { getTeams } from '$lib/server/data/teams';
 import { processImageURL } from '$lib/server/storage';
@@ -34,7 +34,7 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 		getPlayerMatches(params.id) || getPlayerMatches(player.slug ?? player.name);
 	const legacyPlayerAgents = getPlayerAgents(player);
 	const legacyPlayerWins = getPlayerWins(params.id) || getPlayerWins(player.slug ?? player.name);
-	const legacyPlayerKD = calculatePlayerKD(player);
+	const serverPlayerKD = await getServerPlayerKD(playerID);
 
 	// Process server events with image URLs
 	// Collect unique image URLs
@@ -78,7 +78,7 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 
 	// Use server stats with fallback to legacy
 	const playerWins = serverStats.wins > 0 ? serverStats.wins : legacyPlayerWins;
-	const playerKD = serverStats.kd > 0 ? serverStats.kd : legacyPlayerKD;
+	const playerKD = serverStats.kd > 0 ? serverStats.kd : serverPlayerKD;
 
 	return {
 		player,
