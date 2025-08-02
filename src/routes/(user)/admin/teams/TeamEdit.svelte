@@ -8,6 +8,7 @@
 	import ImageUpload from '$lib/components/ImageUpload.svelte';
 	import PlayerInput from '$lib/components/forms/PlayerInput.svelte';
 	import { formatSlug } from '$lib/utils/strings';
+	import { SITE_CANONICAL_HOST } from '$lib/consts';
 
 	let {
 		team,
@@ -172,7 +173,7 @@
 					name="slug"
 					bind:value={newTeam.slug}
 					class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-					placeholder={m.slug()}
+					placeholder={`${SITE_CANONICAL_HOST}/teams/⟨${m.slug().toLocaleLowerCase()}⟩`}
 				/>
 			</div>
 			<div>

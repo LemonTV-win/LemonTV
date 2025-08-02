@@ -13,6 +13,7 @@
 	import IconParkSolidCopy from '~icons/icon-park-solid/copy';
 	import IconParkSolidCheckOne from '~icons/icon-park-solid/check-one';
 	import type { ActionResult } from '@sveltejs/kit';
+	import { SITE_CANONICAL_HOST } from '$lib/consts';
 
 	let {
 		player,
@@ -266,7 +267,7 @@
 				name="slug"
 				bind:value={newPlayer.slug}
 				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-				placeholder={m.slug()}
+				placeholder={`${SITE_CANONICAL_HOST}/players/⟨${m.slug().toLocaleLowerCase()}⟩`}
 				required
 			/>
 		</div>
