@@ -4,7 +4,7 @@ import { getServerPlayerKD, getServerPlayerAgents, getAllPlayersRatings } from '
 
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { eq, or } from 'drizzle-orm';
+import { eq, or, inArray } from 'drizzle-orm';
 
 import type { Team } from '$lib/data/teams';
 import type { Player } from '$lib/data/players';
@@ -177,12 +177,7 @@ export async function getTeam(slug: string): Promise<Team | null> {
 		logoURL: teamRow.logo ? await processImageURL(teamRow.logo) : null,
 		region: (teamRow.region as Region) ?? undefined,
 		players: Array.from(playerMap.values()),
-		wins: getTeamWins({
-			id: teamRow.id,
-			name: teamRow.name,
-			slug: teamRow.slug,
-			abbr: teamRow.abbr
-		}),
+		wins: await getServerTeamWins(teamRow.id),
 		createdAt: teamRow.createdAt,
 		updatedAt: teamRow.updatedAt
 	};
@@ -228,12 +223,7 @@ export async function getTeams(): Promise<(Team & { logoURL: string | null })[]>
 				region: (t.region as Region) ?? undefined,
 				players: new Map<string, Player>(),
 				aliases: new Set<string>(),
-				wins: getTeamWins({
-					id: t.id,
-					name: t.name,
-					slug: t.slug,
-					abbr: t.abbr
-				}),
+				wins: await getServerTeamWins(t.id),
 				createdAt: t.createdAt,
 				updatedAt: t.updatedAt
 			});
@@ -358,14 +348,20 @@ export function getTeamMatches(
 		.filter((match) =>
 			match.teams.some(
 				(p) =>
-					p.team === team.id || p.team === team.slug || p.team === team.abbr || p.team === team.name
+					p.team === team.id ||
+					p.team === team.slug ||
+					(team.abbr && p.team === team.abbr) ||
+					p.team === team.name
 			)
 		)
 		.map((match) => ({
 			...match,
 			teamIndex: match.teams.findIndex(
 				(p) =>
-					p.team === team.id || p.team === team.slug || p.team === team.abbr || p.team === team.name
+					p.team === team.id ||
+					p.team === team.slug ||
+					(team.abbr && p.team === team.abbr) ||
+					p.team === team.name
 			)
 		}));
 }
@@ -374,19 +370,57 @@ export function getTeamWins(team: Pick<Team, 'id' | 'name' | 'slug' | 'abbr'>): 
 	const matches = getTeamMatches(team);
 	return matches.filter((match) => {
 		const winnerIndex = calculateWinnerIndex(match);
-		return (
-			winnerIndex !== null &&
-			winnerIndex ===
-				match.teams.findIndex(
-					(t) =>
-						t.team === team.id ||
-						t.team === team.slug ||
-						t.team === team.abbr ||
-						t.team === team.name
-				) +
-					1
-		);
+		return winnerIndex !== null && winnerIndex === match.teamIndex + 1;
 	}).length;
+}
+
+export async function getServerTeamWins(teamId: string): Promise<number> {
+	console.info('[Teams] Fetching server team wins for:', teamId);
+
+	// Find all matches where this team participated
+	const teamMatches = await db
+		.select({
+			matchId: table.match.id,
+			teamPosition: table.matchTeam.position,
+			teamScore: table.matchTeam.score
+		})
+		.from(table.matchTeam)
+		.innerJoin(table.match, eq(table.matchTeam.matchId, table.match.id))
+		.where(eq(table.matchTeam.teamId, teamId));
+
+	// Count wins
+	let wins = 0;
+
+	for (const match of teamMatches) {
+		// Get both teams' scores for this match
+		const matchTeams = await db
+			.select({
+				position: table.matchTeam.position,
+				score: table.matchTeam.score
+			})
+			.from(table.matchTeam)
+			.where(eq(table.matchTeam.matchId, match.matchId))
+			.orderBy(table.matchTeam.position);
+
+		if (matchTeams.length === 2) {
+			const team1Score = matchTeams[0].score ?? 0;
+			const team2Score = matchTeams[1].score ?? 0;
+
+			// Determine winner based on match scores
+			if (team1Score !== team2Score) {
+				const winnerPosition = team1Score > team2Score ? 0 : 1;
+
+				// Check if our team won
+				if (match.teamPosition === winnerPosition) {
+					wins++;
+				}
+			}
+			// If scores are equal, it's a draw - no winner
+		}
+	}
+
+	console.info('[Teams] Team', teamId, 'has', wins, 'match wins');
+	return wins;
 }
 
 export async function getTeamStatistics(team: Team): Promise<{
@@ -394,12 +428,15 @@ export async function getTeamStatistics(team: Team): Promise<{
 	wins: number;
 }> {
 	// TODO: More efficent algorithm
-	const teams = (await getTeams()).map((t) => ({
-		...t,
-		wins: getTeamWins(t)
-	}));
+	const teams = await getTeams();
+	const teamsWithWins = await Promise.all(
+		teams.map(async (t) => ({
+			...t,
+			wins: await getServerTeamWins(t.id)
+		}))
+	);
 
-	const sortedByWins = teams.sort((a, b) => b.wins - a.wins);
+	const sortedByWins = teamsWithWins.sort((a, b) => b.wins - a.wins);
 
 	const currentTeamIndex = sortedByWins.findIndex((t) => t.id === team.id);
 
