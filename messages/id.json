@@ -543,7 +543,19 @@
 	"unknown_round": "Putaran tidak diketahui",
 	"nodes_without_round": "Node tanpa putaran",
 	"performance_score": "Skor",
-	"damage_score": "Skor Serangan",
-	"knocks": "Hancurkan",
-	"damage": "Serangan"
+	"damage_score": "Skor Kerusakan",
+	"knocks": "Knockdown",
+	"damage": "Kerusakan",
+	"duration": "Durasi (detik)",
+	"player_scores": "Skor Pemain",
+	"import_json_data": "Impor Data JSON",
+	"export_json_data": "Ekspor Data JSON",
+	"enter_account_id": "Masukkan atau pilih ID akun",
+	"danger_zone": "Zona Berbahaya",
+	"delete_game_confirm": "Apakah Anda yakin ingin menghapus game ini? Tindakan ini tidak dapat dibatalkan.",
+	"delete_game": "Hapus Game",
+	"save_game": "Simpan",
+	"add_game": "Tambah",
+	"team_a": "Tim A",
+	"team_b": "Tim B"
 }

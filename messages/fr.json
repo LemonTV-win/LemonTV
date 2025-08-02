@@ -545,5 +545,17 @@
 	"performance_score": "Score",
 	"damage_score": "Score de dégâts",
 	"knocks": "Défaites",
-	"damage": "Dégâts"
+	"damage": "Dégâts",
+	"duration": "Durée (secondes)",
+	"player_scores": "Scores des Joueurs",
+	"import_json_data": "Importer les Données JSON",
+	"export_json_data": "Exporter les Données JSON",
+	"enter_account_id": "Entrer ou sélectionner l'ID de compte",
+	"danger_zone": "Zone de Danger",
+	"delete_game_confirm": "Êtes-vous sûr de vouloir supprimer ce jeu ? Cette action ne peut pas être annulée.",
+	"delete_game": "Supprimer le Jeu",
+	"save_game": "Enregistrer",
+	"add_game": "Ajouter",
+	"team_a": "Équipe A",
+	"team_b": "Équipe B"
 }

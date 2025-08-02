@@ -542,8 +542,20 @@
 	"no_match": "無比賽",
 	"unknown_round": "未知輪次",
 	"nodes_without_round": "無輪次節點",
-	"performance_score": "表現分數",
-	"damage_score": "傷害分數",
+	"performance_score": "得分",
+	"damage_score": "傷害得分",
 	"knocks": "擊倒",
-	"damage": "傷害"
+	"damage": "傷害",
+	"duration": "時長（秒）",
+	"player_scores": "玩家得分",
+	"import_json_data": "匯入JSON資料",
+	"export_json_data": "匯出JSON資料",
+	"enter_account_id": "輸入或選擇帳戶ID",
+	"danger_zone": "危險區域",
+	"delete_game_confirm": "您確定要刪除這個遊戲嗎？此操作無法撤銷。",
+	"delete_game": "刪除遊戲",
+	"save_game": "儲存",
+	"add_game": "新增",
+	"team_a": "隊伍A",
+	"team_b": "隊伍B"
 }

@@ -545,5 +545,17 @@
 	"performance_score": "スコア",
 	"damage_score": "ダメージスコア",
 	"knocks": "ノック",
-	"damage": "ダメージ"
+	"damage": "ダメージ",
+	"duration": "時間（秒）",
+	"player_scores": "プレイヤースコア",
+	"import_json_data": "JSONデータをインポート",
+	"export_json_data": "JSONデータをエクスポート",
+	"enter_account_id": "アカウントIDを入力または選択",
+	"danger_zone": "危険区域",
+	"delete_game_confirm": "このゲームを削除してもよろしいですか？この操作は取り消せません。",
+	"delete_game": "ゲームを削除",
+	"save_game": "保存",
+	"add_game": "追加",
+	"team_a": "チームA",
+	"team_b": "チームB"
 }

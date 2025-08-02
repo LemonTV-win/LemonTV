@@ -545,5 +545,17 @@
 	"performance_score": "Score",
 	"damage_score": "Damage Score",
 	"knocks": "Knocks",
-	"damage": "Damage"
+	"damage": "Damage",
+	"duration": "Duration (seconds)",
+	"player_scores": "Player Scores",
+	"import_json_data": "Import JSON Data",
+	"export_json_data": "Export JSON Data",
+	"enter_account_id": "Enter or select account ID",
+	"danger_zone": "Danger Zone",
+	"delete_game_confirm": "Are you sure you want to delete this game? This action cannot be undone.",
+	"delete_game": "Delete Game",
+	"save_game": "Save",
+	"add_game": "Add",
+	"team_a": "Team A",
+	"team_b": "Team B"
 }

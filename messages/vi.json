@@ -542,8 +542,20 @@
 	"no_match": "Không có trận đấu",
 	"unknown_round": "Vòng không xác định",
 	"nodes_without_round": "Nút không có vòng",
-	"performance_score": "Điểm",
+	"performance_score": "Điểm số",
 	"damage_score": "Điểm sát thương",
-	"knocks": "Điểm",
-	"damage": "Điểm"
+	"knocks": "Hạ gục",
+	"damage": "Sát thương",
+	"duration": "Thời lượng (giây)",
+	"player_scores": "Điểm số Người chơi",
+	"import_json_data": "Nhập Dữ liệu JSON",
+	"export_json_data": "Xuất Dữ liệu JSON",
+	"enter_account_id": "Nhập hoặc chọn ID tài khoản",
+	"danger_zone": "Khu vực Nguy hiểm",
+	"delete_game_confirm": "Bạn có chắc chắn muốn xóa trò chơi này? Hành động này không thể hoàn tác.",
+	"delete_game": "Xóa Trò chơi",
+	"save_game": "Lưu",
+	"add_game": "Thêm",
+	"team_a": "Đội A",
+	"team_b": "Đội B"
 }
