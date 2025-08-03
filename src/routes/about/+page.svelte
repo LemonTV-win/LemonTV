@@ -6,6 +6,9 @@
 	import IconYoutube from '~icons/simple-icons/youtube';
 	import IconLinktree from '~icons/simple-icons/linktree';
 	import IconBilibili from '~icons/simple-icons/bilibili';
+	import IconGlobe from '~icons/pepicons-pencil/internet';
+	import IconCalendar from '~icons/icon-park-solid/calendar';
+	import IconTrend from '~icons/icon-park-solid/trend-two';
 	import { m } from '$lib/paraglide/messages';
 	import { IDREAMSKY_URL_EN, IDREAMSKY_URL_ZH } from '$lib/consts';
 	import { getLocale } from '$lib/paraglide/runtime';
@@ -57,17 +60,42 @@
 			<section class="mb-12">
 				<h2 class="mb-6 text-3xl font-semibold">{m.about_features_title()}</h2>
 				<div class="mt-8 grid grid-cols-1 gap-8 md:grid-cols-3">
-					<div class="glass-card p-6">
-						<h3 class="mb-4 text-xl font-semibold">{m.about_features_coverage_title()}</h3>
-						<p class="text-slate-200">{m.about_features_coverage_description()}</p>
+					<div class="glass-card group p-6 transition-all duration-300 hover:scale-105">
+						<div class="relative mb-4">
+							<div
+								class="pointer-events-none absolute -top-4 -right-4 opacity-5 transition-all duration-300 group-hover:text-blue-300 group-hover:opacity-20"
+							>
+								<IconCalendar class="h-20 w-20 text-blue-400" />
+							</div>
+							<h3 class="relative z-20 text-xl font-semibold">
+								{m.about_features_coverage_title()}
+							</h3>
+						</div>
+						<p class="relative z-20 text-slate-200">{m.about_features_coverage_description()}</p>
 					</div>
-					<div class="glass-card p-6">
-						<h3 class="mb-4 text-xl font-semibold">{m.about_features_community_title()}</h3>
-						<p class="text-slate-200">{m.about_features_community_description()}</p>
+					<div class="glass-card group p-6 transition-all duration-300 hover:scale-105">
+						<div class="relative mb-4">
+							<div
+								class="pointer-events-none absolute -top-4 -right-4 opacity-5 transition-all duration-300 group-hover:text-green-300 group-hover:opacity-20"
+							>
+								<IconGlobe class="h-20 w-20 text-green-400" />
+							</div>
+							<h3 class="relative z-20 text-xl font-semibold">
+								{m.about_features_community_title()}
+							</h3>
+						</div>
+						<p class="relative z-20 text-slate-200">{m.about_features_community_description()}</p>
 					</div>
-					<div class="glass-card p-6">
-						<h3 class="mb-4 text-xl font-semibold">{m.about_features_stats_title()}</h3>
-						<p class="text-slate-200">{m.about_features_stats_description()}</p>
+					<div class="glass-card group p-6 transition-all duration-300 hover:scale-105">
+						<div class="relative mb-4">
+							<div
+								class="pointer-events-none absolute -top-4 -right-4 opacity-5 transition-all duration-300 group-hover:text-purple-300 group-hover:opacity-20"
+							>
+								<IconTrend class="h-20 w-20 text-purple-400" />
+							</div>
+							<h3 class="relative z-20 text-xl font-semibold">{m.about_features_stats_title()}</h3>
+						</div>
+						<p class="relative z-20 text-slate-200">{m.about_features_stats_description()}</p>
 					</div>
 				</div>
 			</section>
