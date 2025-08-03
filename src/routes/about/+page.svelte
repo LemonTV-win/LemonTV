@@ -10,6 +10,7 @@
 	import { IDREAMSKY_URL_EN, IDREAMSKY_URL_ZH } from '$lib/consts';
 	import { getLocale } from '$lib/paraglide/runtime';
 	import placeholderAvatar from '$assets/placeholder_avatar.png';
+	import type { PageProps } from './$types';
 
 	const ROLE_NAMES: Record<string, () => string> = {
 		founder: m.about_team_roles_founder,
@@ -21,104 +22,16 @@
 
 	type Role = keyof typeof ROLE_NAMES;
 
-	type Social = {
-		icon: any;
-		link: string;
-	};
+	let { data }: PageProps = $props();
 
-	type Member = {
-		name: string;
-		roles: Role[];
-		socials: Social[];
-		avatar?: string;
+	const SOCIAL_ICONS: Record<string, any> = {
+		github: IconGithub,
+		x: IconX,
+		youtube: IconYoutube,
+		twitch: IconTwitch,
+		linktree: IconLinktree,
+		bilibili: IconBilibili
 	};
-
-	const MEMBERS: Member[] = [
-		{
-			name: 'mkpoli',
-			roles: ['founder'],
-			socials: [
-				{
-					icon: IconGithub,
-					link: 'https://github.com/mkpoli'
-				},
-				{
-					icon: IconX,
-					link: 'https://x.com/mkpoli'
-				}
-			],
-			avatar: 'https://avatars.githubusercontent.com/u/3502597?v=4'
-		},
-		{
-			name: 'swae gae pinoe',
-			roles: ['chief_editor'],
-			socials: [
-				{
-					icon: IconTwitch,
-					link: 'https://twitch.tv/swaegaepinoe'
-				}
-			],
-			avatar: placeholderAvatar
-		},
-		{
-			name: 'XinghuiEnjoyer',
-			roles: ['consultant'],
-			socials: [
-				{
-					icon: IconYoutube,
-					link: 'https://www.youtube.com/@XinghuiEnjoyer'
-				},
-				{
-					icon: IconTwitch,
-					link: 'https://twitch.tv/xinghuienjoyer'
-				}
-			],
-			avatar:
-				'https://yt3.googleusercontent.com/7IYPXmmYCaPYVA_lmgduXuierwW3Lo1qfSNq51OV0VU7C3AxMarHrtuaGgr84B6VCwnB5G70-Q=s160-c-k-c0x00ffffff-no-rj'
-		},
-		{
-			name: 'Krihcity',
-			roles: ['chief_editor'],
-			socials: [
-				{
-					icon: IconYoutube,
-					link: 'https://www.youtube.com/@krihcity'
-				},
-				{
-					icon: IconTwitch,
-					link: 'https://www.twitch.tv/krihcity'
-				}
-			],
-			avatar:
-				'https://static-cdn.jtvnw.net/jtv_user_pictures/3bb121c0-f337-435a-b20c-4d87261d2a31-profile_image-70x70.png'
-		},
-		{
-			name: 'Eaterrius',
-			roles: ['editor', 'translator'],
-			socials: [
-				{
-					icon: IconLinktree,
-					link: 'https://linktr.ee/eaterrius'
-				},
-				{
-					icon: IconX,
-					link: 'https://x.com/eaterrius'
-				}
-			],
-			avatar: placeholderAvatar
-		},
-		{
-			name: '空镜槐花',
-			roles: ['chief_editor'],
-			socials: [
-				{
-					icon: IconBilibili,
-					link: 'https://space.bilibili.com/1906660896'
-				}
-			],
-			avatar: placeholderAvatar
-		}
-	];
 </script>
 
 <svelte:head>
@@ -162,7 +75,8 @@
 			<section class="mb-12 text-center" id="team">
 				<h2 class="mb-6 text-3xl font-semibold">{m.about_team_title()}</h2>
 				<div class="grid grid-cols-1 gap-8 md:grid-cols-2">
-					{#each MEMBERS as member}
+					{#each data.members as member}
+						{@const Icon = SOCIAL_ICONS[member.socials[0].type]}
 						<div class="glass-card p-6">
 							<div class="flex items-start gap-4">
 								<img
@@ -186,7 +100,7 @@
 											rel="noopener noreferrer"
 											class="text-blue-400 transition-colors duration-200 hover:text-blue-300"
 										>
-											<social.icon class="h-5 w-5" />
+											<Icon class="h-5 w-5" />
 										</a>
 									{/each}
 								</div>
