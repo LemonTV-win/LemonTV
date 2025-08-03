@@ -47,7 +47,7 @@
 					link: 'https://x.com/mkpoli'
 				}
 			],
-			avatar: placeholderAvatar
+			avatar: 'https://avatars.githubusercontent.com/u/3502597?v=4'
 		},
 		{
 			name: 'swae gae pinoe',
@@ -73,7 +73,8 @@
 					link: 'https://twitch.tv/xinghuienjoyer'
 				}
 			],
-			avatar: placeholderAvatar
+			avatar:
+				'https://yt3.googleusercontent.com/7IYPXmmYCaPYVA_lmgduXuierwW3Lo1qfSNq51OV0VU7C3AxMarHrtuaGgr84B6VCwnB5G70-Q=s160-c-k-c0x00ffffff-no-rj'
 		},
 		{
 			name: 'Krihcity',
@@ -88,7 +89,8 @@
 					link: 'https://www.twitch.tv/krihcity'
 				}
 			],
-			avatar: placeholderAvatar
+			avatar:
+				'https://static-cdn.jtvnw.net/jtv_user_pictures/3bb121c0-f337-435a-b20c-4d87261d2a31-profile_image-70x70.png'
 		},
 		{
 			name: 'Eaterrius',
