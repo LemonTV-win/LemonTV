@@ -12,11 +12,105 @@
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 	import { MAP_NAMES } from '$lib/data/game';
 	import PlayerAgents from './PlayerAgents.svelte';
+	import { onMount } from 'svelte';
 	let { data }: PageProps = $props();
 
 	if (!data.player) {
 		throw error(404, 'Player not found');
 	}
+
+	let gradientStyle = $state('');
+
+	// Function to extract dominant colors from an image
+	function extractColors(img: HTMLImageElement): string[] {
+		const canvas = document.createElement('canvas');
+		const ctx = canvas.getContext('2d');
+		if (!ctx) return ['#1e3a8a', '#7c3aed']; // fallback colors
+
+		// Set canvas size (smaller for performance)
+		canvas.width = 50;
+		canvas.height = 50;
+
+		// Draw image on canvas
+		ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+		// Get image data
+		const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+		const data = imageData.data;
+
+		// Sample pixels and collect colors
+		const colors: string[] = [];
+		const step = Math.max(1, Math.floor(data.length / 4 / 100)); // Sample every nth pixel
+
+		for (let i = 0; i < data.length; i += step * 4) {
+			const r = data[i];
+			const g = data[i + 1];
+			const b = data[i + 2];
+
+			// Prefer darker pixels (lower brightness)
+			const brightness = (r + g + b) / 3;
+			if (brightness > 180 || brightness < 15) continue; // Skip very light pixels
+
+			// Convert to hex
+			const hex = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+			colors.push(hex);
+		}
+
+		// Find most common colors (simple approach)
+		const colorCounts: Record<string, number> = {};
+		colors.forEach((color) => {
+			colorCounts[color] = (colorCounts[color] || 0) + 1;
+		});
+
+		// Sort by frequency and take top 2
+		const sortedColors = Object.entries(colorCounts)
+			.sort(([, a], [, b]) => b - a)
+			.slice(0, 2)
+			.map(([color]) => color);
+
+		return sortedColors.length >= 2 ? sortedColors : ['#1e3a8a', '#7c3aed'];
+	}
+
+	// Function to generate gradient style
+	function generateGradient(colors: string[]): string {
+		if (colors.length < 2)
+			return 'linear-gradient(to right, rgba(30, 58, 138, 0.8), rgba(124, 58, 237, 0.8))';
+
+		// Darken the colors by reducing RGB values
+		const darkenColor = (color: string) => {
+			const r = parseInt(color.slice(1, 3), 16);
+			const g = parseInt(color.slice(3, 5), 16);
+			const b = parseInt(color.slice(5, 7), 16);
+
+			// Reduce brightness by 40%
+			const darkR = Math.max(0, Math.floor(r * 0.6));
+			const darkG = Math.max(0, Math.floor(g * 0.6));
+			const darkB = Math.max(0, Math.floor(b * 0.6));
+
+			return `rgba(${darkR}, ${darkG}, ${darkB}, 0.8)`;
+		};
+
+		const darkColor1 = darkenColor(colors[0]);
+		const darkColor2 = darkenColor(colors[1]);
+
+		return `linear-gradient(to right, ${darkColor1}, ${darkColor2})`;
+	}
+
+	onMount(() => {
+		// Create a temporary image to extract colors
+		const tempImg = new Image();
+		tempImg.crossOrigin = 'anonymous';
+		tempImg.onload = () => {
+			try {
+				const colors = extractColors(tempImg);
+				gradientStyle = generateGradient(colors);
+			} catch (error) {
+				console.warn('Failed to extract colors from image:', error);
+				gradientStyle = 'linear-gradient(to right, #1e3a8a, #7c3aed)';
+			}
+		};
+		tempImg.src = data.player?.avatarURL || data.player?.avatar || '';
+	});
 </script>
 
 {#if data.player}
@@ -24,7 +118,7 @@
 	<main class="mx-auto max-w-screen-lg p-4">
 		<div class="grid grid-cols-1 gap-6 md:grid-cols-3">
 			<div class="glass overflow-hidden rounded-2xl">
-				<div class="bg-gradient-to-r from-blue-900 to-purple-900 p-6">
+				<div class="p-6" style={gradientStyle ? `background: ${gradientStyle}` : ''}>
 					<PlayerAvatar player={data.player} class="mx-auto h-32 w-32" />
 				</div>
 				<div class="flex flex-col gap-4 p-6">
