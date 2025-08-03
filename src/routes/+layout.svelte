@@ -22,11 +22,11 @@
 	let { data, children }: LayoutProps = $props();
 
 	const navigation = [
-		{ href: '/news', label: () => m.news() },
-		{ href: '/events', label: () => m.events() },
-		{ href: '/teams', label: () => m.teams() },
-		{ href: '/players', label: () => m.players() },
-		{ href: '/community', label: () => m.community() }
+		{ href: '/news', label: m.news },
+		{ href: '/events', label: m.events },
+		{ href: '/teams', label: m.teams },
+		{ href: '/players', label: m.players },
+		{ href: '/community', label: m.community }
 	] as const;
 
 	const locales: Record<Locale, string> = {
