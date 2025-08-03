@@ -76,24 +76,28 @@
 				<h2 class="mb-6 text-3xl font-semibold">{m.about_team_title()}</h2>
 				<div class="grid grid-cols-1 gap-8 md:grid-cols-2">
 					{#each data.members as member}
-						{@const Icon = SOCIAL_ICONS[member.socials[0].type]}
 						<div class="glass-card p-6">
-							<div class="flex items-start gap-4">
+							<div class="grid grid-cols-[auto_1fr_auto] items-start gap-4">
 								<img
 									src={member.avatar || placeholderAvatar}
 									alt="{member.name} avatar"
-									class="h-16 w-16 flex-shrink-0 rounded-full object-cover"
+									class="h-16 w-16 min-w-16 rounded-full object-cover"
 								/>
-								<div class="flex flex-1 flex-col items-start justify-around">
-									<h3 class="my-0 text-left text-xl font-semibold">{member.name}</h3>
+								<div class="flex flex-col items-start justify-around">
+									<h3
+										class="my-0 overflow-hidden text-left text-xl font-semibold text-ellipsis whitespace-nowrap"
+									>
+										{member.name}
+									</h3>
 									<p class="my-2 text-left text-slate-300">
 										{member.roles
 											.map((role) => ROLE_NAMES[role as keyof typeof ROLE_NAMES]())
 											.join(' & ')}
 									</p>
 								</div>
-								<div class="flex flex-shrink-0 gap-3">
-									{#each member.socials as social}
+								<div class="flex flex-wrap gap-3">
+									{#each member.socials as social, i (i)}
+										{@const Icon = SOCIAL_ICONS[social.type]}
 										<a
 											href={social.link}
 											target="_blank"
