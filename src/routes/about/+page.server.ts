@@ -38,7 +38,7 @@ export const load: PageServerLoad = async ({}) => {
 					link: 'https://twitch.tv/swaegaepinoe'
 				}
 			],
-			avatar: null
+			avatar: 'players/b7b49342-e7cd-4d2f-a33b-38f5752518d7-swaeg.jpg'
 		},
 		{
 			name: 'XinghuiEnjoyer',
@@ -85,7 +85,7 @@ export const load: PageServerLoad = async ({}) => {
 					link: 'https://x.com/eaterrius'
 				}
 			],
-			avatar: null
+			avatar: 'players/c8e8a79c-e342-4537-86fa-14f57a875402-Eaterrius.jpg'
 		},
 		{
 			name: '空镜槐花',
