@@ -14,6 +14,7 @@
 
 	import SocialLinks from '$lib/components/SocialLinks.svelte';
 	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
+	import PlayerAvatar from '$lib/components/PlayerAvatar.svelte';
 	import Modal from '$lib/components/Modal.svelte';
 	import EditHistory from '../EditHistory.svelte';
 	import PlayerEdit from './PlayerEdit.svelte';
@@ -534,6 +535,7 @@
 							{/if}
 						</button>
 					</th>
+					<th class="px-4 py-1">{m.logo()}</th>
 					<th class="px-4 py-1">
 						<button
 							class="flex items-center gap-1 text-left"
@@ -614,6 +616,9 @@
 							title={player.id}
 						>
 							{player.id}
+						</td>
+						<td class="px-4 py-1">
+							<PlayerAvatar {player} class="h-8 w-8" />
 						</td>
 						<td class="max-w-32 truncate px-4 py-1 text-white">
 							<a href={`/players/${player.slug}`} class="hover:text-yellow-400" title={player.slug}>
