@@ -2,7 +2,7 @@ import type { PageServerLoad } from './$types';
 import { processImageURL } from '$lib/server/storage';
 
 export type Social = {
-	type: 'github' | 'x' | 'youtube' | 'twitch' | 'linktree' | 'bilibili';
+	type: 'github' | 'x' | 'youtube' | 'twitch' | 'linktree' | 'bilibili' | 'homepage';
 	link: string;
 };
 
@@ -86,6 +86,17 @@ export const load: PageServerLoad = async ({}) => {
 				}
 			],
 			avatar: 'players/c8e8a79c-e342-4537-86fa-14f57a875402-Eaterrius.jpg'
+		},
+		{
+			name: 'Chihiro Kiyomi',
+			roles: ['chief_editor'],
+			socials: [
+				{
+					type: 'homepage',
+					link: 'https://e-z.bio/chihiro'
+				}
+			],
+			avatar: 'organizers/437487ba-2dfb-42e4-872d-019cb5fd1d6f-Kiyomi.jpg'
 		},
 		{
 			name: '空镜槐花',

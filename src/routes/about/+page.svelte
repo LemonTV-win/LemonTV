@@ -9,6 +9,7 @@
 	import IconGlobe from '~icons/pepicons-pencil/internet';
 	import IconCalendar from '~icons/icon-park-solid/calendar';
 	import IconTrend from '~icons/icon-park-solid/trend-two';
+	import IconHome from '~icons/icon-park-solid/home';
 	import { m } from '$lib/paraglide/messages';
 	import { IDREAMSKY_URL_EN, IDREAMSKY_URL_ZH } from '$lib/consts';
 	import { getLocale } from '$lib/paraglide/runtime';
@@ -23,8 +24,6 @@
 		translator: m.about_team_roles_translator
 	} as const;
 
-	type Role = keyof typeof ROLE_NAMES;
-
 	let { data }: PageProps = $props();
 
 	const SOCIAL_ICONS: Record<string, any> = {
@@ -33,7 +32,8 @@
 		youtube: IconYoutube,
 		twitch: IconTwitch,
 		linktree: IconLinktree,
-		bilibili: IconBilibili
+		bilibili: IconBilibili,
+		homepage: IconHome
 	};
 </script>
 
