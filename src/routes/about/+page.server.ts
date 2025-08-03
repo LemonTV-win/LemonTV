@@ -74,7 +74,7 @@ export const load: PageServerLoad = async ({}) => {
 		},
 		{
 			name: 'Eaterrius',
-			roles: ['editor', 'translator'],
+			roles: ['chief_editor', 'translator'],
 			socials: [
 				{
 					type: 'linktree',
@@ -89,7 +89,7 @@ export const load: PageServerLoad = async ({}) => {
 		},
 		{
 			name: 'Chihiro Kiyomi',
-			roles: ['chief_editor'],
+			roles: ['chief_editor', 'translator'],
 			socials: [
 				{
 					type: 'homepage',
