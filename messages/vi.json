@@ -323,7 +323,7 @@
 	"sign_up": "Đăng ký",
 	"sign_up_description": "Tạo tài khoản để tham gia cộng đồng!",
 	"footer_fan_made": "Một nền tảng truyền thông e-sports được tạo ra và duy trì bởi {linkStart}những người chơi Strinova đam mê{linkEnd}. Chúng tôi cam kết mang đến cho bạn tin tức, sự kiện và nội dung cộng đồng mới nhất từ thế giới Strinova.",
-	"footer_trademark": "{strinova} là thương hiệu của {idreamsky}. Trang web này không liên kết hoặc được chứng thực bởi Strinova hay iDreamSky.",
+	"footer_trademark": "{strinova} là thương hiệu của {idreamsky}. Trang web này không liên kết hoặc được chứng thực bởi Strinova hay {idreamsky}.",
 	"platform_statistics": "Thống Kê Nền Tảng",
 	"total_events": "Tổng Số Sự Kiện",
 	"total_teams": "Tổng Số Đội",
@@ -372,7 +372,7 @@
 	"about_links_title": "Liên kết",
 	"about_links_github": "Kho lưu trữ GitHub",
 	"about_links_discord": "Máy chủ Discord",
-	"about_thanks_message": "và cảm ơn tất cả những người đã cung cấp thông tin về các sự kiện trong quá khứ và sắp tới, iDreamSky & Day1 Studio vì đã tạo ra trò chơi mà chúng tôi đam mê, và mọi người chơi đã làm cho cảnh eSport trở nên khả thi.",
+	"about_thanks_message": "và cảm ơn tất cả những người đã cung cấp thông tin về các sự kiện trong quá khứ và sắp tới, {idreamsky} & Day1 Studio vì đã tạo ra trò chơi mà chúng tôi đam mê, và mọi người chơi đã làm cho cảnh eSport trở nên khả thi.",
 	"europe": "Châu Âu (EU)",
 	"china": "Trung Quốc (CN)",
 	"associated_user_id": "ID Người dùng liên kết",
@@ -561,5 +561,6 @@
 	"save_game": "Lưu",
 	"add_game": "Thêm",
 	"team_a": "Đội A",
-	"team_b": "Đội B"
+	"team_b": "Đội B",
+	"idreamsky": "iDreamSky"
 }

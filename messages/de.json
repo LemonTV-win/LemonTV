@@ -323,7 +323,7 @@
 	"sign_up": "Registrieren",
 	"sign_up_description": "Erstellen Sie ein Konto, um der Community beizutreten!",
 	"footer_fan_made": "Eine von {linkStart}leidenschaftlichen Strinova-Spielern{linkEnd} erstellte und betriebene E-Sport-Medienplattform. Wir sind bestrebt, Ihnen die neuesten Nachrichten, Events und Community-Inhalte aus der Welt von Strinova zu bieten.",
-	"footer_trademark": "{strinova} ist eine eingetragene Marke von {idreamsky}. Diese Website ist weder mit Strinova noch mit iDreamSky verbunden oder von ihnen unterstützt.",
+	"footer_trademark": "{strinova} ist eine eingetragene Marke von {idreamsky}. Diese Website ist weder mit Strinova noch mit {idreamsky} verbunden oder von ihnen unterstützt.",
 	"platform_statistics": "Plattform-Statistiken",
 	"total_events": "Gesamtveranstaltungen",
 	"total_teams": "Gesamtteams",
@@ -372,7 +372,7 @@
 	"about_links_title": "Links",
 	"about_links_github": "GitHub-Repository",
 	"about_links_discord": "Discord-Community",
-	"about_thanks_message": "und vielen Dank an alle, die Informationen über vergangene und bevorstehende Veranstaltungen bereitgestellt haben, an iDreamSky & Day1 Studio für die Erschaffung des Spiels, das uns begeistert, und an jeden Spieler, der die eSport-Szene möglich gemacht hat.",
+	"about_thanks_message": "und vielen Dank an alle, die Informationen über vergangene und bevorstehende Veranstaltungen bereitgestellt haben, an {idreamsky} & Day1 Studio für die Erschaffung des Spiels, das uns begeistert, und an jeden Spieler, der die eSport-Szene möglich gemacht hat.",
 	"europe": "Europa (EU)",
 	"china": "China (CN)",
 	"associated_user_id": "Zugehörige Benutzer-ID",
@@ -561,5 +561,6 @@
 	"save_game": "Speichern",
 	"add_game": "Hinzufügen",
 	"team_a": "Team A",
-	"team_b": "Team B"
+	"team_b": "Team B",
+	"idreamsky": "iDreamSky"
 }

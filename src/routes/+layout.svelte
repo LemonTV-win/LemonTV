@@ -17,7 +17,7 @@
 	import type { LayoutProps } from './$types';
 	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
-	import { SITE_CANONICAL_HOST } from '$lib/consts';
+	import { IDREAMSKY_URL_EN, IDREAMSKY_URL_ZH, SITE_CANONICAL_HOST } from '$lib/consts';
 
 	let { data, children }: LayoutProps = $props();
 
@@ -405,7 +405,7 @@
 			<p class="text-xs text-gray-400">
 				{@html m.footer_trademark({
 					strinova: `<a href="https://www.strinova.com/" class="underline hover:text-gray-300" target="_blank">Strinova</a>`,
-					idreamsky: `<a href="https://en.idreamsky.com/" class="underline hover:text-gray-300" target="_blank">iDreamSky</a>`
+					idreamsky: `<a href="${['zh', 'zh-tw'].includes(getLocale()) ? IDREAMSKY_URL_ZH : IDREAMSKY_URL_EN}" class="underline hover:text-gray-300" target="_blank">${m.idreamsky()}</a>`
 				})}
 			</p>
 		</div>

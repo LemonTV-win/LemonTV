@@ -260,7 +260,7 @@
 	"sign_up": "登録",
 	"sign_up_description": "アカウントを作成してコミュニティに参加しましょう！",
 	"footer_fan_made": "Strinovaの{linkStart}熱心なプレイヤー{linkEnd}によって作成・運営されているeスポーツメディアプラットフォームです。Strinovaの世界からの最新ニュース、イベント、コミュニティコンテンツをお届けします。",
-	"footer_trademark": "{strinova}は{idreamsky}の商標です。このサイトはStrinovaまたはiDreamSkyとは関係なく、承認も受けていません。",
+	"footer_trademark": "{strinova}は{idreamsky}の商標です。このサイトはStrinovaまたは{idreamsky}とは関係なく、承認も受けていません。",
 	"platform_statistics": "プラットフォーム統計",
 	"total_events": "総イベント数",
 	"total_teams": "総チーム数",
@@ -309,7 +309,7 @@
 	"about_links_title": "リンク",
 	"about_links_github": "GitHubで見る",
 	"about_links_discord": "Discordに参加",
-	"about_thanks_message": "過去と今後のイベントについて情報を提供してくださった皆様、私たちが情熱を注ぐゲームを作成してくださったiDreamSky & Day1 Studio、そしてeスポーツシーンを可能にしてくださったすべてのプレイヤーの皆様に感謝いたします。",
+	"about_thanks_message": "過去と今後のイベントについて情報を提供してくださった皆様、私たちが情熱を注ぐゲームを作成してくださった{idreamsky} & Day1 Studio、そしてeスポーツシーンを可能にしてくださったすべてのプレイヤーの皆様に感謝いたします。",
 	"europe": "ヨーロッパ (EU)",
 	"china": "中国大陸 (CN)",
 	"associated_user_id": "関連ユーザーID",
@@ -561,5 +561,6 @@
 	"save_game": "保存",
 	"add_game": "追加",
 	"team_a": "チームA",
-	"team_b": "チームB"
+	"team_b": "チームB",
+	"idreamsky": "iDreamSky"
 }

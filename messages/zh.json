@@ -323,7 +323,7 @@
 	"sign_up": "注册",
 	"sign_up_description": "创建账号加入社区！",
 	"footer_fan_made": "一个由{linkStart}热情的卡拉彼丘玩家{linkEnd}创建和维护的电子竞技媒体平台。我们致力于为您带来卡拉彼丘世界的最新新闻、赛事和社区内容。",
-	"footer_trademark": "{strinova}是{idreamsky}的商标。本网站与卡拉彼丘或iDreamSky无关，也不受其认可。",
+	"footer_trademark": "{strinova}是{idreamsky}的商标。本网站与卡拉彼丘或{idreamsky}无关，也不受其认可。",
 	"platform_statistics": "平台统计",
 	"total_events": "总赛事数",
 	"total_teams": "总队伍数",
@@ -372,7 +372,7 @@
 	"about_links_title": "我们的链接",
 	"about_links_github": "GitHub",
 	"about_links_discord": "Discord",
-	"about_thanks_message": "感谢所有为我们提供以往现在未来的各种赛事信息的卡奴们，感谢 创梦天地 & Day1工作室 创造了我们所热爱的游戏，感谢每一位努力让卡丘电竞成为可能的选手们和玩家们。",
+	"about_thanks_message": "感谢所有为我们提供以往现在未来的各种赛事信息的卡奴们，感谢 {idreamsky} & Day1工作室 创造了我们所热爱的游戏，感谢每一位努力让卡丘电竞成为可能的选手们和玩家们。",
 	"europe": "欧洲 (EU)",
 	"china": "中国 (CN)",
 	"associated_user_id": "关联用户ID",
@@ -560,6 +560,7 @@
 	"delete_game": "删除游戏",
 	"save_game": "保存",
 	"add_game": "添加",
-	"team_a": "队伍A",
-	"team_b": "队伍B"
+	"team_a": "A队",
+	"team_b": "B队",
+	"idreamsky": "创梦天地"
 }

@@ -323,7 +323,7 @@
 	"sign_up": "Зареєструватись",
 	"sign_up_description": "Створіть акаунт та приєднайтесь до спільноти!",
 	"footer_fan_made": "Фанатська кіберспортивна медіа платформа, створена і підтримуєма {linkStart}пристрасними гравцями Strinova{linkEnd}. Ми пропонуємо вам найновіші новини, події та контент спільноти зі світу Strinova.",
-	"footer_trademark": "{strinova} є зареєстрованною торговою маркою {idreamsky}. Цей сайт не пов'язанний і не підтримується зі сторони Strinova чи iDreamSky.",
+	"footer_trademark": "{strinova} є зареєстрованою торговою маркою {idreamsky}. Цей сайт не пов'язаний і не підтримується зі сторони Strinova чи {idreamsky}.",
 	"total_events": "Всього поді'",
 	"total_teams": "Всього команд",
 	"total_players": "Всього гравців",
@@ -372,7 +372,7 @@
 	"about_links_title": "Посилання",
 	"about_links_github": "GitHub репозиторій",
 	"about_links_discord": "Discord спільнота",
-	"about_thanks_message": "і дякуємо всім, хто надав інформацію про минулі та майбутні події, iDreamSky & Day1 Studio за створення гри, яка нас захоплює, та кожному гравцю, який зробив можливою eSport сцену.",
+	"about_thanks_message": "і дякуємо всім, хто надав інформацію про минулі та майбутні події, {idreamsky} & Day1 Studio за створення гри, яка нас захоплює, та кожному гравцю, який зробив можливою eSport сцену.",
 	"europe": "Європа (EU)",
 	"china": "Китай (CN)",
 	"associated_user_id": "Асоційований ID користувача",
@@ -561,5 +561,6 @@
 	"save_game": "Зберегти",
 	"add_game": "Додати",
 	"team_a": "Команда A",
-	"team_b": "Команда B"
+	"team_b": "Команда B",
+	"idreamsky": "iDreamSky"
 }

@@ -323,7 +323,7 @@
 	"sign_up": "가입하기",
 	"sign_up_description": "커뮤니티에 참여하려면 계정을 만드세요!",
 	"footer_fan_made": "Strinova의{linkStart}열정적인 플레이어들{linkEnd}이 만들고 운영하는 e스포츠 미디어 플랫폼입니다. Strinova 세계의 최신 뉴스, 이벤트, 커뮤니티 콘텐츠를 제공합니다.",
-	"footer_trademark": "{strinova}는 {idreamsky}의 상표입니다. 이 사이트는 Strinova 또는 iDreamSky와 제휴하지 않으며 승인을 받지 않았습니다.",
+	"footer_trademark": "{strinova}는 {idreamsky}의 상표입니다. 이 사이트는 Strinova 또는 {idreamsky}와 제휴하지 않으며 승인을 받지 않았습니다.",
 	"platform_statistics": "플랫폼 통계",
 	"total_events": "총 이벤트",
 	"total_teams": "총 팀",
@@ -372,7 +372,7 @@
 	"about_links_title": "링크",
 	"about_links_github": "GitHub 저장소",
 	"about_links_discord": "Discord 커뮤니티",
-	"about_thanks_message": "과거와 향후 이벤트에 대한 정보를 제공해주신 모든 분들, 우리가 열정을 가진 게임을 만들어주신 iDreamSky & Day1 Studio, 그리고 e스포츠 씬을 가능하게 해주신 모든 플레이어들에게 감사드립니다.",
+	"about_thanks_message": "과거와 향후 이벤트에 대한 정보를 제공해주신 모든 분들, 우리가 열정을 가진 게임을 만들어주신 {idreamsky} & Day1 Studio, 그리고 e스포츠 씬을 가능하게 해주신 모든 플레이어들에게 감사드립니다.",
 	"europe": "유럽 (EU)",
 	"china": "중국 대륙 (CN)",
 	"associated_user_id": "연결된 사용자 ID",
@@ -561,5 +561,6 @@
 	"save_game": "저장",
 	"add_game": "추가",
 	"team_a": "팀 A",
-	"team_b": "팀 B"
+	"team_b": "팀 B",
+	"idreamsky": "iDreamSky"
 }

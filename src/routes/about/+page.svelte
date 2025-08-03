@@ -7,6 +7,8 @@
 	import IconLinktree from '~icons/simple-icons/linktree';
 	import IconBilibili from '~icons/simple-icons/bilibili';
 	import { m } from '$lib/paraglide/messages';
+	import { IDREAMSKY_URL_EN, IDREAMSKY_URL_ZH } from '$lib/consts';
+	import { getLocale } from '$lib/paraglide/runtime';
 
 	const ROLE_NAMES: Record<string, () => string> = {
 		founder: m.about_team_roles_founder,
@@ -190,7 +192,9 @@
 			</section>
 
 			<p class="text-slate-200">
-				{m.about_thanks_message()}
+				{@html m.about_thanks_message({
+					idreamsky: `<a href="${['zh', 'zh-tw'].includes(getLocale()) ? IDREAMSKY_URL_ZH : IDREAMSKY_URL_EN}" class="underline hover:text-gray-300" target="_blank">${m.idreamsky()}</a>`
+				})}
 			</p>
 
 			<section class="my-12 text-center">

@@ -323,7 +323,7 @@
 	"sign_up": "Daftar",
 	"sign_up_description": "Buat akun untuk bergabung dengan komunitas!",
 	"footer_fan_made": "Platform media e-sports yang dibuat dan dikelola oleh {linkStart}pemain Strinova yang bersemangat{linkEnd}. Kami berdedikasi untuk membawakan Anda berita terbaru, acara, dan konten komunitas dari dunia Strinova.",
-	"footer_trademark": "{strinova} adalah merek dagang dari {idreamsky}. Situs ini tidak berafiliasi dengan atau didukung oleh Strinova maupun iDreamSky.",
+	"footer_trademark": "{strinova} adalah merek dagang dari {idreamsky}. Situs ini tidak berafiliasi dengan atau didukung oleh Strinova maupun {idreamsky}.",
 	"platform_statistics": "Statistik Platform",
 	"total_events": "Total Acara",
 	"total_teams": "Total Tim",
@@ -372,7 +372,7 @@
 	"about_links_title": "Tautan",
 	"about_links_github": "Repositori GitHub",
 	"about_links_discord": "Komunitas Discord",
-	"about_thanks_message": "dan terima kasih kepada semua orang yang telah memberikan informasi tentang acara masa lalu dan yang akan datang, kepada iDreamSky & Day1 Studio karena telah menciptakan permainan yang kami sukai, dan kepada setiap pemain yang telah membuat adegan eSport menjadi mungkin.",
+	"about_thanks_message": "dan terima kasih kepada semua orang yang telah memberikan informasi tentang acara masa lalu dan yang akan datang, kepada {idreamsky} & Day1 Studio karena telah menciptakan permainan yang kami sukai, dan kepada setiap pemain yang telah membuat adegan eSport menjadi mungkin.",
 	"europe": "Eropa (EU)",
 	"china": "Tiongkok (CN)",
 	"associated_user_id": "ID Pengguna Terkait",
@@ -561,5 +561,6 @@
 	"save_game": "Simpan",
 	"add_game": "Tambah",
 	"team_a": "Tim A",
-	"team_b": "Tim B"
+	"team_b": "Tim B",
+	"idreamsky": "iDreamSky"
 }
