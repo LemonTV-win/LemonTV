@@ -9,6 +9,7 @@
 	import { m } from '$lib/paraglide/messages';
 	import { IDREAMSKY_URL_EN, IDREAMSKY_URL_ZH } from '$lib/consts';
 	import { getLocale } from '$lib/paraglide/runtime';
+	import placeholderAvatar from '$assets/placeholder_avatar.png';
 
 	const ROLE_NAMES: Record<string, () => string> = {
 		founder: m.about_team_roles_founder,
@@ -29,6 +30,7 @@
 		name: string;
 		roles: Role[];
 		socials: Social[];
+		avatar?: string;
 	};
 
 	const MEMBERS: Member[] = [
@@ -44,7 +46,8 @@
 					icon: IconX,
 					link: 'https://x.com/mkpoli'
 				}
-			]
+			],
+			avatar: placeholderAvatar
 		},
 		{
 			name: 'swae gae pinoe',
@@ -54,7 +57,8 @@
 					icon: IconTwitch,
 					link: 'https://twitch.tv/swaegaepinoe'
 				}
-			]
+			],
+			avatar: placeholderAvatar
 		},
 		{
 			name: 'XinghuiEnjoyer',
@@ -68,7 +72,8 @@
 					icon: IconTwitch,
 					link: 'https://twitch.tv/xinghuienjoyer'
 				}
-			]
+			],
+			avatar: placeholderAvatar
 		},
 		{
 			name: 'Krihcity',
@@ -82,7 +87,8 @@
 					icon: IconTwitch,
 					link: 'https://www.twitch.tv/krihcity'
 				}
-			]
+			],
+			avatar: placeholderAvatar
 		},
 		{
 			name: 'Eaterrius',
@@ -96,7 +102,8 @@
 					icon: IconX,
 					link: 'https://x.com/eaterrius'
 				}
-			]
+			],
+			avatar: placeholderAvatar
 		},
 		{
 			name: '空镜槐花',
@@ -106,7 +113,8 @@
 					icon: IconBilibili,
 					link: 'https://space.bilibili.com/1906660896'
 				}
-			]
+			],
+			avatar: placeholderAvatar
 		}
 	];
 </script>
@@ -154,23 +162,32 @@
 				<div class="grid grid-cols-1 gap-8 md:grid-cols-2">
 					{#each MEMBERS as member}
 						<div class="glass-card p-6">
-							<h3 class="mb-2 text-xl font-semibold">{member.name}</h3>
-							<p class="mb-4 text-slate-300">
-								{member.roles
-									.map((role) => ROLE_NAMES[role as keyof typeof ROLE_NAMES]())
-									.join(' & ')}
-							</p>
-							<div class="flex justify-center gap-4">
-								{#each member.socials as social}
-									<a
-										href={social.link}
-										target="_blank"
-										rel="noopener noreferrer"
-										class="text-blue-400 hover:underline"
-									>
-										<social.icon class="h-6 w-6" />
-									</a>
-								{/each}
+							<div class="flex items-start gap-4">
+								<img
+									src={member.avatar || placeholderAvatar}
+									alt="{member.name} avatar"
+									class="h-16 w-16 flex-shrink-0 rounded-full object-cover"
+								/>
+								<div class="flex flex-1 flex-col items-start justify-around">
+									<h3 class="my-0 text-left text-xl font-semibold">{member.name}</h3>
+									<p class="my-2 text-left text-slate-300">
+										{member.roles
+											.map((role) => ROLE_NAMES[role as keyof typeof ROLE_NAMES]())
+											.join(' & ')}
+									</p>
+								</div>
+								<div class="flex flex-shrink-0 gap-3">
+									{#each member.socials as social}
+										<a
+											href={social.link}
+											target="_blank"
+											rel="noopener noreferrer"
+											class="text-blue-400 transition-colors duration-200 hover:text-blue-300"
+										>
+											<social.icon class="h-5 w-5" />
+										</a>
+									{/each}
+								</div>
 							</div>
 						</div>
 					{/each}
