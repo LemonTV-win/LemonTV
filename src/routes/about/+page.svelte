@@ -5,14 +5,14 @@
 	import IconX from '~icons/simple-icons/x';
 	import IconYoutube from '~icons/simple-icons/youtube';
 	import IconLinktree from '~icons/simple-icons/linktree';
-	import * as m from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 
-	const ROLE_NAMES = {
+	const ROLE_NAMES: Record<string, () => string> = {
 		founder: m.about_team_roles_founder,
-		chief_editor: () => 'Chief Editor',
-		consultant: () => 'Consultant',
+		chief_editor: m.about_team_roles_chief_editor,
+		consultant: m.about_team_roles_consultant,
 		editor: m.about_team_roles_editor,
-		translator: () => 'Translator'
+		translator: m.about_team_roles_translator
 	} as const;
 
 	type Role = keyof typeof ROLE_NAMES;
