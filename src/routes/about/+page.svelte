@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import IconDiscord from '~icons/simple-icons/discord';
 	import IconGithub from '~icons/simple-icons/github';
 	import IconTwitch from '~icons/simple-icons/twitch';
@@ -6,6 +6,96 @@
 	import IconYoutube from '~icons/simple-icons/youtube';
 	import IconLinktree from '~icons/simple-icons/linktree';
 	import * as m from '$lib/paraglide/messages';
+
+	const ROLE_NAMES = {
+		founder: m.about_team_roles_founder,
+		chief_editor: () => 'Chief Editor',
+		consultant: () => 'Consultant',
+		editor: m.about_team_roles_editor,
+		translator: () => 'Translator'
+	} as const;
+
+	type Role = keyof typeof ROLE_NAMES;
+
+	type Social = {
+		icon: any;
+		link: string;
+	};
+
+	type Member = {
+		name: string;
+		roles: Role[];
+		socials: Social[];
+	};
+
+	const MEMBERS: Member[] = [
+		{
+			name: 'mkpoli',
+			roles: ['founder'],
+			socials: [
+				{
+					icon: IconGithub,
+					link: 'https://github.com/mkpoli'
+				},
+				{
+					icon: IconX,
+					link: 'https://x.com/mkpoli'
+				}
+			]
+		},
+		{
+			name: 'swae gae pinoe',
+			roles: ['chief_editor'],
+			socials: [
+				{
+					icon: IconTwitch,
+					link: 'https://twitch.tv/swaegaepinoe'
+				}
+			]
+		},
+		{
+			name: 'XinghuiEnjoyer',
+			roles: ['consultant'],
+			socials: [
+				{
+					icon: IconYoutube,
+					link: 'https://www.youtube.com/@XinghuiEnjoyer'
+				},
+				{
+					icon: IconTwitch,
+					link: 'https://twitch.tv/xinghuienjoyer'
+				}
+			]
+		},
+		{
+			name: 'Krihcity',
+			roles: ['chief_editor'],
+			socials: [
+				{
+					icon: IconYoutube,
+					link: 'https://www.youtube.com/@krihcity'
+				},
+				{
+					icon: IconTwitch,
+					link: 'https://www.twitch.tv/krihcity'
+				}
+			]
+		},
+		{
+			name: 'Eaterrius',
+			roles: ['editor', 'translator'],
+			socials: [
+				{
+					icon: IconLinktree,
+					link: 'https://linktr.ee/eaterrius'
+				},
+				{
+					icon: IconX,
+					link: 'https://x.com/eaterrius'
+				}
+			]
+		}
+	];
 </script>
 
 <svelte:head>
@@ -49,108 +139,29 @@
 			<section class="mb-12 text-center" id="team">
 				<h2 class="mb-6 text-3xl font-semibold">{m.about_team_title()}</h2>
 				<div class="grid grid-cols-1 gap-8 md:grid-cols-2">
-					<div class="glass-card p-6">
-						<h3 class="mb-2 text-xl font-semibold">mkpoli</h3>
-						<p class="mb-4 text-slate-300">{m.about_team_roles_founder()}</p>
-						<div class="flex justify-center gap-4">
-							<a
-								href="https://github.com/mkpoli"
-								target="_blank"
-								rel="noopener noreferrer"
-								class="text-blue-400 hover:underline"
-							>
-								<IconGithub class="h-6 w-6" />
-							</a>
-							<a
-								href="https://x.com/mkpoli"
-								target="_blank"
-								rel="noopener noreferrer"
-								class="text-blue-400 hover:underline"
-							>
-								<IconX class="h-6 w-6" />
-							</a>
+					{#each MEMBERS as member}
+						<div class="glass-card p-6">
+							<h3 class="mb-2 text-xl font-semibold">{member.name}</h3>
+							<p class="mb-4 text-slate-300">
+								{member.roles
+									.map((role) => ROLE_NAMES[role as keyof typeof ROLE_NAMES]())
+									.join(' & ')}
+							</p>
+							<div class="flex justify-center gap-4">
+								{#each member.socials as social}
+									<a
+										href={social.link}
+										target="_blank"
+										rel="noopener noreferrer"
+										class="text-blue-400 hover:underline"
+									>
+										<social.icon class="h-6 w-6" />
+									</a>
+								{/each}
+							</div>
 						</div>
-					</div>
-					<div class="glass-card p-6">
-						<h3 class="mb-2 text-xl font-semibold">swae gae pinoe</h3>
-						<p class="mb-4 text-slate-300">{m.about_team_roles_editor()}</p>
-						<div class="flex justify-center gap-4">
-							<a
-								href="https://twitch.tv/swaegaepinoe"
-								target="_blank"
-								rel="noopener noreferrer"
-								class="text-blue-400 hover:underline"
-							>
-								<IconTwitch class="h-6 w-6" />
-							</a>
-						</div>
-					</div>
-					<div class="glass-card p-6">
-						<h3 class="mb-2 text-xl font-semibold">XinghuiEnjoyer</h3>
-						<p class="mb-4 text-slate-300">Consultant</p>
-						<div class="flex justify-center gap-4">
-							<a
-								href="https://www.youtube.com/@XinghuiEnjoyer"
-								target="_blank"
-								rel="noopener noreferrer"
-								class="text-blue-400 hover:underline"
-							>
-								<IconYoutube class="h-6 w-6" />
-							</a>
-							<a
-								href="https://twitch.tv/xinghuienjoyer"
-								target="_blank"
-								rel="noopener noreferrer"
-								class="text-blue-400 hover:underline"
-							>
-								<IconTwitch class="h-6 w-6" />
-							</a>
-						</div>
-					</div>
-					<div class="glass-card p-6">
-						<h3 class="mb-2 text-xl font-semibold">Krihcity</h3>
-						<p class="mb-4 text-slate-300">Chief Editor</p>
-						<div class="flex justify-center gap-4">
-							<a
-								href="https://www.youtube.com/@krihcity"
-								target="_blank"
-								rel="noopener noreferrer"
-								class="text-blue-400 hover:underline"
-							>
-								<IconYoutube class="h-6 w-6" />
-							</a>
-							<a
-								href="https://www.twitch.tv/krihcity"
-								target="_blank"
-								rel="noopener noreferrer"
-								class="text-blue-400 hover:underline"
-							>
-								<IconTwitch class="h-6 w-6" />
-							</a>
-						</div>
-					</div>
-					<div class="glass-card p-6">
-						<h3 class="mb-2 text-xl font-semibold">Eaterrius</h3>
-						<p class="mb-4 text-slate-300">Editor & Translator</p>
-						<div class="flex justify-center gap-4">
-							<a
-								href="https://linktr.ee/eaterrius"
-								target="_blank"
-								rel="noopener noreferrer"
-								class="text-blue-400 hover:underline"
-							>
-								<IconLinktree class="h-6 w-6" />
-							</a>
-							<a
-								href="https://x.com/eaterrius"
-								target="_blank"
-								rel="noopener noreferrer"
-								class="text-blue-400 hover:underline"
-							>
-								<IconX class="h-6 w-6" />
-							</a>
-						</div>
-					</div>
+					{/each}
+
 					<div class="glass-card p-6 md:col-span-2">
 						<h3 class="mb-2 text-xl font-semibold">{m.about_team_join_title()}</h3>
 						<p class="mb-4 text-slate-300">{m.about_team_join_description()}</p>
