@@ -72,6 +72,7 @@ export const actions = {
 
 		const slug = formData.get('slug') as string;
 		const name = formData.get('name') as string;
+		const avatar = (formData.get('avatar') || undefined) as string | undefined;
 		const userId = (formData.get('userId') || null) as string | null;
 		const nationalities = JSON.parse(formData.get('nationalities') as string) as TCountryCode[];
 		const aliases = JSON.parse(formData.get('aliases') as string) as string[];
@@ -93,6 +94,7 @@ export const actions = {
 				{
 					slug,
 					name,
+					avatar,
 					nationalities,
 					aliases,
 					gameAccounts,
@@ -147,6 +149,7 @@ export const actions = {
 		const id = formData.get('id') as string;
 		const slug = formData.get('slug') as string;
 		const name = formData.get('name') as string;
+		const avatar = (formData.get('avatar') || undefined) as string | undefined;
 		const userId = (formData.get('userId') || null) as string | null;
 		const nationalities = JSON.parse(formData.get('nationalities') as string) as TCountryCode[];
 		const aliases = JSON.parse(formData.get('aliases') as string) as string[];
@@ -169,6 +172,7 @@ export const actions = {
 					id,
 					slug,
 					name,
+					avatar,
 					nationalities,
 					aliases,
 					gameAccounts,

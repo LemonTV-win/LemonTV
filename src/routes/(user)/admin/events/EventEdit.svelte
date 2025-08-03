@@ -405,7 +405,8 @@
 				players={players.map((p) => ({
 					...p,
 					nationalities: (p.nationality ? [p.nationality] : []) as TCountryCode[],
-					gameAccounts: []
+					gameAccounts: [],
+					avatar: p.avatar || undefined
 				}))}
 				bind:casters={newEvent.casters}
 			/>

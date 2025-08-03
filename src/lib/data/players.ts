@@ -7,6 +7,7 @@ export interface Player {
 	name: string; // display name
 	slug: string; // url name (/players/<slug>)
 	nationalities: TCountryCode[]; // First element is primary nationality, rest are additional
+	avatar?: string;
 	aliases?: string[];
 	gameAccounts: GameAccount[];
 	socialAccounts?: SocialAccount[];

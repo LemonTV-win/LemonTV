@@ -276,6 +276,7 @@ export async function getPlayer(keyword: string): Promise<Player | null> {
 		id: playerData.id,
 		slug: playerData.slug,
 		name: playerData.name,
+		avatar: playerData.avatar || undefined,
 		nationalities: playerData.nationality
 			? [
 					playerData.nationality as TCountryCode,
@@ -293,7 +294,15 @@ export async function getPlayer(keyword: string): Promise<Player | null> {
 			platformId: acc.platformId,
 			accountId: acc.accountId,
 			overridingUrl: acc.overriding_url || undefined
-		}))
+		})),
+		user: playerData.userId
+			? {
+					id: playerData.userId,
+					username: '',
+					email: '',
+					roles: []
+				}
+			: undefined
 	};
 }
 
@@ -341,6 +350,7 @@ export async function getPlayers(): Promise<Player[]> {
 		id: p.id,
 		name: p.name,
 		slug: p.slug,
+		avatar: p.avatar || undefined,
 		nationalities: p.nationality
 			? [
 					p.nationality as TCountryCode,
@@ -1008,6 +1018,7 @@ export async function createPlayer(
 			name: data.name,
 			slug: slug,
 			nationality: primaryNationality,
+			avatar: data.avatar,
 			userId
 		});
 
@@ -1031,6 +1042,18 @@ export async function createPlayer(
 				fieldName: 'name',
 				oldValue: null,
 				newValue: data.name.toString(),
+				editedBy
+			});
+		}
+
+		if (data.avatar) {
+			await tx.insert(editHistory).values({
+				id: randomUUID(),
+				tableName: 'player',
+				recordId: id,
+				fieldName: 'avatar',
+				oldValue: null,
+				newValue: data.avatar.toString(),
 				editedBy
 			});
 		}
@@ -1182,6 +1205,7 @@ export async function updatePlayer(
 				name: data.name,
 				slug: data.slug,
 				nationality: primaryNationality,
+				avatar: data.avatar,
 				userId: data.user?.id
 			})
 			.where(eq(player.id, data.id));
@@ -1207,6 +1231,18 @@ export async function updatePlayer(
 				fieldName: 'slug',
 				oldValue: currentPlayer.slug?.toString() || null,
 				newValue: data.slug?.toString() || null,
+				editedBy
+			});
+		}
+
+		if (data.avatar !== currentPlayer.avatar) {
+			await tx.insert(editHistory).values({
+				id: randomUUID(),
+				tableName: 'player',
+				recordId: data.id,
+				fieldName: 'avatar',
+				oldValue: currentPlayer.avatar?.toString() || null,
+				newValue: data.avatar?.toString() || null,
 				editedBy
 			});
 		}

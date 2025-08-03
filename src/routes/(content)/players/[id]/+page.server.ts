@@ -24,6 +24,12 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 	const teams = await getTeams();
 	const playerID = player.id;
 
+	// Process player avatar URL
+	let playerAvatarURL: string | null = null;
+	if (player.avatar) {
+		playerAvatarURL = await processImageURL(player.avatar);
+	}
+
 	// Get unified server stats
 	const serverStats = await getServerPlayerStats(playerID);
 
@@ -81,7 +87,10 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 	const playerKD = serverStats.kd > 0 ? serverStats.kd : serverPlayerKD;
 
 	return {
-		player,
+		player: {
+			...player,
+			avatarURL: playerAvatarURL
+		},
 		playerTeams: await getPlayerTeams(params.id),
 		playerEvents,
 		playerMatches,

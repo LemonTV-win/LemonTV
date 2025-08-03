@@ -14,6 +14,7 @@
 	import IconParkSolidCheckOne from '~icons/icon-park-solid/check-one';
 	import type { ActionResult } from '@sveltejs/kit';
 	import { SITE_CANONICAL_HOST } from '$lib/consts';
+	import ImageUpload from '$lib/components/ImageUpload.svelte';
 
 	let {
 		player,
@@ -41,6 +42,11 @@
 	let additionalNationalities = $state<(TCountryCode | undefined)[]>(
 		player.nationalities?.slice(1) || []
 	);
+	let playerAvatar = $state(player.avatar ?? null);
+
+	$effect(() => {
+		newPlayer.avatar = playerAvatar || undefined;
+	});
 
 	const filteredUsers = $derived(
 		users.filter((user) => user.username.toLowerCase().includes(userSearch.toLowerCase()))
@@ -368,6 +374,14 @@
 					<span>{m.add()}</span>
 				</button>
 			</div>
+		</div>
+
+		<div>
+			<label for="playerAvatar" class="block text-sm font-medium text-slate-300">
+				{m.logo()}
+			</label>
+			<ImageUpload bind:value={playerAvatar} prefix="players" />
+			<input type="hidden" name="avatar" value={playerAvatar} />
 		</div>
 
 		<div>

@@ -6,6 +6,7 @@ export const player = sqliteTable('player', {
 	slug: text('slug').notNull().unique(),
 	name: text('name').notNull(),
 	nationality: text('nationality'),
+	avatar: text('avatar'),
 	userId: text('user_id').references(() => user.id)
 });
 

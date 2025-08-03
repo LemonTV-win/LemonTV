@@ -24,6 +24,7 @@
 			slug: string;
 			name: string;
 			nationalities: TCountryCode[];
+			avatarURL?: string | null;
 			wins: number;
 			rating: number;
 			kd: number;
@@ -163,12 +164,22 @@
 					</td>
 					<td class="px-4 py-1">
 						<a
-							class="flex flex-col items-baseline gap-1 transition-all duration-200 hover:text-yellow-400"
+							class="flex items-center gap-3 transition-all duration-200 hover:text-yellow-400"
 							href={`/players/${player.slug ?? player.id}`}
-							>{player.name}
-							{#each getAllNames(player).filter((name) => name !== player.name) as name (name)}
-								<span class="text-xs text-gray-400">({name})</span>
-							{/each}
+						>
+							{#if player.avatarURL}
+								<img
+									src={player.avatarURL}
+									alt={player.name}
+									class="h-8 w-8 rounded-full object-cover"
+								/>
+							{/if}
+							<div class="flex flex-col items-baseline gap-1">
+								{player.name}
+								{#each getAllNames(player).filter((name) => name !== player.name) as name (name)}
+									<span class="text-xs text-gray-400">({name})</span>
+								{/each}
+							</div>
 						</a>
 					</td>
 					<td class="px-4 py-1 text-sm">

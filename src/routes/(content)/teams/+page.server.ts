@@ -15,11 +15,19 @@ export const load: PageServerLoad = async ({ url }) => {
 		allPlayerRatings.map((rating) => [rating.playerId, rating.rating])
 	);
 
-	// Collect unique logo URLs
+	// Collect unique logo URLs and player avatar URLs
 	const uniqueLogoUrls = new Set<string>();
+	const uniqueAvatarUrls = new Set<string>();
+
 	for (const team of teams) {
 		if (team.logo) {
 			uniqueLogoUrls.add(team.logo);
+		}
+		// Collect player avatar URLs
+		for (const player of team.players || []) {
+			if (player.avatar) {
+				uniqueAvatarUrls.add(player.avatar);
+			}
 		}
 	}
 
@@ -32,6 +40,15 @@ export const load: PageServerLoad = async ({ url }) => {
 		})
 	);
 
+	// Process all avatar URLs in parallel
+	const avatarUrlMap = new Map<string, string>();
+	await Promise.all(
+		Array.from(uniqueAvatarUrls).map(async (url) => {
+			const processed = await processImageURL(url);
+			avatarUrlMap.set(url, processed);
+		})
+	);
+
 	// Apply processed URLs to teams and calculate wins
 	const teamsWithLogos = (await Promise.all(
 		teams.map(async (team) => ({
@@ -40,12 +57,13 @@ export const load: PageServerLoad = async ({ url }) => {
 			wins: await getServerTeamWins(team.id),
 			players: team.players?.map((player) => ({
 				...player,
+				avatarURL: player.avatar ? avatarUrlMap.get(player.avatar) || null : null,
 				rating: ratingsByPlayerId.get(player.id) ?? 0
 			}))
 		}))
 	)) as (Team & {
 		wins: number;
-		players: (Player & { rating: number })[];
+		players: (Player & { rating: number; avatarURL: string | null })[];
 		logoURL: string | null;
 	})[];
 

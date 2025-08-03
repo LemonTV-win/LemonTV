@@ -13,7 +13,10 @@
 		rank,
 		expanded = false
 	}: {
-		team: Team & { players: (Player & { rating: number })[]; logoURL: string | null };
+		team: Team & {
+			players: (Player & { rating: number; avatarURL?: string | null })[];
+			logoURL: string | null;
+		};
 		wins: number;
 		rank: number;
 		expanded: boolean;
@@ -77,7 +80,10 @@
 									href={`/players/${player.slug}`}
 									class="group/player flex items-center gap-3 rounded-lg border border-gray-700/50 bg-gray-800/50 px-3 py-2 text-gray-300 transition-all duration-200 hover:border-gray-600 hover:bg-white/5 hover:shadow-[0_0_15px_rgba(255,255,255,0.1)]"
 								>
-									<PlayerAvatar {player} class="h-8 w-8" />
+									<PlayerAvatar
+										player={{ ...player, avatarURL: player.avatarURL }}
+										class="h-8 w-8"
+									/>
 									<span
 										class="font-medium transition-transform duration-200 group-hover/player:translate-x-1"
 									>
