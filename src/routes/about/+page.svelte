@@ -5,6 +5,7 @@
 	import IconX from '~icons/simple-icons/x';
 	import IconYoutube from '~icons/simple-icons/youtube';
 	import IconLinktree from '~icons/simple-icons/linktree';
+	import IconBilibili from '~icons/simple-icons/bilibili';
 	import { m } from '$lib/paraglide/messages';
 
 	const ROLE_NAMES: Record<string, () => string> = {
@@ -92,6 +93,16 @@
 				{
 					icon: IconX,
 					link: 'https://x.com/eaterrius'
+				}
+			]
+		},
+		{
+			name: '空镜槐花',
+			roles: ['chief_editor'],
+			socials: [
+				{
+					icon: IconBilibili,
+					link: 'https://space.bilibili.com/1906660896'
 				}
 			]
 		}
