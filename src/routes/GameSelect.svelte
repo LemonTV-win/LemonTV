@@ -2,7 +2,7 @@
 	import { m } from '$lib/paraglide/messages.js';
 	import IconSelect from '$lib/components/ui/IconSelect.svelte';
 	import IconOption from '$lib/components/ui/IconOption.svelte';
-
+	import { FATE_TRIGGER_URL } from '$lib/consts';
 	let { class: className = '', iconOnly = true }: { class?: string; iconOnly?: boolean } = $props();
 </script>
 
@@ -10,7 +10,7 @@
 	value="strinova"
 	onselect={(value: string) => {
 		if (value === 'fate_trigger') {
-			window.location.href = 'https://ft.lemontv.win/';
+			window.location.href = FATE_TRIGGER_URL;
 		}
 	}}
 	{iconOnly}
