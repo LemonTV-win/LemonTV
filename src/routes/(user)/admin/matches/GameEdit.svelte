@@ -843,6 +843,7 @@
 		{playerScoresA}
 		{playerScoresB}
 		{teamData}
+		{compiledGameAccountIDMaps}
 		onClose={() => (showImportModal = false)}
 	/>
 {/if}

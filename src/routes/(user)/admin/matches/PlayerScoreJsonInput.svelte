@@ -23,20 +23,75 @@
 		playerScoresA,
 		playerScoresB,
 		teamData,
+		compiledGameAccountIDMaps,
 		onClose
 	}: {
 		showModal: boolean;
 		playerScoresA: GamePlayerScore[];
 		playerScoresB: GamePlayerScore[];
 		teamData: Array<{ teamId: string; position: number; score: number }>;
+		compiledGameAccountIDMaps: Array<Map<number, { player: any; job: 'main' | 'sub' | 'coach' }>>;
 		onClose: () => void;
 	} = $props();
 
 	let importJsonData = $state('');
 	let importError = $state('');
 	let reverseTeams = $state(false);
+	let autoDetectedSwap = $state(false);
+
+	// Auto-detect if teams need to be swapped based on account IDs
+	function autoDetectTeamSwap(data: PlayerScoreData): boolean {
+		if (!compiledGameAccountIDMaps || compiledGameAccountIDMaps.length < 2) return false;
+
+		const teamAMap = compiledGameAccountIDMaps[0];
+		const teamBMap = compiledGameAccountIDMaps[1];
+
+		// Count how many players from each team are found in the imported data
+		let teamAMatches = 0;
+		let teamBMatches = 0;
+
+		// Check team A data (first array in imported data)
+		data[0].forEach((playerScore) => {
+			if (playerScore.accountId && teamAMap.has(playerScore.accountId)) {
+				teamAMatches++;
+			}
+			if (playerScore.accountId && teamBMap.has(playerScore.accountId)) {
+				teamBMatches++;
+			}
+		});
+
+		// Check team B data (second array in imported data)
+		data[1].forEach((playerScore) => {
+			if (playerScore.accountId && teamAMap.has(playerScore.accountId)) {
+				teamAMatches++;
+			}
+			if (playerScore.accountId && teamBMap.has(playerScore.accountId)) {
+				teamBMatches++;
+			}
+		});
+
+		// If more team B players are found in the first array (team A position),
+		// or more team A players are found in the second array (team B position),
+		// then we need to swap teams
+		const teamAInFirstArray = data[0].filter(
+			(p) => p.accountId && teamAMap.has(p.accountId)
+		).length;
+		const teamBInFirstArray = data[0].filter(
+			(p) => p.accountId && teamBMap.has(p.accountId)
+		).length;
+		const teamAInSecondArray = data[1].filter(
+			(p) => p.accountId && teamAMap.has(p.accountId)
+		).length;
+		const teamBInSecondArray = data[1].filter(
+			(p) => p.accountId && teamBMap.has(p.accountId)
+		).length;
+
+		// If the distribution suggests teams are swapped, return true
+		return teamBInFirstArray > teamAInFirstArray && teamAInSecondArray > teamBInSecondArray;
+	}
 
 	const EXAMPLE_JSON_DATA = `// Supports both JSON and TypeScript formats:
+// Note: Account IDs are used for auto-detection of team swapping
 
 // JSON format:
 [
@@ -52,9 +107,7 @@
       "deaths": 10,
       "assists": 11,
       "damage": 3812
-    }
-  ],
-  [
+    },
     {
       "accountId": 2340207,
       "player": "JY10137",
@@ -66,6 +119,20 @@
       "deaths": 7,
       "assists": 25,
       "damage": 5371
+    }
+  ],
+  [
+    {
+      "accountId": 3456789,
+      "player": "Player3",
+      "characters": ["Character1", "Character2"],
+      "score": 180,
+      "damageScore": 150,
+      "kills": 8,
+      "knocks": 10,
+      "deaths": 12,
+      "assists": 15,
+      "damage": 3200
     }
   ]
 ]
@@ -104,6 +171,11 @@
 
 	function importData(data: PlayerScoreData) {
 		try {
+			// Auto-detect if teams need to be swapped
+			const shouldSwapTeams = autoDetectTeamSwap(data);
+			reverseTeams = shouldSwapTeams;
+			autoDetectedSwap = shouldSwapTeams;
+
 			// Reverse teams if checkbox is checked
 			const teamAData = reverseTeams ? data[1] : data[0];
 			const teamBData = reverseTeams ? data[0] : data[1];
@@ -189,6 +261,7 @@
 		importJsonData = '';
 		importError = '';
 		reverseTeams = false;
+		autoDetectedSwap = false;
 		onClose();
 	}
 </script>
@@ -212,7 +285,8 @@
 
 			<div class="mb-4">
 				<label class="mb-2 block text-sm font-medium text-slate-300" for="jsonData">
-					Paste JSON data in PlayerScoreData format:
+					Paste JSON data in PlayerScoreData format (auto-detects team swapping based on account
+					IDs):
 				</label>
 				<textarea
 					id="jsonData"
@@ -231,6 +305,11 @@
 					/>
 					Reverse teams (swap team A and team B)
 				</label>
+				{#if autoDetectedSwap}
+					<div class="mt-2 rounded-md bg-yellow-500/20 p-2 text-sm text-yellow-200">
+						⚠️ Auto-detected team swap based on account IDs. Teams have been automatically reversed.
+					</div>
+				{/if}
 			</div>
 
 			{#if importError}
