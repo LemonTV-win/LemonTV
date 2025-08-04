@@ -19,6 +19,7 @@
 	import { page } from '$app/state';
 	import { IDREAMSKY_URL_EN, IDREAMSKY_URL_ZH, SITE_CANONICAL_HOST } from '$lib/consts';
 	import GameSelect from './GameSelect.svelte';
+	import LanguageSelect from './LanguageSelect.svelte';
 
 	let { data, children }: LayoutProps = $props();
 
@@ -191,21 +192,9 @@
 								{m.admin_panel()}
 							</a>
 						{/if}
+						<hr class="border-gray-700" />
 						<div class="px-4 py-2">
-							<div class="flex items-center gap-2">
-								<MaterialSymbolsTranslateRounded class="h-6 w-6 text-gray-300" />
-								<select
-									class="w-full rounded-md bg-gray-700 px-4 py-1 text-white"
-									onchange={({ currentTarget }) => {
-										setLocale(currentTarget.value as Locale);
-									}}
-									bind:value={locale}
-								>
-									{#each Object.entries(locales) as [locale, label]}
-										<option value={locale}>{label}</option>
-									{/each}
-								</select>
-							</div>
+							<LanguageSelect compact class="w-full" />
 							<div class="mt-2 flex items-center gap-2">
 								<Switch label={m.spoiler_mode()} bind:checked={settings.spoilerMode} />
 							</div>
@@ -224,24 +213,11 @@
 				{/if}
 			</div>
 		{:else}
-			<div class="z-10 hidden items-center gap-2 lg:flex">
-				<div class="flex items-center gap-2">
-					<MaterialSymbolsTranslateRounded class="h-6 w-6 text-gray-300" />
-					<select
-						class="rounded-md border-white/30 bg-gray-700 py-1 pr-7 pl-3 text-white"
-						onchange={({ currentTarget }) => {
-							setLocale(currentTarget.value as Locale);
-						}}
-						bind:value={locale}
-					>
-						{#each Object.entries(locales) as [locale, label]}
-							<option value={locale}>{label}</option>
-						{/each}
-					</select>
-				</div>
+			<div class="z-10 hidden items-stretch gap-2 lg:flex">
+				<LanguageSelect />
 				<a
 					href="/login?redirect={encodeURIComponent(page.url.pathname + page.url.search)}"
-					class="rounded-md border-1 border-gray-500 bg-gray-800 px-4 py-1 text-white transition-colors duration-300 hover:bg-gray-700"
+					class="flex items-center rounded-md border-1 border-gray-500 bg-gray-800 px-4 py-1 text-white transition-colors duration-300 hover:bg-gray-700"
 					>{m.sign_in()}</a
 				>
 			</div>
@@ -292,28 +268,13 @@
 							</a>
 						{/if}
 						<div class="py-2">
-							<div
-								class="flex items-center gap-2 rounded-md px-3 py-2 transition-all duration-200 hover:bg-gray-700"
-							>
-								<MaterialSymbolsTranslateRounded class="h-6 w-6 text-gray-300" />
-								<select
-									class="w-full rounded-md bg-gray-700 px-4 py-2 text-white transition-all duration-200 hover:bg-gray-600"
-									onchange={({ currentTarget }) => {
-										setLocale(currentTarget.value as Locale);
-									}}
-									bind:value={locale}
-								>
-									{#each Object.entries(locales) as [locale, label]}
-										<option value={locale}>{label}</option>
-									{/each}
-								</select>
-							</div>
+							<LanguageSelect class="w-full" />
 							<div class="mt-2 flex items-center gap-2">
 								<Switch label={m.spoiler_mode()} bind:checked={settings.spoilerMode} />
 							</div>
 						</div>
 						<hr class="border-gray-700" />
-						<form method="post" action="/?/logout" use:enhance>
+						<form method="post" action="/?/logout">
 							<button
 								type="submit"
 								class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-lg text-gray-300 transition-all duration-200 hover:bg-gray-700"
@@ -328,22 +289,7 @@
 			{:else}
 				<div class="mt-4 border-t border-gray-700 pt-4">
 					<div class="flex flex-col gap-1.5 pl-4">
-						<div
-							class="flex items-center gap-2 rounded-md px-3 py-1 text-sm transition-colors hover:bg-gray-700 hover:text-yellow-300"
-						>
-							<MaterialSymbolsTranslateRounded class="h-5 w-5" />
-							<select
-								class="w-full rounded-md border-1 border-white/30 bg-gray-700 px-4 py-2 text-white"
-								onchange={({ currentTarget }) => {
-									setLocale(currentTarget.value as Locale);
-								}}
-								bind:value={locale}
-							>
-								{#each Object.entries(locales) as [locale, label]}
-									<option value={locale}>{label}</option>
-								{/each}
-							</select>
-						</div>
+						<LanguageSelect class="w-full" />
 						<div
 							class="flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors hover:bg-gray-700 hover:text-yellow-300"
 						>
