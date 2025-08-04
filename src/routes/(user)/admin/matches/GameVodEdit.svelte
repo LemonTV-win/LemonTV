@@ -37,13 +37,13 @@
 	let isDeleting = $state(false);
 
 	const vodTypes = [
-		{ value: 'main', label: 'Main Stream' },
-		{ value: 'sub', label: 'Secondary Stream' },
-		{ value: 'restream', label: 'Restream' },
-		{ value: 'pov', label: 'Player POV' },
-		{ value: 'archive', label: 'Archive' },
-		{ value: 'clip', label: 'Highlights' },
-		{ value: 'analysis', label: 'Analysis' }
+		{ value: 'main', label: m.main_stream },
+		{ value: 'sub', label: m.secondary_stream },
+		{ value: 'restream', label: m.restream },
+		{ value: 'pov', label: m.player_pov },
+		{ value: 'archive', label: m.archive },
+		{ value: 'clip', label: m.highlights },
+		{ value: 'analysis', label: m.analysis }
 	] as const;
 
 	const platforms = [
@@ -105,11 +105,11 @@
 	function handleEnhance() {
 		return ({ result }: { result: ActionResult }) => {
 			if (result.type === 'success') {
-				successMessage = 'VOD saved successfully';
+				successMessage = m.vod_saved_successfully();
 				editingVod = null;
 				onSuccess();
 			} else if (result.type === 'failure') {
-				errorMessage = result.data?.error || 'Failed to save VOD';
+				errorMessage = result.data?.error || m.failed_to_save_vod();
 			} else if (result.type === 'error') {
 				errorMessage = result.error?.message || 'An error occurred';
 			}
@@ -126,16 +126,16 @@
 			formData.append('url', vod.url);
 			const res = await fetch('?/deleteGameVod', { method: 'POST', body: formData });
 			if (res.ok) {
-				successMessage = 'VOD deleted successfully';
+				successMessage = m.vod_deleted_successfully();
 				deletingVod = null;
 				onSuccess();
 			} else {
 				const data = await res.json().catch(() => ({}));
-				errorMessage = data?.error || 'Failed to delete VOD';
+				errorMessage = data?.error || m.failed_to_delete_vod();
 			}
 		} catch (e) {
 			console.error('Error deleting VOD:', e);
-			errorMessage = 'An error occurred while deleting';
+			errorMessage = m.error_deleting_vod();
 		} finally {
 			isDeleting = false;
 		}
@@ -174,14 +174,14 @@
 
 <div class="space-y-4">
 	<div class="flex items-center justify-between">
-		<h3 class="text-lg font-semibold text-slate-300">VODs</h3>
+		<h3 class="text-lg font-semibold text-slate-300">{m.vods()}</h3>
 		<button
 			type="button"
 			onclick={() => startEdit()}
 			class="flex items-center gap-2 rounded bg-yellow-500 px-3 py-1 text-sm text-black hover:bg-yellow-600"
 		>
 			<IconParkSolidAdd class="h-4 w-4" />
-			Add VOD
+			{m.add_vod()}
 		</button>
 	</div>
 
@@ -196,13 +196,13 @@
 	{#if editingVod}
 		<div class="rounded border border-slate-700 bg-slate-800 p-4">
 			<h4 class="mb-3 font-medium text-slate-300">
-				{editingVod.url ? 'Edit VOD' : 'Add VOD'}
+				{editingVod.url ? m.edit_vod() : m.add_vod()}
 			</h4>
 			<form method="POST" action="?/saveGameVod" use:enhance={handleEnhance} class="space-y-3">
 				<input type="hidden" name="gameId" value={gameId} />
 
 				<div>
-					<label for="vodUrl" class="block text-sm font-medium text-slate-300">VOD URL *</label>
+					<label for="vodUrl" class="block text-sm font-medium text-slate-300">{m.vod_url()}</label>
 					<div class="relative">
 						<input
 							type="url"
@@ -225,7 +225,9 @@
 				</div>
 
 				<div>
-					<label for="vodType" class="block text-sm font-medium text-slate-300">Type *</label>
+					<label for="vodType" class="block text-sm font-medium text-slate-300"
+						>{m.vod_type()}</label
+					>
 					<select
 						id="vodType"
 						name="type"
@@ -234,27 +236,29 @@
 						class="mt-1 block w-full rounded border border-slate-700 bg-slate-800 px-3 py-2 text-white shadow-sm focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 focus:outline-none"
 					>
 						{#each vodTypes as type}
-							<option value={type.value}>{type.label}</option>
+							<option value={type.value}>{type.label()}</option>
 						{/each}
 					</select>
 				</div>
 
 				<div class="grid grid-cols-2 gap-3">
 					<div>
-						<label for="vodTitle" class="block text-sm font-medium text-slate-300">Title</label>
+						<label for="vodTitle" class="block text-sm font-medium text-slate-300"
+							>{m.vod_title()}</label
+						>
 						<input
 							type="text"
 							id="vodTitle"
 							name="title"
 							bind:value={editingVod.title}
 							class="mt-1 block w-full rounded border border-slate-700 bg-slate-800 px-3 py-2 text-white shadow-sm focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 focus:outline-none"
-							placeholder="VOD title"
+							placeholder={m.vod_title_placeholder()}
 						/>
 					</div>
 
 					<div>
 						<label for="vodPlatform" class="block text-sm font-medium text-slate-300"
-							>Platform</label
+							>{m.vod_platform()}</label
 						>
 						<select
 							id="vodPlatform"
@@ -262,7 +266,7 @@
 							bind:value={editingVod.platform}
 							class="mt-1 block w-full rounded border border-slate-700 bg-slate-800 px-3 py-2 text-white shadow-sm focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 focus:outline-none"
 						>
-							<option value="">Select platform</option>
+							<option value="">{m.select_platform()}</option>
 							{#each platforms as platform}
 								<option value={platform.value}>{platform.label}</option>
 							{/each}
@@ -273,7 +277,7 @@
 				<div class="grid grid-cols-2 gap-3">
 					<div>
 						<label for="vodLanguage" class="block text-sm font-medium text-slate-300"
-							>Language</label
+							>{m.vod_language()}</label
 						>
 						<input
 							type="text"
@@ -281,13 +285,13 @@
 							name="language"
 							bind:value={editingVod.language}
 							class="mt-1 block w-full rounded border border-slate-700 bg-slate-800 px-3 py-2 text-white shadow-sm focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 focus:outline-none"
-							placeholder="en, zh, etc."
+							placeholder={m.language_placeholder()}
 						/>
 					</div>
 
 					<div>
 						<label for="vodStartTime" class="block text-sm font-medium text-slate-300"
-							>Start Time (seconds)</label
+							>{m.vod_start_time()}</label
 						>
 						<input
 							type="number"
@@ -304,7 +308,7 @@
 				<div class="grid grid-cols-2 gap-3">
 					<div>
 						<label for="vodPlayerId" class="block text-sm font-medium text-slate-300"
-							>Player ID</label
+							>{m.vod_player_id()}</label
 						>
 						<input
 							type="text"
@@ -312,19 +316,21 @@
 							name="playerId"
 							bind:value={editingVod.playerId}
 							class="mt-1 block w-full rounded border border-slate-700 bg-slate-800 px-3 py-2 text-white shadow-sm focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 focus:outline-none"
-							placeholder="For POV VODs"
+							placeholder={m.for_pov_vods()}
 						/>
 					</div>
 
 					<div>
-						<label for="vodTeamId" class="block text-sm font-medium text-slate-300">Team ID</label>
+						<label for="vodTeamId" class="block text-sm font-medium text-slate-300"
+							>{m.vod_team_id()}</label
+						>
 						<input
 							type="text"
 							id="vodTeamId"
 							name="teamId"
 							bind:value={editingVod.teamId}
 							class="mt-1 block w-full rounded border border-slate-700 bg-slate-800 px-3 py-2 text-white shadow-sm focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 focus:outline-none"
-							placeholder="For team-specific VODs"
+							placeholder={m.for_team_specific_vods()}
 						/>
 					</div>
 				</div>
@@ -337,7 +343,7 @@
 							bind:checked={editingVod.official}
 							class="rounded border-slate-700 bg-slate-800 text-yellow-500 focus:ring-yellow-500"
 						/>
-						<span class="text-sm text-slate-300">Official VOD</span>
+						<span class="text-sm text-slate-300">{m.official_vod()}</span>
 					</label>
 
 					<label class="flex items-center gap-2">
@@ -347,7 +353,7 @@
 							bind:checked={editingVod.available}
 							class="rounded border-slate-700 bg-slate-800 text-yellow-500 focus:ring-yellow-500"
 						/>
-						<span class="text-sm text-slate-300">Available</span>
+						<span class="text-sm text-slate-300">{m.available()}</span>
 					</label>
 				</div>
 
@@ -356,14 +362,14 @@
 						type="submit"
 						class="rounded bg-yellow-500 px-4 py-2 text-black hover:bg-yellow-600"
 					>
-						Save
+						{m.save()}
 					</button>
 					<button
 						type="button"
 						onclick={cancelEdit}
 						class="rounded border border-slate-700 bg-slate-800 px-4 py-2 text-slate-300 hover:bg-slate-700"
 					>
-						Cancel
+						{m.cancel()}
 					</button>
 				</div>
 			</form>
@@ -374,7 +380,7 @@
 		<div
 			class="rounded border border-dashed border-slate-700 bg-slate-800/50 p-4 text-center text-slate-400"
 		>
-			No VODs added yet
+			{m.no_vods_added_yet()}
 		</div>
 	{:else}
 		<div class="space-y-2">
@@ -393,28 +399,32 @@
 								{vod.title || vod.url}
 							</a>
 							{#if vod.official}
-								<span class="rounded bg-green-600 px-2 py-1 text-xs text-white">Official</span>
+								<span class="rounded bg-green-600 px-2 py-1 text-xs text-white">{m.official()}</span
+								>
 							{/if}
 							{#if !vod.available}
-								<span class="rounded bg-red-600 px-2 py-1 text-xs text-white">Unavailable</span>
+								<span class="rounded bg-red-600 px-2 py-1 text-xs text-white"
+									>{m.unavailable()}</span
+								>
 							{/if}
 						</div>
 						<div class="mt-1 flex flex-wrap gap-2 text-xs text-slate-500">
-							<span>Type: {vod.type}</span>
+							<span>{m.type_label()} {vod.type}</span>
 							{#if vod.platform}
-								<span>Platform: {vod.platform}</span>
+								<span>{m.platform_label()} {vod.platform}</span>
 							{/if}
 							{#if vod.language}
-								<span>Language: {vod.language}</span>
+								<span>{m.language_label()} {vod.language}</span>
 							{/if}
 							{#if vod.startTime}
 								<span
-									>Start: {Math.floor(vod.startTime / 60)}:{(vod.startTime % 60)
+									>{m.start_label()}
+									{Math.floor(vod.startTime / 60)}:{(vod.startTime % 60)
 										.toString()
 										.padStart(2, '0')}</span
 								>
 							{/if}
-							<span>Added: {new Date(vod.createdAt).toLocaleDateString()}</span>
+							<span>{m.added_label()} {new Date(vod.createdAt).toLocaleDateString()}</span>
 						</div>
 					</div>
 					<div class="flex gap-2">
@@ -422,7 +432,7 @@
 							type="button"
 							onclick={() => startEdit(vod)}
 							class="rounded bg-slate-700 p-1 text-slate-300 hover:bg-slate-600"
-							title="Edit VOD"
+							title={m.edit_vod_title()}
 						>
 							<IconParkSolidEdit class="h-4 w-4" />
 						</button>
@@ -430,7 +440,7 @@
 							type="button"
 							onclick={() => handleDeleteVod(vod)}
 							class="rounded bg-red-900/50 p-1 text-red-400 hover:bg-red-800/50"
-							title="Delete VOD"
+							title={m.delete_vod_title()}
 							disabled={isDeleting && deletingVod === vod}
 						>
 							<IconParkSolidDelete class="h-4 w-4" />
