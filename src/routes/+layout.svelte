@@ -228,7 +228,7 @@
 				<div class="flex items-center gap-2">
 					<MaterialSymbolsTranslateRounded class="h-6 w-6 text-gray-300" />
 					<select
-						class="rounded-lg bg-gray-700 px-3 py-1 text-white"
+						class="rounded-md border-white/30 bg-gray-700 py-1 pr-7 pl-3 text-white"
 						onchange={({ currentTarget }) => {
 							setLocale(currentTarget.value as Locale);
 						}}
@@ -272,32 +272,32 @@
 						<UserAvatar email={data.user.email} class="h-8 w-8" />
 						<span class="text-lg font-medium">{data.user.username}</span>
 					</div>
-					<div class="pl-4">
+					<div class="flex flex-col gap-1.5 pl-4">
 						<a
 							href="/profile"
-							class="flex items-center gap-2 rounded-lg px-3 py-2 text-lg text-gray-300 transition-all duration-200 hover:bg-gray-700"
+							class="flex items-center gap-2 rounded-md px-3 py-2 text-lg text-gray-300 transition-all duration-200 hover:bg-gray-700"
 							onclick={toggleMobileMenu}
 						>
-							<MaterialSymbolsSettingsRounded class="h-6 w-6" />
+							<MaterialSymbolsSettingsRounded class="h-5 w-5" />
 							{m.profile_settings()}
 						</a>
 						{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
 							<a
 								href="/admin"
-								class="flex items-center gap-2 rounded-lg px-3 py-2 text-lg text-gray-300 transition-all duration-200 hover:bg-gray-700"
+								class="flex items-center gap-2 rounded-md px-3 py-2 text-lg text-gray-300 transition-all duration-200 hover:bg-gray-700"
 								onclick={toggleMobileMenu}
 							>
-								<MaterialSymbolsAdminPanelSettingsRounded class="h-6 w-6" />
+								<MaterialSymbolsAdminPanelSettingsRounded class="h-5 w-5" />
 								{m.admin_panel()}
 							</a>
 						{/if}
 						<div class="py-2">
 							<div
-								class="flex items-center gap-2 rounded-lg px-3 py-2 transition-all duration-200 hover:bg-gray-700"
+								class="flex items-center gap-2 rounded-md px-3 py-2 transition-all duration-200 hover:bg-gray-700"
 							>
 								<MaterialSymbolsTranslateRounded class="h-6 w-6 text-gray-300" />
 								<select
-									class="w-full rounded-lg bg-gray-700 px-4 py-2 text-white transition-all duration-200 hover:bg-gray-600"
+									class="w-full rounded-md bg-gray-700 px-4 py-2 text-white transition-all duration-200 hover:bg-gray-600"
 									onchange={({ currentTarget }) => {
 										setLocale(currentTarget.value as Locale);
 									}}
@@ -316,7 +316,7 @@
 						<form method="post" action="/?/logout" use:enhance>
 							<button
 								type="submit"
-								class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-lg text-gray-300 transition-all duration-200 hover:bg-gray-700"
+								class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-lg text-gray-300 transition-all duration-200 hover:bg-gray-700"
 								onclick={toggleMobileMenu}
 							>
 								<MaterialSymbolsLogoutRounded class="h-6 w-6" />
@@ -327,11 +327,13 @@
 				</div>
 			{:else}
 				<div class="mt-4 border-t border-gray-700 pt-4">
-					<div class="mb-4">
-						<div class="flex items-center gap-2">
-							<MaterialSymbolsTranslateRounded class="h-6 w-6 text-gray-300" />
+					<div class="flex flex-col gap-1.5 pl-4">
+						<div
+							class="flex items-center gap-2 rounded-md px-3 py-1 text-sm transition-colors hover:bg-gray-700 hover:text-yellow-300"
+						>
+							<MaterialSymbolsTranslateRounded class="h-5 w-5" />
 							<select
-								class="w-full rounded-lg bg-gray-700 px-4 py-2 text-white"
+								class="w-full rounded-md border-1 border-white/30 bg-gray-700 px-4 py-2 text-white"
 								onchange={({ currentTarget }) => {
 									setLocale(currentTarget.value as Locale);
 								}}
@@ -342,7 +344,9 @@
 								{/each}
 							</select>
 						</div>
-						<div class="mt-2 flex items-center gap-2">
+						<div
+							class="flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors hover:bg-gray-700 hover:text-yellow-300"
+						>
 							<Switch label={m.spoiler_mode()} bind:checked={settings.spoilerMode} />
 						</div>
 					</div>
