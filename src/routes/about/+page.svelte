@@ -11,7 +11,11 @@
 	import IconTrend from '~icons/icon-park-solid/trend-two';
 	import IconHome from '~icons/icon-park-solid/home';
 	import { m } from '$lib/paraglide/messages';
-	import { IDREAMSKY_URL_EN, IDREAMSKY_URL_ZH } from '$lib/consts';
+	import {
+		IDREAMSKY_URL_EN,
+		IDREAMSKY_URL_ZH,
+		STRINOVA_ESPORTS_HUB_DISCORD_URL
+	} from '$lib/consts';
 	import { getLocale } from '$lib/paraglide/runtime';
 	import placeholderAvatar from '$assets/placeholder_avatar.png';
 	import type { PageProps } from './$types';
@@ -144,7 +148,7 @@
 						<h3 class="mb-2 text-xl font-semibold">{m.about_team_join_title()}</h3>
 						<p class="mb-4 text-slate-300">{m.about_team_join_description()}</p>
 						<a
-							href="https://discord.gg/mY8DMatXM4"
+							href={STRINOVA_ESPORTS_HUB_DISCORD_URL}
 							target="_blank"
 							rel="noopener noreferrer"
 							class="inline-flex items-center gap-2 text-blue-400 hover:underline"
@@ -175,7 +179,7 @@
 						{m.about_links_github()}
 					</a>
 					<a
-						href="https://discord.gg/mY8DMatXM4"
+						href={STRINOVA_ESPORTS_HUB_DISCORD_URL}
 						target="_blank"
 						rel="noopener noreferrer"
 						class="flex items-center gap-2 text-blue-400 hover:underline"
