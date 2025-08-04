@@ -125,7 +125,7 @@ async function extractTwitchMetadata(videoId: string): Promise<VideoMetadata> {
 		player: data.author_name
 	};
 }
-export async function extractVideoMetadata(url: string): Promise<VideoMetadata> {
+async function extractVideoMetadata(url: string): Promise<VideoMetadata> {
 	// Extract start time from URL first
 	const startTime = extractStartTimeFromUrl(url);
 
