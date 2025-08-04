@@ -10,10 +10,22 @@
 	import { m } from '$lib/paraglide/messages';
 	import { LOGIN_SCHEMA, REGISTER_SCHEMA } from '$lib/validations/auth';
 	import InlineAlert from '$lib/components/InlineAlert.svelte';
+	import { goto } from '$app/navigation';
 
 	type FormData = { message?: string; success?: boolean; redirect?: string } | null;
 	let { form, data }: { form: FormData; data: PageServerData } = $props();
+
 	let activeTab = $state(data.tab || 'login');
+	$effect(() => {
+		const url = new URL(window.location.href);
+		if (activeTab === 'login') {
+			url.searchParams.set('tab', 'login');
+		} else {
+			url.searchParams.set('tab', 'register');
+		}
+		goto(url.toString(), { keepFocus: true, noScroll: true });
+	});
+
 	let showPassword = $state(false);
 	let showConfirmPassword = $state(false);
 
