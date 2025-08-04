@@ -88,7 +88,7 @@
 		/>
 		{#if getCurrentPlayerName()}
 			<div
-				class="absolute top-1/2 right-2 max-w-20 -translate-y-1/2 truncate text-sm text-slate-400"
+				class="absolute top-1/2 right-2 max-w-[1/2] -translate-y-1/2 truncate text-sm text-slate-400"
 			>
 				{getCurrentPlayerName()}
 			</div>

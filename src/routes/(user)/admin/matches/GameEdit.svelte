@@ -379,10 +379,16 @@
 					value={ps.accountId}
 					options={new Map(
 						Array.from(compiledGameAccountIDMaps[team === 'A' ? 0 : 1].entries()).map(
-							([accountId, roster]) => [
-								accountId,
-								`${roster.player.name} ${roster.player.aliases.map((a) => `(${a})`).join(' ')}`
-							]
+							([accountId, roster]) => {
+								// Find the specific game account to get the server
+								const account = roster.player.gameAccounts.find((a) => a.accountId === accountId);
+								const serverName =
+									account?.server === 'Strinova' ? m.strinova_server() : m.calabiyau_server();
+								return [
+									accountId,
+									`${roster.player.name} ${roster.player.aliases.map((a) => `(${a})`).join(' ')} (${serverName})`
+								];
+							}
 						)
 					)}
 					placeholder={m.enter_account_id()}
