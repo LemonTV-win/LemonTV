@@ -14,6 +14,7 @@ import { social_platform } from '$lib/server/db/schemas/game/social';
 import { db } from '$lib/server/db';
 import { getUsers } from '$lib/server/data/users';
 import { formatSlug } from '$lib/utils/strings';
+import { processImageURL } from '$lib/server/storage';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const players = await getPlayers();
@@ -25,10 +26,18 @@ export const load: PageServerLoad = async ({ url }) => {
 	const id = url.searchParams.get('id');
 	const searchQuery = url.searchParams.get('searchQuery');
 
+	const avatarMap = new Map<string, string>();
+	for await (const player of players) {
+		if (player.avatar) {
+			avatarMap.set(player.avatar, await processImageURL(player.avatar));
+		}
+	}
+
 	return {
 		players: players.map((player) => ({
 			...player,
-			user: users.find((u) => u.id === player.user?.id)
+			user: users.find((u) => u.id === player.user?.id),
+			avatarURL: player.avatar ? avatarMap.get(player.avatar) : null
 		})),
 		socialPlatforms,
 		playersTeams,
