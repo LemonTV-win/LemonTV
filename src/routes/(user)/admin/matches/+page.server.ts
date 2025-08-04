@@ -1849,6 +1849,39 @@ const GAME_ACTIONS = {
 			}
 		}
 
+		// Parse VODs for new games
+		const gameVods: any[] = [];
+		for (let i = 0; i < 10; i++) {
+			// Allow up to 10 VODs
+			const url = formData.get(`gameVods[${i}].url`);
+			if (!url) continue;
+
+			gameVods.push({
+				url: String(url),
+				type:
+					(formData.get(`gameVods[${i}].type`) as
+						| 'main'
+						| 'sub'
+						| 'restream'
+						| 'pov'
+						| 'archive'
+						| 'clip'
+						| 'analysis') || 'main',
+				playerId: formData.get(`gameVods[${i}].playerId`) || null,
+				teamId: formData.get(`gameVods[${i}].teamId`) || null,
+				language: formData.get(`gameVods[${i}].language`) || null,
+				platform:
+					(formData.get(`gameVods[${i}].platform`) as 'youtube' | 'bilibili' | 'twitch') || null,
+				title: formData.get(`gameVods[${i}].title`) || null,
+				official: formData.get(`gameVods[${i}].official`) === 'on',
+				startTime: formData.get(`gameVods[${i}].startTime`)
+					? parseInt(formData.get(`gameVods[${i}].startTime`) as string)
+					: null,
+				available: formData.get(`gameVods[${i}].available`) === 'on',
+				gameId: undefined // will set after game insert
+			});
+		}
+
 		if (
 			!gameData.matchId ||
 			!gameData.mapId ||
@@ -1912,6 +1945,25 @@ const GAME_ACTIONS = {
 							assists: ps.assists,
 							damage: ps.damage,
 							accountId: ps.accountId
+						}))
+					);
+				}
+
+				// Insert VODs
+				if (gameVods.length) {
+					await tx.insert(table.gameVod).values(
+						gameVods.map((vod) => ({
+							gameId: newGame.id,
+							url: vod.url,
+							type: vod.type,
+							playerId: vod.playerId,
+							teamId: vod.teamId,
+							language: vod.language,
+							platform: vod.platform,
+							title: vod.title,
+							official: vod.official,
+							startTime: vod.startTime,
+							available: vod.available
 						}))
 					);
 				}
