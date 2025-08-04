@@ -378,7 +378,7 @@
 
 		<div>
 			<label for="playerAvatar" class="block text-sm font-medium text-slate-300">
-				{m.logo()}
+				{m.avatar()}
 			</label>
 			<ImageUpload bind:value={playerAvatar} prefix="players" />
 			<input type="hidden" name="avatar" value={playerAvatar} />

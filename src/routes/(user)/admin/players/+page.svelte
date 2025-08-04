@@ -535,7 +535,7 @@
 							{/if}
 						</button>
 					</th>
-					<th class="px-4 py-1">{m.logo()}</th>
+					<th class="px-4 py-1">{m.avatar()}</th>
 					<th class="px-4 py-1">
 						<button
 							class="flex items-center gap-1 text-left"
