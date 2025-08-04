@@ -365,7 +365,9 @@
 	>
 		<div class="mx-auto max-w-2xl">
 			<p class="mb-4 text-lg">
-				© 2025 <a href="/about" class="text-yellow-300 hover:text-yellow-400 hover:underline"
+				© 2025 <a
+					href="/about"
+					class="text-yellow-300 transition-colors duration-100 hover:text-yellow-400 hover:underline"
 					>LemonTV</a
 				>
 			</p>
@@ -380,7 +382,7 @@
 					href="https://discord.gg/mY8DMatXM4"
 					target="_blank"
 					rel="noopener noreferrer"
-					class="text-yellow-300 hover:text-yellow-400"
+					class="text-yellow-300 transition-colors duration-300 hover:text-yellow-400"
 				>
 					<IconDiscord class="h-6 w-6" />
 				</a>
@@ -388,7 +390,7 @@
 					href="https://github.com/mkpoli/LemonTV"
 					target="_blank"
 					rel="noopener noreferrer"
-					class="text-yellow-300 hover:text-yellow-400"
+					class="text-yellow-300 transition-colors duration-300 hover:text-yellow-400"
 				>
 					<IconGithub class="h-6 w-6" />
 				</a>
@@ -398,7 +400,7 @@
 					href="https://lemonade.mkpo.li/"
 					target="_blank"
 					rel="noopener noreferrer"
-					class="text-yellow-300 hover:text-yellow-400"
+					class="text-yellow-300 transition-colors duration-300 hover:text-yellow-400"
 				>
 					Lemonade
 				</a>
@@ -406,7 +408,7 @@
 					href="https://slice.lemontv.win/"
 					target="_blank"
 					rel="noopener noreferrer"
-					class="text-yellow-300 hover:text-yellow-400"
+					class="text-yellow-300 transition-colors duration-300 hover:text-yellow-400"
 				>
 					LemonSlice
 				</a>
