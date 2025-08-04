@@ -163,7 +163,7 @@
 			<div class="user-menu relative hidden lg:block">
 				<button
 					onclick={toggleUserMenu}
-					class="flex items-center gap-2 rounded-full bg-gray-700 p-1 hover:bg-gray-600"
+					class="flex cursor-pointer items-center gap-2 rounded-full bg-gray-700 p-1 hover:bg-gray-600"
 				>
 					<UserAvatar email={data.user.email} class="h-8 w-8" />
 				</button>
