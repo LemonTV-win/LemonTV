@@ -64,4 +64,18 @@ export interface Game {
 		B: [PlayerScore, PlayerScore, PlayerScore, PlayerScore, PlayerScore]
 	];
 	winner: number;
+	vods?: Array<{
+		url: string;
+		type: 'main' | 'sub' | 'restream' | 'pov' | 'archive' | 'clip' | 'analysis';
+		playerId?: string;
+		teamId?: string;
+		language?: string;
+		platform?: 'youtube' | 'bilibili' | 'twitch';
+		title?: string;
+		official: boolean;
+		startTime?: number;
+		available: boolean;
+		createdAt: Date;
+		updatedAt: Date;
+	}>;
 }

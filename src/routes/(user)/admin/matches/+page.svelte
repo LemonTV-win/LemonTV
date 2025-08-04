@@ -13,6 +13,7 @@
 	import { goto } from '$app/navigation';
 	import MatchEdit from './MatchEdit.svelte';
 	import type { Match, MatchTeam, MatchMap, Team } from '$lib/server/db/schema';
+	import type { GameVod } from '$lib/server/db/schemas/game/match';
 	import StageEdit from './StageEdit.svelte';
 	import Modal from '$lib/components/Modal.svelte';
 	import BracketEdit from './BracketEdit.svelte';
@@ -175,6 +176,7 @@
 							assists: number;
 							damage: number;
 						}>;
+						vods?: GameVod[];
 					}>;
 				}>;
 				rounds: Array<{
@@ -413,6 +415,7 @@
 				assists: number;
 				damage: number;
 			}>;
+			vods?: GameVod[];
 		}>;
 	};
 
@@ -942,6 +945,11 @@
 														<span class="text-xs text-gray-500"
 															>({formatDuration(game.duration)})</span
 														>
+														{#if game.vods && game.vods.length > 0}
+															<span class="text-xs text-blue-400" title="Has VODs">
+																📹 {game.vods.length}
+															</span>
+														{/if}
 													</div>
 													<div class="flex items-center gap-2">
 														<span

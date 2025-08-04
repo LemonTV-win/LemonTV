@@ -23,6 +23,7 @@ import { MATCH_TEAMS, MATCH_MAPS } from './seeds/matches';
 import { DISCORD_SERVERS, COMMUNITY_TAGS, DISCORD_SERVER_TAGS } from './seeds/community';
 import { GAMES, GAME_TEAMS, GAME_PLAYER_SCORES } from './seeds/games';
 import { GAME_ACCOUNTS } from './seeds/game-accounts';
+import { GAME_VODS } from './seeds/game-vods';
 
 export async function seed() {
 	console.info('[SEED] Starting seeding...');
@@ -34,6 +35,8 @@ export async function seed() {
 	console.info('[SEED] - Deleted gamePlayerScore');
 	await db.delete(schema.gameTeam);
 	console.info('[SEED] - Deleted gameTeam');
+	await db.delete(schema.gameVod);
+	console.info('[SEED] - Deleted gameVod');
 	await db.delete(schema.game);
 	console.info('[SEED] - Deleted game');
 	await db.delete(schema.matchMap);
@@ -165,6 +168,9 @@ export async function seed() {
 
 	console.info('[SEED] Seeding game player scores...');
 	await db.insert(schema.gamePlayerScore).values(GAME_PLAYER_SCORES);
+
+	console.info('[SEED] Seeding game VODs...');
+	await db.insert(schema.gameVod).values(GAME_VODS);
 
 	// After seeding events, add some sample videos
 	console.info('[SEED] Seeding event videos...');

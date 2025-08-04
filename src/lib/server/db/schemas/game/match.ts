@@ -3,7 +3,10 @@ import { sqliteTable, text, integer, check, primaryKey } from 'drizzle-orm/sqlit
 import { team } from './team';
 import { map } from './game';
 import type { GameMap } from '$lib/data/game';
+import { player } from './player';
+import type { TLanguageCode } from 'countries-list';
 
+// #region Match
 export const match = sqliteTable(
 	'match',
 	{
@@ -43,6 +46,13 @@ export const matchMap = sqliteTable('match_map', {
 	map_picker_position: integer('map_picker_position'),
 	side_picker_position: integer('side_picker_position')
 });
+
+export type Match = typeof match.$inferSelect;
+export type MatchTeam = typeof matchTeam.$inferSelect;
+export type MatchMap = typeof matchMap.$inferSelect;
+// #endregion
+
+// #region Game
 
 export const game = sqliteTable('game', {
 	id: integer('id').primaryKey(),
@@ -96,9 +106,44 @@ export const gamePlayerScore = sqliteTable('game_player_score', {
 	damage: integer('damage').notNull()
 });
 
-export type Match = typeof match.$inferSelect;
-export type MatchTeam = typeof matchTeam.$inferSelect;
-export type MatchMap = typeof matchMap.$inferSelect;
+export const gameVod = sqliteTable(
+	'game_vod',
+	{
+		gameId: integer('game_id')
+			.references(() => game.id)
+			.notNull(),
+		url: text('url').notNull(),
+		type: text('type', {
+			enum: [
+				'main', // Main casted stream (Official TO=Tournament Organizer broadcast with commentary)
+				'sub', // Other official stream w/o casters or alternate cam / clean feed / map cam, etc.
+				'restream', // Non-offcial restream of main w/ custom casting, e.g. in other languages or reaction
+				'pov', // Live or recorded player POV by player or TO or third party, either full or cut
+				'archive', // Non-official unmodified or full game replay record for archive purposes
+				'clip', // Highlight/lowlight cut clip of edited videos showing only kills or final moments
+				'analysis' // Post-match analysis of a specific moment in the game or strategy reviews
+			]
+		}).notNull(),
+		playerId: text('player_id').references(() => player.id), // for POV VODs
+		teamId: text('team_id').references(() => team.id), // for POV or team specific contents
+		language: text('language').$type<TLanguageCode>(), // main language of the VOD
+		platform: text('platform').$type<'youtube' | 'bilibili' | 'twitch'>(),
+		title: text('title'),
+		official: integer('official', { mode: 'boolean' }).notNull().default(true),
+		startTime: integer('start_time'), // in seconds
+		available: integer('available', { mode: 'boolean' }).notNull().default(true),
+		createdAt: integer('created_at', { mode: 'timestamp_ms' })
+			.notNull()
+			.default(sql`(unixepoch() * 1000)`),
+		updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
+			.notNull()
+			.default(sql`(unixepoch() * 1000)`)
+	},
+	(t) => [primaryKey({ columns: [t.gameId, t.url] })]
+);
+
 export type Game = typeof game.$inferSelect;
 export type GameTeam = typeof gameTeam.$inferSelect;
 export type GamePlayerScore = typeof gamePlayerScore.$inferSelect;
+export type GameVod = typeof gameVod.$inferSelect;
+// #endregion

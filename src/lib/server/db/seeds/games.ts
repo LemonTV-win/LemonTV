@@ -3,6 +3,7 @@ import { MATCHES } from './stages';
 import { GAME_ACCOUNTS } from './game-accounts';
 import type { GameTeam } from '../schema';
 import type { GamePlayerScore } from '../schema';
+import type { GameMap } from '$lib/data/game';
 
 // Game metadata and configuration
 const GAME_CONFIG = {
@@ -221,7 +222,7 @@ function generateGames() {
 	const games: {
 		id: number;
 		matchId: string;
-		mapId: string;
+		mapId: GameMap;
 		duration: number;
 		winner: number;
 	}[] = [];
@@ -270,7 +271,7 @@ function generateGames() {
 			const game = {
 				id: gameId,
 				matchId: match.id,
-				mapId,
+				mapId: mapId as GameMap,
 				duration,
 				winner
 			};

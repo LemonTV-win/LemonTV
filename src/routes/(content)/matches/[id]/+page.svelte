@@ -37,6 +37,7 @@
 	import Scoreboard from './Scoreboard.svelte';
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
+	import VodDisplay from './VodDisplay.svelte';
 	import { m } from '$lib/paraglide/messages';
 	import { goto } from '$app/navigation';
 
@@ -137,6 +138,17 @@
 			/>
 		{/if}
 	</div>
+
+	<!-- VOD Display -->
+	{#if data.match.games?.[currentMapID]?.vods}
+		<div class="px-8 py-4">
+			<VodDisplay
+				vods={data.match.games[currentMapID].vods || []}
+				gameId={data.match.games[currentMapID].id}
+				mapName={MAP_2_NAME[data.match.maps[currentMapID].map]}
+			/>
+		</div>
+	{/if}
 {/if}
 
 <style lang="postcss">

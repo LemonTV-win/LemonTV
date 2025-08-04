@@ -1,9 +1,9 @@
 import { error, fail } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { desc, eq } from 'drizzle-orm';
+import { desc, eq, and } from 'drizzle-orm';
 import { processImageURL } from '$lib/server/storage';
-import type { TCountryCode } from 'countries-list';
+import type { TCountryCode, TLanguageCode } from 'countries-list';
 import type { Region, GameMap } from '$lib/data/game';
 import { MAPS } from '$lib/data/game';
 import type { PageServerLoad } from './$types';
@@ -127,7 +127,8 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 			map: table.map,
 			game: table.game,
 			game_team: table.gameTeam,
-			game_player_score: table.gamePlayerScore
+			game_player_score: table.gamePlayerScore,
+			game_vod: table.gameVod
 		})
 		.from(table.event)
 		.leftJoin(table.stage, eq(table.event.id, table.stage.eventId))
@@ -139,6 +140,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		.leftJoin(table.game, eq(table.match.id, table.game.matchId))
 		.leftJoin(table.gameTeam, eq(table.game.id, table.gameTeam.gameId))
 		.leftJoin(table.gamePlayerScore, eq(table.game.id, table.gamePlayerScore.gameId))
+		.leftJoin(table.gameVod, eq(table.game.id, table.gameVod.gameId))
 		.orderBy(desc(table.event.createdAt));
 
 	const queryEndTime = Date.now();
@@ -381,6 +383,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 					}
 				>;
 				playerScores: Array<(typeof processedEvents)[number]['game_player_score']>;
+				vods: Array<(typeof processedEvents)[number]['game_vod']>;
 			}
 		>;
 	};
@@ -489,7 +492,8 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 										winner: game.winner,
 										map: gameMap || { id: game.mapId }, // Use game map or fallback
 										teams: [],
-										playerScores: []
+										playerScores: [],
+										vods: []
 									});
 								}
 
@@ -526,6 +530,20 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 											);
 											if (!scoreExists) {
 												gameData.playerScores.push(playerScore);
+											}
+										}
+									}
+
+									// If there's a game vod, add it to the game's vods
+									if (row.game_vod) {
+										const vod = row.game_vod;
+										if (vod.gameId) {
+											// Check if vod already exists to avoid duplicates
+											const vodExists = gameData.vods.some(
+												(v: any) => v && v.gameId === vod.gameId && v.url === vod.url
+											);
+											if (!vodExists) {
+												gameData.vods.push(vod);
 											}
 										}
 									}
@@ -657,7 +675,8 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 									score: team.score,
 									team: team.team
 								})),
-								playerScores: game.playerScores
+								playerScores: game.playerScores,
+								vods: game.vods
 							}))
 						}));
 						return [
@@ -724,6 +743,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 									team: (typeof processedEvents)[number]['teams'];
 								}>;
 								playerScores: Array<(typeof processedEvents)[number]['game_player_score']>;
+								vods: Array<(typeof processedEvents)[number]['game_vod']>;
 							}>;
 						}>;
 						rounds: Array<(typeof stageRounds)[number]>;
@@ -2139,6 +2159,7 @@ const GAME_ACTIONS = {
 			// Delete related records first
 			await db.delete(table.gameTeam).where(eq(table.gameTeam.gameId, id));
 			await db.delete(table.gamePlayerScore).where(eq(table.gamePlayerScore.gameId, id));
+			await db.delete(table.gameVod).where(eq(table.gameVod.gameId, id));
 
 			// Delete the game
 			await db.delete(table.game).where(eq(table.game.id, id));
@@ -2167,11 +2188,187 @@ const GAME_ACTIONS = {
 	}
 };
 
+const VOD_ACTIONS = {
+	saveGameVod: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
+		const permissionResult = checkPermissions(locals, ['admin', 'editor']);
+		if (permissionResult.status === 'error') {
+			return fail(permissionResult.statusCode, {
+				error: permissionResult.error
+			});
+		}
+
+		const formData = await request.formData();
+		const gameId = parseInt(formData.get('gameId') as string);
+		const url = formData.get('url') as string;
+		const type = formData.get('type') as
+			| 'main'
+			| 'sub'
+			| 'restream'
+			| 'pov'
+			| 'archive'
+			| 'clip'
+			| 'analysis';
+		const playerId = formData.get('playerId') as string;
+		const teamId = formData.get('teamId') as string;
+		const language = formData.get('language') as TLanguageCode;
+		const platform = formData.get('platform') as 'youtube' | 'bilibili' | 'twitch' | null;
+		const title = formData.get('title') as string;
+		const official = formData.get('official') === 'on';
+		const startTime = formData.get('startTime') as string;
+		const available = formData.get('available') === 'on';
+
+		if (!gameId || !url || !type) {
+			return fail(400, {
+				error: 'Game ID, URL, and Type are required'
+			});
+		}
+
+		try {
+			// Check if game exists
+			const game = await db.select().from(table.game).where(eq(table.game.id, gameId)).limit(1);
+			if (!game.length) {
+				return fail(404, {
+					error: 'Game not found'
+				});
+			}
+
+			// Check if VOD already exists
+			const existingVod = await db
+				.select()
+				.from(table.gameVod)
+				.where(and(eq(table.gameVod.gameId, gameId), eq(table.gameVod.url, url)))
+				.limit(1);
+
+			const vodData = {
+				gameId,
+				url,
+				type,
+				playerId: playerId || null,
+				teamId: teamId || null,
+				language: language || null,
+				platform: platform || null,
+				title: title || null,
+				official,
+				startTime: startTime ? parseInt(startTime) : null,
+				available
+			};
+
+			if (existingVod.length > 0) {
+				// Update existing VOD
+				await db
+					.update(table.gameVod)
+					.set({
+						...vodData,
+						createdAt: existingVod[0].createdAt // Preserve original creation date
+					})
+					.where(and(eq(table.gameVod.gameId, gameId), eq(table.gameVod.url, url)));
+
+				// Add edit history
+				await db.insert(table.editHistory).values({
+					id: crypto.randomUUID(),
+					tableName: 'game_vod',
+					recordId: `${gameId}-${url}`,
+					fieldName: 'update',
+					oldValue: JSON.stringify(existingVod[0]),
+					newValue: JSON.stringify(vodData),
+					editedBy: permissionResult.userId,
+					editedAt: new Date()
+				});
+			} else {
+				// Insert new VOD
+				await db.insert(table.gameVod).values(vodData);
+
+				// Add edit history
+				await db.insert(table.editHistory).values({
+					id: crypto.randomUUID(),
+					tableName: 'game_vod',
+					recordId: `${gameId}-${url}`,
+					fieldName: 'creation',
+					oldValue: '',
+					newValue: JSON.stringify(vodData),
+					editedBy: permissionResult.userId,
+					editedAt: new Date()
+				});
+			}
+
+			return {
+				success: true
+			};
+		} catch (e) {
+			console.error('[Admin][VODs][Save] Failed to save VOD:', e);
+			return fail(500, {
+				error: 'Failed to save VOD'
+			});
+		}
+	},
+
+	deleteGameVod: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
+		const permissionResult = checkPermissions(locals, ['admin', 'editor']);
+		if (permissionResult.status === 'error') {
+			return fail(permissionResult.statusCode, {
+				error: permissionResult.error
+			});
+		}
+
+		const formData = await request.formData();
+		const gameId = parseInt(formData.get('gameId') as string);
+		const url = formData.get('url') as string;
+
+		if (!gameId || !url) {
+			return fail(400, {
+				error: 'Game ID and URL are required'
+			});
+		}
+
+		try {
+			// Get the VOD data before deletion for history
+			const vod = await db
+				.select()
+				.from(table.gameVod)
+				.where(and(eq(table.gameVod.gameId, gameId), eq(table.gameVod.url, url)))
+				.limit(1);
+
+			if (!vod.length) {
+				return fail(404, {
+					error: 'VOD not found'
+				});
+			}
+
+			// Delete the VOD
+			await db
+				.delete(table.gameVod)
+				.where(and(eq(table.gameVod.gameId, gameId), eq(table.gameVod.url, url)));
+
+			// Add edit history
+			await db.insert(table.editHistory).values({
+				id: crypto.randomUUID(),
+				tableName: 'game_vod',
+				recordId: `${gameId}-${url}`,
+				fieldName: 'deletion',
+				oldValue: JSON.stringify(vod[0]),
+				newValue: 'deleted',
+				editedBy: permissionResult.userId,
+				editedAt: new Date()
+			});
+
+			return {
+				success: true
+			};
+		} catch (e) {
+			console.error('[Admin][VODs][Delete] Failed to delete VOD:', e);
+			return fail(500, {
+				error: 'Failed to delete VOD'
+			});
+		}
+	}
+};
+
 export const actions = {
 	...MATCH_ACTIONS,
 	...STAGE_ACTIONS,
 	...STAGE_ROUND_ACTIONS,
 	...STAGE_NODE_ACTIONS,
 	...STAGE_NODE_DEPENDENCY_ACTIONS,
-	...GAME_ACTIONS
+	...GAME_ACTIONS,
+	...VOD_ACTIONS
 };

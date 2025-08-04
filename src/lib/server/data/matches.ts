@@ -106,6 +106,19 @@ export async function getMatch(id: string): Promise<(AppMatch & { event: Event }
 			)
 		);
 
+	// Get VOD data
+	const vods = await db
+		.select({
+			gameVod: table.gameVod
+		})
+		.from(table.gameVod)
+		.where(
+			inArray(
+				table.gameVod.gameId,
+				games.map((g) => g.game.id)
+			)
+		);
+
 	// Filter out any null teams or maps
 	const validTeams = teams.filter(
 		(t): t is typeof t & { team: NonNullable<typeof t.team> } => t.team !== null
@@ -155,6 +168,8 @@ export async function getMatch(id: string): Promise<(AppMatch & { event: Event }
 		const teamB = gameTeamData.find((gt) => gt.gameTeam.position === 1);
 
 		const playerScoreData = playerScores.filter((ps) => ps.gamePlayerScore.gameId === game.game.id);
+		const gameVods = vods.filter((v) => v.gameVod.gameId === game.game.id);
+
 		const teamAScores = playerScoreData
 			.filter((ps) => ps.gamePlayerScore.teamId === teamA?.gameTeam.teamId)
 			.map((ps) => ({
@@ -219,7 +234,21 @@ export async function getMatch(id: string): Promise<(AppMatch & { event: Event }
 				A: [PlayerScore, PlayerScore, PlayerScore, PlayerScore, PlayerScore],
 				B: [PlayerScore, PlayerScore, PlayerScore, PlayerScore, PlayerScore]
 			],
-			winner: game.game.winner
+			winner: game.game.winner,
+			vods: gameVods.map((v) => ({
+				url: v.gameVod.url,
+				type: v.gameVod.type,
+				playerId: v.gameVod.playerId || undefined,
+				teamId: v.gameVod.teamId || undefined,
+				language: v.gameVod.language || undefined,
+				platform: v.gameVod.platform || undefined,
+				title: v.gameVod.title || undefined,
+				official: v.gameVod.official,
+				startTime: v.gameVod.startTime || undefined,
+				available: v.gameVod.available,
+				createdAt: v.gameVod.createdAt,
+				updatedAt: v.gameVod.updatedAt
+			}))
 		};
 	});
 

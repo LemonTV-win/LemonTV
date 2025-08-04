@@ -5,6 +5,7 @@
 	import AccountIdCombobox from '$lib/components/AccountIdCombobox.svelte';
 	import PlayerScoreJsonInput from './PlayerScoreJsonInput.svelte';
 	import PlayerScoreJsonExport from './PlayerScoreJsonExport.svelte';
+	import GameVodEdit from './GameVodEdit.svelte';
 	import type { GameParticipant } from './+page.server';
 	import type { GamePlayerScore } from '$lib/server/db/schemas';
 	import type { Character } from '$lib/data/game';
@@ -491,6 +492,19 @@
 				{/each}
 			</div>
 		</div>
+
+		{#if game}
+			<div class="mt-8 border-t border-slate-700 pt-6">
+				<GameVodEdit
+					gameId={game.id}
+					vods={game.vods || []}
+					onSuccess={() => {
+						// Refresh the page data
+						window.location.reload();
+					}}
+				/>
+			</div>
+		{/if}
 
 		{#if game}
 			<div class="mt-8 border-t border-slate-700 pt-6">
