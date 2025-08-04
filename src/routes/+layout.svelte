@@ -18,6 +18,7 @@
 	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
 	import { IDREAMSKY_URL_EN, IDREAMSKY_URL_ZH, SITE_CANONICAL_HOST } from '$lib/consts';
+	import GameSelect from './GameSelect.svelte';
 
 	let { data, children }: LayoutProps = $props();
 
@@ -120,10 +121,17 @@
 	<header
 		class="flex items-center justify-between border-b-1 border-white/30 bg-gradient-to-br from-slate-600/60 to-slate-800 px-4 py-4 text-white backdrop-blur-lg"
 	>
-		<a href="/" class="flex items-center gap-2 text-2xl font-bold">
-			<img src="/favicon.svg" alt="LemonTV" class="h-10 w-10" />
-			LemonTV
-		</a>
+
+		<div class="flex items-center gap-4">
+			<a
+				href="/"
+				class="flex items-center gap-2 text-2xl font-bold transition-colors duration-300 hover:text-yellow-300"
+			>
+				<img src="/favicon.svg" alt="LemonTV" class="h-10 w-10" />
+				LemonTV
+			</a>
+			<GameSelect />
+		</div>
 
 		<!-- Mobile menu button -->
 		<button class="md:hidden" onclick={toggleMobileMenu}>
