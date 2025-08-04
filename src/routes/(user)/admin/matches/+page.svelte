@@ -10,6 +10,7 @@
 	import TypcnArrowSortedDown from '~icons/typcn/arrow-sorted-down';
 	import TypcnArrowSortedUp from '~icons/typcn/arrow-sorted-up';
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
+	import IconVideo from '~icons/icon-park-outline/video';
 	import { goto } from '$app/navigation';
 	import MatchEdit from './MatchEdit.svelte';
 	import type { Match, MatchTeam, MatchMap, Team } from '$lib/server/db/schema';
@@ -958,7 +959,7 @@
 										<div class="flex flex-col gap-1.5">
 											{#each match.games.sort((a, b) => a.id - b.id) as game, idx (idx)}
 												<button
-													class="group flex w-full min-w-72 cursor-pointer items-center justify-between gap-2 rounded-lg bg-gray-700/50 px-3 py-1 text-left transition-all hover:scale-[1.02] hover:bg-gray-600 hover:shadow-lg hover:shadow-gray-900/50"
+													class="group flex w-full min-w-80 cursor-pointer items-center justify-between gap-2 rounded-lg bg-gray-700/50 px-3 py-1 text-left transition-all hover:scale-[1.02] hover:bg-gray-600 hover:shadow-lg hover:shadow-gray-900/50"
 													onclick={() => openGameModal(match, selectedEventData, game)}
 												>
 													<div class="flex items-center gap-2">
@@ -971,12 +972,13 @@
 														<span class="text-xs text-gray-500"
 															>({formatDuration(game.duration)})</span
 														>
-														{#if game.vods && game.vods.length > 0}
-															<span class="text-xs text-blue-400" title="Has VODs">
-																📹 {game.vods.length}
-															</span>
-														{/if}
 													</div>
+													{#if game.vods && game.vods.length > 0}
+														<span class="flex gap-1 text-xs text-blue-400" title="Has VODs">
+															<IconVideo class="h-4 w-4" />
+															{game.vods.length}
+														</span>
+													{/if}
 													<div class="flex items-center gap-2">
 														<span
 															class="text-xs font-semibold {getScoreColor(
