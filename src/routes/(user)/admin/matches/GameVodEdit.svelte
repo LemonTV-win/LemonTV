@@ -6,6 +6,7 @@
 	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
 	import IconParkSolidAdd from '~icons/icon-park-solid/add';
 	import { m } from '$lib/paraglide/messages';
+	import { detectPlatform } from '$lib/utils/video';
 
 	let {
 		gameId,
@@ -19,6 +20,7 @@
 
 	let errorMessage = $state('');
 	let successMessage = $state('');
+	let isExtractingMetadata = $state(false);
 	let editingVod = $state<{
 		url: string;
 		type: 'main' | 'sub' | 'restream' | 'pov' | 'archive' | 'clip' | 'analysis';
@@ -49,6 +51,52 @@
 		{ value: 'bilibili', label: 'Bilibili' },
 		{ value: 'twitch', label: 'Twitch' }
 	] as const;
+
+	async function extractMetadata(url: string) {
+		if (!url || !detectPlatform(url)) return;
+
+		isExtractingMetadata = true;
+		errorMessage = '';
+
+		try {
+			const formData = new FormData();
+			formData.append('url', url);
+			const res = await fetch('/api/video-metadata', { method: 'POST', body: formData });
+
+			if (res.ok) {
+				const metadata = await res.json();
+				if (editingVod) {
+					editingVod.title = metadata.title;
+					editingVod.platform = metadata.platform;
+				}
+			} else {
+				const data = await res.json().catch(() => ({}));
+				console.warn('Failed to extract metadata:', data.error);
+			}
+		} catch (e) {
+			console.error('Error extracting metadata:', e);
+		} finally {
+			isExtractingMetadata = false;
+		}
+	}
+
+	function handleUrlChange(event: Event) {
+		const target = event.target as HTMLInputElement;
+		const url = target.value;
+
+		if (editingVod) {
+			editingVod.url = url;
+			// Auto-detect platform
+			const detectedPlatform = detectPlatform(url);
+			if (detectedPlatform) {
+				editingVod.platform = detectedPlatform;
+			}
+			// Extract metadata if URL is complete
+			if (url && url.length > 10) {
+				extractMetadata(url);
+			}
+		}
+	}
 
 	function handleEnhance() {
 		return ({ result }: { result: ActionResult }) => {
@@ -151,15 +199,25 @@
 
 				<div>
 					<label for="vodUrl" class="block text-sm font-medium text-slate-300">VOD URL *</label>
-					<input
-						type="url"
-						id="vodUrl"
-						name="url"
-						bind:value={editingVod.url}
-						required
-						class="mt-1 block w-full rounded border border-slate-700 bg-slate-800 px-3 py-2 text-white shadow-sm focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 focus:outline-none"
-						placeholder="https://example.com/vod"
-					/>
+					<div class="relative">
+						<input
+							type="url"
+							id="vodUrl"
+							name="url"
+							bind:value={editingVod.url}
+							oninput={handleUrlChange}
+							required
+							class="mt-1 block w-full rounded border border-slate-700 bg-slate-800 px-3 py-2 text-white shadow-sm focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 focus:outline-none"
+							placeholder="https://example.com/vod"
+						/>
+						{#if isExtractingMetadata}
+							<div class="absolute top-1/2 right-3 -translate-y-1/2">
+								<div
+									class="h-4 w-4 animate-spin rounded-full border-2 border-yellow-500 border-t-transparent"
+								></div>
+							</div>
+						{/if}
+					</div>
 				</div>
 
 				<div>
