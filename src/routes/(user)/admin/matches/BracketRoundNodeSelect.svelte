@@ -32,8 +32,7 @@
 			{@const team1Score = match?.teams[0]?.score || 0}
 			{@const team2Score = match?.teams[1]?.score || 0}
 			<option value={`node-${nodeIndex}`}>
-				{m.stage_node()} #{nodeIndex + 1}: {round?.title || round?.type || m.unknown_round()} -
-				{match
+				- {m.stage_node()} #{nodeIndex + 1}: {match
 					? `${match.teams[0]?.team?.name || 'TBD'} vs ${match.teams[1]?.team?.name || 'TBD'} (${team1Score}-${team2Score}) - ${match.id}`
 					: m.no_match()} (#{node.order})
 			</option>
