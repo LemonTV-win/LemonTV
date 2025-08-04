@@ -169,7 +169,7 @@
 				</button>
 				{#if userMenuOpen}
 					<div
-						class="ring-opacity-5 absolute right-0 z-50 mt-2 w-48 rounded-lg bg-gray-800 py-1 shadow-lg ring-1 ring-black"
+						class="ring-opacity-5 absolute right-0 z-50 mt-2 w-48 rounded-md border border-white/10 bg-gray-800 py-1 shadow-lg ring-1 ring-black"
 						use:clickOutside
 					>
 						<div class="border-b border-gray-700 px-4 py-2">
@@ -177,7 +177,7 @@
 						</div>
 						<a
 							href="/profile"
-							class="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
+							class="flex items-center gap-2 px-4 py-2 text-gray-300 transition-colors hover:bg-gray-700 hover:text-yellow-300"
 						>
 							<MaterialSymbolsSettingsRounded class="h-5 w-5" />
 							{m.profile_settings()}
@@ -185,7 +185,7 @@
 						{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
 							<a
 								href="/admin"
-								class="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
+								class="flex items-center gap-2 px-4 py-2 text-gray-300 transition-colors hover:bg-gray-700 hover:text-yellow-300"
 							>
 								<MaterialSymbolsAdminPanelSettingsRounded class="h-5 w-5" />
 								{m.admin_panel()}
@@ -195,7 +195,7 @@
 							<div class="flex items-center gap-2">
 								<MaterialSymbolsTranslateRounded class="h-6 w-6 text-gray-300" />
 								<select
-									class="w-full rounded-lg bg-gray-700 px-4 py-0 text-white"
+									class="w-full rounded-md bg-gray-700 px-4 py-1 text-white"
 									onchange={({ currentTarget }) => {
 										setLocale(currentTarget.value as Locale);
 									}}
