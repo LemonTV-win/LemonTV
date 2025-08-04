@@ -121,6 +121,23 @@
 	<header
 		class="relative z-50 flex items-center justify-between border-b-1 border-white/30 bg-gradient-to-br from-slate-600/60 to-slate-800 px-4 py-4 text-white backdrop-blur-lg"
 	>
+		<!-- Desktop navigation -->
+		<div class="absolute inset-0 hidden items-center justify-center lg:flex">
+			<nav class="flex items-center justify-center gap-1">
+				{#each navigation as { href, label }}
+					<a
+						{href}
+						class={[
+							'rounded-md px-4 py-2 transition-all duration-200',
+							isActive(href)
+								? 'bg-gray-700/40 font-semibold shadow-[inset_0_0_0_2px_rgba(255,255,255,0.1)]'
+								: 'hover:scale-105 hover:bg-gray-700/60 hover:text-yellow-300',
+							'focus:bg-gray-700 focus:text-yellow-300 focus:ring-2 focus:ring-yellow-300 focus:outline-none'
+						]}>{label()}</a
+					>
+				{/each}
+			</nav>
+		</div>
 
 		<div class="flex items-center gap-4">
 			<a
@@ -134,29 +151,13 @@
 		</div>
 
 		<!-- Mobile menu button -->
-		<button class="md:hidden" onclick={toggleMobileMenu}>
+		<button class="cursor-pointer lg:hidden" onclick={toggleMobileMenu}>
 			{#if mobileMenuOpen}
 				<MaterialSymbolsCloseRounded class="h-8 w-8" />
 			{:else}
 				<MaterialSymbolsMenuRounded class="h-8 w-8" />
 			{/if}
 		</button>
-
-		<!-- Desktop navigation -->
-		<nav class="hidden items-center gap-1 md:flex">
-			{#each navigation as { href, label }}
-				<a
-					{href}
-					class={[
-						'rounded-md px-4 py-2 transition-all duration-200',
-						isActive(href)
-							? 'bg-gray-700/40 font-semibold shadow-[inset_0_0_0_2px_rgba(255,255,255,0.1)]'
-							: 'hover:bg-gray-700/60 hover:text-yellow-300',
-						'focus:bg-gray-700 focus:text-yellow-300 focus:ring-2 focus:ring-yellow-300 focus:outline-none'
-					]}>{label()}</a
-				>
-			{/each}
-		</nav>
 
 		{#if data.user}
 			<div class="user-menu relative hidden md:block">
