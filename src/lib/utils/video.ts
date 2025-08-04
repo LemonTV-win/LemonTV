@@ -6,28 +6,86 @@ export interface VideoMetadata {
 	thumbnail: string;
 	player: string;
 	publishedAt?: string;
+	startTime?: number;
 }
 
 export async function extractVideoMetadata(url: string): Promise<VideoMetadata> {
+	// Extract start time from URL first
+	const startTime = extractStartTimeFromUrl(url);
+
 	// Bilibili
 	const bilibiliMatch = url.match(/bilibili\.com\/video\/([A-Za-z0-9]+)/);
 	if (bilibiliMatch) {
-		return await extractBilibiliMetadata(bilibiliMatch[1]);
+		const metadata = await extractBilibiliMetadata(bilibiliMatch[1]);
+		return { ...metadata, startTime };
 	}
 
 	// YouTube
 	const youtubeMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
 	if (youtubeMatch) {
-		return await extractYouTubeMetadata(youtubeMatch[1]);
+		const metadata = await extractYouTubeMetadata(youtubeMatch[1]);
+		return { ...metadata, startTime };
 	}
 
 	// Twitch
 	const twitchMatch = url.match(/twitch\.tv\/videos\/(\d+)/);
 	if (twitchMatch) {
-		return await extractTwitchMetadata(twitchMatch[1]);
+		const metadata = await extractTwitchMetadata(twitchMatch[1]);
+		return { ...metadata, startTime };
 	}
 
 	throw new Error('Unsupported video URL');
+}
+
+function extractStartTimeFromUrl(url: string): number | undefined {
+	const urlObj = new URL(url);
+
+	// YouTube: t parameter (seconds) or time parameter (HH:MM:SS)
+	const youtubeTime = urlObj.searchParams.get('t');
+	if (youtubeTime) {
+		// Handle both seconds and HH:MM:SS format
+		if (youtubeTime.includes(':')) {
+			const parts = youtubeTime.split(':').map(Number);
+			if (parts.length === 2) {
+				// MM:SS format
+				return parts[0] * 60 + parts[1];
+			} else if (parts.length === 3) {
+				// HH:MM:SS format
+				return parts[0] * 3600 + parts[1] * 60 + parts[2];
+			}
+		} else {
+			// Seconds format
+			const seconds = parseInt(youtubeTime);
+			if (!isNaN(seconds)) return seconds;
+		}
+	}
+
+	// YouTube: time parameter (HH:MM:SS)
+	const youtubeTimeParam = urlObj.searchParams.get('time');
+	if (youtubeTimeParam) {
+		const parts = youtubeTimeParam.split(':').map(Number);
+		if (parts.length === 2) {
+			return parts[0] * 60 + parts[1];
+		} else if (parts.length === 3) {
+			return parts[0] * 3600 + parts[1] * 60 + parts[2];
+		}
+	}
+
+	// Bilibili: t parameter (seconds)
+	const bilibiliTime = urlObj.searchParams.get('t');
+	if (bilibiliTime) {
+		const seconds = parseInt(bilibiliTime);
+		if (!isNaN(seconds)) return seconds;
+	}
+
+	// Twitch: t parameter (seconds)
+	const twitchTime = urlObj.searchParams.get('t');
+	if (twitchTime) {
+		const seconds = parseInt(twitchTime);
+		if (!isNaN(seconds)) return seconds;
+	}
+
+	return undefined;
 }
 
 async function extractBilibiliMetadata(bvid: string): Promise<VideoMetadata> {

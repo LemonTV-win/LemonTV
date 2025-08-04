@@ -68,6 +68,10 @@
 				if (editingVod) {
 					editingVod.title = metadata.title;
 					editingVod.platform = metadata.platform;
+					// Also extract start time if available
+					if (metadata.startTime !== undefined) {
+						editingVod.startTime = metadata.startTime;
+					}
 				}
 			} else {
 				const data = await res.json().catch(() => ({}));
