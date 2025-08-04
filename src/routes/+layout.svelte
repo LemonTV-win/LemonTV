@@ -119,7 +119,7 @@
 
 <div class="flex min-h-dvh flex-col">
 	<header
-		class="flex items-center justify-between border-b-1 border-white/30 bg-gradient-to-br from-slate-600/60 to-slate-800 px-4 py-4 text-white backdrop-blur-lg"
+		class="relative z-50 flex items-center justify-between border-b-1 border-white/30 bg-gradient-to-br from-slate-600/60 to-slate-800 px-4 py-4 text-white backdrop-blur-lg"
 	>
 
 		<div class="flex items-center gap-4">
