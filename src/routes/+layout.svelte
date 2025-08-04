@@ -211,7 +211,7 @@
 							</div>
 						</div>
 						<hr class="border-gray-700" />
-						<form method="post" action="/?/logout" use:enhance>
+						<form method="post" action="/?/logout">
 							<button
 								type="submit"
 								class="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
