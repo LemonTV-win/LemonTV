@@ -224,7 +224,7 @@
 				{/if}
 			</div>
 		{:else}
-			<div class="hidden items-center gap-2 lg:flex">
+			<div class="z-10 hidden items-center gap-2 lg:flex">
 				<div class="flex items-center gap-2">
 					<MaterialSymbolsTranslateRounded class="h-6 w-6 text-gray-300" />
 					<select
