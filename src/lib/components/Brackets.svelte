@@ -146,7 +146,8 @@
 		semifinals: m.semifinals,
 		final: m.final,
 		quarterfinals: m.quarterfinals,
-		top16: m.top16
+		top16: m.top16,
+		grandfinal: m.grandfinal
 	};
 
 	let show = $state(false);
