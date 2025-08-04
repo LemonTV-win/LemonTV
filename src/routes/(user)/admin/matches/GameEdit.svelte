@@ -437,6 +437,7 @@
 						bind:value={ps.score}
 						placeholder={m.performance_score()}
 						title={m.performance_score()}
+						onfocus={(e) => e.currentTarget.select()}
 						class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
 					/>
 					<input
@@ -445,6 +446,7 @@
 						bind:value={ps.damageScore}
 						placeholder={m.damage_score()}
 						title={m.damage_score()}
+						onfocus={(e) => e.currentTarget.select()}
 						class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
 					/>
 					<input
@@ -453,6 +455,7 @@
 						bind:value={ps.kills}
 						placeholder={m.kills()}
 						title={m.kills()}
+						onfocus={(e) => e.currentTarget.select()}
 						class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
 					/>
 					<input
@@ -461,6 +464,7 @@
 						bind:value={ps.knocks}
 						placeholder={m.knocks()}
 						title={m.knocks()}
+						onfocus={(e) => e.currentTarget.select()}
 						class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
 					/>
 					<input
@@ -469,6 +473,7 @@
 						bind:value={ps.deaths}
 						placeholder={m.deaths()}
 						title={m.deaths()}
+						onfocus={(e) => e.currentTarget.select()}
 						class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
 					/>
 					<input
@@ -477,6 +482,7 @@
 						bind:value={ps.assists}
 						placeholder={m.assists()}
 						title={m.assists()}
+						onfocus={(e) => e.currentTarget.select()}
 						class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
 					/>
 					<input
@@ -485,6 +491,7 @@
 						bind:value={ps.damage}
 						placeholder={m.damage()}
 						title={m.damage()}
+						onfocus={(e) => e.currentTarget.select()}
 						class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
 					/>
 				</div>
