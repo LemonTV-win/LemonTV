@@ -128,7 +128,7 @@
 					<a
 						{href}
 						class={[
-							'rounded-md px-4 py-2 transition-all duration-200',
+							'rounded-lg px-4 py-2 transition-all duration-200',
 							isActive(href)
 								? 'bg-gray-700/40 font-semibold shadow-[inset_0_0_0_2px_rgba(255,255,255,0.1)]'
 								: 'hover:scale-105 hover:bg-gray-700/60 hover:text-yellow-300',
@@ -160,7 +160,7 @@
 		</button>
 
 		{#if data.user}
-			<div class="user-menu relative hidden md:block">
+			<div class="user-menu relative hidden lg:block">
 				<button
 					onclick={toggleUserMenu}
 					class="flex items-center gap-2 rounded-full bg-gray-700 p-1 hover:bg-gray-600"
@@ -169,7 +169,7 @@
 				</button>
 				{#if userMenuOpen}
 					<div
-						class="ring-opacity-5 absolute right-0 z-50 mt-2 w-48 rounded-md bg-gray-800 py-1 shadow-lg ring-1 ring-black"
+						class="ring-opacity-5 absolute right-0 z-50 mt-2 w-48 rounded-lg bg-gray-800 py-1 shadow-lg ring-1 ring-black"
 						use:clickOutside
 					>
 						<div class="border-b border-gray-700 px-4 py-2">
@@ -195,7 +195,7 @@
 							<div class="flex items-center gap-2">
 								<MaterialSymbolsTranslateRounded class="h-6 w-6 text-gray-300" />
 								<select
-									class="w-full rounded-md bg-gray-700 px-4 py-0 text-white"
+									class="w-full rounded-lg bg-gray-700 px-4 py-0 text-white"
 									onchange={({ currentTarget }) => {
 										setLocale(currentTarget.value as Locale);
 									}}
@@ -224,11 +224,11 @@
 				{/if}
 			</div>
 		{:else}
-			<div class="hidden items-center gap-2 md:flex">
+			<div class="hidden items-center gap-2 lg:flex">
 				<div class="flex items-center gap-2">
 					<MaterialSymbolsTranslateRounded class="h-6 w-6 text-gray-300" />
 					<select
-						class="rounded-md bg-gray-700 px-3 py-1 text-white"
+						class="rounded-lg bg-gray-700 px-3 py-1 text-white"
 						onchange={({ currentTarget }) => {
 							setLocale(currentTarget.value as Locale);
 						}}
@@ -241,7 +241,7 @@
 				</div>
 				<a
 					href="/login?redirect={encodeURIComponent(page.url.pathname + page.url.search)}"
-					class="rounded-md border-1 border-gray-500 bg-gray-800 px-4 py-1 text-white transition-colors duration-300 hover:bg-gray-700"
+					class="rounded-lg border-1 border-gray-500 bg-gray-800 px-4 py-1 text-white transition-colors duration-300 hover:bg-gray-700"
 					>{m.sign_in()}</a
 				>
 			</div>
@@ -251,13 +251,13 @@
 	<!-- Mobile navigation menu -->
 	{#if mobileMenuOpen}
 		<nav
-			class="flex flex-col border-b-1 border-white/30 bg-gradient-to-br from-slate-600/60 to-slate-800 px-3 py-4 text-white backdrop-blur-lg md:hidden"
+			class="flex flex-col border-b-1 border-white/30 bg-gradient-to-br from-slate-600/60 to-slate-800 px-3 py-4 text-white backdrop-blur-lg lg:hidden"
 		>
 			{#each navigation as { href, label }}
 				<a
 					{href}
 					class={[
-						'rounded-md px-3 py-2 text-lg transition-all duration-200',
+						'rounded-lg px-3 py-2 text-lg transition-all duration-200',
 						isActive(href)
 							? 'bg-gray-700/40 text-yellow-300 shadow-[inset_0_0_0_2px_rgba(255,255,255,0.1)]'
 							: 'hover:bg-gray-700/60 hover:text-yellow-300',
@@ -275,7 +275,7 @@
 					<div class="pl-4">
 						<a
 							href="/profile"
-							class="flex items-center gap-2 rounded-md px-3 py-2 text-lg text-gray-300 transition-all duration-200 hover:bg-gray-700"
+							class="flex items-center gap-2 rounded-lg px-3 py-2 text-lg text-gray-300 transition-all duration-200 hover:bg-gray-700"
 							onclick={toggleMobileMenu}
 						>
 							<MaterialSymbolsSettingsRounded class="h-6 w-6" />
@@ -284,7 +284,7 @@
 						{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
 							<a
 								href="/admin"
-								class="flex items-center gap-2 rounded-md px-3 py-2 text-lg text-gray-300 transition-all duration-200 hover:bg-gray-700"
+								class="flex items-center gap-2 rounded-lg px-3 py-2 text-lg text-gray-300 transition-all duration-200 hover:bg-gray-700"
 								onclick={toggleMobileMenu}
 							>
 								<MaterialSymbolsAdminPanelSettingsRounded class="h-6 w-6" />
@@ -293,11 +293,11 @@
 						{/if}
 						<div class="py-2">
 							<div
-								class="flex items-center gap-2 rounded-md px-3 py-2 transition-all duration-200 hover:bg-gray-700"
+								class="flex items-center gap-2 rounded-lg px-3 py-2 transition-all duration-200 hover:bg-gray-700"
 							>
 								<MaterialSymbolsTranslateRounded class="h-6 w-6 text-gray-300" />
 								<select
-									class="w-full rounded-md bg-gray-700 px-4 py-2 text-white transition-all duration-200 hover:bg-gray-600"
+									class="w-full rounded-lg bg-gray-700 px-4 py-2 text-white transition-all duration-200 hover:bg-gray-600"
 									onchange={({ currentTarget }) => {
 										setLocale(currentTarget.value as Locale);
 									}}
@@ -316,7 +316,7 @@
 						<form method="post" action="/?/logout" use:enhance>
 							<button
 								type="submit"
-								class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-lg text-gray-300 transition-all duration-200 hover:bg-gray-700"
+								class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-lg text-gray-300 transition-all duration-200 hover:bg-gray-700"
 								onclick={toggleMobileMenu}
 							>
 								<MaterialSymbolsLogoutRounded class="h-6 w-6" />
@@ -331,7 +331,7 @@
 						<div class="flex items-center gap-2">
 							<MaterialSymbolsTranslateRounded class="h-6 w-6 text-gray-300" />
 							<select
-								class="w-full rounded-md bg-gray-700 px-4 py-2 text-white"
+								class="w-full rounded-lg bg-gray-700 px-4 py-2 text-white"
 								onchange={({ currentTarget }) => {
 									setLocale(currentTarget.value as Locale);
 								}}
@@ -348,7 +348,7 @@
 					</div>
 					<a
 						href="/login?redirect={encodeURIComponent(page.url.pathname + page.url.search)}"
-						class="flex w-full items-center justify-center rounded-md border-1 border-gray-500 bg-gray-700 px-4 py-2 text-lg text-white transition-colors duration-300 hover:bg-gray-600"
+						class="flex w-full items-center justify-center rounded-lg border-1 border-gray-500 bg-gray-700 px-4 py-2 text-lg text-white transition-colors duration-300 hover:bg-gray-600"
 						onclick={toggleMobileMenu}>{m.sign_in()}</a
 					>
 				</div>
