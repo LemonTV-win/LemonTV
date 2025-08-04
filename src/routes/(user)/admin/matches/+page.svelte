@@ -257,6 +257,28 @@
 				job: 'main' | 'sub' | 'coach';
 			}[]
 		];
+		match?: {
+			maps: Array<{
+				id: number;
+				matchId: string;
+				mapId: string;
+				order: number;
+				side: number;
+				map_picker_position: number;
+				side_picker_position: number;
+				map: {
+					id: string;
+				};
+				action?: string;
+			}>;
+			games: Array<{
+				id: number;
+				matchId: string;
+				mapId: string;
+				duration: number;
+				winner: number;
+			}>;
+		};
 	} | null>(null);
 	$inspect('[admin/matches] editingGame', editingGame);
 
@@ -273,7 +295,11 @@
 				// data.teamRoasters: Map<string, Map<string, { player: GameParticipant; job: 'main' | 'sub' | 'coach' }[]>
 				data.teamRosters.get(eventData.event.id)?.get(match.teams[0].team.id) ?? [],
 				data.teamRosters.get(eventData.event.id)?.get(match.teams[1].team.id) ?? []
-			]
+			],
+			match: {
+				maps: match.maps,
+				games: match.games
+			}
 		};
 	}
 
@@ -1186,6 +1212,7 @@
 			onSuccess={closeGameModal}
 			teams={[editingGame.matchTeamA, editingGame.matchTeamB]}
 			rosters={editingGame.rosters}
+			match={editingGame.match}
 		/>
 	</Modal>
 {/if}

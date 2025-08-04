@@ -22,7 +22,8 @@
 		onCancel,
 		onSuccess,
 		teams,
-		rosters
+		rosters,
+		match
 	}: {
 		game?: any;
 		matchId: string;
@@ -43,14 +44,58 @@
 				job: 'main' | 'sub' | 'coach';
 			}[]
 		];
+		match?: {
+			maps: Array<{
+				id: number;
+				matchId: string;
+				mapId: string;
+				order: number;
+				side: number;
+				map_picker_position: number;
+				side_picker_position: number;
+				map: {
+					id: string;
+				};
+				action?: string;
+			}>;
+			games: Array<{
+				id: number;
+				matchId: string;
+				mapId: string;
+				duration: number;
+				winner: number;
+			}>;
+		};
 	} = $props();
 
 	$inspect('[admin/matches/GameEdit] game', game);
 	$inspect('[admin/matches/GameEdit] teams', teams);
 	$inspect('[admin/matches/GameEdit] rosters', rosters);
+	$inspect('[admin/matches/GameEdit] match', match);
+
+	// Calculate the next map to be played based on match's map pick order
+	function getNextMapToPlay(): string {
+		if (!match || !game) return ''; // If editing existing game, don't change map
+
+		// Sort maps by order
+		const sortedMaps = match.maps.sort((a, b) => a.order - b.order);
+
+		// Get maps that have been played (exist in games)
+		const playedMapIds = new Set(match.games.map((game) => game.mapId));
+
+		// Find the first map that hasn't been played yet
+		for (const map of sortedMaps) {
+			if (!playedMapIds.has(map.mapId)) {
+				return map.mapId;
+			}
+		}
+
+		// If all maps have been played, return empty string
+		return '';
+	}
 
 	let formData = $state({
-		mapId: game?.mapId || '',
+		mapId: game?.mapId || getNextMapToPlay(),
 		duration: game?.duration || '',
 		winner: game?.winner ?? ''
 	});
