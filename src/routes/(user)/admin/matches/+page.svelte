@@ -639,7 +639,7 @@
 				<input
 					type="text"
 					bind:value={searchQuery}
-					placeholder="Search events..."
+					placeholder={m.search_events()}
 					class="w-full rounded-lg border border-gray-700 bg-gray-800 py-2 pr-4 pl-10 text-white placeholder-gray-400 focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 focus:outline-none"
 				/>
 			</div>
@@ -656,10 +656,12 @@
 
 	{#if selectedEventData}
 		<div class="mb-4 flex items-center justify-between">
-			<h2 class="text-xl font-semibold">Matches for {selectedEventData.event.name}</h2>
+			<h2 class="text-xl font-semibold">
+				{m.matches_for_event({ name: selectedEventData.event.name })}
+			</h2>
 			<div class="flex items-center gap-4">
 				<div class="text-sm text-gray-400">
-					{totalMatches} matches, {totalGames} games
+					{m.total_matches_games({ matches: totalMatches, games: totalGames })}
 				</div>
 				<button
 					onclick={() => {
@@ -671,7 +673,7 @@
 					}}
 					class="rounded-md bg-yellow-500 px-4 py-2 text-sm font-medium text-black hover:bg-yellow-400 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 				>
-					Add Stage
+					{m.add_stage()}
 				</button>
 			</div>
 		</div>
@@ -683,13 +685,15 @@
 							href={`/events/${selectedEventData.event.slug}?stage=${stageId}`}
 							class="hover:text-yellow-500"
 						>
-							{stage.title} ({stage.stage} - {stage.format})
+							{m.stage_info({ title: stage.title, stage: stage.stage, format: stage.format })}
 						</a>
 					</h3>
 					<div class="flex items-center gap-4">
-						<span class="text-sm text-gray-400">{matches.length} matches</span>
+						<span class="text-sm text-gray-400">{m.matches_count({ count: matches.length })}</span>
 						<span class="text-sm text-gray-400">
-							{matches.reduce((total, match) => total + (match.games?.length || 0), 0)} games
+							{m.games_count({
+								count: matches.reduce((total, match) => total + (match.games?.length || 0), 0)
+							})}
 						</span>
 						<button
 							onclick={() => {
@@ -703,9 +707,9 @@
 								);
 							}}
 							class="rounded-md bg-yellow-500 px-2 py-1 text-xs font-medium text-black hover:bg-yellow-400"
-							title="Add Match to this Stage"
+							title={m.add_match_to_stage()}
 						>
-							Add Match
+							{m.add_match()}
 						</button>
 						<button
 							onclick={() => {
@@ -713,9 +717,9 @@
 								openBracketEdit();
 							}}
 							class="rounded-md bg-green-600 px-2 py-1 text-xs font-medium text-white hover:bg-green-700"
-							title="Edit Bracket Structure"
+							title={m.edit_bracket_structure()}
 						>
-							Edit Bracket
+							{m.edit_bracket()}
 						</button>
 						<button
 							onclick={() => {
@@ -726,7 +730,7 @@
 								});
 							}}
 							class="text-yellow-500 hover:text-yellow-400"
-							title="Edit Stage"
+							title={m.edit_stage()}
 						>
 							<IconParkSolidEdit class="h-4 w-4" />
 						</button>
@@ -734,18 +738,18 @@
 							method="POST"
 							action="?/deleteStage"
 							onsubmit={(e) => {
-								if (
-									!confirm(
-										'Are you sure you want to delete this stage? This will also delete all matches in this stage.'
-									)
-								) {
+								if (!confirm(m.delete_stage_confirmation())) {
 									e.preventDefault();
 								}
 							}}
 							class="inline"
 						>
 							<input type="hidden" name="id" value={stage.id} />
-							<button type="submit" class="text-red-400 hover:text-red-300" title="Delete Stage">
+							<button
+								type="submit"
+								class="text-red-400 hover:text-red-300"
+								title={m.delete_stage()}
+							>
 								<IconParkSolidDelete class="h-4 w-4" />
 							</button>
 						</form>
@@ -763,7 +767,7 @@
 										class:text-white={sortBy === 'id-asc' || sortBy === 'id-desc'}
 										onclick={() => (sortBy = sortBy === 'id-asc' ? 'id-desc' : 'id-asc')}
 									>
-										Match ID
+										{m.match_id()}
 										{#if sortBy === 'id-asc'}
 											<TypcnArrowSortedUp class="inline-block" />
 										{:else if sortBy === 'id-desc'}
@@ -780,7 +784,7 @@
 										onclick={() =>
 											(sortBy = sortBy === 'format-asc' ? 'format-desc' : 'format-asc')}
 									>
-										Format
+										{m.format()}
 										{#if sortBy === 'format-asc'}
 											<TypcnArrowSortedUp class="inline-block" />
 										{:else if sortBy === 'format-desc'}
@@ -790,10 +794,10 @@
 										{/if}
 									</button>
 								</th>
-								<th class="px-4 py-1 text-center">Matchup</th>
-								<th class="px-4 py-1">Maps</th>
-								<th class="px-4 py-1">Games</th>
-								<th class="sticky right-0 z-10 h-12 bg-gray-800 px-4 py-1">Actions</th>
+								<th class="px-4 py-1 text-center">{m.matchup()}</th>
+								<th class="px-4 py-1">{m.maps()}</th>
+								<th class="px-4 py-1">{m.games()}</th>
+								<th class="sticky right-0 z-10 h-12 bg-gray-800 px-4 py-1">{m.actions()}</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -825,7 +829,7 @@
 													{/if}
 													<span class="text-gray-300">{match.teams[0].team.name}</span>
 												{:else}
-													<span class="text-gray-500">TBD</span>
+													<span class="text-gray-500">{m.tbd()}</span>
 												{/if}
 											</div>
 											<div class="flex items-center gap-2">
@@ -836,7 +840,7 @@
 														0
 													)}">{match.teams[0]?.score ?? '-'}</span
 												>
-												<span class="text-gray-500">vs.</span>
+												<span class="text-gray-500">{m.versus()}</span>
 												<span
 													class="font-semibold {getScoreColor(
 														match.teams[0]?.score ?? null,
@@ -858,7 +862,7 @@
 													{/if}
 													<span class="text-gray-300">{match.teams[1].team.name}</span>
 												{:else}
-													<span class="text-gray-500">TBD</span>
+													<span class="text-gray-500">{m.tbd()}</span>
 												{/if}
 											</div>
 										</div>
@@ -947,7 +951,7 @@
 																0
 															)}">{game.teams[0]?.score ?? '-'}</span
 														>
-														<span class="text-xs text-gray-500">vs</span>
+														<span class="text-xs text-gray-500">{m.versus()}</span>
 														<span
 															class="text-xs font-semibold {getScoreColor(
 																game.teams[0]?.score ?? null,
@@ -961,21 +965,21 @@
 																	? 'text-yellow-500'
 																	: 'text-yellow-500'}"
 															>
-																({game.winner === 0 ? 'A' : 'B'} wins)
+																({game.winner === 0 ? m.team_a_wins() : m.team_b_wins()})
 															</span>
 														{/if}
 													</div>
 												</button>
 											{/each}
 											{#if match.games.length === 0}
-												<span class="text-xs text-gray-500 italic">No games recorded</span>
+												<span class="text-xs text-gray-500 italic">{m.no_games_recorded()}</span>
 											{/if}
 											<!-- Add game area -->
 											<button
 												onclick={() => openGameModal(match, selectedEventData)}
 												class="mt-2 w-full rounded-lg border border-emerald-500/30 bg-emerald-500/10 py-2 text-xs font-medium text-emerald-400 transition-all hover:bg-emerald-500/20 hover:text-emerald-300 active:scale-[0.98]"
 											>
-												+ Add game
+												{m.add_game()}
 											</button>
 										</div>
 									</td>
@@ -989,7 +993,7 @@
 													);
 												}}
 												class="flex items-center gap-1 text-yellow-500 hover:text-yellow-400"
-												title="Edit Match"
+												title={m.edit_match()}
 											>
 												<IconParkSolidEdit class="h-4 w-4" />
 											</button>
@@ -1001,7 +1005,7 @@
 													);
 												}}
 												class="flex items-center gap-1 text-red-500 hover:text-red-400"
-												title="Delete Match"
+												title={m.delete_match()}
 											>
 												<IconParkSolidDelete class="h-4 w-4" />
 											</button>
@@ -1016,7 +1020,7 @@
 		{/each}
 	{:else}
 		<div class="rounded-lg border border-gray-700 bg-gray-800 p-8 text-center text-gray-400">
-			<p>Select an event to view its matches</p>
+			<p>{m.select_event_to_view_matches()}</p>
 		</div>
 	{/if}
 </div>
@@ -1102,9 +1106,9 @@
 	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
 		<div class="mx-auto w-full max-w-md rounded-lg border border-slate-700 bg-slate-800 p-6">
 			<div class="space-y-4">
-				<h3 class="text-lg font-semibold text-white">Delete Match</h3>
+				<h3 class="text-lg font-semibold text-white">{m.delete_match()}</h3>
 				<p class="text-gray-300">
-					Are you sure you want to delete this match? This action cannot be undone.
+					{m.delete_match_confirmation()}
 				</p>
 
 				<div class="flex justify-end gap-2">
@@ -1112,7 +1116,7 @@
 						class="rounded-md bg-gray-700 px-4 py-2 font-medium text-white hover:bg-gray-600"
 						onclick={closeDeleteGameModal}
 					>
-						Cancel
+						{m.cancel()}
 					</button>
 					<form method="POST" action="?/delete" use:enhance={handleDeleteSubmit} class="inline">
 						<input type="hidden" name="id" value={editingMatch.match.id} />
@@ -1121,7 +1125,7 @@
 							class="rounded-md bg-red-600 px-4 py-2 font-medium text-white hover:bg-red-500"
 							disabled={isDeleting}
 						>
-							{isDeleting ? 'Deleting...' : 'Delete'}
+							{isDeleting ? m.deleting() : m.delete()}
 						</button>
 					</form>
 				</div>
@@ -1146,7 +1150,7 @@
 
 <!-- Bracket Edit Modal -->
 {#if showBracketEdit && selectedStage}
-	<Modal show={true} title="Edit Bracket" onClose={closeBracketEdit}>
+	<Modal show={true} title={m.edit_bracket()} onClose={closeBracketEdit}>
 		<BracketEdit
 			stage={selectedStage}
 			matches={stageMatches}
@@ -1162,7 +1166,7 @@
 {#if editingGame}
 	<Modal
 		show={true}
-		title={editingGame.game ? 'Edit Game' : 'Add Game'}
+		title={editingGame.game ? m.edit_game() : m.add_game()}
 		onClose={closeGameModal}
 		dismissible={false}
 	>
@@ -1180,21 +1184,21 @@
 
 <!-- Game Delete Modal -->
 {#if deletingGame}
-	<Modal show={true} title="Delete Game" onClose={closeDeleteGameModal} dismissible={false}>
+	<Modal show={true} title={m.delete_game()} onClose={closeDeleteGameModal} dismissible={false}>
 		<div class="p-4">
-			<p class="mb-4 text-slate-200">Are you sure you want to delete this game?</p>
+			<p class="mb-4 text-slate-200">{m.delete_game_confirmation()}</p>
 			<div class="flex justify-end gap-2">
 				<button
 					type="button"
 					class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
 					onclick={closeDeleteGameModal}
-					disabled={isDeletingGame}>Cancel</button
+					disabled={isDeletingGame}>{m.cancel()}</button
 				>
 				<button
 					type="button"
 					class="rounded-md bg-red-600 px-4 py-2 font-medium text-white hover:bg-red-700"
 					onclick={handleDeleteGameSubmit}
-					disabled={isDeletingGame}>{isDeletingGame ? 'Deleting...' : 'Delete'}</button
+					disabled={isDeletingGame}>{isDeletingGame ? m.deleting() : m.delete()}</button
 				>
 			</div>
 		</div>
