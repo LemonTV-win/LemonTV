@@ -618,7 +618,9 @@
 							{player.id}
 						</td>
 						<td class="px-4 py-1">
-							<PlayerAvatar {player} class="h-8 w-8" />
+							{#if player.avatar}
+								<PlayerAvatar {player} class="h-8 min-h-8 w-8 min-w-8" />
+							{/if}
 						</td>
 						<td class="max-w-32 truncate px-4 py-1 text-white">
 							<a href={`/players/${player.slug}`} class="hover:text-yellow-400" title={player.slug}>
