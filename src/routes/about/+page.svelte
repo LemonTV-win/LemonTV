@@ -6,6 +6,7 @@
 	import IconYoutube from '~icons/simple-icons/youtube';
 	import IconLinktree from '~icons/simple-icons/linktree';
 	import IconBilibili from '~icons/simple-icons/bilibili';
+	import IconQq from '~icons/simple-icons/qq';
 	import IconGlobe from '~icons/pepicons-pencil/internet';
 	import IconCalendar from '~icons/icon-park-solid/calendar';
 	import IconTrend from '~icons/icon-park-solid/trend-two';
@@ -14,7 +15,8 @@
 	import {
 		IDREAMSKY_URL_EN,
 		IDREAMSKY_URL_ZH,
-		STRINOVA_ESPORTS_HUB_DISCORD_URL
+		STRINOVA_ESPORTS_HUB_DISCORD_URL,
+		LEMON_TV_QQ_URL
 	} from '$lib/consts';
 	import { getLocale } from '$lib/paraglide/runtime';
 	import placeholderAvatar from '$assets/placeholder_avatar.png';
@@ -147,15 +149,26 @@
 					<div class="glass-card p-6 md:col-span-2">
 						<h3 class="mb-2 text-xl font-semibold">{m.about_team_join_title()}</h3>
 						<p class="mb-4 text-slate-300">{m.about_team_join_description()}</p>
-						<a
-							href={STRINOVA_ESPORTS_HUB_DISCORD_URL}
-							target="_blank"
-							rel="noopener noreferrer"
-							class="inline-flex items-center gap-2 text-blue-400 hover:underline"
-						>
-							<IconDiscord class="h-6 w-6" />
-							{m.about_team_join_discord()}
-						</a>
+						<div class="flex flex-col gap-2">
+							<a
+								href={STRINOVA_ESPORTS_HUB_DISCORD_URL}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="inline-flex items-center gap-2 text-blue-400 hover:underline"
+							>
+								<IconDiscord class="h-6 w-6" />
+								{m.about_team_join_discord()}
+							</a>
+							<a
+								href={LEMON_TV_QQ_URL}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="inline-flex items-center gap-2 text-blue-400 hover:underline"
+							>
+								<IconQq class="h-6 w-6" />
+								QQ群
+							</a>
+						</div>
 					</div>
 				</div>
 			</section>
@@ -186,6 +199,15 @@
 					>
 						<IconDiscord class="h-6 w-6" />
 						{m.about_links_discord()}
+					</a>
+					<a
+						href={LEMON_TV_QQ_URL}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="flex items-center gap-2 text-blue-400 hover:underline"
+					>
+						<IconQq class="h-6 w-6" />
+						QQ群
 					</a>
 				</div>
 			</section>

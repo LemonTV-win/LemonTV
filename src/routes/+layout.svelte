@@ -11,6 +11,7 @@
 	import MaterialSymbolsAdminPanelSettingsRounded from '~icons/material-symbols/admin-panel-settings-rounded';
 	import IconDiscord from '~icons/simple-icons/discord';
 	import IconGithub from '~icons/simple-icons/github';
+	import IconQq from '~icons/simple-icons/qq';
 	import UserAvatar from '$lib/components/UserAvatar.svelte';
 	import Switch from '$lib/components/ui/Switch.svelte';
 	import { settings } from '$lib/settings.svelte';
@@ -21,7 +22,8 @@
 		IDREAMSKY_URL_EN,
 		IDREAMSKY_URL_ZH,
 		SITE_CANONICAL_HOST,
-		STRINOVA_ESPORTS_HUB_DISCORD_URL
+		STRINOVA_ESPORTS_HUB_DISCORD_URL,
+		LEMON_TV_QQ_URL
 	} from '$lib/consts';
 	import GameSelect from './GameSelect.svelte';
 	import LanguageSelect from './LanguageSelect.svelte';
@@ -342,6 +344,14 @@
 					class="text-yellow-300 transition-colors duration-300 hover:text-yellow-400"
 				>
 					<IconDiscord class="h-6 w-6" />
+				</a>
+				<a
+					href={LEMON_TV_QQ_URL}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="text-yellow-300 transition-colors duration-300 hover:text-yellow-400"
+				>
+					<IconQq class="h-6 w-6" />
 				</a>
 				<a
 					href="https://github.com/mkpoli/LemonTV"
