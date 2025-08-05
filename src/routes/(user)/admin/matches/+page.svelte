@@ -35,11 +35,13 @@
 		| 'editGame'
 		| 'newGame'
 		| 'editBracket'
+		| 'deleteGame'
 		| null = $state(null);
 	let actionParams = $state<{
 		id?: string | number;
 		stageId?: number;
 		gameId?: number;
+		matchId?: string;
 		delete?: boolean;
 	} | null>(null);
 
@@ -57,6 +59,9 @@
 				if (actionParams.gameId) {
 					url.searchParams.set('gameId', actionParams.gameId.toString());
 				}
+				if (actionParams.matchId) {
+					url.searchParams.set('matchId', actionParams.matchId.toString());
+				}
 				if (actionParams.delete) {
 					url.searchParams.set('delete', 'true');
 				}
@@ -66,6 +71,7 @@
 			url.searchParams.delete('id');
 			url.searchParams.delete('stageId');
 			url.searchParams.delete('gameId');
+			url.searchParams.delete('matchId');
 			url.searchParams.delete('delete');
 		}
 		goto(url.pathname + url.search, { replaceState: true });
@@ -134,10 +140,79 @@
 			editingStage = {};
 		} else if (data.action === 'editGame' && data.id) {
 			action = 'editGame';
-			actionParams = { gameId: parseInt(data.id) };
-		} else if (data.action === 'newGame') {
+			const gameId = parseInt(data.id);
+			actionParams = { gameId };
+			// Find the game to edit and open the game edit modal
+			if (selectedEventData && gameId) {
+				for (const stageData of Object.values(selectedEventData.stages)) {
+					for (const match of stageData.matches) {
+						const game = match.games?.find((g) => g.id === gameId);
+						if (game) {
+							editingGame = {
+								game,
+								matchId: match.id,
+								matchTeamA: match.teams[0].team,
+								matchTeamB: match.teams[1].team,
+								rosters: [
+									data.teamRosters.get(selectedEventData.event.id)?.get(match.teams[0].team.id) ??
+										[],
+									data.teamRosters.get(selectedEventData.event.id)?.get(match.teams[1].team.id) ??
+										[]
+								],
+								match: {
+									maps: match.maps,
+									games: match.games
+								}
+							};
+							break;
+						}
+					}
+					if (editingGame) break;
+				}
+			}
+		} else if (data.action === 'newGame' && page.url.searchParams.get('matchId')) {
 			action = 'newGame';
-			actionParams = null;
+			const matchId = page.url.searchParams.get('matchId');
+			actionParams = { matchId: matchId || undefined };
+			// Find the match to add a game to and open the game edit modal
+			if (selectedEventData && matchId) {
+				for (const stageData of Object.values(selectedEventData.stages)) {
+					const match = stageData.matches.find((m) => m.id === matchId);
+					if (match) {
+						editingGame = {
+							matchId: match.id,
+							matchTeamA: match.teams[0].team,
+							matchTeamB: match.teams[1].team,
+							rosters: [
+								data.teamRosters.get(selectedEventData.event.id)?.get(match.teams[0].team.id) ?? [],
+								data.teamRosters.get(selectedEventData.event.id)?.get(match.teams[1].team.id) ?? []
+							],
+							match: {
+								maps: match.maps,
+								games: match.games
+							}
+						};
+						break;
+					}
+				}
+			}
+		} else if (data.action === 'deleteGame' && data.id) {
+			action = 'deleteGame';
+			const gameId = parseInt(data.id);
+			actionParams = { gameId };
+			// Find the game to delete and open the delete confirmation modal
+			if (selectedEventData && gameId) {
+				for (const stageData of Object.values(selectedEventData.stages)) {
+					for (const match of stageData.matches) {
+						const game = match.games?.find((g) => g.id === gameId);
+						if (game) {
+							deletingGame = { game, matchId: match.id };
+							break;
+						}
+					}
+					if (deletingGame) break;
+				}
+			}
 		} else if (data.action === 'editBracket' && data.stageId) {
 			action = 'editBracket';
 			actionParams = { stageId: parseInt(data.stageId) };
