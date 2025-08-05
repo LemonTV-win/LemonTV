@@ -222,7 +222,7 @@
 
 <div
 	bind:this={container}
-	class="relative grid auto-rows-min justify-items-center gap-x-8 gap-y-0 overflow-x-auto bg-zinc-900 px-4 py-8 [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-800"
+	class="relative grid auto-rows-min justify-items-center gap-x-8 gap-y-0 overflow-x-auto bg-zinc-900 px-4 py-8"
 	style="grid-template-columns: repeat({gridColumns}, 1fr);"
 >
 	{#each rounds as r, i (`round-header-${i}`)}

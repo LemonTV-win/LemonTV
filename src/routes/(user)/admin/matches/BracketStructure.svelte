@@ -197,9 +197,7 @@
 			<p>{m.no_rounds_configured()}</p>
 		</div>
 	{:else}
-		<div
-			class="overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb]:hover:bg-slate-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-800"
-		>
+		<div class="styled-scroll-horizontal overflow-x-auto">
 			<div
 				class="inline-grid gap-4 pr-2 pb-2"
 				style="grid-template-columns: repeat({rounds.length + 1}, 200px);"

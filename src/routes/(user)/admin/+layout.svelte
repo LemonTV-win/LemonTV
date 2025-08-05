@@ -98,9 +98,7 @@
 		{@render tab('/admin/community', IconParkSolidMessage, m.community())}
 		{@render tab('/admin/edit-history', IconParkSolidHistory, m.edit_history())}
 	</nav>
-	<main
-		class="overflow-auto p-8 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-800"
-	>
+	<main class="styled-scrollbar overflow-auto p-8">
 		{@render children()}
 	</main>
 </div>
