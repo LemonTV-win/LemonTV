@@ -11,5 +11,10 @@
 <img
 	src={player.avatarURL || player.avatar || PlaceholderAvatar}
 	alt={player.name}
-	class={['h-10 w-10 rounded-full object-cover', className]}
+	class={[
+		'rounded-full object-cover',
+		className,
+		!className.includes('h-') && 'h-10 min-h-10',
+		!className.includes('w-') && 'w-10 min-w-10'
+	]}
 />
