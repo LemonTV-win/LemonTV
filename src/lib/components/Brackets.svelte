@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { calculateWinnerIndex } from '$lib/data';
 	import type { Stage } from '$lib/data/events';
-	import type { Match } from '$lib/data/matches';
+	import { type Match, ROUND_NAMES } from '$lib/data/matches';
 	import type { Team } from '$lib/data/teams';
 	import { m } from '$lib/paraglide/messages';
 	import { getLocale, type Locale } from '$lib/paraglide/runtime';
@@ -140,15 +140,6 @@
 	let tooltipID = $state<string>();
 
 	let highlightingTeam = $state<string>();
-
-	const ROUND_NAMES = {
-		thirdplace: m.thirdplace,
-		semifinals: m.semifinals,
-		final: m.final,
-		quarterfinals: m.quarterfinals,
-		top16: m.top16,
-		grandfinal: m.grandfinal
-	};
 
 	let show = $state(false);
 </script>

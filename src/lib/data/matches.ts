@@ -1,3 +1,4 @@
+import { m } from '$lib/paraglide/messages';
 import type { Character } from './game';
 import type { GameMap } from './game';
 import type { Team } from './teams';
@@ -79,3 +80,20 @@ export interface Game {
 		updatedAt: Date;
 	}>;
 }
+
+export type Round =
+	| 'quarterfinals'
+	| 'semifinals'
+	| 'final'
+	| 'thirdplace'
+	| 'grandfinal'
+	| 'top16';
+
+export const ROUND_NAMES: Record<Round, () => string> = {
+	quarterfinals: m.quarterfinals,
+	semifinals: m.semifinals,
+	final: m.final,
+	thirdplace: m.thirdplace,
+	grandfinal: m.grandfinal,
+	top16: m.top16
+};
