@@ -150,7 +150,7 @@
 					<div class="glass-card p-6 md:col-span-2">
 						<h3 class="mb-2 text-xl font-semibold">{m.about_team_join_title()}</h3>
 						<p class="mb-4 text-slate-300">{m.about_team_join_description()}</p>
-						<div class="flex flex-col gap-2">
+						<div class="flex justify-center gap-2">
 							<a
 								href={STRINOVA_ESPORTS_HUB_DISCORD_URL}
 								target="_blank"
@@ -167,7 +167,7 @@
 								class="inline-flex items-center gap-2 text-blue-400 hover:underline"
 							>
 								<IconQq class="h-6 w-6" />
-								QQ群
+								{m.about_team_join_qq()}
 							</a>
 						</div>
 					</div>
