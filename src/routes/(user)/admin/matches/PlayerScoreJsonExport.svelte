@@ -228,7 +228,7 @@
 					>Exported Data</label
 				>
 				<div
-					class="h-64 w-full overflow-auto rounded-md border border-slate-600 bg-slate-800 p-3 font-mono text-sm text-slate-200 focus:ring-2 focus:ring-yellow-500 focus:outline-none [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800"
+					class="styled-scroll h-64 w-full overflow-auto rounded-md border border-slate-600 bg-slate-800 p-3 font-mono text-sm text-slate-200 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 				>
 					<Highlight
 						language={exportFormat === 'json' ? json : typescript}

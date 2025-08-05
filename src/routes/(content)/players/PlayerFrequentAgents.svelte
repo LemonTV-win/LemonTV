@@ -143,7 +143,7 @@
 		'flex-col gap-0',
 		'max-h-64',
 		'rounded-lg border border-slate-600 bg-slate-800/50 backdrop-blur-sm',
-		'[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800',
+		'styled-scroll',
 		'whitespace-nowrap'
 	]}
 	popover="auto"

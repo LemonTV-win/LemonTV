@@ -51,7 +51,7 @@
 		tabindex="0"
 	>
 		<div
-			class="relative max-h-[90vh] w-full max-w-2xl rounded-lg border border-slate-800 bg-slate-900/95 p-6 shadow-lg [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800"
+			class="styled-scroll relative max-h-[90vh] w-full max-w-2xl rounded-lg border border-slate-800 bg-slate-900/95 p-6 shadow-lg"
 			role="dialog"
 			aria-modal="true"
 			aria-labelledby="modal-title"

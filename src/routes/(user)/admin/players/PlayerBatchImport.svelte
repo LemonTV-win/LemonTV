@@ -646,9 +646,7 @@ const players: PlayerImportData[] = [
 								Copy Schema
 							</button>
 						</div>
-						<div
-							class="max-h-100 overflow-x-auto overflow-y-auto text-xs [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800"
-						>
+						<div class="styled-scroll max-h-100 overflow-x-auto overflow-y-auto text-xs">
 							<Highlight language={typescript} code={TYPESCRIPT_SCHEMA} />
 						</div>
 					</div>
@@ -658,7 +656,7 @@ const players: PlayerImportData[] = [
 					id="jsonData"
 					bind:value={importJsonData}
 					placeholder={`Paste your JSON data here. Example: \n${EXAMPLE_JSON_DATA}`}
-					class="h-64 w-full rounded-md border border-slate-700 bg-slate-900 p-3 font-mono text-sm text-slate-200 focus:ring-2 focus:ring-yellow-500 focus:outline-none [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800"
+					class="styled-scroll h-64 w-full rounded-md border border-slate-700 bg-slate-900 p-3 font-mono text-sm text-slate-200 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 				></textarea>
 
 				{#if importJsonData.trim() && !parsedPlayers}
@@ -689,7 +687,7 @@ const players: PlayerImportData[] = [
 					<h4 class="mb-3 text-sm font-medium text-slate-200">Parsed Players</h4>
 
 					<div
-						class="max-h-128 overflow-x-auto overflow-y-auto rounded-md border border-slate-700 bg-slate-900 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800"
+						class="styled-scroll max-h-128 overflow-x-auto overflow-y-auto rounded-md border border-slate-700 bg-slate-900"
 					>
 						<table class="w-full table-auto border-collapse border-y-2 border-gray-500 bg-gray-800">
 							<thead>

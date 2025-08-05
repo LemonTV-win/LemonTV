@@ -784,9 +784,7 @@
 	{/if}
 
 	<div class="min-h-0 flex-1">
-		<div
-			class="h-full space-y-4 overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800"
-		>
+		<div class="styled-scroll h-full space-y-4 overflow-y-auto pr-2">
 			<div class="flex items-center justify-between">
 				<h4 class="text-lg font-medium text-white">
 					{m.selected_item()}

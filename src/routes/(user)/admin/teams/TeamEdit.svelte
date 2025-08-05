@@ -124,9 +124,7 @@
 		</div>
 	{/if}
 
-	<div
-		class="flex-1 space-y-4 overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800"
-	>
+	<div class="styled-scroll flex-1 space-y-4 overflow-y-auto pr-2">
 		{#if team.id}
 			<div>
 				<label class="block text-sm font-medium text-slate-300" for="eventId">ID</label>
