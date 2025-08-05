@@ -12,6 +12,7 @@
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 	import { MAP_NAMES } from '$lib/data/game';
 	import PlayerAgents from './PlayerAgents.svelte';
+	import PlayerRadarGraph from '$lib/components/PlayerRadarGraph.svelte';
 	import { onMount } from 'svelte';
 	let { data }: PageProps = $props();
 
@@ -273,6 +274,8 @@
 				</ul>
 			</div>
 
+			<PlayerRadarGraph playerStats={data.playerStats} />
+
 			{#if data.playerEvents}
 				<div class="md:col-span-3">
 					<h2 class="my-5 text-xl font-bold">{m.attended_events()}</h2>
@@ -280,7 +283,7 @@
 						{#if data.playerEvents.length > 0}
 							{#each data.playerEvents as event (event.slug)}
 								{#if event}
-									<li
+									<lib
 										class="grid grid-rows-[auto] gap-2 overflow-hidden rounded-sm bg-gray-800 shadow-2xl"
 									>
 										<a href="/events/{event.slug}" class="contents">
@@ -289,7 +292,7 @@
 											</div>
 											<div class="h-full p-4 text-white">{event.name}</div>
 										</a>
-									</li>
+									</lib>
 								{/if}
 							{/each}
 						{:else}
