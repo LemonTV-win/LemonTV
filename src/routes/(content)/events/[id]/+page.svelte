@@ -63,7 +63,7 @@
 				<ContentActionLink
 					href={`/admin/matches?event=${data.event.id}`}
 					type="edit"
-					title="Matches"
+					label={m.edit_matches()}
 				/>
 			{/if}
 		</h1>

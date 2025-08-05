@@ -59,7 +59,7 @@
 			<h1 class="text-2xl font-semibold">{m.events()}</h1>
 			{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
 				<ContentActionLink href="/admin/events" type="edit" />
-				<ContentActionLink href="/admin/matches" type="edit" title={m.matches()} />
+				<ContentActionLink href="/admin/matches" type="edit" label={m.edit_matches()} />
 			{/if}
 		</div>
 
