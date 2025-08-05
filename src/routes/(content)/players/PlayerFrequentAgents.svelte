@@ -136,25 +136,23 @@
 	{/each}
 </button>
 
-{#if playerAgents.length > 3}
-	<ul
-		bind:this={popover}
-		class={[
-			'fixed z-50',
-			'flex-col gap-0',
-			'max-h-64',
-			'rounded-lg border border-slate-600 bg-slate-800/50 backdrop-blur-sm',
-			'[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800',
-			'whitespace-nowrap'
-		]}
-		popover="auto"
-		id={`player-agents-extended-${playerIndex}`}
-		style:left={`${popoverPosition.x}px`}
-		style:top={`${popoverPosition.y}px`}
-	>
-		<PlayerAgents {playerAgents} />
-	</ul>
-{/if}
+<ul
+	bind:this={popover}
+	class={[
+		'fixed z-50',
+		'flex-col gap-0',
+		'max-h-64',
+		'rounded-lg border border-slate-600 bg-slate-800/50 backdrop-blur-sm',
+		'[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800',
+		'whitespace-nowrap'
+	]}
+	popover="auto"
+	id={`player-agents-extended-${playerIndex}`}
+	style:left={`${popoverPosition.x}px`}
+	style:top={`${popoverPosition.y}px`}
+>
+	<PlayerAgents {playerAgents} />
+</ul>
 
 <style>
 	ul:popover-open {
