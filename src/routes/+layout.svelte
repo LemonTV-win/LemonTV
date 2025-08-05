@@ -147,7 +147,7 @@
 			</nav>
 		</div>
 
-		<div class="flex items-center gap-4">
+		<div class="relative z-10 flex items-center gap-4">
 			<a
 				href="/"
 				class="flex items-center gap-2 text-2xl font-bold transition-colors duration-300 hover:text-yellow-300"
