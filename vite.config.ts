@@ -1,3 +1,4 @@
+import devtoolsJson from 'vite-plugin-devtools-json';
 import { paraglideVitePlugin } from '@inlang/paraglide-js';
 import tailwindcss from '@tailwindcss/vite';
 import { sveltekit } from '@sveltejs/kit/vite';
@@ -13,17 +14,12 @@ export default defineConfig({
 			outdir: './src/lib/paraglide',
 			strategy: ['cookie', 'url', 'baseLocale']
 		}),
-		Icons({
-			compiler: 'svelte'
-		})
+		Icons({ compiler: 'svelte' }),
+		devtoolsJson()
 	],
-	optimizeDeps: {
-		exclude: ['@node-rs/argon2']
-	},
+	optimizeDeps: { exclude: ['@node-rs/argon2'] },
 	build: {
 		target: 'esnext',
-		rollupOptions: {
-			external: ['@node-rs/argon2-wasm32-wasi']
-		}
+		rollupOptions: { external: ['@node-rs/argon2-wasm32-wasi'] }
 	}
 });

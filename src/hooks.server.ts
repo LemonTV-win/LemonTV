@@ -71,17 +71,4 @@ const handleJWKS: Handle = ({ event, resolve }) => {
 	return resolve(event);
 };
 
-const handleChromeDevTools: Handle = ({ event, resolve }) => {
-	if (event.url.pathname.startsWith('/.well-known/appspecific/com.chrome.devtools')) {
-		return new Response(null, { status: 204 });
-	}
-
-	return resolve(event);
-};
-
-export const handle: Handle = sequence(
-	handleParaglide,
-	handleAuth,
-	handleJWKS,
-	handleChromeDevTools
-);
+export const handle: Handle = sequence(handleParaglide, handleAuth, handleJWKS);
