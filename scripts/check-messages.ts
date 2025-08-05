@@ -11,6 +11,39 @@ const allMessageIDs = new Set<string>();
 const referenceLanguages = ['en', 'zh', 'ja'];
 const referenceMessages: Record<string, any> = {};
 
+// Helper function to recursively extract all nested message IDs
+function extractMessageIDs(obj: any, prefix = ''): string[] {
+	const ids: string[] = [];
+
+	for (const [key, value] of Object.entries(obj)) {
+		if (key === '$schema') continue;
+
+		const currentPath = prefix ? `${prefix}.${key}` : key;
+
+		if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+			// Recursively extract from nested objects
+			ids.push(...extractMessageIDs(value, currentPath));
+		} else if (typeof value === 'string') {
+			// This is a leaf node (actual translation)
+			ids.push(currentPath);
+		}
+	}
+
+	return ids;
+}
+
+// Helper function to get nested value from an object using dot notation
+function getNestedValue(obj: any, path: string): any {
+	return path.split('.').reduce((current, key) => {
+		return current && typeof current === 'object' ? current[key] : undefined;
+	}, obj);
+}
+
+// Helper function to check if a nested path exists in an object
+function hasNestedPath(obj: any, path: string): boolean {
+	return getNestedValue(obj, path) !== undefined;
+}
+
 // Load reference language files
 for (const lang of referenceLanguages) {
 	const filePath = path.join(messagesPath, `${lang}.json`);
@@ -19,15 +52,11 @@ for (const lang of referenceLanguages) {
 	}
 }
 
-// First pass: collect all message IDs
+// First pass: collect all message IDs from all files
 for (const file of fs.readdirSync(messagesPath)) {
 	const messages = JSON.parse(fs.readFileSync(path.join(messagesPath, file), 'utf8'));
-	// Skip the schema property
-	Object.keys(messages).forEach((key) => {
-		if (key !== '$schema') {
-			allMessageIDs.add(key);
-		}
-	});
+	const messageIDs = extractMessageIDs(messages);
+	messageIDs.forEach((id) => allMessageIDs.add(id));
 }
 
 console.log(
@@ -44,7 +73,7 @@ const missingTranslations: Record<string, string[]> = {};
 // Collect all missing translations by message ID
 for (const file of fs.readdirSync(messagesPath)) {
 	const messages = JSON.parse(fs.readFileSync(path.join(messagesPath, file), 'utf8'));
-	const fileMessageIDs = new Set(Object.keys(messages).filter((key) => key !== '$schema'));
+	const fileMessageIDs = new Set(extractMessageIDs(messages));
 
 	const missingMessages = Array.from(allMessageIDs).filter((id) => !fileMessageIDs.has(id));
 	missingMessages.forEach((id) => {
@@ -66,8 +95,8 @@ if (Object.keys(missingTranslations).length > 0) {
 		// Display reference translations
 		const references: string[] = [];
 		for (const lang of referenceLanguages) {
-			if (referenceMessages[lang] && referenceMessages[lang][messageId]) {
-				const translation = referenceMessages[lang][messageId];
+			const translation = getNestedValue(referenceMessages[lang], messageId);
+			if (translation && typeof translation === 'string') {
 				// Truncate long translations for display
 				const displayText =
 					translation.length > 60 ? translation.substring(0, 60) + '...' : translation;
@@ -83,10 +112,10 @@ if (Object.keys(missingTranslations).length > 0) {
 	hasWarnings = true;
 }
 
-// Check if any message is duplicated
+// Check if any message is duplicated (including nested ones)
 for (const file of fs.readdirSync(messagesPath)) {
 	const messages = JSON.parse(fs.readFileSync(path.join(messagesPath, file), 'utf8'));
-	const messageIDs = Object.keys(messages).filter((key) => key !== '$schema');
+	const messageIDs = extractMessageIDs(messages);
 	if (messageIDs.length !== new Set(messageIDs).size) {
 		console.warn(chalk.yellow(`[Check Messages] ${file} has duplicated translations`));
 		hasWarnings = true;
