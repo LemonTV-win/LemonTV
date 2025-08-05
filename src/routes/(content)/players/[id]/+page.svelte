@@ -219,9 +219,7 @@
 
 			<div class="glass rounded-2xl p-6">
 				<h3 class="mb-4 text-lg font-bold">{m.superstrings()}</h3>
-				<ul
-					class="flex max-h-100 list-none flex-col gap-2 overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb]:hover:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800"
-				>
+				<ul class="styled-scroll flex max-h-100 list-none flex-col gap-2 overflow-y-auto pr-2">
 					{#if data.playerAgents.length > 0}
 						<PlayerAgents playerAgents={data.playerAgents} />
 					{:else}

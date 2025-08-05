@@ -827,7 +827,7 @@
 	</div>
 
 	<div
-		class="mb-8 grid max-h-[calc(3*theme(spacing.20)+2*theme(spacing.4))] gap-4 overflow-y-auto pr-4 md:grid-cols-2 lg:grid-cols-3 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb]:hover:bg-slate-500 [&::-webkit-scrollbar-track]:bg-slate-800"
+		class="styled-scroll mb-8 grid max-h-[calc(3*theme(spacing.20)+2*theme(spacing.4))] gap-4 overflow-y-auto pr-4 md:grid-cols-2 lg:grid-cols-3"
 	>
 		{#each filteredEvents as event (event.id)}
 			<EventButtonCard {event} {handleEventSelect} bind:selectedEventId />
