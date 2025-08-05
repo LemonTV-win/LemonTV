@@ -2,12 +2,11 @@
 	import '../app.css';
 
 	import { m } from '$lib/paraglide/messages.js';
-	import { setLocale, type Locale, getLocale } from '$lib/paraglide/runtime';
+	import { getLocale } from '$lib/paraglide/runtime';
 	import MaterialSymbolsMenuRounded from '~icons/material-symbols/menu-rounded';
 	import MaterialSymbolsCloseRounded from '~icons/material-symbols/close-rounded';
 	import MaterialSymbolsLogoutRounded from '~icons/material-symbols/logout-rounded';
 	import MaterialSymbolsSettingsRounded from '~icons/material-symbols/settings-rounded';
-	import MaterialSymbolsTranslateRounded from '~icons/material-symbols/translate-rounded';
 	import MaterialSymbolsAdminPanelSettingsRounded from '~icons/material-symbols/admin-panel-settings-rounded';
 	import IconDiscord from '~icons/simple-icons/discord';
 	import IconGithub from '~icons/simple-icons/github';
@@ -16,7 +15,6 @@
 	import Switch from '$lib/components/ui/Switch.svelte';
 	import { settings } from '$lib/settings.svelte';
 	import type { LayoutProps } from './$types';
-	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
 	import {
 		IDREAMSKY_URL_EN,
@@ -39,23 +37,6 @@
 		{ href: '/community', label: m.community }
 	] as const;
 
-	const locales: Record<Locale, string> = {
-		en: 'English',
-		ja: '日本語',
-		zh: '简体中文',
-		'zh-tw': '繁體中文',
-		es: 'Español',
-		ko: '한국어',
-		'pt-br': 'Português',
-		de: 'Deutsch',
-		fr: 'Français',
-		ru: 'Русский',
-		vi: 'Tiếng Việt',
-		id: 'Bahasa Indonesia',
-		'uk-ua': 'Українська'
-	};
-
-	let locale = $state(getLocale());
 	let mobileMenuOpen = $state(false);
 	let userMenuOpen = $state(false);
 
