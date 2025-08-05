@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { GameMap } from '$lib/data/game';
+	import { MAP_NAMES, type GameMap } from '$lib/data/game';
 	import { m } from '$lib/paraglide/messages.js';
 
 	const MAP_2_IMAGE: Record<GameMap, string> = {
@@ -28,8 +28,8 @@
 	<img
 		class={['h-9 w-12 rounded object-cover', className]}
 		src={MAP_2_IMAGE[mapId]}
-		alt={m[mapId]()}
-		title={m[mapId]()}
+		alt={MAP_NAMES[mapId]()}
+		title={MAP_NAMES[mapId]()}
 	/>
 {:else}
 	<div

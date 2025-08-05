@@ -21,6 +21,7 @@
 	import GameEdit from './GameEdit.svelte';
 	import type { GameParticipant } from './+page.server';
 	import EventButtonCard from './EventButtonCard.svelte';
+	import { MAP_NAMES, type GameMap } from '$lib/data/game';
 
 	let { data }: PageProps = $props();
 
@@ -134,7 +135,7 @@
 						map_picker_position: number;
 						side_picker_position: number;
 						map: {
-							id: string;
+							id: GameMap;
 						};
 						action?: string;
 					}>;
@@ -145,7 +146,7 @@
 						duration: number;
 						winner: number;
 						map: {
-							id: string;
+							id: GameMap;
 						};
 						teams: Array<{
 							gameId: number;
@@ -399,7 +400,7 @@
 			map_picker_position: number;
 			side_picker_position: number;
 			map: {
-				id: string;
+				id: GameMap;
 			};
 			action?: string;
 		}>;
@@ -410,7 +411,7 @@
 			duration: number;
 			winner: number;
 			map: {
-				id: string;
+				id: GameMap;
 			};
 			teams: Array<{
 				gameId: number;
@@ -509,11 +510,6 @@
 		return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
 	}
 
-	// Helper function to get map name
-	function getMapName(mapId: string): string {
-		return MAP_2_NAME[mapId] || mapId;
-	}
-
 	// Helper function to determine score color
 	function getScoreColor(score1: number | null, score2: number | null, position: number): string {
 		if (score1 === null || score2 === null) return 'text-gray-500';
@@ -532,7 +528,7 @@
 		}
 	}
 
-	const MAP_2_IMAGE: Record<string, string> = {
+	const MAP_2_IMAGE: Record<GameMap, string> = {
 		base_404:
 			'https://klbq-web-cms.strinova.com/prod/strinova_web/images/202411/830d991d-24ce-4c00-92e9-2b4eb5ff703c.jpg',
 		area_88:
@@ -549,17 +545,6 @@
 			'https://klbq-web-cms.strinova.com/prod/strinova_web/images/202411/c0951e88-691f-4698-8c27-e65ab25ff166.jpg',
 		ocarnus:
 			'https://static.wikitide.net/strinovawiki/thumb/9/9d/Intro_Ocarnus.png/450px-Intro_Ocarnus.png'
-	};
-
-	const MAP_2_NAME: Record<string, string> = {
-		base_404: m.base_404(),
-		area_88: m.area_88(),
-		port_euler: m.port_euler(),
-		windy_town: m.windy_town(),
-		space_lab: m.space_lab(),
-		cauchy_district: m.cauchy_district(),
-		cosmite: m.cosmite(),
-		ocarnus: m.ocarnus()
 	};
 
 	function handleDeleteSubmit() {
@@ -905,7 +890,7 @@
 													<div class="relative">
 														<img
 															src={MAP_2_IMAGE[map.map.id]}
-															alt={MAP_2_NAME[map.map.id]}
+															alt={MAP_NAMES[map.map.id]()}
 															class="h-6 w-10 rounded object-cover"
 														/>
 														{#if map.action === 'ban' || map.action === 'pick'}
@@ -925,8 +910,8 @@
 														{#if map.map_picker_position !== null}
 															<div class="group/map relative">
 																<span class="cursor-help text-sm text-gray-300"
-																	>{MAP_2_NAME[map.map.id]}</span
-																>
+																	>{MAP_NAMES[map.map.id]()}
+																</span>
 																<div
 																	class="invisible absolute top-4 -right-1 z-10 rounded bg-gray-800 px-2 py-1 text-xs text-gray-300 opacity-0 transition-all group-hover/map:visible group-hover/map:opacity-100"
 																>
@@ -934,7 +919,7 @@
 																</div>
 															</div>
 														{:else}
-															<span class="text-sm text-gray-300">{MAP_2_NAME[map.map.id]}</span>
+															<span class="text-sm text-gray-300">{MAP_NAMES[map.map.id]()} </span>
 														{/if}
 														{#if map.side_picker_position !== null}
 															<div class="group/side relative">
@@ -965,10 +950,10 @@
 													<div class="flex items-center gap-2">
 														<img
 															src={MAP_2_IMAGE[game.map.id]}
-															alt={getMapName(game.map.id)}
+															alt={MAP_NAMES[game.map.id]()}
 															class="h-4 w-6 rounded object-cover"
 														/>
-														<span class="text-xs text-gray-300">{getMapName(game.map.id)}</span>
+														<span class="text-xs text-gray-300">{MAP_NAMES[game.map.id]()} </span>
 														<span class="text-xs text-gray-500"
 															>({formatDuration(game.duration)})</span
 														>
@@ -1209,7 +1194,7 @@
 		<GameEdit
 			game={editingGame.game}
 			matchId={editingGame.matchId}
-			maps={data.maps.map((map) => ({ id: map.id, name: MAP_2_NAME[map.id] }))}
+			maps={data.maps.map((map) => ({ id: map.id, name: MAP_NAMES[map.id]() }))}
 			onCancel={closeGameModal}
 			onSuccess={closeGameModal}
 			teams={[editingGame.matchTeamA, editingGame.matchTeamB]}

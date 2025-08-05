@@ -9,6 +9,7 @@
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import IconParkSolidAdd from '~icons/icon-park-solid/add';
 	import { SvelteMap } from 'svelte/reactivity';
+	import { MAP_NAMES } from '$lib/data/game';
 	let {
 		match,
 		matchTeams,
@@ -62,17 +63,6 @@
 
 	const formatOptions = ['BO1', 'BO3', 'BO5'];
 	const mapActionOptions = ['pick', 'ban', 'decider', 'set'] as const;
-
-	const MAP_2_NAME: Record<string, string> = {
-		base_404: m.base_404(),
-		area_88: m.area_88(),
-		port_euler: m.port_euler(),
-		windy_town: m.windy_town(),
-		space_lab: m.space_lab(),
-		cauchy_district: m.cauchy_district(),
-		cosmite: m.cosmite(),
-		ocarnus: m.ocarnus()
-	};
 
 	// Group stages by event
 	let stagesByEvent: SvelteMap<string, { id: string; name: string }[]> = $derived.by(() => {
@@ -287,7 +277,7 @@
 								>
 									<option value={null}>{m.select_map()}</option>
 									{#each maps as mapOption (mapOption.id)}
-										<option value={mapOption.id}>{MAP_2_NAME[mapOption.id]}</option>
+										<option value={mapOption.id}>{MAP_NAMES[mapOption.id]}</option>
 									{/each}
 								</select>
 							</div>

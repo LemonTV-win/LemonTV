@@ -45,10 +45,13 @@ const MAPS = [
 	{ id: 'cauchy_district' },
 	{ id: 'cosmite' },
 	{ id: 'ocarnus' }
-];
+] as const;
 
 async function syncMaps() {
-	await db.insert(schema.map).values(MAPS).onConflictDoNothing();
+	await db
+		.insert(schema.map)
+		.values([...MAPS])
+		.onConflictDoNothing();
 }
 
 export async function syncAll() {
