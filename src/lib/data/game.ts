@@ -76,32 +76,32 @@ export type Character = (typeof CHARACTERS)[number];
 
 export const CHARACTER_NAMES: Record<Character, () => string> = {
 	// P.U.S
-	Yvette: m.Yvette,
-	Nobunaga: m.Nobunaga,
-	Kokona: m.Kokona,
-	Michele: m.Michele,
-	Flavia: m.Flavia,
-	Yugiri: m.Yugiri,
-	Leona: m.Leona,
-	Chiyo: m.Chiyo,
+	Yvette: m['game.character.Yvette'],
+	Nobunaga: m['game.character.Nobunaga'],
+	Kokona: m['game.character.Kokona'],
+	Michele: m['game.character.Michele'],
+	Flavia: m['game.character.Flavia'],
+	Yugiri: m['game.character.Yugiri'],
+	Leona: m['game.character.Leona'],
+	Chiyo: m['game.character.Chiyo'],
 
 	// The Scissors
-	Reiichi: m.Reiichi,
-	Lawine: m.Lawine,
-	Ming: m.Ming,
-	Meredith: m.Meredith,
-	Eika: m.Eika,
-	Kanami: m.Kanami,
-	Fragrans: m.Fragrans,
-	Mara: m.Mara,
+	Reiichi: m['game.character.Reiichi'],
+	Lawine: m['game.character.Lawine'],
+	Ming: m['game.character.Ming'],
+	Meredith: m['game.character.Meredith'],
+	Eika: m['game.character.Eika'],
+	Kanami: m['game.character.Kanami'],
+	Fragrans: m['game.character.Fragrans'],
+	Mara: m['game.character.Mara'],
 
 	// Urbino
-	Audrey: m.Audrey,
-	Maddelena: m.Maddelena,
-	'Bai Mo': m['Bai Mo'],
-	Fuchsia: m.Fuchsia,
-	Galatea: m.Galatea,
-	Celestia: m.Celestia
+	Audrey: m['game.character.Audrey'],
+	Maddelena: m['game.character.Maddelena'],
+	'Bai Mo': m['game.character.Bai Mo'],
+	Fuchsia: m['game.character.Fuchsia'],
+	Galatea: m['game.character.Galatea'],
+	Celestia: m['game.character.Celestia']
 };
 
 // #endregion

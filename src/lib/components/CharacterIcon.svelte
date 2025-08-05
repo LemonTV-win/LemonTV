@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Character } from '$lib/data/game';
-	import { m } from '$lib/paraglide/messages.js';
+	import { CHARACTER_NAMES } from '$lib/data/game';
 	const CHARACTER_2_IMAGE: Record<Character, string> = {
 		Michele:
 			'https://static.wikitide.net/strinovawiki/thumb/f/f9/Michele_Profile.png/150px-Michele_Profile.png',
@@ -44,8 +44,8 @@
 	<img
 		class={['h-9 min-h-9 w-9 min-w-9 flex-shrink-0 rounded-full object-contain', className]}
 		src={CHARACTER_2_IMAGE[character]}
-		alt={m[character]()}
-		title={m[character]()}
+		alt={CHARACTER_NAMES[character]()}
+		title={CHARACTER_NAMES[character]()}
 	/>
 {:else}
 	<div
