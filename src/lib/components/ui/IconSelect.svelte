@@ -170,7 +170,7 @@
 
 	{#if isOpen}
 		<ul
-			class="ring-opacity-5 scroll absolute top-full right-0 left-0 z-50 mt-1 max-h-48 list-none overflow-y-auto rounded-md border border-slate-700 bg-slate-800 p-1 shadow-lg ring-1 ring-black"
+			class="ring-opacity-5 styled-scroll absolute top-full right-0 left-0 z-50 mt-1 max-h-48 list-none overflow-y-auto rounded-md border border-slate-700 bg-slate-800 p-1 shadow-lg ring-1 ring-black"
 			role="listbox"
 		>
 			{#each options as option (option.value)}
