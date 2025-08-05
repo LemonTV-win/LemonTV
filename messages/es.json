@@ -568,6 +568,7 @@
 	"idreamsky": "iDreamSky",
 	"strinova": "Strinova",
 	"fate_trigger": "Fate Trigger",
+	"edit_game": "Editar Juego",
 	"matches_for_event": "Partidas para {name}",
 	"total_matches_games": "{matches} partidas, {games} juegos",
 	"add_stage": "Agregar Etapa",
