@@ -30,6 +30,8 @@
 	});
 	let errorMessage = $state('');
 	let successMessage = $state('');
+	let hasFile = $state(false);
+	let uploaded = $state(false);
 	let lastTeamName = $state(team.name || '');
 
 	$effect(() => {
@@ -85,6 +87,12 @@
 		formData.append('aliases', JSON.stringify(aliases));
 		// Add players data
 		formData.append('players', JSON.stringify(selectedPlayers));
+
+		// Prevent submission if there's a pending file upload
+		if (hasFile && !uploaded) {
+			errorMessage = 'Please upload the selected image before saving the team.';
+			return;
+		}
 
 		console.log('[Admin][Teams][TeamEdit] Form data:', [...formData.entries()]);
 
@@ -195,7 +203,7 @@
 			<label for="teamLogo" class="block text-sm font-medium text-slate-300">
 				{m.logo()}
 			</label>
-			<ImageUpload bind:value={newTeam.logo} prefix="teams" />
+			<ImageUpload bind:value={newTeam.logo} prefix="teams" bind:hasFile bind:uploaded />
 			<input type="hidden" name="logo" value={newTeam.logo} />
 		</div>
 

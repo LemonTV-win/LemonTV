@@ -4,13 +4,19 @@
 	import IconImage from '~icons/carbon/image';
 	import IconDocument from '~icons/carbon/document';
 	import IconCircle from '~icons/carbon/circle-dash';
+	import IconClose from '~icons/carbon/close';
+	import IconUndo from '~icons/carbon/undo';
 
 	let {
 		value = $bindable(),
-		prefix = 'events'
+		prefix = 'events',
+		hasFile = $bindable(false),
+		uploaded = $bindable(false)
 	}: {
 		value: string | null;
 		prefix?: string;
+		hasFile?: boolean;
+		uploaded?: boolean;
 	} = $props();
 
 	let errorMessage = $state('');
@@ -21,6 +27,10 @@
 	let previewUrl: string | null = $state(null);
 	let displayUrl: string | null = $state(null);
 	let imageLoadError = $state(false);
+	let originalValue = $state<string | null>(null);
+
+	// Track if we have a pending upload (file selected but not uploaded)
+	let hasPendingUpload = $derived(selectedFile !== null && !uploaded);
 
 	// Cleanup preview URL when component is destroyed
 	$effect(() => {
@@ -29,6 +39,13 @@
 				URL.revokeObjectURL(previewUrl);
 			}
 		};
+	});
+
+	// Store original value when component initializes
+	$effect(() => {
+		if (originalValue === null) {
+			originalValue = value;
+		}
 	});
 
 	// Handle file selection
@@ -40,8 +57,27 @@
 
 		if (file) {
 			previewUrl = URL.createObjectURL(file);
+			hasFile = true;
+			uploaded = false;
+		} else {
+			hasFile = false;
+			uploaded = false;
 		}
 		selectedFile = file;
+	}
+
+	// Clear selected file and restore original value
+	function clearSelectedFile() {
+		handleFileSelect(null);
+		value = originalValue;
+		errorMessage = '';
+		successMessage = '';
+
+		// Clear the file input
+		const fileInput = document.getElementById('imageFile') as HTMLInputElement;
+		if (fileInput) {
+			fileInput.value = '';
+		}
 	}
 
 	// Update display URL when value changes
@@ -102,6 +138,7 @@
 
 			if (response.ok) {
 				value = result.key;
+				uploaded = true;
 				successMessage = m.image_uploaded();
 				// Clear the file input and preview
 				const fileInput = document.getElementById('imageFile') as HTMLInputElement;
@@ -171,6 +208,25 @@
 	{#if successMessage}
 		<div class="rounded-md bg-green-900/50 p-4 text-green-200" role="alert">
 			<span class="block sm:inline">{successMessage}</span>
+		</div>
+	{/if}
+
+	{#if hasPendingUpload}
+		<div class="rounded-md bg-yellow-900/50 p-4 text-yellow-200" role="alert">
+			<div class="flex items-center justify-between">
+				<span class="block sm:inline"
+					>⚠️ You have a file selected but not uploaded. Please upload or clear the selection.</span
+				>
+				<button
+					type="button"
+					onclick={clearSelectedFile}
+					class="flex items-center gap-1 rounded px-2 py-1 text-sm hover:bg-yellow-800/50"
+					title="Clear selected file and restore original"
+				>
+					<IconUndo class="h-4 w-4" />
+					Clear
+				</button>
+			</div>
 		</div>
 	{/if}
 
@@ -244,6 +300,15 @@
 								<IconImage class="h-4 w-4" />
 								<span class="font-mono">{selectedFile.type.split('/')[1].toUpperCase()}</span>
 							</div>
+							<button
+								type="button"
+								onclick={clearSelectedFile}
+								class="flex items-center gap-1 rounded px-2 py-1 text-red-400 hover:bg-red-900/50"
+								title="Clear selected file"
+							>
+								<IconClose class="h-4 w-4" />
+								Clear
+							</button>
 						</div>
 					</div>
 				{/if}

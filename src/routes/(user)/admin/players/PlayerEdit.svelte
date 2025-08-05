@@ -35,6 +35,8 @@
 	let newPlayer = $state({ ...player });
 	let errorMessage = $state('');
 	let copySuccess = $state(false);
+	let hasFile = $state(false);
+	let uploaded = $state(false);
 	let userId = $state(player.user?.id || '');
 	let userSearch = $state(users.find((user) => user.id === userId)?.username || '');
 	let showUserDropdown = $state(false);
@@ -215,6 +217,12 @@
 
 		formData.set('nationalities', JSON.stringify(newPlayer.nationalities || []));
 
+		// Prevent submission if there's a pending file upload
+		if (hasFile && !uploaded) {
+			errorMessage = 'Please upload the selected image before saving the player.';
+			return;
+		}
+
 		return ({ result }: { result: ActionResult }) => {
 			if (result.type === 'success') {
 				onsuccess();
@@ -380,7 +388,7 @@
 			<label for="playerAvatar" class="block text-sm font-medium text-slate-300">
 				{m.avatar()}
 			</label>
-			<ImageUpload bind:value={playerAvatar} prefix="players" />
+			<ImageUpload bind:value={playerAvatar} prefix="players" bind:hasFile bind:uploaded />
 			<input type="hidden" name="avatar" value={playerAvatar} />
 		</div>
 

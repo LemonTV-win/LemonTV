@@ -122,6 +122,8 @@
 	let errorMessage = $state('');
 	let successMessage = $state('');
 	let dateRange = $state({ start: '', end: '' });
+	let hasFile = $state(false);
+	let uploaded = $state(false);
 
 	// Initialize date range from event.date
 	$effect(() => {
@@ -184,6 +186,13 @@
 		formData.append('videos', JSON.stringify(newEvent.videos));
 		// Add casters data
 		formData.append('casters', JSON.stringify(newEvent.casters));
+
+		// Prevent submission if there's a pending file upload
+		if (hasFile && !uploaded) {
+			errorMessage = 'Please upload the selected image before saving the event.';
+			return;
+		}
+
 		return async ({ result }) => {
 			if (result.type === 'success') {
 				onsuccess();
@@ -356,7 +365,7 @@
 
 		<div>
 			<label class="block text-sm font-medium text-slate-300" for="image">{m.image()}</label>
-			<ImageUpload bind:value={newEvent.image} prefix="events" />
+			<ImageUpload bind:value={newEvent.image} prefix="events" bind:hasFile bind:uploaded />
 			<input type="hidden" name="image" value={newEvent.image} />
 		</div>
 

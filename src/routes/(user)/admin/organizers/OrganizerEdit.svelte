@@ -26,6 +26,8 @@
 	});
 	let errorMessage = $state('');
 	let successMessage = $state('');
+	let hasFile = $state(false);
+	let uploaded = $state(false);
 
 	const organizerTypes = [
 		{ value: 'individual', label: m.individual() },
@@ -40,6 +42,12 @@
 	method="POST"
 	action={organizer.id ? '?/update' : '?/create'}
 	use:enhance={() => {
+		// Prevent submission if there's a pending file upload
+		if (hasFile && !uploaded) {
+			errorMessage = 'Please upload the selected image before saving the organizer.';
+			return;
+		}
+
 		return async ({ result }) => {
 			if (result.type === 'success') {
 				onsuccess();
@@ -108,7 +116,7 @@
 
 		<div class="mb-4">
 			<label class="block text-sm font-medium text-slate-300" for="logo">{m.logo()}</label>
-			<ImageUpload bind:value={newOrganizer.logo} prefix="organizers" />
+			<ImageUpload bind:value={newOrganizer.logo} prefix="organizers" bind:hasFile bind:uploaded />
 			<input type="hidden" name="logo" value={newOrganizer.logo} />
 		</div>
 

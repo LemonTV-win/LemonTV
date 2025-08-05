@@ -29,6 +29,8 @@
 	});
 	let errorMessage = $state('');
 	let successMessage = $state('');
+	let hasFile = $state(false);
+	let uploaded = $state(false);
 
 	function handleTagToggle(tag: CommunityTag) {
 		const index = newServer.tags.findIndex((t) => t.id === tag.id);
@@ -44,6 +46,12 @@
 	method="POST"
 	action={server.id ? '?/update' : '?/create'}
 	use:enhance={() => {
+		// Prevent submission if there's a pending file upload
+		if (hasFile && !uploaded) {
+			errorMessage = 'Please upload the selected image before saving the server.';
+			return;
+		}
+
 		return async ({ result }) => {
 			if (result.type === 'success') {
 				onSuccess();
@@ -95,7 +103,7 @@
 
 	<div class="mb-4">
 		<label class="block text-sm font-medium text-slate-300" for="icon">{m.icon_url()}</label>
-		<ImageUpload bind:value={newServer.icon} prefix="community" />
+		<ImageUpload bind:value={newServer.icon} prefix="community" bind:hasFile bind:uploaded />
 		<input type="hidden" name="icon" value={newServer.icon} />
 	</div>
 
