@@ -36,6 +36,16 @@
 			"Fuchsia": "绯莎",
 			"Galatea": "加拉蒂亚",
 			"Chiyo": "千代"
+		},
+		"map": {
+			"base_404": "404基地",
+			"area_88": "88区",
+			"port_euler": "欧拉港口",
+			"space_lab": "空间实验室",
+			"windy_town": "风曳镇",
+			"cauchy_district": "柯西街区",
+			"cosmite": "科斯迷特",
+			"ocarnus": "奥卡努斯"
 		}
 	},
 	"name": "名字",
@@ -214,14 +224,6 @@
 	"failed_to_add_role": "添加角色失败",
 	"failed_to_remove_role": "删除角色失败",
 	"failed_to_update_role": "更新角色失败",
-	"base_404": "404基地",
-	"area_88": "88区",
-	"port_euler": "欧拉港口",
-	"space_lab": "空间实验室",
-	"windy_town": "风曳镇",
-	"cauchy_district": "柯西街区",
-	"cosmite": "科斯迷特",
-	"ocarnus": "奥卡努斯",
 	"settings": "设置",
 	"admin_settings_desc": "管理系统设置和偏好。",
 	"admin_users_desc": "管理用户账户和权限。",

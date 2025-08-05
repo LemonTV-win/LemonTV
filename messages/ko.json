@@ -36,6 +36,16 @@
 			"Fuchsia": "퓨시아",
 			"Galatea": "갈라테아",
 			"Chiyo": "치요"
+		},
+		"map": {
+			"base_404": "베이스 404",
+			"area_88": "에어리어 88",
+			"port_euler": "포트 오일러",
+			"space_lab": "스페이스 랩",
+			"windy_town": "윈디 타운",
+			"cauchy_district": "코시 구역",
+			"cosmite": "코스마이트",
+			"ocarnus": "오르카누스"
 		}
 	},
 	"name": "이름",
@@ -214,14 +224,6 @@
 	"failed_to_add_role": "역할 추가 실패",
 	"failed_to_remove_role": "역할 삭제 실패",
 	"failed_to_update_role": "역할 업데이트 실패",
-	"base_404": "베이스 404",
-	"area_88": "에어리어 88",
-	"port_euler": "포트 오일러",
-	"space_lab": "스페이스 랩",
-	"windy_town": "윈디 타운",
-	"cauchy_district": "코시 구역",
-	"cosmite": "코스마이트",
-	"ocarnus": "오르카누스",
 	"settings": "설정",
 	"admin_settings_desc": "시스템 설정 및 환경설정 구성",
 	"admin_users_desc": "사용자 계정 및 권한 관리",

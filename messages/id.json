@@ -36,6 +36,16 @@
 			"Fuchsia": "Fuchsia",
 			"Galatea": "Galatea",
 			"Chiyo": "Chiyo"
+		},
+		"map": {
+			"base_404": "Pangkalan 404",
+			"area_88": "Area 88",
+			"port_euler": "Pelabuhan Euler",
+			"space_lab": "Laboratorium Antariksa",
+			"windy_town": "Kota Berangin",
+			"cauchy_district": "Jalan Cauchy",
+			"cosmite": "Cosmite",
+			"ocarnus": "Ocarnus"
 		}
 	},
 	"name": "Nama",
@@ -214,14 +224,6 @@
 	"failed_to_add_role": "Gagal menambahkan peran",
 	"failed_to_remove_role": "Gagal menghapus peran",
 	"failed_to_update_role": "Gagal memperbarui peran",
-	"base_404": "Pangkalan 404",
-	"area_88": "Area 88",
-	"port_euler": "Pelabuhan Euler",
-	"space_lab": "Laboratorium Antariksa",
-	"windy_town": "Kota Berangin",
-	"cauchy_district": "Jalan Cauchy",
-	"cosmite": "Cosmite",
-	"ocarnus": "Ocarnus",
 	"settings": "Pengaturan",
 	"admin_settings_desc": "Konfigurasi pengaturan sistem dan preferensi.",
 	"admin_users_desc": "Mengelola akun pengguna dan izin.",

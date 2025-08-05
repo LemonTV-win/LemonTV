@@ -36,6 +36,16 @@
 			"Fuchsia": "フューシャ",
 			"Galatea": "ガラテア",
 			"Chiyo": "千代"
+		},
+		"map": {
+			"base_404": "404基地",
+			"area_88": "88区",
+			"port_euler": "オイラー港",
+			"space_lab": "スペース研究センター",
+			"windy_town": "ウィンディタウン",
+			"cauchy_district": "コーシー街区",
+			"cosmite": "キスメット",
+			"ocarnus": "オルカヌス"
 		}
 	},
 	"name": "名前",
@@ -152,14 +162,6 @@
 	"register_error": "登録中にエラーが発生しました",
 	"dismiss": "閉じる",
 	"incorrect_credentials": "ユーザー名またはパスワードが正しくありません",
-	"base_404": "404基地",
-	"area_88": "88区",
-	"port_euler": "オイラー港",
-	"space_lab": "スペース研究センター",
-	"windy_town": "ウィンディタウン",
-	"cauchy_district": "コーシー街区",
-	"cosmite": "キスメット",
-	"ocarnus": "オルカヌス",
 	"settings": "設定",
 	"admin_settings_desc": "システム設定と環境設定を構成",
 	"admin_users_desc": "ユーザーアカウントと権限を管理",

@@ -36,6 +36,16 @@
 			"Fuchsia": "Fuchsia",
 			"Galatea": "Galatea",
 			"Chiyo": "Chiyo"
+		},
+		"map": {
+			"base_404": "Base 404",
+			"area_88": "Zone 88",
+			"port_euler": "Port Euler",
+			"space_lab": "Labo spatial",
+			"windy_town": "Ville venteuse",
+			"cauchy_district": "Rue Cauchy",
+			"cosmite": "Cosmite",
+			"ocarnus": "Ocarnus"
 		}
 	},
 	"name": "Nom",
@@ -214,14 +224,6 @@
 	"failed_to_add_role": "Échec de l'ajout du rôle",
 	"failed_to_remove_role": "Échec de la suppression du rôle",
 	"failed_to_update_role": "Échec de la mise à jour du rôle",
-	"base_404": "Base 404",
-	"area_88": "Zone 88",
-	"port_euler": "Port Euler",
-	"space_lab": "Labo spatial",
-	"windy_town": "Ville venteuse",
-	"cauchy_district": "Rue Cauchy",
-	"cosmite": "Cosmite",
-	"ocarnus": "Ocarnus",
 	"settings": "Paramètres",
 	"admin_settings_desc": "Configurez les paramètres du système et préférences.",
 	"admin_users_desc": "Gérez les comptes utilisateur et les permissions.",

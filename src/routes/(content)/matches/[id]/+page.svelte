@@ -2,7 +2,7 @@
 	import { error } from '@sveltejs/kit';
 	import type { PageProps } from './$types';
 
-	import type { GameMap } from '$lib/data/game';
+	import { MAP_NAMES, type GameMap } from '$lib/data/game';
 
 	let { data }: PageProps = $props();
 
@@ -60,17 +60,6 @@
 			'https://static.wikitide.net/strinovawiki/thumb/9/9d/Intro_Ocarnus.png/450px-Intro_Ocarnus.png'
 	};
 
-	const MAP_2_NAME: Record<GameMap, string> = {
-		base_404: m.base_404(),
-		area_88: m.area_88(),
-		port_euler: m.port_euler(),
-		windy_town: m.windy_town(),
-		space_lab: m.space_lab(),
-		cauchy_district: m.cauchy_district(),
-		cosmite: m.cosmite(),
-		ocarnus: m.ocarnus()
-	};
-
 	let currentMapID: number = $state(0);
 
 	function formatDuration(seconds: number): string {
@@ -116,8 +105,8 @@
 						style:opacity={index >= (data.match.games?.length ?? 0) ? '0.5' : '1'}
 						class:active={index === currentMapID}
 					>
-						<img src={MAP_2_IMAGE[map.map]} class="h-10 w-full" alt={MAP_2_NAME[map.map]} />
-						<span class="px-4 text-sm">{MAP_2_NAME[map.map]}</span>
+						<img src={MAP_2_IMAGE[map.map]} class="h-10 w-full" alt={MAP_NAMES[map.map]()} />
+						<span class="px-4 text-sm">{MAP_NAMES[map.map]()}</span>
 						<span class="px-4 text-sm text-yellow-300"
 							>{formatDuration(data.match.games?.[index]?.duration ?? 0)}</span
 						>
@@ -145,7 +134,7 @@
 			<VodDisplay
 				vods={data.match.games[currentMapID].vods || []}
 				gameId={data.match.games[currentMapID].id}
-				mapName={MAP_2_NAME[data.match.maps[currentMapID].map]}
+				mapName={MAP_NAMES[data.match.maps[currentMapID].map]()}
 			/>
 		</div>
 	{/if}

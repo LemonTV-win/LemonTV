@@ -34,6 +34,16 @@
 			"Fuchsia": "Fuchsia",
 			"Galatea": "Galatea",
 			"Chiyo": "Chiyo"
+		},
+		"map": {
+			"base_404": "Base 404",
+			"area_88": "Area 88",
+			"port_euler": "Port Euler",
+			"space_lab": "Space Lab",
+			"windy_town": "Windy Town",
+			"cauchy_district": "Cauchy Street",
+			"cosmite": "Cosmite",
+			"ocarnus": "Ocarnus"
 		}
 	},
 	"name": "Tên",
@@ -212,14 +222,6 @@
 	"failed_to_add_role": "Không thể thêm vai trò",
 	"failed_to_remove_role": "Không thể xóa vai trò",
 	"failed_to_update_role": "Không thể cập nhật vai trò",
-	"base_404": "Base 404",
-	"area_88": "Area 88",
-	"port_euler": "Port Euler",
-	"space_lab": "Space Lab",
-	"windy_town": "Windy Town",
-	"cauchy_district": "Cauchy Street",
-	"cosmite": "Cosmite",
-	"ocarnus": "Ocarnus",
 	"settings": "Cài đặt",
 	"admin_settings_desc": "Cấu hình cài đặt hệ thống và tùy chọn.",
 	"admin_users_desc": "Quản lý tài khoản người dùng và quyền truy cập.",

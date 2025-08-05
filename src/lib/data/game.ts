@@ -23,14 +23,14 @@ export const MAPS = [
 export type GameMap = (typeof MAPS)[number];
 
 export const MAP_NAMES: Record<GameMap, () => string> = {
-	base_404: m.base_404,
-	area_88: m.area_88,
-	port_euler: m.port_euler,
-	space_lab: m.space_lab,
-	windy_town: m.windy_town,
-	cauchy_district: m.cauchy_district,
-	cosmite: m.cosmite,
-	ocarnus: m.ocarnus
+	base_404: m['game.map.base_404'],
+	area_88: m['game.map.area_88'],
+	port_euler: m['game.map.port_euler'],
+	space_lab: m['game.map.space_lab'],
+	windy_town: m['game.map.windy_town'],
+	cauchy_district: m['game.map.cauchy_district'],
+	cosmite: m['game.map.cosmite'],
+	ocarnus: m['game.map.ocarnus']
 };
 // #endregion
 
