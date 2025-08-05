@@ -158,9 +158,24 @@
 		<!-- <h2 class="text-2xl font-bold text-white">Brackets</h2> -->
 		{#if activeStage}
 			<!-- TODO Use tab -->
-			<h2 class="text-2xl font-bold text-white">
-				{activeStage.title === 'Main Bracket' ? m.main_bracket() : activeStage.title}
-			</h2>
+			<div class="flex gap-4">
+				<h2 class="text-2xl font-bold text-white">
+					{activeStage.title === 'Main Bracket' ? m.main_bracket() : activeStage.title}
+				</h2>
+				<div class="flex gap-2">
+					{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
+						<ContentActionLink
+							href={`/admin/matches?event=${data.event.id}&action=editStage&stageId=${activeStage.id}`}
+							type="edit"
+						/>
+						<ContentActionLink
+							href={`/admin/matches?event=${data.event.id}&action=editBracket&stageId=${activeStage.id}`}
+							type="edit"
+							label={m.edit_bracket()}
+						/>
+					{/if}
+				</div>
+			</div>
 			<BracketGraph stage={activeStage} teams={data.teams} />
 		{:else}
 			{#each data.event.stages as stage (stage.id)}
