@@ -366,6 +366,7 @@
 	"about_team_roles_chief_editor": "Rédacteur en Chef",
 	"about_team_roles_consultant": "Consultant",
 	"about_team_roles_translator": "Traducteur",
+	"about_team_roles_delimiter": " & ",
 	"about_team_join_title": "Rejoignez-nous !",
 	"about_team_join_description": "Nous recherchons toujours des contributeurs passionnés",
 	"about_team_join_discord": "Rejoindre notre Discord",

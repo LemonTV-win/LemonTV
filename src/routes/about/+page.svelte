@@ -126,7 +126,7 @@
 									<p class="my-2 text-left text-slate-300">
 										{member.roles
 											.map((role) => ROLE_NAMES[role as keyof typeof ROLE_NAMES]())
-											.join(' & ')}
+											.join(m.about_team_roles_delimiter())}
 									</p>
 								</div>
 								<div class="flex flex-wrap gap-3">
