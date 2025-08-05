@@ -191,24 +191,6 @@
 						<IconGithub class="h-6 w-6" />
 						{m.about_links_github()}
 					</a>
-					<a
-						href={STRINOVA_ESPORTS_HUB_DISCORD_URL}
-						target="_blank"
-						rel="noopener noreferrer"
-						class="flex items-center gap-2 text-blue-400 hover:underline"
-					>
-						<IconDiscord class="h-6 w-6" />
-						{m.about_links_discord()}
-					</a>
-					<a
-						href={LEMON_TV_QQ_URL}
-						target="_blank"
-						rel="noopener noreferrer"
-						class="flex items-center gap-2 text-blue-400 hover:underline"
-					>
-						<IconQq class="h-6 w-6" />
-						QQ群
-					</a>
 				</div>
 			</section>
 
