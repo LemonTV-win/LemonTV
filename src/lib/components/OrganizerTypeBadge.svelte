@@ -22,7 +22,11 @@
 
 {#if type}
 	<span
-		class={`inline-flex items-center rounded-md border border-current/20 px-2 py-1 text-sm ${typeColors[type] || 'bg-gray-500/10 text-gray-500'}`}
+		class={[
+			'inline-flex items-center rounded-md border border-current/20 px-2 py-1 text-sm',
+			typeColors[type] || 'bg-gray-500/10 text-gray-500',
+			'overflow-hidden whitespace-nowrap'
+		]}
 	>
 		{typeLabels[type as keyof typeof typeLabels]() || type}
 	</span>
