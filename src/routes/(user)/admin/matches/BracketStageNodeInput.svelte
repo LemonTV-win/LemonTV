@@ -19,7 +19,7 @@
 		selectedObject: string;
 		confirmRemoveNode: (nodeIndex: number) => void;
 		addDependency: (nodeIndex: number) => void;
-		removeDependency: (nodeIndex: number, depIndex: number) => void;
+		removeDependency: (nodeIndex: number, depIndex: number) => Promise<void>;
 		getAvailableMatches: (nodeIndex: number) => Match[];
 		getAvailableMatchesForDependencies: (nodeIndex: number, depIndex: number) => Match[];
 		matches: Match[];
@@ -150,7 +150,7 @@
 						<button
 							type="button"
 							class="cursor-pointer text-red-500 hover:text-red-400"
-							onclick={() => removeDependency(nodeIndex, depIndex)}
+							onclick={async () => await removeDependency(nodeIndex, depIndex)}
 							aria-label="Remove dependency"
 						>
 							<IconParkSolidDelete class="h-3 w-3" />

@@ -40,6 +40,7 @@
 			id?: number;
 			dependencyMatchId: string;
 			outcome: 'winner' | 'loser';
+			isNew?: boolean;
 		}>;
 		isNew?: boolean;
 	};
@@ -200,7 +201,8 @@
 					dependencies: node.dependencies.map((dep: (typeof node.dependencies)[0]) => ({
 						id: dep.id,
 						dependencyMatchId: dep.dependencyMatchId,
-						outcome: dep.outcome as 'winner' | 'loser'
+						outcome: dep.outcome as 'winner' | 'loser',
+						isNew: false
 					})),
 					isNew: false
 				}));
@@ -435,14 +437,43 @@
 			...nodes[nodeIndex].dependencies,
 			{
 				dependencyMatchId: '',
-				outcome: 'winner'
+				outcome: 'winner',
+				isNew: true
 			}
 		];
 	}
 
-	function removeDependency(nodeIndex: number, depIndex: number) {
+	async function removeDependency(nodeIndex: number, depIndex: number) {
 		if (!nodes[nodeIndex]) return;
 
+		const dependency = nodes[nodeIndex].dependencies[depIndex];
+
+		// If the dependency has an ID and is not new (exists in database), delete it via API
+		if (dependency.id && !dependency.isNew) {
+			try {
+				const formData = new FormData();
+				formData.append('action', 'deleteStageNodeDependency');
+				formData.append('id', dependency.id.toString());
+
+				const response = await fetch('?/deleteStageNodeDependency', {
+					method: 'POST',
+					body: formData
+				});
+
+				if (!response.ok) {
+					throw new Error('Failed to delete stage node dependency');
+				}
+
+				const result: ActionResult = deserialize(await response.text());
+				applyAction(result);
+			} catch (error) {
+				console.error('Failed to delete stage node dependency:', error);
+				errorMessage = 'Failed to delete stage node dependency';
+				return;
+			}
+		}
+
+		// Remove from local state
 		nodes[nodeIndex].dependencies = nodes[nodeIndex].dependencies.filter((_, i) => i !== depIndex);
 	}
 
