@@ -27,9 +27,55 @@
 
 	$inspect('[admin/matches] data', data);
 
+	let action:
+		| 'editMatch'
+		| 'editStage'
+		| 'newMatch'
+		| 'newStage'
+		| 'editGame'
+		| 'newGame'
+		| 'editBracket'
+		| null = $state(null);
+	let actionParams = $state<{
+		id?: string | number;
+		stageId?: number;
+		gameId?: number;
+		delete?: boolean;
+	} | null>(null);
+
+	$effect(() => {
+		const url = new URL(window.location.href);
+		if (action) {
+			url.searchParams.set('action', action);
+			if (actionParams) {
+				if (actionParams.id) {
+					url.searchParams.set('id', actionParams.id.toString());
+				}
+				if (actionParams.stageId) {
+					url.searchParams.set('stageId', actionParams.stageId.toString());
+				}
+				if (actionParams.gameId) {
+					url.searchParams.set('gameId', actionParams.gameId.toString());
+				}
+				if (actionParams.delete) {
+					url.searchParams.set('delete', 'true');
+				}
+			}
+		} else {
+			url.searchParams.delete('action');
+			url.searchParams.delete('id');
+			url.searchParams.delete('stageId');
+			url.searchParams.delete('gameId');
+			url.searchParams.delete('delete');
+		}
+		goto(url.pathname + url.search, { replaceState: true });
+	});
+
 	// Handle URL parameters for modal state
 	$effect(() => {
 		if (data.action === 'editMatch' && data.id) {
+			action = 'editMatch';
+			actionParams = { id: data.id };
 			// Find the match to edit
 			if (selectedEventData) {
 				for (const stageData of Object.values(selectedEventData.stages)) {
@@ -52,12 +98,15 @@
 						// Check if we should show delete modal
 						if (data.delete === 'true') {
 							showDeleteModal = true;
+							actionParams = { ...actionParams, delete: true };
 						}
 						break;
 					}
 				}
 			}
 		} else if (data.action === 'editStage' && data.id) {
+			action = 'editStage';
+			actionParams = { id: parseInt(data.id) };
 			// Find the stage to edit
 			if (selectedEventData) {
 				const stageId = parseInt(data.id);
@@ -67,8 +116,10 @@
 				}
 			}
 		} else if (data.action === 'newMatch') {
-			// Pre-populate stageId if provided in URL
+			action = 'newMatch';
 			const stageId = data.stageId ? parseInt(data.stageId) : null;
+			actionParams = stageId ? { stageId } : null;
+			// Pre-populate stageId if provided in URL
 			editingMatch = {
 				match: {
 					format: 'bo1',
@@ -78,7 +129,21 @@
 				matchMaps: []
 			};
 		} else if (data.action === 'newStage') {
+			action = 'newStage';
+			actionParams = null;
 			editingStage = {};
+		} else if (data.action === 'editGame' && data.id) {
+			action = 'editGame';
+			actionParams = { gameId: parseInt(data.id) };
+		} else if (data.action === 'newGame') {
+			action = 'newGame';
+			actionParams = null;
+		} else if (data.action === 'editBracket' && data.stageId) {
+			action = 'editBracket';
+			actionParams = { stageId: parseInt(data.stageId) };
+		} else {
+			action = null;
+			actionParams = null;
 		}
 	});
 
@@ -288,6 +353,8 @@
 	let isDeletingGame = $state(false);
 
 	function openGameModal(match: StageMatch, eventData: EventData, game?: any) {
+		action = game ? 'editGame' : 'newGame';
+		actionParams = game ? { gameId: game.id } : null;
 		editingGame = {
 			game,
 			matchId: match.id,
@@ -307,6 +374,8 @@
 
 	function closeGameModal() {
 		editingGame = null;
+		action = null;
+		actionParams = null;
 		// Invalidate the page data to refresh the games list
 		invalidateAll();
 	}
@@ -314,6 +383,8 @@
 	function closeDeleteGameModal() {
 		deletingGame = null;
 		isDeletingGame = false;
+		action = null;
+		actionParams = null;
 	}
 	async function handleDeleteGameSubmit() {
 		isDeletingGame = true;
@@ -551,6 +622,8 @@
 		return async ({ update }: { update: () => Promise<void> }) => {
 			await update();
 			closeDeleteGameModal();
+			action = null;
+			actionParams = null;
 			goto(`/admin/matches?event=${selectedEventId}`, {
 				replaceState: true,
 				noScroll: true,
@@ -562,6 +635,8 @@
 
 	function closeStageEdit() {
 		showStageEdit = false;
+		action = null;
+		actionParams = null;
 		successMessage = '';
 		errorMessage = '';
 	}
@@ -571,11 +646,15 @@
 			errorMessage = 'Please select a stage first';
 			return;
 		}
+		action = 'editBracket';
+		actionParams = { stageId: selectedStage.id };
 		showBracketEdit = true;
 	}
 
 	function closeBracketEdit() {
 		showBracketEdit = false;
+		action = null;
+		actionParams = null;
 		successMessage = '';
 		errorMessage = '';
 	}
@@ -1056,6 +1135,8 @@
 				eventId={selectedEventId!}
 				onCancel={() => {
 					editingStage = null;
+					action = null;
+					actionParams = null;
 					goto(`/admin/matches?event=${selectedEventId}`, {
 						replaceState: true,
 						noScroll: true,
@@ -1064,6 +1145,8 @@
 				}}
 				onSuccess={() => {
 					editingStage = null;
+					action = null;
+					actionParams = null;
 					goto(`/admin/matches?event=${selectedEventId}`, {
 						replaceState: true,
 						noScroll: true,
@@ -1102,6 +1185,8 @@
 					.filter((stage, index, self) => index === self.findIndex((s) => s.id === stage.id))}
 				onCancel={() => {
 					editingMatch = null;
+					action = null;
+					actionParams = null;
 					goto(`/admin/matches?event=${selectedEventId}`, {
 						replaceState: true,
 						noScroll: true,
@@ -1110,6 +1195,8 @@
 				}}
 				onSuccess={() => {
 					editingMatch = null;
+					action = null;
+					actionParams = null;
 					goto(`/admin/matches?event=${selectedEventId}`, {
 						replaceState: true,
 						noScroll: true,
