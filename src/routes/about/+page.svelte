@@ -24,11 +24,11 @@
 	import type { PageProps } from './$types';
 
 	const ROLE_NAMES: Record<string, () => string> = {
-		founder: m.about_team_roles_founder,
-		chief_editor: m.about_team_roles_chief_editor,
-		consultant: m.about_team_roles_consultant,
-		editor: m.about_team_roles_editor,
-		translator: m.about_team_roles_translator
+		founder: m['about.team_roles_founder'],
+		chief_editor: m['about.team_roles_chief_editor'],
+		consultant: m['about.team_roles_consultant'],
+		editor: m['about.team_roles_editor'],
+		translator: m['about.team_roles_translator']
 	} as const;
 
 	let { data }: PageProps = $props();
@@ -45,7 +45,7 @@
 </script>
 
 <svelte:head>
-	<title>{m.about_title()} | LemonTV</title>
+	<title>{m['about.title']()} | LemonTV</title>
 </svelte:head>
 
 <main class="glass-container mx-auto max-w-screen-lg p-12">
@@ -53,19 +53,19 @@
 		<div class="mx-auto max-w-4xl">
 			<section class="mb-16 text-center">
 				<img src="/favicon.svg" alt="LemonTV Logo" class="mx-auto mb-6 h-24 w-24" />
-				<h1 class="mb-4 text-4xl font-bold">{m.about_title()}</h1>
-				<p class="text-xl text-slate-400">{m.about_tagline()}</p>
+				<h1 class="mb-4 text-4xl font-bold">{m['about.title']()}</h1>
+				<p class="text-xl text-slate-400">{m['about.tagline']()}</p>
 			</section>
 
 			<section class="mb-12">
-				<h2 class="mb-6 text-3xl font-semibold">{m.about_mission_title()}</h2>
+				<h2 class="mb-6 text-3xl font-semibold">{m['about.mission_title']()}</h2>
 				<p class="leading-relaxed text-slate-200">
-					{m.about_mission_description()}
+					{m['about.mission_description']()}
 				</p>
 			</section>
 
 			<section class="mb-12">
-				<h2 class="mb-6 text-3xl font-semibold">{m.about_features_title()}</h2>
+				<h2 class="mb-6 text-3xl font-semibold">{m['about.features_title']()}</h2>
 				<div class="mt-8 grid grid-cols-1 gap-8 md:grid-cols-3">
 					<div class="glass-card group p-6 transition-all duration-300 hover:scale-105">
 						<div class="relative mb-4">
@@ -75,10 +75,10 @@
 								<IconCalendar class="h-20 w-20 text-blue-400" />
 							</div>
 							<h3 class="relative z-20 text-xl font-semibold">
-								{m.about_features_coverage_title()}
+								{m['about.features_coverage_title']()}
 							</h3>
 						</div>
-						<p class="relative z-20 text-slate-200">{m.about_features_coverage_description()}</p>
+						<p class="relative z-20 text-slate-200">{m['about.features_coverage_description']()}</p>
 					</div>
 					<div class="glass-card group p-6 transition-all duration-300 hover:scale-105">
 						<div class="relative mb-4">
@@ -88,10 +88,12 @@
 								<IconGlobe class="h-20 w-20 text-green-400" />
 							</div>
 							<h3 class="relative z-20 text-xl font-semibold">
-								{m.about_features_community_title()}
+								{m['about.features_community_title']()}
 							</h3>
 						</div>
-						<p class="relative z-20 text-slate-200">{m.about_features_community_description()}</p>
+						<p class="relative z-20 text-slate-200">
+							{m['about.features_community_description']()}
+						</p>
 					</div>
 					<div class="glass-card group p-6 transition-all duration-300 hover:scale-105">
 						<div class="relative mb-4">
@@ -100,15 +102,17 @@
 							>
 								<IconTrend class="h-20 w-20 text-purple-400" />
 							</div>
-							<h3 class="relative z-20 text-xl font-semibold">{m.about_features_stats_title()}</h3>
+							<h3 class="relative z-20 text-xl font-semibold">
+								{m['about.features_stats_title']()}
+							</h3>
 						</div>
-						<p class="relative z-20 text-slate-200">{m.about_features_stats_description()}</p>
+						<p class="relative z-20 text-slate-200">{m['about.features_stats_description']()}</p>
 					</div>
 				</div>
 			</section>
 
 			<section class="mb-12 text-center" id="team">
-				<h2 class="mb-6 text-3xl font-semibold">{m.about_team_title()}</h2>
+				<h2 class="mb-6 text-3xl font-semibold">{m['about.team_title']()}</h2>
 				<div class="grid grid-cols-1 gap-8 md:grid-cols-2">
 					{#each data.members as member}
 						<div class="glass-card p-6">
@@ -127,7 +131,7 @@
 									<p class="my-2 text-left text-slate-300">
 										{member.roles
 											.map((role) => ROLE_NAMES[role as keyof typeof ROLE_NAMES]())
-											.join(m.about_team_roles_delimiter())}
+											.join(m['about.team_roles_delimiter']())}
 									</p>
 								</div>
 								<div class="flex flex-wrap gap-3">
@@ -148,8 +152,8 @@
 					{/each}
 
 					<div class="glass-card p-6 md:col-span-2">
-						<h3 class="mb-2 text-xl font-semibold">{m.about_team_join_title()}</h3>
-						<p class="mb-4 text-slate-300">{m.about_team_join_description()}</p>
+						<h3 class="mb-2 text-xl font-semibold">{m['about.team_join_title']()}</h3>
+						<p class="mb-4 text-slate-300">{m['about.team_join_description']()}</p>
 						<div class="flex justify-center gap-2">
 							<a
 								href={STRINOVA_ESPORTS_HUB_DISCORD_URL}
@@ -158,7 +162,7 @@
 								class="inline-flex items-center gap-2 text-blue-400 hover:underline"
 							>
 								<IconDiscord class="h-6 w-6" />
-								{m.about_team_join_discord()}
+								{m['about.team_join_discord']()}
 							</a>
 							<a
 								href={LEMON_TV_QQ_URL}
@@ -167,7 +171,7 @@
 								class="inline-flex items-center gap-2 text-blue-400 hover:underline"
 							>
 								<IconQq class="h-6 w-6" />
-								{m.about_team_join_qq()}
+								{m['about.team_join_qq']()}
 							</a>
 						</div>
 					</div>
@@ -175,13 +179,13 @@
 			</section>
 
 			<p class="text-slate-200">
-				{@html m.about_thanks_message({
+				{@html m['about.thanks_message']({
 					idreamsky: `<a href="${['zh', 'zh-tw'].includes(getLocale()) ? IDREAMSKY_URL_ZH : IDREAMSKY_URL_EN}" class="underline hover:text-gray-300" target="_blank">${m.idreamsky()}</a>`
 				})}
 			</p>
 
 			<section class="my-12 text-center">
-				<h2 class="mb-6 text-3xl font-semibold">{m.about_links_title()}</h2>
+				<h2 class="mb-6 text-3xl font-semibold">{m['about.links_title']()}</h2>
 				<div class="flex flex-col items-center gap-4">
 					<a
 						href={GITHUB_REPO_URL}
@@ -190,7 +194,7 @@
 						class="flex items-center gap-2 text-blue-400 hover:underline"
 					>
 						<IconGithub class="h-6 w-6" />
-						{m.about_links_github()}
+						{m['about.links_github']()}
 					</a>
 				</div>
 			</section>

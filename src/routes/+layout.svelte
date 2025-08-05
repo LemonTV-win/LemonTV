@@ -70,7 +70,7 @@
 	}
 
 	let pageTitle = $derived(page.data.metadata?.title || `LemonTV – ${m.title_description()}`);
-	let pageDescription = $derived(page.data.metadata?.description || m.about_tagline());
+	let pageDescription = $derived(page.data.metadata?.description || m['about.tagline']());
 </script>
 
 <svelte:head>
@@ -103,7 +103,7 @@
 		'@type': 'WebSite',
 		name: 'LemonTV',
 		url: SITE_CANONICAL_HOST,
-		description: m.about_tagline()
+		description: m['about.tagline']()
 	})}</script>`}
 </svelte:head>
 
