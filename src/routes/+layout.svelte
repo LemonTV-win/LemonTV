@@ -23,7 +23,8 @@
 		IDREAMSKY_URL_ZH,
 		SITE_CANONICAL_HOST,
 		STRINOVA_ESPORTS_HUB_DISCORD_URL,
-		LEMON_TV_QQ_URL
+		LEMON_TV_QQ_URL,
+		GITHUB_REPO_URL
 	} from '$lib/consts';
 	import GameSelect from './GameSelect.svelte';
 	import LanguageSelect from './LanguageSelect.svelte';
@@ -354,7 +355,7 @@
 					<IconQq class="h-6 w-6" />
 				</a>
 				<a
-					href="https://github.com/mkpoli/LemonTV"
+					href={GITHUB_REPO_URL}
 					target="_blank"
 					rel="noopener noreferrer"
 					class="text-yellow-300 transition-colors duration-300 hover:text-yellow-400"

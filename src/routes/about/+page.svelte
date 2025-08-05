@@ -16,7 +16,8 @@
 		IDREAMSKY_URL_EN,
 		IDREAMSKY_URL_ZH,
 		STRINOVA_ESPORTS_HUB_DISCORD_URL,
-		LEMON_TV_QQ_URL
+		LEMON_TV_QQ_URL,
+		GITHUB_REPO_URL
 	} from '$lib/consts';
 	import { getLocale } from '$lib/paraglide/runtime';
 	import placeholderAvatar from '$assets/placeholder_avatar.png';
@@ -183,7 +184,7 @@
 				<h2 class="mb-6 text-3xl font-semibold">{m.about_links_title()}</h2>
 				<div class="flex flex-col items-center gap-4">
 					<a
-						href="https://github.com/mkpoli/LemonTV"
+						href={GITHUB_REPO_URL}
 						target="_blank"
 						rel="noopener noreferrer"
 						class="flex items-center gap-2 text-blue-400 hover:underline"
