@@ -118,7 +118,8 @@
 				const stageId = parseInt(data.id);
 				const stageData = selectedEventData.stages[stageId];
 				if (stageData) {
-					editingStage = { stage: stageData.stage };
+					selectedStage = stageData.stage;
+					showStageEdit = true;
 				}
 			}
 		} else if (data.action === 'newMatch') {
@@ -137,7 +138,8 @@
 		} else if (data.action === 'newStage') {
 			action = 'newStage';
 			actionParams = null;
-			editingStage = {};
+			selectedStage = undefined;
+			showStageEdit = true;
 		} else if (data.action === 'editGame' && data.id) {
 			action = 'editGame';
 			const gameId = parseInt(data.id);
@@ -1209,41 +1211,6 @@
 	{/if}
 </div>
 
-{#if editingStage}
-	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-		<div
-			class="mx-auto flex h-[90vh] w-full max-w-3xl flex-col rounded-lg border border-slate-800 bg-slate-900/95 p-6"
-		>
-			<StageEdit
-				stage={editingStage.stage}
-				eventId={selectedEventId!}
-				onCancel={() => {
-					editingStage = null;
-					action = null;
-					actionParams = null;
-					goto(`/admin/matches?event=${selectedEventId}`, {
-						replaceState: true,
-						noScroll: true,
-						keepFocus: true
-					});
-				}}
-				onSuccess={() => {
-					editingStage = null;
-					action = null;
-					actionParams = null;
-					goto(`/admin/matches?event=${selectedEventId}`, {
-						replaceState: true,
-						noScroll: true,
-						keepFocus: true
-					});
-					// Refresh the page to show updated data
-					invalidateAll();
-				}}
-			/>
-		</div>
-	</div>
-{/if}
-
 {#if editingMatch}
 	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
 		<div
@@ -1328,16 +1295,14 @@
 
 <!-- Stage Edit Modal -->
 {#if showStageEdit}
-	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-		<div class="max-h-[90vh] w-full max-w-2xl overflow-hidden rounded-lg bg-slate-900 shadow-xl">
-			<StageEdit
-				stage={selectedStage}
-				eventId={selectedEvent}
-				onCancel={closeStageEdit}
-				onSuccess={handleStageSuccess}
-			/>
-		</div>
-	</div>
+	<Modal show={true} title={m.edit_stage()} onClose={closeStageEdit}>
+		<StageEdit
+			stage={selectedStage}
+			eventId={selectedEvent}
+			onCancel={closeStageEdit}
+			onSuccess={handleStageSuccess}
+		/>
+	</Modal>
 {/if}
 
 <!-- Bracket Edit Modal -->
