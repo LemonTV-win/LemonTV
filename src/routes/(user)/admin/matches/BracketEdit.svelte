@@ -217,11 +217,56 @@
 		console.log('[BracketEdit] add round');
 		const newRoundIndex = rounds.length;
 		const maxRoundID = Math.max(...rounds.map((r) => r.id || 0));
+
+		// Define the round progression order
+		const roundProgression = ['quarterfinals', 'semifinals', 'final', 'thirdplace', 'grandfinal'];
+
+		// Determine the next round type based on existing rounds
+		let nextRoundType = 'quarterfinals'; // Default fallback
+
+		if (rounds.length === 0) {
+			nextRoundType = 'quarterfinals';
+		} else {
+			// Get the last round type
+			const lastRoundType = rounds[rounds.length - 1].type;
+			const currentIndex = roundProgression.indexOf(lastRoundType);
+
+			if (currentIndex !== -1 && currentIndex < roundProgression.length - 1) {
+				// Move to the next round in progression
+				nextRoundType = roundProgression[currentIndex + 1];
+			} else {
+				// If we're at the end or the last round type isn't in our progression,
+				// determine based on the last round type
+				switch (lastRoundType) {
+					case 'quarterfinals':
+						nextRoundType = 'semifinals';
+						break;
+					case 'semifinals':
+						nextRoundType = 'final';
+						break;
+					case 'final':
+						nextRoundType = 'thirdplace';
+						break;
+					case 'thirdplace':
+						nextRoundType = 'grandfinal';
+						break;
+					case 'grandfinal':
+						// If we already have a grand final, add another final (for double elimination)
+						nextRoundType = 'final';
+						break;
+					default:
+						// For any other round types, default to semifinals
+						nextRoundType = 'semifinals';
+						break;
+				}
+			}
+		}
+
 		rounds = [
 			...rounds,
 			{
 				id: maxRoundID + 1,
-				type: 'quarterfinals',
+				type: nextRoundType,
 				title: '',
 				bracket: 'upper',
 				isNew: true
