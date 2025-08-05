@@ -141,6 +141,15 @@
 		} else if (data.action === 'editBracket' && data.stageId) {
 			action = 'editBracket';
 			actionParams = { stageId: parseInt(data.stageId) };
+			// Find the stage to edit and open the bracket edit modal
+			if (selectedEventData) {
+				const stageId = parseInt(data.stageId);
+				const stageData = selectedEventData.stages[stageId];
+				if (stageData) {
+					selectedStage = stageData.stage;
+					showBracketEdit = true;
+				}
+			}
 		} else {
 			action = null;
 			actionParams = null;
