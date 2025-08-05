@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { m } from '$lib/paraglide/messages';
+	import { ROUND_NAMES } from '$lib/data/matches';
 	import type { Node, Round, Match } from './BracketEdit.svelte';
 
 	let {
@@ -24,7 +25,9 @@
 	{#each rounds as round, roundIndex (`round-#${roundIndex}`)}
 		<option value={`round-${roundIndex}`}>
 			{m.stage_round()}
-			{roundIndex + 1}: {round.title || round.type}
+			{roundIndex + 1}: {round.title ||
+				ROUND_NAMES[round.type as keyof typeof ROUND_NAMES]?.() ||
+				round.type}
 		</option>
 		{#each nodes.filter((node) => node.roundId === round.id) as node, j (`node-${roundIndex}-${j}`)}
 			{@const nodeIndex = nodes.indexOf(node)}

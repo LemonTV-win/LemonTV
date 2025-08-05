@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { m } from '$lib/paraglide/messages';
+	import { ROUND_NAMES } from '$lib/data/matches';
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import type { Round } from './BracketEdit.svelte';
 
@@ -51,7 +52,9 @@
 						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 					>
 						{#each roundTypes as type (type)}
-							<option value={type}>{type}</option>
+							<option value={type}
+								>{ROUND_NAMES[type as keyof typeof ROUND_NAMES]?.() || type}</option
+							>
 						{/each}
 					</select>
 				</div>
@@ -96,7 +99,9 @@
 						<option value={undefined}>None</option>
 						{#each rounds.filter((r) => r.parallelGroup === undefined && r.id !== round.id) as availableRound (`available-round-#${availableRound.id}`)}
 							<option value={availableRound.id}>
-								{availableRound.title || availableRound.type}
+								{availableRound.title ||
+									ROUND_NAMES[availableRound.type as keyof typeof ROUND_NAMES]?.() ||
+									availableRound.type}
 							</option>
 						{/each}
 					</select>

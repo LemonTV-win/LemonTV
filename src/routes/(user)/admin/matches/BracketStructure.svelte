@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { m } from '$lib/paraglide/messages';
+	import { ROUND_NAMES } from '$lib/data/matches';
 	import type { Team } from '$lib/data/teams';
 	let {
 		rounds,
@@ -218,7 +219,9 @@
 								]}
 								onclick={() => (selectedObject = `round-${roundIndex}`)}
 							>
-								{roundIndex + 1}: {round.title || round.type}
+								{roundIndex + 1}: {round.title ||
+									ROUND_NAMES[round.type as keyof typeof ROUND_NAMES]?.() ||
+									round.type}
 							</button>
 							{#if round.parallelGroup !== undefined}
 								<span

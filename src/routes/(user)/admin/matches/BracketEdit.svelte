@@ -82,6 +82,7 @@
 	import { invalidateAll } from '$app/navigation';
 	import { applyAction, deserialize } from '$app/forms';
 	import { m } from '$lib/paraglide/messages';
+	import { ROUND_NAMES } from '$lib/data/matches';
 	import type { ActionResult } from '@sveltejs/kit';
 	import Brackets from '$lib/components/Brackets.svelte';
 	import type { Team } from '$lib/data/teams';
@@ -218,18 +219,26 @@
 		const newRoundIndex = rounds.length;
 		const maxRoundID = Math.max(...rounds.map((r) => r.id || 0));
 
-		// Define the round progression order
-		const roundProgression = ['quarterfinals', 'semifinals', 'final', 'thirdplace', 'grandfinal'];
+		// Define the round progression order using ROUND_NAMES keys
+		const roundProgression = [
+			'quarterfinals',
+			'semifinals',
+			'final',
+			'thirdplace',
+			'grandfinal'
+		] as const;
 
 		// Determine the next round type based on existing rounds
-		let nextRoundType = 'quarterfinals'; // Default fallback
+		let nextRoundType: keyof typeof ROUND_NAMES = 'quarterfinals'; // Default fallback
 
 		if (rounds.length === 0) {
 			nextRoundType = 'quarterfinals';
 		} else {
 			// Get the last round type
 			const lastRoundType = rounds[rounds.length - 1].type;
-			const currentIndex = roundProgression.indexOf(lastRoundType);
+			const currentIndex = roundProgression.indexOf(
+				lastRoundType as (typeof roundProgression)[number]
+			);
 
 			if (currentIndex !== -1 && currentIndex < roundProgression.length - 1) {
 				// Move to the next round in progression

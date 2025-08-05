@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { m } from '$lib/paraglide/messages';
+	import { ROUND_NAMES } from '$lib/data/matches';
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import type { Match, Node, Round } from './BracketEdit.svelte';
 
@@ -72,7 +73,9 @@
 						>
 							{#each rounds as round, roundIndex (`round-#${roundIndex}`)}
 								<option value={round.id || roundIndex}>
-									{round.title || round.type}
+									{round.title ||
+										ROUND_NAMES[round.type as keyof typeof ROUND_NAMES]?.() ||
+										round.type}
 								</option>
 							{/each}
 						</select>
