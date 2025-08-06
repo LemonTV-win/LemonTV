@@ -22,5 +22,9 @@ export default defineConfig({
 	build: {
 		target: 'esnext',
 		rollupOptions: { external: ['@node-rs/argon2-wasm32-wasi'] }
+	},
+	server: {
+		port: 23355,
+		host: true
 	}
 });
