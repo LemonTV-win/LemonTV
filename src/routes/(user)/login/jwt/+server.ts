@@ -6,10 +6,17 @@ import { dev } from '$app/environment';
 import { LEMON_PRIVATE_JWK_BASE64 } from '$env/static/private';
 import { SITE_CANONICAL_HOST } from '$lib/consts.js';
 
-const ALLOWED_REDIRECTS = [
-	'https://lemonade.strinova.win/auth/callback',
-	'https://slice.lemontv.win/auth/callback'
-];
+function isAllowedDomain(url: string): boolean {
+	try {
+		const urlObj = new URL(url);
+		const hostname = urlObj.hostname.toLowerCase();
+
+		// Allow *.lemontv.win and *.strinova.win domains
+		return hostname.endsWith('.lemontv.win') || hostname.endsWith('.strinova.win');
+	} catch {
+		return false;
+	}
+}
 
 export async function GET({ url, locals }) {
 	const redirect_uri = url.searchParams.get('redirect_uri');
@@ -19,7 +26,7 @@ export async function GET({ url, locals }) {
 		return json({ error: 'Missing redirect_uri' }, { status: 400 });
 	}
 
-	const isAllowedRedirect = dev ? true : ALLOWED_REDIRECTS.includes(redirect_uri);
+	const isAllowedRedirect = dev ? true : isAllowedDomain(redirect_uri);
 
 	if (!isAllowedRedirect) {
 		return json({ error: 'Invalid redirect URI' }, { status: 400 });
