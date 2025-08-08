@@ -46,7 +46,7 @@
 </script>
 
 <li
-	class="grid grid-cols-1 items-center rounded-sm bg-gray-800 px-4 shadow-2xl sm:grid-cols-[1fr_1fr_auto] sm:gap-4"
+	class="glass grid grid-cols-1 items-center rounded-sm px-4 shadow-2xl sm:grid-cols-[1fr_1fr_auto] sm:gap-4"
 >
 	<a href={`/events/${event.slug || event.id}`} class="flex flex-col py-2 sm:py-0">
 		<time datetime={event.date} class="text-xs text-gray-400">

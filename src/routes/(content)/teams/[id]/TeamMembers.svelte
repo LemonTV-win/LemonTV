@@ -20,7 +20,7 @@
 	<ul class="flex flex-wrap gap-4">
 		{#each players.toSorted((a, b) => (teamMemberStatistics?.[b.id ?? '']?.rating ?? 0) - (teamMemberStatistics?.[a.id ?? '']?.rating ?? 0)) as player (player.id)}
 			<li
-				class="gap-y- grid w-full min-w-32 grid-cols-[auto_1fr] grid-rows-[auto_auto] items-center gap-x-4 gap-y-2 rounded-sm bg-gray-800 px-2 py-2 sm:w-auto"
+				class="glass gap-y- grid w-full min-w-32 grid-cols-[auto_1fr] grid-rows-[auto_auto] items-center gap-x-4 gap-y-2 rounded-sm px-2 py-2 sm:w-auto"
 			>
 				<PlayerAvatar {player} class="row-span-2 h-16 w-16 rounded-full" />
 				<a class="flex gap-1 px-1 text-lg font-semibold" href={`/players/${player.id}`}
