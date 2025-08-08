@@ -7,7 +7,6 @@ import {
 	getSocialPlatforms,
 	getServerPlayerDetailedMatches
 } from '$lib/server/data/players';
-import { getTeams } from '$lib/server/data/teams';
 import { processImageURL } from '$lib/server/storage';
 import type { Character } from '$lib/data/game';
 
@@ -17,7 +16,6 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 		throw error(404, 'Player not found');
 	}
 
-	const teams = await getTeams();
 	const playerID = player.id;
 
 	// Process player avatar URL
@@ -31,6 +29,23 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 
 	// Get detailed match data for the player
 	const playerDetailedMatches = await getServerPlayerDetailedMatches(playerID);
+
+	// Create a teams Map using team names/abbreviations as keys
+	// This is what the MatchCard component expects
+	const teamsMap = new Map<string, any>();
+	for (const match of playerDetailedMatches) {
+		for (const team of match.teams) {
+			if (team.team && team.team !== 'Unknown Team' && !teamsMap.has(team.team)) {
+				// Create a minimal team object with just the name
+				teamsMap.set(team.team, {
+					id: team.teamId || team.team,
+					name: team.team,
+					slug: team.teamId || team.team,
+					abbr: team.team
+				});
+			}
+		}
+	}
 
 	// Process server events with image URLs
 	// Collect unique image URLs
@@ -96,7 +111,7 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 		playerAgents,
 		playerMapStats: serverStats.mapStats,
 		socialPlatforms: await getSocialPlatforms(),
-		teams: new Map(teams.map((team) => [team.abbr ?? team.id ?? team.name ?? team.slug, team])), // TODO: remove this
+		teams: teamsMap,
 		user
 	};
 };

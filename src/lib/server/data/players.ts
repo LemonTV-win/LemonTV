@@ -798,6 +798,7 @@ export async function getServerPlayerDetailedMatches(playerId: string): Promise<
 		stageId: number | null;
 		teams: Array<{
 			team: string;
+			teamId: string;
 			score: number;
 		}>;
 		games: Array<{
@@ -955,6 +956,7 @@ export async function getServerPlayerDetailedMatches(playerId: string): Promise<
 				'Unknown Team') as string;
 			return {
 				team: teamName,
+				teamId: team.teamId || '',
 				score: team.score || 0
 			};
 		});
@@ -963,6 +965,7 @@ export async function getServerPlayerDetailedMatches(playerId: string): Promise<
 		while (processedTeams.length < 2) {
 			processedTeams.push({
 				team: `Team ${processedTeams.length + 1}`,
+				teamId: '',
 				score: 0
 			});
 		}
