@@ -24,7 +24,23 @@
 		onCancel,
 		onSuccess: onsuccess
 	}: {
-		event: Partial<Event>;
+		event: Partial<Event> & {
+			results?: Array<{
+				rank: number;
+				rankTo?: number;
+				team: {
+					id: string;
+					name: string;
+					slug: string;
+					logo?: string;
+					logoURL?: string;
+				};
+				prizes: Array<{
+					amount: number;
+					currency: string;
+				}>;
+			}>;
+		};
 		organizers: Organizer[];
 		eventOrganizers: EventOrganizer[];
 		teams: Team[];
@@ -33,6 +49,8 @@
 		onCancel: () => void;
 		onSuccess: () => void;
 	} = $props();
+
+	$inspect('[EventEdit] event', event);
 
 	let newEvent = $state({
 		id: event.id || '',
@@ -162,7 +180,7 @@
 			prizeCurrency: string;
 		}>
 	>(
-		((event as any).results ?? []).map((result: EventResult) => ({
+		(event.results || []).map((result) => ({
 			teamId: result.team.id,
 			rank: result.rank,
 			rankTo: result.rankTo,

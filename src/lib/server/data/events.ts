@@ -950,6 +950,21 @@ export async function getEventsForAdminPage(): Promise<
 			url: string;
 			title?: string;
 		}>;
+		results?: Array<{
+			rank: number;
+			rankTo?: number;
+			team: {
+				id: string;
+				name: string;
+				slug: string;
+				logo?: string;
+				logoURL?: string;
+			};
+			prizes: Array<{
+				amount: number;
+				currency: string;
+			}>;
+		}>;
 	}>
 > {
 	const totalStart = performance.now();
@@ -962,13 +977,17 @@ export async function getEventsForAdminPage(): Promise<
 			event: table.event,
 			organizer: table.organizer,
 			eventWebsite: table.eventWebsite,
-			eventVideo: table.eventVideo
+			eventVideo: table.eventVideo,
+			eventResult: table.eventResult,
+			team: table.team
 		})
 		.from(table.event)
 		.leftJoin(table.eventOrganizer, eq(table.eventOrganizer.eventId, table.event.id))
 		.leftJoin(table.organizer, eq(table.organizer.id, table.eventOrganizer.organizerId))
 		.leftJoin(table.eventWebsite, eq(table.eventWebsite.eventId, table.event.id))
-		.leftJoin(table.eventVideo, eq(table.eventVideo.eventId, table.event.id));
+		.leftJoin(table.eventVideo, eq(table.eventVideo.eventId, table.event.id))
+		.leftJoin(table.eventResult, eq(table.eventResult.eventId, table.event.id))
+		.leftJoin(table.team, eq(table.team.id, table.eventResult.teamId));
 	const eventsQueryDuration = performance.now() - eventsQueryStart;
 	console.info(`[Events] Admin events query took ${eventsQueryDuration.toFixed(2)}ms`);
 
@@ -989,49 +1008,95 @@ export async function getEventsForAdminPage(): Promise<
 				url: string;
 				title?: string;
 			}>;
+			results: Array<{
+				rank: number;
+				rankTo?: number;
+				team: {
+					id: string;
+					name: string;
+					slug: string;
+					logo?: string;
+					logoURL?: string;
+				};
+				prizes: Array<{
+					amount: number;
+					currency: string;
+				}>;
+			}>;
 		}
 	>();
 
-	eventsWithOrganizers.forEach(({ event, organizer, eventWebsite, eventVideo }) => {
-		if (!eventsMap.has(event.id)) {
-			eventsMap.set(event.id, {
-				event,
-				organizers: [],
-				websites: [],
-				videos: []
-			});
-		}
-		const eventData = eventsMap.get(event.id)!;
-
-		if (organizer) {
-			// Only add the organizer if it's not already in the array
-			if (!eventData.organizers.some((o) => o.id === organizer.id)) {
-				eventData.organizers.push(organizer);
-			}
-		}
-
-		if (eventWebsite) {
-			// Only add the website if it's not already in the array
-			if (!eventData.websites.some((w) => w.url === eventWebsite.url)) {
-				eventData.websites.push({
-					url: eventWebsite.url,
-					label: eventWebsite.label || undefined
+	eventsWithOrganizers.forEach(
+		({ event, organizer, eventWebsite, eventVideo, eventResult, team }) => {
+			if (!eventsMap.has(event.id)) {
+				eventsMap.set(event.id, {
+					event,
+					organizers: [],
+					websites: [],
+					videos: [],
+					results: []
 				});
 			}
-		}
+			const eventData = eventsMap.get(event.id)!;
 
-		if (eventVideo) {
-			// Only add the video if it's not already in the array
-			if (!eventData.videos.some((v) => v.url === eventVideo.url)) {
-				eventData.videos.push({
-					type: eventVideo.type as 'stream' | 'clip' | 'vod',
-					platform: eventVideo.platform as 'twitch' | 'youtube' | 'bilibili',
-					url: eventVideo.url,
-					title: eventVideo.title || undefined
-				});
+			if (organizer) {
+				// Only add the organizer if it's not already in the array
+				if (!eventData.organizers.some((o) => o.id === organizer.id)) {
+					eventData.organizers.push(organizer);
+				}
+			}
+
+			if (eventWebsite) {
+				// Only add the website if it's not already in the array
+				if (!eventData.websites.some((w) => w.url === eventWebsite.url)) {
+					eventData.websites.push({
+						url: eventWebsite.url,
+						label: eventWebsite.label || undefined
+					});
+				}
+			}
+
+			if (eventVideo) {
+				// Only add the video if it's not already in the array
+				if (!eventData.videos.some((v) => v.url === eventVideo.url)) {
+					eventData.videos.push({
+						type: eventVideo.type as 'stream' | 'clip' | 'vod',
+						platform: eventVideo.platform as 'twitch' | 'youtube' | 'bilibili',
+						url: eventVideo.url,
+						title: eventVideo.title || undefined
+					});
+				}
+			}
+
+			if (eventResult && team) {
+				// Only add the result if it's not already in the array and has valid data
+				if (
+					!eventData.results.some((r) => r.team.id === team.id && r.rank === eventResult.rank) &&
+					eventResult.rank !== null &&
+					eventResult.prizeAmount !== null &&
+					eventResult.prizeCurrency !== null
+				) {
+					eventData.results.push({
+						rank: eventResult.rank,
+						rankTo: eventResult.rankTo ?? undefined,
+						team: {
+							id: team.id,
+							name: team.name,
+							slug: team.slug,
+							logo: team.logo || undefined,
+							logoURL: team.logo ? undefined : undefined // Will be processed later
+						},
+						prizes: [
+							{
+								amount: eventResult.prizeAmount,
+								currency: eventResult.prizeCurrency
+							}
+						]
+					});
+				}
 			}
 		}
-	});
+	);
 	const dataProcessingDuration = performance.now() - dataProcessingStart;
 	console.info(`[Events] Admin data processing took ${dataProcessingDuration.toFixed(2)}ms`);
 
@@ -1041,10 +1106,13 @@ export async function getEventsForAdminPage(): Promise<
 	// Step 1: Collect unique image URLs
 	const uniqueImageUrls = new Set<string>();
 
-	for (const { event, organizers } of eventsMap.values()) {
+	for (const { event, organizers, results } of eventsMap.values()) {
 		if (event.image) uniqueImageUrls.add(event.image);
 		for (const organizer of organizers) {
 			if (organizer.logo) uniqueImageUrls.add(organizer.logo);
+		}
+		for (const result of results) {
+			if (result.team.logo) uniqueImageUrls.add(result.team.logo);
 		}
 	}
 
@@ -1059,36 +1127,50 @@ export async function getEventsForAdminPage(): Promise<
 	);
 
 	// Step 3: Apply processed URLs to the data
-	const result = Array.from(eventsMap.values()).map(({ event, organizers, websites, videos }) => {
-		return {
-			id: event.id,
-			slug: event.slug,
-			name: event.name,
-			server: event.server,
-			capacity: event.capacity,
-			format: event.format,
-			region: event.region,
-			status: event.status,
-			official: event.official,
-			date: event.date,
-			image: event.image,
-			imageURL: event.image ? imageUrlMap.get(event.image) || undefined : undefined,
-			organizers:
-				organizers.length > 0
-					? organizers.map((organizer) => ({
-							...organizer,
-							logo: organizer.logo
-								? imageUrlMap.get(organizer.logo) || organizer.logo
-								: organizer.logo,
-							description: organizer.description ?? undefined,
-							url: organizer.url ?? undefined,
-							type: organizer.type ?? undefined
-						}))
-					: [],
-			websites: websites.length > 0 ? websites : undefined,
-			videos: videos.length > 0 ? videos : undefined
-		};
-	});
+	const result = Array.from(eventsMap.values()).map(
+		({ event, organizers, websites, videos, results }) => {
+			return {
+				id: event.id,
+				slug: event.slug,
+				name: event.name,
+				server: event.server,
+				capacity: event.capacity,
+				format: event.format,
+				region: event.region,
+				status: event.status,
+				official: event.official,
+				date: event.date,
+				image: event.image,
+				imageURL: event.image ? imageUrlMap.get(event.image) || undefined : undefined,
+				organizers:
+					organizers.length > 0
+						? organizers.map((organizer) => ({
+								...organizer,
+								logo: organizer.logo
+									? imageUrlMap.get(organizer.logo) || organizer.logo
+									: organizer.logo,
+								description: organizer.description ?? undefined,
+								url: organizer.url ?? undefined,
+								type: organizer.type ?? undefined
+							}))
+						: [],
+				websites: websites.length > 0 ? websites : undefined,
+				videos: videos.length > 0 ? videos : undefined,
+				results:
+					results.length > 0
+						? results.map((result) => ({
+								...result,
+								team: {
+									...result.team,
+									logoURL: result.team.logo
+										? imageUrlMap.get(result.team.logo) || undefined
+										: undefined
+								}
+							}))
+						: undefined
+			};
+		}
+	);
 	const finalProcessingDuration = performance.now() - finalProcessingStart;
 	console.info(`[Events] Admin final processing took ${finalProcessingDuration.toFixed(2)}ms`);
 
