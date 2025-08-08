@@ -184,7 +184,10 @@ export async function getTeam(slug: string): Promise<Team | null> {
 }
 
 export async function getTeams(): Promise<(Team & { logoURL: string | null })[]> {
+	const totalStart = performance.now();
 	console.info('[Teams] Fetching all teams');
+
+	const queryStart = performance.now();
 	const rows = await db
 		.select()
 		.from(table.team)
@@ -203,11 +206,28 @@ export async function getTeams(): Promise<(Team & { logoURL: string | null })[]>
 			table.playerAdditionalNationality,
 			eq(table.playerAdditionalNationality.playerId, table.player.id)
 		);
+	const queryDuration = performance.now() - queryStart;
+	console.info(`[Teams] Database query took ${queryDuration.toFixed(2)}ms`);
 
+	const processingStart = performance.now();
 	const teamMap = new Map<
 		string,
 		Omit<Team, 'players' | 'aliases'> & { players: Map<string, Player>; aliases: Set<string> }
 	>();
+
+	// Get team wins in parallel for better performance
+	const teamWinsPromises = new Map<string, Promise<number>>();
+	const uniqueTeamIds = new Set<string>();
+
+	for (const row of rows) {
+		const t = row.teams;
+		uniqueTeamIds.add(t.id);
+	}
+
+	// Start all team wins queries in parallel
+	for (const teamId of uniqueTeamIds) {
+		teamWinsPromises.set(teamId, getServerTeamWins(teamId));
+	}
 
 	for (const row of rows) {
 		const t = row.teams;
@@ -221,7 +241,7 @@ export async function getTeams(): Promise<(Team & { logoURL: string | null })[]>
 				region: (t.region as Region) ?? undefined,
 				players: new Map<string, Player>(),
 				aliases: new Set<string>(),
-				wins: await getServerTeamWins(t.id),
+				wins: 0, // Will be set after processing
 				createdAt: t.createdAt,
 				updatedAt: t.updatedAt
 			});
@@ -294,8 +314,14 @@ export async function getTeams(): Promise<(Team & { logoURL: string | null })[]>
 			player.socialAccounts!.push({
 				platformId: sa.platformId,
 				accountId: sa.accountId,
-				overridingUrl: sa.overriding_url ?? undefined
+				overridingUrl: sa.overriding_url || undefined
 			});
+		}
+
+		// Add user role
+		const role = row.user_role?.roleId;
+		if (player.user && role && !player.user.roles.includes(role as UserRole)) {
+			player.user.roles.push(role as UserRole);
 		}
 
 		// Add additional nationality
@@ -306,38 +332,42 @@ export async function getTeams(): Promise<(Team & { logoURL: string | null })[]>
 		) {
 			player.nationalities.push(additionalNationality as TCountryCode);
 		}
-
-		// Add user role
-		const role = row.user_role?.roleId as UserRole | undefined;
-		if (player.user && role && !player.user.roles.includes(role)) {
-			player.user.roles.push(role);
-		}
 	}
 
-	// Collect unique logo URLs
-	const uniqueLogoUrls = new Set<string>();
-	for (const team of teamMap.values()) {
-		if (team.logo) {
-			uniqueLogoUrls.add(team.logo);
+	// Wait for all team wins to complete
+	const teamWinsStart = performance.now();
+	const teamWinsResults = await Promise.all(Array.from(teamWinsPromises.values()));
+	const teamWinsDuration = performance.now() - teamWinsStart;
+	console.info(`[Teams] Team wins queries took ${teamWinsDuration.toFixed(2)}ms`);
+
+	// Apply team wins to the teams
+	let teamWinsIndex = 0;
+	for (const teamId of uniqueTeamIds) {
+		const team = teamMap.get(teamId);
+		if (team) {
+			team.wins = teamWinsResults[teamWinsIndex];
 		}
+		teamWinsIndex++;
 	}
 
-	// Process all logo URLs in parallel
-	const logoUrlMap = new Map<string, string>();
-	await Promise.all(
-		Array.from(uniqueLogoUrls).map(async (url) => {
-			const processed = await processImageURL(url);
-			logoUrlMap.set(url, processed);
-		})
-	);
+	const processingDuration = performance.now() - processingStart;
+	console.info(`[Teams] Data processing took ${processingDuration.toFixed(2)}ms`);
 
-	// Apply processed URLs to teams
-	return Array.from(teamMap.values()).map((t) => ({
-		...t,
-		players: Array.from(t.players.values()),
-		aliases: Array.from(t.aliases),
-		logoURL: t.logo ? logoUrlMap.get(t.logo) || null : null
+	// Convert to final format
+	const conversionStart = performance.now();
+	const result = Array.from(teamMap.values()).map((team) => ({
+		...team,
+		players: Array.from(team.players.values()),
+		aliases: Array.from(team.aliases),
+		logoURL: null // Will be processed by the calling function
 	}));
+	const conversionDuration = performance.now() - conversionStart;
+	console.info(`[Teams] Data conversion took ${conversionDuration.toFixed(2)}ms`);
+
+	const totalDuration = performance.now() - totalStart;
+	console.info(`[Teams] Total getTeams took ${totalDuration.toFixed(2)}ms`);
+
+	return result;
 }
 
 export async function getServerTeamWins(teamId: string): Promise<number> {

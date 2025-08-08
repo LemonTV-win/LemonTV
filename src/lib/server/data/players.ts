@@ -305,10 +305,37 @@ export async function getPlayer(keyword: string): Promise<Player | null> {
 }
 
 export async function getPlayers(): Promise<Player[]> {
+	const totalStart = performance.now();
 	console.info('[Players] Fetching all players');
-	const players = await db.select().from(player);
 
+	const playersQueryStart = performance.now();
+	const players = await db.select().from(player);
+	const playersQueryDuration = performance.now() - playersQueryStart;
+	console.info(`[Players] Players query took ${playersQueryDuration.toFixed(2)}ms`);
+
+	const aliasesQueryStart = performance.now();
 	const aliases = await db.select().from(playerAlias);
+	const aliasesQueryDuration = performance.now() - aliasesQueryStart;
+	console.info(`[Players] Aliases query took ${aliasesQueryDuration.toFixed(2)}ms`);
+
+	const accountsQueryStart = performance.now();
+	const accounts = await db.select().from(gameAccount);
+	const accountsQueryDuration = performance.now() - accountsQueryStart;
+	console.info(`[Players] Game accounts query took ${accountsQueryDuration.toFixed(2)}ms`);
+
+	const socialAccountsQueryStart = performance.now();
+	const socialAccounts = await db.select().from(player_social_account);
+	const socialAccountsQueryDuration = performance.now() - socialAccountsQueryStart;
+	console.info(`[Players] Social accounts query took ${socialAccountsQueryDuration.toFixed(2)}ms`);
+
+	const nationalitiesQueryStart = performance.now();
+	const additionalNationalities = await db.select().from(playerAdditionalNationality);
+	const nationalitiesQueryDuration = performance.now() - nationalitiesQueryStart;
+	console.info(
+		`[Players] Additional nationalities query took ${nationalitiesQueryDuration.toFixed(2)}ms`
+	);
+
+	const dataProcessingStart = performance.now();
 	const aliasesByPlayer = new Map<string, string[]>();
 	for (const alias of aliases) {
 		if (!aliasesByPlayer.has(alias.playerId)) {
@@ -317,7 +344,6 @@ export async function getPlayers(): Promise<Player[]> {
 		aliasesByPlayer.get(alias.playerId)!.push(alias.alias);
 	}
 
-	const accounts = await db.select().from(gameAccount);
 	const accountsByPlayer = new Map<string, typeof accounts>();
 	for (const acc of accounts) {
 		if (!accountsByPlayer.has(acc.playerId)) {
@@ -326,7 +352,6 @@ export async function getPlayers(): Promise<Player[]> {
 		accountsByPlayer.get(acc.playerId)!.push(acc);
 	}
 
-	const socialAccounts = await db.select().from(player_social_account);
 	const socialAccountsByPlayer = new Map<string, typeof socialAccounts>();
 	for (const acc of socialAccounts) {
 		if (!socialAccountsByPlayer.has(acc.playerId)) {
@@ -335,7 +360,6 @@ export async function getPlayers(): Promise<Player[]> {
 		socialAccountsByPlayer.get(acc.playerId)!.push(acc);
 	}
 
-	const additionalNationalities = await db.select().from(playerAdditionalNationality);
 	const additionalNationalitiesByPlayer = new Map<string, string[]>();
 	for (const nat of additionalNationalities) {
 		if (!additionalNationalitiesByPlayer.has(nat.playerId)) {
@@ -376,8 +400,13 @@ export async function getPlayers(): Promise<Player[]> {
 				}
 			: undefined
 	}));
+	const dataProcessingDuration = performance.now() - dataProcessingStart;
+	console.info(`[Players] Data processing took ${dataProcessingDuration.toFixed(2)}ms`);
 
-	console.info('[Players] Successfully retrieved', result.length, 'players');
+	const totalDuration = performance.now() - totalStart;
+	console.info(
+		`[Players] Total getPlayers took ${totalDuration.toFixed(2)}ms - Successfully retrieved ${result.length} players`
+	);
 	return result;
 }
 
@@ -393,12 +422,19 @@ export async function getPlayerTeams(slug: string) {
 }
 
 export async function getPlayersTeams(): Promise<Record<string, Team[]>> {
+	const totalStart = performance.now();
+	console.info('[Players] Fetching players teams');
+
+	const queryStart = performance.now();
 	const rows = await db
 		.select()
 		.from(schema.player)
 		.innerJoin(schema.teamPlayer, eq(schema.teamPlayer.playerId, schema.player.id))
 		.innerJoin(schema.team, eq(schema.teamPlayer.teamId, schema.team.id));
+	const queryDuration = performance.now() - queryStart;
+	console.info(`[Players] Players teams query took ${queryDuration.toFixed(2)}ms`);
 
+	const processingStart = performance.now();
 	const result: Record<string, Team[]> = {};
 	for (const row of rows) {
 		if (!result[row.player.id]) {
@@ -415,8 +451,14 @@ export async function getPlayersTeams(): Promise<Record<string, Team[]>> {
 			updatedAt: row.teams.updatedAt
 		});
 	}
+	const processingDuration = performance.now() - processingStart;
+	console.info(`[Players] Players teams processing took ${processingDuration.toFixed(2)}ms`);
+
+	const totalDuration = performance.now() - totalStart;
+	console.info(`[Players] Total getPlayersTeams took ${totalDuration.toFixed(2)}ms`);
 	return result;
 }
+
 export async function getServerPlayerAgents(playerId: string): Promise<[Character, number][]> {
 	console.info('[Players] Fetching server player agents for:', playerId);
 
@@ -1721,19 +1763,25 @@ export interface PlayerRating {
 }
 
 export async function getAllPlayersRatings(limit?: number): Promise<PlayerRating[]> {
+	const totalStart = performance.now();
 	console.info('[Players] Fetching ratings for all players', limit ? `(limited to ${limit})` : '');
 
-	// Get all players
+	const playersQueryStart = performance.now();
 	const players = await db.select().from(player);
+	const playersQueryDuration = performance.now() - playersQueryStart;
+	console.info(`[Players] Players query took ${playersQueryDuration.toFixed(2)}ms`);
 
 	if (players.length === 0) {
 		console.warn('[Players] No players found');
 		return [];
 	}
 
-	// Get all game accounts for all players
+	const accountsQueryStart = performance.now();
 	const allPlayerAccounts = await db.select().from(gameAccount);
+	const accountsQueryDuration = performance.now() - accountsQueryStart;
+	console.info(`[Players] Game accounts query took ${accountsQueryDuration.toFixed(2)}ms`);
 
+	const dataProcessingStart = performance.now();
 	// Group accounts by player ID
 	const accountsByPlayer = new Map<string, number[]>();
 	for (const account of allPlayerAccounts) {
@@ -1748,12 +1796,18 @@ export async function getAllPlayersRatings(limit?: number): Promise<PlayerRating
 
 	if (allAccountIds.length === 0) {
 		console.warn('[Players] No game accounts found for any players');
+		const dataProcessingDuration = performance.now() - dataProcessingStart;
+		console.info(`[Players] Data processing took ${dataProcessingDuration.toFixed(2)}ms`);
+
+		const totalDuration = performance.now() - totalStart;
+		console.info(`[Players] Total getAllPlayersRatings took ${totalDuration.toFixed(2)}ms`);
 		return players.map((p) => ({
 			playerId: p.id,
 			rating: 0
 		}));
 	}
 
+	const scoresQueryStart = performance.now();
 	// Get all player scores for all players (only what we need for rating)
 	const allPlayerScores = await db
 		.select({
@@ -1762,8 +1816,11 @@ export async function getAllPlayersRatings(limit?: number): Promise<PlayerRating
 		})
 		.from(schema.gamePlayerScore)
 		.where(inArray(schema.gamePlayerScore.accountId, allAccountIds));
+	const scoresQueryDuration = performance.now() - scoresQueryStart;
+	console.info(`[Players] Player scores query took ${scoresQueryDuration.toFixed(2)}ms`);
 
 	// Calculate ratings for each player
+	const ratingCalculationStart = performance.now();
 	const result: PlayerRating[] = [];
 
 	for (const player of players) {
@@ -1794,11 +1851,22 @@ export async function getAllPlayersRatings(limit?: number): Promise<PlayerRating
 			rating
 		});
 	}
+	const ratingCalculationDuration = performance.now() - ratingCalculationStart;
+	console.info(`[Players] Rating calculation took ${ratingCalculationDuration.toFixed(2)}ms`);
 
 	// Sort by rating (descending) and apply limit if specified
+	const sortingStart = performance.now();
 	const sortedResult = result.sort((a, b) => b.rating - a.rating).slice(0, limit);
+	const sortingDuration = performance.now() - sortingStart;
+	console.info(`[Players] Sorting and limiting took ${sortingDuration.toFixed(2)}ms`);
 
-	console.info('[Players] Successfully calculated ratings for', sortedResult.length, 'players');
+	const dataProcessingDuration = performance.now() - dataProcessingStart;
+	console.info(`[Players] Data processing took ${dataProcessingDuration.toFixed(2)}ms`);
+
+	const totalDuration = performance.now() - totalStart;
+	console.info(
+		`[Players] Total getAllPlayersRatings took ${totalDuration.toFixed(2)}ms - Successfully calculated ratings for ${sortedResult.length} players`
+	);
 	return sortedResult;
 }
 
