@@ -1,17 +1,15 @@
 <script lang="ts">
 	import type { PageProps } from './$types';
-	import PlayerAvatar from '$lib/components/PlayerAvatar.svelte';
-	import CharacterIcon from '$lib/components/CharacterIcon.svelte';
 	import IconParkSolidPeoples from '~icons/icon-park-solid/peoples';
 	import IconParkSolidCalendar from '~icons/icon-park-solid/calendar';
 	import PhRankingFill from '~icons/ph/ranking-fill';
 	import { m } from '$lib/paraglide/messages';
 	import MatchCard from '$lib/components/MatchCard.svelte';
 	import RegionTag from '$lib/components/tags/RegionTag.svelte';
-	import { getAllNames } from '$lib/data/players';
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 	import { safeGetTimestamp } from '$lib/utils/date';
+	import TeamMembers from './TeamMembers.svelte';
 
 	let { data }: PageProps = $props();
 </script>
@@ -57,59 +55,10 @@
 		<h2 class="my-5 flex items-center text-xl font-bold">
 			<IconParkSolidPeoples class="mr-2 inline-block text-yellow-300" />{m.active_members()}
 		</h2>
-		{#if data.team.players}
-			<ul class="flex flex-wrap gap-4">
-				{#each data.team.players.toSorted((a, b) => (data.teamMemberStatistics?.[b.id ?? '']?.rating ?? 0) - (data.teamMemberStatistics?.[a.id ?? '']?.rating ?? 0)) as player (player.id)}
-					<li
-						class="gap-y- grid w-full min-w-32 grid-cols-[auto_1fr] grid-rows-[auto_auto] items-center gap-x-4 gap-y-2 rounded-sm bg-gray-800 px-2 py-2 sm:w-auto"
-					>
-						<PlayerAvatar {player} class="row-span-2 h-16 w-16 rounded-full" />
-						<a class="flex gap-1 px-1 text-lg font-semibold" href={`/players/${player.id}`}
-							>{player.name}{#each getAllNames(player).filter((name) => name !== player.name) as name (name)}
-								<span class="text-gray-400">
-									({name})
-								</span>
-							{/each}
-						</a>
-						{#if player.id}
-							{#if data.teamMemberStatistics?.[player.id]}
-								<div class="flex gap-2">
-									<div
-										class="flex min-w-16 flex-col items-center rounded-sm bg-gray-700/50 px-2 py-1"
-									>
-										<span class="text-xs text-gray-400">{m.rating()}</span>
-										<span class="text-sm text-yellow-300">
-											{data.teamMemberStatistics[player.id].rating.toFixed(2)}
-										</span>
-									</div>
-									<div
-										class="flex min-w-16 flex-col items-center rounded-sm bg-gray-700/50 px-2 py-1"
-									>
-										<span class="text-xs text-gray-400">{m.kd_ratio()}</span>
-										<span class="text-sm">
-											{data.teamMemberStatistics[player.id].kd.toFixed(2)}
-										</span>
-									</div>
-									<div class="flex flex-wrap items-center justify-center -space-x-3">
-										{#each data.teamMemberStatistics[player.id].characters
-											.toSorted((a, b) => b[1] - a[1])
-											.map(([character]) => character)
-											.slice(0, 3)
-											.concat(Array(3).fill(null))
-											.slice(0, 3) as character, i (i)}
-											<CharacterIcon
-												{character}
-												class={`h-3 w-3 shadow-md ${i === 0 ? 'z-3' : i === 1 ? 'z-2' : 'z-1'}`}
-											/>
-										{/each}
-									</div>
-								</div>
-							{/if}
-						{/if}
-					</li>
-				{/each}
-			</ul>
-		{/if}
+		<TeamMembers
+			players={data.team.players}
+			teamMemberStatistics={data.teamMemberStatistics ?? undefined}
+		/>
 		<!-- Statistics -->
 		<!-- Achievements -->
 		<!-- Previous members -->
