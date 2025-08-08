@@ -15,7 +15,21 @@
 		teamIndex,
 		event,
 		teams
-	}: { match: Match; teamIndex: number; event: Event; teams: Map<string, Team> } = $props();
+	}: {
+		match: {
+			id: string;
+			teams: {
+				team: string;
+				score: number;
+			}[];
+			games: {
+				winner: number;
+			}[];
+		};
+		teamIndex: number;
+		event: Event;
+		teams: Map<string, Team>;
+	} = $props();
 </script>
 
 <li

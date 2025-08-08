@@ -111,7 +111,8 @@
 		<!-- Statistics -->
 		<!-- Achievements -->
 		<!-- Previous members -->
-
+		<!-- TODO: Add server matches -->
+		<!-- 
 		<h2 class="my-5 flex items-center text-xl font-bold">
 			<IconParkSolidCalendar class="mr-2 inline-block text-yellow-300" />{m.matches()}
 		</h2>
@@ -123,7 +124,7 @@
 					{/if}
 				{/each}
 			</ul>
-		{/if}
+		{/if} -->
 		<!-- News -->
 	</main>
 {/if}

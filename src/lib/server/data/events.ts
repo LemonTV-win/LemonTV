@@ -19,7 +19,7 @@ import type { Player } from '$lib/data/players';
 import { getPlayer } from '$lib/server/data/players';
 import type { UserRole } from '$lib/data/user';
 import type { TCountryCode } from 'countries-list';
-import type { Participant } from '$lib/data/matches';
+import type { Participant, PlayerScore } from '$lib/data/matches';
 import type { EssentialEvent } from '$lib/components/EventCard.svelte';
 import type { GameMap } from '$lib/data/game';
 
@@ -763,6 +763,116 @@ export async function getEvent(id: string): Promise<AppEvent | undefined> {
 		eventMatches = Array.from(matchMap.values());
 	}
 
+	// Get games data for all matches in this event
+	const gamesQueryStart = performance.now();
+	const games = await db
+		.select({
+			game: table.game,
+			map: table.map,
+			match: table.match
+		})
+		.from(table.game)
+		.leftJoin(table.map, eq(table.game.mapId, table.map.id))
+		.leftJoin(table.match, eq(table.game.matchId, table.match.id))
+		.where(inArray(table.match.id, Array.from(allMatchIds)))
+		.orderBy(table.game.id);
+	const gamesQueryDuration = performance.now() - gamesQueryStart;
+	console.info(`[Events] Games query took ${gamesQueryDuration.toFixed(2)}ms`);
+
+	// Get game teams data
+	const gameTeamsQueryStart = performance.now();
+	const gameTeams = await db
+		.select({
+			gameTeam: table.gameTeam,
+			team: table.team
+		})
+		.from(table.gameTeam)
+		.leftJoin(table.team, eq(table.gameTeam.teamId, table.team.id))
+		.where(
+			inArray(
+				table.gameTeam.gameId,
+				games.map((g) => g.game.id)
+			)
+		);
+	const gameTeamsQueryDuration = performance.now() - gameTeamsQueryStart;
+	console.info(`[Events] Game teams query took ${gameTeamsQueryDuration.toFixed(2)}ms`);
+
+	// Get player scores data
+	const playerScoresQueryStart = performance.now();
+	const playerScores = await db
+		.select({
+			gamePlayerScore: table.gamePlayerScore,
+			team: table.team
+		})
+		.from(table.gamePlayerScore)
+		.leftJoin(table.team, eq(table.gamePlayerScore.teamId, table.team.id))
+		.where(
+			inArray(
+				table.gamePlayerScore.gameId,
+				games.map((g) => g.game.id)
+			)
+		);
+	const playerScoresQueryDuration = performance.now() - playerScoresQueryStart;
+	console.info(`[Events] Player scores query took ${playerScoresQueryDuration.toFixed(2)}ms`);
+
+	// Get VOD data
+	const vodsQueryStart = performance.now();
+	const vods = await db
+		.select({
+			gameVod: table.gameVod
+		})
+		.from(table.gameVod)
+		.where(
+			inArray(
+				table.gameVod.gameId,
+				games.map((g) => g.game.id)
+			)
+		);
+	const vodsQueryDuration = performance.now() - vodsQueryStart;
+	console.info(`[Events] VODs query took ${vodsQueryDuration.toFixed(2)}ms`);
+
+	// Process games data
+	const validGames = games.filter(
+		(g): g is typeof g & { map: NonNullable<typeof g.map>; match: NonNullable<typeof g.match> } =>
+			g.map !== null && g.match !== null
+	);
+
+	// Group games by match ID
+	const gamesByMatch = new Map<string, typeof validGames>();
+	validGames.forEach((game) => {
+		if (!gamesByMatch.has(game.match.id)) {
+			gamesByMatch.set(game.match.id, []);
+		}
+		gamesByMatch.get(game.match.id)!.push(game);
+	});
+
+	// Group game teams by game ID
+	const gameTeamsByGame = new Map<number, typeof gameTeams>();
+	gameTeams.forEach((gt) => {
+		if (!gameTeamsByGame.has(gt.gameTeam.gameId)) {
+			gameTeamsByGame.set(gt.gameTeam.gameId, []);
+		}
+		gameTeamsByGame.get(gt.gameTeam.gameId)!.push(gt);
+	});
+
+	// Group player scores by game ID
+	const playerScoresByGame = new Map<number, typeof playerScores>();
+	playerScores.forEach((ps) => {
+		if (!playerScoresByGame.has(ps.gamePlayerScore.gameId)) {
+			playerScoresByGame.set(ps.gamePlayerScore.gameId, []);
+		}
+		playerScoresByGame.get(ps.gamePlayerScore.gameId)!.push(ps);
+	});
+
+	// Group VODs by game ID
+	const vodsByGame = new Map<number, typeof vods>();
+	vods.forEach((v) => {
+		if (!vodsByGame.has(v.gameVod.gameId)) {
+			vodsByGame.set(v.gameVod.gameId, []);
+		}
+		vodsByGame.get(v.gameVod.gameId)!.push(v);
+	});
+
 	// Convert stages to expected format with matches
 	const processedStages: Stage[] = Array.from(stageMap.values()).map((stageData) => {
 		// Get matches for this stage
@@ -772,31 +882,129 @@ export async function getEvent(id: string): Promise<AppEvent | undefined> {
 					roundData.nodes.some((nodeData) => nodeData.node.matchId === match.id)
 				)
 			)
-			.map((match) => ({
-				id: match.id,
-				teams: [
-					{
-						team: match.teams[0]?.team || '',
-						score: match.teams[0]?.score || 0,
-						roaster: [],
-						substitutes: []
-					},
-					{
-						team: match.teams[1]?.team || '',
-						score: match.teams[1]?.score || 0,
-						roaster: [],
-						substitutes: []
-					}
-				] as [Participant, Participant],
-				battleOf: match.format as 'BO1' | 'BO3' | 'BO5',
-				maps: (match.maps || []).map(
-					(mapData: { map: string; map_picker_position: number; side: number }) => ({
-						map: mapData.map as GameMap,
-						pickerId: mapData.map_picker_position,
-						pickedSide: mapData.side === 0 ? ('Attack' as const) : ('Defense' as const)
-					})
-				)
-			}));
+			.map((match) => {
+				// Get games for this match
+				const matchGames = gamesByMatch.get(match.id) || [];
+				const processedGames = matchGames.map((game) => {
+					const gameTeams = gameTeamsByGame.get(game.game.id) || [];
+					const playerScores = playerScoresByGame.get(game.game.id) || [];
+					const gameVods = vodsByGame.get(game.game.id) || [];
+
+					// Get team A and B data
+					const teamA = gameTeams.find((gt) => gt.gameTeam.position === 0);
+					const teamB = gameTeams.find((gt) => gt.gameTeam.position === 1);
+
+					// Process player scores for team A
+					const teamAScores = playerScores
+						.filter((ps) => ps.gamePlayerScore.teamId === teamA?.gameTeam.teamId)
+						.map((ps) => ({
+							accountId: ps.gamePlayerScore.accountId,
+							player: ps.gamePlayerScore.player,
+							playerSlug: undefined, // We don't have slug mapping here
+							characters: [
+								ps.gamePlayerScore.characterFirstHalf,
+								ps.gamePlayerScore.characterSecondHalf
+							] as [string | null, string | null],
+							score: ps.gamePlayerScore.score,
+							damageScore: ps.gamePlayerScore.damageScore,
+							kills: ps.gamePlayerScore.kills,
+							knocks: ps.gamePlayerScore.knocks,
+							deaths: ps.gamePlayerScore.deaths,
+							assists: ps.gamePlayerScore.assists,
+							damage: ps.gamePlayerScore.damage
+						}));
+
+					// Process player scores for team B
+					const teamBScores = playerScores
+						.filter((ps) => ps.gamePlayerScore.teamId === teamB?.gameTeam.teamId)
+						.map((ps) => ({
+							accountId: ps.gamePlayerScore.accountId,
+							player: ps.gamePlayerScore.player,
+							playerSlug: undefined, // We don't have slug mapping here
+							characters: [
+								ps.gamePlayerScore.characterFirstHalf,
+								ps.gamePlayerScore.characterSecondHalf
+							] as [string | null, string | null],
+							score: ps.gamePlayerScore.score,
+							damageScore: ps.gamePlayerScore.damageScore,
+							kills: ps.gamePlayerScore.kills,
+							knocks: ps.gamePlayerScore.knocks,
+							deaths: ps.gamePlayerScore.deaths,
+							assists: ps.gamePlayerScore.assists,
+							damage: ps.gamePlayerScore.damage
+						}));
+
+					// Ensure we have exactly 5 players per team
+					const teamAScoresFixed = teamAScores.slice(0, 5) as [
+						PlayerScore,
+						PlayerScore,
+						PlayerScore,
+						PlayerScore,
+						PlayerScore
+					];
+					const teamBScoresFixed = teamBScores.slice(0, 5) as [
+						PlayerScore,
+						PlayerScore,
+						PlayerScore,
+						PlayerScore,
+						PlayerScore
+					];
+
+					return {
+						id: game.game.id,
+						map: game.map.id as GameMap,
+						duration: game.game.duration,
+						teams: [teamA?.team?.id || '', teamB?.team?.id || ''] as [string, string],
+						result: [teamA?.gameTeam.score || 0, teamB?.gameTeam.score || 0] as [number, number],
+						scores: [teamAScoresFixed, teamBScoresFixed] as [
+							A: [PlayerScore, PlayerScore, PlayerScore, PlayerScore, PlayerScore],
+							B: [PlayerScore, PlayerScore, PlayerScore, PlayerScore, PlayerScore]
+						],
+						winner: game.game.winner,
+						vods: gameVods.map((v) => ({
+							url: v.gameVod.url,
+							type: v.gameVod.type,
+							playerId: v.gameVod.playerId || undefined,
+							teamId: v.gameVod.teamId || undefined,
+							language: v.gameVod.language || undefined,
+							platform: v.gameVod.platform || undefined,
+							title: v.gameVod.title || undefined,
+							official: v.gameVod.official,
+							startTime: v.gameVod.startTime || undefined,
+							available: v.gameVod.available,
+							createdAt: v.gameVod.createdAt,
+							updatedAt: v.gameVod.updatedAt
+						}))
+					};
+				});
+
+				return {
+					id: match.id,
+					teams: [
+						{
+							team: match.teams[0]?.team || '',
+							score: match.teams[0]?.score || 0,
+							roaster: [],
+							substitutes: []
+						},
+						{
+							team: match.teams[1]?.team || '',
+							score: match.teams[1]?.score || 0,
+							roaster: [],
+							substitutes: []
+						}
+					] as [Participant, Participant],
+					battleOf: match.format as 'BO1' | 'BO3' | 'BO5',
+					maps: (match.maps || []).map(
+						(mapData: { map: string; map_picker_position: number; side: number }) => ({
+							map: mapData.map as GameMap,
+							pickerId: mapData.map_picker_position,
+							pickedSide: mapData.side === 0 ? ('Attack' as const) : ('Defense' as const)
+						})
+					),
+					games: processedGames
+				};
+			});
 
 		return {
 			id: stageData.stage.id,

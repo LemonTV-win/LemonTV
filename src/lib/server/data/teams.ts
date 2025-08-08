@@ -1,17 +1,14 @@
 import type { Character, Region } from '$lib/data/game';
-import { calculateWinnerIndex, getMatches } from '$lib/data';
 import { getServerPlayerKD, getServerPlayerAgents, getAllPlayersRatings } from './players';
 
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { eq, or, inArray } from 'drizzle-orm';
+import { eq, or } from 'drizzle-orm';
 
 import type { Team } from '$lib/data/teams';
 import type { Player } from '$lib/data/players';
 import type { User, UserRole } from '$lib/data/user';
 import type { TCountryCode } from 'countries-list';
-import type { Match } from '$lib/data/matches';
-import type { Event } from '$lib/data/events';
 
 import { randomUUID } from 'node:crypto';
 import { editHistory } from '$lib/server/db/schemas/edit-history';
@@ -341,39 +338,6 @@ export async function getTeams(): Promise<(Team & { logoURL: string | null })[]>
 		aliases: Array.from(t.aliases),
 		logoURL: t.logo ? logoUrlMap.get(t.logo) || null : null
 	}));
-}
-
-export function getTeamMatches(
-	team: Pick<Team, 'id' | 'name' | 'slug' | 'abbr'>
-): (Match & { event: Event; teamIndex: number })[] {
-	return getMatches()
-		.filter((match) =>
-			match.teams.some(
-				(p) =>
-					p.team === team.id ||
-					p.team === team.slug ||
-					(team.abbr && p.team === team.abbr) ||
-					p.team === team.name
-			)
-		)
-		.map((match) => ({
-			...match,
-			teamIndex: match.teams.findIndex(
-				(p) =>
-					p.team === team.id ||
-					p.team === team.slug ||
-					(team.abbr && p.team === team.abbr) ||
-					p.team === team.name
-			)
-		}));
-}
-
-export function getTeamWins(team: Pick<Team, 'id' | 'name' | 'slug' | 'abbr'>): number {
-	const matches = getTeamMatches(team);
-	return matches.filter((match) => {
-		const winnerIndex = calculateWinnerIndex(match);
-		return winnerIndex !== null && winnerIndex === match.teamIndex + 1;
-	}).length;
 }
 
 export async function getServerTeamWins(teamId: string): Promise<number> {

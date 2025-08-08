@@ -7,7 +7,6 @@ import type {
 	LegacyEventParticipant
 } from '$lib/data/events';
 
-import { getEvent } from '$lib/data';
 import { getEvent as getServerEvent } from '$lib/server/data/events';
 import { getTeams } from '$lib/server/data/teams';
 import { error } from '@sveltejs/kit';
@@ -18,7 +17,7 @@ import { eq, inArray } from 'drizzle-orm';
 import type { GameMap } from '$lib/data/game';
 
 export const load: PageServerLoad = async ({ params }) => {
-	let event: Event | undefined = getEvent(params.id) || (await getServerEvent(params.id));
+	let event: Event | undefined = await getServerEvent(params.id);
 
 	if (!event) {
 		throw error(404, 'Event not found');

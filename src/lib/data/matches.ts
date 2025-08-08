@@ -32,7 +32,7 @@ export interface Match {
 		pickerId?: number;
 		pickedSide?: 'Attack' | 'Defense';
 	}[];
-	games?: Game[];
+	games: Game[];
 	vod?: string; // url to the vod
 }
 

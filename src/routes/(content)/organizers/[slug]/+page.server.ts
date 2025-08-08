@@ -1,7 +1,6 @@
 import { getOrganizer } from '$lib/server/data/organizers';
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { events } from '$lib/data/events';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
@@ -13,14 +12,6 @@ export const load: PageServerLoad = async ({ params }) => {
 	if (!organizer) {
 		throw error(404, 'Organizer not found');
 	}
-
-	const legacyEvents = events.filter((event) =>
-		event.organizers.some((org) => org.name === organizer.name)
-	);
-	console.log(
-		`[Content][Organizer][${organizer.name}] Found ${legacyEvents.length} legacy events`,
-		legacyEvents.map((e) => ({ id: e.id, name: e.name }))
-	);
 
 	console.log(`[Content][Organizer][${organizer.name}] Organizer ID: ${organizer.id}`);
 
@@ -68,10 +59,8 @@ export const load: PageServerLoad = async ({ params }) => {
 		imageURL: event.image ? imageUrlMap.get(event.image) || event.image : event.image
 	}));
 
-	const organizedEvents = [...legacyEvents, ...processedServerEvents];
-
 	return {
 		organizer,
-		events: organizedEvents
+		events: processedServerEvents
 	};
 };

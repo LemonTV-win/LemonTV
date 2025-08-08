@@ -1,28 +1,5 @@
 import { type Player } from '$lib/data/players';
 import type { Match } from '$lib/data/matches';
-import { events, type Event } from '$lib/data/events';
-export function getEvents() {
-	return events;
-}
-
-export function getEvent(id: string) {
-	return events.find((event) => event.slug === id || event.id === id);
-}
-
-export function getMatches(): (Match & { event: Event })[] {
-	return getEvents().flatMap((event) =>
-		event.stages.flatMap((stage) =>
-			stage.matches.map((match) => ({
-				...match,
-				event
-			}))
-		)
-	);
-}
-
-export function getMatch(id: string) {
-	return getMatches().find((match) => match.id === id);
-}
 
 export function identifyPlayer(id: string, player: Player | string): boolean {
 	if (typeof player === 'string') {
@@ -41,7 +18,11 @@ export function identifyPlayer(id: string, player: Player | string): boolean {
 	);
 }
 
-export function calculateMatchScoreFromGames(match: Match): [number, number] {
+export function calculateMatchScoreFromGames(match: {
+	games: {
+		winner: number;
+	}[];
+}): [number, number] {
 	if (!match.games || match.games.length === 0) {
 		return [0, 0];
 	}
@@ -60,7 +41,15 @@ export function calculateMatchScoreFromGames(match: Match): [number, number] {
 	return [team1Wins, team2Wins];
 }
 
-export function calculateWinnerIndex(match: Match): number | null {
+export function calculateWinnerIndex(match: {
+	teams: {
+		team: string;
+		score: number;
+	}[];
+	games: {
+		winner: number;
+	}[];
+}): number | null {
 	if (match.teams.length !== 2) {
 		throw new Error('Match must have 2 and only 2 teams');
 	}

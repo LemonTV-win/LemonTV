@@ -2,7 +2,6 @@ import { fail, type Actions } from '@sveltejs/kit';
 import * as auth from '$lib/server/auth';
 import type { PageServerLoad } from './$types';
 import { getPlayers, getPlayersTeams, getAllPlayersRatings } from '$lib/server/data/players';
-import { getEvents } from '$lib/data';
 import { getEssentialEvents } from '$lib/server/data/events';
 import { getTeams } from '$lib/server/data/teams';
 import type { EssentialEvent } from '$lib/components/EventCard.svelte';
@@ -38,7 +37,7 @@ export const load: PageServerLoad = async () => {
 		}));
 
 	return {
-		events: [...getEvents(), ...(await getEssentialEvents())] as (Event | EssentialEvent)[], // TODO: limit = 5
+		events: await getEssentialEvents(), // TODO: limit = 5
 		teams: (await getTeams())
 			.toSorted((a, b) => (b.wins ?? 0) - (a.wins ?? 0))
 			.map((team, index) => ({

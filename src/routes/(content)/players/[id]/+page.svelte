@@ -300,13 +300,15 @@
 				</div>
 			{/if}
 
+			<!-- TODO: Handle server match data structure -->
+			<!-- 
 			<div class="md:col-span-3">
 				<h2 class="my-5 text-xl font-bold">{m.recent_matches()}</h2>
 				<ul class="flex flex-col gap-2">
 					{#if data.playerMatches.length > 0}
 						{#each data.playerMatches.toSorted((a, b) => {
-							const dateA = 'event' in a ? new Date(a.event.date).getTime() : new Date(a.eventDate).getTime();
-							const dateB = 'event' in b ? new Date(b.event.date).getTime() : new Date(b.eventDate).getTime();
+							const dateA = new Date(a.eventDate).getTime();
+							const dateB = new Date(b.eventDate).getTime();
 							return dateB - dateA;
 						}) as match (match.id)}
 							{#if match}
@@ -318,7 +320,6 @@
 										teams={data.teams}
 									/>
 								{:else}
-									<!-- Handle server match data structure -->
 									<div class="glass rounded-lg p-4">
 										<div class="flex items-center justify-between">
 											<div class="flex items-center gap-4">
@@ -337,7 +338,7 @@
 						<li class="text-center text-gray-400">{m.no_data()}</li>
 					{/if}
 				</ul>
-			</div>
+			</div> -->
 		</div>
 	</main>
 {/if}

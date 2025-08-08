@@ -11,7 +11,6 @@ import {
 import { eq, or, and } from 'drizzle-orm';
 import type { Player } from '$lib/data/players';
 import { randomUUID } from 'node:crypto';
-import { calculateWinnerIndex, getEvents, getMatches, identifyPlayer } from '$lib/data';
 import type { Team } from '$lib/data/teams';
 import type { Character, GameMap, Region } from '$lib/data/game';
 import type { TCountryCode } from 'countries-list';
@@ -419,50 +418,6 @@ export async function getPlayersTeams(): Promise<Record<string, Team[]>> {
 	}
 	return result;
 }
-
-export function getPlayerMatches(
-	slug: string
-): (Match & { playerTeamIndex: number; event: Event })[] {
-	return (
-		getMatches()
-			// .filter((match) => match.teams.some((team) => isPlayerInTeam(id, team.team)))
-			.filter((match) =>
-				match.teams.some((participant) =>
-					[...(participant.roaster ?? []), ...(participant.substitutes ?? [])].includes(slug)
-				)
-			)
-			.map((match) => ({
-				...match,
-				playerTeamIndex: match.teams.findIndex((team) =>
-					[...(team.roaster ?? []), ...(team.substitutes ?? [])].includes(slug)
-				)
-			}))
-	);
-}
-
-export function getPlayerAgents(player: Player): [Character, number][] {
-	const characters = getPlayerMatches(player.slug ?? player.name)
-		.flatMap((match) =>
-			(match.games ?? []).flatMap((game) => {
-				for (const score of game.scores[match.playerTeamIndex]) {
-					if (identifyPlayerFromScore(score, player)) {
-						return score.characters;
-					}
-				}
-			})
-		)
-		.filter(Boolean) as Character[];
-
-	// Count occurrences of each character
-	const characterCounts = new Map<Character, number>();
-	for (const character of characters) {
-		characterCounts.set(character, (characterCounts.get(character) ?? 0) + 1);
-	}
-
-	// Convert to array of tuples
-	return Array.from(characterCounts.entries());
-}
-
 export async function getServerPlayerAgents(playerId: string): Promise<[Character, number][]> {
 	console.info('[Players] Fetching server player agents for:', playerId);
 
@@ -698,30 +653,6 @@ export async function getServerPlayerMapStats(playerId: string): Promise<
 	return result;
 }
 
-export function getPlayersAgents(
-	players: Player[],
-	limit: number = 3
-): Record<string, [Character, number][]> {
-	return Object.fromEntries(
-		players.map((player) => [player.id, getPlayerAgents(player).slice(0, limit)])
-	);
-}
-
-export function getPlayerWins(id: string): number {
-	return getPlayerMatches(id).filter((match) => {
-		const winnerIndex = calculateWinnerIndex(match);
-		return winnerIndex !== null && winnerIndex === match.playerTeamIndex + 1;
-	}).length;
-}
-
-export function getPlayerEvents(id: string) {
-	return getEvents().filter((event) =>
-		event.participants.some(({ main, reserve, coach }) =>
-			[...main, ...reserve, ...coach].some((player) => identifyPlayer(id, player))
-		)
-	);
-}
-
 export async function getServerPlayerEvents(id: string): Promise<
 	{
 		id: string;
@@ -935,72 +866,12 @@ export async function getServerPlayerKD(playerId: string): Promise<number> {
 	return kdRatio;
 }
 
-export function calculatePlayerRating(player: Player) {
-	if (!player.slug && !player.name) {
-		return 0;
-	}
-
-	const matches = getPlayerMatches(player.slug ?? player.name);
-	if (!matches || matches.length === 0) {
-		return 0;
-	}
-
-	const scores = matches
-		.flatMap((match) => {
-			const playerTeamIndex = match.playerTeamIndex;
-
-			const playerScore = match.games?.flatMap((game) =>
-				game.scores[playerTeamIndex]
-					.filter((score) => identifyPlayerFromScore(score, player))
-					.map((score) => score.score)
-			);
-
-			return playerScore;
-		})
-		.filter(Boolean) as number[];
-
-	const averageScore = scores.reduce((acc, score) => acc + score, 0) / scores.length;
-
-	return isNaN(averageScore) ? 0 : averageScore / 200;
-}
-
 function identifyPlayerFromScore(score: PlayerScore, player: Player): boolean {
 	return (
 		(player.gameAccounts.some((acc) => acc.accountId === score.accountId) ||
 			player.aliases?.some((alias) => alias === score.player)) ??
 		false
 	);
-}
-
-export function calculatePlayerKD(player: Player): number {
-	const matches = getPlayerMatches(player.slug ?? player.name);
-
-	return matches.reduce((acc, match) => {
-		const playerTeamIndex = match.playerTeamIndex;
-
-		if (!match.games) {
-			return acc;
-		}
-
-		const kills = match.games
-			?.flatMap((game) =>
-				game.scores[playerTeamIndex]
-					.filter((score) => identifyPlayerFromScore(score, player))
-					.map((score) => score.kills)
-					.reduce((acc, kill) => acc + kill, 0)
-			)
-			.reduce((acc, kill) => acc + kill, 0);
-
-		const deaths = match.games
-			?.flatMap((game) =>
-				game.scores[playerTeamIndex]
-					.filter((score) => identifyPlayerFromScore(score, player))
-					.map((score) => score.deaths)
-			)
-			.reduce((acc, death) => acc + death, 0);
-
-		return kills / deaths;
-	}, 0);
 }
 
 export async function createPlayer(

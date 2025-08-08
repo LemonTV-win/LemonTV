@@ -3,7 +3,6 @@ import type { PageServerLoad } from './$types';
 import {
 	getTeam,
 	getTeamStatistics,
-	getTeamMatches,
 	getTeams,
 	getTeamMemberStatistics
 } from '$lib/server/data/teams';
@@ -46,7 +45,6 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 			}))
 		},
 		teams: new Map(teams.map((team) => [team.abbr ?? team.id ?? team.name ?? team.slug, team])), // TODO: remove this
-		teamMatches: getTeamMatches(team),
 		teamMemberStatistics: await getTeamMemberStatistics(team),
 		teamStatistics: await getTeamStatistics(team),
 		user

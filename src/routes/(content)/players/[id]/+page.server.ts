@@ -3,13 +3,8 @@ import type { PageServerLoad } from './$types';
 import {
 	getPlayer,
 	getPlayerTeams,
-	getPlayerAgents,
 	getServerPlayerStats,
-	getSocialPlatforms,
-	getPlayerMatches,
-	getPlayerWins,
-	getPlayerEvents,
-	getServerPlayerKD
+	getSocialPlatforms
 } from '$lib/server/data/players';
 import { getTeams } from '$lib/server/data/teams';
 import { processImageURL } from '$lib/server/storage';
@@ -34,13 +29,6 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 	const serverStats = await getServerPlayerStats(playerID);
 
 	// Get legacy data for fallback
-	const legacyPlayerEvents =
-		getPlayerEvents(params.id) || getPlayerEvents(player.slug ?? player.name);
-	const legacyPlayerMatches =
-		getPlayerMatches(params.id) || getPlayerMatches(player.slug ?? player.name);
-	const legacyPlayerAgents = getPlayerAgents(player);
-	const legacyPlayerWins = getPlayerWins(params.id) || getPlayerWins(player.slug ?? player.name);
-	const serverPlayerKD = await getServerPlayerKD(playerID);
 
 	// Process server events with image URLs
 	// Collect unique image URLs
@@ -67,9 +55,7 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 	}));
 
 	// Merge server and legacy data
-	const playerEvents = [...serverEvents, ...legacyPlayerEvents];
-	const playerMatches = [...serverStats.matches, ...legacyPlayerMatches];
-	const playerAgents = [...serverStats.agents, ...legacyPlayerAgents].reduce(
+	const playerAgents = [...serverStats.agents].reduce(
 		(acc, [character, count]) => {
 			const existing = acc.find(([c]) => c === character);
 			if (existing) {
@@ -82,20 +68,16 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 		[] as [Character, number][]
 	);
 
-	// Use server stats with fallback to legacy
-	const playerWins = serverStats.wins > 0 ? serverStats.wins : legacyPlayerWins;
-	const playerKD = serverStats.kd > 0 ? serverStats.kd : serverPlayerKD;
-
 	return {
 		player: {
 			...player,
 			avatarURL: playerAvatarURL
 		},
 		playerTeams: await getPlayerTeams(params.id),
-		playerEvents,
-		playerMatches,
-		playerWins,
-		playerKD,
+		playerEvents: serverEvents,
+		playerMatches: serverStats.matches,
+		playerWins: serverStats.wins,
+		playerKD: serverStats.kd,
 		// Additional stats
 		playerStats: {
 			wins: serverStats.wins,

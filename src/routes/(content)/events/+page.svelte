@@ -39,7 +39,6 @@
 				event.slug.toLowerCase().includes(searchLower) ||
 				event.region.toLowerCase().includes(searchLower) ||
 				event.format.toLowerCase().includes(searchLower) ||
-				('server' in event && event.server.toLowerCase().includes(searchLower)) ||
 				(event.organizers &&
 					event.organizers.some((organizer) => organizer.name.toLowerCase().includes(searchLower)))
 			);

@@ -125,7 +125,18 @@
 		};
 	});
 
-	function isWinner(match: Match, team: Team | undefined) {
+	function isWinner(
+		match: {
+			teams: {
+				team: string;
+				score: number;
+			}[];
+			games: {
+				winner: number;
+			}[];
+		},
+		team: Team | undefined
+	) {
 		if (!team) return false;
 
 		const winnerIndex = calculateWinnerIndex(match);
@@ -144,7 +155,17 @@
 	let show = $state(false);
 </script>
 
-{#snippet matchContainer(match: Match)}
+{#snippet matchContainer(match: {
+	id: string;
+	teams: {
+		team: string;
+		score: number;
+	}[];
+	games: {
+		winner: number;
+		result: [number, number];
+	}[];
+})}
 	<div
 		class="relative z-10 cursor-pointer bg-zinc-800 text-white decoration-0 shadow-md transition-shadow duration-200 hover:shadow-lg"
 		use:register={match.id}
