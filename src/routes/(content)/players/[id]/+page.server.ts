@@ -30,6 +30,24 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 	// Get detailed match data for the player
 	const playerDetailedMatches = await getServerPlayerDetailedMatches(playerID);
 
+	// Transform match data to include team objects
+	const transformedMatches = playerDetailedMatches.map((match) => ({
+		...match,
+		teams: match.teams.map((teamData) => ({
+			team: {
+				id: teamData.teamId || teamData.team,
+				name: teamData.team,
+				slug: teamData.teamId || teamData.team,
+				abbr: teamData.team,
+				region: null,
+				logo: null,
+				createdAt: null,
+				updatedAt: null
+			},
+			score: teamData.score
+		}))
+	}));
+
 	// Create a teams Map using team names/abbreviations as keys
 	// This is what the MatchCard component expects
 	const teamsMap = new Map<string, any>();
@@ -71,8 +89,7 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 		imageURL: event.image ? imageUrlMap.get(event.image) || event.image : event.image
 	}));
 
-	// Merge server and legacy data
-	const playerAgents = [...serverStats.agents].reduce(
+	const playerAgents = serverStats.agents.reduce(
 		(acc, [character, count]) => {
 			const existing = acc.find(([c]) => c === character);
 			if (existing) {
@@ -92,7 +109,7 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 		},
 		playerTeams: await getPlayerTeams(params.id),
 		playerEvents: serverEvents,
-		playerMatches: playerDetailedMatches,
+		playerMatches: transformedMatches,
 		playerWins: serverStats.wins,
 		playerKD: serverStats.kd,
 		// Additional stats

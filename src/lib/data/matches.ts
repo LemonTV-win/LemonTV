@@ -10,17 +10,14 @@ export interface EventParticipant {
 }
 
 export interface Participant {
-	team: string;
+	team: Team;
 	score: number;
 	roaster?: string[];
 	substitutes?: string[];
 }
 
-export interface CompiledParticipant {
-	team: Team;
-	score: number;
-	roaster?: string[];
-	substitutes?: string[];
+export interface CompiledParticipant extends Participant {
+	team: Team & { logoURL: string | null };
 }
 
 export interface Match {

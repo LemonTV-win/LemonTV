@@ -1,11 +1,5 @@
 import type { PageServerLoad } from './$types';
-import type {
-	LegacyEventResult,
-	Event,
-	EventResult,
-	EventParticipant,
-	LegacyEventParticipant
-} from '$lib/data/events';
+import type { Event, EventResult, EventParticipant } from '$lib/data/events';
 
 import { getEvent as getServerEvent } from '$lib/server/data/events';
 import { getTeams } from '$lib/server/data/teams';
@@ -14,7 +8,6 @@ import type { Team } from '$lib/data/teams';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { eq, inArray } from 'drizzle-orm';
-import type { GameMap } from '$lib/data/game';
 
 export const load: PageServerLoad = async ({ params }) => {
 	let event: Event | undefined = await getServerEvent(params.id);
@@ -31,7 +24,7 @@ export const load: PageServerLoad = async ({ params }) => {
 		stage.matches?.forEach((match) => {
 			match.teams.forEach((team) => {
 				if (team.team) {
-					matchTeamAbbrs.add(team.team);
+					matchTeamAbbrs.add(team.team.id);
 				}
 			});
 		});
@@ -41,10 +34,7 @@ export const load: PageServerLoad = async ({ params }) => {
 	const filteredTeams = teams.filter(
 		(t) =>
 			event &&
-			(matchTeamAbbrs.has(t.abbr || '') ||
-				event.participants.some(
-					(p) => p.team === t.abbr || p.team === t.id || p.team === t.name || p.team === t.slug
-				))
+			(matchTeamAbbrs.has(t.abbr || '') || event.participants.some((p) => p.team.id === t.id))
 	);
 
 	// Create team map with multiple keys for each team (abbr, id, name, slug)
@@ -149,110 +139,113 @@ export const load: PageServerLoad = async ({ params }) => {
 		gamesData = Array.from(gamesMap.values());
 	}
 
-	// Add games data to matches
+	// Transform match data to include team objects
 	event.stages?.forEach((stage) => {
 		stage.matches?.forEach((match) => {
-			const matchGames = gamesData.filter((game) => game.matchId === match.id);
-			// Transform games data to match the expected format
-			match.games = matchGames.map((game) => ({
-				id: game.id,
-				map: game.map.id as GameMap,
-				duration: game.duration,
-				teams: [game.teams[0]?.team?.id || '', game.teams[1]?.team?.id || ''] as [string, string],
-				result: [game.teams[0]?.score || 0, game.teams[1]?.score || 0] as [number, number],
-				scores: [
-					// Create empty PlayerScore arrays for each team (5 players each)
-					Array(5)
-						.fill(null)
-						.map(() => ({
-							accountId: 0,
-							player: '',
-							characters: [null, null] as [null, null],
-							score: 0,
-							damageScore: 0,
-							kills: 0,
-							knocks: 0,
-							deaths: 0,
-							assists: 0,
-							damage: 0
-						})) as [any, any, any, any, any],
-					Array(5)
-						.fill(null)
-						.map(() => ({
-							accountId: 0,
-							player: '',
-							characters: [null, null] as [null, null],
-							score: 0,
-							damageScore: 0,
-							kills: 0,
-							knocks: 0,
-							deaths: 0,
-							assists: 0,
-							damage: 0
-						})) as [any, any, any, any, any]
-				] as [[any, any, any, any, any], [any, any, any, any, any]],
-				winner: game.winner
-			}));
-
-			// Calculate match scores from games
-			let team1Wins = 0;
-			let team2Wins = 0;
-
-			for (const game of match.games) {
-				if (game.winner === 0) {
-					team1Wins++;
-				} else if (game.winner === 1) {
-					team2Wins++;
+			// Transform match teams to include full team objects
+			const transformedTeams = match.teams.map((teamData) => {
+				if (!teamData) {
+					// Return a default team object if no team data
+					return {
+						team: {
+							id: 'unknown',
+							name: 'Unknown Team',
+							slug: 'unknown',
+							abbr: 'UNK',
+							region: null,
+							logo: null,
+							createdAt: null,
+							updatedAt: null
+						},
+						score: 0
+					};
 				}
+
+				// Find the team object from the teamMap
+				const team = teamMap.get(teamData.team.id) || {
+					id: teamData.team.id,
+					name: teamData.team.name,
+					slug: teamData.team.slug,
+					abbr: teamData.team.abbr,
+					region: teamData.team.region,
+					logo: teamData.team.logo,
+					createdAt: teamData.team.createdAt,
+					updatedAt: teamData.team.updatedAt
+				};
+
+				return {
+					team,
+					score: teamData.score
+				};
+			});
+
+			// Ensure we have exactly 2 teams
+			while (transformedTeams.length < 2) {
+				transformedTeams.push({
+					team: {
+						id: 'unknown',
+						name: 'Unknown Team',
+						slug: 'unknown',
+						abbr: 'UNK',
+						region: null,
+						logo: null,
+						createdAt: null,
+						updatedAt: null
+					},
+					score: 0
+				});
 			}
 
-			// Set match scores
-			match.teams[0].score = team1Wins;
-			match.teams[1].score = team2Wins;
-		});
-	});
+			match.teams = transformedTeams.slice(0, 2) as [
+				(typeof transformedTeams)[0],
+				(typeof transformedTeams)[1]
+			];
 
-	// Convert legacy results to new format if needed
-	if (event.results && typeof (event.results[0] as LegacyEventResult)?.team === 'string') {
-		const convertedResults: EventResult[] = (event.results as LegacyEventResult[]).map(
-			(result) => ({
-				...result,
-				team: teamMap.get(result.team) ?? {
-					id: result.team,
-					name: result.team,
-					slug: result.team.toLowerCase(),
-					abbr: result.team,
+			// Transform game data to include team objects
+			match.games?.forEach((game) => {
+				// Find team objects for the game teams
+				const team1 = teamMap.get(game.teams[0]) || {
+					id: game.teams[0],
+					name: game.teams[0],
+					slug: game.teams[0].toLowerCase(),
+					abbr: game.teams[0],
 					region: null,
 					logo: null,
 					createdAt: null,
 					updatedAt: null
-				}
-			})
-		);
-		event = {
-			...event,
-			results: convertedResults
-		};
-	}
+				};
+				const team2 = teamMap.get(game.teams[1]) || {
+					id: game.teams[1],
+					name: game.teams[1],
+					slug: game.teams[1].toLowerCase(),
+					abbr: game.teams[1],
+					region: null,
+					logo: null,
+					createdAt: null,
+					updatedAt: null
+				};
+
+				// Update the game teams to use team objects instead of strings
+				(game as any).teams = [team1, team2];
+			});
+		});
+	});
 
 	// Ensure event has the correct type by creating a new object with only the new format
 	const typedEvent: Omit<Event, 'results'> & {
 		results?: (Omit<EventResult, 'team'> & { team: Team & { logoURL: string | null } })[];
-		participants:
-			| LegacyEventParticipant[]
-			| (Omit<EventParticipant, 'team'> & { team: Team & { logoURL: string | null } })[];
+		participants: (Omit<EventParticipant, 'team'> & { team: Team & { logoURL: string | null } })[];
 	} = {
 		...event,
 		results: event.results as
 			| (Omit<EventResult, 'team'> & { team: Team & { logoURL: string | null } })[]
 			| undefined,
-		participants: event.participants as
-			| LegacyEventParticipant[]
-			| (Omit<EventParticipant, 'team'> & { team: Team & { logoURL: string | null } })[]
+		participants: event.participants as (Omit<EventParticipant, 'team'> & {
+			team: Team & { logoURL: string | null };
+		})[]
 	};
 
 	return {
-		event: typedEvent,
-		teams: teamMap
+		event: typedEvent
 	};
 };

@@ -145,7 +145,7 @@
 					return dateB - dateA;
 				}) as match (match.id)}
 					{#if match}
-						<MatchCard {match} teamIndex={match.teamIndex} event={match.event} teams={data.teams} />
+						<MatchCard {match} teamIndex={match.teamIndex} event={match.event} />
 					{/if}
 				{/each}
 			</ul>

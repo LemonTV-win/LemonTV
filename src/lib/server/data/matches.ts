@@ -260,10 +260,31 @@ export async function getMatch(id: string): Promise<(AppMatch & { event: Event }
 			pickerId: m.matchMap.map_picker_position ?? undefined,
 			pickedSide: m.matchMap.side === 0 ? 'Attack' : ('Defense' as 'Attack' | 'Defense')
 		})),
-		teams: validTeams.map((t) => ({
-			team: t.team.id,
-			score: t.matchTeam.score
-		})) as [AppMatch['teams'][0], AppMatch['teams'][1]],
+		teams: (() => {
+			const teamArray = validTeams.map((t) => ({
+				team: t.team,
+				score: t.matchTeam.score || 0
+			}));
+
+			// Ensure exactly 2 teams
+			while (teamArray.length < 2) {
+				teamArray.push({
+					team: {
+						id: 'unknown',
+						name: 'Unknown Team',
+						slug: 'unknown',
+						abbr: 'UNK',
+						region: null,
+						logo: null,
+						createdAt: null,
+						updatedAt: null
+					},
+					score: 0
+				});
+			}
+
+			return teamArray.slice(0, 2) as [AppMatch['teams'][0], AppMatch['teams'][1]];
+		})(),
 		games: transformedGames,
 		event
 	};

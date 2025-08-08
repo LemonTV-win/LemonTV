@@ -6,15 +6,7 @@ import * as table from '$lib/server/db/schema';
 import { processImageURL } from '$lib/server/storage';
 import type { Region } from '$lib/data/game';
 import { inArray, eq, or } from 'drizzle-orm';
-import { alias } from 'drizzle-orm/sqlite-core';
-import { convertOrganizer } from './organizers';
-import type {
-	LegacyEventParticipant,
-	EventParticipant,
-	StageNode,
-	Stage,
-	EventResult
-} from '$lib/data/events';
+import type { EventParticipant, StageNode, Stage, EventResult } from '$lib/data/events';
 import type { Player } from '$lib/data/players';
 import { getPlayer } from '$lib/server/data/players';
 import type { UserRole } from '$lib/data/user';
@@ -34,7 +26,7 @@ export interface CreateEventData {
 	official: boolean;
 	server: string;
 	format: string;
-	region: string;
+	region: Region;
 	image: string;
 	status: string;
 	capacity: number;
@@ -81,7 +73,16 @@ export interface EventFieldChange {
 export interface EventMatchData {
 	id: string;
 	teams: Array<{
-		team: string;
+		team: {
+			id: string;
+			name: string;
+			slug: string;
+			abbr: string | null;
+			logo: string | null;
+			region: string | null;
+			createdAt: string | null;
+			updatedAt: string | null;
+		};
 		score: number;
 	} | null>;
 	maps: Array<{
@@ -103,11 +104,13 @@ export function toDatabaseEvent(
 		official: data.official,
 		server: data.server,
 		format: data.format,
-		region: data.region,
+		region: data.region as Region,
 		image: data.image,
 		status: data.status,
 		capacity: data.capacity,
-		date: data.date
+		date: data.date as
+			| `${string}-${string}-${string}`
+			| `${string}-${string}-${string}/${string}-${string}-${string}`
 	};
 }
 
@@ -628,20 +631,26 @@ export async function getEvent(id: string): Promise<AppEvent | undefined> {
 	const participants = await Promise.all(
 		Array.from(teamPlayersMap.entries()).map(async ([teamId, players]) => {
 			const teamObj = teamPlayers.find((t) => t.team?.id === teamId)?.team;
-			if (!teamObj) {
-				return {
-					team: teamId,
-					main: players.main.map((p) => p.name),
-					reserve: players.reserve.map((p) => p.name),
-					coach: players.coach.map((p) => p.name)
-				} as LegacyEventParticipant;
-			}
+			// Always create a team object, even if we don't have the full team data
+			const team = teamObj
+				? {
+						...teamObj,
+						logoURL: teamObj.logo ? await processImageURL(teamObj.logo) : null
+					}
+				: {
+						id: teamId,
+						name: teamId,
+						slug: teamId.toLowerCase(),
+						abbr: teamId,
+						region: null,
+						logo: null,
+						createdAt: null,
+						updatedAt: null,
+						logoURL: null
+					};
+
 			return {
-				legacy: false,
-				team: {
-					...teamObj,
-					logoURL: teamObj.logo ? await processImageURL(teamObj.logo) : null
-				},
+				team,
 				main: players.main,
 				reserve: players.reserve,
 				coach: players.coach
@@ -754,7 +763,16 @@ export async function getEvent(id: string): Promise<AppEvent | undefined> {
 				const matchObj = matchMap.get(match.id);
 				if (matchObj) {
 					matchObj.teams[matchTeam.position] = {
-						team: team.abbr || team.name,
+						team: {
+							id: team.id,
+							name: team.name,
+							slug: team.slug,
+							abbr: team.abbr,
+							logo: team.logo,
+							region: team.region as Region,
+							createdAt: team.createdAt,
+							updatedAt: team.updatedAt
+						},
 						score: matchTeam.score || 0
 					};
 				}

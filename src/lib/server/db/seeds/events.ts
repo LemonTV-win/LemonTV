@@ -9,104 +9,104 @@ export const EVENTS = [
 		slug: 'imaginary-cup-1',
 		name: 'Imaginary Cup 1',
 		official: false,
-		server: 'strinova',
-		format: 'online',
+		server: 'strinova' as const,
+		format: 'online' as const,
 		region: 'Global',
 		image: 'https://picsum.photos/seed/imaginary-cup-1/300/200?blur',
-		status: 'finished',
+		status: 'finished' as const,
 		capacity: 16,
-		date: '2024-01-01'
+		date: '2024-01-01' as const
 	},
 	{
 		id: randomUUID(),
 		slug: 'imaginary-cup-2',
 		name: 'Imaginary Cup 2',
 		official: true,
-		server: 'calabiyau',
-		format: 'lan',
+		server: 'calabiyau' as const,
+		format: 'lan' as const,
 		region: 'EU',
 		image: 'https://picsum.photos/seed/imaginary-cup-2/300/200?blur',
-		status: 'live',
+		status: 'live' as const,
 		capacity: 32,
-		date: '2024-03-15'
+		date: '2024-03-15' as const
 	},
 	{
 		id: randomUUID(),
 		slug: 'imaginary-cup-3',
 		name: 'Imaginary Cup 3',
 		official: true,
-		server: 'strinova',
-		format: 'hybrid',
+		server: 'strinova' as const,
+		format: 'hybrid' as const,
 		region: 'APAC',
 		image: 'https://picsum.photos/seed/imaginary-cup-3/300/200?blur',
-		status: 'upcoming',
+		status: 'upcoming' as const,
 		capacity: 64,
-		date: '2024-06-01'
+		date: '2024-06-01' as const
 	},
 	{
 		id: randomUUID(),
 		slug: 'imaginary-cup-4',
 		name: 'Imaginary Cup 4',
 		official: false,
-		server: 'calabiyau',
-		format: 'online',
+		server: 'calabiyau' as const,
+		format: 'online' as const,
 		region: 'NA',
 		image: 'https://picsum.photos/seed/imaginary-cup-4/300/200?blur',
-		status: 'postponed',
+		status: 'postponed' as const,
 		capacity: 24,
-		date: '2024-04-20'
+		date: '2024-04-20' as const
 	},
 	{
 		id: randomUUID(),
 		slug: 'imaginary-cup-5',
 		name: 'Imaginary Cup 5',
 		official: true,
-		server: 'strinova',
-		format: 'lan',
+		server: 'strinova' as const,
+		format: 'lan' as const,
 		region: 'CN',
 		image: 'https://picsum.photos/seed/imaginary-cup-5/300/200?blur',
-		status: 'cancelled',
+		status: 'cancelled' as const,
 		capacity: 48,
-		date: '2024-05-10'
+		date: '2024-05-10' as const
 	},
 	{
 		id: randomUUID(),
 		slug: 'imaginary-cup-6',
 		name: 'Imaginary Cup 6',
 		official: false,
-		server: 'calabiyau',
-		format: 'hybrid',
+		server: 'calabiyau' as const,
+		format: 'hybrid' as const,
 		region: 'SA',
 		image: 'https://picsum.photos/seed/imaginary-cup-6/300/200?blur',
-		status: 'upcoming',
+		status: 'upcoming' as const,
 		capacity: 16,
-		date: '2024-07-01'
+		date: '2024-07-01' as const
 	},
 	{
 		id: randomUUID(),
 		slug: 'imaginary-cup-7',
 		name: 'Imaginary Cup 7',
 		official: true,
-		server: 'strinova',
-		format: 'online',
+		server: 'strinova' as const,
+		format: 'online' as const,
 		region: 'OC',
 		image: 'https://picsum.photos/seed/imaginary-cup-7/300/200?blur',
-		status: 'upcoming',
+		status: 'upcoming' as const,
 		capacity: 32,
-		date: '2024-08-15'
+		date: '2024-08-15' as const
 	},
 	{
 		id: randomUUID(),
 		slug: 'imaginary-cup-8',
 		name: 'Imaginary Cup 8',
 		official: false,
-		server: 'calabiyau',
-		format: 'lan',
+		server: 'calabiyau' as const,
+		format: 'lan' as const,
 		region: 'AF',
 		image: 'https://picsum.photos/seed/imaginary-cup-8/300/200?blur',
-		status: 'upcoming',
+		status: 'upcoming' as const,
 		capacity: 24,
-		date: '2024-09-01'
+		date: '2024-09-01' as const
 	}
 ];
 

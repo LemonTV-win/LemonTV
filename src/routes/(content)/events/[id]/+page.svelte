@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { error } from '@sveltejs/kit';
 	import type { PageProps } from './$types';
-	import { isLegacyEventParticipant, type Stage } from '$lib/data/events';
+	import type { Stage } from '$lib/data/events';
 
 	import { m } from '$lib/paraglide/messages';
 	import { settings } from '$lib/settings.svelte';
@@ -180,13 +180,13 @@
 					{/if}
 				</div>
 			</div>
-			<BracketGraph stage={activeStage} teams={data.teams} />
+			<BracketGraph stage={activeStage} />
 		{:else}
 			{#each data.event.stages as stage (stage.id)}
 				<h2 class="text-2xl font-bold text-white">
 					{stage.title === 'Main Bracket' ? m.main_bracket() : stage.title}
 				</h2>
-				<BracketGraph {stage} teams={data.teams} />
+				<BracketGraph {stage} />
 			{/each}
 		{/if}
 		{#if data.event.results}
@@ -344,113 +344,63 @@
 			<ul class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
 				{#each [...data.event.participants, ...Array.from({ length: data.event.capacity - data.event.participants.length }, () => null)] as participant, idx (idx)}
 					{#if participant}
-						{#if isLegacyEventParticipant(participant)}
-							{@const { team, main, reserve, coach } = participant}
-							{#if team}
-								<li class="glass grid min-w-48 grid-cols-2 grid-rows-[auto_1fr] gap-2 p-4">
-									<h3 class="col-span-2 font-bold">
-										<a href={`/teams/${data.teams.get(team)?.id}`} class="hover:text-yellow-500">
-											{data.teams.get(team)?.name ?? team}
-										</a>
-									</h3>
-									<div class="flex flex-col items-center justify-center gap-2">
-										{#if data.teams.get(team)?.logoURL}
-											<img
-												src={data.teams.get(team)?.logoURL}
-												alt={data.teams.get(team)?.name}
-												class="h-24 w-24 rounded-full"
-											/>
-										{:else}
-											<IconParkSolidPeoples class="h-16 w-16 text-gray-300" />
+						{@const { team, main, reserve, coach } = participant}
+						{#if team}
+							<li class="glass grid min-w-48 grid-cols-2 grid-rows-[auto_1fr] gap-2 p-4">
+								<h3 class="col-span-2 font-bold">
+									<a href={`/teams/${team.slug}`} class="hover:text-yellow-500">
+										{team.name}
+									</a>
+								</h3>
+								<div class="flex flex-col items-center justify-center gap-2">
+									{#if team.logoURL}
+										<img src={team.logoURL} alt={team.name} class="h-24 w-24 rounded-full" />
+									{:else}
+										<IconParkSolidPeoples class="h-16 w-16 text-gray-300" />
+									{/if}
+									<span class="text-gray-400">({team.region})</span>
+								</div>
+								<ul class="text-sm">
+									{#each main as player, idx (idx)}
+										{#if player}
+											<li>
+												{#each player.nationalities as nationality, idx (idx)}
+													<NationalityFlag {nationality} />
+												{/each}
+												<a href={`/players/${player.slug}`} class="hover:text-yellow-500">
+													{player.name}
+												</a>
+											</li>
 										{/if}
-										<span class="text-gray-400">({data.teams.get(team)?.region})</span>
-									</div>
-									<ul class="text-sm">
-										{#each main as player, idx (idx)}
-											{#if player}
-												<li>
-													<span>{player}</span>
-												</li>
-											{/if}
-										{/each}
-										{#each reserve as player, idx (idx)}
-											{#if player}
-												<li class="text-white/50">
-													<span>{player}</span>
-												</li>
-											{/if}
-										{/each}
-										{#each coach as player, idx (idx)}
-											{#if player}
-												<li class="text-white/50">
-													<span>({player})</span>
-												</li>
-											{/if}
-										{/each}
-									</ul>
-								</li>
-							{:else}
-								???
-							{/if}
+									{/each}
+									{#each reserve as player, idx (idx)}
+										{#if player}
+											<li class="text-white/50">
+												{#each player.nationalities as nationality, idx (idx)}
+													<NationalityFlag {nationality} />
+												{/each}
+												<a href={`/players/${player.slug}`} class="hover:text-yellow-500">
+													{player.name}
+												</a>
+											</li>
+										{/if}
+									{/each}
+									{#each coach as player, idx (idx)}
+										{#if player}
+											<li class="text-white/50">
+												{#each player.nationalities as nationality, idx (idx)}
+													<NationalityFlag {nationality} />
+												{/each}
+												<a href={`/players/${player.slug}`} class="hover:text-yellow-500">
+													({player.name})
+												</a>
+											</li>
+										{/if}
+									{/each}
+								</ul>
+							</li>
 						{:else}
-							{@const { team, main, reserve, coach } = participant}
-							{#if team}
-								<li class="glass grid min-w-48 grid-cols-2 grid-rows-[auto_1fr] gap-2 p-4">
-									<h3 class="col-span-2 font-bold">
-										<a href={`/teams/${team.slug}`} class="hover:text-yellow-500">
-											{team.name}
-										</a>
-									</h3>
-									<div class="flex flex-col items-center justify-center gap-2">
-										{#if team.logoURL}
-											<img src={team.logoURL} alt={team.name} class="h-24 w-24 rounded-full" />
-										{:else}
-											<IconParkSolidPeoples class="h-16 w-16 text-gray-300" />
-										{/if}
-										<span class="text-gray-400">({team.region})</span>
-									</div>
-									<ul class="text-sm">
-										{#each main as player, idx (idx)}
-											{#if player}
-												<li>
-													{#each player.nationalities as nationality, idx (idx)}
-														<NationalityFlag {nationality} />
-													{/each}
-													<a href={`/players/${player.slug}`} class="hover:text-yellow-500">
-														{player.name}
-													</a>
-												</li>
-											{/if}
-										{/each}
-										{#each reserve as player, idx (idx)}
-											{#if player}
-												<li class="text-white/50">
-													{#each player.nationalities as nationality, idx (idx)}
-														<NationalityFlag {nationality} />
-													{/each}
-													<a href={`/players/${player.slug}`} class="hover:text-yellow-500">
-														{player.name}
-													</a>
-												</li>
-											{/if}
-										{/each}
-										{#each coach as player, idx (idx)}
-											{#if player}
-												<li class="text-white/50">
-													{#each player.nationalities as nationality, idx (idx)}
-														<NationalityFlag {nationality} />
-													{/each}
-													<a href={`/players/${player.slug}`} class="hover:text-yellow-500">
-														({player.name})
-													</a>
-												</li>
-											{/if}
-										{/each}
-									</ul>
-								</li>
-							{:else}
-								???
-							{/if}
+							???
 						{/if}
 					{:else}
 						<li class="glass flex min-h-48 min-w-48 flex-col items-center gap-2 p-2">

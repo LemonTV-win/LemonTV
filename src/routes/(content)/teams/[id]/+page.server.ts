@@ -39,6 +39,24 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 	// Get detailed match data for the team
 	const teamDetailedMatches = await getServerTeamDetailedMatches(team.id);
 
+	// Transform match data to include team objects
+	const transformedMatches = teamDetailedMatches.map((match) => ({
+		...match,
+		teams: match.teams.map((teamData) => ({
+			team: {
+				id: teamData.team || 'unknown',
+				name: teamData.team,
+				slug: teamData.team.toLowerCase(),
+				abbr: teamData.team,
+				region: null,
+				logo: null,
+				createdAt: null,
+				updatedAt: null
+			},
+			score: teamData.score
+		}))
+	}));
+
 	return {
 		team: {
 			...team,
@@ -51,7 +69,7 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 		teams: new Map(teams.map((team) => [team.abbr ?? team.id ?? team.name ?? team.slug, team])), // TODO: remove this
 		teamMemberStatistics: await getTeamMemberStatistics(team),
 		teamStatistics: await getTeamStatistics(team),
-		teamMatches: teamDetailedMatches,
+		teamMatches: transformedMatches,
 		user
 	};
 };

@@ -16,6 +16,7 @@ import {
 	updateEventTeamPlayers,
 	updateEventCasters
 } from '$lib/server/data/events';
+import type { Region } from '$lib/data/game';
 
 type PermissionResult =
 	| { status: 'success'; userId: string }
@@ -139,7 +140,7 @@ export const actions = {
 			official: formData.get('official') === 'on',
 			server: formData.get('server') as string,
 			format: formData.get('format') as string,
-			region: formData.get('region') as string,
+			region: formData.get('region') as Region,
 			image: formData.get('image') as string,
 			status: formData.get('status') as string,
 			capacity: parseInt(formData.get('capacity') as string),
@@ -324,7 +325,7 @@ export const actions = {
 			official: formData.get('official') === 'on',
 			server: formData.get('server') as string,
 			format: formData.get('format') as string,
-			region: formData.get('region') as string,
+			region: formData.get('region') as Region,
 			image: formData.get('image') as string,
 			status: formData.get('status') as string,
 			capacity: parseInt(formData.get('capacity') as string),

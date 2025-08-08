@@ -49,12 +49,6 @@ export interface EventPrize {
 	currency: string;
 }
 
-export interface LegacyEventResult {
-	rank: number;
-	team: string; // team abbr
-	prizes: EventPrize[];
-}
-
 export interface EventResult {
 	rank: number;
 	rankTo?: number;
@@ -67,25 +61,11 @@ export interface LabeledURL {
 	label?: string;
 }
 
-export interface LegacyEventParticipant {
-	team: string; // team abbr
-	main: string[];
-	reserve: string[];
-	coach: string[];
-}
-
 export interface EventParticipant {
-	legacy: false;
 	team: Team;
 	main: Player[];
 	reserve: Player[];
 	coach: Player[];
-}
-
-export function isLegacyEventParticipant(
-	participant: EventParticipant | LegacyEventParticipant
-): participant is LegacyEventParticipant {
-	return !('legacy' in participant && participant.legacy === false);
 }
 
 export interface Event {
@@ -109,7 +89,7 @@ export interface Event {
 	capacity: number; // expected number of teams
 	date: string;
 	websites?: LabeledURL[];
-	participants: (EventParticipant | LegacyEventParticipant)[];
+	participants: EventParticipant[];
 	videos?: {
 		type: 'stream' | 'clip' | 'vod';
 		platform: 'twitch' | 'youtube' | 'bilibili';
@@ -120,5 +100,5 @@ export interface Event {
 		player: Player;
 		role: 'host' | 'analyst' | 'commentator';
 	}>;
-	results?: LegacyEventResult[] | EventResult[];
+	results?: EventResult[];
 }

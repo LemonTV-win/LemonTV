@@ -9,7 +9,7 @@
 	import { onMount, tick } from 'svelte';
 	import { SvelteMap } from 'svelte/reactivity';
 	import IconEye from '~icons/mdi/eye';
-	let { stage, teams }: { stage: Stage; teams: Map<string, Team> } = $props();
+	let { stage }: { stage: Stage } = $props();
 
 	if (!stage) console.error('Stage is required');
 
@@ -128,7 +128,7 @@
 	function isWinner(
 		match: {
 			teams: {
-				team: string;
+				team: Team;
 				score: number;
 			}[];
 			games: {
@@ -143,8 +143,8 @@
 		if (winnerIndex === null) return false; // Draw - no winner
 
 		return (
-			(winnerIndex === 1 && team.abbr === match.teams[0].team) ||
-			(winnerIndex === 2 && team.abbr === match.teams[1].team)
+			(winnerIndex === 1 && team.id === match.teams[0].team.id) ||
+			(winnerIndex === 2 && team.id === match.teams[1].team.id)
 		);
 	}
 
@@ -158,7 +158,7 @@
 {#snippet matchContainer(match: {
 	id: string;
 	teams: {
-		team: string;
+		team: Team;
 		score: number;
 	}[];
 	games: {
@@ -183,15 +183,15 @@
 			<button
 				class={[
 					'flex w-full justify-between gap-4 border-b-1 border-l-4 border-gray-500 px-2 py-1',
-					isWinner(match, teams.get(match.teams[0].team))
+					isWinner(match, match.teams[0].team)
 						? 'border-l-yellow-400 font-semibold'
 						: 'border-l-red-500 text-gray-300'
 				]}
-				onmouseenter={() => (highlightingTeam = teams.get(match.teams[0].team)?.id)}
+				onmouseenter={() => (highlightingTeam = match.teams[0].team.id)}
 				onmouseleave={() => (highlightingTeam = undefined)}
-				class:bg-gray-700={highlightingTeam === teams.get(match.teams[0].team)?.id}
+				class:bg-gray-700={highlightingTeam === match.teams[0].team.id}
 			>
-				{teams.get(match.teams[0].team)?.name ?? match.teams[0].team}
+				{match.teams[0].team.name ?? match.teams[0].team.id}
 				{#if match.teams[0].score !== undefined}
 					<span class="score">{match.teams[0].score}</span>
 				{/if}
@@ -199,15 +199,15 @@
 			<button
 				class={[
 					'flex w-full justify-between gap-4 border-l-4 border-gray-500 px-2 py-1',
-					isWinner(match, teams.get(match.teams[1].team))
+					isWinner(match, match.teams[1].team)
 						? 'border-l-4 border-yellow-500 font-semibold'
 						: 'border-l-4 border-red-500 text-gray-300'
 				]}
-				onmouseenter={() => (highlightingTeam = teams.get(match.teams[1].team)?.id)}
+				onmouseenter={() => (highlightingTeam = match.teams[1].team.id)}
 				onmouseleave={() => (highlightingTeam = undefined)}
-				class:bg-gray-700={highlightingTeam === teams.get(match.teams[1].team)?.id}
+				class:bg-gray-700={highlightingTeam === match.teams[1].team.id}
 			>
-				{teams.get(match.teams[1].team)?.name ?? match.teams[1].team}
+				{match.teams[1].team.name ?? match.teams[1].team.id}
 				{#if match.teams[1].score !== undefined}
 					<span class="score">{match.teams[1].score}</span>
 				{/if}

@@ -88,6 +88,7 @@
 	import Brackets from '$lib/components/Brackets.svelte';
 	import type { Team } from '$lib/data/teams';
 	import type { GameMap } from '$lib/data/game';
+	import type { Participant } from '$lib/data/matches';
 	import BracketStructure from './BracketStructure.svelte';
 	import BracketStageRoundInput from './BracketStageRoundInput.svelte';
 	import BracketStageNodeInput from './BracketStageNodeInput.svelte';
@@ -697,29 +698,39 @@
 							id: match.id,
 							teams: [
 								{
-									team: match.teams[0]?.team?.name || 'TBD',
+									team: {
+										id: match.teams[0]?.team?.id || 'tbd',
+										name: match.teams[0]?.team?.name || 'TBD',
+										slug: match.teams[0]?.team?.slug || 'tbd',
+										abbr: match.teams[0]?.team?.abbr || 'TBD',
+										region: match.teams[0]?.team?.region || null,
+										logo: match.teams[0]?.team?.logo || null,
+										createdAt: null,
+										updatedAt: null
+									},
 									score: match.teams[0]?.score || 0
 								},
 								{
-									team: match.teams[1]?.team?.name || 'TBD',
+									team: {
+										id: match.teams[1]?.team?.id || 'tbd',
+										name: match.teams[1]?.team?.name || 'TBD',
+										slug: match.teams[1]?.team?.slug || 'tbd',
+										abbr: match.teams[1]?.team?.abbr || 'TBD',
+										region: match.teams[1]?.team?.region || null,
+										logo: match.teams[1]?.team?.logo || null,
+										createdAt: null,
+										updatedAt: null
+									},
 									score: match.teams[1]?.score || 0
 								}
-							] as [
-								{
-									team: string;
-									score: number;
-								},
-								{
-									team: string;
-									score: number;
-								}
-							],
+							] as [Participant, Participant],
 							battleOf: (match.format as 'BO1' | 'BO3' | 'BO5') || 'BO1',
 							maps: match.maps.map((map) => ({
 								map: map.map.id as GameMap,
 								pickerId: map.map_picker_position,
 								pickedSide: map.side === 0 ? 'Attack' : 'Defense'
-							}))
+							})),
+							games: [] // TODO: Add games
 						})),
 						structure: {
 							rounds: rounds.map((round) => ({
@@ -763,7 +774,6 @@
 							}))
 						}
 					}}
-					teams={new Map()}
 				/>
 			</div>
 		{/if}

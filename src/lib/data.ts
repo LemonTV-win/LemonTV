@@ -43,7 +43,6 @@ export function calculateMatchScoreFromGames(match: {
 
 export function calculateWinnerIndex(match: {
 	teams: {
-		team: string;
 		score: number;
 	}[];
 	games: {
