@@ -27,7 +27,21 @@
 			}[];
 		};
 		teamIndex: number;
-		event: Event;
+		event:
+			| Event
+			| {
+					id: string;
+					slug: string;
+					name: string;
+					image: string;
+					date: string;
+					region: string;
+					format: string;
+					status: string;
+					server: string;
+					capacity: number;
+					official: boolean;
+			  };
 		teams: Map<string, Team>;
 	} = $props();
 </script>
@@ -35,7 +49,7 @@
 <li
 	class="grid grid-cols-1 items-center rounded-sm bg-gray-800 px-4 shadow-2xl sm:grid-cols-[1fr_1fr_auto] sm:gap-4"
 >
-	<a href={`/events/${event.id}`} class="flex flex-col py-2 sm:py-0">
+	<a href={`/events/${event.slug || event.id}`} class="flex flex-col py-2 sm:py-0">
 		<time datetime={event.date} class="text-xs text-gray-400">
 			{dateFormatter.format(new Date(event.date))}
 		</time>
@@ -49,7 +63,7 @@
 			class="text-center sm:text-right"
 			class:text-gray-200={teamIndex === 0}
 			class:text-gray-400={teamIndex === 1}
-			>{teams.get(match.teams[0].team)?.name || match.teams[0].team}</span
+			>{teams.get(match.teams[0]?.team)?.name || match.teams[0]?.team || 'Unknown Team'}</span
 		>
 		<span
 			class="mx-auto grid w-18 grid-cols-[1fr_auto_1fr] items-center justify-center gap-1 p-4 text-center text-white"
@@ -67,16 +81,16 @@
 			})()}
 		>
 			<span>
-				{match.teams[0].score}
+				{match.teams[0]?.score || 0}
 			</span>
 			<span class="text-white">-</span>
-			<span>{match.teams[1].score}</span>
+			<span>{match.teams[1]?.score || 0}</span>
 		</span>
 		<span
 			class="pb-2 text-center sm:pb-0 sm:text-left"
 			class:text-gray-200={teamIndex === 1}
 			class:text-gray-400={teamIndex === 0}
-			>{teams.get(match.teams[1].team)?.name || match.teams[1].team}</span
+			>{teams.get(match.teams[1]?.team)?.name || match.teams[1]?.team || 'Unknown Team'}</span
 		>
 	</a>
 </li>

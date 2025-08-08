@@ -300,45 +300,29 @@
 				</div>
 			{/if}
 
-			<!-- TODO: Handle server match data structure -->
-			<!-- 
 			<div class="md:col-span-3">
 				<h2 class="my-5 text-xl font-bold">{m.recent_matches()}</h2>
 				<ul class="flex flex-col gap-2">
 					{#if data.playerMatches.length > 0}
 						{#each data.playerMatches.toSorted((a, b) => {
-							const dateA = new Date(a.eventDate).getTime();
-							const dateB = new Date(b.eventDate).getTime();
+							const dateA = new Date(a.event.date).getTime();
+							const dateB = new Date(b.event.date).getTime();
 							return dateB - dateA;
 						}) as match (match.id)}
 							{#if match}
-								{#if 'event' in match}
-									<MatchCard
-										{match}
-										teamIndex={match.playerTeamIndex}
-										event={match.event}
-										teams={data.teams}
-									/>
-								{:else}
-									<div class="glass rounded-lg p-4">
-										<div class="flex items-center justify-between">
-											<div class="flex items-center gap-4">
-												<div class="text-sm text-gray-400">{match.eventName}</div>
-												<div class="text-sm text-gray-400">{match.eventDate}</div>
-											</div>
-											<div class="text-sm text-gray-400">
-												{m.match_number({ number: match.id })}
-											</div>
-										</div>
-									</div>
-								{/if}
+								<MatchCard
+									{match}
+									teamIndex={match.playerTeamIndex}
+									event={match.event}
+									teams={data.teams}
+								/>
 							{/if}
 						{/each}
 					{:else}
 						<li class="text-center text-gray-400">{m.no_data()}</li>
 					{/if}
 				</ul>
-			</div> -->
+			</div>
 		</div>
 	</main>
 {/if}

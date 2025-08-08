@@ -4,7 +4,8 @@ import {
 	getPlayer,
 	getPlayerTeams,
 	getServerPlayerStats,
-	getSocialPlatforms
+	getSocialPlatforms,
+	getServerPlayerDetailedMatches
 } from '$lib/server/data/players';
 import { getTeams } from '$lib/server/data/teams';
 import { processImageURL } from '$lib/server/storage';
@@ -28,7 +29,8 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 	// Get unified server stats
 	const serverStats = await getServerPlayerStats(playerID);
 
-	// Get legacy data for fallback
+	// Get detailed match data for the player
+	const playerDetailedMatches = await getServerPlayerDetailedMatches(playerID);
 
 	// Process server events with image URLs
 	// Collect unique image URLs
@@ -75,7 +77,7 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 		},
 		playerTeams: await getPlayerTeams(params.id),
 		playerEvents: serverEvents,
-		playerMatches: serverStats.matches,
+		playerMatches: playerDetailedMatches,
 		playerWins: serverStats.wins,
 		playerKD: serverStats.kd,
 		// Additional stats
