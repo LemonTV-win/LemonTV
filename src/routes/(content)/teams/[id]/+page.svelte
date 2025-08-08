@@ -125,6 +125,25 @@
 				{/each}
 			</ul>
 		{/if} -->
+
+		<h2 class="my-5 flex items-center text-xl font-bold">
+			<IconParkSolidCalendar class="mr-2 inline-block text-yellow-300" />{m.recent_matches()}
+		</h2>
+		{#if data.teamMatches}
+			<ul class="flex flex-col gap-2">
+				{#each data.teamMatches.toSorted((a, b) => {
+					const dateA = new Date(a.event.date).getTime();
+					const dateB = new Date(b.event.date).getTime();
+					return dateB - dateA;
+				}) as match (match.id)}
+					{#if match}
+						<MatchCard {match} teamIndex={match.teamIndex} event={match.event} teams={data.teams} />
+					{/if}
+				{/each}
+			</ul>
+		{:else}
+			<li class="text-center text-gray-400">{m.no_data()}</li>
+		{/if}
 		<!-- News -->
 	</main>
 {/if}

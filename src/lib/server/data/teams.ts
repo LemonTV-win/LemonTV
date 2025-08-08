@@ -3,7 +3,7 @@ import { getServerPlayerKD, getServerPlayerAgents, getAllPlayersRatings } from '
 
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { eq, or } from 'drizzle-orm';
+import { eq, or, inArray } from 'drizzle-orm';
 
 import type { Team } from '$lib/data/teams';
 import type { Player } from '$lib/data/players';
@@ -387,6 +387,203 @@ export async function getServerTeamWins(teamId: string): Promise<number> {
 
 	console.info('[Teams] Team', teamId, 'has', wins, 'match wins');
 	return wins;
+}
+
+export async function getServerTeamDetailedMatches(teamId: string): Promise<
+	{
+		id: string;
+		format: string | null;
+		stageId: number | null;
+		teams: Array<{
+			team: string;
+			score: number;
+		}>;
+		games: Array<{
+			winner: number;
+		}>;
+		// Event data
+		event: {
+			id: string;
+			slug: string;
+			name: string;
+			image: string;
+			date: string;
+			region: string;
+			format: string;
+			status: string;
+			server: string;
+			capacity: number;
+			official: boolean;
+		};
+		// Team's position in this match (0 or 1)
+		teamIndex: number;
+	}[]
+> {
+	// Get all matches where this team participated
+	const teamMatches = await db
+		.select({
+			// Match data
+			matchId: table.match.id,
+			format: table.match.format,
+			stageId: table.match.stageId,
+			// Event data
+			eventId: table.event.id,
+			eventSlug: table.event.slug,
+			eventName: table.event.name,
+			eventImage: table.event.image,
+			eventDate: table.event.date,
+			eventRegion: table.event.region,
+			eventFormat: table.event.format,
+			eventStatus: table.event.status,
+			eventServer: table.event.server,
+			eventCapacity: table.event.capacity,
+			eventOfficial: table.event.official,
+			// Team's position in this match
+			teamPosition: table.matchTeam.position
+		})
+		.from(table.matchTeam)
+		.innerJoin(table.match, eq(table.matchTeam.matchId, table.match.id))
+		.innerJoin(table.stage, eq(table.match.stageId, table.stage.id))
+		.innerJoin(table.event, eq(table.stage.eventId, table.event.id))
+		.where(eq(table.matchTeam.teamId, teamId));
+
+	// Get unique match IDs
+	const matchIds = [...new Set(teamMatches.map((tm) => tm.matchId))];
+
+	// Get all teams for these matches - try match_team first, fallback to game_team
+	const matchTeams = await db
+		.select({
+			matchId: table.matchTeam.matchId,
+			teamId: table.matchTeam.teamId,
+			position: table.matchTeam.position,
+			score: table.matchTeam.score,
+			teamName: table.team.name,
+			teamSlug: table.team.slug,
+			teamAbbr: table.team.abbr
+		})
+		.from(table.matchTeam)
+		.innerJoin(table.team, eq(table.matchTeam.teamId, table.team.id))
+		.where(inArray(table.matchTeam.matchId, matchIds))
+		.orderBy(table.matchTeam.position);
+
+	// If we don't have match teams, try to get teams from game_team
+	let fallbackTeams: typeof matchTeams = [];
+	if (matchTeams.length === 0) {
+		fallbackTeams = await db
+			.select({
+				matchId: table.game.matchId,
+				teamId: table.gameTeam.teamId,
+				position: table.gameTeam.position,
+				score: table.gameTeam.score,
+				teamName: table.team.name,
+				teamSlug: table.team.slug,
+				teamAbbr: table.team.abbr
+			})
+			.from(table.game)
+			.innerJoin(table.gameTeam, eq(table.game.id, table.gameTeam.gameId))
+			.innerJoin(table.team, eq(table.gameTeam.teamId, table.team.id))
+			.where(inArray(table.game.matchId, matchIds))
+			.orderBy(table.gameTeam.position);
+	}
+
+	// Use match teams if available, otherwise use fallback teams
+	const allTeams = matchTeams.length > 0 ? matchTeams : fallbackTeams;
+
+	// Get all games for these matches
+	const matchGames = await db
+		.select({
+			matchId: table.game.matchId,
+			gameId: table.game.id,
+			winner: table.game.winner
+		})
+		.from(table.game)
+		.where(inArray(table.game.matchId, matchIds));
+
+	// Group teams by match ID
+	const teamsByMatch = new Map<string, typeof allTeams>();
+	allTeams.forEach((team) => {
+		if (team.matchId) {
+			if (!teamsByMatch.has(team.matchId)) {
+				teamsByMatch.set(team.matchId, []);
+			}
+			teamsByMatch.get(team.matchId)!.push(team);
+		}
+	});
+
+	// Group games by match ID
+	const gamesByMatch = new Map<string, typeof matchGames>();
+	matchGames.forEach((game) => {
+		if (!gamesByMatch.has(game.matchId)) {
+			gamesByMatch.set(game.matchId, []);
+		}
+		gamesByMatch.get(game.matchId)!.push(game);
+	});
+
+	// Build the result
+	const result = teamMatches.map((tm) => {
+		const teams = teamsByMatch.get(tm.matchId) || [];
+		const games = gamesByMatch.get(tm.matchId) || [];
+
+		// Ensure we have exactly 2 teams
+		let processedTeams = teams.map((team) => {
+			const teamName = (team.teamAbbr ||
+				team.teamName ||
+				team.teamSlug ||
+				team.teamId ||
+				'Unknown Team') as string;
+			return {
+				team: teamName,
+				score: team.score || 0
+			};
+		});
+
+		// If we don't have exactly 2 teams, pad with placeholder teams
+		while (processedTeams.length < 2) {
+			processedTeams.push({
+				team: `Team ${processedTeams.length + 1}`,
+				score: 0
+			});
+		}
+
+		// If we have more than 2 teams, take only the first 2
+		if (processedTeams.length > 2) {
+			processedTeams = processedTeams.slice(0, 2);
+		}
+
+		return {
+			id: tm.matchId,
+			format: tm.format,
+			stageId: tm.stageId,
+			teams: processedTeams,
+			games: games.map((game) => ({
+				winner: game.winner
+			})),
+			event: {
+				id: tm.eventId,
+				slug: tm.eventSlug,
+				name: tm.eventName,
+				image: tm.eventImage,
+				date: tm.eventDate,
+				region: tm.eventRegion,
+				format: tm.eventFormat,
+				status: tm.eventStatus,
+				server: tm.eventServer,
+				capacity: tm.eventCapacity,
+				official: tm.eventOfficial
+			},
+			teamIndex: tm.teamPosition || 0
+		};
+	});
+
+	// Remove duplicates (same match might appear multiple times for different games)
+	const uniqueMatches = new Map<string, (typeof result)[0]>();
+	result.forEach((match) => {
+		if (!uniqueMatches.has(match.id)) {
+			uniqueMatches.set(match.id, match);
+		}
+	});
+
+	return Array.from(uniqueMatches.values());
 }
 
 export async function getTeamStatistics(team: Team): Promise<{
