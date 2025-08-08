@@ -16,6 +16,7 @@
 	import type { EventWithOrganizers } from '$lib/server/data/events';
 	import OrganizerChip from '$lib/components/OrganizerChip.svelte';
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
+	import { safeFormatEventDate, safeGetTimestamp } from '$lib/utils/date';
 
 	let { data }: { data: PageData } = $props();
 	let {
@@ -72,17 +73,9 @@
 				} else if (sortBy === 'name-desc') {
 					return b.name.localeCompare(a.name);
 				} else if (sortBy === 'date-asc') {
-					const getDate = (dateStr: string) => {
-						const [start] = dateStr.split('/');
-						return new Date(start).getTime();
-					};
-					return getDate(a.date) - getDate(b.date);
+					return safeGetTimestamp(a.date) - safeGetTimestamp(b.date);
 				} else if (sortBy === 'date-desc') {
-					const getDate = (dateStr: string) => {
-						const [start] = dateStr.split('/');
-						return new Date(start).getTime();
-					};
-					return getDate(b.date) - getDate(a.date);
+					return safeGetTimestamp(b.date) - safeGetTimestamp(a.date);
 				} else if (sortBy === 'status-asc') {
 					return a.status.localeCompare(b.status);
 				} else if (sortBy === 'status-desc') {
@@ -109,6 +102,9 @@
 			if (eventToEdit) {
 				handleEditEvent({
 					...eventToEdit,
+					date: eventToEdit.date as
+						| `${string}-${string}-${string}`
+						| `${string}-${string}-${string}/${string}-${string}-${string}`,
 					createdAt: new Date(),
 					updatedAt: new Date(),
 					organizers: (eventToEdit.organizers || []).map((org) => ({
@@ -374,15 +370,8 @@
 								{event.official ? m.yes() : m.no()}
 							</span>
 						</td>
-						<td class="min-w-max px-4 py-1 whitespace-nowrap text-gray-300">
-							{#if event.date.includes('/')}
-								{(() => {
-									const [start, end] = event.date.split('/');
-									return `${new Date(start).toLocaleDateString()} - ${new Date(end).toLocaleDateString()}`;
-								})()}
-							{:else}
-								{new Date(event.date).toLocaleDateString()}
-							{/if}
+						<td class="min-w-max px-4 py-1">
+							{safeFormatEventDate(event.date)}
 						</td>
 						<td class="min-w-max px-4 py-1">
 							<div class="flex min-w-max flex-wrap gap-2">
@@ -430,6 +419,9 @@
 									onclick={() => {
 										selectedEvent = {
 											...event,
+											date: event.date as
+												| `${string}-${string}-${string}`
+												| `${string}-${string}-${string}/${string}-${string}-${string}`,
 											createdAt: new Date(),
 											updatedAt: new Date(),
 											organizers: (event.organizers || []).map((org) => ({
@@ -453,6 +445,9 @@
 									onclick={() => {
 										selectedEvent = {
 											...event,
+											date: event.date as
+												| `${string}-${string}-${string}`
+												| `${string}-${string}-${string}/${string}-${string}-${string}`,
 											createdAt: new Date(),
 											updatedAt: new Date(),
 											organizers: (event.organizers || []).map((org) => ({

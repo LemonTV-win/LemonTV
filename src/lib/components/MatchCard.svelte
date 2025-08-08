@@ -3,6 +3,7 @@
 	import type { Event } from '$lib/data/events';
 	import type { Team } from '$lib/data/teams';
 	import { calculateWinnerIndex } from '$lib/data';
+	import { safeFormatDate } from '$lib/utils/date';
 
 	import { getLocale } from '$lib/paraglide/runtime';
 	const dateFormatter = new Intl.DateTimeFormat(getLocale(), {
@@ -10,6 +11,7 @@
 		day: 'numeric',
 		year: 'numeric'
 	});
+
 	let {
 		match,
 		teamIndex,
@@ -51,7 +53,7 @@
 >
 	<a href={`/events/${event.slug || event.id}`} class="flex flex-col py-2 sm:py-0">
 		<time datetime={event.date} class="text-xs text-gray-400">
-			{dateFormatter.format(new Date(event.date))}
+			{safeFormatDate(event.date, dateFormatter)}
 		</time>
 		<span class="text-sm text-yellow-300">{event.name}</span>
 	</a>

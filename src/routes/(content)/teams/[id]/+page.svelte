@@ -11,6 +11,8 @@
 	import { getAllNames } from '$lib/data/players';
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
+	import { safeGetTimestamp } from '$lib/utils/date';
+
 	let { data }: PageProps = $props();
 </script>
 
@@ -118,7 +120,12 @@
 		</h2>
 		{#if data.teamMatches}
 			<ul class="grid grid-cols-1 gap-3">
-				{#each data.teamMatches.toSorted((a, b) => new Date(b.event.date).getTime() - new Date(a.event.date).getTime()) as match (match.id)}
+				{#each data.teamMatches.toSorted((a, b) => {
+					// Safe date parsing to prevent RangeError
+					const dateA = safeGetTimestamp(a.event.date);
+					const dateB = safeGetTimestamp(b.event.date);
+					return dateB - dateA;
+				}) as match (match.id)}
 					{#if match}
 						<MatchCard {match} event={match.event} teamIndex={match.teamIndex} teams={data.teams} />
 					{/if}
@@ -132,8 +139,9 @@
 		{#if data.teamMatches}
 			<ul class="flex flex-col gap-2">
 				{#each data.teamMatches.toSorted((a, b) => {
-					const dateA = new Date(a.event.date).getTime();
-					const dateB = new Date(b.event.date).getTime();
+					// Safe date parsing to prevent RangeError
+					const dateA = safeGetTimestamp(a.event.date);
+					const dateB = safeGetTimestamp(b.event.date);
 					return dateB - dateA;
 				}) as match (match.id)}
 					{#if match}

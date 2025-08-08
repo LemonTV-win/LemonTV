@@ -29,6 +29,7 @@
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import CasterCard from './CasterCard.svelte';
+	import { safeFormatEventDate } from '$lib/utils/date';
 
 	let activeStage = $state<Stage | null>(data.initialStage ?? null);
 	let showResults = $state(false);
@@ -113,7 +114,7 @@
 					})}</span
 				>・<span class="inline-flex items-center gap-1">
 					<IconParkSolidCalendar class="inline-block h-4 w-4" />
-					<time datetime={data.event.date}>{data.event.date.replace('/', ' - ')}</time>
+					<time datetime={data.event.date}>{safeFormatEventDate(data.event.date)}</time>
 				</span>
 			</div>
 			<div class="flex flex-wrap gap-2">

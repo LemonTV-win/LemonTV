@@ -15,7 +15,13 @@ export const event = sqliteTable('event', {
 	image: text('image').notNull(),
 	status: text('status').notNull(),
 	capacity: integer('capacity').notNull(),
-	date: text('date').notNull(),
+	// '2025-08-25' | '2025-08-25/2025-08-26'
+	date: text('date')
+		.$type<
+			| `${string}-${string}-${string}`
+			| `${string}-${string}-${string}/${string}-${string}-${string}`
+		>()
+		.notNull(),
 	createdAt: integer('created_at', { mode: 'timestamp_ms' })
 		.notNull()
 		.default(sql`(unixepoch() * 1000)`),

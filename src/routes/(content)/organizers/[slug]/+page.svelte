@@ -7,6 +7,7 @@
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 	import OrganizerTypeBadge from '$lib/components/OrganizerTypeBadge.svelte';
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
+	import { safeFormatEventDate } from '$lib/utils/date';
 
 	export let data: PageData;
 	const { organizer, events } = data;
@@ -64,7 +65,7 @@
 								<div class="mt-2 flex flex-wrap gap-2 text-sm text-gray-200">
 									<span class="inline-flex items-center gap-1">
 										<IconParkSolidCalendar class="h-4 w-4" />
-										<time datetime={event.date}>{event.date.replace('/', ' - ')}</time>
+										<time datetime={event.date}>{safeFormatEventDate(event.date)}</time>
 									</span>
 									<span class="inline-flex items-center gap-1">
 										<IconParkSolidLocalPin class="h-4 w-4" />

@@ -14,6 +14,7 @@
 	import PlayerAgents from './PlayerAgents.svelte';
 	import PlayerRadarGraph from '$lib/components/PlayerRadarGraph.svelte';
 	import { onMount } from 'svelte';
+	import { safeGetTimestamp } from '$lib/utils/date';
 	let { data }: PageProps = $props();
 
 	if (!data.player) {
@@ -305,8 +306,9 @@
 				<ul class="flex flex-col gap-2">
 					{#if data.playerMatches.length > 0}
 						{#each data.playerMatches.toSorted((a, b) => {
-							const dateA = new Date(a.event.date).getTime();
-							const dateB = new Date(b.event.date).getTime();
+							// Safe date parsing to prevent RangeError
+							const dateA = safeGetTimestamp(a.event.date);
+							const dateB = safeGetTimestamp(b.event.date);
 							return dateB - dateA;
 						}) as match (match.id)}
 							{#if match}

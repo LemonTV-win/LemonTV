@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { safeFormatEventDate } from '$lib/utils/date';
+
 	let {
 		event,
 		handleEventSelect,
@@ -69,14 +71,7 @@
 				<span>{event.region}</span>
 			</div>
 			<div class="mt-1">
-				{#if event.date.includes('/')}
-					{(() => {
-						const [start, end] = event.date.split('/');
-						return `${new Date(start).toLocaleDateString()} - ${new Date(end).toLocaleDateString()}`;
-					})()}
-				{:else}
-					{new Date(event.date).toLocaleDateString()}
-				{/if}
+				{safeFormatEventDate(event.date)}
 			</div>
 		</div>
 	</div>

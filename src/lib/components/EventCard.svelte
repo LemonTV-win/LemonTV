@@ -24,6 +24,7 @@
 <script lang="ts">
 	import type { Event } from '$lib/data/events';
 	import { m } from '$lib/paraglide/messages';
+	import { safeFormatEventDate } from '$lib/utils/date';
 
 	import IconParkSolidCalendar from '~icons/icon-park-solid/calendar';
 	import IconParkSolidPeoples from '~icons/icon-park-solid/peoples';
@@ -63,7 +64,7 @@
 				<div class="flex gap-4 text-gray-400">
 					<span class="flex items-center gap-1">
 						<IconParkSolidCalendar class="inline-block h-4 w-4" />
-						<time datetime={event.date}>{event.date.replace('/', ' - ')}</time>
+						<time datetime={event.date}>{safeFormatEventDate(event.date)}</time>
 					</span>
 					<span class="flex items-center gap-1">
 						<IconParkSolidPeoples class="inline-block h-4 w-4" />
@@ -121,7 +122,7 @@
 					<div class="flex flex-wrap gap-4 text-gray-300">
 						<span class="flex items-center gap-1">
 							<IconParkSolidCalendar class="inline-block h-4 w-4" />
-							<time datetime={event.date}>{event.date.replace('/', ' - ')}</time>
+							<time datetime={event.date}>{safeFormatEventDate(event.date)}</time>
 						</span>
 						<span class="flex items-center gap-1">
 							<IconParkSolidPeoples class="inline-block h-4 w-4" />
