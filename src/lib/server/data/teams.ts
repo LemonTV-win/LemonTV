@@ -215,19 +215,11 @@ export async function getTeams(): Promise<(Team & { logoURL: string | null })[]>
 		Omit<Team, 'players' | 'aliases'> & { players: Map<string, Player>; aliases: Set<string> }
 	>();
 
-	// Get team wins in parallel for better performance
-	const teamWinsPromises = new Map<string, Promise<number>>();
-	const uniqueTeamIds = new Set<string>();
-
-	for (const row of rows) {
-		const t = row.teams;
-		uniqueTeamIds.add(t.id);
-	}
-
-	// Start all team wins queries in parallel
-	for (const teamId of uniqueTeamIds) {
-		teamWinsPromises.set(teamId, getServerTeamWins(teamId));
-	}
+	// Get all team wins in a single optimized batch query
+	const teamWinsStart = performance.now();
+	const allTeamWins = await getAllTeamsWins();
+	const teamWinsDuration = performance.now() - teamWinsStart;
+	console.info(`[Teams] Batch team wins query took ${teamWinsDuration.toFixed(2)}ms`);
 
 	for (const row of rows) {
 		const t = row.teams;
@@ -241,7 +233,7 @@ export async function getTeams(): Promise<(Team & { logoURL: string | null })[]>
 				region: (t.region as Region) ?? undefined,
 				players: new Map<string, Player>(),
 				aliases: new Set<string>(),
-				wins: 0, // Will be set after processing
+				wins: allTeamWins[t.id] ?? 0, // Use pre-fetched wins
 				createdAt: t.createdAt,
 				updatedAt: t.updatedAt
 			});
@@ -334,22 +326,6 @@ export async function getTeams(): Promise<(Team & { logoURL: string | null })[]>
 		}
 	}
 
-	// Wait for all team wins to complete
-	const teamWinsStart = performance.now();
-	const teamWinsResults = await Promise.all(Array.from(teamWinsPromises.values()));
-	const teamWinsDuration = performance.now() - teamWinsStart;
-	console.info(`[Teams] Team wins queries took ${teamWinsDuration.toFixed(2)}ms`);
-
-	// Apply team wins to the teams
-	let teamWinsIndex = 0;
-	for (const teamId of uniqueTeamIds) {
-		const team = teamMap.get(teamId);
-		if (team) {
-			team.wins = teamWinsResults[teamWinsIndex];
-		}
-		teamWinsIndex++;
-	}
-
 	const processingDuration = performance.now() - processingStart;
 	console.info(`[Teams] Data processing took ${processingDuration.toFixed(2)}ms`);
 
@@ -417,6 +393,77 @@ export async function getServerTeamWins(teamId: string): Promise<number> {
 
 	console.info('[Teams] Team', teamId, 'has', wins, 'match wins');
 	return wins;
+}
+
+// New optimized function to get wins for all teams in a single batch
+export async function getAllTeamsWins(): Promise<Record<string, number>> {
+	const totalStart = performance.now();
+	console.info('[Teams] Fetching wins for all teams in batch');
+
+	const queryStart = performance.now();
+	// Get all match teams with their scores in a single query
+	const allMatchTeams = await db
+		.select({
+			matchId: table.matchTeam.matchId,
+			teamId: table.matchTeam.teamId,
+			position: table.matchTeam.position,
+			score: table.matchTeam.score
+		})
+		.from(table.matchTeam)
+		.innerJoin(table.match, eq(table.matchTeam.matchId, table.match.id));
+	const queryDuration = performance.now() - queryStart;
+	console.info(`[Teams] Batch match teams query took ${queryDuration.toFixed(2)}ms`);
+
+	const processingStart = performance.now();
+	// Group by match ID
+	const matchesByMatchId = new Map<string, typeof allMatchTeams>();
+	for (const matchTeam of allMatchTeams) {
+		// Skip entries with null matchId or teamId
+		if (!matchTeam.matchId || !matchTeam.teamId) continue;
+
+		if (!matchesByMatchId.has(matchTeam.matchId)) {
+			matchesByMatchId.set(matchTeam.matchId, []);
+		}
+		matchesByMatchId.get(matchTeam.matchId)!.push(matchTeam);
+	}
+
+	// Calculate wins for each team
+	const teamWins = new Map<string, number>();
+
+	for (const [matchId, matchTeams] of matchesByMatchId) {
+		if (matchTeams.length === 2) {
+			const team1 = matchTeams[0];
+			const team2 = matchTeams[1];
+
+			// Skip if either team has null teamId
+			if (!team1.teamId || !team2.teamId) continue;
+
+			const team1Score = team1.score ?? 0;
+			const team2Score = team2.score ?? 0;
+
+			// Determine winner based on match scores
+			if (team1Score !== team2Score) {
+				const winnerPosition = team1Score > team2Score ? 0 : 1;
+				const winningTeam = matchTeams[winnerPosition];
+
+				// Skip if winning team has null teamId
+				if (!winningTeam.teamId) continue;
+
+				// Increment wins for the winning team
+				const currentWins = teamWins.get(winningTeam.teamId) ?? 0;
+				teamWins.set(winningTeam.teamId, currentWins + 1);
+			}
+			// If scores are equal, it's a draw - no winner
+		}
+	}
+
+	const processingDuration = performance.now() - processingStart;
+	console.info(`[Teams] Batch wins processing took ${processingDuration.toFixed(2)}ms`);
+
+	const totalDuration = performance.now() - totalStart;
+	console.info(`[Teams] Total getAllTeamsWins took ${totalDuration.toFixed(2)}ms`);
+
+	return Object.fromEntries(teamWins);
 }
 
 export async function getServerTeamDetailedMatches(teamId: string): Promise<
