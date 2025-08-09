@@ -19,11 +19,18 @@
 	<main class="mx-auto max-w-screen-lg px-4 py-4">
 		<!-- Info -->
 
-		<section>
+		<section class="glass mb-6 rounded-lg p-6">
 			<div class="flex flex-col gap-4 sm:flex-row sm:items-center">
-				<h1 class="my-6 text-3xl font-bold">
-					{data.team.name}
-				</h1>
+				<div class="flex items-center gap-4">
+					{#if data.team.logoURL}
+						<img src={data.team.logoURL} alt={data.team.name} class="h-24 w-24 rounded-full" />
+					{/if}
+					<div>
+						<h1 class="text-3xl font-bold">
+							{data.team.name}
+						</h1>
+					</div>
+				</div>
 
 				<div class="flex flex-wrap gap-2">
 					{#if data.team.region}
@@ -48,10 +55,8 @@
 					<ContentActionLink href={`/admin/teams?action=edit&id=${data.team.id}`} type="edit" />
 				{/if}
 			</div>
-			{#if data.team.logoURL}
-				<img src={data.team.logoURL} alt={data.team.name} class="h-24 w-24 rounded-full" />
-			{/if}
 		</section>
+
 		<h2 class="my-5 flex items-center text-xl font-bold">
 			<IconParkSolidPeoples class="mr-2 inline-block text-yellow-300" />{m.active_members()}
 		</h2>
