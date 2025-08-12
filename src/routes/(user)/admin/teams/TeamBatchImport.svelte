@@ -673,7 +673,7 @@ const teams: TeamImportData[] = [
 					<h4 class="mb-3 text-sm font-medium text-slate-200">Parsed Teams</h4>
 
 					<div
-						class="styled-scroll max-h-128 overflow-x-auto overflow-y-auto rounded-md border border-slate-700 bg-slate-900"
+						class="styled-scroll max-h-64 overflow-x-auto overflow-y-auto rounded-md border border-slate-700 bg-slate-900"
 					>
 						<table class="w-full table-auto border-collapse border-y-2 border-gray-500 bg-gray-800">
 							<thead>
@@ -749,10 +749,13 @@ const teams: TeamImportData[] = [
 			{#if parsedTeams && hasNewPlayersRequired}
 				<div class="mb-4 rounded-md border border-yellow-700 bg-yellow-900/50 p-4">
 					<h4 class="mb-3 text-sm font-medium text-yellow-200">New Players Required</h4>
+					<p class="mb-3 text-xs text-slate-300">
+						The following players need to be created before importing teams. They will be created
+						automatically during the import process.
+					</p>
 					<ParsedPlayersTable
 						players={newPlayersRequired}
-						description="The following players need to be created before importing teams. They will be created automatically during the import process."
-						containerClass=""
+						containerClass="max-h-64"
 						showDuplicateHighlighting={true}
 						duplicateCheckers={{
 							isDuplicateSlug: hasNewPlayerDuplicate,

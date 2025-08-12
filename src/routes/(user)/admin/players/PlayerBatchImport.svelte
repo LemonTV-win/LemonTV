@@ -691,7 +691,7 @@ const players: PlayerImportData[] = [
 							getDuplicateReason,
 							getDuplicateAccountIdReason
 						}}
-						containerClass=""
+						containerClass="max-h-128"
 					/>
 				</div>
 			{/if}
