@@ -5,9 +5,11 @@
 	import '$lib/highlight.css';
 	import { formatSlug } from '$lib/utils/strings';
 	import { parseData } from '$lib/utils/json';
+	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
 
 	import { deserialize } from '$app/forms';
 	import { m } from '$lib/paraglide/messages';
+	import type { PlayerImportData } from '../players/PlayerBatchImport.svelte';
 
 	interface TeamImportData {
 		name: string;
@@ -17,11 +19,13 @@
 		logo?: string;
 		aliases?: string[];
 		players?: {
-			playerId: string;
-			role: 'active' | 'substitute' | 'former' | 'coach' | 'manager' | 'owner';
-			startedOn?: string; // format: YYYY-MM-DD
-			endedOn?: string; // format: YYYY-MM-DD
-			note?: string;
+			player: PlayerImportData;
+			teamPlayer: {
+				role: 'active' | 'substitute' | 'former' | 'coach' | 'manager' | 'owner';
+				startedOn?: string; // format: YYYY-MM-DD
+				endedOn?: string; // format: YYYY-MM-DD
+				note?: string;
+			};
 		}[];
 	}
 
@@ -29,7 +33,8 @@
 		showModal,
 		onClose,
 		onSuccess,
-		existingTeams
+		existingTeams,
+		existingPlayers
 	}: {
 		showModal: boolean;
 		onClose: () => void;
@@ -39,6 +44,12 @@
 			name: string;
 			slug: string;
 			abbr: string | null;
+		}>;
+		existingPlayers: Array<{
+			id: string;
+			name: string;
+			slug: string;
+			gameAccounts?: Array<{ accountId: number; server: string }>;
 		}>;
 	} = $props();
 
@@ -220,7 +231,182 @@
 		return 'Unknown duplicate';
 	}
 
-	let hasAnyDuplicates = $derived(hasDuplicateSlugs);
+	// Get all players from parsed teams that need to be created
+	let newPlayersRequired = $derived.by(() => {
+		if (!parsedTeams || parsedTeams.type !== 'success') return [];
+
+		const newPlayers: PlayerImportData[] = [];
+		const existingPlayerIds = new Set(existingPlayers.map((p) => p.id));
+		const existingPlayerNames = new Set(existingPlayers.map((p) => p.name));
+		const existingAccountIds = new Set(
+			existingPlayers.flatMap((p) => p.gameAccounts?.map((ga) => ga.accountId) || [])
+		);
+
+		parsedTeams.data.forEach((team) => {
+			team.players?.forEach(({ player }) => {
+				// Check if player already exists by ID, name, or account ID
+				const hasExistingId = player.user?.id && existingPlayerIds.has(player.user.id);
+				const hasExistingName = existingPlayerNames.has(player.name);
+				const hasExistingAccountId = player.gameAccounts?.some((ga) =>
+					existingAccountIds.has(ga.accountId)
+				);
+
+				if (!hasExistingId && !hasExistingName && !hasExistingAccountId) {
+					// This is a new player that needs to be created
+					newPlayers.push(player);
+				}
+			});
+		});
+
+		// Remove duplicates based on name
+		const uniquePlayers = new Map<string, PlayerImportData>();
+		newPlayers.forEach((player) => {
+			if (!uniquePlayers.has(player.name)) {
+				uniquePlayers.set(player.name, player);
+			}
+		});
+
+		return Array.from(uniquePlayers.values());
+	});
+
+	let hasNewPlayersRequired = $derived(newPlayersRequired.length > 0);
+
+	// Check for duplicate slugs in new players
+	let newPlayerDuplicateSlugs = $derived.by(() => {
+		if (newPlayersRequired.length === 0) return [];
+
+		const slugCounts = new Map<string, string[]>();
+		const existingSlugs = new Set(existingPlayers.map((p) => p.slug));
+
+		newPlayersRequired.forEach((player) => {
+			const slug = player.slug || formatSlug(player.name);
+			if (!slugCounts.has(slug)) {
+				slugCounts.set(slug, []);
+			}
+			slugCounts.get(slug)!.push(player.name);
+		});
+
+		const duplicates: string[] = [];
+
+		// Check for duplicates within new players
+		slugCounts.forEach((names, slug) => {
+			if (names.length > 1) {
+				duplicates.push(`${slug} (${names.join(', ')})`);
+			}
+		});
+
+		// Check for conflicts with existing players
+		newPlayersRequired.forEach((player) => {
+			const slug = player.slug || formatSlug(player.name);
+			if (existingSlugs.has(slug)) {
+				const existingPlayer = existingPlayers.find((p) => p.slug === slug);
+				duplicates.push(`${slug} (conflicts with existing: ${existingPlayer?.name || 'Unknown'})`);
+			}
+		});
+
+		return duplicates;
+	});
+
+	// Check for duplicate account IDs in new players
+	let newPlayerDuplicateAccountIds = $derived.by(() => {
+		if (newPlayersRequired.length === 0) return [];
+
+		const accountIdCounts = new Map<number, string[]>();
+		const existingAccountIds = new Set(
+			existingPlayers.flatMap((p) => p.gameAccounts?.map((ga) => ga.accountId) || [])
+		);
+
+		newPlayersRequired.forEach((player) => {
+			player.gameAccounts?.forEach((account) => {
+				if (!accountIdCounts.has(account.accountId)) {
+					accountIdCounts.set(account.accountId, []);
+				}
+				accountIdCounts.get(account.accountId)!.push(`${player.name} (${account.server})`);
+			});
+		});
+
+		const duplicates: string[] = [];
+
+		// Check for duplicates within new players
+		accountIdCounts.forEach((names, accountId) => {
+			if (names.length > 1) {
+				duplicates.push(`Account ID ${accountId} (${names.join(', ')})`);
+			}
+		});
+
+		// Check for conflicts with existing players
+		newPlayersRequired.forEach((player) => {
+			player.gameAccounts?.forEach((account) => {
+				if (existingAccountIds.has(account.accountId)) {
+					const existingPlayer = existingPlayers.find((p) =>
+						p.gameAccounts?.some((ga) => ga.accountId === account.accountId)
+					);
+					duplicates.push(
+						`Account ID ${account.accountId} (${player.name} conflicts with existing: ${existingPlayer?.name || 'Unknown'})`
+					);
+				}
+			});
+		});
+
+		return duplicates;
+	});
+
+	let hasNewPlayerDuplicates = $derived(
+		newPlayerDuplicateSlugs.length > 0 || newPlayerDuplicateAccountIds.length > 0
+	);
+
+	// Check if any new player has duplicates
+	function hasNewPlayerDuplicate(player: PlayerImportData): boolean {
+		const slug = player.slug || formatSlug(player.name);
+		const hasDuplicateSlug = newPlayerDuplicateSlugs.some((dup) => dup.includes(slug));
+		const hasDuplicateAccountId =
+			player.gameAccounts?.some((account) =>
+				newPlayerDuplicateAccountIds.some((dup) => dup.includes(`Account ID ${account.accountId}`))
+			) || false;
+		return hasDuplicateSlug || hasDuplicateAccountId;
+	}
+
+	// Get duplicate reason for a new player
+	function getNewPlayerDuplicateReason(player: PlayerImportData): string {
+		const reasons: string[] = [];
+		const slug = player.slug || formatSlug(player.name);
+
+		// Check slug duplicates
+		const slugDuplicate = newPlayerDuplicateSlugs.find((dup) => dup.includes(slug));
+		if (slugDuplicate) {
+			reasons.push(`Slug: ${slugDuplicate}`);
+		}
+
+		// Check account ID duplicates
+		player.gameAccounts?.forEach((account) => {
+			const accountDuplicate = newPlayerDuplicateAccountIds.find((dup) =>
+				dup.includes(`Account ID ${account.accountId}`)
+			);
+			if (accountDuplicate) {
+				reasons.push(`Account ID: ${accountDuplicate}`);
+			}
+		});
+
+		return reasons.join('; ');
+	}
+
+	// Check if a team has any duplicates (slug)
+	function hasAnyDuplicate(team: TeamImportData): boolean {
+		return isDuplicateSlug(team);
+	}
+
+	// Get all duplicate reasons for a team
+	function getAllDuplicateReasons(team: TeamImportData): string {
+		const reasons: string[] = [];
+
+		if (isDuplicateSlug(team)) {
+			reasons.push(getDuplicateReason(team));
+		}
+
+		return reasons.join('; ');
+	}
+
+	let hasAnyDuplicates = $derived(hasDuplicateSlugs || hasNewPlayerDuplicates);
 
 	const TYPESCRIPT_SCHEMA = `// TypeScript schema for team data
 interface TeamImportData {
@@ -234,11 +420,13 @@ interface TeamImportData {
 }
 
 interface TeamPlayer {
-  playerId: string;                // Required: Player ID (must exist in database)
-  role: 'active' | 'substitute' | 'former' | 'coach' | 'manager' | 'owner'; // Required: Player role
-  startedOn?: string;              // Optional: Start date (format: YYYY-MM-DD)
-  endedOn?: string;                // Optional: End date (format: YYYY-MM-DD)
-  note?: string;                   // Optional: Additional notes about the player
+  player: PlayerImportData;        // Required: Full player data (will be created if new)
+  teamPlayer: {
+    role: 'active' | 'substitute' | 'former' | 'coach' | 'manager' | 'owner'; // Required: Player role
+    startedOn?: string;            // Optional: Start date (format: YYYY-MM-DD)
+    endedOn?: string;              // Optional: End date (format: YYYY-MM-DD)
+    note?: string;                 // Optional: Additional notes about the player
+  };
 }
 
 // Example usage:
@@ -252,15 +440,23 @@ const teams: TeamImportData[] = [
     aliases: ["TSM", "Team SoloMid"],
     players: [
       {
-        playerId: "player-123",
-        role: "active",
-        startedOn: "2023-01-01",
-        note: "Starting mid laner"
-      },
-      {
-        playerId: "player-456",
-        role: "coach",
-        startedOn: "2023-01-01"
+        player: {
+          name: "Player Name",
+          slug: "player-slug",
+          nationalities: ["US"],
+          gameAccounts: [
+            {
+              server: "Strinova",
+              accountId: 1234567,
+              currentName: "CurrentGameName"
+            }
+          ]
+        },
+        teamPlayer: {
+          role: "active",
+          startedOn: "2023-01-01",
+          note: "Starting mid laner"
+        }
       }
     ]
   }
@@ -279,24 +475,23 @@ const teams: TeamImportData[] = [
     "aliases": ["TSM", "Team SoloMid"],
     "players": [
       {
-        "playerId": "player-123",
-        "role": "active",
-        "startedOn": "2023-01-01",
-        "note": "Starting mid laner"
-      }
-    ]
-  },
-  {
-    "name": "Cloud9",
-    "slug": "cloud9",
-    "abbr": "C9",
-    "region": "NA",
-    "aliases": ["C9"],
-    "players": [
-      {
-        "playerId": "player-789",
-        "role": "active",
-        "startedOn": "2023-01-01"
+        "player": {
+          "name": "Player Name",
+          "slug": "player-slug",
+          "nationalities": ["US"],
+          "gameAccounts": [
+            {
+              "server": "Strinova",
+              "accountId": 1234567,
+              "currentName": "CurrentGameName"
+            }
+          ]
+        },
+        "teamPlayer": {
+          "role": "active",
+          "startedOn": "2023-01-01",
+          "note": "Starting mid laner"
+        }
       }
     ]
   }
@@ -313,10 +508,23 @@ const teams: TeamImportData[] = [
     aliases: ['TSM', 'Team SoloMid'],
     players: [
       {
-        playerId: 'player-123',
-        role: 'active',
-        startedOn: '2023-01-01',
-        note: 'Starting mid laner'
+        player: {
+          name: 'Player Name',
+          slug: 'player-slug',
+          nationalities: ['US'],
+          gameAccounts: [
+            {
+              server: 'Strinova',
+              accountId: 1234567,
+              currentName: 'CurrentGameName'
+            }
+          ]
+        },
+        teamPlayer: {
+          role: 'active',
+          startedOn: '2023-01-01',
+          note: 'Starting mid laner'
+        }
       }
     ]
   }
@@ -371,22 +579,6 @@ const teams: TeamImportData[] = [
 
 	function copySchema() {
 		navigator.clipboard.writeText(TYPESCRIPT_SCHEMA);
-	}
-
-	// Check if a team has any duplicates (slug)
-	function hasAnyDuplicate(team: TeamImportData): boolean {
-		return isDuplicateSlug(team);
-	}
-
-	// Get all duplicate reasons for a team
-	function getAllDuplicateReasons(team: TeamImportData): string {
-		const reasons: string[] = [];
-
-		if (isDuplicateSlug(team)) {
-			reasons.push(getDuplicateReason(team));
-		}
-
-		return reasons.join('; ');
 	}
 </script>
 
@@ -530,12 +722,14 @@ const teams: TeamImportData[] = [
 										<td class="px-4 py-1 text-gray-300">
 											{#if team.players && team.players.length > 0}
 												<ul>
-													{#each team.players as player}
+													{#each team.players as playerData}
 														<li class="break-keep whitespace-nowrap">
-															<span class="text-xs text-gray-400">{player.playerId}</span>
-															{player.role}
-															{#if player.startedOn}
-																<span class="text-xs text-gray-400">({player.startedOn})</span>
+															<span class="text-xs text-gray-400">{playerData.player.name}</span>
+															{playerData.teamPlayer.role}
+															{#if playerData.teamPlayer.startedOn}
+																<span class="text-xs text-gray-400"
+																	>({playerData.teamPlayer.startedOn})</span
+																>
 															{/if}
 														</li>
 													{/each}
@@ -548,6 +742,136 @@ const teams: TeamImportData[] = [
 								{/each}
 							</tbody>
 						</table>
+					</div>
+				</div>
+			{/if}
+
+			{#if parsedTeams && hasNewPlayersRequired}
+				<div class="mb-4 rounded-md border border-yellow-700 bg-yellow-900/50 p-4">
+					<h4 class="mb-3 text-sm font-medium text-yellow-200">New Players Required</h4>
+					<p class="mb-3 text-xs text-yellow-300">
+						The following players need to be created before importing teams. They will be created
+						automatically during the import process.
+					</p>
+
+					<div
+						class="styled-scroll max-h-128 overflow-x-auto overflow-y-auto rounded-md border border-slate-700 bg-slate-900"
+					>
+						<table class="w-full table-auto border-collapse border-y-2 border-gray-500 bg-gray-800">
+							<thead>
+								<tr class="border-b-2 border-gray-500 text-left text-sm text-gray-400">
+									<th class="px-4 py-1">Name</th>
+									<th class="px-4 py-1">Slug</th>
+									<th class="px-4 py-1">Nationalities</th>
+									<th class="px-4 py-1">Aliases</th>
+									<th class="px-4 py-1">Game Accounts</th>
+									<th class="px-4 py-1">Social Accounts</th>
+									<th class="px-4 py-1">User</th>
+								</tr>
+							</thead>
+							<tbody>
+								{#each newPlayersRequired as player}
+									<tr class="border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl">
+										<td class="px-4 py-1 text-white">
+											{player.name}
+										</td>
+										<td
+											class="max-w-32 truncate px-4 py-1 text-white {hasNewPlayerDuplicate(player)
+												? 'bg-red-900/30'
+												: ''}"
+											title={hasNewPlayerDuplicate(player)
+												? getNewPlayerDuplicateReason(player)
+												: ''}
+										>
+											{player.slug || formatSlug(player.name)}
+										</td>
+										<td class="max-w-6 px-4 py-1 text-gray-300">
+											{#each player.nationalities ?? [] as nationality, idx (idx)}
+												<NationalityFlag {nationality} />
+											{:else}
+												<NationalityFlag nationality={null} />
+											{/each}
+										</td>
+										<td class="px-4 py-1 text-gray-300">
+											{#if player.aliases && player.aliases.length > 0}
+												{#each player.aliases as alias}
+													{alias},
+												{/each}
+											{:else}
+												-
+											{/if}
+										</td>
+										<td
+											class="px-4 py-1 text-gray-300 {hasNewPlayerDuplicate(player)
+												? 'bg-red-900/30'
+												: ''}"
+											title={hasNewPlayerDuplicate(player)
+												? getNewPlayerDuplicateReason(player)
+												: ''}
+										>
+											{#if player.gameAccounts && player.gameAccounts.length > 0}
+												<ul>
+													{#each player.gameAccounts as account}
+														<li class="break-keep whitespace-nowrap">
+															<span class="text-xs text-gray-400">{account.accountId}</span>
+															{account.currentName}
+															{#if account.region}
+																<span class="text-xs text-gray-400">({account.region})</span>
+															{/if}
+														</li>
+													{/each}
+												</ul>
+											{:else}
+												-
+											{/if}
+										</td>
+										<td class="px-4 py-1 text-gray-300">
+											{#if player.socialAccounts && player.socialAccounts.length > 0}
+												<ul>
+													{#each player.socialAccounts as account}
+														<li class="break-keep whitespace-nowrap">
+															{account.platformId} - {account.accountId}
+															{#if account.overridingUrl}
+																<span class="text-xs text-gray-400">({account.overridingUrl})</span>
+															{/if}
+														</li>
+													{/each}
+												</ul>
+											{:else}
+												-
+											{/if}
+										</td>
+										<td class="px-4 py-1 text-gray-300">
+											{#if player.user}
+												<div class="flex flex-col">
+													<span class="text-xs text-gray-400">{player.user.id}</span>
+													<span>{player.user.username}</span>
+												</div>
+											{:else}
+												-
+											{/if}
+										</td>
+									</tr>
+								{/each}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			{/if}
+
+			{#if parsedTeams && hasNewPlayerDuplicates}
+				<div class="mb-4 rounded-md border border-red-700 bg-red-900/50 p-3">
+					<div class="flex items-start gap-2">
+						<div class="mt-0.5 h-4 w-4 flex-shrink-0 rounded-full bg-red-500"></div>
+						<div class="flex-1">
+							<p class="mb-1 text-sm font-medium text-red-200">
+								Duplicate issues in new players detected
+							</p>
+							<p class="text-xs text-red-300">
+								Please resolve the duplicate issues highlighted in red above before importing. New
+								players must have unique slugs and account IDs.
+							</p>
+						</div>
 					</div>
 				</div>
 			{/if}

@@ -508,4 +508,5 @@
 		goto('/admin/teams', { invalidateAll: true, noScroll: true, keepFocus: true });
 	}}
 	existingTeams={data.teams}
+	existingPlayers={data.players}
 />

@@ -1,16 +1,5 @@
-<script lang="ts">
-	import type { TCountryCode } from 'countries-list';
-	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
-	import Highlight from 'svelte-highlight';
-	import typescript from 'svelte-highlight/languages/typescript';
-	import '$lib/highlight.css';
-	import { formatSlug } from '$lib/utils/strings';
-	import { parseData } from '$lib/utils/json';
-
-	import { deserialize } from '$app/forms';
-	import { m } from '$lib/paraglide/messages';
-
-	interface PlayerImportData {
+<script module>
+	export interface PlayerImportData {
 		name: string;
 		slug?: string;
 		nationalities?: TCountryCode[];
@@ -33,6 +22,19 @@
 			roles: string[];
 		};
 	}
+</script>
+
+<script lang="ts">
+	import type { TCountryCode } from 'countries-list';
+	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
+	import Highlight from 'svelte-highlight';
+	import typescript from 'svelte-highlight/languages/typescript';
+	import '$lib/highlight.css';
+	import { formatSlug } from '$lib/utils/strings';
+	import { parseData } from '$lib/utils/json';
+
+	import { deserialize } from '$app/forms';
+	import { m } from '$lib/paraglide/messages';
 
 	let {
 		showModal,
