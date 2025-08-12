@@ -360,7 +360,7 @@
 						<td class="px-4 py-1 text-gray-300">
 							{#if getTeamPlayers(team.id)?.length}
 								<ul class="list-inside">
-									{#each getTeamPlayers(team.id) as player (player.playerId)}
+									{#each getTeamPlayers(team.id) as player (player.id)}
 										{@const playerObj = data.players?.find((p) => p.id === player.playerId)}
 										{#if playerObj}
 											<li>
