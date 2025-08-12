@@ -117,6 +117,15 @@
 		}
 	});
 
+	let existingAccountIdKeys = $derived(
+		new Set(
+			existingPlayers.flatMap(
+				(p) => p.gameAccounts?.map((ga) => `${ga.accountId}-${ga.server}`) || []
+			)
+		)
+	);
+	$inspect(`[TeamBatchImport] existingAccountIdKeys: ${existingAccountIdKeys}`);
+
 	// Get all existing slugs for comparison
 	let existingSlugs = $derived(
 		new Set(existingTeams.map((team: { id: string; name: string; slug: string }) => team.slug))
@@ -238,9 +247,6 @@
 		const newPlayers: PlayerImportData[] = [];
 		const existingPlayerIds = new Set(existingPlayers.map((p) => p.id));
 		const existingPlayerNames = new Set(existingPlayers.map((p) => p.name));
-		const existingAccountIds = new Set(
-			existingPlayers.flatMap((p) => p.gameAccounts?.map((ga) => ga.accountId) || [])
-		);
 
 		parsedTeams.data.forEach((team) => {
 			team.players?.forEach(({ player }) => {
@@ -248,7 +254,7 @@
 				const hasExistingId = player.user?.id && existingPlayerIds.has(player.user.id);
 				const hasExistingName = existingPlayerNames.has(player.name);
 				const hasExistingAccountId = player.gameAccounts?.some((ga) =>
-					existingAccountIds.has(ga.accountId)
+					existingAccountIdKeys.has(`${ga.accountId}-${ga.server}`)
 				);
 
 				if (!hasExistingId && !hasExistingName && !hasExistingAccountId) {

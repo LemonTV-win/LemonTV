@@ -236,7 +236,7 @@
 
 	// Get all existing account IDs for comparison
 	let existingAccountIds = $derived.by(() => {
-		const accountIds = new Set<number>();
+		const accountIds = new Set<string>();
 		existingPlayers.forEach(
 			(player: {
 				id: string;
@@ -245,7 +245,7 @@
 				gameAccounts?: Array<{ accountId: number; server: string }>;
 			}) => {
 				player.gameAccounts?.forEach((account: { accountId: number; server: string }) => {
-					accountIds.add(account.accountId);
+					accountIds.add(`${account.accountId}-${account.server}`);
 				});
 			}
 		);
@@ -256,31 +256,33 @@
 	let duplicateAccountIds = $derived.by(() => {
 		if (!parsedPlayers || parsedPlayers.type !== 'success') return [];
 
-		const accountIdCounts = new Map<number, string[]>();
-
+		const accountIdCounts = new Map<string, string[]>();
 		// Count account IDs within the parsed data
 		parsedPlayers.data.forEach((player) => {
 			player.gameAccounts?.forEach((account) => {
-				if (!accountIdCounts.has(account.accountId)) {
-					accountIdCounts.set(account.accountId, []);
+				const compositeKey = `${account.accountId}-${account.server}`;
+				if (!accountIdCounts.has(compositeKey)) {
+					accountIdCounts.set(compositeKey, []);
 				}
-				accountIdCounts.get(account.accountId)!.push(`${player.name} (${account.server})`);
+				accountIdCounts.get(compositeKey)!.push(`${player.name} (${account.server})`);
 			});
 		});
 
 		const duplicates: string[] = [];
 
 		// Check for duplicates within parsed data
-		accountIdCounts.forEach((names, accountId) => {
+		accountIdCounts.forEach((names, compositeKey) => {
 			if (names.length > 1) {
-				duplicates.push(`Account ID ${accountId} (${names.join(', ')})`);
+				const [accountId, server] = compositeKey.split('-');
+				duplicates.push(`Account ID ${accountId} on ${server} (${names.join(', ')})`);
 			}
 		});
 
 		// Check for conflicts with existing players
 		parsedPlayers.data.forEach((player) => {
 			player.gameAccounts?.forEach((account) => {
-				if (existingAccountIds.has(account.accountId)) {
+				const compositeKey = `${account.accountId}-${account.server}`; // Use composite key
+				if (existingAccountIds.has(compositeKey)) {
 					const existingPlayer = existingPlayers.find(
 						(p: {
 							id: string;
@@ -289,11 +291,12 @@
 							gameAccounts?: Array<{ accountId: number; server: string }>;
 						}) =>
 							p.gameAccounts?.some(
-								(ga: { accountId: number; server: string }) => ga.accountId === account.accountId
+								(ga: { accountId: number; server: string }) =>
+									`${ga.accountId}-${ga.server}` === compositeKey
 							)
 					);
 					duplicates.push(
-						`Account ID ${account.accountId} (${player.name} conflicts with existing: ${existingPlayer?.name || 'Unknown'})`
+						`Account ID ${account.accountId} on ${account.server} (${player.name} conflicts with existing: ${existingPlayer?.name || 'Unknown'})`
 					);
 				}
 			});
@@ -306,31 +309,33 @@
 
 	// Get duplicate account ID values for highlighting
 	let duplicateAccountIdValues = $derived.by(() => {
-		if (!parsedPlayers || parsedPlayers.type !== 'success') return new Set<number>();
+		if (!parsedPlayers || parsedPlayers.type !== 'success') return new Set<string>(); // Changed from Set<number> to Set<string>
 
-		const accountIdCounts = new Map<number, number>();
+		const accountIdCounts = new Map<string, number>(); // Changed from Map<number, number> to Map<string, number>
 
 		// Count account IDs within parsed data
 		parsedPlayers.data.forEach((player) => {
 			player.gameAccounts?.forEach((account) => {
-				accountIdCounts.set(account.accountId, (accountIdCounts.get(account.accountId) || 0) + 1);
+				const compositeKey = `${account.accountId}-${account.server}`; // Use composite key
+				accountIdCounts.set(compositeKey, (accountIdCounts.get(compositeKey) || 0) + 1);
 			});
 		});
 
-		const duplicates = new Set<number>();
+		const duplicates = new Set<string>(); // Changed from Set<number> to Set<string>
 
 		// Check for duplicates within parsed data
-		accountIdCounts.forEach((count, accountId) => {
+		accountIdCounts.forEach((count, compositeKey) => {
 			if (count > 1) {
-				duplicates.add(accountId);
+				duplicates.add(compositeKey);
 			}
 		});
 
 		// Check for conflicts with existing players
 		parsedPlayers.data.forEach((player) => {
 			player.gameAccounts?.forEach((account) => {
-				if (existingAccountIds.has(account.accountId)) {
-					duplicates.add(account.accountId);
+				const compositeKey = `${account.accountId}-${account.server}`; // Use composite key
+				if (existingAccountIds.has(compositeKey)) {
+					duplicates.add(compositeKey);
 				}
 			});
 		});
@@ -341,7 +346,10 @@
 	// Check if a player has a duplicate account ID
 	function isDuplicateAccountId(player: PlayerImportData): boolean {
 		if (!player.gameAccounts) return false;
-		return player.gameAccounts.some((account) => duplicateAccountIdValues.has(account.accountId));
+		return player.gameAccounts.some((account) => {
+			const compositeKey = `${account.accountId}-${account.server}`; // Use composite key
+			return duplicateAccountIdValues.has(compositeKey);
+		});
 	}
 
 	// Get the reason for account ID duplicate
@@ -351,9 +359,10 @@
 		const reasons: string[] = [];
 
 		player.gameAccounts.forEach((account) => {
-			if (duplicateAccountIdValues.has(account.accountId)) {
+			const compositeKey = `${account.accountId}-${account.server}`; // Use composite key
+			if (duplicateAccountIdValues.has(compositeKey)) {
 				// Check if it conflicts with existing players
-				if (existingAccountIds.has(account.accountId)) {
+				if (existingAccountIds.has(compositeKey)) {
 					const existingPlayer = existingPlayers.find(
 						(p: {
 							id: string;
@@ -362,30 +371,32 @@
 							gameAccounts?: Array<{ accountId: number; server: string }>;
 						}) =>
 							p.gameAccounts?.some(
-								(ga: { accountId: number; server: string }) => ga.accountId === account.accountId
+								(ga: { accountId: number; server: string }) =>
+									`${ga.accountId}-${ga.server}` === compositeKey
 							)
 					);
 					reasons.push(
-						`Account ID ${account.accountId} conflicts with existing player: ${existingPlayer?.name || 'Unknown'}`
+						`Account ID ${account.accountId} on ${account.server} conflicts with existing player: ${existingPlayer?.name || 'Unknown'}`
 					);
 				} else {
 					// Check if it's duplicate within parsed data
-					const accountIdCounts = new Map<number, string[]>();
+					const accountIdCounts = new Map<string, string[]>();
 					if (!parsedPlayers || parsedPlayers.type !== 'success') return '';
 					parsedPlayers.data.forEach((p: PlayerImportData) => {
 						p.gameAccounts?.forEach((ga) => {
-							if (!accountIdCounts.has(ga.accountId)) {
-								accountIdCounts.set(ga.accountId, []);
+							const pCompositeKey = `${ga.accountId}-${ga.server}`; // Use composite key
+							if (!accountIdCounts.has(pCompositeKey)) {
+								accountIdCounts.set(pCompositeKey, []);
 							}
-							accountIdCounts.get(ga.accountId)!.push(`${p.name} (${ga.server})`);
+							accountIdCounts.get(pCompositeKey)!.push(`${p.name} (${ga.server})`);
 						});
 					});
 
-					const names = accountIdCounts.get(account.accountId) || [];
+					const names = accountIdCounts.get(compositeKey) || [];
 					if (names.length > 1) {
 						const otherNames = names.filter((n) => n !== `${player.name} (${account.server})`);
 						reasons.push(
-							`Account ID ${account.accountId} duplicate within import: ${otherNames.join(', ')}`
+							`Account ID ${account.accountId} on ${account.server} duplicate within import: ${otherNames.join(', ')}`
 						);
 					}
 				}
