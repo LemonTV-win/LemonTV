@@ -18,6 +18,7 @@ import type { TCountryCode } from 'countries-list';
 import * as schema from '$lib/server/db/schema';
 import type { Match, PlayerScore } from '$lib/data/matches';
 import type { Event } from '$lib/data/events';
+import { formatSlug } from '$lib/utils/strings';
 
 // Unified player statistics interface
 export interface PlayerStats {
@@ -1141,7 +1142,7 @@ export async function createPlayer(
 	tx?: Parameters<Parameters<typeof db.transaction>[0]>[0]
 ) {
 	const id = randomUUID();
-	const slug = data.slug ?? data.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+	const slug = data.slug ?? formatSlug(data.name);
 	const userId = data.user?.id;
 	const primaryNationality = data.nationalities?.[0] as TCountryCode | undefined;
 
