@@ -6,6 +6,7 @@ import { createTeam, updateTeam, deleteTeam } from '$lib/server/data/teams';
 import { createPlayer } from '$lib/server/data/players';
 import type { Region } from '$lib/data/game';
 import { processImageURL } from '$lib/server/storage';
+import { checkPermissions } from '$lib/server/security/permission';
 
 export const load: PageServerLoad = async ({ url, locals }) => {
 	const teamsList = await db.select().from(table.team);
@@ -53,6 +54,13 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 
 export const actions = {
 	create: async ({ request, locals }) => {
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
+			});
+		}
+
 		const formData = await request.formData();
 		const name = formData.get('name') as string;
 		const logo = formData.get('logo') as string | null;
@@ -74,12 +82,6 @@ export const actions = {
 			});
 		}
 
-		if (!locals.user?.id) {
-			return fail(401, {
-				error: 'Unauthorized'
-			});
-		}
-
 		try {
 			await createTeam(
 				{
@@ -91,7 +93,7 @@ export const actions = {
 					aliases,
 					players
 				},
-				locals.user.id
+				result.userId
 			);
 
 			return {
@@ -106,6 +108,13 @@ export const actions = {
 	},
 
 	update: async ({ request, locals }) => {
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
+			});
+		}
+
 		const formData = await request.formData();
 		const id = formData.get('id') as string;
 		const name = formData.get('name') as string;
@@ -128,12 +137,6 @@ export const actions = {
 			});
 		}
 
-		if (!locals.user?.id) {
-			return fail(401, {
-				error: 'Unauthorized'
-			});
-		}
-
 		try {
 			await updateTeam(
 				{
@@ -146,7 +149,7 @@ export const actions = {
 					aliases,
 					players
 				},
-				locals.user.id
+				result.userId
 			);
 
 			return {
@@ -161,6 +164,13 @@ export const actions = {
 	},
 
 	delete: async ({ request, locals }) => {
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
+			});
+		}
+
 		const formData = await request.formData();
 		const id = formData.get('id') as string;
 
@@ -170,14 +180,8 @@ export const actions = {
 			});
 		}
 
-		if (!locals.user?.id) {
-			return fail(401, {
-				error: 'Unauthorized'
-			});
-		}
-
 		try {
-			await deleteTeam(id, locals.user.id);
+			await deleteTeam(id, result.userId);
 			return {
 				success: true
 			};
@@ -190,18 +194,19 @@ export const actions = {
 	},
 
 	batchCreate: async ({ request, locals }) => {
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, {
+				error: result.error
+			});
+		}
+
 		const formData = await request.formData();
 		const teamsData = formData.get('teams') as string;
 
 		if (!teamsData) {
 			return fail(400, {
 				error: 'Teams data is required'
-			});
-		}
-
-		if (!locals.user?.id) {
-			return fail(401, {
-				error: 'Unauthorized'
 			});
 		}
 
@@ -294,7 +299,7 @@ export const actions = {
 						user: playerData.user
 					};
 
-					const newPlayerId = await createPlayer(playerToCreate, locals.user.id);
+					const newPlayerId = await createPlayer(playerToCreate, result.userId);
 					playerIdMap.set(playerName, newPlayerId);
 					playersCreated++;
 				} catch (error) {
@@ -365,7 +370,7 @@ export const actions = {
 							aliases: teamData.aliases || [],
 							players: convertedPlayers
 						},
-						locals.user.id
+						result.userId
 					);
 					createdCount++;
 				} catch (error) {
