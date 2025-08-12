@@ -4,6 +4,7 @@
 	import typescript from 'svelte-highlight/languages/typescript';
 	import '$lib/highlight.css';
 	import { formatSlug } from '$lib/utils/strings';
+	import { parseData } from '$lib/utils/json';
 
 	import { deserialize } from '$app/forms';
 	import { m } from '$lib/paraglide/messages';
@@ -63,40 +64,34 @@
 		}
 
 		try {
-			// Clean the data by removing comments and fixing common issues
-			let cleanedData = importJsonData
-				.replace(/\/\/.*$/gm, '') // Remove single-line comments
-				.replace(/\/\*[\s\S]*?\*\//g, '') // Remove multi-line comments
-				.trim();
+			// Use the utility function to parse and validate
+			const result = parseData<TeamImportData>(
+				importJsonData,
+				(parsedData): parsedData is TeamImportData[] => {
+					// Validate the data
+					if (!Array.isArray(parsedData)) {
+						return false;
+					}
 
-			// Convert TypeScript object literal syntax to JSON
-			// Replace property names without quotes to quoted property names
-			cleanedData = cleanedData
-				.replace(/(\w+):/g, '"$1":') // Convert property names to quoted
-				.replace(/'/g, '"') // Replace single quotes with double quotes
-				.replace(/(\w+):\s*\[/g, '"$1": [') // Handle array properties
-				.replace(/(\w+):\s*\{/g, '"$1": {') // Handle object properties
-				.replace(/(\w+):\s*(\d+)/g, '"$1": $2') // Handle numeric properties
-				.replace(/(\w+):\s*"([^"]*)"/g, '"$1": "$2"') // Handle string properties
-				.replace(/(\w+):\s*true/g, '"$1": true') // Handle boolean true
-				.replace(/(\w+):\s*false/g, '"$1": false'); // Handle boolean false
-
-			const parsedData = JSON.parse(cleanedData) as TeamImportData[];
-
-			// Validate the data
-			if (!Array.isArray(parsedData)) {
-				throw new Error('Data must be an array of teams');
-			}
-
-			// Validate each team
-			for (const team of parsedData) {
-				if (!team.name) {
-					throw new Error('Each team must have a name');
+					// Validate each team
+					for (const team of parsedData) {
+						if (!team.name) {
+							return false;
+						}
+					}
+					return true;
 				}
+			);
+
+			if (result?.type === 'success') {
+				return result;
+			} else if (result?.type === 'error') {
+				return result;
 			}
+
 			return {
-				type: 'success',
-				data: parsedData
+				type: 'error',
+				error: 'Data validation failed'
 			};
 		} catch (error) {
 			console.error('Parse error:', error);
