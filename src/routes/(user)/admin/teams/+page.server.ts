@@ -12,7 +12,22 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 	const teamsList = await db.select().from(table.team);
 	const teamPlayers = await db.select().from(table.teamPlayer);
 	const teamAliases = await db.select().from(table.teamAlias);
-	const players = await db.select().from(table.player);
+	const players = await db.query.player.findMany({
+		// TODO:
+		// columns: {
+		// 	id: true,
+		// 	name: true,
+		// 	slug: true
+		// },
+		with: {
+			gameAccounts: {
+				columns: {
+					accountId: true,
+					server: true
+				}
+			}
+		}
+	});
 
 	// Collect unique logo URLs
 	const uniqueLogoUrls = new Set<string>();
