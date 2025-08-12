@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { TCountryCode } from 'countries-list';
 	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
 	import { formatSlug } from '$lib/utils/strings';
 	import type { PlayerImportData } from './PlayerBatchImport.svelte';
+	import { m } from '$lib/paraglide/messages';
 	interface Props {
 		players: PlayerImportData[];
 		showDuplicateHighlighting?: boolean;
@@ -35,13 +35,13 @@
 	<table class="w-full table-auto border-collapse border-y-2 border-gray-500 bg-gray-800">
 		<thead>
 			<tr class="border-b-2 border-gray-500 text-left text-sm text-gray-400">
-				<th class="px-4 py-1">Name</th>
-				<th class="px-4 py-1">Slug</th>
-				<th class="px-4 py-1">Nationalities</th>
-				<th class="px-4 py-1">Aliases</th>
-				<th class="px-4 py-1">Game Accounts</th>
-				<th class="px-4 py-1">Social Accounts</th>
-				<th class="px-4 py-1">User</th>
+				<th class="px-4 py-1">{m.name()}</th>
+				<th class="px-4 py-1">{m.slug()}</th>
+				<th class="px-4 py-1">{m.nationality()}</th>
+				<th class="px-4 py-1">{m.aliases()}</th>
+				<th class="px-4 py-1">{m.game_accounts()}</th>
+				<th class="px-4 py-1">{m.social_accounts()}</th>
+				<th class="px-4 py-1">{m.users()}</th>
 			</tr>
 		</thead>
 		<tbody>
