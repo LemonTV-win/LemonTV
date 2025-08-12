@@ -6,6 +6,7 @@
 	import SearchInput from '$lib/components/SearchInput.svelte';
 	import TeamCard from '$lib/components/TeamCard.svelte';
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
+	import { goto } from '$app/navigation';
 	let { data }: PageProps = $props();
 
 	let search = $state(data.search || '');
@@ -17,11 +18,13 @@
 	);
 
 	$effect(() => {
-		window.history.replaceState(
-			{},
-			'',
-			`/teams${search ? `?search=${encodeURIComponent(search)}` : ''}`
-		);
+		const url = new URL(window.location.href);
+		if (search) {
+			url.searchParams.set('search', search);
+		} else {
+			url.searchParams.delete('search');
+		}
+		goto(url.toString(), { replaceState: true, keepFocus: true, noScroll: true });
 	});
 
 	onMount(() => {
