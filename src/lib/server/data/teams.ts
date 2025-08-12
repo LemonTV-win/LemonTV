@@ -702,13 +702,17 @@ export async function createTeam(
 			note?: string;
 		}[];
 	},
-	editedBy: string
+	editedBy: string,
+	tx?: Parameters<Parameters<typeof db.transaction>[0]>[0]
 ) {
 	const id = randomUUID();
 	const slug = data.slug ?? data.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
 
-	await db.transaction(async (tx) => {
-		await tx.insert(table.team).values({
+	// Use provided transaction or create a new one
+	const executeInTransaction = async (
+		transaction: Parameters<Parameters<typeof db.transaction>[0]>[0]
+	) => {
+		await transaction.insert(table.team).values({
 			id,
 			name: data.name,
 			slug,
@@ -718,7 +722,7 @@ export async function createTeam(
 		});
 
 		// Record initial creation in edit history
-		await tx.insert(editHistory).values({
+		await transaction.insert(editHistory).values({
 			id: randomUUID(),
 			tableName: 'teams',
 			recordId: id,
@@ -730,7 +734,7 @@ export async function createTeam(
 
 		// Record initial values
 		if (data.name) {
-			await tx.insert(editHistory).values({
+			await transaction.insert(editHistory).values({
 				id: randomUUID(),
 				tableName: 'teams',
 				recordId: id,
@@ -742,7 +746,7 @@ export async function createTeam(
 		}
 
 		if (data.region) {
-			await tx.insert(editHistory).values({
+			await transaction.insert(editHistory).values({
 				id: randomUUID(),
 				tableName: 'teams',
 				recordId: id,
@@ -754,7 +758,7 @@ export async function createTeam(
 		}
 
 		if (data.abbr) {
-			await tx.insert(editHistory).values({
+			await transaction.insert(editHistory).values({
 				id: randomUUID(),
 				tableName: 'teams',
 				recordId: id,
@@ -766,7 +770,7 @@ export async function createTeam(
 		}
 
 		if (data.logo) {
-			await tx.insert(editHistory).values({
+			await transaction.insert(editHistory).values({
 				id: randomUUID(),
 				tableName: 'teams',
 				recordId: id,
@@ -778,7 +782,7 @@ export async function createTeam(
 		}
 
 		if (data.aliases?.length) {
-			await tx.insert(table.teamAlias).values(
+			await transaction.insert(table.teamAlias).values(
 				data.aliases.map((alias) => ({
 					teamId: id,
 					alias
@@ -787,7 +791,7 @@ export async function createTeam(
 
 			// Record initial aliases
 			for (const alias of data.aliases) {
-				await tx.insert(editHistory).values({
+				await transaction.insert(editHistory).values({
 					id: randomUUID(),
 					tableName: 'team_alias',
 					recordId: id,
@@ -800,7 +804,7 @@ export async function createTeam(
 		}
 
 		if (data.players?.length) {
-			await tx.insert(table.teamPlayer).values(
+			await transaction.insert(table.teamPlayer).values(
 				data.players.map((player) => ({
 					teamId: id,
 					playerId: player.playerId,
@@ -813,7 +817,7 @@ export async function createTeam(
 
 			// Record initial players
 			for (const player of data.players) {
-				await tx.insert(editHistory).values({
+				await transaction.insert(editHistory).values({
 					id: randomUUID(),
 					tableName: 'team_player',
 					recordId: id,
@@ -824,7 +828,15 @@ export async function createTeam(
 				});
 			}
 		}
-	});
+	};
+
+	if (tx) {
+		// Use provided transaction
+		await executeInTransaction(tx);
+	} else {
+		// Create new transaction
+		await db.transaction(executeInTransaction);
+	}
 
 	return id;
 }

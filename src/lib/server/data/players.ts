@@ -1137,15 +1137,19 @@ function identifyPlayerFromScore(score: PlayerScore, player: Player): boolean {
 
 export async function createPlayer(
 	data: Omit<Player, 'id' | 'gameAccounts'> & { gameAccounts: Player['gameAccounts'] },
-	editedBy: string
+	editedBy: string,
+	tx?: Parameters<Parameters<typeof db.transaction>[0]>[0]
 ) {
 	const id = randomUUID();
 	const slug = data.slug ?? data.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
 	const userId = data.user?.id;
 	const primaryNationality = data.nationalities?.[0] as TCountryCode | undefined;
 
-	await db.transaction(async (tx) => {
-		await tx.insert(player).values({
+	// Use provided transaction or create a new one
+	const executeInTransaction = async (
+		transaction: Parameters<Parameters<typeof db.transaction>[0]>[0]
+	) => {
+		await transaction.insert(player).values({
 			id,
 			name: data.name,
 			slug: slug,
@@ -1155,7 +1159,7 @@ export async function createPlayer(
 		});
 
 		// Record initial creation in edit history
-		await tx.insert(editHistory).values({
+		await transaction.insert(editHistory).values({
 			id: randomUUID(),
 			tableName: 'player',
 			recordId: id,
@@ -1167,7 +1171,7 @@ export async function createPlayer(
 
 		// Record initial values
 		if (data.name) {
-			await tx.insert(editHistory).values({
+			await transaction.insert(editHistory).values({
 				id: randomUUID(),
 				tableName: 'player',
 				recordId: id,
@@ -1179,7 +1183,7 @@ export async function createPlayer(
 		}
 
 		if (data.avatar) {
-			await tx.insert(editHistory).values({
+			await transaction.insert(editHistory).values({
 				id: randomUUID(),
 				tableName: 'player',
 				recordId: id,
@@ -1192,7 +1196,7 @@ export async function createPlayer(
 
 		if (data.nationalities?.length) {
 			// Record primary nationality
-			await tx.insert(editHistory).values({
+			await transaction.insert(editHistory).values({
 				id: randomUUID(),
 				tableName: 'player',
 				recordId: id,
@@ -1204,7 +1208,7 @@ export async function createPlayer(
 
 			// Insert additional nationalities
 			if (data.nationalities.length > 1) {
-				await tx.insert(playerAdditionalNationality).values(
+				await transaction.insert(playerAdditionalNationality).values(
 					data.nationalities.slice(1).map((nationality) => ({
 						playerId: id,
 						nationality: nationality as TCountryCode
@@ -1213,7 +1217,7 @@ export async function createPlayer(
 
 				// Record additional nationalities
 				for (const nationality of data.nationalities.slice(1)) {
-					await tx.insert(editHistory).values({
+					await transaction.insert(editHistory).values({
 						id: randomUUID(),
 						tableName: 'player_additional_nationality',
 						recordId: id,
@@ -1227,7 +1231,7 @@ export async function createPlayer(
 		}
 
 		if (userId) {
-			await tx.insert(editHistory).values({
+			await transaction.insert(editHistory).values({
 				id: randomUUID(),
 				tableName: 'player',
 				recordId: id,
@@ -1239,7 +1243,7 @@ export async function createPlayer(
 		}
 
 		if (data.aliases?.length) {
-			await tx.insert(playerAlias).values(
+			await transaction.insert(playerAlias).values(
 				data.aliases.map((alias) => ({
 					playerId: id,
 					alias
@@ -1248,7 +1252,7 @@ export async function createPlayer(
 
 			// Record initial aliases
 			for (const alias of data.aliases) {
-				await tx.insert(editHistory).values({
+				await transaction.insert(editHistory).values({
 					id: randomUUID(),
 					tableName: 'player_alias',
 					recordId: id,
@@ -1261,7 +1265,7 @@ export async function createPlayer(
 		}
 
 		if (data.gameAccounts?.length) {
-			await tx.insert(gameAccount).values(
+			await transaction.insert(gameAccount).values(
 				data.gameAccounts.map((account) => ({
 					playerId: id,
 					server: account.region === 'CN' ? 'CalabiYau' : 'Strinova',
@@ -1273,7 +1277,7 @@ export async function createPlayer(
 
 			// Record initial game accounts
 			for (const account of data.gameAccounts) {
-				await tx.insert(editHistory).values({
+				await transaction.insert(editHistory).values({
 					id: randomUUID(),
 					tableName: 'game_account',
 					recordId: id,
@@ -1286,7 +1290,7 @@ export async function createPlayer(
 		}
 
 		if (data.socialAccounts?.length) {
-			await tx.insert(player_social_account).values(
+			await transaction.insert(player_social_account).values(
 				data.socialAccounts.map((account) => ({
 					id: randomUUID(),
 					playerId: id,
@@ -1298,7 +1302,7 @@ export async function createPlayer(
 
 			// Record initial social accounts
 			for (const account of data.socialAccounts) {
-				await tx.insert(editHistory).values({
+				await transaction.insert(editHistory).values({
 					id: randomUUID(),
 					tableName: 'player_social_account',
 					recordId: id,
@@ -1309,7 +1313,15 @@ export async function createPlayer(
 				});
 			}
 		}
-	});
+	};
+
+	if (tx) {
+		// Use provided transaction
+		await executeInTransaction(tx);
+	} else {
+		// Create new transaction
+		await db.transaction(executeInTransaction);
+	}
 
 	return id;
 }
