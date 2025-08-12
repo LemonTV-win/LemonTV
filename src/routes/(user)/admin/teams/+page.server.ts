@@ -356,7 +356,7 @@ export const actions = {
 								return {
 									playerId,
 									role: teamPlayer.role,
-									startedOn: teamPlayer.startedOn,
+									startedOn: teamPlayer.startedOn ?? new Date().toISOString().split('T')[0],
 									endedOn: teamPlayer.endedOn,
 									note: teamPlayer.note
 								};
