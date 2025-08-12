@@ -22,6 +22,11 @@ export interface GameAccount {
 	names?: string[];
 }
 
+export const SERVER_ABBREVIATIONS: Record<string, string> = {
+	Strinova: 'S',
+	CalabiYau: 'C'
+};
+
 export interface SocialAccount {
 	platformId: string;
 	accountId: string;

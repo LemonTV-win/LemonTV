@@ -3,6 +3,7 @@
 	import { formatSlug } from '$lib/utils/strings';
 	import type { PlayerImportData } from './PlayerBatchImport.svelte';
 	import { m } from '$lib/paraglide/messages';
+	import GameAccount from './GameAccount.svelte';
 	interface Props {
 		players: PlayerImportData[];
 		showDuplicateHighlighting?: boolean;
@@ -90,11 +91,7 @@
 							<ul>
 								{#each player.gameAccounts as account}
 									<li class="break-keep whitespace-nowrap">
-										<span class="text-xs text-gray-400">{account.accountId}</span>
-										{account.currentName}
-										{#if account.region}
-											<span class="text-xs text-gray-400">({account.region})</span>
-										{/if}
+										<GameAccount {account} />
 									</li>
 								{/each}
 							</ul>

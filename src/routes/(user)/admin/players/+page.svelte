@@ -24,6 +24,7 @@
 	import { countryCodeToLocalizedName } from '$lib/utils/strings';
 	import { getLocale } from '$lib/paraglide/runtime';
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
+	import GameAccount from './GameAccount.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -648,11 +649,7 @@
 								<ul>
 									{#each player.gameAccounts as account (account.accountId)}
 										<li class="break-keep whitespace-nowrap">
-											<span class="text-xs text-gray-400">{account.accountId}</span>
-											{account.currentName}
-											{#if account.region}
-												<span class="text-xs text-gray-400">({account.region})</span>
-											{/if}
+											<GameAccount {account} />
 										</li>
 									{/each}
 								</ul>
