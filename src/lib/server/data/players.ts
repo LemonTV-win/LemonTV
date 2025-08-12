@@ -437,21 +437,29 @@ export async function getPlayersTeams(): Promise<Record<string, Team[]>> {
 
 	const processingStart = performance.now();
 	const result: Record<string, Team[]> = {};
+
 	for (const row of rows) {
 		if (!result[row.player.id]) {
 			result[row.player.id] = [];
 		}
-		result[row.player.id].push({
-			id: row.teams.id,
-			name: row.teams.name,
-			slug: row.teams.slug,
-			abbr: row.teams.abbr || null,
-			logo: row.teams.logo || null,
-			region: (row.teams.region as Region) || null,
-			createdAt: row.teams.createdAt,
-			updatedAt: row.teams.updatedAt
-		});
+
+		// Check if this team is already added to this player
+		const teamAlreadyExists = result[row.player.id].some((team) => team.id === row.teams.id);
+
+		if (!teamAlreadyExists) {
+			result[row.player.id].push({
+				id: row.teams.id,
+				name: row.teams.name,
+				slug: row.teams.slug,
+				abbr: row.teams.abbr || null,
+				logo: row.teams.logo || null,
+				region: (row.teams.region as Region) || null,
+				createdAt: row.teams.createdAt,
+				updatedAt: row.teams.updatedAt
+			});
+		}
 	}
+
 	const processingDuration = performance.now() - processingStart;
 	console.info(`[Players] Players teams processing took ${processingDuration.toFixed(2)}ms`);
 
