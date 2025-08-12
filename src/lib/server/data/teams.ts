@@ -13,6 +13,7 @@ import type { TCountryCode } from 'countries-list';
 import { randomUUID } from 'node:crypto';
 import { editHistory } from '$lib/server/db/schemas/edit-history';
 import { processImageURL } from '../storage';
+import { formatSlug } from '$lib/utils/strings';
 
 export async function getTeamMemberStatistics(team: Team): Promise<Record<
 	string,
@@ -706,7 +707,7 @@ export async function createTeam(
 	tx?: Parameters<Parameters<typeof db.transaction>[0]>[0]
 ) {
 	const id = randomUUID();
-	const slug = data.slug ?? data.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+	const slug = data.slug ?? formatSlug(data.name);
 
 	// Use provided transaction or create a new one
 	const executeInTransaction = async (
