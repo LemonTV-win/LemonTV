@@ -1,5 +1,7 @@
 import { primaryKey, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 import { user } from '../auth/user';
+import { relations } from 'drizzle-orm';
+import { gameAccount } from './game-account';
 
 export const player = sqliteTable('player', {
 	id: text('id').primaryKey(),
@@ -31,3 +33,14 @@ export const playerAdditionalNationality = sqliteTable(
 export type Player = typeof player.$inferSelect;
 export type PlayerAlias = typeof playerAlias.$inferSelect;
 export type PlayerAdditionalNationality = typeof playerAdditionalNationality.$inferSelect;
+
+export const playerRelations = relations(player, ({ many }) => ({
+	gameAccounts: many(gameAccount)
+}));
+
+export const gameAccountRelations = relations(gameAccount, ({ one }) => ({
+	player: one(player, {
+		fields: [gameAccount.playerId],
+		references: [player.id]
+	})
+}));
