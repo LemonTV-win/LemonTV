@@ -8,10 +8,7 @@ import type { Region, GameMap } from '$lib/data/game';
 import { MAPS } from '$lib/data/game';
 import type { PageServerLoad } from './$types';
 import { dev } from '$app/environment';
-
-type PermissionResult =
-	| { status: 'success'; userId: string }
-	| { status: 'error'; error: string; statusCode: 401 | 403 };
+import { checkPermissions } from '$lib/server/security/permission';
 
 type MapAction = 'ban' | 'pick' | 'decider' | 'set' | null;
 
@@ -27,22 +24,6 @@ export type GameParticipant = {
 		region?: Region;
 	}>;
 };
-
-function checkPermissions(locals: App.Locals, requiredRoles: string[]): PermissionResult {
-	if (!locals.user?.id) {
-		console.error('[Admin][Matches] Unauthorized: user is not authenticated');
-		return { status: 'error', error: 'Unauthorized', statusCode: 401 };
-	}
-
-	if (!requiredRoles.some((role) => locals.user?.roles.includes(role))) {
-		console.error(
-			`[Admin][Matches] Forbidden: user "${locals.user.username}" (${locals.user.id}) lacks required roles (${requiredRoles.join(', ')}). Current roles: ${locals.user.roles.join(', ')}`
-		);
-		return { status: 'error', error: 'Insufficient permissions', statusCode: 403 };
-	}
-
-	return { status: 'success', userId: locals.user.id };
-}
 
 function parseFormData(formData: FormData) {
 	const format = formData.get('format') as string;

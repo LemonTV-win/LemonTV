@@ -4,34 +4,7 @@ import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { eq, sql } from 'drizzle-orm';
 import { processImageURL } from '$lib/server/storage';
-
-type PermissionResult =
-	| { status: 'success'; userId: string }
-	| { status: 'error'; error: string; statusCode: 401 | 403 };
-
-function checkPermissions(locals: App.Locals, requiredRoles: string[]): PermissionResult {
-	if (!locals.user) {
-		return {
-			status: 'error',
-			error: 'You must be logged in to perform this action',
-			statusCode: 401
-		};
-	}
-
-	if (!locals.user.roles.some((role) => requiredRoles.includes(role))) {
-		return {
-			status: 'error',
-			error: 'You do not have permission to perform this action',
-			statusCode: 403
-		};
-	}
-
-	return {
-		status: 'success',
-		userId: locals.user.id
-	};
-}
-
+import { checkPermissions } from '$lib/server/security/permission';
 export const load: PageServerLoad = async ({ url }) => {
 	const organizersList = await db.select().from(table.organizer);
 

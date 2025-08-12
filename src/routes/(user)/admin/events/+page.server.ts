@@ -17,26 +17,7 @@ import {
 	updateEventCasters
 } from '$lib/server/data/events';
 import type { Region } from '$lib/data/game';
-
-type PermissionResult =
-	| { status: 'success'; userId: string }
-	| { status: 'error'; error: string; statusCode: 401 | 403 };
-
-function checkPermissions(locals: App.Locals, requiredRoles: string[]): PermissionResult {
-	if (!locals.user?.id) {
-		console.error('[Admin][Events] Unauthorized: user is not authenticated');
-		return { status: 'error', error: 'Unauthorized', statusCode: 401 };
-	}
-
-	if (!requiredRoles.some((role) => locals.user?.roles.includes(role))) {
-		console.error(
-			`[Admin][Events] Forbidden: user "${locals.user.username}" (${locals.user.id}) lacks required roles (${requiredRoles.join(', ')}). Current roles: ${locals.user.roles.join(', ')}`
-		);
-		return { status: 'error', error: 'Insufficient permissions', statusCode: 403 };
-	}
-
-	return { status: 'success', userId: locals.user.id };
-}
+import { checkPermissions } from '$lib/server/security/permission';
 
 function withTimer<T>(name: string, fn: () => Promise<T>): () => Promise<T> {
 	return async () => {
