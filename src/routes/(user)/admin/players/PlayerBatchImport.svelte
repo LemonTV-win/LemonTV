@@ -8,7 +8,7 @@
 			server: 'Strinova' | 'CalabiYau';
 			accountId: number;
 			currentName: string;
-			region?: string;
+			region?: Region;
 		}[];
 		socialAccounts?: {
 			platformId: string;
@@ -35,6 +35,7 @@
 
 	import { deserialize } from '$app/forms';
 	import { m } from '$lib/paraglide/messages';
+	import type { Region } from '$lib/data/game';
 
 	let {
 		showModal,
