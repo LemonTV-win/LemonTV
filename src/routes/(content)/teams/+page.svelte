@@ -53,7 +53,7 @@
 	<!-- <div class="my-4 h-px w-full bg-white/25"></div> -->
 
 	<ul class="glass-card-container">
-		{#each filtered as team (team.slug)}
+		{#each filtered as team (team.id)}
 			{#if team}
 				<TeamCard {team} wins={team.wins} rank={team.ranking} expanded={team.ranking === 1} />
 			{/if}
