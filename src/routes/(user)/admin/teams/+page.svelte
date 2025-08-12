@@ -13,6 +13,7 @@
 	import Modal from '$lib/components/Modal.svelte';
 	import EditHistory from '../EditHistory.svelte';
 	import TeamEdit from './TeamEdit.svelte';
+	import TeamBatchImport from './TeamBatchImport.svelte';
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 
 	import type { PageProps } from './$types';
@@ -26,9 +27,9 @@
 	let isEditing = $state(false);
 	let errorMessage = $state('');
 	let successMessage = $state('');
-	let isImporting = $state(false);
 	let isDeleting = $state(false);
 	let teamToDelete: Team | null = $state(null);
+	let showBatchImportModal = $state(false);
 	let sortBy:
 		| 'id-asc'
 		| 'id-desc'
@@ -154,42 +155,6 @@
 		return data.teamAliases.filter((ta: TeamAlias) => ta.teamId === teamId);
 	}
 
-	async function handleImport(event: Event) {
-		errorMessage = '';
-		successMessage = '';
-		isImporting = true;
-
-		const formData = new FormData();
-		const fileInput = event.target as HTMLInputElement;
-		if (!fileInput.files?.length) {
-			isImporting = false;
-			return;
-		}
-
-		formData.append('file', fileInput.files[0]);
-
-		try {
-			const response = await fetch('?/import', {
-				method: 'POST',
-				body: formData
-			});
-
-			const result = await response.json();
-
-			if (result.error) {
-				errorMessage = result.error;
-			} else {
-				successMessage = result.message || 'Teams imported successfully';
-				goto('/admin/teams', { invalidateAll: true, noScroll: true, keepFocus: true });
-			}
-		} catch (e) {
-			errorMessage = 'Failed to import teams';
-			console.error('Error importing teams:', e);
-		} finally {
-			isImporting = false;
-		}
-	}
-
 	async function handleExport() {
 		errorMessage = '';
 		successMessage = '';
@@ -248,23 +213,12 @@
 		</div>
 		<div class="flex gap-2">
 			{#if data.user?.roles.includes('admin')}
-				<label
-					class="cursor-pointer rounded-md bg-slate-700 px-4 py-2 font-medium text-white hover:bg-slate-600 disabled:cursor-not-allowed disabled:opacity-50"
-					class:opacity-50={isImporting}
+				<button
+					class="rounded-md bg-slate-700 px-4 py-2 font-medium text-white hover:bg-slate-600"
+					onclick={() => (showBatchImportModal = true)}
 				>
-					{#if isImporting}
-						{m.importing()}
-					{:else}
-						{m.import_json()}
-					{/if}
-					<input
-						type="file"
-						accept=".json"
-						class="hidden"
-						onchange={handleImport}
-						disabled={isImporting}
-					/>
-				</label>
+					Batch Import
+				</button>
 			{/if}
 			<button
 				class="rounded-md bg-slate-700 px-4 py-2 font-medium text-white hover:bg-slate-600"
@@ -544,3 +498,14 @@
 		{/if}
 	</Modal>
 {/if}
+
+<TeamBatchImport
+	showModal={showBatchImportModal}
+	onClose={() => (showBatchImportModal = false)}
+	onSuccess={(message) => {
+		successMessage = message;
+		showBatchImportModal = false;
+		goto('/admin/teams', { invalidateAll: true, noScroll: true, keepFocus: true });
+	}}
+	existingTeams={data.teams}
+/>

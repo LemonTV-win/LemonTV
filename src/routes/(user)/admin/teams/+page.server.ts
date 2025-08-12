@@ -5,9 +5,8 @@ import * as table from '$lib/server/db/schema';
 import { createTeam, updateTeam, deleteTeam } from '$lib/server/data/teams';
 import type { Region } from '$lib/data/game';
 import { processImageURL } from '$lib/server/storage';
-// import { importTeams } from '$lib/server/data/teams';
 
-export const load: PageServerLoad = async ({ url }) => {
+export const load: PageServerLoad = async ({ url, locals }) => {
 	const teamsList = await db.select().from(table.team);
 	const teamPlayers = await db.select().from(table.teamPlayer);
 	const teamAliases = await db.select().from(table.teamAlias);
@@ -44,6 +43,7 @@ export const load: PageServerLoad = async ({ url }) => {
 		teamPlayers,
 		teamAliases,
 		players,
+		user: locals.user,
 		action,
 		id,
 		searchQuery
@@ -184,6 +184,74 @@ export const actions = {
 			console.error('Error deleting team:', e);
 			return fail(500, {
 				error: 'Failed to delete team'
+			});
+		}
+	},
+
+	batchCreate: async ({ request, locals }) => {
+		const formData = await request.formData();
+		const teamsData = formData.get('teams') as string;
+
+		if (!teamsData) {
+			return fail(400, {
+				error: 'Teams data is required'
+			});
+		}
+
+		if (!locals.user?.id) {
+			return fail(401, {
+				error: 'Unauthorized'
+			});
+		}
+
+		try {
+			const teams = JSON.parse(teamsData) as Array<{
+				name: string;
+				slug?: string;
+				abbr?: string;
+				region?: string;
+				logo?: string;
+				aliases?: string[];
+				players?: {
+					playerId: string;
+					role: string;
+					startedOn?: string;
+					endedOn?: string;
+					note?: string;
+				}[];
+			}>;
+
+			let createdCount = 0;
+
+			for (const teamData of teams) {
+				try {
+					await createTeam(
+						{
+							name: teamData.name,
+							logo: teamData.logo || undefined,
+							region: teamData.region as Region | undefined,
+							slug: teamData.slug || undefined,
+							abbr: teamData.abbr || undefined,
+							aliases: teamData.aliases || [],
+							players: teamData.players || []
+						},
+						locals.user.id
+					);
+					createdCount++;
+				} catch (error) {
+					console.error(`Error creating team ${teamData.name}:`, error);
+					// Continue with other teams even if one fails
+				}
+			}
+
+			return {
+				success: true,
+				createdCount
+			};
+		} catch (e) {
+			console.error('Error in batch team creation:', e);
+			return fail(500, {
+				error: 'Failed to create teams'
 			});
 		}
 	}
