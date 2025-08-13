@@ -5,7 +5,6 @@
 	import { fade, fly } from 'svelte/transition';
 	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
 	import PlayerAvatar from '$lib/components/PlayerAvatar.svelte';
-	import type { Player } from '$lib/data/players';
 
 	let {
 		team,
@@ -14,7 +13,7 @@
 		expanded = false
 	}: {
 		team: Team & {
-			players: (TeamPlayer & { rating: number; avatarURL?: string | null })[];
+			players: (TeamPlayer & { rating: number; avatarURL: string | null })[];
 			logoURL: string | null;
 		};
 		wins: number;
@@ -67,35 +66,95 @@
 				out:fade={{ duration: 200 }}
 			>
 				<div class="mb-3 flex items-center justify-between">
-					<span class="rounded-full bg-gray-700/50 px-3 py-1 text-sm text-gray-400">
-						{team.players.length}
-						{team.players.length === 1 ? m.player() : m.players()}
-					</span>
+					<div class="flex flex-col">
+						<span class="rounded-full bg-gray-700/50 px-3 py-1 text-sm text-gray-400">
+							{team.players?.filter((p) => p.teamPlayer.role !== 'former').length || 0}
+							{team.players?.filter((p) => p.teamPlayer.role !== 'former').length === 1
+								? m.player()
+								: m.players()}
+						</span>
+						{#if team.players?.some((p) => p.teamPlayer.role === 'former')}
+							<span class="text-2xs text-gray-500">
+								+{team.players?.filter((p) => p.teamPlayer.role === 'former').length || 0} former players
+							</span>
+						{/if}
+					</div>
 				</div>
-				<ul class="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
-					{#each team.players as teamPlayer, i (teamPlayer.player.id)}
+				<ul class="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
+					{#each team.players?.filter((p) => p.teamPlayer.role !== 'former') || [] as teamPlayer, i (teamPlayer.player.id)}
+						{@const extendedTeamPlayer = teamPlayer as TeamPlayer & {
+							rating: number;
+							avatarURL: string | null;
+						}}
 						<li in:fly={{ y: 20, duration: 300, delay: i * 50 }} out:fade={{ duration: 200 }}>
-							{#if teamPlayer}
+							{#if extendedTeamPlayer}
 								<a
-									href={`/players/${teamPlayer.player.slug}`}
-									class="group/player flex items-center gap-3 rounded-lg border border-gray-700/50 bg-gray-800/50 px-3 py-2 text-gray-300 transition-all duration-200 hover:border-gray-600 hover:bg-white/5 hover:shadow-[0_0_15px_rgba(255,255,255,0.1)]"
+									href={`/players/${extendedTeamPlayer.player.slug}`}
+									class="group/player flex flex-col gap-2 rounded-lg border border-gray-700/50 bg-gray-800/50 p-3 text-gray-300 transition-all duration-200 hover:border-gray-600 hover:bg-white/5 hover:shadow-[0_0_15px_rgba(255,255,255,0.1)]"
 								>
-									<PlayerAvatar
-										player={{ ...teamPlayer.player, avatarURL: teamPlayer.avatarURL }}
-										class="h-8 w-8"
-									/>
-									<span
-										class="font-medium transition-transform duration-200 group-hover/player:translate-x-1"
-									>
-										{teamPlayer.player.name}
-									</span>
-									{#each teamPlayer.player.nationalities as nationality, idx (idx)}
-										<NationalityFlag {nationality} class="h-5 w-5" />
-									{/each}
-									{#if teamPlayer.rating}
-										<span class="ml-auto text-sm font-medium text-yellow-500"
-											>{teamPlayer.rating.toFixed(2)}</span
-										>
+									<div class="flex items-center gap-3">
+										<PlayerAvatar
+											player={{
+												...extendedTeamPlayer.player,
+												avatarURL: extendedTeamPlayer.avatarURL
+											}}
+											class="h-8 w-8"
+										/>
+										<div class="flex flex-col">
+											<span
+												class="font-medium transition-transform duration-200 group-hover/player:translate-x-1"
+											>
+												{extendedTeamPlayer.player.name}
+											</span>
+											<span class="text-left text-[0.125em] leading-2.5 text-gray-500">
+												{#if extendedTeamPlayer.teamPlayer.role === 'substitute'}
+													Substitute
+												{:else if extendedTeamPlayer.teamPlayer.role === 'coach'}
+													Coach
+												{:else if extendedTeamPlayer.teamPlayer.role === 'manager'}
+													Manager
+												{:else if extendedTeamPlayer.teamPlayer.role === 'owner'}
+													Owner
+												{/if}
+											</span>
+										</div>
+										<div class="ml-auto flex items-center gap-2">
+											{#each extendedTeamPlayer.player.nationalities as nationality, idx (idx)}
+												<NationalityFlag {nationality} class="h-5 w-5" />
+											{/each}
+											{#if extendedTeamPlayer.rating}
+												<span class="text-sm font-medium text-yellow-500"
+													>{extendedTeamPlayer.rating.toFixed(2)}</span
+												>
+											{/if}
+										</div>
+									</div>
+									{#if extendedTeamPlayer.teamPlayer.startedOn || extendedTeamPlayer.teamPlayer.endedOn || extendedTeamPlayer.teamPlayer.note}
+										<div class="space-y-1 border-t border-gray-700/30 pt-2">
+											{#if extendedTeamPlayer.teamPlayer.startedOn || extendedTeamPlayer.teamPlayer.endedOn}
+												<div class="flex flex-wrap gap-2 text-xs text-gray-500">
+													{#if extendedTeamPlayer.teamPlayer.startedOn}
+														<span
+															>Started: {new Date(
+																extendedTeamPlayer.teamPlayer.startedOn
+															).toLocaleDateString()}</span
+														>
+													{/if}
+													{#if extendedTeamPlayer.teamPlayer.endedOn}
+														<span
+															>Ended: {new Date(
+																extendedTeamPlayer.teamPlayer.endedOn
+															).toLocaleDateString()}</span
+														>
+													{/if}
+												</div>
+											{/if}
+											{#if extendedTeamPlayer.teamPlayer.note}
+												<div class="text-xs text-gray-400 italic">
+													"{extendedTeamPlayer.teamPlayer.note}"
+												</div>
+											{/if}
+										</div>
 									{/if}
 								</a>
 							{/if}
