@@ -114,13 +114,13 @@
 </script>
 
 <svelte:head>
-	<title>{m.edit_history()} | {m.admin_panel()} | LemonTV</title>
+	<title>{m['editing.history.edit_history']()} | {m.admin_panel()} | LemonTV</title>
 </svelte:head>
 
 <main class="mx-auto max-w-screen-lg px-4">
 	<div class="mb-6 flex items-center justify-between">
 		<h1 class="text-2xl font-bold">{m.admin_dashboard()}</h1>
-		<h2 class="text-xl font-bold">{m.edit_history()}</h2>
+		<h2 class="text-xl font-bold">{m['editing.history.edit_history']()}</h2>
 	</div>
 
 	<div class="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">

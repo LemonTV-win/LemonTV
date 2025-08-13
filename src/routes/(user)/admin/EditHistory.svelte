@@ -85,14 +85,14 @@
 		try {
 			const response = await fetch(`/api/${recordType}s/${record.id}/history`);
 			if (!response.ok) {
-				throw new Error(m.failed_to_load_history());
+				throw new Error(m['editing.history.failed_to_load_history']());
 			}
 			history = (await response.json()).map((entry: { editedAt: string }) => ({
 				...entry,
 				editedAt: new Date(Date.parse(entry.editedAt))
 			}));
 		} catch (e) {
-			error = e instanceof Error ? e.message : m.failed_to_load_history();
+			error = e instanceof Error ? e.message : m['editing.history.failed_to_load_history']();
 			console.error('Error loading history:', error);
 		} finally {
 			loading = false;
@@ -264,19 +264,21 @@
 
 		<!-- Overview Section -->
 		<div class="rounded-lg border border-slate-800 bg-slate-900/95 p-4 shadow-lg">
-			<h2 class="mb-4 text-lg font-medium text-slate-200">{m.edit_history_overview()}</h2>
+			<h2 class="mb-4 text-lg font-medium text-slate-200">
+				{m['editing.history.edit_history_overview']()}
+			</h2>
 			<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 				<div class="rounded-md bg-slate-800/50 p-3">
-					<div class="text-sm text-slate-400">{m.total_edits()}</div>
+					<div class="text-sm text-slate-400">{m['editing.history.total_edits']()}</div>
 					<div class="text-xl font-medium text-slate-200">{totalEdits}</div>
 				</div>
 				<div class="rounded-md bg-slate-800/50 p-3">
-					<div class="text-sm text-slate-400">{m.unique_editors()}</div>
+					<div class="text-sm text-slate-400">{m['editing.history.unique_editors']()}</div>
 					<div class="text-xl font-medium text-slate-200">{uniqueEditors}</div>
 				</div>
 				{#if firstEdit}
 					<div class="rounded-md bg-slate-800/50 p-3">
-						<div class="text-sm text-slate-400">{m.first_edit()}</div>
+						<div class="text-sm text-slate-400">{m['editing.history.first_edit']()}</div>
 						<div class="text-sm text-slate-200">
 							{format(firstEdit, 'MMM d, yyyy')}
 							<span class="text-slate-400">
@@ -287,7 +289,7 @@
 				{/if}
 				{#if lastEdit}
 					<div class="rounded-md bg-slate-800/50 p-3">
-						<div class="text-sm text-slate-400">{m.last_edit()}</div>
+						<div class="text-sm text-slate-400">{m['editing.history.last_edit']()}</div>
 						<div class="text-sm text-slate-200">
 							{format(lastEdit, 'MMM d, yyyy')}
 							<span class="text-slate-400">
@@ -299,7 +301,9 @@
 			</div>
 			{#if Object.keys(editTypes).length > 0}
 				<div class="mt-4">
-					<div class="mb-2 text-sm font-medium text-slate-400">{m.edit_types()}</div>
+					<div class="mb-2 text-sm font-medium text-slate-400">
+						{m['editing.history.edit_types']()}
+					</div>
 					<div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
 						{#each Object.entries(editTypes) as [type, count] (type)}
 							<div class="flex items-center justify-between rounded-md bg-slate-800/50 px-3 py-2">

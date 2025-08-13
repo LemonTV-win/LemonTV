@@ -105,8 +105,8 @@
 	{@render adminCard(
 		'/admin/edit-history',
 		IconParkSolidHistory,
-		m.edit_history(),
-		m.edit_history_desc(),
+		m['editing.history.edit_history'](),
+		m['editing.history.edit_history_desc'](),
 		'yellow'
 	)}
 	{#if data.user?.roles.includes('admin')}

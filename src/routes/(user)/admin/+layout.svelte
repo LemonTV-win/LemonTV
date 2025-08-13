@@ -96,7 +96,7 @@
 		{@render tab('/admin/matches', IconParkSolidGame, m.matches())}
 		{@render tab('/admin/organizers', IconParkSolidTrophy, m.organizers())}
 		{@render tab('/admin/community', IconParkSolidMessage, m.community())}
-		{@render tab('/admin/edit-history', IconParkSolidHistory, m.edit_history())}
+		{@render tab('/admin/edit-history', IconParkSolidHistory, m['editing.history.edit_history']())}
 	</nav>
 	<main class="styled-scrollbar overflow-auto p-8">
 		{@render children()}
