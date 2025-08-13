@@ -659,7 +659,12 @@
 			"coaches": "Entrenadores",
 			"managers": "Managers",
 			"owners": "Propietarios",
-			"former_members": "Miembros Anteriores"
+			"former_members": "Miembros Anteriores",
+			"substitute": "Suplente",
+			"coach": "Entrenador",
+			"manager": "Manager",
+			"owner": "Propietario",
+			"former": "Anterior"
 		},
 		"players": {
 			"current_teams": [

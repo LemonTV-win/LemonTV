@@ -55,7 +55,12 @@
 			"coaches": "Coaches",
 			"managers": "Managers",
 			"owners": "Owners",
-			"former_members": "Former Members"
+			"former_members": "Former Members",
+			"substitute": "Substitute",
+			"coach": "Coach",
+			"manager": "Manager",
+			"owner": "Owner",
+			"former": "Former"
 		},
 		"players": {
 			"current_teams": [

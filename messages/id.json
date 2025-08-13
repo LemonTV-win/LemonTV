@@ -659,7 +659,12 @@
 			"coaches": "Pelatih",
 			"managers": "Manajer",
 			"owners": "Pemilik",
-			"former_members": "Mantan Anggota"
+			"former_members": "Mantan Anggota",
+			"substitute": "Cadangan",
+			"coach": "Pelatih",
+			"manager": "Manajer",
+			"owner": "Pemilik",
+			"former": "Mantan"
 		},
 		"players": {
 			"current_teams": [

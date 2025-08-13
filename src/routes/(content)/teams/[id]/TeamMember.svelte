@@ -64,6 +64,25 @@
 							{/if}
 						</div>
 					{/if}
+
+					<!-- Role display for former players -->
+					{#if teamPlayer.teamPlayer.role === 'former'}
+						<div class="flex items-center gap-1">
+							<span class="text-xs text-gray-500">{m['content.teams.former']()}</span>
+							{#if teamPlayer.teamPlayer.startedOn}
+								<span class="text-xs text-gray-500">
+									({new Date(teamPlayer.teamPlayer.startedOn).getFullYear()}
+									{#if teamPlayer.teamPlayer.endedOn}
+										- {new Date(teamPlayer.teamPlayer.endedOn).getFullYear()}
+									{/if})
+								</span>
+							{/if}
+						</div>
+					{:else if teamPlayer.teamPlayer.role !== 'active'}
+						<div class="flex items-center gap-1">
+							<span class="text-xs text-gray-500 capitalize">{teamPlayer.teamPlayer.role}</span>
+						</div>
+					{/if}
 				</a>
 
 				<!-- Rank in top right corner -->

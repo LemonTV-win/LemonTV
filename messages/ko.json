@@ -659,7 +659,12 @@
 			"coaches": "코치",
 			"managers": "매니저",
 			"owners": "소유자",
-			"former_members": "이전 멤버"
+			"former_members": "이전 멤버",
+			"substitute": "대체",
+			"coach": "코치",
+			"manager": "매니저",
+			"owner": "소유자",
+			"former": "이전"
 		},
 		"players": {
 			"current_teams": [

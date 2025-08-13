@@ -659,7 +659,12 @@
 			"coaches": "教練",
 			"managers": "經理",
 			"owners": "擁有者",
-			"former_members": "前隊員"
+			"former_members": "前隊員",
+			"substitute": "替補",
+			"coach": "教練",
+			"manager": "經理",
+			"owner": "擁有者",
+			"former": "前"
 		},
 		"players": {
 			"current_teams": [

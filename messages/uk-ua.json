@@ -659,7 +659,12 @@
 			"coaches": "Тренери",
 			"managers": "Менеджери",
 			"owners": "Власники",
-			"former_members": "Колишні учасники"
+			"former_members": "Колишні учасники",
+			"substitute": "Запасний",
+			"coach": "Тренер",
+			"manager": "Менеджер",
+			"owner": "Власник",
+			"former": "Колишній"
 		},
 		"players": {
 			"current_teams": [

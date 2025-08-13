@@ -659,7 +659,12 @@
 			"coaches": "コーチ",
 			"managers": "マネージャー",
 			"owners": "オーナー",
-			"former_members": "元メンバー"
+			"former_members": "元メンバー",
+			"substitute": "サブ",
+			"coach": "コーチ",
+			"manager": "マネージャー",
+			"owner": "オーナー",
+			"former": "元"
 		},
 		"players": {
 			"current_teams": [

@@ -659,7 +659,12 @@
 			"coaches": "教练",
 			"managers": "经理",
 			"owners": "所有者",
-			"former_members": "前队员"
+			"former_members": "前队员",
+			"substitute": "替补",
+			"coach": "教练",
+			"manager": "经理",
+			"owner": "所有者",
+			"former": "前"
 		},
 		"players": {
 			"current_teams": [

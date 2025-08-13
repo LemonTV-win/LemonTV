@@ -659,7 +659,12 @@
 			"coaches": "Huấn luyện viên",
 			"managers": "Quản lý",
 			"owners": "Chủ sở hữu",
-			"former_members": "Thành viên Cũ"
+			"former_members": "Thành viên Cũ",
+			"substitute": "Dự bị",
+			"coach": "Huấn luyện viên",
+			"manager": "Quản lý",
+			"owner": "Chủ sở hữu",
+			"former": "Cũ"
 		},
 		"players": {
 			"current_teams": [
