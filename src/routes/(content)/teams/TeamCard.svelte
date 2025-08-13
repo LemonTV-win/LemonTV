@@ -108,13 +108,13 @@
 											</span>
 											<span class="text-left text-[0.125em] leading-2.5 text-gray-500">
 												{#if extendedTeamPlayer.teamPlayer.role === 'substitute'}
-													Substitute
+													{m['content.teams.substitute']()}
 												{:else if extendedTeamPlayer.teamPlayer.role === 'coach'}
-													Coach
+													{m['content.teams.coach']()}
 												{:else if extendedTeamPlayer.teamPlayer.role === 'manager'}
-													Manager
+													{m['content.teams.manager']()}
 												{:else if extendedTeamPlayer.teamPlayer.role === 'owner'}
-													Owner
+													{m['content.teams.owner']()}
 												{/if}
 											</span>
 										</div>
@@ -129,33 +129,6 @@
 											{/if}
 										</div>
 									</div>
-									{#if extendedTeamPlayer.teamPlayer.startedOn || extendedTeamPlayer.teamPlayer.endedOn || extendedTeamPlayer.teamPlayer.note}
-										<div class="space-y-1 border-t border-gray-700/30 pt-2">
-											{#if extendedTeamPlayer.teamPlayer.startedOn || extendedTeamPlayer.teamPlayer.endedOn}
-												<div class="flex flex-wrap gap-2 text-xs text-gray-500">
-													{#if extendedTeamPlayer.teamPlayer.startedOn}
-														<span
-															>Started: {new Date(
-																extendedTeamPlayer.teamPlayer.startedOn
-															).toLocaleDateString()}</span
-														>
-													{/if}
-													{#if extendedTeamPlayer.teamPlayer.endedOn}
-														<span
-															>Ended: {new Date(
-																extendedTeamPlayer.teamPlayer.endedOn
-															).toLocaleDateString()}</span
-														>
-													{/if}
-												</div>
-											{/if}
-											{#if extendedTeamPlayer.teamPlayer.note}
-												<div class="text-xs text-gray-400 italic">
-													"{extendedTeamPlayer.teamPlayer.note}"
-												</div>
-											{/if}
-										</div>
-									{/if}
 								</a>
 							{/if}
 						</li>
