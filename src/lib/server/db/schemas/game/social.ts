@@ -1,4 +1,5 @@
 import { sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { relations } from 'drizzle-orm';
 import { player } from './player';
 
 export const social_platform = sqliteTable('social_platform', {
@@ -18,3 +19,23 @@ export const player_social_account = sqliteTable('social_account', {
 	accountId: text('account_id').notNull(),
 	overriding_url: text('overriding_url')
 });
+
+export type SocialPlatform = typeof social_platform.$inferSelect;
+export type PlayerSocialAccount = typeof player_social_account.$inferSelect;
+
+// Social platform relations
+export const socialPlatformRelations = relations(social_platform, ({ many }) => ({
+	playerAccounts: many(player_social_account)
+}));
+
+// Player social account relations
+export const playerSocialAccountRelations = relations(player_social_account, ({ one }) => ({
+	platform: one(social_platform, {
+		fields: [player_social_account.platformId],
+		references: [social_platform.id]
+	}),
+	player: one(player, {
+		fields: [player_social_account.playerId],
+		references: [player.id]
+	})
+}));

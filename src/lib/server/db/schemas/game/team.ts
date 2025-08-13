@@ -1,5 +1,7 @@
 import { sql } from 'drizzle-orm';
 import { text, sqliteTable, unique, integer } from 'drizzle-orm/sqlite-core';
+import { relations } from 'drizzle-orm';
+import { player } from './player';
 
 export const team = sqliteTable('teams', {
 	id: text('id').primaryKey(),
@@ -39,3 +41,29 @@ export const teamAlias = sqliteTable(
 export type Team = typeof team.$inferSelect;
 export type TeamPlayer = typeof teamPlayer.$inferSelect;
 export type TeamAlias = typeof teamAlias.$inferSelect;
+
+// Team relations
+export const teamRelations = relations(team, ({ many }) => ({
+	players: many(teamPlayer),
+	aliases: many(teamAlias)
+}));
+
+// TeamPlayer relations
+export const teamPlayerRelations = relations(teamPlayer, ({ one }) => ({
+	team: one(team, {
+		fields: [teamPlayer.teamId],
+		references: [team.id]
+	}),
+	player: one(player, {
+		fields: [teamPlayer.playerId],
+		references: [player.id]
+	})
+}));
+
+// TeamAlias relations
+export const teamAliasRelations = relations(teamAlias, ({ one }) => ({
+	team: one(team, {
+		fields: [teamAlias.teamId],
+		references: [team.id]
+	})
+}));

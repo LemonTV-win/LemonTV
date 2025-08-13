@@ -10,6 +10,14 @@ import type { Player } from '$lib/data/players';
 import type { User, UserRole } from '$lib/data/user';
 import type { TCountryCode } from 'countries-list';
 
+// Define TeamPlayer type inline to avoid import issues
+type TeamPlayer = Player & {
+	role: 'active' | 'substitute' | 'former' | 'coach' | 'manager' | 'owner';
+	startedOn?: string;
+	endedOn?: string;
+	note?: string;
+};
+
 import { randomUUID } from 'node:crypto';
 import { editHistory } from '$lib/server/db/schemas/edit-history';
 import { processImageURL } from '../storage';
@@ -64,157 +72,46 @@ export async function getTeamMemberStatistics(team: Team): Promise<Record<
 	return result;
 }
 
-export async function getTeam(slug: string): Promise<Team | null> {
-	const rows = await db
-		.select()
-		.from(table.team)
-		.where(or(eq(table.team.slug, slug), eq(table.team.id, slug)))
-		.leftJoin(table.teamPlayer, eq(table.teamPlayer.teamId, table.team.id))
-		.leftJoin(table.player, eq(table.player.id, table.teamPlayer.playerId))
-		.leftJoin(table.playerAlias, eq(table.playerAlias.playerId, table.player.id))
-		.leftJoin(table.gameAccount, eq(table.gameAccount.playerId, table.player.id))
-		.leftJoin(
-			table.player_social_account,
-			eq(table.player_social_account.playerId, table.player.id)
-		)
-		.leftJoin(table.user, eq(table.user.id, table.player.userId))
-		.leftJoin(table.userRole, eq(table.userRole.userId, table.user.id))
-		.leftJoin(
-			table.playerAdditionalNationality,
-			eq(table.playerAdditionalNationality.playerId, table.player.id)
-		);
-
-	if (rows.length === 0) return null;
-
-	const teamRow = rows[0].teams;
-	const playerMap = new Map<string, Player>();
-
-	for (const row of rows) {
-		const p = row.player;
-		if (!p?.id) continue;
-
-		if (!playerMap.has(p.id)) {
-			playerMap.set(p.id, {
-				id: p.id,
-				name: p.name,
-				slug: p.slug ?? undefined,
-				avatar: p.avatar || undefined,
-				nationalities: p.nationality ? [p.nationality as TCountryCode] : [],
-				aliases: [],
-				gameAccounts: [],
-				socialAccounts: [],
-				user: row.user
-					? ({
-							id: row.user.id,
-							email: row.user.email,
-							username: row.user.username,
-							roles: []
-						} as User)
-					: undefined
-			});
-		}
-
-		const player = playerMap.get(p.id)!;
-
-		// Add additional nationality
-		const additionalNationality = row.player_additional_nationality?.nationality;
-		if (
-			additionalNationality &&
-			!player.nationalities.includes(additionalNationality as TCountryCode)
-		) {
-			player.nationalities.push(additionalNationality as TCountryCode);
-		}
-
-		// Add alias
-		const alias = row.player_alias?.alias;
-		if (alias && !player.aliases!.includes(alias)) {
-			player.aliases!.push(alias);
-		}
-
-		// Add game account
-		const ga = row.game_account;
-		if (
-			ga?.accountId &&
-			!player.gameAccounts.some((a) => a.accountId === ga.accountId && a.server === ga.server)
-		) {
-			player.gameAccounts.push({
-				server: ga.server as 'Strinova' | 'CalabiYau',
-				accountId: ga.accountId,
-				currentName: ga.currentName,
-				region: (ga.region as Region) ?? undefined
-			});
-		}
-
-		// Add social account
-		const sa = row.social_account;
-		if (
-			sa?.platformId &&
-			!player.socialAccounts!.some(
-				(a) => a.platformId === sa.platformId && a.accountId === sa.accountId
-			)
-		) {
-			player.socialAccounts!.push({
-				platformId: sa.platformId,
-				accountId: sa.accountId,
-				overridingUrl: sa.overriding_url ?? undefined
-			});
-		}
-
-		// Add user role
-		const role = row.user_role?.roleId as UserRole | undefined;
-		if (player.user && role && !player.user.roles.includes(role)) {
-			player.user.roles.push(role);
-		}
-	}
-
-	const fullTeam: Team & { logoURL: string | null } = {
-		id: teamRow.id,
-		name: teamRow.name,
-		slug: teamRow.slug,
-		abbr: teamRow.abbr,
-		logo: teamRow.logo,
-		logoURL: teamRow.logo ? await processImageURL(teamRow.logo) : null,
-		region: (teamRow.region as Region) ?? undefined,
-		players: Array.from(playerMap.values()),
-		wins: await getServerTeamWins(teamRow.id),
-		createdAt: teamRow.createdAt,
-		updatedAt: teamRow.updatedAt
-	};
-
-	return fullTeam;
-}
-
-export async function getTeams(): Promise<(Team & { logoURL: string | null })[]> {
+export async function getTeams(): Promise<
+	(Team & { logoURL: string | null; playersWithRoles: TeamPlayer[] })[]
+> {
 	const totalStart = performance.now();
-	console.info('[Teams] Fetching all teams');
+	console.info('[Teams] Fetching all teams with relations');
 
 	const queryStart = performance.now();
-	const rows = await db
-		.select()
-		.from(table.team)
-		.leftJoin(table.teamPlayer, eq(table.teamPlayer.teamId, table.team.id))
-		.leftJoin(table.player, eq(table.player.id, table.teamPlayer.playerId))
-		.leftJoin(table.playerAlias, eq(table.playerAlias.playerId, table.player.id))
-		.leftJoin(table.gameAccount, eq(table.gameAccount.playerId, table.player.id))
-		.leftJoin(
-			table.player_social_account,
-			eq(table.player_social_account.playerId, table.player.id)
-		)
-		.leftJoin(table.user, eq(table.user.id, table.player.userId))
-		.leftJoin(table.userRole, eq(table.userRole.userId, table.user.id))
-		.leftJoin(table.teamAlias, eq(table.teamAlias.teamId, table.team.id))
-		.leftJoin(
-			table.playerAdditionalNationality,
-			eq(table.playerAdditionalNationality.playerId, table.player.id)
-		);
+
+	// Use Drizzle relations to fetch all teams with related data
+	const teamsWithRelations = await db.query.team.findMany({
+		with: {
+			players: {
+				with: {
+					player: {
+						with: {
+							aliases: true,
+							additionalNationalities: true,
+							gameAccounts: true,
+							socialAccounts: true,
+							user: {
+								with: {
+									roles: {
+										with: {
+											role: true
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			aliases: true
+		}
+	});
+
 	const queryDuration = performance.now() - queryStart;
-	console.info(`[Teams] Database query took ${queryDuration.toFixed(2)}ms`);
+	console.info(`[Teams] Relations query took ${queryDuration.toFixed(2)}ms`);
 
 	const processingStart = performance.now();
-	const teamMap = new Map<
-		string,
-		Omit<Team, 'players' | 'aliases'> & { players: Map<string, Player>; aliases: Set<string> }
-	>();
 
 	// Get all team wins in a single optimized batch query
 	const teamWinsStart = performance.now();
@@ -222,129 +119,284 @@ export async function getTeams(): Promise<(Team & { logoURL: string | null })[]>
 	const teamWinsDuration = performance.now() - teamWinsStart;
 	console.info(`[Teams] Batch team wins query took ${teamWinsDuration.toFixed(2)}ms`);
 
-	for (const row of rows) {
-		const t = row.teams;
-		if (!teamMap.has(t.id)) {
-			teamMap.set(t.id, {
-				id: t.id,
-				name: t.name,
-				slug: t.slug,
-				abbr: t.abbr,
-				logo: t.logo,
-				region: (t.region as Region) ?? undefined,
-				players: new Map<string, Player>(),
-				aliases: new Set<string>(),
-				wins: allTeamWins[t.id] ?? 0, // Use pre-fetched wins
-				createdAt: t.createdAt,
-				updatedAt: t.updatedAt
-			});
-		}
+	// Process teams
+	const result = await Promise.all(
+		teamsWithRelations.map(async (teamWithRelations) => {
+			// Process players with roles
+			const playersWithRoles =
+				teamWithRelations.players
+					?.map((tp) => {
+						const player = tp.player;
+						if (!player) return null;
 
-		const team = teamMap.get(t.id)!;
+						// Process nationalities
+						const nationalities: TCountryCode[] = [];
+						if (player.nationality) {
+							nationalities.push(player.nationality as TCountryCode);
+						}
+						if (player.additionalNationalities) {
+							for (const additional of player.additionalNationalities) {
+								if (!nationalities.includes(additional.nationality as TCountryCode)) {
+									nationalities.push(additional.nationality as TCountryCode);
+								}
+							}
+						}
 
-		// Add team alias
-		const teamAlias = row.team_alias?.alias;
-		if (teamAlias) {
-			team.aliases.add(teamAlias);
-		}
+						// Process aliases
+						const aliases = player.aliases?.map((a) => a.alias) || [];
 
-		const p = row.player;
-		if (!p?.id) continue;
+						// Process game accounts
+						const gameAccounts =
+							player.gameAccounts?.map((ga) => ({
+								server: ga.server as 'Strinova' | 'CalabiYau',
+								accountId: ga.accountId,
+								currentName: ga.currentName,
+								region: (ga.region as Region) ?? undefined
+							})) || [];
 
-		if (!team.players.has(p.id)) {
-			team.players.set(p.id, {
-				id: p.id,
-				name: p.name,
-				slug: p.slug ?? undefined,
-				avatar: p.avatar || undefined,
-				nationalities: p.nationality ? [p.nationality as TCountryCode] : [],
-				aliases: [],
-				gameAccounts: [],
-				socialAccounts: [],
-				user: row.user
-					? ({
-							id: row.user.id,
-							email: row.user.email,
-							username: row.user.username,
-							roles: []
-						} as User)
-					: undefined
-			});
-		}
+						// Process social accounts
+						const socialAccounts =
+							player.socialAccounts?.map((sa) => ({
+								platformId: sa.platformId,
+								accountId: sa.accountId,
+								overridingUrl: sa.overriding_url ?? undefined
+							})) || [];
 
-		const player = team.players.get(p.id)!;
+						// Process user and roles
+						let user: User | undefined;
+						if (player.user) {
+							const roles = player.user.roles?.map((ur) => ur.role.name as UserRole) || [];
+							user = {
+								id: player.user.id,
+								email: player.user.email,
+								username: player.user.username,
+								roles
+							};
+						}
 
-		// Add player alias
-		const playerAlias = row.player_alias?.alias;
-		if (playerAlias && !player.aliases!.includes(playerAlias)) {
-			player.aliases!.push(playerAlias);
-		}
+						return {
+							id: player.id,
+							name: player.name,
+							slug: player.slug ?? undefined,
+							avatar: player.avatar || undefined,
+							nationalities,
+							aliases,
+							gameAccounts,
+							socialAccounts,
+							user,
+							role:
+								(tp.role as 'active' | 'substitute' | 'former' | 'coach' | 'manager' | 'owner') ||
+								'active',
+							startedOn: tp.startedOn || undefined,
+							endedOn: tp.endedOn || undefined,
+							note: tp.note || undefined
+						};
+					})
+					.filter((p): p is NonNullable<typeof p> => p !== null) || [];
 
-		// Add game account
-		const gameAccount = row.game_account;
-		if (
-			gameAccount?.accountId &&
-			!player.gameAccounts.some(
-				(a) => a.accountId === gameAccount.accountId && a.server === gameAccount.server
-			)
-		) {
-			player.gameAccounts.push({
-				server: gameAccount.server as 'Strinova' | 'CalabiYau',
-				accountId: gameAccount.accountId,
-				currentName: gameAccount.currentName,
-				region: (gameAccount.region as Region) ?? undefined
-			});
-		}
+			// Process team aliases
+			const aliases = teamWithRelations.aliases?.map((a) => a.alias) || [];
 
-		// Add social account
-		const sa = row.social_account;
-		if (
-			sa?.platformId &&
-			!player.socialAccounts!.some(
-				(a) => a.platformId === sa.platformId && a.accountId === sa.accountId
-			)
-		) {
-			player.socialAccounts!.push({
-				platformId: sa.platformId,
-				accountId: sa.accountId,
-				overridingUrl: sa.overriding_url || undefined
-			});
-		}
+			// Process logoURL
+			const logoURL = teamWithRelations.logo ? await processImageURL(teamWithRelations.logo) : null;
 
-		// Add user role
-		const role = row.user_role?.roleId;
-		if (player.user && role && !player.user.roles.includes(role as UserRole)) {
-			player.user.roles.push(role as UserRole);
-		}
-
-		// Add additional nationality
-		const additionalNationality = row.player_additional_nationality?.nationality;
-		if (
-			additionalNationality &&
-			!player.nationalities.includes(additionalNationality as TCountryCode)
-		) {
-			player.nationalities.push(additionalNationality as TCountryCode);
-		}
-	}
+			// Build the team object
+			return {
+				id: teamWithRelations.id,
+				name: teamWithRelations.name,
+				slug: teamWithRelations.slug,
+				abbr: teamWithRelations.abbr,
+				logo: teamWithRelations.logo,
+				logoURL,
+				region: (teamWithRelations.region as Region) ?? undefined,
+				players: playersWithRoles.map((p) => ({
+					id: p.id,
+					name: p.name,
+					slug: p.slug,
+					avatar: p.avatar,
+					nationalities: p.nationalities,
+					aliases: p.aliases,
+					gameAccounts: p.gameAccounts,
+					socialAccounts: p.socialAccounts,
+					user: p.user
+				})),
+				playersWithRoles,
+				aliases,
+				wins: allTeamWins[teamWithRelations.id] ?? 0,
+				createdAt: teamWithRelations.createdAt,
+				updatedAt: teamWithRelations.updatedAt
+			};
+		})
+	);
 
 	const processingDuration = performance.now() - processingStart;
-	console.info(`[Teams] Data processing took ${processingDuration.toFixed(2)}ms`);
-
-	// Convert to final format
-	const conversionStart = performance.now();
-	const result = Array.from(teamMap.values()).map((team) => ({
-		...team,
-		players: Array.from(team.players.values()),
-		aliases: Array.from(team.aliases),
-		logoURL: null // Will be processed by the calling function
-	}));
-	const conversionDuration = performance.now() - conversionStart;
-	console.info(`[Teams] Data conversion took ${conversionDuration.toFixed(2)}ms`);
+	console.info(`[Teams] Relations processing took ${processingDuration.toFixed(2)}ms`);
 
 	const totalDuration = performance.now() - totalStart;
-	console.info(`[Teams] Total getTeams took ${totalDuration.toFixed(2)}ms`);
+	console.info(`[Teams] Total getTeamsFromRelations took ${totalDuration.toFixed(2)}ms`);
 
 	return result;
+}
+
+export async function getTeam(
+	slug: string
+): Promise<(Team & { logoURL: string | null; playersWithRoles: TeamPlayer[] }) | null> {
+	const totalStart = performance.now();
+	console.info('[Teams] Fetching team with relations:', slug);
+
+	const queryStart = performance.now();
+
+	// Use Drizzle relations to fetch team with all related data
+	const teamWithRelations = await db.query.team.findFirst({
+		where: (team, { eq, or }) => or(eq(team.slug, slug), eq(team.id, slug)),
+		with: {
+			players: {
+				with: {
+					player: {
+						with: {
+							aliases: true,
+							additionalNationalities: true,
+							gameAccounts: true,
+							socialAccounts: true,
+							user: {
+								with: {
+									roles: {
+										with: {
+											role: true
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			aliases: true
+		}
+	});
+
+	const queryDuration = performance.now() - queryStart;
+	console.info(`[Teams] Relations query took ${queryDuration.toFixed(2)}ms`);
+
+	if (!teamWithRelations) {
+		console.info('[Teams] Team not found:', slug);
+		return null;
+	}
+
+	const processingStart = performance.now();
+
+	// Get team wins
+	const wins = await getServerTeamWins(teamWithRelations.id);
+
+	// Process players with roles
+	const playersWithRoles =
+		teamWithRelations.players
+			?.map((tp) => {
+				const player = tp.player;
+				if (!player) return null;
+
+				// Process nationalities
+				const nationalities: TCountryCode[] = [];
+				if (player.nationality) {
+					nationalities.push(player.nationality as TCountryCode);
+				}
+				if (player.additionalNationalities) {
+					for (const additional of player.additionalNationalities) {
+						if (!nationalities.includes(additional.nationality as TCountryCode)) {
+							nationalities.push(additional.nationality as TCountryCode);
+						}
+					}
+				}
+
+				// Process aliases
+				const aliases = player.aliases?.map((a: any) => a.alias) || [];
+
+				// Process game accounts
+				const gameAccounts =
+					player.gameAccounts?.map((ga: any) => ({
+						server: ga.server as 'Strinova' | 'CalabiYau',
+						accountId: ga.accountId,
+						currentName: ga.currentName,
+						region: (ga.region as Region) ?? undefined
+					})) || [];
+
+				// Process social accounts
+				const socialAccounts =
+					player.socialAccounts?.map((sa: any) => ({
+						platformId: sa.platformId,
+						accountId: sa.accountId,
+						overridingUrl: sa.overriding_url ?? undefined
+					})) || [];
+
+				// Process user and roles
+				let user: User | undefined;
+				if (player.user) {
+					const roles = player.user.roles?.map((ur: any) => ur.role.name as UserRole) || [];
+					user = {
+						id: player.user.id,
+						email: player.user.email,
+						username: player.user.username,
+						roles
+					};
+				}
+
+				return {
+					id: player.id,
+					name: player.name,
+					slug: player.slug ?? undefined,
+					avatar: player.avatar || undefined,
+					nationalities,
+					aliases,
+					gameAccounts,
+					socialAccounts,
+					user,
+					role:
+						(tp.role as 'active' | 'substitute' | 'former' | 'coach' | 'manager' | 'owner') ||
+						'active',
+					startedOn: tp.startedOn || undefined,
+					endedOn: tp.endedOn || undefined,
+					note: tp.note || undefined
+				};
+			})
+			.filter((p): p is NonNullable<typeof p> => p !== null) || [];
+
+	// Process team aliases
+	const aliases = teamWithRelations.aliases?.map((a: any) => a.alias) || [];
+
+	// Build the final team object
+	const fullTeam: Team & { logoURL: string | null; playersWithRoles: TeamPlayer[] } = {
+		id: teamWithRelations.id,
+		name: teamWithRelations.name,
+		slug: teamWithRelations.slug,
+		abbr: teamWithRelations.abbr,
+		logo: teamWithRelations.logo,
+		logoURL: teamWithRelations.logo ? await processImageURL(teamWithRelations.logo) : null,
+		region: (teamWithRelations.region as Region) ?? undefined,
+		players: playersWithRoles.map((p) => ({
+			id: p.id,
+			name: p.name,
+			slug: p.slug,
+			avatar: p.avatar,
+			nationalities: p.nationalities,
+			aliases: p.aliases,
+			gameAccounts: p.gameAccounts,
+			socialAccounts: p.socialAccounts,
+			user: p.user
+		})),
+		playersWithRoles,
+		aliases,
+		wins,
+		createdAt: teamWithRelations.createdAt,
+		updatedAt: teamWithRelations.updatedAt
+	};
+
+	const processingDuration = performance.now() - processingStart;
+	console.info(`[Teams] Relations processing took ${processingDuration.toFixed(2)}ms`);
+
+	const totalDuration = performance.now() - totalStart;
+	console.info(`[Teams] Total getTeamFromRelations took ${totalDuration.toFixed(2)}ms`);
+
+	return fullTeam;
 }
 
 export async function getServerTeamWins(teamId: string): Promise<number> {
@@ -353,7 +405,7 @@ export async function getServerTeamWins(teamId: string): Promise<number> {
 	// Find all matches where this team participated
 	const teamMatches = await db
 		.select({
-			matchId: table.match.id,
+			matchId: table.matchTeam.matchId,
 			teamPosition: table.matchTeam.position,
 			teamScore: table.matchTeam.score
 		})
@@ -365,6 +417,9 @@ export async function getServerTeamWins(teamId: string): Promise<number> {
 	let wins = 0;
 
 	for (const match of teamMatches) {
+		// Skip if matchId is null
+		if (!match.matchId) continue;
+
 		// Get both teams' scores for this match
 		const matchTeams = await db
 			.select({
