@@ -9,7 +9,7 @@
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 	import { safeGetTimestamp } from '$lib/utils/date';
-	import TeamMembers from './TeamMembers.svelte';
+	import TeamMember from './TeamMember.svelte';
 
 	let { data }: PageProps = $props();
 </script>
@@ -57,13 +57,100 @@
 			</div>
 		</section>
 
-		<h2 class="my-5 flex items-center text-xl font-bold">
-			<IconParkSolidPeoples class="mr-2 inline-block text-yellow-300" />{m.active_members()}
-		</h2>
-		<TeamMembers
-			players={data.team.players}
-			teamMemberStatistics={data.teamMemberStatistics ?? undefined}
-		/>
+		<!-- Team Members -->
+		{#if data.team.players?.length}
+			<!-- Active Players -->
+			{#if data.team.players.filter((p) => p.teamPlayer.role === 'active').length}
+				<h2 class="my-5 flex items-center text-xl font-bold">
+					<IconParkSolidPeoples class="mr-2 inline-block text-green-400" />Active Players
+					<span class="ml-2 text-sm font-normal text-gray-500">
+						({data.team.players.filter((p) => p.teamPlayer.role === 'active').length})
+					</span>
+				</h2>
+				<ul class="flex flex-wrap gap-4">
+					{#each data.team.players
+						.filter((p) => p.teamPlayer.role === 'active')
+						.toSorted((a, b) => (data.teamMemberStatistics?.[b.player.id ?? '']?.rating ?? 0) - (data.teamMemberStatistics?.[a.player.id ?? '']?.rating ?? 0)) as teamPlayer (teamPlayer.player.id)}
+						<TeamMember {teamPlayer} teamMemberStatistics={data.teamMemberStatistics} />
+					{/each}
+				</ul>
+			{/if}
+
+			<!-- Substitute Players -->
+			{#if data.team.players.filter((p) => p.teamPlayer.role === 'substitute').length}
+				<h2 class="my-5 flex items-center text-xl font-bold">
+					<IconParkSolidPeoples class="mr-2 inline-block text-blue-400" />Substitutes
+					<span class="ml-2 text-sm font-normal text-gray-500">
+						({data.team.players.filter((p) => p.teamPlayer.role === 'substitute').length})
+					</span>
+				</h2>
+				<ul class="flex flex-wrap gap-4">
+					{#each data.team.players
+						.filter((p) => p.teamPlayer.role === 'substitute')
+						.toSorted((a, b) => (data.teamMemberStatistics?.[b.player.id ?? '']?.rating ?? 0) - (data.teamMemberStatistics?.[a.player.id ?? '']?.rating ?? 0)) as teamPlayer (teamPlayer.player.id)}
+						<TeamMember {teamPlayer} teamMemberStatistics={data.teamMemberStatistics} />
+					{/each}
+				</ul>
+			{/if}
+
+			<!-- Coaches -->
+			{#if data.team.players.filter((p) => p.teamPlayer.role === 'coach').length}
+				<h2 class="my-5 flex items-center text-xl font-bold">
+					<IconParkSolidPeoples class="mr-2 inline-block text-purple-400" />Coaches
+					<span class="ml-2 text-sm font-normal text-gray-500">
+						({data.team.players.filter((p) => p.teamPlayer.role === 'coach').length})
+					</span>
+				</h2>
+				<ul class="flex flex-wrap gap-4">
+					{#each data.team.players.filter((p) => p.teamPlayer.role === 'coach') as teamPlayer (teamPlayer.player.id)}
+						<TeamMember {teamPlayer} teamMemberStatistics={data.teamMemberStatistics} />
+					{/each}
+				</ul>
+			{/if}
+
+			<!-- Managers -->
+			{#if data.team.players.filter((p) => p.teamPlayer.role === 'manager').length}
+				<h2 class="my-5 flex items-center text-xl font-bold">
+					<IconParkSolidPeoples class="mr-2 inline-block text-orange-400" />Managers
+					<span class="ml-2 text-sm font-normal text-gray-500">
+						({data.team.players.filter((p) => p.teamPlayer.role === 'manager').length})
+					</span>
+				</h2>
+				<ul class="flex flex-wrap gap-4">
+					{#each data.team.players.filter((p) => p.teamPlayer.role === 'manager') as teamPlayer (teamPlayer.player.id)}
+						<TeamMember {teamPlayer} teamMemberStatistics={data.teamMemberStatistics} />
+					{/each}
+				</ul>
+			{/if}
+
+			<!-- Owners -->
+			{#if data.team.players.filter((p) => p.teamPlayer.role === 'owner').length}
+				<h2 class="my-5 flex items-center text-xl font-bold">
+					<IconParkSolidPeoples class="mr-2 inline-block text-yellow-400" />Owners
+					<span class="ml-2 text-sm font-normal text-gray-500">
+						({data.team.players.filter((p) => p.teamPlayer.role === 'owner').length})
+					</span>
+				</h2>
+				<ul class="flex flex-wrap gap-4">
+					{#each data.team.players.filter((p) => p.teamPlayer.role === 'owner') as teamPlayer (teamPlayer.player.id)}
+						<TeamMember {teamPlayer} teamMemberStatistics={data.teamMemberStatistics} />
+					{/each}
+				</ul>
+			{/if}
+
+			<!-- Former Players (Hidden but count shown) -->
+			{#if data.team.players.filter((p) => p.teamPlayer.role === 'former').length}
+				<div class="my-5 text-center text-sm text-gray-500">
+					+{data.team.players.filter((p) => p.teamPlayer.role === 'former').length} former players (not
+					displayed)
+				</div>
+			{/if}
+		{:else}
+			<h2 class="my-5 flex items-center text-xl font-bold">
+				<IconParkSolidPeoples class="mr-2 inline-block text-yellow-300" />{m.active_members()}
+			</h2>
+			<div class="text-center text-gray-400">{m.no_data()}</div>
+		{/if}
 		<!-- Statistics -->
 		<!-- Achievements -->
 		<!-- Previous members -->
