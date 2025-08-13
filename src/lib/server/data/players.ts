@@ -243,32 +243,35 @@ export async function getServerPlayerStats(playerId: string): Promise<PlayerStat
 
 export async function getPlayer(keyword: string): Promise<Player | null> {
 	console.info('[Players] Attempting to get player:', keyword);
-	const [playerData] = await db
-		.select()
-		.from(player)
-		.where(or(eq(player.id, keyword), eq(player.slug, keyword), eq(player.name, keyword)));
+
+	const playerData = await db.query.player.findFirst({
+		where: (player, { eq, or }) =>
+			or(eq(player.id, keyword), eq(player.slug, keyword), eq(player.name, keyword)),
+		with: {
+			gameAccounts: true,
+			aliases: true,
+			additionalNationalities: true,
+			socialAccounts: {
+				with: {
+					platform: true
+				}
+			},
+			user: {
+				with: {
+					roles: {
+						with: {
+							role: true
+						}
+					}
+				}
+			}
+		}
+	});
 
 	if (!playerData) {
 		console.warn('[Players] Player not found:', keyword);
 		return null;
 	}
-
-	const aliases = await db
-		.select()
-		.from(playerAlias)
-		.where(eq(playerAlias.playerId, playerData.id));
-	const accounts = await db
-		.select()
-		.from(gameAccount)
-		.where(eq(gameAccount.playerId, playerData.id));
-	const socialAccounts = await db
-		.select()
-		.from(player_social_account)
-		.where(eq(player_social_account.playerId, playerData.id));
-	const additionalNationalities = await db
-		.select()
-		.from(playerAdditionalNationality)
-		.where(eq(playerAdditionalNationality.playerId, playerData.id));
 
 	console.info('[Players] Successfully retrieved player:', keyword);
 	return {
@@ -279,27 +282,32 @@ export async function getPlayer(keyword: string): Promise<Player | null> {
 		nationalities: playerData.nationality
 			? [
 					playerData.nationality as TCountryCode,
-					...additionalNationalities.map((n) => n.nationality as TCountryCode)
+					...(playerData.additionalNationalities?.map((n) => n.nationality as TCountryCode) || [])
 				]
-			: additionalNationalities.map((n) => n.nationality as TCountryCode),
-		aliases: aliases.map((a) => a.alias),
-		gameAccounts: accounts.map((acc) => ({
+			: playerData.additionalNationalities?.map((n) => n.nationality as TCountryCode) || [],
+		aliases: playerData.aliases?.map((a) => a.alias) || [],
+		gameAccounts: (playerData.gameAccounts || []).map((acc) => ({
 			accountId: acc.accountId,
 			currentName: acc.currentName,
 			region: acc.region as Player['gameAccounts'][0]['region'],
 			server: acc.server as 'Strinova' | 'CalabiYau' // TODO: Add validation
 		})),
-		socialAccounts: socialAccounts.map((acc) => ({
+		socialAccounts: (playerData.socialAccounts || []).map((acc) => ({
 			platformId: acc.platformId,
 			accountId: acc.accountId,
 			overridingUrl: acc.overriding_url || undefined
 		})),
-		user: playerData.userId
+		user: playerData.user
 			? {
-					id: playerData.userId,
-					username: '',
-					email: '',
-					roles: []
+					id: playerData.user.id,
+					username: playerData.user.username,
+					email: playerData.user.email,
+					roles:
+						playerData.user.roles
+							?.map((ur) => ur.role.name as 'admin' | 'editor')
+							.filter(
+								(role): role is 'admin' | 'editor' => role === 'admin' || role === 'editor'
+							) || []
 				}
 			: undefined
 	};
@@ -409,17 +417,6 @@ export async function getPlayers(): Promise<Player[]> {
 		`[Players] Total getPlayers took ${totalDuration.toFixed(2)}ms - Successfully retrieved ${result.length} players`
 	);
 	return result;
-}
-
-export async function getPlayerTeams(slug: string) {
-	const teams = await db
-		.select()
-		.from(schema.player)
-		.where(eq(schema.player.slug, slug))
-		.innerJoin(schema.teamPlayer, eq(schema.teamPlayer.playerId, schema.player.id))
-		.innerJoin(schema.team, eq(schema.teamPlayer.teamId, schema.team.id));
-
-	return teams;
 }
 
 export async function getPlayersTeams(): Promise<Record<string, Team[]>> {
