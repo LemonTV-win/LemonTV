@@ -26,36 +26,40 @@ export interface Team {
 	aliases?: string[];
 }
 
+export function alreadyEnded(tp: { endedOn?: TeamPlayerRole['endedOn'] }) {
+	return tp.endedOn ? new Date(tp.endedOn) < new Date() : false;
+}
+
 export function isActive(tp: {
 	role: TeamPlayerRole['role'];
 	endedOn?: TeamPlayerRole['endedOn'];
 }) {
-	return tp.role === 'active' && !tp.endedOn;
+	return tp.role === 'active' && !alreadyEnded(tp);
 }
 
 export function isSubstitute(tp: {
 	role: TeamPlayerRole['role'];
 	endedOn?: TeamPlayerRole['endedOn'];
 }) {
-	return tp.role === 'substitute' && !tp.endedOn;
+	return tp.role === 'substitute' && !alreadyEnded(tp);
 }
 
 export function isCoaching(tp: {
 	role: TeamPlayerRole['role'];
 	endedOn?: TeamPlayerRole['endedOn'];
 }) {
-	return tp.role === 'coach' && !tp.endedOn;
+	return tp.role === 'coach' && !alreadyEnded(tp);
 }
 
 export function isManager(tp: {
 	role: TeamPlayerRole['role'];
 	endedOn?: TeamPlayerRole['endedOn'];
 }) {
-	return tp.role === 'manager' && !tp.endedOn;
+	return tp.role === 'manager' && !alreadyEnded(tp);
 }
 
 export function isOwner(tp: { role: TeamPlayerRole['role']; endedOn?: TeamPlayerRole['endedOn'] }) {
-	return tp.role === 'owner' && !tp.endedOn;
+	return tp.role === 'owner' && !alreadyEnded(tp);
 }
 
 export function isFormer(tp: {
