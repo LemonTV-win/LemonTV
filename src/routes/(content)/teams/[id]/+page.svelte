@@ -166,11 +166,44 @@
 				</ul>
 			{/if}
 
-			<!-- Former Players (Hidden but count shown) -->
+			<!-- Former Players -->
 			{#if data.team.players.filter((p) => isFormer(p.teamPlayer)).length}
-				<div class="my-5 text-center text-sm text-gray-500">
-					+{data.team.players.filter((p) => isFormer(p.teamPlayer)).length} former players (not displayed)
-				</div>
+				<h2 class="my-5 flex items-center text-xl font-bold">
+					<IconParkSolidPeoples class="mr-2 inline-block text-gray-400" />Former Members
+					<span class="ml-2 text-sm font-normal text-gray-500">
+						({data.team.players.filter((p) => isFormer(p.teamPlayer)).length})
+					</span>
+				</h2>
+				<ul class="flex flex-wrap gap-4">
+					{#each data.team.players
+						.filter((p) => isFormer(p.teamPlayer))
+						.toSorted((a, b) => {
+							// Sort by end date (most recent first), then by start date
+							const endDateA = a.teamPlayer.endedOn ? new Date(a.teamPlayer.endedOn).getTime() : 0;
+							const endDateB = b.teamPlayer.endedOn ? new Date(b.teamPlayer.endedOn).getTime() : 0;
+							if (endDateB !== endDateA) return endDateB - endDateA;
+
+							const startDateA = a.teamPlayer.startedOn ? new Date(a.teamPlayer.startedOn).getTime() : 0;
+							const startDateB = b.teamPlayer.startedOn ? new Date(b.teamPlayer.startedOn).getTime() : 0;
+							return startDateB - startDateA;
+						}) as teamPlayer (teamPlayer.player.id)}
+						<div class="relative">
+							<TeamMember
+								{teamPlayer}
+								teamMemberStatistics={data.teamMemberStatistics}
+								globalRank={teamPlayer.globalRank}
+							/>
+							<!-- End date badge -->
+							{#if teamPlayer.teamPlayer.endedOn}
+								<div
+									class="absolute -top-2 -right-2 rounded-full bg-gray-600 px-2 py-1 text-xs text-white"
+								>
+									Ended: {new Date(teamPlayer.teamPlayer.endedOn).toLocaleDateString()}
+								</div>
+							{/if}
+						</div>
+					{/each}
+				</ul>
 			{/if}
 		{:else}
 			<h2 class="my-5 flex items-center text-xl font-bold">
