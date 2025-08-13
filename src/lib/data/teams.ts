@@ -25,3 +25,24 @@ export interface Team {
 	wins?: number;
 	aliases?: string[];
 }
+
+export function isActive(tp: {
+	role: TeamPlayerRole['role'];
+	endedOn?: TeamPlayerRole['endedOn'];
+}) {
+	return tp.role === 'active' && !tp.endedOn;
+}
+
+export function isCoaching(tp: {
+	role: TeamPlayerRole['role'];
+	endedOn?: TeamPlayerRole['endedOn'];
+}) {
+	return tp.role === 'coach' && !tp.endedOn;
+}
+
+export function isFormer(tp: {
+	role: TeamPlayerRole['role'];
+	endedOn?: TeamPlayerRole['endedOn'];
+}) {
+	return !isActive(tp) && !isCoaching(tp);
+}

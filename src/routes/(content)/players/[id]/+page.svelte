@@ -15,6 +15,7 @@
 	import PlayerRadarGraph from '$lib/components/PlayerRadarGraph.svelte';
 	import { onMount } from 'svelte';
 	import { safeGetTimestamp } from '$lib/utils/date';
+	import { isActive, isCoaching, isFormer } from '$lib/data/teams';
 	let { data }: PageProps = $props();
 
 	if (!data.player) {
@@ -113,18 +114,6 @@
 		};
 		tempImg.src = data.player?.avatarURL || data.player?.avatar || '';
 	});
-
-	function isActiveTeam(team: PlayerTeam) {
-		return team.role === 'active' && !team.endedOn;
-	}
-
-	function isCoachingTeam(team: PlayerTeam) {
-		return team.role === 'coach' && !team.endedOn;
-	}
-
-	function isFormerTeam(team: PlayerTeam) {
-		return !isActiveTeam(team) && !isCoachingTeam(team);
-	}
 </script>
 
 {#if data.player}
@@ -170,15 +159,15 @@
 							/>
 						</div>
 					{/if}
-					{#if data.player.teams?.filter(isActiveTeam).length}
+					{#if data.player.teams?.filter(isActive).length}
 						<div class="grid grid-cols-1 gap-4 py-4 sm:grid-cols-[auto_1fr]">
 							<h3 class="text-lg font-bold">
 								{m['content.players.current_teams']({
-									count: data.player.teams.filter(isActiveTeam).length
+									count: data.player.teams.filter(isActive).length
 								})}
 							</h3>
 							<ul class="text-right">
-								{#each data.player.teams.filter(isActiveTeam) as team (team.slug)}
+								{#each data.player.teams.filter(isActive) as team (team.slug)}
 									{#if team}
 										<li>
 											<a href={`/teams/${team.slug}`} class="text-yellow-500 hover:text-yellow-400">
@@ -193,15 +182,15 @@
 							</ul>
 						</div>
 					{/if}
-					{#if data.player.teams?.filter(isCoachingTeam).length}
+					{#if data.player.teams?.filter(isCoaching).length}
 						<div class="grid grid-cols-1 gap-4 py-4 sm:grid-cols-[auto_1fr]">
 							<h3 class="text-lg font-bold">
 								{m['content.players.coaching_teams']({
-									count: data.player.teams.filter(isCoachingTeam).length
+									count: data.player.teams.filter(isCoaching).length
 								})}
 							</h3>
 							<ul class="text-right">
-								{#each data.player.teams.filter(isCoachingTeam) as team (team.slug)}
+								{#each data.player.teams.filter(isCoaching) as team (team.slug)}
 									{#if team}
 										<li>
 											<a href={`/teams/${team.slug}`} class="text-yellow-500 hover:text-yellow-400">
@@ -216,15 +205,15 @@
 							</ul>
 						</div>
 					{/if}
-					{#if data.player.teams?.filter(isFormerTeam).length}
+					{#if data.player.teams?.filter(isFormer).length}
 						<div class="grid grid-cols-1 gap-4 py-4 sm:grid-cols-[auto_1fr]">
 							<h3 class="text-lg font-bold">
 								{m['content.players.former_teams']({
-									count: data.player.teams.filter(isFormerTeam).length
+									count: data.player.teams.filter(isFormer).length
 								})}
 							</h3>
 							<ul class="text-right">
-								{#each data.player.teams.filter(isFormerTeam) as team (team.slug)}
+								{#each data.player.teams.filter(isFormer) as team (team.slug)}
 									{#if team}
 										<li>
 											<a href={`/teams/${team.slug}`} class="text-yellow-500 hover:text-yellow-400">
