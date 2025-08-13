@@ -653,6 +653,14 @@
 	"analysis": "分析",
 	"avatar": "アバター",
 	"content": {
+		"teams": {
+			"active_players": "アクティブプレイヤー",
+			"substitute_players": "サブプレイヤー",
+			"coaches": "コーチ",
+			"managers": "マネージャー",
+			"owners": "オーナー",
+			"former_members": "元メンバー"
+		},
 		"players": {
 			"current_teams": [
 				{

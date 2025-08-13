@@ -653,6 +653,14 @@
 	"analysis": "分析",
 	"avatar": "頭像",
 	"content": {
+		"teams": {
+			"active_players": "活躍隊員",
+			"substitute_players": "替補隊員",
+			"coaches": "教練",
+			"managers": "經理",
+			"owners": "擁有者",
+			"former_members": "前隊員"
+		},
 		"players": {
 			"current_teams": [
 				{

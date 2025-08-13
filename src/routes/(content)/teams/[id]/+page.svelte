@@ -70,7 +70,9 @@
 			<!-- Active Players -->
 			{#if data.team.players.filter((p) => isActive(p.teamPlayer)).length}
 				<h2 class="my-5 flex items-center text-xl font-bold">
-					<IconParkSolidPeoples class="mr-2 inline-block text-green-400" />Active Players
+					<IconParkSolidPeoples class="mr-2 inline-block text-green-400" />{m[
+						'content.teams.active_players'
+					]()}
 					<span class="ml-2 text-sm font-normal text-gray-500">
 						({data.team.players.filter((p) => isActive(p.teamPlayer)).length})
 					</span>
@@ -91,7 +93,9 @@
 			<!-- Substitute Players -->
 			{#if data.team.players.filter((p) => isSubstitute(p.teamPlayer)).length}
 				<h2 class="my-5 flex items-center text-xl font-bold">
-					<IconParkSolidPeoples class="mr-2 inline-block text-blue-400" />Substitutes
+					<IconParkSolidPeoples class="mr-2 inline-block text-blue-400" />{m[
+						'content.teams.substitute_players'
+					]()}
 					<span class="ml-2 text-sm font-normal text-gray-500">
 						({data.team.players.filter((p) => isSubstitute(p.teamPlayer)).length})
 					</span>
@@ -112,7 +116,9 @@
 			<!-- Coaches -->
 			{#if data.team.players.filter((p) => isCoaching(p.teamPlayer)).length}
 				<h2 class="my-5 flex items-center text-xl font-bold">
-					<IconParkSolidPeoples class="mr-2 inline-block text-purple-400" />Coaches
+					<IconParkSolidPeoples class="mr-2 inline-block text-purple-400" />{m[
+						'content.teams.coaches'
+					]()}
 					<span class="ml-2 text-sm font-normal text-gray-500">
 						({data.team.players.filter((p) => isCoaching(p.teamPlayer)).length})
 					</span>
@@ -131,7 +137,9 @@
 			<!-- Managers -->
 			{#if data.team.players.filter((p) => isManager(p.teamPlayer)).length}
 				<h2 class="my-5 flex items-center text-xl font-bold">
-					<IconParkSolidPeoples class="mr-2 inline-block text-orange-400" />Managers
+					<IconParkSolidPeoples class="mr-2 inline-block text-orange-400" />{m[
+						'content.teams.managers'
+					]()}
 					<span class="ml-2 text-sm font-normal text-gray-500">
 						({data.team.players.filter((p) => isManager(p.teamPlayer)).length})
 					</span>
@@ -150,7 +158,9 @@
 			<!-- Owners -->
 			{#if data.team.players.filter((p) => isOwner(p.teamPlayer)).length}
 				<h2 class="my-5 flex items-center text-xl font-bold">
-					<IconParkSolidPeoples class="mr-2 inline-block text-yellow-400" />Owners
+					<IconParkSolidPeoples class="mr-2 inline-block text-yellow-400" />{m[
+						'content.teams.owners'
+					]()}
 					<span class="ml-2 text-sm font-normal text-gray-500">
 						({data.team.players.filter((p) => isOwner(p.teamPlayer)).length})
 					</span>
@@ -169,7 +179,9 @@
 			<!-- Former Players -->
 			{#if data.team.players.filter((p) => isFormer(p.teamPlayer)).length}
 				<h2 class="my-5 flex items-center text-xl font-bold">
-					<IconParkSolidPeoples class="mr-2 inline-block text-gray-400" />Former Members
+					<IconParkSolidPeoples class="mr-2 inline-block text-gray-400" />{m[
+						'content.teams.former_members'
+					]()}
 					<span class="ml-2 text-sm font-normal text-gray-500">
 						({data.team.players.filter((p) => isFormer(p.teamPlayer)).length})
 					</span>
@@ -198,7 +210,7 @@
 								<div
 									class="absolute -top-2 -right-2 rounded-full bg-gray-600 px-2 py-1 text-xs text-white"
 								>
-									Ended: {new Date(teamPlayer.teamPlayer.endedOn).toLocaleDateString()}
+									{m.ended_on()}: {new Date(teamPlayer.teamPlayer.endedOn).toLocaleDateString()}
 								</div>
 							{/if}
 						</div>

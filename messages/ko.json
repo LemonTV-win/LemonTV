@@ -653,6 +653,14 @@
 	"analysis": "분석",
 	"avatar": "아바타",
 	"content": {
+		"teams": {
+			"active_players": "활성 플레이어",
+			"substitute_players": "대체 플레이어",
+			"coaches": "코치",
+			"managers": "매니저",
+			"owners": "소유자",
+			"former_members": "이전 멤버"
+		},
 		"players": {
 			"current_teams": [
 				{

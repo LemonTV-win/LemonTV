@@ -653,6 +653,14 @@
 	"analysis": "Analisis",
 	"avatar": "Avatar",
 	"content": {
+		"teams": {
+			"active_players": "Pemain Aktif",
+			"substitute_players": "Pemain Cadangan",
+			"coaches": "Pelatih",
+			"managers": "Manajer",
+			"owners": "Pemilik",
+			"former_members": "Mantan Anggota"
+		},
 		"players": {
 			"current_teams": [
 				{

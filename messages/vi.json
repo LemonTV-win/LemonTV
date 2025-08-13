@@ -653,6 +653,14 @@
 	"analysis": "Phân tích",
 	"avatar": "Ảnh đại diện",
 	"content": {
+		"teams": {
+			"active_players": "Thành viên Hoạt động",
+			"substitute_players": "Thành viên Dự bị",
+			"coaches": "Huấn luyện viên",
+			"managers": "Quản lý",
+			"owners": "Chủ sở hữu",
+			"former_members": "Thành viên Cũ"
+		},
 		"players": {
 			"current_teams": [
 				{

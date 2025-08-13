@@ -653,6 +653,14 @@
 	"analysis": "Аналіз",
 	"avatar": "Аватар",
 	"content": {
+		"teams": {
+			"active_players": "Активні гравці",
+			"substitute_players": "Запасні гравці",
+			"coaches": "Тренери",
+			"managers": "Менеджери",
+			"owners": "Власники",
+			"former_members": "Колишні учасники"
+		},
 		"players": {
 			"current_teams": [
 				{

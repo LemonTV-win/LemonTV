@@ -49,6 +49,14 @@
 		}
 	},
 	"content": {
+		"teams": {
+			"active_players": "Active Players",
+			"substitute_players": "Substitutes",
+			"coaches": "Coaches",
+			"managers": "Managers",
+			"owners": "Owners",
+			"former_members": "Former Members"
+		},
 		"players": {
 			"current_teams": [
 				{

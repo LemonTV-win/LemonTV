@@ -653,6 +653,14 @@
 	"analysis": "Analyse",
 	"avatar": "Avatar",
 	"content": {
+		"teams": {
+			"active_players": "Joueurs Actifs",
+			"substitute_players": "Remplaçants",
+			"coaches": "Entraîneurs",
+			"managers": "Managers",
+			"owners": "Propriétaires",
+			"former_members": "Anciens Membres"
+		},
 		"players": {
 			"current_teams": [
 				{
