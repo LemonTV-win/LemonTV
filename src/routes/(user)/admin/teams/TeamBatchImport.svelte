@@ -240,6 +240,18 @@
 		return 'Unknown duplicate';
 	}
 
+	// Helper function to get existing team link for slug conflicts
+	function getExistingTeamLinkForSlug(team: TeamImportData): { id: string; name: string } | null {
+		const slug = team.slug || formatSlug(team.name);
+		if (existingSlugs.has(slug)) {
+			const existingTeam = existingTeams.find(
+				(t: { id: string; name: string; slug: string }) => t.slug === slug
+			);
+			return existingTeam ? { id: existingTeam.id, name: existingTeam.name } : null;
+		}
+		return null;
+	}
+
 	// Get all players from parsed teams that need to be created
 	let newPlayersRequired = $derived.by(() => {
 		if (!parsedTeams || parsedTeams.type !== 'success') return [];
@@ -767,46 +779,41 @@ const teams: TeamImportData[] = [
 							isDuplicateSlug: hasNewPlayerDuplicate,
 							isDuplicateAccountId: hasNewPlayerDuplicate,
 							getDuplicateReason: getNewPlayerDuplicateReason,
-							getDuplicateAccountIdReason: getNewPlayerDuplicateReason
+							getDuplicateAccountIdReason: getNewPlayerDuplicateReason,
+							getExistingPlayerLinkForSlug: (player) => {
+								const slug = player.slug || formatSlug(player.name);
+								const existingPlayer = existingPlayers.find((p) => p.slug === slug);
+								return existingPlayer ? { id: existingPlayer.id, name: existingPlayer.name } : null;
+							},
+							getExistingPlayerLinkForAccountId: (player) => {
+								if (!player.gameAccounts) return [];
+								const conflicts: Array<{
+									id: string;
+									name: string;
+									accountId: number;
+									server: string;
+								}> = [];
+								player.gameAccounts.forEach((account) => {
+									const existingPlayer = existingPlayers.find((p) =>
+										p.gameAccounts?.some((ga) => ga.accountId === account.accountId)
+									);
+									if (existingPlayer) {
+										conflicts.push({
+											id: existingPlayer.id,
+											name: existingPlayer.name,
+											accountId: account.accountId,
+											server: account.server
+										});
+									}
+								});
+								return conflicts;
+							}
 						}}
 					/>
 				</div>
 			{/if}
 
-			{#if parsedTeams && hasNewPlayerDuplicates}
-				<div class="mb-4 rounded-md border border-red-700 bg-red-900/50 p-3">
-					<div class="flex items-start gap-2">
-						<div class="mt-0.5 h-4 w-4 flex-shrink-0 rounded-full bg-red-500"></div>
-						<div class="flex-1">
-							<p class="mb-1 text-sm font-medium text-red-200">
-								Duplicate issues in new players detected
-							</p>
-							<p class="text-xs text-red-300">
-								Please resolve the duplicate issues highlighted in red above before importing. New
-								players must have unique slugs and account IDs.
-							</p>
-						</div>
-					</div>
-				</div>
-			{/if}
-
-			{#if parsedTeams && hasDuplicateSlugs}
-				<div class="mb-4 rounded-md border border-red-700 bg-red-900/50 p-3">
-					<div class="flex items-start gap-2">
-						<div class="mt-0.5 h-4 w-4 flex-shrink-0 rounded-full bg-red-500"></div>
-						<div class="flex-1">
-							<p class="mb-1 text-sm font-medium text-red-200">Duplicate slugs detected</p>
-							<p class="text-xs text-red-300">
-								Please resolve the duplicate slugs highlighted in red above before importing. Each
-								team must have a unique slug (either provided explicitly or auto-generated from
-								name).
-							</p>
-						</div>
-					</div>
-				</div>
-			{/if}
-
-			{#if parsedTeams && hasAnyDuplicates}
+			{#if parsedTeams && (hasDuplicateSlugs || hasNewPlayerDuplicates)}
 				<div class="mb-4 rounded-md border border-red-700 bg-red-900/50 p-3">
 					<div class="flex items-start gap-2">
 						<div class="mt-0.5 h-4 w-4 flex-shrink-0 rounded-full bg-red-500"></div>
@@ -815,6 +822,75 @@ const teams: TeamImportData[] = [
 							<p class="text-xs text-red-300">
 								Please resolve the duplicate issues highlighted in red above before importing.
 							</p>
+
+							{#if hasNewPlayerDuplicates}
+								{#if newPlayerDuplicateSlugs.length > 0}
+									<div class="mt-2 rounded border border-red-600 bg-red-900/30 p-2">
+										<p class="mb-1 text-xs font-medium text-red-200">
+											Duplicate slugs in new players:
+										</p>
+										<ul class="space-y-1 text-xs text-red-300">
+											{#each newPlayerDuplicateSlugs as duplicate}
+												<li class="font-mono">• {duplicate}</li>
+											{/each}
+										</ul>
+									</div>
+								{/if}
+								{#if newPlayerDuplicateAccountIds.length > 0}
+									<div class="mt-2 rounded border border-red-600 bg-red-900/30 p-2">
+										<p class="mb-1 text-xs font-medium text-red-200">
+											Duplicate account IDs in new players:
+										</p>
+										<ul class="space-y-1 text-xs text-red-300">
+											{#each newPlayerDuplicateAccountIds as duplicate}
+												<li class="font-mono">• {duplicate}</li>
+											{/each}
+										</ul>
+									</div>
+								{/if}
+							{/if}
+
+							{#if parsedTeams && parsedTeams.type === 'success'}
+								{@const duplicateTeams = parsedTeams.data.filter((t) => isDuplicateSlug(t))}
+								{#if duplicateTeams.length > 0}
+									<div class="mt-2 rounded border border-red-600 bg-red-900/30 p-2">
+										<p class="mb-1 text-xs font-medium text-red-200">Duplicate slugs</p>
+										<div class="styled-scroll max-h-32 overflow-y-auto">
+											<ul class="space-y-1 text-xs text-red-300">
+												{#each duplicateTeams as team}
+													{@const existingTeam = getExistingTeamLinkForSlug(team)}
+													{#if existingTeam}
+														<li class="flex items-center gap-2">
+															{team.name} (conflicts with existing:
+															<a
+																href="/teams/{existingTeam.id}"
+																target="_blank"
+																class="inline-flex items-center gap-1 text-yellow-400 hover:text-yellow-300 hover:underline"
+															>
+																{existingTeam.name}
+																<svg
+																	class="h-3 w-3"
+																	fill="none"
+																	stroke="currentColor"
+																	viewBox="0 0 24 24"
+																>
+																	<path
+																		stroke-linecap="round"
+																		stroke-linejoin="round"
+																		stroke-width="2"
+																		d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+																	/>
+																</svg>
+															</a>
+															)
+														</li>
+													{/if}
+												{/each}
+											</ul>
+										</div>
+									</div>
+								{/if}
+							{/if}
 						</div>
 					</div>
 				</div>

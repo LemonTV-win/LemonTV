@@ -359,7 +359,7 @@
 		const reasons: string[] = [];
 
 		player.gameAccounts.forEach((account) => {
-			const compositeKey = `${account.accountId}-${account.server}`; // Use composite key
+			const compositeKey = `${account.accountId}-${account.server}`;
 			if (duplicateAccountIdValues.has(compositeKey)) {
 				// Check if it conflicts with existing players
 				if (existingAccountIds.has(compositeKey)) {
@@ -384,7 +384,7 @@
 					if (!parsedPlayers || parsedPlayers.type !== 'success') return '';
 					parsedPlayers.data.forEach((p: PlayerImportData) => {
 						p.gameAccounts?.forEach((ga) => {
-							const pCompositeKey = `${ga.accountId}-${ga.server}`; // Use composite key
+							const pCompositeKey = `${ga.accountId}-${ga.server}`;
 							if (!accountIdCounts.has(pCompositeKey)) {
 								accountIdCounts.set(pCompositeKey, []);
 							}
@@ -404,6 +404,57 @@
 		});
 
 		return reasons.join('; ');
+	}
+
+	// Helper function to get existing player link for slug conflicts
+	function getExistingPlayerLinkForSlug(
+		player: PlayerImportData
+	): { id: string; name: string } | null {
+		const slug = player.slug || formatSlug(player.name);
+		if (existingSlugs.has(slug)) {
+			const existingPlayer = existingPlayers.find(
+				(p: { id: string; name: string; slug: string }) => p.slug === slug
+			);
+			return existingPlayer ? { id: existingPlayer.id, name: existingPlayer.name } : null;
+		}
+		return null;
+	}
+
+	// Helper function to get existing player link for account ID conflicts
+	function getExistingPlayerLinkForAccountId(
+		player: PlayerImportData
+	): Array<{ id: string; name: string; accountId: number; server: string }> {
+		if (!player.gameAccounts) return [];
+
+		const conflicts: Array<{ id: string; name: string; accountId: number; server: string }> = [];
+
+		player.gameAccounts.forEach((account) => {
+			const compositeKey = `${account.accountId}-${account.server}`;
+			if (existingAccountIds.has(compositeKey)) {
+				const existingPlayer = existingPlayers.find(
+					(p: {
+						id: string;
+						name: string;
+						slug: string;
+						gameAccounts?: Array<{ accountId: number; server: string }>;
+					}) =>
+						p.gameAccounts?.some(
+							(ga: { accountId: number; server: string }) =>
+								`${ga.accountId}-${ga.server}` === compositeKey
+						)
+				);
+				if (existingPlayer) {
+					conflicts.push({
+						id: existingPlayer.id,
+						name: existingPlayer.name,
+						accountId: account.accountId,
+						server: account.server
+					});
+				}
+			}
+		});
+
+		return conflicts;
 	}
 
 	let hasAnyDuplicates = $derived(hasDuplicateSlugs || hasDuplicateAccountIds);
@@ -701,45 +752,16 @@ const players: PlayerImportData[] = [
 							isDuplicateSlug,
 							isDuplicateAccountId,
 							getDuplicateReason,
-							getDuplicateAccountIdReason
+							getDuplicateAccountIdReason,
+							getExistingPlayerLinkForSlug,
+							getExistingPlayerLinkForAccountId
 						}}
 						containerClass="max-h-128"
 					/>
 				</div>
 			{/if}
 
-			{#if parsedPlayers && hasDuplicateSlugs}
-				<div class="mb-4 rounded-md border border-red-700 bg-red-900/50 p-3">
-					<div class="flex items-start gap-2">
-						<div class="mt-0.5 h-4 w-4 flex-shrink-0 rounded-full bg-red-500"></div>
-						<div class="flex-1">
-							<p class="mb-1 text-sm font-medium text-red-200">Duplicate slugs detected</p>
-							<p class="text-xs text-red-300">
-								Please resolve the duplicate slugs highlighted in red above before importing. Each
-								player must have a unique slug (either provided explicitly or auto-generated from
-								name).
-							</p>
-						</div>
-					</div>
-				</div>
-			{/if}
-
-			{#if parsedPlayers && hasDuplicateAccountIds}
-				<div class="mb-4 rounded-md border border-red-700 bg-red-900/50 p-3">
-					<div class="flex items-start gap-2">
-						<div class="mt-0.5 h-4 w-4 flex-shrink-0 rounded-full bg-red-500"></div>
-						<div class="flex-1">
-							<p class="mb-1 text-sm font-medium text-red-200">Duplicate account IDs detected</p>
-							<p class="text-xs text-red-300">
-								Please resolve the duplicate account IDs highlighted in red above before importing.
-								Each player must have a unique account ID.
-							</p>
-						</div>
-					</div>
-				</div>
-			{/if}
-
-			{#if parsedPlayers && hasAnyDuplicates}
+			{#if parsedPlayers && (hasDuplicateSlugs || hasDuplicateAccountIds)}
 				<div class="mb-4 rounded-md border border-red-700 bg-red-900/50 p-3">
 					<div class="flex items-start gap-2">
 						<div class="mt-0.5 h-4 w-4 flex-shrink-0 rounded-full bg-red-500"></div>
@@ -748,6 +770,77 @@ const players: PlayerImportData[] = [
 							<p class="text-xs text-red-300">
 								Please resolve the duplicate issues highlighted in red above before importing.
 							</p>
+
+							{#if parsedPlayers && parsedPlayers.type === 'success'}
+								{@const duplicatePlayers = parsedPlayers.data.filter(
+									(p) => isDuplicateSlug(p) || isDuplicateAccountId(p)
+								)}
+								{#if duplicatePlayers.length > 0}
+									<div class="mt-2 rounded border border-red-600 bg-red-900/30 p-2">
+										<p class="mb-1 text-xs font-medium text-red-200">Duplicate issues:</p>
+										<div class="styled-scroll max-h-32 overflow-y-auto">
+											<ul class="space-y-1 text-xs text-red-300">
+												{#each duplicatePlayers as player}
+													{@const existingPlayer = getExistingPlayerLinkForSlug(player)}
+													{#if existingPlayer}
+														<li class="flex items-center gap-2">
+															{player.name} (conflicts with existing: {existingPlayer.name}
+															<a
+																href="/admin/players/{existingPlayer.id}"
+																target="_blank"
+																class="inline-flex items-center gap-1 text-blue-400 hover:text-blue-300"
+															>
+																<svg
+																	class="h-3 w-3"
+																	fill="none"
+																	stroke="currentColor"
+																	viewBox="0 0 24 24"
+																>
+																	<path
+																		stroke-linecap="round"
+																		stroke-linejoin="round"
+																		stroke-width="2"
+																		d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+																	/>
+																</svg>
+															</a>
+															)
+														</li>
+													{/if}
+													{@const existingPlayers = getExistingPlayerLinkForAccountId(player)}
+													{#if existingPlayers.length > 0}
+														{#each existingPlayers as existingPlayer}
+															<li class="flex items-center gap-2">
+																{player.name} (conflicts with existing: {existingPlayer.name}
+																<a
+																	href="/admin/players/{existingPlayer.id}"
+																	target="_blank"
+																	class="inline-flex items-center gap-1 text-blue-400 hover:text-blue-300"
+																>
+																	<svg
+																		class="h-3 w-3"
+																		fill="none"
+																		stroke="currentColor"
+																		viewBox="0 0 24 24"
+																	>
+																		<path
+																			stroke-linecap="round"
+																			stroke-linejoin="round"
+																			stroke-width="2"
+																			d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+																		/>
+																	</svg>
+																</a>
+																)
+															</li>
+														{/each}
+													{/if}
+												{/each}
+											</ul>
+										</div>
+									</div>
+								{/if}
+							{/if}
 						</div>
 					</div>
 				</div>

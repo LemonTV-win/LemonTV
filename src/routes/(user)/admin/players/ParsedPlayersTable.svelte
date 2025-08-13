@@ -12,6 +12,12 @@
 			isDuplicateAccountId?: (player: PlayerImportData) => boolean;
 			getDuplicateReason?: (player: PlayerImportData) => string;
 			getDuplicateAccountIdReason?: (player: PlayerImportData) => string;
+			getExistingPlayerLinkForSlug?: (
+				player: PlayerImportData
+			) => { id: string; name: string } | null;
+			getExistingPlayerLinkForAccountId?: (
+				player: PlayerImportData
+			) => Array<{ id: string; name: string; accountId: number; server: string }>;
 		};
 		containerClass?: string;
 	}
