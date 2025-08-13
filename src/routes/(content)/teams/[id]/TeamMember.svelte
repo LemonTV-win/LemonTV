@@ -130,6 +130,7 @@
 						{#each teamMemberStatistics[teamPlayer.player.id].characters
 							.toSorted((a, b) => b[1] - a[1])
 							.map(([character]) => character)
+							.concat([null, null, null])
 							.slice(0, 3) as character, i (i)}
 							<CharacterIcon
 								{character}
