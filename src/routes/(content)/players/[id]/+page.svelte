@@ -141,7 +141,7 @@
 							<span class="text-white">{data.player.name}</span>
 							<span class="inline-flex flex-col gap-2">
 								{#each getAllNames(data.player).filter((name) => name !== data.player.name) as name (name)}
-									<span class="text-gray-400">({name})</span>
+									<span class="text-sm text-gray-400">({name})</span>
 								{/each}
 							</span>
 						</h1>
@@ -153,9 +153,11 @@
 						{/if}
 					</div>
 					{#if data.player.nationalities.length}
-						<p class="text-center text-gray-400">
+						<p class="flex flex-wrap justify-center gap-4 text-center text-gray-400">
 							{#each data.player.nationalities as nationality, idx (idx)}
-								<NationalityFlag {nationality} showLabel />
+								<span class="flex items-center gap-1">
+									<NationalityFlag {nationality} showLabel />
+								</span>
 							{/each}
 						</p>
 					{/if}
