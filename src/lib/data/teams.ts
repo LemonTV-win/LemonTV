@@ -33,6 +33,13 @@ export function isActive(tp: {
 	return tp.role === 'active' && !tp.endedOn;
 }
 
+export function isSubstitute(tp: {
+	role: TeamPlayerRole['role'];
+	endedOn?: TeamPlayerRole['endedOn'];
+}) {
+	return tp.role === 'substitute' && !tp.endedOn;
+}
+
 export function isCoaching(tp: {
 	role: TeamPlayerRole['role'];
 	endedOn?: TeamPlayerRole['endedOn'];
@@ -40,9 +47,20 @@ export function isCoaching(tp: {
 	return tp.role === 'coach' && !tp.endedOn;
 }
 
+export function isManager(tp: {
+	role: TeamPlayerRole['role'];
+	endedOn?: TeamPlayerRole['endedOn'];
+}) {
+	return tp.role === 'manager' && !tp.endedOn;
+}
+
+export function isOwner(tp: { role: TeamPlayerRole['role']; endedOn?: TeamPlayerRole['endedOn'] }) {
+	return tp.role === 'owner' && !tp.endedOn;
+}
+
 export function isFormer(tp: {
 	role: TeamPlayerRole['role'];
 	endedOn?: TeamPlayerRole['endedOn'];
 }) {
-	return !isActive(tp) && !isCoaching(tp);
+	return !isActive(tp) && !isCoaching(tp) && !isSubstitute(tp) && !isManager(tp) && !isOwner(tp);
 }

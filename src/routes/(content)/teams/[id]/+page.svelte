@@ -10,6 +10,14 @@
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 	import { safeGetTimestamp } from '$lib/utils/date';
 	import TeamMember from './TeamMember.svelte';
+	import {
+		isActive,
+		isSubstitute,
+		isCoaching,
+		isManager,
+		isOwner,
+		isFormer
+	} from '$lib/data/teams';
 
 	let { data }: PageProps = $props();
 </script>
@@ -60,16 +68,16 @@
 		<!-- Team Members -->
 		{#if data.team.players?.length}
 			<!-- Active Players -->
-			{#if data.team.players.filter((p) => p.teamPlayer.role === 'active').length}
+			{#if data.team.players.filter((p) => isActive(p.teamPlayer)).length}
 				<h2 class="my-5 flex items-center text-xl font-bold">
 					<IconParkSolidPeoples class="mr-2 inline-block text-green-400" />Active Players
 					<span class="ml-2 text-sm font-normal text-gray-500">
-						({data.team.players.filter((p) => p.teamPlayer.role === 'active').length})
+						({data.team.players.filter((p) => isActive(p.teamPlayer)).length})
 					</span>
 				</h2>
 				<ul class="flex flex-wrap gap-4">
 					{#each data.team.players
-						.filter((p) => p.teamPlayer.role === 'active')
+						.filter((p) => isActive(p.teamPlayer))
 						.toSorted((a, b) => (data.teamMemberStatistics?.[b.player.id ?? '']?.rating ?? 0) - (data.teamMemberStatistics?.[a.player.id ?? '']?.rating ?? 0)) as teamPlayer (teamPlayer.player.id)}
 						<TeamMember
 							{teamPlayer}
@@ -81,16 +89,16 @@
 			{/if}
 
 			<!-- Substitute Players -->
-			{#if data.team.players.filter((p) => p.teamPlayer.role === 'substitute').length}
+			{#if data.team.players.filter((p) => isSubstitute(p.teamPlayer)).length}
 				<h2 class="my-5 flex items-center text-xl font-bold">
 					<IconParkSolidPeoples class="mr-2 inline-block text-blue-400" />Substitutes
 					<span class="ml-2 text-sm font-normal text-gray-500">
-						({data.team.players.filter((p) => p.teamPlayer.role === 'substitute').length})
+						({data.team.players.filter((p) => isSubstitute(p.teamPlayer)).length})
 					</span>
 				</h2>
 				<ul class="flex flex-wrap gap-4">
 					{#each data.team.players
-						.filter((p) => p.teamPlayer.role === 'substitute')
+						.filter((p) => isSubstitute(p.teamPlayer))
 						.toSorted((a, b) => (data.teamMemberStatistics?.[b.player.id ?? '']?.rating ?? 0) - (data.teamMemberStatistics?.[a.player.id ?? '']?.rating ?? 0)) as teamPlayer (teamPlayer.player.id)}
 						<TeamMember
 							{teamPlayer}
@@ -102,15 +110,15 @@
 			{/if}
 
 			<!-- Coaches -->
-			{#if data.team.players.filter((p) => p.teamPlayer.role === 'coach').length}
+			{#if data.team.players.filter((p) => isCoaching(p.teamPlayer)).length}
 				<h2 class="my-5 flex items-center text-xl font-bold">
 					<IconParkSolidPeoples class="mr-2 inline-block text-purple-400" />Coaches
 					<span class="ml-2 text-sm font-normal text-gray-500">
-						({data.team.players.filter((p) => p.teamPlayer.role === 'coach').length})
+						({data.team.players.filter((p) => isCoaching(p.teamPlayer)).length})
 					</span>
 				</h2>
 				<ul class="flex flex-wrap gap-4">
-					{#each data.team.players.filter((p) => p.teamPlayer.role === 'coach') as teamPlayer (teamPlayer.player.id)}
+					{#each data.team.players.filter( (p) => isCoaching(p.teamPlayer) ) as teamPlayer (teamPlayer.player.id)}
 						<TeamMember
 							{teamPlayer}
 							teamMemberStatistics={data.teamMemberStatistics}
@@ -121,15 +129,15 @@
 			{/if}
 
 			<!-- Managers -->
-			{#if data.team.players.filter((p) => p.teamPlayer.role === 'manager').length}
+			{#if data.team.players.filter((p) => isManager(p.teamPlayer)).length}
 				<h2 class="my-5 flex items-center text-xl font-bold">
 					<IconParkSolidPeoples class="mr-2 inline-block text-orange-400" />Managers
 					<span class="ml-2 text-sm font-normal text-gray-500">
-						({data.team.players.filter((p) => p.teamPlayer.role === 'manager').length})
+						({data.team.players.filter((p) => isManager(p.teamPlayer)).length})
 					</span>
 				</h2>
 				<ul class="flex flex-wrap gap-4">
-					{#each data.team.players.filter((p) => p.teamPlayer.role === 'manager') as teamPlayer (teamPlayer.player.id)}
+					{#each data.team.players.filter( (p) => isManager(p.teamPlayer) ) as teamPlayer (teamPlayer.player.id)}
 						<TeamMember
 							{teamPlayer}
 							teamMemberStatistics={data.teamMemberStatistics}
@@ -140,15 +148,15 @@
 			{/if}
 
 			<!-- Owners -->
-			{#if data.team.players.filter((p) => p.teamPlayer.role === 'owner').length}
+			{#if data.team.players.filter((p) => isOwner(p.teamPlayer)).length}
 				<h2 class="my-5 flex items-center text-xl font-bold">
 					<IconParkSolidPeoples class="mr-2 inline-block text-yellow-400" />Owners
 					<span class="ml-2 text-sm font-normal text-gray-500">
-						({data.team.players.filter((p) => p.teamPlayer.role === 'owner').length})
+						({data.team.players.filter((p) => isOwner(p.teamPlayer)).length})
 					</span>
 				</h2>
 				<ul class="flex flex-wrap gap-4">
-					{#each data.team.players.filter((p) => p.teamPlayer.role === 'owner') as teamPlayer (teamPlayer.player.id)}
+					{#each data.team.players.filter( (p) => isOwner(p.teamPlayer) ) as teamPlayer (teamPlayer.player.id)}
 						<TeamMember
 							{teamPlayer}
 							teamMemberStatistics={data.teamMemberStatistics}
@@ -159,10 +167,9 @@
 			{/if}
 
 			<!-- Former Players (Hidden but count shown) -->
-			{#if data.team.players.filter((p) => p.teamPlayer.role === 'former').length}
+			{#if data.team.players.filter((p) => isFormer(p.teamPlayer)).length}
 				<div class="my-5 text-center text-sm text-gray-500">
-					+{data.team.players.filter((p) => p.teamPlayer.role === 'former').length} former players (not
-					displayed)
+					+{data.team.players.filter((p) => isFormer(p.teamPlayer)).length} former players (not displayed)
 				</div>
 			{/if}
 		{:else}
