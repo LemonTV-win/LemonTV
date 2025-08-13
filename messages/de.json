@@ -651,5 +651,39 @@
 	"archive": "Archiv",
 	"highlights": "Highlights",
 	"analysis": "Analyse",
-	"avatar": "Avatar"
+	"avatar": "Avatar",
+	"content": {
+		"players": {
+			"current_teams": [
+				{
+					"declarations": ["input count", "local countPlural = count: plural"],
+					"selectors": ["countPlural"],
+					"match": {
+						"countPlural=one": "Aktuelles Team",
+						"countPlural=other": "Aktuelle Teams"
+					}
+				}
+			],
+			"coaching_teams": [
+				{
+					"declarations": ["input count", "local countPlural = count: plural"],
+					"selectors": ["countPlural"],
+					"match": {
+						"countPlural=one": "Trainerteam",
+						"countPlural=other": "Trainerteams"
+					}
+				}
+			],
+			"former_teams": [
+				{
+					"declarations": ["input count", "local countPlural = count: plural"],
+					"selectors": ["countPlural"],
+					"match": {
+						"countPlural=one": "Ehemaliges Team",
+						"countPlural=other": "Ehemalige Teams"
+					}
+				}
+			]
+		}
+	}
 }

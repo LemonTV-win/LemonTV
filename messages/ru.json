@@ -651,5 +651,39 @@
 	"archive": "Архив",
 	"highlights": "Хайлайты",
 	"analysis": "Анализ",
-	"avatar": "Аватар"
+	"avatar": "Аватар",
+	"content": {
+		"players": {
+			"current_teams": [
+				{
+					"declarations": ["input count", "local countPlural = count: plural"],
+					"selectors": ["countPlural"],
+					"match": {
+						"countPlural=one": "Текущая команда",
+						"countPlural=other": "Текущие команды"
+					}
+				}
+			],
+			"coaching_teams": [
+				{
+					"declarations": ["input count", "local countPlural = count: plural"],
+					"selectors": ["countPlural"],
+					"match": {
+						"countPlural=one": "Команда тренера",
+						"countPlural=other": "Команды тренера"
+					}
+				}
+			],
+			"former_teams": [
+				{
+					"declarations": ["input count", "local countPlural = count: plural"],
+					"selectors": ["countPlural"],
+					"match": {
+						"countPlural=one": "Бывшая команда",
+						"countPlural=other": "Бывшие команды"
+					}
+				}
+			]
+		}
+	}
 }

@@ -651,5 +651,36 @@
 	"archive": "아카이브",
 	"highlights": "하이라이트",
 	"analysis": "분석",
-	"avatar": "아바타"
+	"avatar": "아바타",
+	"content": {
+		"players": {
+			"current_teams": [
+				{
+					"declarations": ["input count", "local countPlural = count: plural"],
+					"selectors": ["countPlural"],
+					"match": {
+						"countPlural=other": "현재 팀"
+					}
+				}
+			],
+			"coaching_teams": [
+				{
+					"declarations": ["input count", "local countPlural = count: plural"],
+					"selectors": ["countPlural"],
+					"match": {
+						"countPlural=other": "코칭 팀"
+					}
+				}
+			],
+			"former_teams": [
+				{
+					"declarations": ["input count", "local countPlural = count: plural"],
+					"selectors": ["countPlural"],
+					"match": {
+						"countPlural=other": "이전 팀"
+					}
+				}
+			]
+		}
+	}
 }

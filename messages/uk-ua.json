@@ -651,5 +651,39 @@
 	"archive": "Архів",
 	"highlights": "Хайлайти",
 	"analysis": "Аналіз",
-	"avatar": "Аватар"
+	"avatar": "Аватар",
+	"content": {
+		"players": {
+			"current_teams": [
+				{
+					"declarations": ["input count", "local countPlural = count: plural"],
+					"selectors": ["countPlural"],
+					"match": {
+						"countPlural=one": "Поточна команда",
+						"countPlural=other": "Поточні команди"
+					}
+				}
+			],
+			"coaching_teams": [
+				{
+					"declarations": ["input count", "local countPlural = count: plural"],
+					"selectors": ["countPlural"],
+					"match": {
+						"countPlural=one": "Команда тренування",
+						"countPlural=other": "Команди тренування"
+					}
+				}
+			],
+			"former_teams": [
+				{
+					"declarations": ["input count", "local countPlural = count: plural"],
+					"selectors": ["countPlural"],
+					"match": {
+						"countPlural=one": "Колишня команда",
+						"countPlural=other": "Колишні команди"
+					}
+				}
+			]
+		}
+	}
 }

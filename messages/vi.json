@@ -651,5 +651,36 @@
 	"archive": "Lưu trữ",
 	"highlights": "Điểm nổi bật",
 	"analysis": "Phân tích",
-	"avatar": "Ảnh đại diện"
+	"avatar": "Ảnh đại diện",
+	"content": {
+		"players": {
+			"current_teams": [
+				{
+					"declarations": ["input count", "local countPlural = count: plural"],
+					"selectors": ["countPlural"],
+					"match": {
+						"countPlural=other": "Đội hiện tại"
+					}
+				}
+			],
+			"coaching_teams": [
+				{
+					"declarations": ["input count", "local countPlural = count: plural"],
+					"selectors": ["countPlural"],
+					"match": {
+						"countPlural=other": "Đội huấn luyện"
+					}
+				}
+			],
+			"former_teams": [
+				{
+					"declarations": ["input count", "local countPlural = count: plural"],
+					"selectors": ["countPlural"],
+					"match": {
+						"countPlural=other": "Đội cũ"
+					}
+				}
+			]
+		}
+	}
 }

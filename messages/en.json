@@ -48,6 +48,40 @@
 			"ocarnus": "Ocarnus"
 		}
 	},
+	"content": {
+		"players": {
+			"current_teams": [
+				{
+					"declarations": ["input count", "local countPlural = count: plural"],
+					"selectors": ["countPlural"],
+					"match": {
+						"countPlural=one": "Current Team",
+						"countPlural=other": "Current Teams"
+					}
+				}
+			],
+			"coaching_teams": [
+				{
+					"declarations": ["input count", "local countPlural = count: plural"],
+					"selectors": ["countPlural"],
+					"match": {
+						"countPlural=one": "Coaching Team",
+						"countPlural=other": "Coaching Teams"
+					}
+				}
+			],
+			"former_teams": [
+				{
+					"declarations": ["input count", "local countPlural = count: plural"],
+					"selectors": ["countPlural"],
+					"match": {
+						"countPlural=one": "Former Team",
+						"countPlural=other": "Former Teams"
+					}
+				}
+			]
+		}
+	},
 	"name": "Name",
 	"rating": "Rating",
 	"view_all_teams": "View All Teams",

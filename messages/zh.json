@@ -651,5 +651,36 @@
 	"archive": "存档",
 	"highlights": "精彩片段",
 	"analysis": "分析",
-	"avatar": "头像"
+	"avatar": "头像",
+	"content": {
+		"players": {
+			"current_teams": [
+				{
+					"declarations": ["input count", "local countPlural = count: plural"],
+					"selectors": ["countPlural"],
+					"match": {
+						"countPlural=other": "当前队伍"
+					}
+				}
+			],
+			"coaching_teams": [
+				{
+					"declarations": ["input count", "local countPlural = count: plural"],
+					"selectors": ["countPlural"],
+					"match": {
+						"countPlural=other": "教练队伍"
+					}
+				}
+			],
+			"former_teams": [
+				{
+					"declarations": ["input count", "local countPlural = count: plural"],
+					"selectors": ["countPlural"],
+					"match": {
+						"countPlural=other": "前队伍"
+					}
+				}
+			]
+		}
+	}
 }

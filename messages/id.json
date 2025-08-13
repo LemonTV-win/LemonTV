@@ -651,5 +651,36 @@
 	"archive": "Arsip",
 	"highlights": "Sorotan",
 	"analysis": "Analisis",
-	"avatar": "Avatar"
+	"avatar": "Avatar",
+	"content": {
+		"players": {
+			"current_teams": [
+				{
+					"declarations": ["input count", "local countPlural = count: plural"],
+					"selectors": ["countPlural"],
+					"match": {
+						"countPlural=other": "Tim saat ini"
+					}
+				}
+			],
+			"coaching_teams": [
+				{
+					"declarations": ["input count", "local countPlural = count: plural"],
+					"selectors": ["countPlural"],
+					"match": {
+						"countPlural=other": "Tim pelatihan"
+					}
+				}
+			],
+			"former_teams": [
+				{
+					"declarations": ["input count", "local countPlural = count: plural"],
+					"selectors": ["countPlural"],
+					"match": {
+						"countPlural=other": "Tim sebelumnya"
+					}
+				}
+			]
+		}
+	}
 }

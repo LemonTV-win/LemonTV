@@ -7,7 +7,7 @@
 	import MatchCard from '$lib/components/MatchCard.svelte';
 	import SocialLinks from '$lib/components/SocialLinks.svelte';
 	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
-	import { getAllNames } from '$lib/data/players';
+	import { getAllNames, type PlayerTeam } from '$lib/data/players';
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 	import { MAP_NAMES } from '$lib/data/game';
@@ -113,6 +113,18 @@
 		};
 		tempImg.src = data.player?.avatarURL || data.player?.avatar || '';
 	});
+
+	function isActiveTeam(team: PlayerTeam) {
+		return team.role === 'active' && !team.endedOn;
+	}
+
+	function isCoachingTeam(team: PlayerTeam) {
+		return team.role === 'coach' && !team.endedOn;
+	}
+
+	function isFormerTeam(team: PlayerTeam) {
+		return !isActiveTeam(team) && !isCoachingTeam(team);
+	}
 </script>
 
 {#if data.player}
@@ -156,15 +168,71 @@
 							/>
 						</div>
 					{/if}
-					{#if data.player.teams}
+					{#if data.player.teams?.filter(isActiveTeam).length}
 						<div class="grid grid-cols-1 gap-4 py-4 sm:grid-cols-[auto_1fr]">
-							<h3 class="text-lg font-bold">{m.teams()}</h3>
+							<h3 class="text-lg font-bold">
+								{m['content.players.current_teams']({
+									count: data.player.teams.filter(isActiveTeam).length
+								})}
+							</h3>
 							<ul class="text-right">
-								{#each data.player.teams as team (team.slug)}
+								{#each data.player.teams.filter(isActiveTeam) as team (team.slug)}
 									{#if team}
 										<li>
 											<a href={`/teams/${team.slug}`} class="text-yellow-500 hover:text-yellow-400">
 												{team.name}
+												{#if team.role !== 'active'}
+													<span class="text-sm text-gray-400"> ({team.role})</span>
+												{/if}
+											</a>
+										</li>
+									{/if}
+								{/each}
+							</ul>
+						</div>
+					{/if}
+					{#if data.player.teams?.filter(isCoachingTeam).length}
+						<div class="grid grid-cols-1 gap-4 py-4 sm:grid-cols-[auto_1fr]">
+							<h3 class="text-lg font-bold">
+								{m['content.players.coaching_teams']({
+									count: data.player.teams.filter(isCoachingTeam).length
+								})}
+							</h3>
+							<ul class="text-right">
+								{#each data.player.teams.filter(isCoachingTeam) as team (team.slug)}
+									{#if team}
+										<li>
+											<a href={`/teams/${team.slug}`} class="text-yellow-500 hover:text-yellow-400">
+												{team.name}
+												{#if team.role !== 'coach'}
+													<span class="text-sm text-gray-400"> ({team.role})</span>
+												{/if}
+											</a>
+										</li>
+									{/if}
+								{/each}
+							</ul>
+						</div>
+					{/if}
+					{#if data.player.teams?.filter(isFormerTeam).length}
+						<div class="grid grid-cols-1 gap-4 py-4 sm:grid-cols-[auto_1fr]">
+							<h3 class="text-lg font-bold">
+								{m['content.players.former_teams']({
+									count: data.player.teams.filter(isFormerTeam).length
+								})}
+							</h3>
+							<ul class="text-right">
+								{#each data.player.teams.filter(isFormerTeam) as team (team.slug)}
+									{#if team}
+										<li>
+											<a href={`/teams/${team.slug}`} class="text-yellow-500 hover:text-yellow-400">
+												{team.name}
+												{#if team.role !== 'active'}
+													<span class="text-sm text-gray-400"> ({team.role})</span>
+												{/if}
+												{#if team.endedOn}
+													<span class="text-sm text-gray-400"> - {team.endedOn}</span>
+												{/if}
 											</a>
 										</li>
 									{/if}
@@ -188,7 +256,9 @@
 					</div>
 					<div class="rounded-lg bg-slate-800/50 p-4">
 						<div class="text-sm text-gray-400">{m.win_rate()}</div>
-						<div class="text-2xl font-bold text-white">{data.playerStats.winRate.toFixed(1)}%</div>
+						<div class="text-2xl font-bold text-white">
+							{data.playerStats.winRate.toFixed(1)}%
+						</div>
 					</div>
 					<div class="rounded-lg bg-slate-800/50 p-4">
 						<div class="text-sm text-gray-400">{m.games()}</div>
