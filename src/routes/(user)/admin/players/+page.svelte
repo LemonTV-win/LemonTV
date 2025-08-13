@@ -383,7 +383,7 @@
 	{/if}
 
 	{#if showHistoryModal}
-		<Modal show={true} title="Edit History" onClose={closeHistoryModal}>
+		<Modal show={true} title={m.edit_history()} onClose={closeHistoryModal}>
 			{#if selectedPlayer}
 				<EditHistory recordType="player" record={selectedPlayer} />
 			{/if}
