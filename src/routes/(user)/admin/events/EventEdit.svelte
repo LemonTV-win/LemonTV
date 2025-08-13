@@ -45,7 +45,13 @@
 		eventOrganizers: EventOrganizer[];
 		teams: Team[];
 		players: Player[];
-		teamPlayers: Array<{ teamId: string; playerId: string; role: string }>;
+		teamPlayers: Array<{
+			teamId: string;
+			playerId: string;
+			role: 'active' | 'substitute' | 'coach' | 'manager' | 'owner' | 'former';
+			startedOn?: string;
+			endedOn?: string;
+		}>;
 		onCancel: () => void;
 		onSuccess: () => void;
 	} = $props();

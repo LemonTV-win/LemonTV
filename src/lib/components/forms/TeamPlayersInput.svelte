@@ -7,6 +7,7 @@
 	import Combobox from '$lib/components/Combobox.svelte';
 	import type { Team, Player } from '$lib/server/db/schema';
 	import { SvelteSet } from 'svelte/reactivity';
+	import { isActive, isSubstitute, isCoaching } from '$lib/data/teams';
 
 	interface Props {
 		teams: Team[];
@@ -20,7 +21,9 @@
 		teamPlayers: Array<{
 			teamId: string;
 			playerId: string;
-			role: string;
+			role: 'active' | 'substitute' | 'coach' | 'manager' | 'owner' | 'former';
+			startedOn?: string;
+			endedOn?: string;
 		}>;
 	}
 
@@ -42,8 +45,10 @@
 	function addTeam(teamId: string) {
 		if (!selectedTeams.includes(teamId)) {
 			selectedTeams = [...selectedTeams, teamId];
-			// Only add players that belong to this team
-			const teamMembers = teamPlayers.filter((tp) => tp.teamId === teamId);
+			// Only add players that belong to this team AND are active, substitutes, or coaches
+			const teamMembers = teamPlayers.filter(
+				(tp) => tp.teamId === teamId && (isActive(tp) || isSubstitute(tp) || isCoaching(tp))
+			);
 			const newTeamPlayers = teamMembers
 				.filter(
 					(tp) =>
@@ -52,10 +57,12 @@
 				.map((tp) => {
 					// Find the player's existing role in other teams
 					const existingRole = eventTeamPlayers.find((etp) => etp.playerId === tp.playerId)?.role;
+					// Use the helper function to determine the appropriate role
+					const defaultRole = getEventRole(tp);
 					return {
 						teamId,
 						playerId: tp.playerId,
-						role: existingRole || ('main' as const)
+						role: existingRole || defaultRole
 					};
 				});
 			eventTeamPlayers = [...eventTeamPlayers, ...newTeamPlayers];
@@ -83,17 +90,28 @@
 	function addTeamPlayer(teamId: string) {
 		const teamMembers = players.filter(
 			(p) =>
-				teamPlayers.some((tp) => tp.playerId === p.id) &&
-				!eventTeamPlayers.some((etp) => etp.playerId === p.id)
+				teamPlayers.some(
+					(tp) =>
+						tp.playerId === p.id &&
+						tp.teamId === teamId &&
+						(isActive(tp) || isSubstitute(tp) || isCoaching(tp))
+				) && !eventTeamPlayers.some((etp) => etp.playerId === p.id)
 		);
-		eventTeamPlayers = [
-			...eventTeamPlayers,
-			{
-				teamId,
-				playerId: teamMembers?.length > 0 ? teamMembers[0].id : '',
-				role: 'main'
-			}
-		];
+
+		if (teamMembers.length > 0) {
+			const playerId = teamMembers[0].id;
+			const teamPlayer = teamPlayers.find((tp) => tp.teamId === teamId && tp.playerId === playerId);
+			const defaultRole = getEventRole(teamPlayer);
+
+			eventTeamPlayers = [
+				...eventTeamPlayers,
+				{
+					teamId,
+					playerId,
+					role: defaultRole
+				}
+			];
+		}
 	}
 
 	function removeTeamPlayer(teamPlayer: { teamId: string; playerId: string; role: string }) {
@@ -143,6 +161,15 @@
 		}
 
 		return validations.length > 0 ? validations : null;
+	}
+
+	// Helper function to determine the appropriate event role based on team player status
+	function getEventRole(teamPlayer: any | undefined): 'main' | 'sub' | 'coach' {
+		if (!teamPlayer) return 'main'; // Default for players not in team
+		if (isActive(teamPlayer)) return 'main';
+		if (isSubstitute(teamPlayer)) return 'sub';
+		if (isCoaching(teamPlayer)) return 'coach';
+		return 'main'; // Fallback
 	}
 </script>
 
