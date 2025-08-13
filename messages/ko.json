@@ -330,6 +330,9 @@
 	"total_players": "총 선수",
 	"live_events": "라이브 이벤트",
 	"rankings": "랭킹",
+	"news_and_announcements": "뉴스 및 공지사항",
+	"news_coming_soon": "곧 출시 예정",
+	"news_placeholder_description": "Strinova의 토너먼트, 팀, 선수에 대한 최신 업데이트, 공지사항, 뉴스를 계속 확인하세요.",
 	"editing": {
 		"history": {
 			"edit_history": "편집 기록",
