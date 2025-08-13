@@ -344,6 +344,9 @@
 			"last_edit": "Dernière Modification",
 			"edit_types": "Types de Modification",
 			"failed_to_load_history": "Échec du chargement de l'historique"
+		},
+		"batch": {
+			"batch_import": "Importation par lots"
 		}
 	},
 	"table_name": "Nom de la table",

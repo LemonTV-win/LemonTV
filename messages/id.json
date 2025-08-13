@@ -344,6 +344,9 @@
 			"last_edit": "Edit Terakhir",
 			"edit_types": "Jenis Edit",
 			"failed_to_load_history": "Gagal memuat riwayat"
+		},
+		"batch": {
+			"batch_import": "Import Batch"
 		}
 	},
 	"table_name": "Nama Tabel",

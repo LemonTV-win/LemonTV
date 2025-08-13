@@ -344,6 +344,9 @@
 			"last_edit": "Lần Chỉnh Sửa Cuối Cùng",
 			"edit_types": "Loại Chỉnh Sửa",
 			"failed_to_load_history": "Không thể tải lịch sử"
+		},
+		"batch": {
+			"batch_import": "Nhập hàng loạt"
 		}
 	},
 	"table_name": "Tên bảng",

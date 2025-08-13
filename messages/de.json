@@ -344,6 +344,9 @@
 			"last_edit": "Letzte Bearbeitung",
 			"edit_types": "Bearbeitungstypen",
 			"failed_to_load_history": "Fehler beim Laden des Verlaufs"
+		},
+		"batch": {
+			"batch_import": "Batch-Import"
 		}
 	},
 	"table_name": "Tabellenname",

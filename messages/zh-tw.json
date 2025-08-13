@@ -344,6 +344,9 @@
 			"last_edit": "最後編輯",
 			"edit_types": "編輯類型",
 			"failed_to_load_history": "載入歷史失敗"
+		},
+		"batch": {
+			"batch_import": "批量導入"
 		}
 	},
 	"table_name": "表名",

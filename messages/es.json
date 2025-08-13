@@ -344,6 +344,9 @@
 			"last_edit": "Última Edición",
 			"edit_types": "Tipos de Edición",
 			"failed_to_load_history": "Error al cargar el historial"
+		},
+		"batch": {
+			"batch_import": "Importación por lotes"
 		}
 	},
 	"table_name": "Nombre de la tabla",

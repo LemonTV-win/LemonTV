@@ -344,6 +344,9 @@
 			"last_edit": "마지막 편집",
 			"edit_types": "편집 유형",
 			"failed_to_load_history": "기록을 불러오는데 실패했습니다"
+		},
+		"batch": {
+			"batch_import": "배치 가져오기"
 		}
 	},
 	"table_name": "테이블 이름",

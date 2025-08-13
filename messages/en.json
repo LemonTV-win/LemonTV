@@ -393,6 +393,9 @@
 			"last_edit": "Last Edit",
 			"edit_types": "Edit Types",
 			"failed_to_load_history": "Failed to load history"
+		},
+		"batch": {
+			"batch_import": "Batch Import"
 		}
 	},
 	"table_name": "Table Name",

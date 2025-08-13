@@ -281,6 +281,9 @@
 			"last_edit": "最後の編集",
 			"edit_types": "編集タイプ",
 			"failed_to_load_history": "履歴の読み込みに失敗しました"
+		},
+		"batch": {
+			"batch_import": "バッチインポート"
 		}
 	},
 	"table_name": "テーブル名",
