@@ -12,6 +12,22 @@ export interface Player {
 	gameAccounts: GameAccount[];
 	socialAccounts?: SocialAccount[];
 	user?: User;
+	teams?: PlayerTeam[];
+}
+
+export interface PlayerTeam {
+	id: string;
+	name: string;
+	slug: string;
+	abbr: string | null;
+	logo: string | null;
+	region: string | null;
+	createdAt: string | null;
+	updatedAt: string | null;
+	role: 'active' | 'substitute' | 'former' | 'coach' | 'manager' | 'owner';
+	startedOn?: string;
+	endedOn?: string;
+	note?: string;
 }
 
 export interface GameAccount {

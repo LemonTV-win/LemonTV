@@ -156,18 +156,15 @@
 							/>
 						</div>
 					{/if}
-					{#if data.playerTeams}
+					{#if data.player.teams}
 						<div class="grid grid-cols-1 gap-4 py-4 sm:grid-cols-[auto_1fr]">
 							<h3 class="text-lg font-bold">{m.teams()}</h3>
 							<ul class="text-right">
-								{#each data.playerTeams as team (team.teams.slug)}
+								{#each data.player.teams as team (team.slug)}
 									{#if team}
 										<li>
-											<a
-												href={`/teams/${team.teams.slug}`}
-												class="text-yellow-500 hover:text-yellow-400"
-											>
-												{team.teams.name}
+											<a href={`/teams/${team.slug}`} class="text-yellow-500 hover:text-yellow-400">
+												{team.name}
 											</a>
 										</li>
 									{/if}

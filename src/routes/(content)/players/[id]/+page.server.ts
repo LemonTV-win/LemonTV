@@ -2,7 +2,6 @@ import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import {
 	getPlayer,
-	getPlayerTeams,
 	getServerPlayerStats,
 	getSocialPlatforms,
 	getServerPlayerDetailedMatches
@@ -107,7 +106,6 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 			...player,
 			avatarURL: playerAvatarURL
 		},
-		playerTeams: await getPlayerTeams(params.id),
 		playerEvents: serverEvents,
 		playerMatches: transformedMatches,
 		playerWins: serverStats.wins,

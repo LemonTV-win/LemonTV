@@ -9,7 +9,7 @@ import {
 	playerAdditionalNationality
 } from '$lib/server/db/schema';
 import { eq, or, and, inArray } from 'drizzle-orm';
-import type { Player } from '$lib/data/players';
+import type { Player, PlayerTeam } from '$lib/data/players';
 import { randomUUID } from 'node:crypto';
 import type { Team } from '$lib/data/teams';
 import type { Character, GameMap, Region } from '$lib/data/game';
@@ -256,6 +256,11 @@ export async function getPlayer(keyword: string): Promise<Player | null> {
 					platform: true
 				}
 			},
+			teamMemberships: {
+				with: {
+					team: true
+				}
+			},
 			user: {
 				with: {
 					roles: {
@@ -309,7 +314,22 @@ export async function getPlayer(keyword: string): Promise<Player | null> {
 								(role): role is 'admin' | 'editor' => role === 'admin' || role === 'editor'
 							) || []
 				}
-			: undefined
+			: undefined,
+		teams:
+			playerData.teamMemberships?.map((tm) => ({
+				id: tm.team.id,
+				name: tm.team.name,
+				slug: tm.team.slug,
+				abbr: tm.team.abbr || null,
+				logo: tm.team.logo || null,
+				region: (tm.team.region as Region) || null,
+				createdAt: tm.team.createdAt,
+				updatedAt: tm.team.updatedAt,
+				role: tm.role as PlayerTeam['role'],
+				startedOn: tm.startedOn || undefined,
+				endedOn: tm.endedOn || undefined,
+				note: tm.note || undefined
+			})) || []
 	};
 }
 
