@@ -79,7 +79,8 @@
 						"countPlural=other": "Former Teams"
 					}
 				}
-			]
+			],
+			"top_characters": "Top Used"
 		}
 	},
 	"name": "Name",

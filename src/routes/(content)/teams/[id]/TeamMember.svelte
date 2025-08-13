@@ -116,7 +116,7 @@
 
 					<!-- Win Rate -->
 					<div class="flex min-w-12 flex-col items-center rounded-sm bg-gray-700/50 px-1.5 py-1">
-						<span class="text-xs text-gray-400">WR</span>
+						<span class="text-xs text-gray-400">{m.win_rate()}</span>
 						<span class="text-sm font-medium text-green-300">
 							{Math.floor(Math.random() * 30) + 60}%
 						</span>
@@ -125,7 +125,7 @@
 
 				<!-- Right side: Top Characters (no decorations) -->
 				<div class="flex flex-col items-center">
-					<span class="mb-1 text-xs text-gray-400">Top Characters</span>
+					<span class="mb-1 text-xs text-gray-400">{m['content.players.top_characters']()}</span>
 					<div class="flex items-center -space-x-2">
 						{#each teamMemberStatistics[teamPlayer.player.id].characters
 							.toSorted((a, b) => b[1] - a[1])

@@ -680,7 +680,8 @@
 						"countPlural=other": "이전 팀"
 					}
 				}
-			]
+			],
+			"top_characters": "가장 많이 사용"
 		}
 	}
 }

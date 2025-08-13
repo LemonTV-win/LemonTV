@@ -683,7 +683,8 @@
 						"countPlural=other": "Колишні команди"
 					}
 				}
-			]
+			],
+			"top_characters": "Найчастіше"
 		}
 	}
 }
