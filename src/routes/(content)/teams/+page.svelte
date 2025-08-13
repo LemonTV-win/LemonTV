@@ -4,7 +4,7 @@
 	import { m } from '$lib/paraglide/messages.js';
 	import { onMount } from 'svelte';
 	import SearchInput from '$lib/components/SearchInput.svelte';
-	import TeamCard from '$lib/components/TeamCard.svelte';
+	import TeamCard from './TeamCard.svelte';
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 	import { goto } from '$app/navigation';
 	let { data }: PageProps = $props();
