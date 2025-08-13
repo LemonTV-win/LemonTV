@@ -197,7 +197,13 @@
 				})()}
 				teams={data.teams}
 				players={data.players}
-				teamPlayers={data.teamPlayers}
+				teamPlayers={data.teamPlayers.map((tp) => ({
+					teamId: tp.teamId,
+					playerId: tp.playerId,
+					role: tp.role as 'active' | 'substitute' | 'coach' | 'manager' | 'owner' | 'former',
+					startedOn: tp.startedOn || undefined,
+					endedOn: tp.endedOn || undefined
+				}))}
 				onCancel={handleCancel}
 				onSuccess={handleSuccess}
 			/>
