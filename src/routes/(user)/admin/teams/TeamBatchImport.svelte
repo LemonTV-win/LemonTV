@@ -131,6 +131,11 @@
 		new Set(existingTeams.map((team: { id: string; name: string; slug: string }) => team.slug))
 	);
 
+	// Get all existing team names for comparison
+	let existingTeamNames = $derived(
+		new Set(existingTeams.map((team: { id: string; name: string; slug: string }) => team.name))
+	);
+
 	// Check for duplicate slugs in parsed data (including against existing teams)
 	let duplicateSlugs = $derived.by(() => {
 		if (!parsedTeams || parsedTeams.type !== 'success') return [];
@@ -169,7 +174,46 @@
 		return duplicates;
 	});
 
+	// Check for duplicate team names in parsed data (including against existing teams)
+	let duplicateTeamNames = $derived.by(() => {
+		if (!parsedTeams || parsedTeams.type !== 'success') return [];
+
+		const nameCounts = new Map<string, string[]>();
+
+		// Count names within the parsed data
+		parsedTeams.data.forEach((team) => {
+			if (!nameCounts.has(team.name)) {
+				nameCounts.set(team.name, []);
+			}
+			nameCounts.get(team.name)!.push(team.slug || formatSlug(team.name));
+		});
+
+		const duplicates: string[] = [];
+
+		// Check for duplicates within parsed data
+		nameCounts.forEach((slugs, name) => {
+			if (slugs.length > 1) {
+				duplicates.push(`${name} (${slugs.join(', ')})`);
+			}
+		});
+
+		// Check for conflicts with existing teams
+		parsedTeams.data.forEach((team) => {
+			if (existingTeamNames.has(team.name)) {
+				const existingTeam = existingTeams.find(
+					(t: { id: string; name: string; slug: string }) => t.name === team.name
+				);
+				duplicates.push(
+					`${team.name} (conflicts with existing: ${existingTeam?.slug || 'Unknown'})`
+				);
+			}
+		});
+
+		return duplicates;
+	});
+
 	let hasDuplicateSlugs = $derived(duplicateSlugs.length > 0);
+	let hasDuplicateTeamNames = $derived(duplicateTeamNames.length > 0);
 
 	// Get duplicate slug values for highlighting (including existing teams)
 	let duplicateSlugValues = $derived.by(() => {
@@ -203,13 +247,48 @@
 		return duplicates;
 	});
 
+	// Get duplicate team name values for highlighting (including existing teams)
+	let duplicateTeamNameValues = $derived.by(() => {
+		if (!parsedTeams || parsedTeams.type !== 'success') return new Set<string>();
+
+		const nameCounts = new Map<string, number>();
+
+		// Count names within parsed data
+		parsedTeams.data.forEach((team) => {
+			nameCounts.set(team.name, (nameCounts.get(team.name) || 0) + 1);
+		});
+
+		const duplicates = new Set<string>();
+
+		// Check for duplicates within parsed data
+		nameCounts.forEach((count, name) => {
+			if (count > 1) {
+				duplicates.add(name);
+			}
+		});
+
+		// Check for conflicts with existing teams
+		parsedTeams.data.forEach((team: TeamImportData) => {
+			if (existingTeamNames.has(team.name)) {
+				duplicates.add(team.name);
+			}
+		});
+
+		return duplicates;
+	});
+
 	// Check if a team has a duplicate slug (including against existing teams)
 	function isDuplicateSlug(team: TeamImportData): boolean {
 		const slug = team.slug || formatSlug(team.name);
 		return duplicateSlugValues.has(slug);
 	}
 
-	// Get the reason for duplicate (internal or existing conflict)
+	// Check if a team has a duplicate name (including against existing teams)
+	function isDuplicateTeamName(team: TeamImportData): boolean {
+		return duplicateTeamNameValues.has(team.name);
+	}
+
+	// Get the reason for duplicate slug (internal or existing conflict)
 	function getDuplicateReason(team: TeamImportData): string {
 		if (!parsedTeams || parsedTeams.type !== 'success') return '';
 		const slug = team.slug || formatSlug(team.name);
@@ -240,12 +319,52 @@
 		return 'Unknown duplicate';
 	}
 
+	// Get the reason for duplicate team name (internal or existing conflict)
+	function getDuplicateTeamNameReason(team: TeamImportData): string {
+		if (!parsedTeams || parsedTeams.type !== 'success') return '';
+
+		// Check if it conflicts with existing teams
+		if (existingTeamNames.has(team.name)) {
+			const existingTeam = existingTeams.find(
+				(t: { id: string; name: string; slug: string }) => t.name === team.name
+			);
+			return `Conflicts with existing team: ${existingTeam?.slug || 'Unknown'}`;
+		}
+
+		// Check if it's duplicate within parsed data
+		const nameCounts = new Map<string, string[]>();
+		parsedTeams.data.forEach((t: TeamImportData) => {
+			if (!nameCounts.has(t.name)) {
+				nameCounts.set(t.name, []);
+			}
+			nameCounts.get(t.name)!.push(t.slug || formatSlug(t.name));
+		});
+
+		const slugs = nameCounts.get(team.name) || [];
+		if (slugs.length > 1) {
+			return `Duplicate within import: ${slugs.filter((s) => s !== (team.slug || formatSlug(team.name))).join(', ')}`;
+		}
+
+		return 'Unknown duplicate';
+	}
+
 	// Helper function to get existing team link for slug conflicts
 	function getExistingTeamLinkForSlug(team: TeamImportData): { id: string; name: string } | null {
 		const slug = team.slug || formatSlug(team.name);
 		if (existingSlugs.has(slug)) {
 			const existingTeam = existingTeams.find(
 				(t: { id: string; name: string; slug: string }) => t.slug === slug
+			);
+			return existingTeam ? { id: existingTeam.id, name: existingTeam.name } : null;
+		}
+		return null;
+	}
+
+	// Helper function to get existing team link for name conflicts
+	function getExistingTeamLinkForName(team: TeamImportData): { id: string; name: string } | null {
+		if (existingTeamNames.has(team.name)) {
+			const existingTeam = existingTeams.find(
+				(t: { id: string; name: string; slug: string }) => t.name === team.name
 			);
 			return existingTeam ? { id: existingTeam.id, name: existingTeam.name } : null;
 		}
@@ -408,9 +527,9 @@
 		return reasons.join('; ');
 	}
 
-	// Check if a team has any duplicates (slug)
+	// Check if a team has any duplicates (slug or name)
 	function hasAnyDuplicate(team: TeamImportData): boolean {
-		return isDuplicateSlug(team);
+		return isDuplicateSlug(team) || isDuplicateTeamName(team);
 	}
 
 	// Get all duplicate reasons for a team
@@ -421,10 +540,16 @@
 			reasons.push(getDuplicateReason(team));
 		}
 
+		if (isDuplicateTeamName(team)) {
+			reasons.push(getDuplicateTeamNameReason(team));
+		}
+
 		return reasons.join('; ');
 	}
 
-	let hasAnyDuplicates = $derived(hasDuplicateSlugs || hasNewPlayerDuplicates);
+	let hasAnyDuplicates = $derived(
+		hasDuplicateSlugs || hasDuplicateTeamNames || hasNewPlayerDuplicates
+	);
 
 	const TYPESCRIPT_SCHEMA = `// TypeScript schema for team data
 interface TeamImportData {
@@ -708,7 +833,12 @@ const teams: TeamImportData[] = [
 							<tbody>
 								{#each parsedTeams.data as team}
 									<tr class="border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl">
-										<td class="px-4 py-1 text-white">
+										<td
+											class="px-4 py-1 text-white {isDuplicateTeamName(team)
+												? 'bg-red-900/30'
+												: ''}"
+											title={isDuplicateTeamName(team) ? getDuplicateTeamNameReason(team) : ''}
+										>
 											{team.name}
 										</td>
 										<td
@@ -813,7 +943,7 @@ const teams: TeamImportData[] = [
 				</div>
 			{/if}
 
-			{#if parsedTeams && (hasDuplicateSlugs || hasNewPlayerDuplicates)}
+			{#if parsedTeams && (hasDuplicateSlugs || hasDuplicateTeamNames || hasNewPlayerDuplicates)}
 				<div class="mb-4 rounded-md border border-red-700 bg-red-900/50 p-3">
 					<div class="flex items-start gap-2">
 						<div class="mt-0.5 h-4 w-4 flex-shrink-0 rounded-full bg-red-500"></div>
@@ -883,6 +1013,50 @@ const teams: TeamImportData[] = [
 																</svg>
 															</a>
 															)
+														</li>
+													{/if}
+												{/each}
+											</ul>
+										</div>
+									</div>
+								{/if}
+
+								{@const duplicateTeamNames = parsedTeams.data.filter((t) => isDuplicateTeamName(t))}
+								{#if duplicateTeamNames.length > 0}
+									<div class="mt-2 rounded border border-red-600 bg-red-900/30 p-2">
+										<p class="mb-1 text-xs font-medium text-red-200">Duplicate team names</p>
+										<div class="styled-scroll max-h-32 overflow-y-auto">
+											<ul class="space-y-1 text-xs text-red-300">
+												{#each duplicateTeamNames as team}
+													{@const existingTeam = getExistingTeamLinkForName(team)}
+													{#if existingTeam}
+														<li class="flex items-center gap-2">
+															{team.name} (conflicts with existing:
+															<a
+																href="/teams/{existingTeam.id}"
+																target="_blank"
+																class="inline-flex items-center gap-1 text-yellow-400 hover:text-yellow-300 hover:underline"
+															>
+																{existingTeam.name}
+																<svg
+																	class="h-3 w-3"
+																	fill="none"
+																	stroke="currentColor"
+																	viewBox="0 0 24 24"
+																>
+																	<path
+																		stroke-linecap="round"
+																		stroke-linejoin="round"
+																		stroke-width="2"
+																		d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+																	/>
+																</svg>
+															</a>
+															)
+														</li>
+													{:else}
+														<li class="flex items-center gap-2">
+															{team.name} (duplicate within import)
 														</li>
 													{/if}
 												{/each}
