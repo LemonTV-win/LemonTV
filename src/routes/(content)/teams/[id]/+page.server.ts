@@ -7,6 +7,7 @@ import {
 	getTeamMemberStatistics,
 	getServerTeamDetailedMatches
 } from '$lib/server/data/teams';
+import { getAllPlayersRatings } from '$lib/server/data/players';
 import { error } from '@sveltejs/kit';
 import { processImageURL } from '$lib/server/storage';
 
@@ -18,6 +19,12 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 	}
 
 	const teams = await getTeams();
+
+	// Get all player ratings for global ranking
+	const allPlayerRatings = await getAllPlayersRatings();
+	const globalRankingByPlayerId = new Map(
+		allPlayerRatings.map((rating, index) => [rating.playerId, index + 1])
+	);
 
 	// Process player avatar URLs
 	const uniqueAvatarUrls = new Set<string>();
@@ -65,7 +72,8 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 				...teamPlayer,
 				avatarURL: teamPlayer.player.avatar
 					? avatarUrlMap.get(teamPlayer.player.avatar) || null
-					: null
+					: null,
+				globalRank: globalRankingByPlayerId.get(teamPlayer.player.id) ?? 0
 			}))
 		},
 		teams: new Map(teams.map((team) => [team.abbr ?? team.id ?? team.name ?? team.slug, team])), // TODO: remove this

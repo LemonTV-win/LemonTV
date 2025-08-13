@@ -71,7 +71,11 @@
 					{#each data.team.players
 						.filter((p) => p.teamPlayer.role === 'active')
 						.toSorted((a, b) => (data.teamMemberStatistics?.[b.player.id ?? '']?.rating ?? 0) - (data.teamMemberStatistics?.[a.player.id ?? '']?.rating ?? 0)) as teamPlayer (teamPlayer.player.id)}
-						<TeamMember {teamPlayer} teamMemberStatistics={data.teamMemberStatistics} />
+						<TeamMember
+							{teamPlayer}
+							teamMemberStatistics={data.teamMemberStatistics}
+							globalRank={teamPlayer.globalRank}
+						/>
 					{/each}
 				</ul>
 			{/if}
@@ -88,7 +92,11 @@
 					{#each data.team.players
 						.filter((p) => p.teamPlayer.role === 'substitute')
 						.toSorted((a, b) => (data.teamMemberStatistics?.[b.player.id ?? '']?.rating ?? 0) - (data.teamMemberStatistics?.[a.player.id ?? '']?.rating ?? 0)) as teamPlayer (teamPlayer.player.id)}
-						<TeamMember {teamPlayer} teamMemberStatistics={data.teamMemberStatistics} />
+						<TeamMember
+							{teamPlayer}
+							teamMemberStatistics={data.teamMemberStatistics}
+							globalRank={teamPlayer.globalRank}
+						/>
 					{/each}
 				</ul>
 			{/if}
@@ -103,7 +111,11 @@
 				</h2>
 				<ul class="flex flex-wrap gap-4">
 					{#each data.team.players.filter((p) => p.teamPlayer.role === 'coach') as teamPlayer (teamPlayer.player.id)}
-						<TeamMember {teamPlayer} teamMemberStatistics={data.teamMemberStatistics} />
+						<TeamMember
+							{teamPlayer}
+							teamMemberStatistics={data.teamMemberStatistics}
+							globalRank={teamPlayer.globalRank}
+						/>
 					{/each}
 				</ul>
 			{/if}
@@ -118,7 +130,11 @@
 				</h2>
 				<ul class="flex flex-wrap gap-4">
 					{#each data.team.players.filter((p) => p.teamPlayer.role === 'manager') as teamPlayer (teamPlayer.player.id)}
-						<TeamMember {teamPlayer} teamMemberStatistics={data.teamMemberStatistics} />
+						<TeamMember
+							{teamPlayer}
+							teamMemberStatistics={data.teamMemberStatistics}
+							globalRank={teamPlayer.globalRank}
+						/>
 					{/each}
 				</ul>
 			{/if}
@@ -133,7 +149,11 @@
 				</h2>
 				<ul class="flex flex-wrap gap-4">
 					{#each data.team.players.filter((p) => p.teamPlayer.role === 'owner') as teamPlayer (teamPlayer.player.id)}
-						<TeamMember {teamPlayer} teamMemberStatistics={data.teamMemberStatistics} />
+						<TeamMember
+							{teamPlayer}
+							teamMemberStatistics={data.teamMemberStatistics}
+							globalRank={teamPlayer.globalRank}
+						/>
 					{/each}
 				</ul>
 			{/if}
