@@ -212,7 +212,7 @@
 			<ContentActionLink href="/teams" type="view" />
 		</div>
 		<div class="flex gap-2">
-			{#if data.user?.roles.includes('admin')}
+			{#if ['admin', 'editor'].some((role) => data.user?.roles?.includes(role))}
 				<button
 					class="rounded-md bg-slate-700 px-4 py-2 font-medium text-white hover:bg-slate-600"
 					onclick={() => (showBatchImportModal = true)}
