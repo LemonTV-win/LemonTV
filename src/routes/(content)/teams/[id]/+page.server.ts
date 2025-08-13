@@ -21,9 +21,9 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 
 	// Process player avatar URLs
 	const uniqueAvatarUrls = new Set<string>();
-	for (const player of team.players || []) {
-		if (player.avatar) {
-			uniqueAvatarUrls.add(player.avatar);
+	for (const teamPlayer of team.players || []) {
+		if (teamPlayer.player.avatar) {
+			uniqueAvatarUrls.add(teamPlayer.player.avatar);
 		}
 	}
 
@@ -61,9 +61,11 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 		team: {
 			...team,
 			logoURL: team.logo ? await processImageURL(team.logo) : null,
-			players: team.players?.map((player) => ({
-				...player,
-				avatarURL: player.avatar ? avatarUrlMap.get(player.avatar) || null : null
+			players: team.players?.map((teamPlayer) => ({
+				...teamPlayer,
+				avatarURL: teamPlayer.player.avatar
+					? avatarUrlMap.get(teamPlayer.player.avatar) || null
+					: null
 			}))
 		},
 		teams: new Map(teams.map((team) => [team.abbr ?? team.id ?? team.name ?? team.slug, team])), // TODO: remove this

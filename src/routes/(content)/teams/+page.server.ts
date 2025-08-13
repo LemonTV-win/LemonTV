@@ -1,6 +1,5 @@
 import type { PageServerLoad } from './$types';
-import type { Team } from '$lib/data/teams';
-import type { Player } from '$lib/data/players';
+import type { Team, TeamPlayer } from '$lib/data/teams';
 import { getTeams, getServerTeamWins } from '$lib/server/data/teams';
 import { getAllPlayersRatings } from '$lib/server/data/players';
 import { processImageURL } from '$lib/server/storage';
@@ -24,9 +23,9 @@ export const load: PageServerLoad = async ({ url }) => {
 			uniqueLogoUrls.add(team.logo);
 		}
 		// Collect player avatar URLs
-		for (const player of team.players || []) {
-			if (player.avatar) {
-				uniqueAvatarUrls.add(player.avatar);
+		for (const teamPlayer of team.players || []) {
+			if (teamPlayer.player.avatar) {
+				uniqueAvatarUrls.add(teamPlayer.player.avatar);
 			}
 		}
 	}
@@ -55,15 +54,17 @@ export const load: PageServerLoad = async ({ url }) => {
 			...team,
 			logoURL: team.logo ? logoUrlMap.get(team.logo) || null : null,
 			wins: await getServerTeamWins(team.id),
-			players: team.players?.map((player) => ({
-				...player,
-				avatarURL: player.avatar ? avatarUrlMap.get(player.avatar) || null : null,
-				rating: ratingsByPlayerId.get(player.id) ?? 0
+			players: team.players?.map((teamPlayer) => ({
+				...teamPlayer,
+				avatarURL: teamPlayer.player.avatar
+					? avatarUrlMap.get(teamPlayer.player.avatar) || null
+					: null,
+				rating: ratingsByPlayerId.get(teamPlayer.player.id) ?? 0
 			}))
 		}))
 	)) as (Team & {
 		wins: number;
-		players: (Player & { rating: number; avatarURL: string | null })[];
+		players: (TeamPlayer & { rating: number; avatarURL: string | null })[];
 		logoURL: string | null;
 	})[];
 

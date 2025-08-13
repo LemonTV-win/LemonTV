@@ -5,18 +5,10 @@ import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { eq, or, inArray } from 'drizzle-orm';
 
-import type { Team } from '$lib/data/teams';
+import type { Team, TeamPlayer, TeamPlayerRole } from '$lib/data/teams';
 import type { Player } from '$lib/data/players';
 import type { User, UserRole } from '$lib/data/user';
 import type { TCountryCode } from 'countries-list';
-
-// Define TeamPlayer type inline to avoid import issues
-type TeamPlayer = Player & {
-	role: 'active' | 'substitute' | 'former' | 'coach' | 'manager' | 'owner';
-	startedOn?: string;
-	endedOn?: string;
-	note?: string;
-};
 
 import { randomUUID } from 'node:crypto';
 import { editHistory } from '$lib/server/db/schemas/edit-history';
@@ -38,7 +30,7 @@ export async function getTeamMemberStatistics(team: Team): Promise<Record<
 	// Get player IDs for this team
 	const playerIds = team.players
 		.filter(Boolean)
-		.map((player) => player.id)
+		.map((teamPlayer) => teamPlayer.player.id)
 		.filter(Boolean);
 
 	if (playerIds.length === 0) {
@@ -55,14 +47,14 @@ export async function getTeamMemberStatistics(team: Team): Promise<Record<
 	const result: Record<string, { kd: number; rating: number; characters: [Character, number][] }> =
 		{};
 
-	for (const player of team.players) {
-		if (!player.id) continue;
+	for (const teamPlayer of team.players) {
+		if (!teamPlayer.player.id) continue;
 
-		const kd = await getServerPlayerKD(player.id);
-		const characters = await getServerPlayerAgents(player.id);
-		const rating = ratingsByPlayerId.get(player.id) ?? 0;
+		const kd = await getServerPlayerKD(teamPlayer.player.id);
+		const characters = await getServerPlayerAgents(teamPlayer.player.id);
+		const rating = ratingsByPlayerId.get(teamPlayer.player.id) ?? 0;
 
-		result[player.id] = {
+		result[teamPlayer.player.id] = {
 			kd,
 			rating,
 			characters
@@ -72,9 +64,11 @@ export async function getTeamMemberStatistics(team: Team): Promise<Record<
 	return result;
 }
 
-export async function getTeams(): Promise<
-	(Team & { logoURL: string | null; playersWithRoles: TeamPlayer[] })[]
-> {
+export async function getTeams(): Promise<(Team & { logoURL: string | null })[]> {
+	return getTeamsFromRelations();
+}
+
+export async function getTeamsFromRelations(): Promise<(Team & { logoURL: string | null })[]> {
 	const totalStart = performance.now();
 	console.info('[Teams] Fetching all teams with relations');
 
@@ -122,8 +116,8 @@ export async function getTeams(): Promise<
 	// Process teams
 	const result = await Promise.all(
 		teamsWithRelations.map(async (teamWithRelations) => {
-			// Process players with roles
-			const playersWithRoles =
+			// Process players with the new structure
+			const players =
 				teamWithRelations.players
 					?.map((tp) => {
 						const player = tp.player;
@@ -143,11 +137,11 @@ export async function getTeams(): Promise<
 						}
 
 						// Process aliases
-						const aliases = player.aliases?.map((a) => a.alias) || [];
+						const aliases = player.aliases?.map((a: any) => a.alias) || [];
 
 						// Process game accounts
 						const gameAccounts =
-							player.gameAccounts?.map((ga) => ({
+							player.gameAccounts?.map((ga: any) => ({
 								server: ga.server as 'Strinova' | 'CalabiYau',
 								accountId: ga.accountId,
 								currentName: ga.currentName,
@@ -156,7 +150,7 @@ export async function getTeams(): Promise<
 
 						// Process social accounts
 						const socialAccounts =
-							player.socialAccounts?.map((sa) => ({
+							player.socialAccounts?.map((sa: any) => ({
 								platformId: sa.platformId,
 								accountId: sa.accountId,
 								overridingUrl: sa.overriding_url ?? undefined
@@ -165,7 +159,7 @@ export async function getTeams(): Promise<
 						// Process user and roles
 						let user: User | undefined;
 						if (player.user) {
-							const roles = player.user.roles?.map((ur) => ur.role.name as UserRole) || [];
+							const roles = player.user.roles?.map((ur: any) => ur.role.name as UserRole) || [];
 							user = {
 								id: player.user.id,
 								email: player.user.email,
@@ -174,7 +168,8 @@ export async function getTeams(): Promise<
 							};
 						}
 
-						return {
+						// Create the player object
+						const playerObj: Player = {
 							id: player.id,
 							name: player.name,
 							slug: player.slug ?? undefined,
@@ -183,7 +178,11 @@ export async function getTeams(): Promise<
 							aliases,
 							gameAccounts,
 							socialAccounts,
-							user,
+							user
+						};
+
+						// Create the team player role object
+						const teamPlayerRole: TeamPlayerRole = {
 							role:
 								(tp.role as 'active' | 'substitute' | 'former' | 'coach' | 'manager' | 'owner') ||
 								'active',
@@ -191,11 +190,17 @@ export async function getTeams(): Promise<
 							endedOn: tp.endedOn || undefined,
 							note: tp.note || undefined
 						};
+
+						// Return the new structure
+						return {
+							player: playerObj,
+							teamPlayer: teamPlayerRole
+						};
 					})
 					.filter((p): p is NonNullable<typeof p> => p !== null) || [];
 
 			// Process team aliases
-			const aliases = teamWithRelations.aliases?.map((a) => a.alias) || [];
+			const aliases = teamWithRelations.aliases?.map((a: any) => a.alias) || [];
 
 			// Process logoURL
 			const logoURL = teamWithRelations.logo ? await processImageURL(teamWithRelations.logo) : null;
@@ -209,18 +214,7 @@ export async function getTeams(): Promise<
 				logo: teamWithRelations.logo,
 				logoURL,
 				region: (teamWithRelations.region as Region) ?? undefined,
-				players: playersWithRoles.map((p) => ({
-					id: p.id,
-					name: p.name,
-					slug: p.slug,
-					avatar: p.avatar,
-					nationalities: p.nationalities,
-					aliases: p.aliases,
-					gameAccounts: p.gameAccounts,
-					socialAccounts: p.socialAccounts,
-					user: p.user
-				})),
-				playersWithRoles,
+				players,
 				aliases,
 				wins: allTeamWins[teamWithRelations.id] ?? 0,
 				createdAt: teamWithRelations.createdAt,
@@ -238,9 +232,7 @@ export async function getTeams(): Promise<
 	return result;
 }
 
-export async function getTeam(
-	slug: string
-): Promise<(Team & { logoURL: string | null; playersWithRoles: TeamPlayer[] }) | null> {
+export async function getTeam(slug: string): Promise<(Team & { logoURL: string | null }) | null> {
 	const totalStart = performance.now();
 	console.info('[Teams] Fetching team with relations:', slug);
 
@@ -288,8 +280,8 @@ export async function getTeam(
 	// Get team wins
 	const wins = await getServerTeamWins(teamWithRelations.id);
 
-	// Process players with roles
-	const playersWithRoles =
+	// Process players with the new structure
+	const players =
 		teamWithRelations.players
 			?.map((tp) => {
 				const player = tp.player;
@@ -340,7 +332,8 @@ export async function getTeam(
 					};
 				}
 
-				return {
+				// Create the player object
+				const playerObj: Player = {
 					id: player.id,
 					name: player.name,
 					slug: player.slug ?? undefined,
@@ -349,13 +342,23 @@ export async function getTeam(
 					aliases,
 					gameAccounts,
 					socialAccounts,
-					user,
+					user
+				};
+
+				// Create the team player role object
+				const teamPlayerRole: TeamPlayerRole = {
 					role:
 						(tp.role as 'active' | 'substitute' | 'former' | 'coach' | 'manager' | 'owner') ||
 						'active',
 					startedOn: tp.startedOn || undefined,
 					endedOn: tp.endedOn || undefined,
 					note: tp.note || undefined
+				};
+
+				// Return the new structure
+				return {
+					player: playerObj,
+					teamPlayer: teamPlayerRole
 				};
 			})
 			.filter((p): p is NonNullable<typeof p> => p !== null) || [];
@@ -364,7 +367,7 @@ export async function getTeam(
 	const aliases = teamWithRelations.aliases?.map((a: any) => a.alias) || [];
 
 	// Build the final team object
-	const fullTeam: Team & { logoURL: string | null; playersWithRoles: TeamPlayer[] } = {
+	const fullTeam: Team & { logoURL: string | null } = {
 		id: teamWithRelations.id,
 		name: teamWithRelations.name,
 		slug: teamWithRelations.slug,
@@ -372,18 +375,7 @@ export async function getTeam(
 		logo: teamWithRelations.logo,
 		logoURL: teamWithRelations.logo ? await processImageURL(teamWithRelations.logo) : null,
 		region: (teamWithRelations.region as Region) ?? undefined,
-		players: playersWithRoles.map((p) => ({
-			id: p.id,
-			name: p.name,
-			slug: p.slug,
-			avatar: p.avatar,
-			nationalities: p.nationalities,
-			aliases: p.aliases,
-			gameAccounts: p.gameAccounts,
-			socialAccounts: p.socialAccounts,
-			user: p.user
-		})),
-		playersWithRoles,
+		players,
 		aliases,
 		wins,
 		createdAt: teamWithRelations.createdAt,
@@ -394,7 +386,7 @@ export async function getTeam(
 	console.info(`[Teams] Relations processing took ${processingDuration.toFixed(2)}ms`);
 
 	const totalDuration = performance.now() - totalStart;
-	console.info(`[Teams] Total getTeamFromRelations took ${totalDuration.toFixed(2)}ms`);
+	console.info(`[Teams] Total getTeam took ${totalDuration.toFixed(2)}ms`);
 
 	return fullTeam;
 }

@@ -17,6 +17,8 @@
 			.filter((team) => team.name.toLowerCase().includes(search.toLowerCase()))
 	);
 
+	$inspect('[/teams] data', data);
+
 	$effect(() => {
 		const url = new URL(window.location.href);
 		if (search) {
