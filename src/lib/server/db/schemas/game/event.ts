@@ -49,6 +49,42 @@ export const eventOrganizer = sqliteTable(
 	(t) => [primaryKey({ columns: [t.eventId, t.organizerId] })]
 );
 
+export const eventTeam = sqliteTable(
+	'event_team',
+	{
+		eventId: text('event_id')
+			.references(() => event.id, { onDelete: 'cascade', onUpdate: 'cascade' })
+			.notNull(),
+		teamId: text('team_id')
+			.references(() => team.id, { onDelete: 'cascade', onUpdate: 'cascade' })
+			.notNull(),
+		entry: text('entry', {
+			enum: [
+				'open',
+				'invited',
+				'qualified',
+				'host',
+				'defending_champion',
+				'regional_slot',
+				'exhibition',
+				'wildcard'
+			]
+		})
+			.notNull()
+			.default('open'),
+		status: text('status', {
+			enum: ['active', 'disqualified', 'withdrawn']
+		})
+			.notNull()
+			.default('active'),
+		createdAt: integer('created_at', { mode: 'timestamp_ms' })
+			.notNull()
+			.default(sql`(unixepoch() * 1000)`),
+		updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
+	},
+	(t) => [primaryKey({ columns: [t.eventId, t.teamId] })]
+);
+
 export const eventTeamPlayer = sqliteTable(
 	'event_team_player',
 	{

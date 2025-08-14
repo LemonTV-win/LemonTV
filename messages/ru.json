@@ -705,7 +705,10 @@
 						}
 					}
 				]
-			}
+			},
+			"disqualified": "Дисквалифицированы",
+			"invited": "Приглашены",
+			"withdrawn": "Снялись"
 		},
 		"players": {
 			"current_teams": [

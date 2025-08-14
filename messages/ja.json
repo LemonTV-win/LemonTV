@@ -696,7 +696,10 @@
 						}
 					}
 				]
-			}
+			},
+			"disqualified": "失格",
+			"invited": "招待",
+			"withdrawn": "辞退"
 		},
 		"players": {
 			"current_teams": [

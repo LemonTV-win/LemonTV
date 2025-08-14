@@ -696,7 +696,10 @@
 						}
 					}
 				]
-			}
+			},
+			"disqualified": "Didiskualifikasi",
+			"invited": "Diundang",
+			"withdrawn": "Mengundurkan diri"
 		},
 		"players": {
 			"current_teams": [

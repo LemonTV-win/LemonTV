@@ -696,7 +696,10 @@
 						}
 					}
 				]
-			}
+			},
+			"disqualified": "取消資格",
+			"invited": "受邀",
+			"withdrawn": "退賽"
 		},
 		"players": {
 			"current_teams": [

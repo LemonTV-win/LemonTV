@@ -699,7 +699,10 @@
 						}
 					}
 				]
-			}
+			},
+			"disqualified": "Desclassificado",
+			"invited": "Convidado",
+			"withdrawn": "Retirado"
 		},
 		"players": {
 			"current_teams": [

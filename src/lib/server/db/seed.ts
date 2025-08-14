@@ -55,6 +55,8 @@ export async function seed() {
 	console.info('[SEED] - Deleted stage');
 	await db.delete(schema.eventTeamPlayer);
 	console.info('[SEED] - Deleted eventTeamPlayer');
+	await db.delete(schema.eventTeam);
+	console.info('[SEED] - Deleted eventTeam');
 	await db.delete(schema.eventOrganizer);
 	console.info('[SEED] - Deleted eventOrganizer');
 	await db.delete(schema.eventResult);
@@ -119,6 +121,55 @@ export async function seed() {
 
 	console.info('[SEED] Seeding event organizers...');
 	await db.insert(schema.eventOrganizer).values(EVENT_ORGANIZERS);
+
+	// Derive unique event-team pairs from EVENT_TEAM_PLAYERS and insert with default entry
+	console.info('[SEED] Seeding event teams...');
+	const EVENT_TEAMS: Array<typeof schema.eventTeam.$inferInsert> = Array.from(
+		new Map(
+			EVENT_TEAM_PLAYERS.map((etp) => [
+				`${etp.eventId}:${etp.teamId}`,
+				{
+					eventId: etp.eventId,
+					teamId: etp.teamId,
+					entry: 'open' as (typeof schema.eventTeam.$inferInsert)['entry'],
+					status: 'active' as (typeof schema.eventTeam.$inferInsert)['status']
+				}
+			])
+		).values()
+	);
+
+	// Showcase examples for UI: invited, disqualified, withdrawn
+	const EVENT_TEAM_OVERRIDES: Array<{
+		eventId: string;
+		teamId: string;
+		entry?:
+			| 'open'
+			| 'invited'
+			| 'qualified'
+			| 'host'
+			| 'defending_champion'
+			| 'regional_slot'
+			| 'exhibition'
+			| 'wildcard';
+		status?: 'active' | 'disqualified' | 'withdrawn';
+	}> = [
+		{ eventId: EVENTS[0].id, teamId: TEAMS[0].id, entry: 'invited', status: 'active' },
+		{ eventId: EVENTS[1].id, teamId: TEAMS[4].id, entry: 'invited', status: 'active' },
+		{ eventId: EVENTS[1].id, teamId: TEAMS[5].id, entry: 'qualified', status: 'disqualified' },
+		{ eventId: EVENTS[1].id, teamId: TEAMS[6].id, entry: 'open', status: 'withdrawn' }
+	];
+
+	for (const o of EVENT_TEAM_OVERRIDES) {
+		const idx = EVENT_TEAMS.findIndex((et) => et.eventId === o.eventId && et.teamId === o.teamId);
+		if (idx !== -1) {
+			EVENT_TEAMS[idx] = {
+				...EVENT_TEAMS[idx],
+				entry: o.entry ?? EVENT_TEAMS[idx].entry,
+				status: o.status ?? EVENT_TEAMS[idx].status
+			};
+		}
+	}
+	await db.insert(schema.eventTeam).values(EVENT_TEAMS);
 
 	console.info('[SEED] Seeding event team players...');
 	await db.insert(schema.eventTeamPlayer).values(EVENT_TEAM_PLAYERS);

@@ -5,7 +5,7 @@ import { db } from '../db';
 import * as table from '$lib/server/db/schema';
 import { processImageURL } from '$lib/server/storage';
 import type { Region } from '$lib/data/game';
-import { inArray, eq, or } from 'drizzle-orm';
+import { inArray, eq, or, and } from 'drizzle-orm';
 import type { EventParticipant, StageNode, Stage, EventResult } from '$lib/data/events';
 import type { Player } from '$lib/data/players';
 import { getPlayer } from '$lib/server/data/players';
@@ -401,17 +401,25 @@ export async function getEvent(id: string): Promise<AppEvent | undefined> {
 	const castersQueryDuration = performance.now() - castersQueryStart;
 	console.info(`[Events] Casters query took ${castersQueryDuration.toFixed(2)}ms`);
 
-	// Get event team players separately
+	// Get event team players and team meta (entry/status) separately
 	const teamPlayersQueryStart = performance.now();
 	const teamPlayers = await db
 		.select({
 			team: table.team,
 			player: table.player,
-			role: table.eventTeamPlayer.role
+			role: table.eventTeamPlayer.role,
+			eventTeam: table.eventTeam
 		})
 		.from(table.eventTeamPlayer)
 		.leftJoin(table.team, eq(table.team.id, table.eventTeamPlayer.teamId))
 		.leftJoin(table.player, eq(table.player.id, table.eventTeamPlayer.playerId))
+		.leftJoin(
+			table.eventTeam,
+			and(
+				eq(table.eventTeam.teamId, table.eventTeamPlayer.teamId),
+				eq(table.eventTeam.eventId, table.eventTeamPlayer.eventId)
+			)
+		)
 		.where(eq(table.eventTeamPlayer.eventId, eventData.event.id));
 	const teamPlayersQueryDuration = performance.now() - teamPlayersQueryStart;
 	console.info(`[Events] Team players query took ${teamPlayersQueryDuration.toFixed(2)}ms`);
@@ -606,9 +614,26 @@ export async function getEvent(id: string): Promise<AppEvent | undefined> {
 	}
 
 	// Group team players by team
-	const teamPlayersMap = new Map<string, { main: Player[]; reserve: Player[]; coach: Player[] }>();
+	const teamPlayersMap = new Map<
+		string,
+		{
+			main: Player[];
+			reserve: Player[];
+			coach: Player[];
+			entry?:
+				| 'open'
+				| 'invited'
+				| 'qualified'
+				| 'host'
+				| 'defending_champion'
+				| 'regional_slot'
+				| 'exhibition'
+				| 'wildcard';
+			status?: 'active' | 'disqualified' | 'withdrawn';
+		}
+	>();
 
-	teamPlayers.forEach(({ team, player, role }) => {
+	teamPlayers.forEach(({ team, player, role, eventTeam }) => {
 		if (!team || !player) return;
 
 		const fullPlayer = playerMap[player.id];
@@ -624,6 +649,11 @@ export async function getEvent(id: string): Promise<AppEvent | undefined> {
 			teamData.reserve.push(fullPlayer);
 		} else if (role === 'coach') {
 			teamData.coach.push(fullPlayer);
+		}
+
+		if (eventTeam) {
+			teamData.entry = eventTeam.entry as typeof teamData.entry;
+			teamData.status = eventTeam.status as typeof teamData.status;
 		}
 	});
 
@@ -653,7 +683,9 @@ export async function getEvent(id: string): Promise<AppEvent | undefined> {
 				team,
 				main: players.main,
 				reserve: players.reserve,
-				coach: players.coach
+				coach: players.coach,
+				entry: players.entry,
+				status: players.status
 			} as EventParticipant;
 		})
 	);

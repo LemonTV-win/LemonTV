@@ -66,6 +66,17 @@ export interface EventParticipant {
 	main: Player[];
 	reserve: Player[];
 	coach: Player[];
+	// Optional metadata from event_team table
+	entry?:
+		| 'open'
+		| 'invited'
+		| 'qualified'
+		| 'host'
+		| 'defending_champion'
+		| 'regional_slot'
+		| 'exhibition'
+		| 'wildcard';
+	status?: 'active' | 'disqualified' | 'withdrawn';
 }
 
 export interface Event {

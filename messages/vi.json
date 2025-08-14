@@ -696,7 +696,10 @@
 						}
 					}
 				]
-			}
+			},
+			"disqualified": "Bị loại",
+			"invited": "Được mời",
+			"withdrawn": "Rút lui"
 		},
 		"players": {
 			"current_teams": [

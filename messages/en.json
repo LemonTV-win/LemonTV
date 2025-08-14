@@ -92,7 +92,10 @@
 						}
 					}
 				]
-			}
+			},
+			"disqualified": "Disqualified",
+			"invited": "Invited",
+			"withdrawn": "Withdrawn"
 		},
 		"players": {
 			"current_teams": [
