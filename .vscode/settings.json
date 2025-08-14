@@ -8,5 +8,8 @@
 		".vscode",
 		".vscode-insiders",
 		"messages/**"
-	]
+	],
+	"files.exclude": {
+		".svelte-kit/**": true
+	}
 }
