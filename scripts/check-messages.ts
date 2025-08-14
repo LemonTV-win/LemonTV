@@ -75,6 +75,8 @@ const pluralRules: Record<string, string[]> = {
 };
 
 // Helper function to recursively extract all nested message IDs
+// - Includes simple string leaves (e.g., "content.teams.active_players")
+// - Includes Paraglide-style message nodes (arrays/objects with selectors/match or message)
 function extractMessageIDs(obj: any, prefix = ''): string[] {
 	const ids: string[] = [];
 
@@ -83,12 +85,44 @@ function extractMessageIDs(obj: any, prefix = ''): string[] {
 
 		const currentPath = prefix ? `${prefix}.${key}` : key;
 
-		if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-			// Recursively extract from nested objects
-			ids.push(...extractMessageIDs(value, currentPath));
-		} else if (typeof value === 'string') {
-			// This is a leaf node (actual translation)
+		// Case 1: Simple string leaf
+		if (typeof value === 'string') {
 			ids.push(currentPath);
+			continue;
+		}
+
+		// Case 2: Arrays - treat Paraglide message arrays as leaf IDs
+		if (Array.isArray(value)) {
+			const looksLikeMessageArray = value.some((item) => {
+				return (
+					item &&
+					typeof item === 'object' &&
+					!Array.isArray(item) &&
+					(('selectors' in item && 'match' in item) || typeof (item as any).message === 'string')
+				);
+			});
+
+			if (looksLikeMessageArray) {
+				ids.push(currentPath);
+			}
+
+			// Do not traverse into arrays to avoid generating index-based IDs
+			continue;
+		}
+
+		// Case 3: Objects - either Paraglide message objects or containers
+		if (typeof value === 'object' && value !== null) {
+			const looksLikeMessageObject =
+				('selectors' in value && 'match' in value && typeof (value as any).match === 'object') ||
+				typeof (value as any).message === 'string';
+
+			if (looksLikeMessageObject) {
+				ids.push(currentPath);
+				continue;
+			}
+
+			// Container object - recurse into children
+			ids.push(...extractMessageIDs(value, currentPath));
 		}
 	}
 
