@@ -18,7 +18,7 @@
 			playerId: string;
 			role: 'main' | 'sub' | 'coach';
 		}>;
-		eventTeams?: Array<{
+		eventTeams: Array<{
 			teamId: string;
 			entry:
 				| 'open'
@@ -49,7 +49,8 @@
 		teamPlayers
 	}: Props = $props();
 
-	$inspect('eventTeamPlayers', eventTeamPlayers);
+	$inspect('[TeamPlayersInput] eventTeamPlayers', eventTeamPlayers);
+	$inspect('[TeamPlayersInput] eventTeams', eventTeams);
 
 	// Track which teams are expanded
 	let expandedTeams = new SvelteSet<string>();
@@ -83,6 +84,25 @@
 		disqualified: m['content.teams.status.disqualified'],
 		withdrawn: m['content.teams.status.withdrawn']
 	};
+
+	function upsertEventTeamMeta(
+		teamId: string,
+		patch: Partial<{ entry: (typeof entryOptions)[number]; status: (typeof statusOptions)[number] }>
+	) {
+		const exists = eventTeams.some((et) => et.teamId === teamId);
+		if (exists) {
+			eventTeams = eventTeams.map((et) => (et.teamId === teamId ? { ...et, ...patch } : et));
+		} else {
+			eventTeams = [
+				...eventTeams,
+				{
+					teamId,
+					entry: (patch.entry ?? 'open') as (typeof entryOptions)[number],
+					status: (patch.status ?? 'active') as (typeof statusOptions)[number]
+				}
+			];
+		}
+	}
 
 	function addTeam(teamId: string) {
 		if (!selectedTeams.includes(teamId)) {
@@ -341,12 +361,11 @@
 							<select
 								id={`entry-${team.id}`}
 								class="min-w-32 rounded border border-slate-600 bg-slate-900 px-2 py-1 text-xs text-slate-200"
-								value={(eventTeams.find((et) => et.teamId === team.id) || {}).entry}
+								value={eventTeams.find((et) => et.teamId === team.id)?.entry ?? 'open'}
 								onchange={(e) => {
-									const et = eventTeams.find((x) => x.teamId === team.id);
-									if (et)
-										et.entry = (e.target as HTMLSelectElement)
-											.value as (typeof entryOptions)[number];
+									const newEntry = (e.target as HTMLSelectElement)
+										.value as (typeof entryOptions)[number];
+									upsertEventTeamMeta(team.id, { entry: newEntry });
 								}}
 							>
 								{#each entryOptions as entry (entry)}
@@ -359,12 +378,11 @@
 							<select
 								id={`status-${team.id}`}
 								class="min-w-32 rounded border border-slate-600 bg-slate-900 px-2 py-1 text-xs text-slate-200"
-								value={(eventTeams.find((et) => et.teamId === team.id) || {}).status}
+								value={eventTeams.find((et) => et.teamId === team.id)?.status ?? 'active'}
 								onchange={(e) => {
-									const et = eventTeams.find((x) => x.teamId === team.id);
-									if (et)
-										et.status = (e.target as HTMLSelectElement)
-											.value as (typeof statusOptions)[number];
+									const newStatus = (e.target as HTMLSelectElement)
+										.value as (typeof statusOptions)[number];
+									upsertEventTeamMeta(team.id, { status: newStatus });
 								}}
 							>
 								{#each statusOptions as status (status)}

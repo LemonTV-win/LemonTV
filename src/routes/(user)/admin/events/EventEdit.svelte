@@ -444,7 +444,14 @@
 
 		<section class="mb-6 flex flex-col gap-4">
 			<h3 class="text-lg font-semibold">{m.teams_and_players()}</h3>
-			<TeamPlayersInput {teams} {players} {teamPlayers} bind:selectedTeams bind:eventTeamPlayers />
+			<TeamPlayersInput
+				{teams}
+				{players}
+				{teamPlayers}
+				bind:selectedTeams
+				bind:eventTeamPlayers
+				bind:eventTeams
+			/>
 		</section>
 
 		<section class="mb-6 flex flex-col gap-4">
