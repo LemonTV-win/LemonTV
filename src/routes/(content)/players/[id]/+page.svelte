@@ -13,6 +13,7 @@
 	import { MAP_NAMES } from '$lib/data/game';
 	import PlayerAgents from './PlayerAgents.svelte';
 	import PlayerRadarGraph from '$lib/components/PlayerRadarGraph.svelte';
+	import PlayerNetWLGraph from './PlayerNetWLGraph.svelte';
 	import { onMount } from 'svelte';
 	import { safeGetTimestamp } from '$lib/utils/date';
 	import { isActive, isCoaching, isFormer } from '$lib/data/teams';
@@ -332,6 +333,8 @@
 			</div>
 
 			<PlayerRadarGraph playerStats={data.playerStats} />
+
+			<PlayerNetWLGraph playerStats={data.playerStats} playerMatches={data.playerMatches} />
 
 			{#if data.playerEvents}
 				<div class="md:col-span-3">
