@@ -43,7 +43,7 @@
 </script>
 
 <div class="space-y-4">
-	{#each results as result, index (result.teamId)}
+	{#each results as result, index (index)}
 		<div
 			class="grid grid-cols-[1fr_auto_auto_auto_auto] items-start gap-4 rounded-lg border border-slate-700 bg-slate-800 p-4"
 		>
