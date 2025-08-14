@@ -31,6 +31,19 @@
 	import EventResults from './EventResults.svelte';
 
 	let activeStage = $state<Stage | null>(data.initialStage ?? null);
+	const participantsSorted = $derived(
+		[...data.event.participants].sort((a, b) => {
+			const aStatusWeight = a.status === 'disqualified' || a.status === 'withdrawn' ? 1 : 0;
+			const bStatusWeight = b.status === 'disqualified' || b.status === 'withdrawn' ? 1 : 0;
+			if (aStatusWeight !== bStatusWeight) return aStatusWeight - bStatusWeight;
+
+			const aEntryWeight = a.entry === 'invited' ? 0 : 1;
+			const bEntryWeight = b.entry === 'invited' ? 0 : 1;
+			if (aEntryWeight !== bEntryWeight) return aEntryWeight - bEntryWeight;
+
+			return a.team.name.localeCompare(b.team.name);
+		})
+	);
 	// Update URL when activeStage changes
 	$effect(() => {
 		if (activeStage) {
@@ -221,7 +234,7 @@
 		<section>
 			<h2 class="my-4 text-2xl font-bold text-white">{m.attending_teams()}</h2>
 			<ul class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-				{#each [...data.event.participants, ...Array.from({ length: data.event.capacity - data.event.participants.length }, () => null)] as participant, idx (idx)}
+				{#each [...participantsSorted, ...Array.from({ length: data.event.capacity - data.event.participants.length }, () => null)] as participant, idx (idx)}
 					{#if participant}
 						<EventTeamCard {participant} />
 					{:else}
