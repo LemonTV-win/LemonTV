@@ -1,5 +1,6 @@
 <script lang="ts">
 	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import IconParkSolidPeoples from '~icons/icon-park-solid/peoples';
 
 	let {
@@ -31,6 +32,17 @@
 	} = $props();
 </script>
 
+{#snippet playerLink(player: { name: string; slug: string; nationalities: string[] })}
+	<a href={`/players/${player.slug}`} class="hover:text-yellow-500">
+		{#if player.nationalities?.length}
+			{#each player.nationalities as nationality, idx (idx)}
+				<NationalityFlag {nationality} />
+			{/each}
+		{/if}
+		{player.name}
+	</a>
+{/snippet}
+
 {#if participant?.team}
 	<li class="glass grid min-w-48 grid-cols-2 grid-rows-[auto_1fr] gap-2 p-4">
 		<h3 class="col-span-2 font-bold">
@@ -54,39 +66,29 @@
 			{#each participant.main as player, idx (idx)}
 				{#if player}
 					<li>
-						{#each player.nationalities as nationality, idx (idx)}
-							<NationalityFlag {nationality} />
-						{/each}
-						<a href={`/players/${player.slug}`} class="hover:text-yellow-500">
-							{player.name}
-						</a>
+						{@render playerLink(player)}
 					</li>
 				{/if}
 			{/each}
 			{#each participant.reserve as player, idx (idx)}
 				{#if player}
 					<li class="text-white/50">
-						{#each player.nationalities as nationality, idx (idx)}
-							<NationalityFlag {nationality} />
-						{/each}
-						<a href={`/players/${player.slug}`} class="hover:text-yellow-500">
-							{player.name}
-						</a>
+						{@render playerLink(player)}
+						<span class="text-xs text-white/50">({m['content.teams.substitute']()})</span>
 					</li>
 				{/if}
 			{/each}
-			{#each participant.coach as player, idx (idx)}
-				{#if player}
-					<li class="text-white/50">
-						{#each player.nationalities as nationality, idx (idx)}
-							<NationalityFlag {nationality} />
-						{/each}
-						<a href={`/players/${player.slug}`} class="hover:text-yellow-500">
-							({player.name})
-						</a>
-					</li>
-				{/if}
-			{/each}
+			{#if participant.coach?.length}
+				<hr class="my-2 border-white/10" />
+				{#each participant.coach as player, idx (idx)}
+					{#if player}
+						<li class="text-white/50">
+							{@render playerLink(player)}
+							<span class="text-xs text-white/50">({m['content.teams.coach']()})</span>
+						</li>
+					{/if}
+				{/each}
+			{/if}
 		</ul>
 	</li>
 {:else}
