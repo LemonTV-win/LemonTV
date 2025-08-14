@@ -731,6 +731,8 @@
 					"selectors": ["countPlural"],
 					"match": {
 						"countPlural=one": "Поточна команда",
+						"countPlural=few": "Поточні команди",
+						"countPlural=many": "Поточних команд",
 						"countPlural=other": "Поточні команди"
 					}
 				}
@@ -741,6 +743,8 @@
 					"selectors": ["countPlural"],
 					"match": {
 						"countPlural=one": "Команда тренування",
+						"countPlural=few": "Команди тренування",
+						"countPlural=many": "Команд тренування",
 						"countPlural=other": "Команди тренування"
 					}
 				}
@@ -751,6 +755,8 @@
 					"selectors": ["countPlural"],
 					"match": {
 						"countPlural=one": "Колишня команда",
+						"countPlural=few": "Колишні команди",
+						"countPlural=many": "Колишніх команд",
 						"countPlural=other": "Колишні команди"
 					}
 				}

@@ -731,6 +731,8 @@
 					"selectors": ["countPlural"],
 					"match": {
 						"countPlural=one": "Текущая команда",
+						"countPlural=few": "Текущие команды",
+						"countPlural=many": "Текущих команд",
 						"countPlural=other": "Текущие команды"
 					}
 				}
@@ -741,6 +743,8 @@
 					"selectors": ["countPlural"],
 					"match": {
 						"countPlural=one": "Команда тренера",
+						"countPlural=few": "Команды тренера",
+						"countPlural=many": "Команд тренера",
 						"countPlural=other": "Команды тренера"
 					}
 				}
@@ -751,6 +755,8 @@
 					"selectors": ["countPlural"],
 					"match": {
 						"countPlural=one": "Бывшая команда",
+						"countPlural=few": "Бывшие команды",
+						"countPlural=many": "Бывших команд",
 						"countPlural=other": "Бывшие команды"
 					}
 				}
