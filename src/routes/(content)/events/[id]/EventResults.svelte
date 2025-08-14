@@ -33,7 +33,7 @@
 
 <div class="relative">
 	<h2 class="my-4 text-2xl font-bold text-white">{m.results()}</h2>
-	<div class="flex h-100 items-end justify-center gap-6 px-4">
+	<div class="mb-8 flex h-100 items-end justify-center gap-6 px-4">
 		{#each podiumOrder as result, idx (idx)}
 			<div
 				class="glass flex min-w-72 flex-col items-center justify-between gap-2 p-4 {result.rank ===
