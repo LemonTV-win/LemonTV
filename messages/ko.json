@@ -698,6 +698,7 @@
 				]
 			},
 			"entry": {
+				"entry": "참가 방식",
 				"open": "오픈",
 				"invited": "초청",
 				"qualified": "예선 통과",
@@ -708,6 +709,7 @@
 				"wildcard": "와일드카드"
 			},
 			"status": {
+				"status": "상태",
 				"active": "참가 중",
 				"disqualified": "실격",
 				"withdrawn": "기권"

@@ -698,6 +698,7 @@
 				]
 			},
 			"entry": {
+				"entry": "Metode masuk",
 				"open": "Terbuka",
 				"invited": "Diundang",
 				"qualified": "Lolos kualifikasi",
@@ -708,6 +709,7 @@
 				"wildcard": "Wildcard"
 			},
 			"status": {
+				"status": "Status",
 				"active": "Aktif",
 				"disqualified": "Didiskualifikasi",
 				"withdrawn": "Mengundurkan diri"

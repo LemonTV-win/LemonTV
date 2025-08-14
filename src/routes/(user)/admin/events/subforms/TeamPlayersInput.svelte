@@ -333,7 +333,9 @@
 				{#if expandedTeams.has(team.id)}
 					<div class="border-t border-slate-700">
 						<div class="flex items-center gap-3 px-4 py-3 text-xs">
-							<label class="text-slate-400" for={`entry-${team.id}`}>Entry</label>
+							<label class="text-slate-400" for={`entry-${team.id}`}
+								>{m['content.teams.entry.entry']()}</label
+							>
 							<select
 								id={`entry-${team.id}`}
 								class="rounded border border-slate-600 bg-slate-900 px-2 py-1 text-slate-200"
@@ -349,7 +351,9 @@
 									<option value={entry}>{ENTRY_NAMES[entry]?.()}</option>
 								{/each}
 							</select>
-							<label class="ml-2 text-slate-400" for={`status-${team.id}`}>{m.status()}</label>
+							<label class="ml-2 text-slate-400" for={`status-${team.id}`}
+								>{m['content.teams.status.status']()}</label
+							>
 							<select
 								id={`status-${team.id}`}
 								class="rounded border border-slate-600 bg-slate-900 px-2 py-1 text-slate-200"

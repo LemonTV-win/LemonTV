@@ -701,6 +701,7 @@
 				]
 			},
 			"entry": {
+				"entry": "Modalidad de acceso",
 				"open": "Abierto",
 				"invited": "Invitado",
 				"qualified": "Clasificado",
@@ -711,6 +712,7 @@
 				"wildcard": "Wildcard"
 			},
 			"status": {
+				"status": "Estado",
 				"active": "Activo",
 				"disqualified": "Descalificado",
 				"withdrawn": "Retirado"

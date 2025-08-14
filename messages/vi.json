@@ -698,6 +698,7 @@
 				]
 			},
 			"entry": {
+				"entry": "Hình thức tham dự",
 				"open": "Mở",
 				"invited": "Được mời",
 				"qualified": "Vượt qua vòng loại",
@@ -708,6 +709,7 @@
 				"wildcard": "Suất đặc cách"
 			},
 			"status": {
+				"status": "Trạng thái",
 				"active": "Đang tham gia",
 				"disqualified": "Bị loại",
 				"withdrawn": "Rút lui"

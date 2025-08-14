@@ -698,6 +698,7 @@
 				]
 			},
 			"entry": {
+				"entry": "参加区分",
 				"open": "オープン",
 				"invited": "招待",
 				"qualified": "予選通過",
@@ -708,6 +709,7 @@
 				"wildcard": "ワイルドカード"
 			},
 			"status": {
+				"status": "ステータス",
 				"active": "参加中",
 				"disqualified": "失格",
 				"withdrawn": "辞退"

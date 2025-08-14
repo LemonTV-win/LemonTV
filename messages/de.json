@@ -701,6 +701,7 @@
 				]
 			},
 			"entry": {
+				"entry": "Teilnahmeart",
 				"open": "Offen",
 				"invited": "Eingeladen",
 				"qualified": "Qualifiziert",
@@ -711,6 +712,7 @@
 				"wildcard": "Wildcard"
 			},
 			"status": {
+				"status": "Status",
 				"active": "Aktiv",
 				"disqualified": "Disqualifiziert",
 				"withdrawn": "Zurückgezogen"

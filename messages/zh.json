@@ -698,8 +698,9 @@
 				]
 			},
 			"entry": {
+				"entry": "参赛方式",
 				"open": "公开报名",
-				"invited": "受邀",
+				"invited": "直邀",
 				"qualified": "通过预选",
 				"host": "主办方名额",
 				"defending_champion": "卫冕冠军",
@@ -708,6 +709,7 @@
 				"wildcard": "外卡"
 			},
 			"status": {
+				"status": "状态",
 				"active": "参赛中",
 				"disqualified": "取消资格",
 				"withdrawn": "退赛"

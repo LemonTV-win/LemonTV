@@ -94,6 +94,7 @@
 				]
 			},
 			"entry": {
+				"entry": "Entry",
 				"open": "Open",
 				"invited": "Invited",
 				"qualified": "Qualified",
@@ -104,6 +105,7 @@
 				"wildcard": "Wildcard"
 			},
 			"status": {
+				"status": "Status",
 				"active": "Active",
 				"disqualified": "Disqualified",
 				"withdrawn": "Withdrawn"
