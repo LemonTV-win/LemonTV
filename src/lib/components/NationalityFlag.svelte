@@ -19,8 +19,18 @@
 		class="font-emoji {className}"
 		title={`${nationality} - ${countryCodeToLocalizedName(nationality, getLocale())}`}
 	>
-		{#if nationality === 'TW' && getLocale() === 'zh'}
-			TW
+		{#if getLocale() === 'zh'}
+			{#if nationality === 'TW'}
+				TW
+			{:else if nationality === 'HK'}
+				{countryCodeToFlagEmoji('CN')}
+				{countryCodeToFlagEmoji('HK')}
+			{:else if nationality === 'MO'}
+				{countryCodeToFlagEmoji('CN')}
+				{countryCodeToFlagEmoji('MO')}
+			{:else}
+				{countryCodeToFlagEmoji(nationality)}
+			{/if}
 		{:else}
 			{countryCodeToFlagEmoji(nationality)}
 		{/if}
