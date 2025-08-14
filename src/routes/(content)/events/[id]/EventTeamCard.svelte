@@ -68,7 +68,7 @@
 	>
 		{#if participant.entry === 'invited'}
 			<span
-				class="pointer-events-none absolute top-6 -right-10 inline-flex rotate-35 items-center justify-center bg-gradient-to-r from-yellow-400 to-amber-500 px-16 py-1.5 text-sm leading-tight font-extrabold tracking-widest text-black uppercase shadow-[0_8px_30px_rgba(255,199,0,0.5)] ring-1 ring-yellow-200/80"
+				class="pointer-events-none absolute top-6 -right-15 inline-flex w-64 rotate-32 items-center justify-center bg-gradient-to-r from-yellow-400 to-amber-500 px-16 py-1.5 text-sm leading-tight font-extrabold tracking-widest text-black uppercase shadow-[0_8px_30px_rgba(255,199,0,0.5)] ring-1 ring-yellow-200/80"
 			>
 				{m['content.teams.entry.invited']()}
 			</span>
