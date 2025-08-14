@@ -4,12 +4,12 @@
 	import type { Event, Organizer, EventOrganizer, Team, Player } from '$lib/server/db/schema';
 	import { m } from '$lib/paraglide/messages';
 	import ImageUpload from '$lib/components/ImageUpload.svelte';
-	import VideoInput from '$lib/components/forms/VideoInput.svelte';
-	import ResultInput from '$lib/components/forms/ResultInput.svelte';
-	import WebsiteInput from '$lib/components/forms/WebsiteInput.svelte';
-	import TeamPlayersInput from '$lib/components/forms/TeamPlayersInput.svelte';
-	import OrganizerInput from '$lib/components/forms/OrganizerInput.svelte';
-	import CasterInput from '$lib/components/forms/CasterInput.svelte';
+	import VideoInput from './subforms/VideoInput.svelte';
+	import ResultInput from './subforms/ResultInput.svelte';
+	import WebsiteInput from './subforms/WebsiteInput.svelte';
+	import TeamPlayersInput from './subforms/TeamPlayersInput.svelte';
+	import OrganizerInput from './subforms/OrganizerInput.svelte';
+	import CasterInput from './subforms/CasterInput.svelte';
 	import type { EventResult } from '$lib/data/events';
 	import type { TCountryCode } from 'countries-list';
 	import { SITE_CANONICAL_HOST } from '$lib/consts';
