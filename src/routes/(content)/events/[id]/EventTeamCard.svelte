@@ -12,6 +12,7 @@
 				slug: string;
 				logoURL?: string | null;
 				region: string | null;
+				abbr: string | null;
 			} | null;
 			main: Array<null | {
 				name: string;
@@ -98,6 +99,9 @@
 				<a href={`/teams/${participant.team.slug}`} class="hover:text-yellow-500">
 					{participant.team.name}
 				</a>
+				{#if participant.team.abbr}
+					<span class="text-xs text-gray-300">({participant.team.abbr})</span>
+				{/if}
 			</h3>
 			<div class="flex flex-col items-center justify-center gap-2">
 				<a href={`/teams/${participant.team.slug}`} class="hover:text-yellow-500">
