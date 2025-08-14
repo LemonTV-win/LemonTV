@@ -697,9 +697,21 @@
 					}
 				]
 			},
-			"disqualified": "실격",
-			"invited": "초청",
-			"withdrawn": "기권"
+			"entry": {
+				"open": "오픈",
+				"invited": "초청",
+				"qualified": "예선 통과",
+				"host": "주최 측",
+				"defending_champion": "디펜딩 챔피언",
+				"regional_slot": "지역 쿼터",
+				"exhibition": "이벤트 매치",
+				"wildcard": "와일드카드"
+			},
+			"status": {
+				"active": "참가 중",
+				"disqualified": "실격",
+				"withdrawn": "기권"
+			}
 		},
 		"players": {
 			"current_teams": [

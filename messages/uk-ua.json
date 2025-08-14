@@ -706,9 +706,21 @@
 					}
 				]
 			},
-			"disqualified": "Дискваліфіковано",
-			"invited": "Запрошено",
-			"withdrawn": "Знято з участі"
+			"entry": {
+				"open": "Відкрита",
+				"invited": "Запрошення",
+				"qualified": "Кваліфікація",
+				"host": "Організатор",
+				"defending_champion": "Чинний чемпіон",
+				"regional_slot": "Регіональна квота",
+				"exhibition": "Показовий матч",
+				"wildcard": "Вайлдкард"
+			},
+			"status": {
+				"active": "Активні",
+				"disqualified": "Дискваліфіковано",
+				"withdrawn": "Знято з участі"
+			}
 		},
 		"players": {
 			"current_teams": [

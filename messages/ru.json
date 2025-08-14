@@ -706,9 +706,21 @@
 					}
 				]
 			},
-			"disqualified": "Дисквалифицированы",
-			"invited": "Приглашены",
-			"withdrawn": "Снялись"
+			"entry": {
+				"open": "Открытая",
+				"invited": "Приглашение",
+				"qualified": "Квалификация",
+				"host": "Хост",
+				"defending_champion": "Действующий чемпион",
+				"regional_slot": "Региональная квота",
+				"exhibition": "Эксгибиция",
+				"wildcard": "Вайлдкард"
+			},
+			"status": {
+				"active": "Активны",
+				"disqualified": "Дисквалифицированы",
+				"withdrawn": "Снялись"
+			}
 		},
 		"players": {
 			"current_teams": [

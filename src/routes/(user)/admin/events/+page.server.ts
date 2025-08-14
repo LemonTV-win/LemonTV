@@ -2,7 +2,7 @@ import { fail, error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { uploadImage } from '$lib/server/storage';
 import {
 	type CreateEventData,
@@ -102,6 +102,35 @@ async function handleTeamPlayersUpdate(eventId: string, playersData: string, use
 		return fail(500, {
 			error: 'Failed to update event team players'
 		});
+	}
+}
+
+// Helper to upsert eventTeams (entry/status)
+async function handleEventTeamsUpdate(eventId: string, teamsData: string) {
+	if (!eventId || !teamsData) return;
+	try {
+		const teams = JSON.parse(teamsData) as Array<{
+			teamId: string;
+			entry: (typeof table.eventTeam.$inferInsert)['entry'];
+			status: (typeof table.eventTeam.$inferInsert)['status'];
+		}>;
+
+		// For simplicity: delete existing for this event and insert new
+		await db.delete(table.eventTeam).where(eq(table.eventTeam.eventId, eventId));
+		if (teams.length > 0) {
+			await db.insert(table.eventTeam).values(
+				teams.map((t) => ({
+					eventId,
+					teamId: t.teamId,
+					entry: t.entry,
+					status: t.status,
+					createdAt: new Date()
+				}))
+			);
+		}
+	} catch (e) {
+		console.error('[Admin][Events][HandleEventTeamsUpdate] Failed:', e);
+		throw e;
 	}
 }
 
@@ -251,6 +280,12 @@ export const actions = {
 						}))
 					);
 				}
+			}
+
+			// Handle event teams meta
+			const eventTeamsData = formData.get('eventTeams') as string;
+			if (eventTeamsData) {
+				await handleEventTeamsUpdate(eventId, eventTeamsData);
 			}
 
 			// Handle team players
@@ -469,6 +504,12 @@ export const actions = {
 						}))
 					);
 				}
+			}
+
+			// Handle event teams meta
+			const eventTeamsData = formData.get('eventTeams') as string;
+			if (eventTeamsData) {
+				await handleEventTeamsUpdate(eventData.id, eventTeamsData);
 			}
 
 			// Handle team players

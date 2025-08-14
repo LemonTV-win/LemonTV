@@ -103,6 +103,23 @@
 		}>
 	>([]);
 
+	// Per-team metadata from event_team
+	let eventTeams = $state<
+		Array<{
+			teamId: string;
+			entry:
+				| 'open'
+				| 'invited'
+				| 'qualified'
+				| 'host'
+				| 'defending_champion'
+				| 'regional_slot'
+				| 'exhibition'
+				| 'wildcard';
+			status: 'active' | 'disqualified' | 'withdrawn';
+		}>
+	>([]);
+
 	// Track selected teams
 	let selectedTeams = $state<string[]>([]);
 
@@ -122,6 +139,20 @@
 				})
 				.catch((e) => {
 					console.error('Failed to load team players:', e);
+				});
+
+			// Load event team meta (entry/status)
+			fetch(`/api/events/${event.id}/teams`)
+				.then((res) => res.json())
+				.then((data) => {
+					eventTeams = (data || []).map((et: any) => ({
+						teamId: et.teamId,
+						entry: et.entry,
+						status: et.status
+					}));
+				})
+				.catch((e) => {
+					console.error('Failed to load event teams:', e);
 				});
 		}
 	});
@@ -206,6 +237,8 @@
 		formData.append('websites', JSON.stringify(newEvent.websites));
 		// Add team players data
 		formData.append('players', JSON.stringify(eventTeamPlayers));
+		// Add event teams (entry/status) data
+		formData.append('eventTeams', JSON.stringify(eventTeams));
 		// Add videos data
 		formData.append('videos', JSON.stringify(newEvent.videos));
 		// Add casters data

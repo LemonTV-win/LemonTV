@@ -697,9 +697,21 @@
 					}
 				]
 			},
-			"disqualified": "Bị loại",
-			"invited": "Được mời",
-			"withdrawn": "Rút lui"
+			"entry": {
+				"open": "Mở",
+				"invited": "Được mời",
+				"qualified": "Vượt qua vòng loại",
+				"host": "Chủ nhà",
+				"defending_champion": "Đương kim vô địch",
+				"regional_slot": "Suất khu vực",
+				"exhibition": "Biểu diễn",
+				"wildcard": "Suất đặc cách"
+			},
+			"status": {
+				"active": "Đang tham gia",
+				"disqualified": "Bị loại",
+				"withdrawn": "Rút lui"
+			}
 		},
 		"players": {
 			"current_teams": [

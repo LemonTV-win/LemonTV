@@ -700,9 +700,21 @@
 					}
 				]
 			},
-			"disqualified": "Desclassificado",
-			"invited": "Convidado",
-			"withdrawn": "Retirado"
+			"entry": {
+				"open": "Aberto",
+				"invited": "Convidado",
+				"qualified": "Classificado",
+				"host": "Anfitrião",
+				"defending_champion": "Campeão defensor",
+				"regional_slot": "Vaga regional",
+				"exhibition": "Exibição",
+				"wildcard": "Wildcard"
+			},
+			"status": {
+				"active": "Ativo",
+				"disqualified": "Desclassificado",
+				"withdrawn": "Retirado"
+			}
 		},
 		"players": {
 			"current_teams": [

@@ -18,6 +18,19 @@
 			playerId: string;
 			role: 'main' | 'sub' | 'coach';
 		}>;
+		eventTeams?: Array<{
+			teamId: string;
+			entry:
+				| 'open'
+				| 'invited'
+				| 'qualified'
+				| 'host'
+				| 'defending_champion'
+				| 'regional_slot'
+				| 'exhibition'
+				| 'wildcard';
+			status: 'active' | 'disqualified' | 'withdrawn';
+		}>;
 		teamPlayers: Array<{
 			teamId: string;
 			playerId: string;
@@ -32,6 +45,7 @@
 		players,
 		selectedTeams = $bindable([]),
 		eventTeamPlayers = $bindable([]),
+		eventTeams = $bindable([]),
 		teamPlayers
 	}: Props = $props();
 
@@ -41,10 +55,42 @@
 	let expandedTeams = new SvelteSet<string>();
 
 	const roleOptions = ['main', 'sub', 'coach'];
+	const entryOptions = [
+		'open',
+		'invited',
+		'qualified',
+		'host',
+		'defending_champion',
+		'regional_slot',
+		'exhibition',
+		'wildcard'
+	] as const;
+	const statusOptions = ['active', 'disqualified', 'withdrawn'] as const;
+
+	const ENTRY_NAMES: Record<(typeof entryOptions)[number], () => string> = {
+		open: m['content.teams.entry.open'],
+		invited: m['content.teams.entry.invited'],
+		qualified: m['content.teams.entry.qualified'],
+		host: m['content.teams.entry.host'],
+		defending_champion: m['content.teams.entry.defending_champion'],
+		regional_slot: m['content.teams.entry.regional_slot'],
+		exhibition: m['content.teams.entry.exhibition'],
+		wildcard: m['content.teams.entry.wildcard']
+	};
+
+	const STATUS_NAMES: Record<(typeof statusOptions)[number], () => string> = {
+		active: m['content.teams.status.active'],
+		disqualified: m['content.teams.status.disqualified'],
+		withdrawn: m['content.teams.status.withdrawn']
+	};
 
 	function addTeam(teamId: string) {
 		if (!selectedTeams.includes(teamId)) {
 			selectedTeams = [...selectedTeams, teamId];
+			// Ensure meta defaults exist
+			if (!eventTeams.some((et) => et.teamId === teamId)) {
+				eventTeams = [...eventTeams, { teamId, entry: 'open', status: 'active' }];
+			}
 			// Only add players that belong to this team AND are active, substitutes, or coaches
 			const teamMembers = teamPlayers.filter(
 				(tp) => tp.teamId === teamId && (isActive(tp) || isSubstitute(tp) || isCoaching(tp))
@@ -75,6 +121,8 @@
 		selectedTeams = selectedTeams.filter((id) => id !== teamId);
 		// Remove all players associated with this team
 		eventTeamPlayers = eventTeamPlayers.filter((tp) => tp.teamId !== teamId);
+		// Remove meta for this team
+		eventTeams = eventTeams.filter((et) => et.teamId !== teamId);
 		// Remove from expanded teams
 		expandedTeams.delete(teamId);
 	}
@@ -284,6 +332,40 @@
 
 				{#if expandedTeams.has(team.id)}
 					<div class="border-t border-slate-700">
+						<div class="flex items-center gap-3 px-4 py-3 text-xs">
+							<label class="text-slate-400" for={`entry-${team.id}`}>Entry</label>
+							<select
+								id={`entry-${team.id}`}
+								class="rounded border border-slate-600 bg-slate-900 px-2 py-1 text-slate-200"
+								value={(eventTeams.find((et) => et.teamId === team.id) || {}).entry}
+								onchange={(e) => {
+									const et = eventTeams.find((x) => x.teamId === team.id);
+									if (et)
+										et.entry = (e.target as HTMLSelectElement)
+											.value as (typeof entryOptions)[number];
+								}}
+							>
+								{#each entryOptions as entry (entry)}
+									<option value={entry}>{ENTRY_NAMES[entry]?.()}</option>
+								{/each}
+							</select>
+							<label class="ml-2 text-slate-400" for={`status-${team.id}`}>{m.status()}</label>
+							<select
+								id={`status-${team.id}`}
+								class="rounded border border-slate-600 bg-slate-900 px-2 py-1 text-slate-200"
+								value={(eventTeams.find((et) => et.teamId === team.id) || {}).status}
+								onchange={(e) => {
+									const et = eventTeams.find((x) => x.teamId === team.id);
+									if (et)
+										et.status = (e.target as HTMLSelectElement)
+											.value as (typeof statusOptions)[number];
+								}}
+							>
+								{#each statusOptions as status (status)}
+									<option value={status}>{STATUS_NAMES[status]?.()}</option>
+								{/each}
+							</select>
+						</div>
 						{#if eventTeamPlayers.filter((tp) => tp.teamId === team.id).length > 0}
 							<div class="divide-y divide-slate-700">
 								{#each eventTeamPlayers.filter((tp) => tp.teamId === team.id) as teamPlayer, index (teamPlayer.playerId)}

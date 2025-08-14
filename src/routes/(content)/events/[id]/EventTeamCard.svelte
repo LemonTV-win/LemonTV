@@ -69,21 +69,21 @@
 			<span
 				class="pointer-events-none absolute top-6 -right-10 inline-flex rotate-35 items-center justify-center bg-gradient-to-r from-yellow-400 to-amber-500 px-16 py-1.5 text-sm leading-tight font-extrabold tracking-widest text-black uppercase shadow-[0_8px_30px_rgba(255,199,0,0.5)] ring-1 ring-yellow-200/80"
 			>
-				{m['content.teams.invited']()}
+				{m['content.teams.entry.invited']()}
 			</span>
 		{/if}
 		{#if participant.status === 'disqualified'}
 			<span
 				class="pointer-events-none absolute top-3 left-2 z-10 -rotate-12 rounded border-2 border-red-600/70 bg-red-600/30 px-2 py-1 text-xl font-black tracking-widest text-red-600 uppercase shadow-[inset_0_0_0_1px_rgba(0,0,0,0.2)]"
 			>
-				{m['content.teams.disqualified']()}
+				{m['content.teams.status.disqualified']()}
 			</span>
 		{/if}
 		{#if participant.status === 'withdrawn'}
 			<span
 				class="pointer-events-none absolute top-3 left-2 z-10 -rotate-12 rounded border-2 border-red-600/70 bg-red-600/30 px-2 py-1 text-xl font-black tracking-widest text-red-600 uppercase shadow-[inset_0_0_0_1px_rgba(0,0,0,0.2)]"
 			>
-				{m['content.teams.withdrawn']()}
+				{m['content.teams.status.withdrawn']()}
 			</span>
 		{/if}
 

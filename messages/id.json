@@ -697,9 +697,21 @@
 					}
 				]
 			},
-			"disqualified": "Didiskualifikasi",
-			"invited": "Diundang",
-			"withdrawn": "Mengundurkan diri"
+			"entry": {
+				"open": "Terbuka",
+				"invited": "Diundang",
+				"qualified": "Lolos kualifikasi",
+				"host": "Tuan rumah",
+				"defending_champion": "Juara bertahan",
+				"regional_slot": "Kuota regional",
+				"exhibition": "Exhibisi",
+				"wildcard": "Wildcard"
+			},
+			"status": {
+				"active": "Aktif",
+				"disqualified": "Didiskualifikasi",
+				"withdrawn": "Mengundurkan diri"
+			}
 		},
 		"players": {
 			"current_teams": [

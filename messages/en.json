@@ -93,9 +93,21 @@
 					}
 				]
 			},
-			"disqualified": "Disqualified",
-			"invited": "Invited",
-			"withdrawn": "Withdrawn"
+			"entry": {
+				"open": "Open",
+				"invited": "Invited",
+				"qualified": "Qualified",
+				"host": "Host",
+				"defending_champion": "Defending Champion",
+				"regional_slot": "Regional Slot",
+				"exhibition": "Exhibition",
+				"wildcard": "Wildcard"
+			},
+			"status": {
+				"active": "Active",
+				"disqualified": "Disqualified",
+				"withdrawn": "Withdrawn"
+			}
 		},
 		"players": {
 			"current_teams": [

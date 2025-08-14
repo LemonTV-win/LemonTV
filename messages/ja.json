@@ -697,9 +697,21 @@
 					}
 				]
 			},
-			"disqualified": "失格",
-			"invited": "招待",
-			"withdrawn": "辞退"
+			"entry": {
+				"open": "オープン",
+				"invited": "招待",
+				"qualified": "予選通過",
+				"host": "主催枠",
+				"defending_champion": "前回優勝",
+				"regional_slot": "地域枠",
+				"exhibition": "エキシビション",
+				"wildcard": "ワイルドカード"
+			},
+			"status": {
+				"active": "参加中",
+				"disqualified": "失格",
+				"withdrawn": "辞退"
+			}
 		},
 		"players": {
 			"current_teams": [

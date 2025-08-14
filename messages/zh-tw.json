@@ -697,9 +697,21 @@
 					}
 				]
 			},
-			"disqualified": "取消資格",
-			"invited": "受邀",
-			"withdrawn": "退賽"
+			"entry": {
+				"open": "公開報名",
+				"invited": "受邀",
+				"qualified": "通過預選",
+				"host": "主辦方名額",
+				"defending_champion": "衛冕冠軍",
+				"regional_slot": "地區名額",
+				"exhibition": "表演賽",
+				"wildcard": "外卡"
+			},
+			"status": {
+				"active": "參賽中",
+				"disqualified": "取消資格",
+				"withdrawn": "退賽"
+			}
 		},
 		"players": {
 			"current_teams": [
