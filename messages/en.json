@@ -60,7 +60,39 @@
 			"coach": "Coach",
 			"manager": "Manager",
 			"owner": "Owner",
-			"former": "Former"
+			"former": "Former",
+			"member_count": {
+				"starters": [
+					{
+						"declarations": ["input count", "local countPlural = count: plural"],
+						"selectors": ["countPlural"],
+						"match": {
+							"countPlural=one": "Starter",
+							"countPlural=other": "Starters"
+						}
+					}
+				],
+				"reserves": [
+					{
+						"declarations": ["input count", "local countPlural = count: plural"],
+						"selectors": ["countPlural"],
+						"match": {
+							"countPlural=one": "Reserve",
+							"countPlural=other": "Reserves"
+						}
+					}
+				],
+				"coaches": [
+					{
+						"declarations": ["input count", "local countPlural = count: plural"],
+						"selectors": ["countPlural"],
+						"match": {
+							"countPlural=one": "Coach",
+							"countPlural=other": "Coaches"
+						}
+					}
+				]
+			}
 		},
 		"players": {
 			"current_teams": [

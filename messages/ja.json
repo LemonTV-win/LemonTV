@@ -667,7 +667,36 @@
 			"coach": "コーチ",
 			"manager": "マネージャー",
 			"owner": "オーナー",
-			"former": "元"
+			"former": "元",
+			"member_count": {
+				"starters": [
+					{
+						"declarations": ["input count", "local countPlural = count: plural"],
+						"selectors": ["countPlural"],
+						"match": {
+							"countPlural=other": "先発"
+						}
+					}
+				],
+				"reserves": [
+					{
+						"declarations": ["input count", "local countPlural = count: plural"],
+						"selectors": ["countPlural"],
+						"match": {
+							"countPlural=other": "控え"
+						}
+					}
+				],
+				"coaches": [
+					{
+						"declarations": ["input count", "local countPlural = count: plural"],
+						"selectors": ["countPlural"],
+						"match": {
+							"countPlural=other": "コーチ"
+						}
+					}
+				]
+			}
 		},
 		"players": {
 			"current_teams": [

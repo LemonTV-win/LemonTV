@@ -667,7 +667,36 @@
 			"coach": "Huấn luyện viên",
 			"manager": "Quản lý",
 			"owner": "Chủ sở hữu",
-			"former": "Cũ"
+			"former": "Cũ",
+			"member_count": {
+				"starters": [
+					{
+						"declarations": ["input count", "local countPlural = count: plural"],
+						"selectors": ["countPlural"],
+						"match": {
+							"countPlural=other": "Đá chính"
+						}
+					}
+				],
+				"reserves": [
+					{
+						"declarations": ["input count", "local countPlural = count: plural"],
+						"selectors": ["countPlural"],
+						"match": {
+							"countPlural=other": "Dự bị"
+						}
+					}
+				],
+				"coaches": [
+					{
+						"declarations": ["input count", "local countPlural = count: plural"],
+						"selectors": ["countPlural"],
+						"match": {
+							"countPlural=other": "Huấn luyện viên"
+						}
+					}
+				]
+			}
 		},
 		"players": {
 			"current_teams": [

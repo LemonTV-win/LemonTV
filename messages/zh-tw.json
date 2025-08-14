@@ -667,7 +667,36 @@
 			"coach": "教練",
 			"manager": "經理",
 			"owner": "擁有者",
-			"former": "前"
+			"former": "前",
+			"member_count": {
+				"starters": [
+					{
+						"declarations": ["input count", "local countPlural = count: plural"],
+						"selectors": ["countPlural"],
+						"match": {
+							"countPlural=other": "先發"
+						}
+					}
+				],
+				"reserves": [
+					{
+						"declarations": ["input count", "local countPlural = count: plural"],
+						"selectors": ["countPlural"],
+						"match": {
+							"countPlural=other": "替補"
+						}
+					}
+				],
+				"coaches": [
+					{
+						"declarations": ["input count", "local countPlural = count: plural"],
+						"selectors": ["countPlural"],
+						"match": {
+							"countPlural=other": "教練"
+						}
+					}
+				]
+			}
 		},
 		"players": {
 			"current_teams": [

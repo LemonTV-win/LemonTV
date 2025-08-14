@@ -667,7 +667,39 @@
 			"coach": "Trainer",
 			"manager": "Manager",
 			"owner": "Eigentümer",
-			"former": "Ehemalig"
+			"former": "Ehemalig",
+			"member_count": {
+				"starters": [
+					{
+						"declarations": ["input count", "local countPlural = count: plural"],
+						"selectors": ["countPlural"],
+						"match": {
+							"countPlural=one": "Starter",
+							"countPlural=other": "Starter"
+						}
+					}
+				],
+				"reserves": [
+					{
+						"declarations": ["input count", "local countPlural = count: plural"],
+						"selectors": ["countPlural"],
+						"match": {
+							"countPlural=one": "Reserve",
+							"countPlural=other": "Reserven"
+						}
+					}
+				],
+				"coaches": [
+					{
+						"declarations": ["input count", "local countPlural = count: plural"],
+						"selectors": ["countPlural"],
+						"match": {
+							"countPlural=one": "Trainer",
+							"countPlural=other": "Trainer"
+						}
+					}
+				]
+			}
 		},
 		"players": {
 			"current_teams": [

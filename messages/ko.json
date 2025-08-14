@@ -667,7 +667,36 @@
 			"coach": "코치",
 			"manager": "매니저",
 			"owner": "소유자",
-			"former": "이전"
+			"former": "이전",
+			"member_count": {
+				"starters": [
+					{
+						"declarations": ["input count", "local countPlural = count: plural"],
+						"selectors": ["countPlural"],
+						"match": {
+							"countPlural=other": "선발"
+						}
+					}
+				],
+				"reserves": [
+					{
+						"declarations": ["input count", "local countPlural = count: plural"],
+						"selectors": ["countPlural"],
+						"match": {
+							"countPlural=other": "교체 선수"
+						}
+					}
+				],
+				"coaches": [
+					{
+						"declarations": ["input count", "local countPlural = count: plural"],
+						"selectors": ["countPlural"],
+						"match": {
+							"countPlural=other": "코치"
+						}
+					}
+				]
+			}
 		},
 		"players": {
 			"current_teams": [

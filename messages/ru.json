@@ -667,7 +667,45 @@
 			"coach": "Тренер",
 			"manager": "Менеджер",
 			"owner": "Владелец",
-			"former": "Бывший"
+			"former": "Бывший",
+			"member_count": {
+				"starters": [
+					{
+						"declarations": ["input count", "local countPlural = count: plural"],
+						"selectors": ["countPlural"],
+						"match": {
+							"countPlural=one": "Стартовый игрок",
+							"countPlural=few": "Стартовых игрока",
+							"countPlural=many": "Стартовых игроков",
+							"countPlural=other": "Стартовые игроки"
+						}
+					}
+				],
+				"reserves": [
+					{
+						"declarations": ["input count", "local countPlural = count: plural"],
+						"selectors": ["countPlural"],
+						"match": {
+							"countPlural=one": "Запасной игрок",
+							"countPlural=few": "Запасных игрока",
+							"countPlural=many": "Запасных игроков",
+							"countPlural=other": "Запасные игроки"
+						}
+					}
+				],
+				"coaches": [
+					{
+						"declarations": ["input count", "local countPlural = count: plural"],
+						"selectors": ["countPlural"],
+						"match": {
+							"countPlural=one": "Тренер",
+							"countPlural=few": "Тренера",
+							"countPlural=many": "Тренеров",
+							"countPlural=other": "Тренеры"
+						}
+					}
+				]
+			}
 		},
 		"players": {
 			"current_teams": [

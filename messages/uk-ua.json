@@ -667,7 +667,45 @@
 			"coach": "Тренер",
 			"manager": "Менеджер",
 			"owner": "Власник",
-			"former": "Колишній"
+			"former": "Колишній",
+			"member_count": {
+				"starters": [
+					{
+						"declarations": ["input count", "local countPlural = count: plural"],
+						"selectors": ["countPlural"],
+						"match": {
+							"countPlural=one": "Стартовий гравець",
+							"countPlural=few": "Стартових гравці",
+							"countPlural=many": "Стартових гравців",
+							"countPlural=other": "Стартові гравці"
+						}
+					}
+				],
+				"reserves": [
+					{
+						"declarations": ["input count", "local countPlural = count: plural"],
+						"selectors": ["countPlural"],
+						"match": {
+							"countPlural=one": "Запасний гравець",
+							"countPlural=few": "Запасних гравці",
+							"countPlural=many": "Запасних гравців",
+							"countPlural=other": "Запасні гравці"
+						}
+					}
+				],
+				"coaches": [
+					{
+						"declarations": ["input count", "local countPlural = count: plural"],
+						"selectors": ["countPlural"],
+						"match": {
+							"countPlural=one": "Тренер",
+							"countPlural=few": "Тренери",
+							"countPlural=many": "Тренерів",
+							"countPlural=other": "Тренери"
+						}
+					}
+				]
+			}
 		},
 		"players": {
 			"current_teams": [

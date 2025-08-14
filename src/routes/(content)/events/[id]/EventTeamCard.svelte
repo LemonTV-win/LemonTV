@@ -30,6 +30,10 @@
 			}>;
 		};
 	} = $props();
+
+	const startersCount = $derived(participant?.main?.filter(Boolean).length ?? 0);
+	const subsCount = $derived(participant?.reserve?.filter(Boolean).length ?? 0);
+	const coachesCount = $derived(participant?.coach?.filter(Boolean).length ?? 0);
 </script>
 
 {#snippet playerLink(player: { name: string; slug: string; nationalities: string[] })}
@@ -44,8 +48,10 @@
 {/snippet}
 
 {#if participant?.team}
-	<li class="glass grid min-w-48 grid-cols-2 grid-rows-[auto_1fr] gap-2 p-4">
-		<h3 class="col-span-2 font-bold">
+	<li
+		class="glass group relative grid min-w-48 grid-cols-2 grid-rows-[auto_1fr_auto] gap-2 overflow-hidden border border-white/10 p-4 transition-all hover:-translate-y-0.5 hover:border-yellow-500/40 hover:shadow-[0_8px_30px_rgba(255,199,0,0.15)]"
+	>
+		<h3 class="col-span-2 text-lg font-bold md:text-xl">
 			<a href={`/teams/${participant.team.slug}`} class="hover:text-yellow-500">
 				{participant.team.name}
 			</a>
@@ -55,14 +61,27 @@
 				<img
 					src={participant.team.logoURL}
 					alt={participant.team.name}
-					class="h-24 w-24 rounded-full"
+					class="h-28 w-28 rounded-full ring-2 ring-white/10 transition group-hover:ring-yellow-400/50"
 				/>
 			{:else}
 				<IconParkSolidPeoples class="h-16 w-16 text-gray-300" />
 			{/if}
-			<span class="text-gray-400">({participant.team.region})</span>
+			{#if participant.team.region}
+				<span
+					class="mt-1 rounded-sm border border-white/10 bg-white/5 px-2 py-0.5 text-xs text-gray-300"
+				>
+					{participant.team.region}
+				</span>
+			{/if}
 		</div>
 		<ul class="text-sm">
+			{#if startersCount}
+				<li class="mb-1 text-xs tracking-wide text-white/60 uppercase">
+					{m['content.teams.member_count.starters']({
+						count: startersCount
+					})} ({startersCount})
+				</li>
+			{/if}
 			{#each participant.main as player, idx (idx)}
 				{#if player}
 					<li>
@@ -70,21 +89,32 @@
 					</li>
 				{/if}
 			{/each}
+			{#if subsCount}
+				<li class="my-2 h-px bg-white/10"></li>
+				<li class="mb-1 text-xs tracking-wide text-white/60 uppercase">
+					{m['content.teams.member_count.reserves']({
+						count: subsCount
+					})} ({subsCount})
+				</li>
+			{/if}
 			{#each participant.reserve as player, idx (idx)}
 				{#if player}
-					<li class="text-white/50">
+					<li>
 						{@render playerLink(player)}
-						<span class="text-xs text-white/50">({m['content.teams.substitute']()})</span>
 					</li>
 				{/if}
 			{/each}
 			{#if participant.coach?.length}
-				<hr class="my-2 border-white/10" />
+				<li class="my-2 h-px bg-white/10"></li>
+				<li class="mb-1 text-xs tracking-wide text-white/60 uppercase">
+					{m['content.teams.member_count.coaches']({
+						count: coachesCount
+					})} ({coachesCount})
+				</li>
 				{#each participant.coach as player, idx (idx)}
 					{#if player}
-						<li class="text-white/50">
+						<li>
 							{@render playerLink(player)}
-							<span class="text-xs text-white/50">({m['content.teams.coach']()})</span>
 						</li>
 					{/if}
 				{/each}

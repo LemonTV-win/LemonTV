@@ -667,7 +667,36 @@
 			"coach": "Pelatih",
 			"manager": "Manajer",
 			"owner": "Pemilik",
-			"former": "Mantan"
+			"former": "Mantan",
+			"member_count": {
+				"starters": [
+					{
+						"declarations": ["input count", "local countPlural = count: plural"],
+						"selectors": ["countPlural"],
+						"match": {
+							"countPlural=other": "Starter"
+						}
+					}
+				],
+				"reserves": [
+					{
+						"declarations": ["input count", "local countPlural = count: plural"],
+						"selectors": ["countPlural"],
+						"match": {
+							"countPlural=other": "Cadangan"
+						}
+					}
+				],
+				"coaches": [
+					{
+						"declarations": ["input count", "local countPlural = count: plural"],
+						"selectors": ["countPlural"],
+						"match": {
+							"countPlural=other": "Pelatih"
+						}
+					}
+				]
+			}
 		},
 		"players": {
 			"current_teams": [
