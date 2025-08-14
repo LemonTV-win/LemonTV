@@ -57,15 +57,17 @@
 			</a>
 		</h3>
 		<div class="flex flex-col items-center justify-center gap-2">
-			{#if participant.team.logoURL}
-				<img
-					src={participant.team.logoURL}
-					alt={participant.team.name}
-					class="h-28 w-28 rounded-full ring-2 ring-white/10 transition group-hover:ring-yellow-400/50"
-				/>
-			{:else}
-				<IconParkSolidPeoples class="h-16 w-16 text-gray-300" />
-			{/if}
+			<a href={`/teams/${participant.team.slug}`} class="hover:text-yellow-500">
+				{#if participant.team.logoURL}
+					<img
+						src={participant.team.logoURL}
+						alt={participant.team.name}
+						class="h-28 w-28 rounded-full ring-2 ring-white/10 transition group-hover:ring-yellow-400/50"
+					/>
+				{:else}
+					<IconParkSolidPeoples class="h-16 w-16 text-gray-300" />
+				{/if}
+			</a>
 			{#if participant.team.region}
 				<span
 					class="mt-1 rounded-sm border border-white/10 bg-white/5 px-2 py-0.5 text-xs text-gray-300"
