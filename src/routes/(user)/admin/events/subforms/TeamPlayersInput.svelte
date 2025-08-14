@@ -332,13 +332,15 @@
 
 				{#if expandedTeams.has(team.id)}
 					<div class="border-t border-slate-700">
-						<div class="flex items-center gap-3 px-4 py-3 text-xs">
+						<div
+							class="flex items-center gap-3 border-b border-slate-700 bg-slate-800 px-4 py-3 text-xs"
+						>
 							<label class="text-slate-400" for={`entry-${team.id}`}
 								>{m['content.teams.entry.entry']()}</label
 							>
 							<select
 								id={`entry-${team.id}`}
-								class="rounded border border-slate-600 bg-slate-900 px-2 py-1 text-slate-200"
+								class="min-w-32 rounded border border-slate-600 bg-slate-900 px-2 py-1 text-xs text-slate-200"
 								value={(eventTeams.find((et) => et.teamId === team.id) || {}).entry}
 								onchange={(e) => {
 									const et = eventTeams.find((x) => x.teamId === team.id);
@@ -356,7 +358,7 @@
 							>
 							<select
 								id={`status-${team.id}`}
-								class="rounded border border-slate-600 bg-slate-900 px-2 py-1 text-slate-200"
+								class="min-w-32 rounded border border-slate-600 bg-slate-900 px-2 py-1 text-xs text-slate-200"
 								value={(eventTeams.find((et) => et.teamId === team.id) || {}).status}
 								onchange={(e) => {
 									const et = eventTeams.find((x) => x.teamId === team.id);
