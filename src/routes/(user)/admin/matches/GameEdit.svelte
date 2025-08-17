@@ -11,6 +11,8 @@
 	import type { Character } from '$lib/data/game';
 	import { CHARACTERS, MAP_NAMES, MAPS } from '$lib/data/game';
 	import IconTrophy from '~icons/icon-park-solid/trophy';
+
+	import Modal from '$lib/components/Modal.svelte';
 	import { m } from '$lib/paraglide/messages';
 	import IconParkSolidAdd from '~icons/icon-park-solid/add';
 	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
@@ -237,25 +239,14 @@
 	$inspect('[admin/matches/GameEdit] compiledGameAccountIDMaps', compiledGameAccountIDMaps);
 </script>
 
-<form
-	method="POST"
-	action={data.game ? '?/updateGame' : '?/createGame'}
-	use:enhance={handleEnhance}
-	class="flex h-full flex-col"
+<Modal
+	show={true}
+	title={data?.game ? m.edit_game() : m.add_game()}
+	onClose={onCancel}
+	dismissible={false}
 >
-	<input type="hidden" name="matchId" value={data.matchId} />
-	{#if data.game}
-		<input type="hidden" name="id" value={data.game.id} />
-	{/if}
-
-	{#if errorMessage}
-		<div class="mb-4 rounded-md bg-red-900/50 p-4 text-red-200" role="alert">
-			<span class="block sm:inline">{errorMessage}</span>
-		</div>
-	{/if}
-
-	<div class="styled-scroll flex-1 space-y-4 overflow-y-auto pr-2">
-		<div class="mb-4 flex justify-end gap-2">
+	{#snippet actionArea()}
+		<div class="mr-4 flex items-center justify-end gap-2">
 			<button
 				type="button"
 				class="cursor-pointer rounded-md border border-slate-600 bg-slate-800 px-3 py-1 text-sm text-slate-300 hover:bg-slate-700"
@@ -271,386 +262,405 @@
 				{m.export_json_data()}
 			</button>
 		</div>
+	{/snippet}
+	<form
+		method="POST"
+		action={data.game ? '?/updateGame' : '?/createGame'}
+		use:enhance={handleEnhance}
+		class="flex h-full flex-col"
+	>
+		<input type="hidden" name="matchId" value={data.matchId} />
+		{#if data.game}
+			<input type="hidden" name="id" value={data.game.id} />
+		{/if}
 
-		<div class="grid grid-cols-2 gap-4">
-			<div>
-				<label class="block text-sm font-medium text-slate-300" for="mapId">{m.map()}</label>
-				<select
-					id="mapId"
-					name="mapId"
-					bind:value={formData.mapId}
-					class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-slate-300 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-					required
-				>
-					<option value="">{m.select_map()}</option>
-					{#each MAPS as map (map)}
-						<option value={map}>{MAP_NAMES[map]()}</option>
-					{/each}
-				</select>
+		{#if errorMessage}
+			<div class="mb-4 rounded-md bg-red-900/50 p-4 text-red-200" role="alert">
+				<span class="block sm:inline">{errorMessage}</span>
 			</div>
-			<div>
-				<label class="block text-sm font-medium text-slate-300" for="duration-sec"
-					>{m.duration()}</label
-				>
-				<MinuteSecondTimeInput
-					class="mt-1"
-					name="duration"
-					id="duration"
-					bind:value={formData.duration}
-				/>
+		{/if}
+
+		<div class="styled-scroll flex-1 space-y-4 overflow-y-auto pr-2">
+			<div class="grid grid-cols-2 gap-4">
+				<div>
+					<label class="block text-sm font-medium text-slate-300" for="mapId">{m.map()}</label>
+					<select
+						id="mapId"
+						name="mapId"
+						bind:value={formData.mapId}
+						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-slate-300 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+						required
+					>
+						<option value="">{m.select_map()}</option>
+						{#each MAPS as map (map)}
+							<option value={map}>{MAP_NAMES[map]()}</option>
+						{/each}
+					</select>
+				</div>
+				<div>
+					<label class="block text-sm font-medium text-slate-300" for="duration-sec"
+						>{m.duration()}</label
+					>
+					<MinuteSecondTimeInput
+						class="mt-1"
+						name="duration"
+						id="duration"
+						bind:value={formData.duration}
+					/>
+				</div>
 			</div>
-		</div>
-		<input type="hidden" name="winner" value={calculatedWinner} />
-		<!-- Teams editing -->
-		<fieldset>
-			<legend class="block text-sm font-medium text-slate-300">{m.teams()}</legend>
-			<div class="mt-2 grid grid-cols-2 gap-4">
-				{#each teamData as team, idx (idx)}
-					<input type="hidden" name={`gameTeams[${idx}].teamId`} value={team.teamId} />
-					<input type="hidden" name={`gameTeams[${idx}].position`} value={team.position} />
-					<div class="rounded-lg border border-slate-700 bg-slate-800 p-4">
-						<div class="mb-2 flex items-center gap-2 font-semibold text-slate-200">
-							{#if data.teams && data.teams[idx]?.logo}
-								<img
-									src={data.teams[idx].logo}
-									alt={data.teams[idx].name}
-									class="h-6 w-6 rounded"
+			<input type="hidden" name="winner" value={calculatedWinner} />
+			<!-- Teams editing -->
+			<fieldset>
+				<legend class="block text-sm font-medium text-slate-300">{m.teams()}</legend>
+				<div class="mt-2 grid grid-cols-2 gap-4">
+					{#each teamData as team, idx (idx)}
+						<input type="hidden" name={`gameTeams[${idx}].teamId`} value={team.teamId} />
+						<input type="hidden" name={`gameTeams[${idx}].position`} value={team.position} />
+						<div class="rounded-lg border border-slate-700 bg-slate-800 p-4">
+							<div class="mb-2 flex items-center gap-2 font-semibold text-slate-200">
+								{#if data.teams && data.teams[idx]?.logo}
+									<img
+										src={data.teams[idx].logo}
+										alt={data.teams[idx].name}
+										class="h-6 w-6 rounded"
+									/>
+								{/if}
+								<span
+									>{data.teams && data.teams[idx]?.name
+										? data.teams[idx].name
+										: idx === 0
+											? m.team_a()
+											: m.team_b()}</span
+								>
+								{#if calculatedWinner === idx.toString()}
+									<IconTrophy class="h-4 w-4 text-yellow-500" />
+								{/if}
+							</div>
+							<div>
+								<label class="block text-xs text-slate-400" for={`gameTeams[${idx}].score`}>
+									{m.score()}
+								</label>
+								<input
+									type="number"
+									id={`gameTeams[${idx}].score`}
+									name={`gameTeams[${idx}].score`}
+									bind:value={team.score}
+									class={[
+										'mt-1 block w-full rounded border px-2 py-1 text-slate-200 ',
+										calculatedWinner === idx.toString()
+											? 'border-yellow-500 bg-yellow-500/10'
+											: calculatedWinner !== '' && calculatedWinner !== idx.toString()
+												? 'border-red-500 bg-red-500/10'
+												: 'border-slate-700 bg-slate-900'
+									]}
+									required
 								/>
-							{/if}
-							<span
-								>{data.teams && data.teams[idx]?.name
-									? data.teams[idx].name
-									: idx === 0
-										? m.team_a()
-										: m.team_b()}</span
-							>
-							{#if calculatedWinner === idx.toString()}
-								<IconTrophy class="h-4 w-4 text-yellow-500" />
-							{/if}
+							</div>
 						</div>
-						<div>
-							<label class="block text-xs text-slate-400" for={`gameTeams[${idx}].score`}>
-								{m.score()}
-							</label>
-							<input
-								type="number"
-								id={`gameTeams[${idx}].score`}
-								name={`gameTeams[${idx}].score`}
-								bind:value={team.score}
-								class={[
-									'mt-1 block w-full rounded border px-2 py-1 text-slate-200 ',
-									calculatedWinner === idx.toString()
-										? 'border-yellow-500 bg-yellow-500/10'
-										: calculatedWinner !== '' && calculatedWinner !== idx.toString()
-											? 'border-red-500 bg-red-500/10'
-											: 'border-slate-700 bg-slate-900'
-								]}
-								required
-							/>
-						</div>
-					</div>
-				{/each}
+					{/each}
+				</div>
+			</fieldset>
+			<!-- Player scores editing -->
+			<div class="mb-4 flex items-center justify-between">
+				<h3 class="text-sm font-medium text-slate-300">{m.player_scores()}</h3>
 			</div>
-		</fieldset>
-		<!-- Player scores editing -->
-		<div class="mb-4 flex items-center justify-between">
-			<h3 class="text-sm font-medium text-slate-300">{m.player_scores()}</h3>
-		</div>
-		{#snippet playerScoreInput(
-			team: 'A' | 'B',
-			ps: {
-				accountId: number;
-				player: string;
-				characterFirstHalf: string | null;
-				characterSecondHalf: string | null;
-				score: number;
-				damageScore: number;
-				kills: number;
-				knocks: number;
-				deaths: number;
-				assists: number;
-				damage: number;
-			},
-			idx: number,
-			availableCharactersFirstHalf: readonly Character[],
-			availableCharactersSecondHalf: readonly Character[]
-		)}
-			<div class="flex flex-col gap-1 rounded bg-slate-900 p-2">
-				<AccountIdCombobox
-					value={ps.accountId}
-					options={new Map(
-						Array.from(compiledGameAccountIDMaps[team === 'A' ? 0 : 1].entries()).map(
-							([accountId, roster]) => {
-								// Find the specific game account to get the server
-								const account = roster.player.gameAccounts.find((a) => a.accountId === accountId);
-								const serverName =
-									account?.server === 'Strinova' ? m.strinova_server() : m.calabiyau_server();
-								return [
-									accountId,
-									`${roster.player.name} ${roster.player.aliases.map((a) => `(${a})`).join(' ')} (${serverName})`
-								];
-							}
-						)
-					)}
-					placeholder={m.enter_account_id()}
-					name={`playerScores${team}[${idx}].accountId`}
-					onchange={(value) => {
-						ps.accountId = value;
-						if (!ps.player) {
-							const roster = compiledGameAccountIDMaps[team === 'A' ? 0 : 1].get(value);
-							if (roster) {
-								const account = roster.player.gameAccounts.find((a) => a.accountId === value);
-								if (account) {
-									ps.player = account.currentName;
+			{#snippet playerScoreInput(
+				team: 'A' | 'B',
+				ps: {
+					accountId: number;
+					player: string;
+					characterFirstHalf: string | null;
+					characterSecondHalf: string | null;
+					score: number;
+					damageScore: number;
+					kills: number;
+					knocks: number;
+					deaths: number;
+					assists: number;
+					damage: number;
+				},
+				idx: number,
+				availableCharactersFirstHalf: readonly Character[],
+				availableCharactersSecondHalf: readonly Character[]
+			)}
+				<div class="flex flex-col gap-1 rounded bg-slate-900 p-2">
+					<AccountIdCombobox
+						value={ps.accountId}
+						options={new Map(
+							Array.from(compiledGameAccountIDMaps[team === 'A' ? 0 : 1].entries()).map(
+								([accountId, roster]) => {
+									// Find the specific game account to get the server
+									const account = roster.player.gameAccounts.find((a) => a.accountId === accountId);
+									const serverName =
+										account?.server === 'Strinova' ? m.strinova_server() : m.calabiyau_server();
+									return [
+										accountId,
+										`${roster.player.name} ${roster.player.aliases.map((a) => `(${a})`).join(' ')} (${serverName})`
+									];
+								}
+							)
+						)}
+						placeholder={m.enter_account_id()}
+						name={`playerScores${team}[${idx}].accountId`}
+						onchange={(value) => {
+							ps.accountId = value;
+							if (!ps.player) {
+								const roster = compiledGameAccountIDMaps[team === 'A' ? 0 : 1].get(value);
+								if (roster) {
+									const account = roster.player.gameAccounts.find((a) => a.accountId === value);
+									if (account) {
+										ps.player = account.currentName;
+									}
 								}
 							}
-						}
-					}}
-				/>
-				<div class="flex gap-1">
-					<input
-						type="text"
-						name={`playerScores${team}[${idx}].player`}
-						bind:value={ps.player}
-						placeholder={m.player()}
-						class="col-span-2 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-						required
+						}}
 					/>
-					<CharacterSelect
-						value={ps.characterFirstHalf as Character | null}
-						onChange={(v) => (ps.characterFirstHalf = v)}
-						name={`playerScores${team}[${idx}].characterFirstHalf`}
-						class="col-span-1"
-						characters={availableCharactersFirstHalf}
-					/>
-					<CharacterSelect
-						value={ps.characterSecondHalf as Character | null}
-						onChange={(v) => (ps.characterSecondHalf = v)}
-						name={`playerScores${team}[${idx}].characterSecondHalf`}
-						class="col-span-1"
-						characters={availableCharactersSecondHalf}
-					/>
-				</div>
-				<div class="grid grid-cols-7 gap-1">
-					<input
-						type="number"
-						name={`playerScores${team}[${idx}].score`}
-						bind:value={ps.score}
-						placeholder={m.performance_score()}
-						title={m.performance_score()}
-						onfocus={(e) => e.currentTarget.select()}
-						class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-					/>
-					<input
-						type="number"
-						name={`playerScores${team}[${idx}].damageScore`}
-						bind:value={ps.damageScore}
-						placeholder={m.damage_score()}
-						title={m.damage_score()}
-						onfocus={(e) => e.currentTarget.select()}
-						class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-					/>
-					<input
-						type="number"
-						name={`playerScores${team}[${idx}].kills`}
-						bind:value={ps.kills}
-						placeholder={m.kills()}
-						title={m.kills()}
-						onfocus={(e) => e.currentTarget.select()}
-						class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-					/>
-					<input
-						type="number"
-						name={`playerScores${team}[${idx}].knocks`}
-						bind:value={ps.knocks}
-						placeholder={m.knocks()}
-						title={m.knocks()}
-						onfocus={(e) => e.currentTarget.select()}
-						class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-					/>
-					<input
-						type="number"
-						name={`playerScores${team}[${idx}].deaths`}
-						bind:value={ps.deaths}
-						placeholder={m.deaths()}
-						title={m.deaths()}
-						onfocus={(e) => e.currentTarget.select()}
-						class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-					/>
-					<input
-						type="number"
-						name={`playerScores${team}[${idx}].assists`}
-						bind:value={ps.assists}
-						placeholder={m.assists()}
-						title={m.assists()}
-						onfocus={(e) => e.currentTarget.select()}
-						class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-					/>
-					<input
-						type="number"
-						name={`playerScores${team}[${idx}].damage`}
-						bind:value={ps.damage}
-						placeholder={m.damage()}
-						title={m.damage()}
-						onfocus={(e) => e.currentTarget.select()}
-						class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-					/>
-				</div>
-			</div>
-		{/snippet}
-		<div>
-			<h3 class="block text-sm font-medium text-slate-300">
-				{m.player_scores()} ({data.teams[0].name})
-			</h3>
-			<div class="mt-2 grid grid-cols-1 gap-2">
-				{#each playerScoresA as ps, idx (idx)}
-					{@render playerScoreInput(
-						'A',
-						ps,
-						idx,
-						CHARACTERS.filter(
-							(char) =>
-								!playerScoresA.some(
-									(ps: GamePlayerScore, i: number) =>
-										i !== idx && ps.player && ps.characterFirstHalf === char
-								)
-						),
-						CHARACTERS.filter(
-							(char) =>
-								!playerScoresA.some(
-									(ps: GamePlayerScore, i: number) =>
-										i !== idx && ps.player && ps.characterSecondHalf === char
-								)
-						)
-					)}
-				{/each}
-			</div>
-		</div>
-		<div>
-			<h3 class="block text-sm font-medium text-slate-300">
-				{m.player_scores()} ({data.teams[1].name})
-			</h3>
-			<div class="mt-2 grid grid-cols-1 gap-2">
-				{#each playerScoresB as ps, idx (idx)}
-					{@render playerScoreInput(
-						'B',
-						ps,
-						idx,
-						CHARACTERS.filter(
-							(char) =>
-								!playerScoresB.some(
-									(ps: GamePlayerScore, i: number) =>
-										i !== idx && ps.player && ps.characterFirstHalf === char
-								)
-						),
-						CHARACTERS.filter(
-							(char) =>
-								!playerScoresB.some(
-									(ps: GamePlayerScore, i: number) =>
-										i !== idx && ps.player && ps.characterSecondHalf === char
-								)
-						)
-					)}
-				{/each}
-			</div>
-		</div>
-
-		<!-- VOD creation for new games -->
-		{#if !data.game}
-			<div class="mt-8 border-t border-slate-700 pt-6">
-				<GameVodEdit
-					mode="create"
-					vods={[]}
-					onSuccess={() => {
-						// VODs will be included in the form submission via hidden inputs
-					}}
-				/>
-			</div>
-		{/if}
-
-		{#if data.game}
-			<div class="mt-8 border-t border-slate-700 pt-6">
-				<GameVodEdit
-					gameId={data.game.id}
-					vods={data.game.vods || []}
-					onSuccess={() => {
-						// Refresh the page data
-						window.location.reload();
-					}}
-				/>
-			</div>
-		{/if}
-
-		{#if data.game}
-			<div class="mt-8 border-t border-slate-700 pt-6">
-				<h3 class="mb-2 text-sm font-semibold text-red-400">{m.danger_zone()}</h3>
-				{#if showDeleteConfirm}
-					<div class="mb-4 rounded-md bg-red-900/60 p-4 text-red-200">
-						<p>{m.delete_game_confirm()}</p>
-						<div class="mt-4 flex justify-end gap-2">
-							<button
-								type="button"
-								class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
-								onclick={() => (showDeleteConfirm = false)}
-								disabled={isDeleting}>{m.cancel()}</button
-							>
-							<button
-								type="button"
-								class="rounded-md bg-red-600 px-4 py-2 font-medium text-white hover:bg-red-700"
-								onclick={handleDelete}
-								disabled={isDeleting}>{isDeleting ? m.deleting() : m.delete_game()}</button
-							>
-						</div>
+					<div class="flex gap-1">
+						<input
+							type="text"
+							name={`playerScores${team}[${idx}].player`}
+							bind:value={ps.player}
+							placeholder={m.player()}
+							class="col-span-2 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
+							required
+						/>
+						<CharacterSelect
+							value={ps.characterFirstHalf as Character | null}
+							onChange={(v) => (ps.characterFirstHalf = v)}
+							name={`playerScores${team}[${idx}].characterFirstHalf`}
+							class="col-span-1"
+							characters={availableCharactersFirstHalf}
+						/>
+						<CharacterSelect
+							value={ps.characterSecondHalf as Character | null}
+							onChange={(v) => (ps.characterSecondHalf = v)}
+							name={`playerScores${team}[${idx}].characterSecondHalf`}
+							class="col-span-1"
+							characters={availableCharactersSecondHalf}
+						/>
 					</div>
-				{:else}
-					<button
-						type="button"
-						class="rounded-md border border-red-700 bg-red-900/30 px-4 py-2 text-red-300 hover:bg-red-800/60"
-						onclick={() => (showDeleteConfirm = true)}
-					>
-						{m.delete_game()}
-					</button>
-				{/if}
+					<div class="grid grid-cols-7 gap-1">
+						<input
+							type="number"
+							name={`playerScores${team}[${idx}].score`}
+							bind:value={ps.score}
+							placeholder={m.performance_score()}
+							title={m.performance_score()}
+							onfocus={(e) => e.currentTarget.select()}
+							class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
+						/>
+						<input
+							type="number"
+							name={`playerScores${team}[${idx}].damageScore`}
+							bind:value={ps.damageScore}
+							placeholder={m.damage_score()}
+							title={m.damage_score()}
+							onfocus={(e) => e.currentTarget.select()}
+							class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
+						/>
+						<input
+							type="number"
+							name={`playerScores${team}[${idx}].kills`}
+							bind:value={ps.kills}
+							placeholder={m.kills()}
+							title={m.kills()}
+							onfocus={(e) => e.currentTarget.select()}
+							class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
+						/>
+						<input
+							type="number"
+							name={`playerScores${team}[${idx}].knocks`}
+							bind:value={ps.knocks}
+							placeholder={m.knocks()}
+							title={m.knocks()}
+							onfocus={(e) => e.currentTarget.select()}
+							class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
+						/>
+						<input
+							type="number"
+							name={`playerScores${team}[${idx}].deaths`}
+							bind:value={ps.deaths}
+							placeholder={m.deaths()}
+							title={m.deaths()}
+							onfocus={(e) => e.currentTarget.select()}
+							class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
+						/>
+						<input
+							type="number"
+							name={`playerScores${team}[${idx}].assists`}
+							bind:value={ps.assists}
+							placeholder={m.assists()}
+							title={m.assists()}
+							onfocus={(e) => e.currentTarget.select()}
+							class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
+						/>
+						<input
+							type="number"
+							name={`playerScores${team}[${idx}].damage`}
+							bind:value={ps.damage}
+							placeholder={m.damage()}
+							title={m.damage()}
+							onfocus={(e) => e.currentTarget.select()}
+							class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
+						/>
+					</div>
+				</div>
+			{/snippet}
+			<div>
+				<h3 class="block text-sm font-medium text-slate-300">
+					{m.player_scores()} ({data.teams[0].name})
+				</h3>
+				<div class="mt-2 grid grid-cols-1 gap-2">
+					{#each playerScoresA as ps, idx (idx)}
+						{@render playerScoreInput(
+							'A',
+							ps,
+							idx,
+							CHARACTERS.filter(
+								(char) =>
+									!playerScoresA.some(
+										(ps: GamePlayerScore, i: number) =>
+											i !== idx && ps.player && ps.characterFirstHalf === char
+									)
+							),
+							CHARACTERS.filter(
+								(char) =>
+									!playerScoresA.some(
+										(ps: GamePlayerScore, i: number) =>
+											i !== idx && ps.player && ps.characterSecondHalf === char
+									)
+							)
+						)}
+					{/each}
+				</div>
 			</div>
-		{/if}
-	</div>
+			<div>
+				<h3 class="block text-sm font-medium text-slate-300">
+					{m.player_scores()} ({data.teams[1].name})
+				</h3>
+				<div class="mt-2 grid grid-cols-1 gap-2">
+					{#each playerScoresB as ps, idx (idx)}
+						{@render playerScoreInput(
+							'B',
+							ps,
+							idx,
+							CHARACTERS.filter(
+								(char) =>
+									!playerScoresB.some(
+										(ps: GamePlayerScore, i: number) =>
+											i !== idx && ps.player && ps.characterFirstHalf === char
+									)
+							),
+							CHARACTERS.filter(
+								(char) =>
+									!playerScoresB.some(
+										(ps: GamePlayerScore, i: number) =>
+											i !== idx && ps.player && ps.characterSecondHalf === char
+									)
+							)
+						)}
+					{/each}
+				</div>
+			</div>
 
-	<div class="mt-6 flex justify-end gap-4 border-t border-slate-700 pt-4">
-		<button
-			type="button"
-			class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
-			onclick={onCancel}
-		>
-			{m.cancel()}
-		</button>
-		<button
-			type="submit"
-			class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600"
-		>
-			{data.game ? m.save_game() : m.add_game()}
-		</button>
-	</div>
-</form>
+			<!-- VOD creation for new games -->
+			{#if !data.game}
+				<div class="mt-8 border-t border-slate-700 pt-6">
+					<GameVodEdit
+						mode="create"
+						vods={[]}
+						onSuccess={() => {
+							// VODs will be included in the form submission via hidden inputs
+						}}
+					/>
+				</div>
+			{/if}
 
-{#if showImportModal}
-	<GameJsonInput
-		showModal={showImportModal}
-		{playerScoresA}
-		{playerScoresB}
-		{teamData}
-		{compiledGameAccountIDMaps}
-		bind:formData
-		onClose={() => (showImportModal = false)}
-	/>
-{/if}
+			{#if data.game}
+				<div class="mt-8 border-t border-slate-700 pt-6">
+					<GameVodEdit
+						gameId={data.game.id}
+						vods={data.game.vods || []}
+						onSuccess={() => {
+							// Refresh the page data
+							window.location.reload();
+						}}
+					/>
+				</div>
+			{/if}
 
-{#if showExportModal}
-	<GameJsonExport
-		showModal={showExportModal}
-		{playerScoresA}
-		{playerScoresB}
-		{teamData}
-		{formData}
-		onClose={() => (showExportModal = false)}
-	/>
-{/if}
+			{#if data.game}
+				<div class="mt-8 border-t border-slate-700 pt-6">
+					<h3 class="mb-2 text-sm font-semibold text-red-400">{m.danger_zone()}</h3>
+					{#if showDeleteConfirm}
+						<div class="mb-4 rounded-md bg-red-900/60 p-4 text-red-200">
+							<p>{m.delete_game_confirm()}</p>
+							<div class="mt-4 flex justify-end gap-2">
+								<button
+									type="button"
+									class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
+									onclick={() => (showDeleteConfirm = false)}
+									disabled={isDeleting}>{m.cancel()}</button
+								>
+								<button
+									type="button"
+									class="rounded-md bg-red-600 px-4 py-2 font-medium text-white hover:bg-red-700"
+									onclick={handleDelete}
+									disabled={isDeleting}>{isDeleting ? m.deleting() : m.delete_game()}</button
+								>
+							</div>
+						</div>
+					{:else}
+						<button
+							type="button"
+							class="rounded-md border border-red-700 bg-red-900/30 px-4 py-2 text-red-300 hover:bg-red-800/60"
+							onclick={() => (showDeleteConfirm = true)}
+						>
+							{m.delete_game()}
+						</button>
+					{/if}
+				</div>
+			{/if}
+		</div>
+
+		<div class="mt-6 flex justify-end gap-4 border-t border-slate-700 pt-4">
+			<button
+				type="button"
+				class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
+				onclick={onCancel}
+			>
+				{m.cancel()}
+			</button>
+			<button
+				type="submit"
+				class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600"
+			>
+				{data.game ? m.save_game() : m.add_game()}
+			</button>
+		</div>
+	</form>
+
+	{#if showImportModal}
+		<GameJsonInput
+			showModal={showImportModal}
+			{playerScoresA}
+			{playerScoresB}
+			{teamData}
+			{compiledGameAccountIDMaps}
+			bind:formData
+			onClose={() => (showImportModal = false)}
+		/>
+	{/if}
+
+	{#if showExportModal}
+		<GameJsonExport
+			showModal={showExportModal}
+			{playerScoresA}
+			{playerScoresB}
+			{teamData}
+			{formData}
+			onClose={() => (showExportModal = false)}
+		/>
+	{/if}
+</Modal>

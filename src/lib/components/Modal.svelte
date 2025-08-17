@@ -8,12 +8,14 @@
 		title = '',
 		onClose = () => {},
 		children,
+		actionArea,
 		dismissible = true
 	}: {
 		show: boolean;
 		title: string;
 		onClose: () => void;
 		children: Snippet;
+		actionArea?: Snippet<[]>;
 		dismissible?: boolean;
 	} = $props();
 
@@ -58,6 +60,7 @@
 		>
 			<div class="mb-4 flex items-center justify-between">
 				<h2 id="modal-title" class="text-xl font-semibold text-white">{title}</h2>
+				{@render actionArea?.()}
 				{#if dismissible}
 					<button
 						type="button"

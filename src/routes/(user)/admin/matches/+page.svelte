@@ -1318,14 +1318,7 @@
 
 <!-- Game Edit/Create Modal -->
 {#if editingGame}
-	<Modal
-		show={true}
-		title={editingGame?.game ? m.edit_game() : m.add_game()}
-		onClose={closeGameModal}
-		dismissible={false}
-	>
-		<GameEdit data={editingGame} onCancel={closeGameModal} onSuccess={closeGameModal} />
-	</Modal>
+	<GameEdit data={editingGame} onCancel={closeGameModal} onSuccess={closeGameModal} />
 {/if}
 
 <!-- Game Delete Modal -->
