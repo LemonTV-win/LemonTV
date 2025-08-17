@@ -153,8 +153,7 @@
 							editingGame = {
 								game,
 								matchId: match.id,
-								matchTeamA: match.teams[0].team,
-								matchTeamB: match.teams[1].team,
+								teams: [match.teams[0].team, match.teams[1].team],
 								rosters: [
 									data.teamRosters.get(selectedEventData.event.id)?.get(match.teams[0].team.id) ??
 										[],
@@ -183,8 +182,7 @@
 					if (match) {
 						editingGame = {
 							matchId: match.id,
-							matchTeamA: match.teams[0].team,
-							matchTeamB: match.teams[1].team,
+							teams: [match.teams[0].team, match.teams[1].team],
 							rosters: [
 								data.teamRosters.get(selectedEventData.event.id)?.get(match.teams[0].team.id) ?? [],
 								data.teamRosters.get(selectedEventData.event.id)?.get(match.teams[1].team.id) ?? []
@@ -398,8 +396,10 @@
 			winner: number;
 		}; // For editing, undefined for new
 		matchId: string;
-		matchTeamA: { id: string; name: string; logo?: string };
-		matchTeamB: { id: string; name: string; logo?: string };
+		teams: [
+			{ id: string; name: string; logo?: string },
+			{ id: string; name: string; logo?: string }
+		];
 		rosters: [
 			{
 				player: GameParticipant;
@@ -444,8 +444,7 @@
 		editingGame = {
 			game,
 			matchId: match.id,
-			matchTeamA: match.teams[0].team,
-			matchTeamB: match.teams[1].team,
+			teams: [match.teams[0].team, match.teams[1].team],
 			rosters: [
 				// data.teamRoasters: Map<string, Map<string, { player: GameParticipant; job: 'main' | 'sub' | 'coach' }[]>
 				data.teamRosters.get(eventData.event.id)?.get(match.teams[0].team.id) ?? [],
@@ -1321,19 +1320,11 @@
 {#if editingGame}
 	<Modal
 		show={true}
-		title={editingGame.game ? m.edit_game() : m.add_game()}
+		title={editingGame?.game ? m.edit_game() : m.add_game()}
 		onClose={closeGameModal}
 		dismissible={false}
 	>
-		<GameEdit
-			game={editingGame.game}
-			matchId={editingGame.matchId}
-			onCancel={closeGameModal}
-			onSuccess={closeGameModal}
-			teams={[editingGame.matchTeamA, editingGame.matchTeamB]}
-			rosters={editingGame.rosters}
-			match={editingGame.match}
-		/>
+		<GameEdit data={editingGame} onCancel={closeGameModal} onSuccess={closeGameModal} />
 	</Modal>
 {/if}
 

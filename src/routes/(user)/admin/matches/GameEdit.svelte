@@ -17,70 +17,68 @@
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import MinuteSecondTimeInput from '$lib/components/MinuteSecondTimeInput.svelte';
 	let {
-		game,
-		matchId,
 		onCancel,
 		onSuccess,
-		teams,
-		rosters,
-		match
+		data
 	}: {
-		game?: any;
-		matchId: string;
 		onCancel: () => void;
 		onSuccess: () => void;
-		teams: [
-			{ id: string; name: string; logo?: string },
-			{ id: string; name: string; logo?: string }
-		];
-		rosters: [
-			{
-				player: GameParticipant;
-				job: 'main' | 'sub' | 'coach';
-			}[],
-			{
-				player: GameParticipant;
-				job: 'main' | 'sub' | 'coach';
-			}[]
-		];
-		match?: {
-			maps: Array<{
-				id: number;
-				matchId: string;
-				mapId: string;
-				order: number;
-				side: number;
-				map_picker_position: number;
-				side_picker_position: number;
-				map: {
-					id: string;
-				};
-				action?: string;
-			}>;
-			games: Array<{
-				id: number;
-				matchId: string;
-				mapId: string;
-				duration: number;
-				winner: number;
-			}>;
+		data: {
+			game?: any;
+			matchId: string;
+			teams: [
+				{ id: string; name: string; logo?: string },
+				{ id: string; name: string; logo?: string }
+			];
+			rosters: [
+				{
+					player: GameParticipant;
+					job: 'main' | 'sub' | 'coach';
+				}[],
+				{
+					player: GameParticipant;
+					job: 'main' | 'sub' | 'coach';
+				}[]
+			];
+			match?: {
+				maps: Array<{
+					id: number;
+					matchId: string;
+					mapId: string;
+					order: number;
+					side: number;
+					map_picker_position: number;
+					side_picker_position: number;
+					map: {
+						id: string;
+					};
+					action?: string;
+				}>;
+				games: Array<{
+					id: number;
+					matchId: string;
+					mapId: string;
+					duration: number;
+					winner: number;
+				}>;
+			};
 		};
 	} = $props();
 
-	$inspect('[admin/matches/GameEdit] game', game);
-	$inspect('[admin/matches/GameEdit] teams', teams);
-	$inspect('[admin/matches/GameEdit] rosters', rosters);
-	$inspect('[admin/matches/GameEdit] match', match);
+	$inspect('[admin/matches/GameEdit] game', data.game);
+	$inspect('[admin/matches/GameEdit] teams', data.teams);
+	$inspect('[admin/matches/GameEdit] rosters', data.rosters);
+	$inspect('[admin/matches/GameEdit] match', data.match);
 
 	// Calculate the next map to be played based on match's map pick order
 	function getNextMapToPlay(): string {
-		if (!match || !game) return ''; // If editing existing game, don't change map
+		if (!data.match || !data.game) return ''; // If editing existing game, don't change map
 
 		// Sort maps by order
-		const sortedMaps = match.maps.sort((a, b) => a.order - b.order);
+		const sortedMaps = data.match.maps.sort((a, b) => a.order - b.order);
 
 		// Get maps that have been played (exist in games)
-		const playedMapIds = new Set(match.games.map((game) => game.mapId));
+		const playedMapIds = new Set(data.match.games.map((game) => game.mapId));
 
 		// Find the first map that hasn't been played yet
 		for (const map of sortedMaps) {
@@ -94,9 +92,9 @@
 	}
 
 	let formData = $state({
-		mapId: game?.mapId || getNextMapToPlay(),
-		duration: game?.duration || '',
-		winner: game?.winner ?? ''
+		mapId: data.game?.mapId || getNextMapToPlay(),
+		duration: data.game?.duration || '',
+		winner: data.game?.winner ?? ''
 	});
 
 	// Automatically calculate winner based on team score difference
@@ -118,26 +116,26 @@
 
 	// Add state for teams and player scores
 	let teamData = $state([
-		game?.teams?.[0]
+		data.game?.teams?.[0]
 			? {
-					teamId: game.teams[0].teamId,
+					teamId: data.game.teams[0].teamId,
 					position: 0,
-					score: game.teams[0].score
+					score: data.game.teams[0].score
 				}
-			: { teamId: teams[0].id, position: 0, score: 0 },
-		game?.teams?.[1]
+			: { teamId: data.teams[0].id, position: 0, score: 0 },
+		data.game?.teams?.[1]
 			? {
-					teamId: game.teams[1].teamId,
+					teamId: data.game.teams[1].teamId,
 					position: 1,
-					score: game.teams[1].score
+					score: data.game.teams[1].score
 				}
-			: { teamId: teams[1].id, position: 1, score: 0 }
+			: { teamId: data.teams[1].id, position: 1, score: 0 }
 	]);
 
 	$inspect('[admin/matches/GameEdit] teamData', teamData);
 
 	let playerScoresA: GamePlayerScore[] = $state(
-		game?.playerScores?.filter((ps: GamePlayerScore) => ps.teamId === teamData[0].teamId) ??
+		data.game?.playerScores?.filter((ps: GamePlayerScore) => ps.teamId === teamData[0].teamId) ??
 			Array(5)
 				.fill(null)
 				.map(() => ({
@@ -156,7 +154,7 @@
 				}))
 	);
 	let playerScoresB = $state(
-		game?.playerScores?.filter((ps: any) => ps.teamId === teamData[1].teamId) ??
+		data.game?.playerScores?.filter((ps: any) => ps.teamId === teamData[1].teamId) ??
 			Array(5)
 				.fill(null)
 				.map(() => ({
@@ -188,12 +186,12 @@
 	}
 
 	async function handleDelete() {
-		if (!game) return;
+		if (!data.game) return;
 		isDeleting = true;
 		errorMessage = '';
 		try {
 			const formData = new FormData();
-			formData.append('id', game.id);
+			formData.append('id', data.game.id);
 			const res = await fetch('?/deleteGame', { method: 'POST', body: formData });
 			if (res.ok) {
 				onSuccess();
@@ -232,8 +230,8 @@
 	}
 
 	let compiledGameAccountIDMaps = $derived([
-		rostersToGameAccountIDMap(rosters[0]),
-		rostersToGameAccountIDMap(rosters[1])
+		rostersToGameAccountIDMap(data.rosters[0]),
+		rostersToGameAccountIDMap(data.rosters[1])
 	]);
 
 	$inspect('[admin/matches/GameEdit] compiledGameAccountIDMaps', compiledGameAccountIDMaps);
@@ -241,13 +239,13 @@
 
 <form
 	method="POST"
-	action={game ? '?/updateGame' : '?/createGame'}
+	action={data.game ? '?/updateGame' : '?/createGame'}
 	use:enhance={handleEnhance}
 	class="flex h-full flex-col"
 >
-	<input type="hidden" name="matchId" value={matchId} />
-	{#if game}
-		<input type="hidden" name="id" value={game.id} />
+	<input type="hidden" name="matchId" value={data.matchId} />
+	{#if data.game}
+		<input type="hidden" name="id" value={data.game.id} />
 	{/if}
 
 	{#if errorMessage}
@@ -288,12 +286,16 @@
 					<input type="hidden" name={`gameTeams[${idx}].position`} value={team.position} />
 					<div class="rounded-lg border border-slate-700 bg-slate-800 p-4">
 						<div class="mb-2 flex items-center gap-2 font-semibold text-slate-200">
-							{#if teams && teams[idx]?.logo}
-								<img src={teams[idx].logo} alt={teams[idx].name} class="h-6 w-6 rounded" />
+							{#if data.teams && data.teams[idx]?.logo}
+								<img
+									src={data.teams[idx].logo}
+									alt={data.teams[idx].name}
+									class="h-6 w-6 rounded"
+								/>
 							{/if}
 							<span
-								>{teams && teams[idx]?.name
-									? teams[idx].name
+								>{data.teams && data.teams[idx]?.name
+									? data.teams[idx].name
 									: idx === 0
 										? m.team_a()
 										: m.team_b()}</span
@@ -490,7 +492,7 @@
 		{/snippet}
 		<div>
 			<h3 class="block text-sm font-medium text-slate-300">
-				{m.player_scores()} ({teams[0].name})
+				{m.player_scores()} ({data.teams[0].name})
 			</h3>
 			<div class="mt-2 grid grid-cols-1 gap-2">
 				{#each playerScoresA as ps, idx (idx)}
@@ -518,7 +520,7 @@
 		</div>
 		<div>
 			<h3 class="block text-sm font-medium text-slate-300">
-				{m.player_scores()} ({teams[1].name})
+				{m.player_scores()} ({data.teams[1].name})
 			</h3>
 			<div class="mt-2 grid grid-cols-1 gap-2">
 				{#each playerScoresB as ps, idx (idx)}
@@ -546,7 +548,7 @@
 		</div>
 
 		<!-- VOD creation for new games -->
-		{#if !game}
+		{#if !data.game}
 			<div class="mt-8 border-t border-slate-700 pt-6">
 				<GameVodEdit
 					mode="create"
@@ -558,11 +560,11 @@
 			</div>
 		{/if}
 
-		{#if game}
+		{#if data.game}
 			<div class="mt-8 border-t border-slate-700 pt-6">
 				<GameVodEdit
-					gameId={game.id}
-					vods={game.vods || []}
+					gameId={data.game.id}
+					vods={data.game.vods || []}
 					onSuccess={() => {
 						// Refresh the page data
 						window.location.reload();
@@ -571,7 +573,7 @@
 			</div>
 		{/if}
 
-		{#if game}
+		{#if data.game}
 			<div class="mt-8 border-t border-slate-700 pt-6">
 				<h3 class="mb-2 text-sm font-semibold text-red-400">{m.danger_zone()}</h3>
 				{#if showDeleteConfirm}
@@ -617,7 +619,7 @@
 			type="submit"
 			class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600"
 		>
-			{game ? m.save_game() : m.add_game()}
+			{data.game ? m.save_game() : m.add_game()}
 		</button>
 	</div>
 </form>
