@@ -28,11 +28,14 @@
 
 	function setInputsFromValue(total: number | string) {
 		const totalSeconds = typeof total === 'number' ? total : Number(total) || 0;
-		const minutes = Math.max(0, Math.floor(totalSeconds / 60));
-		const seconds = Math.max(0, totalSeconds % 60);
+		const { minutes, seconds } = decomposeTime(totalSeconds);
 		minutesInput = String(minutes);
 		secondsInput = String(seconds);
 	}
+
+	$effect(() => {
+		setInputsFromValue(value);
+	});
 
 	function normalizeAndNotify() {
 		let minutes = parseInt(minutesInput);
