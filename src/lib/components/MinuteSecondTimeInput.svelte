@@ -65,7 +65,7 @@
 	{#if name}
 		<input type="hidden" {name} {value} />
 	{/if}
-	<div class="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+	<div class="grid grid-cols-[2fr_auto_2fr_1fr] items-center gap-2">
 		<input
 			type="number"
 			id={id ? `${id}-min` : undefined}
@@ -89,5 +89,6 @@
 			class="w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-center text-slate-300 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 			required
 		/>
+		<span class="text-sm text-slate-400">({value}s)</span>
 	</div>
 </div>
