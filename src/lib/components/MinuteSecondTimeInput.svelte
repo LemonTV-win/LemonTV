@@ -48,6 +48,14 @@
 		}
 		value = minutes * 60 + seconds;
 	}
+
+	function notifyValueNoCarry() {
+		let minutes = parseInt(minutesInput);
+		let seconds = parseInt(secondsInput);
+		if (!Number.isFinite(minutes) || minutes < 0) minutes = 0;
+		if (!Number.isFinite(seconds) || seconds < 0) seconds = 0;
+		value = minutes * 60 + seconds;
+	}
 </script>
 
 <div class={className}>
@@ -61,7 +69,8 @@
 			min="0"
 			placeholder={minutesPlaceholder}
 			bind:value={minutesInput}
-			oninput={normalizeAndNotify}
+			oninput={notifyValueNoCarry}
+			onblur={normalizeAndNotify}
 			class="w-24 rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-slate-300 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 			required
 		/>
@@ -72,7 +81,8 @@
 			min="0"
 			placeholder={secondsPlaceholder}
 			bind:value={secondsInput}
-			oninput={normalizeAndNotify}
+			oninput={notifyValueNoCarry}
+			onblur={normalizeAndNotify}
 			class="w-24 rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-slate-300 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 			required
 		/>
