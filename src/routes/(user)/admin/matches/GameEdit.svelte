@@ -255,26 +255,33 @@
 	{/if}
 
 	<div class="styled-scroll flex-1 space-y-4 overflow-y-auto pr-2">
-		<div>
-			<label class="block text-sm font-medium text-slate-300" for="mapId">{m.map()}</label>
-			<select
-				id="mapId"
-				name="mapId"
-				bind:value={formData.mapId}
-				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-slate-300 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-				required
-			>
-				<option value="">{m.select_map()}</option>
-				{#each MAPS as map (map)}
-					<option value={map}>{MAP_NAMES[map]()}</option>
-				{/each}
-			</select>
-		</div>
-		<div>
-			<label class="block text-sm font-medium text-slate-300" for="duration-sec"
-				>{m.duration()}</label
-			>
-			<MinuteSecondTimeInput name="duration" id="duration" bind:value={formData.duration} />
+		<div class="grid grid-cols-2 gap-4">
+			<div>
+				<label class="block text-sm font-medium text-slate-300" for="mapId">{m.map()}</label>
+				<select
+					id="mapId"
+					name="mapId"
+					bind:value={formData.mapId}
+					class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-slate-300 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+					required
+				>
+					<option value="">{m.select_map()}</option>
+					{#each MAPS as map (map)}
+						<option value={map}>{MAP_NAMES[map]()}</option>
+					{/each}
+				</select>
+			</div>
+			<div>
+				<label class="block text-sm font-medium text-slate-300" for="duration-sec"
+					>{m.duration()}</label
+				>
+				<MinuteSecondTimeInput
+					class="mt-1"
+					name="duration"
+					id="duration"
+					bind:value={formData.duration}
+				/>
+			</div>
 		</div>
 		<input type="hidden" name="winner" value={calculatedWinner} />
 		<!-- Teams editing -->
