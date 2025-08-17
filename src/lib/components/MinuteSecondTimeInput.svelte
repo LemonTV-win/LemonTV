@@ -15,8 +15,16 @@
 		secondsPlaceholder?: string;
 	} = $props();
 
-	let minutesInput = $state('');
-	let secondsInput = $state('');
+	function decomposeTime(totalSeconds: number) {
+		const minutes = Math.max(0, Math.floor(totalSeconds / 60));
+		const seconds = Math.max(0, totalSeconds % 60);
+		return { minutes, seconds };
+	}
+
+	const decomposedTime = decomposeTime(typeof value === 'number' ? value : Number(value) || 0);
+
+	let minutesInput = $state(decomposedTime.minutes.toString());
+	let secondsInput = $state(decomposedTime.seconds.toString());
 
 	function setInputsFromValue(total: number | string) {
 		const totalSeconds = typeof total === 'number' ? total : Number(total) || 0;
@@ -25,14 +33,6 @@
 		minutesInput = String(minutes);
 		secondsInput = String(seconds);
 	}
-
-	$effect(() => {
-		const incoming = typeof value === 'number' ? value : Number(value) || 0;
-		const current = (parseInt(minutesInput) || 0) * 60 + (parseInt(secondsInput) || 0);
-		if (incoming !== current) {
-			setInputsFromValue(incoming);
-		}
-	});
 
 	function normalizeAndNotify() {
 		let minutes = parseInt(minutesInput);
