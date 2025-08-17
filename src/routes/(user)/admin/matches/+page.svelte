@@ -1328,7 +1328,6 @@
 		<GameEdit
 			game={editingGame.game}
 			matchId={editingGame.matchId}
-			maps={data.maps.map((map) => ({ id: map.id, name: MAP_NAMES[map.id]() }))}
 			onCancel={closeGameModal}
 			onSuccess={closeGameModal}
 			teams={[editingGame.matchTeamA, editingGame.matchTeamB]}

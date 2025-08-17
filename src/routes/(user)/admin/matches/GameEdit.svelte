@@ -9,7 +9,7 @@
 	import type { GameParticipant } from './+page.server';
 	import type { GamePlayerScore } from '$lib/server/db/schemas';
 	import type { Character } from '$lib/data/game';
-	import { CHARACTERS } from '$lib/data/game';
+	import { CHARACTERS, MAP_NAMES, MAPS } from '$lib/data/game';
 	import IconTrophy from '~icons/icon-park-solid/trophy';
 	import { m } from '$lib/paraglide/messages';
 	import IconParkSolidAdd from '~icons/icon-park-solid/add';
@@ -19,7 +19,6 @@
 	let {
 		game,
 		matchId,
-		maps,
 		onCancel,
 		onSuccess,
 		teams,
@@ -28,7 +27,6 @@
 	}: {
 		game?: any;
 		matchId: string;
-		maps: Array<{ id: string; name?: string }>;
 		onCancel: () => void;
 		onSuccess: () => void;
 		teams: [
@@ -269,8 +267,8 @@
 				required
 			>
 				<option value="">{m.select_map()}</option>
-				{#each maps as map (map.id)}
-					<option value={map.id}>{map.name || map.id}</option>
+				{#each MAPS as map (map)}
+					<option value={map}>{MAP_NAMES[map]()}</option>
 				{/each}
 			</select>
 		</div>
