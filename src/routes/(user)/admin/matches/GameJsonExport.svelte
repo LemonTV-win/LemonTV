@@ -23,17 +23,31 @@
 		teamB: [PlayerScore, PlayerScore, PlayerScore, PlayerScore, PlayerScore]
 	];
 
+	interface GameMeta {
+		mapId: string;
+		duration: number; // seconds
+		teams: [{ teamId: string; score: number }, { teamId: string; score: number }];
+		winner: 0 | 1 | null;
+	}
+
+	interface GameExportData {
+		game_metadata: GameMeta;
+		player_scores: PlayerScoreData;
+	}
+
 	let {
 		showModal,
 		playerScoresA,
 		playerScoresB,
 		teamData,
+		formData,
 		onClose
 	}: {
 		showModal: boolean;
 		playerScoresA: GamePlayerScore[];
 		playerScoresB: GamePlayerScore[];
 		teamData: Array<{ teamId: string; position: number; score: number }>;
+		formData: { mapId: string; duration: number | string };
 		onClose: () => void;
 	} = $props();
 
@@ -105,13 +119,27 @@
 	}
 
 	function generateExportData(): string {
-		const data = convertToPlayerScoreData();
+		const players = convertToPlayerScoreData();
+		const winner: 0 | 1 | null =
+			teamData[0].score > teamData[1].score ? 0 : teamData[1].score > teamData[0].score ? 1 : null;
+		const meta: GameMeta = {
+			mapId: formData.mapId || '',
+			duration:
+				typeof formData.duration === 'number' ? formData.duration : Number(formData.duration) || 0,
+			teams: [
+				{ teamId: teamData[0].teamId, score: teamData[0].score || 0 },
+				{ teamId: teamData[1].teamId, score: teamData[1].score || 0 }
+			],
+			winner
+		};
+
+		const data: GameExportData = { game_metadata: meta, player_scores: players };
 
 		if (exportFormat === 'json') {
 			return JSON.stringify(data, null, 2);
 		} else {
 			// TypeScript format
-			const tsData = data.map((team) =>
+			const tsPlayers = players.map((team) =>
 				team.map((player) => ({
 					accountId: player.accountId,
 					player: `'${player.player}'`,
@@ -126,26 +154,37 @@
 				}))
 			);
 
-			let result = '[\n';
-			tsData.forEach((team, teamIndex) => {
-				result += '  [\n';
+			let result = '{\n';
+			result += '  meta: {\n';
+			result += `    mapId: '${meta.mapId}',\n`;
+			result += `    duration: ${meta.duration},\n`;
+			result += '    teams: [\n';
+			result += `      { teamId: '${meta.teams[0].teamId}', score: ${meta.teams[0].score} },\n`;
+			result += `      { teamId: '${meta.teams[1].teamId}', score: ${meta.teams[1].score} }\n`;
+			result += '    ],\n';
+			result += `    winner: ${meta.winner === null ? 'null' : meta.winner}\n`;
+			result += '  },\n';
+			result += '  players: [\n';
+			tsPlayers.forEach((team, teamIndex) => {
+				result += '    [\n';
 				team.forEach((player, playerIndex) => {
-					result += '    {\n';
-					result += `      accountId: ${player.accountId},\n`;
-					result += `      player: ${player.player},\n`;
-					result += `      characters: ${player.characters},\n`;
-					result += `      score: ${player.score},\n`;
-					result += `      damageScore: ${player.damageScore},\n`;
-					result += `      kills: ${player.kills},\n`;
-					result += `      knocks: ${player.knocks},\n`;
-					result += `      deaths: ${player.deaths},\n`;
-					result += `      assists: ${player.assists},\n`;
-					result += `      damage: ${player.damage}\n`;
-					result += playerIndex < team.length - 1 ? '    },\n' : '    }\n';
+					result += '      {\n';
+					result += `        accountId: ${player.accountId},\n`;
+					result += `        player: ${player.player},\n`;
+					result += `        characters: ${player.characters},\n`;
+					result += `        score: ${player.score},\n`;
+					result += `        damageScore: ${player.damageScore},\n`;
+					result += `        kills: ${player.kills},\n`;
+					result += `        knocks: ${player.knocks},\n`;
+					result += `        deaths: ${player.deaths},\n`;
+					result += `        assists: ${player.assists},\n`;
+					result += `        damage: ${player.damage}\n`;
+					result += playerIndex < team.length - 1 ? '      },\n' : '      }\n';
 				});
-				result += teamIndex < tsData.length - 1 ? '  ],\n' : '  ]\n';
+				result += teamIndex < tsPlayers.length - 1 ? '    ],\n' : '    ]\n';
 			});
-			result += ']';
+			result += '  ]\n';
+			result += '}';
 
 			return result;
 		}

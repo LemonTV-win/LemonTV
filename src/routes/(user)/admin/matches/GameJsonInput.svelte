@@ -18,12 +18,28 @@
 		teamB: [PlayerScore, PlayerScore, PlayerScore, PlayerScore, PlayerScore]
 	];
 
+	interface GameMeta {
+		mapId: string;
+		duration: number;
+		teams: [{ teamId: string; score: number }, { teamId: string; score: number }];
+		winner: 0 | 1 | null;
+	}
+
+	interface GameImportData {
+		meta: GameMeta;
+		players: PlayerScoreData;
+	}
+
 	let {
 		showModal,
 		playerScoresA,
 		playerScoresB,
-		teamData,
+		teamData = $bindable([
+			{ teamId: '', position: 0, score: 0 },
+			{ teamId: '', position: 1, score: 0 }
+		]),
 		compiledGameAccountIDMaps,
+		formData = $bindable({ mapId: '', duration: 0 }),
 		onClose
 	}: {
 		showModal: boolean;
@@ -31,6 +47,7 @@
 		playerScoresB: GamePlayerScore[];
 		teamData: Array<{ teamId: string; position: number; score: number }>;
 		compiledGameAccountIDMaps: Array<Map<number, { player: any; job: 'main' | 'sub' | 'coach' }>>;
+		formData: { mapId: string; duration: number | string };
 		onClose: () => void;
 	} = $props();
 
@@ -169,16 +186,93 @@
   ]
 ]`;
 
-	function importData(data: PlayerScoreData) {
+	const EXAMPLE_JSON_DATA_NEW = `// Preferred JSON format with metadata (matches export):
+{
+  "game_metadata": {
+    "mapId": "aquaPlaza",
+    "duration": 734,
+    "teams": [
+      { "teamId": "teamA-id", "score": 3 },
+      { "teamId": "teamB-id", "score": 5 }
+    ],
+    "winner": 1
+  },
+  "player_scores": [
+    [
+      {
+        "accountId": 2017921,
+        "player": "iYu",
+        "characters": ["Fuchsia", "Ming"],
+        "score": 204,
+        "damageScore": 172,
+        "kills": 10,
+        "knocks": 13,
+        "deaths": 10,
+        "assists": 11,
+        "damage": 3812
+      }
+    ],
+    [
+      {
+        "accountId": 2340207,
+        "player": "JY10137",
+        "characters": ["Ming", "Bai Mo"],
+        "score": 244,
+        "damageScore": 216,
+        "kills": 9,
+        "knocks": 9,
+        "deaths": 7,
+        "assists": 25,
+        "damage": 5371
+      }
+    ]
+  ]
+}`;
+
+	function importData(
+		data:
+			| PlayerScoreData
+			| { meta?: GameMeta; players?: PlayerScoreData }
+			| { game_metadata?: GameMeta; player_scores?: PlayerScoreData }
+	) {
 		try {
+			const isObjectFormat = !Array.isArray(data);
+			const players: PlayerScoreData | undefined = isObjectFormat
+				? (data as any).players || (data as any).player_scores
+				: (data as PlayerScoreData);
+
+			if (!players || !Array.isArray(players) || players.length < 2) {
+				throw new Error('Invalid players data: expected two-team array');
+			}
+
 			// Auto-detect if teams need to be swapped
-			const shouldSwapTeams = autoDetectTeamSwap(data);
+			const shouldSwapTeams = autoDetectTeamSwap(players);
 			reverseTeams = shouldSwapTeams;
 			autoDetectedSwap = shouldSwapTeams;
 
+			// Apply meta if present
+			if (isObjectFormat) {
+				const meta: GameMeta | undefined = (data as any).meta || (data as any).game_metadata;
+				if (meta) {
+					// map and duration
+					formData.mapId = meta.mapId || '';
+					formData.duration = meta.duration || 0;
+					// scores (respect swap)
+					const scoreA = meta.teams?.[0]?.score ?? 0;
+					const scoreB = meta.teams?.[1]?.score ?? 0;
+					if (reverseTeams) {
+						teamData[0].score = scoreB;
+						teamData[1].score = scoreA;
+					} else {
+						teamData[0].score = scoreA;
+						teamData[1].score = scoreB;
+					}
+				}
+			}
+
 			// Reverse teams if checkbox is checked
-			const teamAData = reverseTeams ? data[1] : data[0];
-			const teamBData = reverseTeams ? data[0] : data[1];
+			const teamAData = reverseTeams ? players[1] : players[0];
+			const teamBData = reverseTeams ? players[0] : players[1];
 
 			// Import team A data
 			teamAData.forEach((playerScore, index) => {
@@ -271,7 +365,12 @@
 		<div class="w-full max-w-2xl rounded-lg bg-slate-800 p-6 shadow-xl">
 			<div class="mb-4 flex items-center justify-between">
 				<h3 class="text-lg font-semibold text-slate-200">Import JSON Data</h3>
-				<button type="button" class="text-slate-400 hover:text-slate-200" onclick={handleClose}>
+				<button
+					type="button"
+					class="text-slate-400 hover:text-slate-200"
+					onclick={handleClose}
+					aria-label="Close dialog"
+				>
 					<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
 							stroke-linecap="round"
@@ -285,13 +384,13 @@
 
 			<div class="mb-4">
 				<label class="mb-2 block text-sm font-medium text-slate-300" for="jsonData">
-					Paste JSON data in PlayerScoreData format (auto-detects team swapping based on account
-					IDs):
+					Paste GameExportData (meta + players) or legacy PlayerScoreData. Team swap auto-detected
+					by account IDs.
 				</label>
 				<textarea
 					id="jsonData"
 					bind:value={importJsonData}
-					placeholder={`Paste your JSON data here. Example: \n${EXAMPLE_JSON_DATA}`}
+					placeholder={`Paste your JSON data here. Example (new): \n${EXAMPLE_JSON_DATA_NEW}\n\nLegacy format: \n${EXAMPLE_JSON_DATA}`}
 					class="styled-scroll h-64 w-full rounded-md border border-slate-700 bg-slate-900 p-3 font-mono text-sm text-slate-200 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 				></textarea>
 			</div>

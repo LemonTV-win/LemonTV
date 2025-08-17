@@ -3,8 +3,8 @@
 	import type { ActionResult } from '@sveltejs/kit';
 	import CharacterSelect from '$lib/components/CharacterSelect.svelte';
 	import AccountIdCombobox from '$lib/components/AccountIdCombobox.svelte';
-	import PlayerScoreJsonInput from './PlayerScoreJsonInput.svelte';
-	import PlayerScoreJsonExport from './PlayerScoreJsonExport.svelte';
+	import GameJsonInput from './GameJsonInput.svelte';
+	import GameJsonExport from './GameJsonExport.svelte';
 	import GameVodEdit from './GameVodEdit.svelte';
 	import type { GameParticipant } from './+page.server';
 	import type { GamePlayerScore } from '$lib/server/db/schemas';
@@ -255,6 +255,23 @@
 	{/if}
 
 	<div class="styled-scroll flex-1 space-y-4 overflow-y-auto pr-2">
+		<div class="mb-4 flex justify-end gap-2">
+			<button
+				type="button"
+				class="cursor-pointer rounded-md border border-slate-600 bg-slate-800 px-3 py-1 text-sm text-slate-300 hover:bg-slate-700"
+				onclick={() => (showImportModal = true)}
+			>
+				{m.import_json_data()}
+			</button>
+			<button
+				type="button"
+				class="cursor-pointer rounded-md border border-slate-600 bg-slate-800 px-3 py-1 text-sm text-slate-300 hover:bg-slate-700"
+				onclick={() => (showExportModal = true)}
+			>
+				{m.export_json_data()}
+			</button>
+		</div>
+
 		<div class="grid grid-cols-2 gap-4">
 			<div>
 				<label class="block text-sm font-medium text-slate-300" for="mapId">{m.map()}</label>
@@ -338,22 +355,6 @@
 		<!-- Player scores editing -->
 		<div class="mb-4 flex items-center justify-between">
 			<h3 class="text-sm font-medium text-slate-300">{m.player_scores()}</h3>
-			<div class="flex gap-2">
-				<button
-					type="button"
-					class="cursor-pointer rounded-md border border-slate-600 bg-slate-800 px-3 py-1 text-sm text-slate-300 hover:bg-slate-700"
-					onclick={() => (showImportModal = true)}
-				>
-					{m.import_json_data()}
-				</button>
-				<button
-					type="button"
-					class="cursor-pointer rounded-md border border-slate-600 bg-slate-800 px-3 py-1 text-sm text-slate-300 hover:bg-slate-700"
-					onclick={() => (showExportModal = true)}
-				>
-					{m.export_json_data()}
-				</button>
-			</div>
 		</div>
 		{#snippet playerScoreInput(
 			team: 'A' | 'B',
@@ -632,22 +633,24 @@
 </form>
 
 {#if showImportModal}
-	<PlayerScoreJsonInput
+	<GameJsonInput
 		showModal={showImportModal}
 		{playerScoresA}
 		{playerScoresB}
 		{teamData}
 		{compiledGameAccountIDMaps}
+		bind:formData
 		onClose={() => (showImportModal = false)}
 	/>
 {/if}
 
 {#if showExportModal}
-	<PlayerScoreJsonExport
+	<GameJsonExport
 		showModal={showExportModal}
 		{playerScoresA}
 		{playerScoresB}
 		{teamData}
+		{formData}
 		onClose={() => (showExportModal = false)}
 	/>
 {/if}
