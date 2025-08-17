@@ -15,6 +15,7 @@
 	import IconParkSolidAdd from '~icons/icon-park-solid/add';
 	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
+	import MinuteSecondTimeInput from '$lib/components/MinuteSecondTimeInput.svelte';
 	let {
 		game,
 		matchId,
@@ -274,16 +275,10 @@
 			</select>
 		</div>
 		<div>
-			<label class="block text-sm font-medium text-slate-300" for="duration">{m.duration()}</label>
-			<input
-				type="number"
-				id="duration"
-				name="duration"
-				min="0"
-				bind:value={formData.duration}
-				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-slate-300 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-				required
-			/>
+			<label class="block text-sm font-medium text-slate-300" for="duration-sec"
+				>{m.duration()}</label
+			>
+			<MinuteSecondTimeInput name="duration" id="duration" bind:value={formData.duration} />
 		</div>
 		<input type="hidden" name="winner" value={calculatedWinner} />
 		<!-- Teams editing -->
