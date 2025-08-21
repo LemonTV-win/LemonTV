@@ -36,10 +36,6 @@ const handleParaglide: Handle = ({ event, resolve }) => {
 const handleAuth: Handle = async ({ event, resolve }) => {
 	// Define public routes that don't need authentication
 	const publicRoutes = [
-		'/',
-		'/login',
-		'/register',
-		'/reset-password',
 		'/sitemap.xml',
 		'/webmanifest.json',
 		'/robots.txt',
