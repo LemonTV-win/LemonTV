@@ -6,10 +6,11 @@ import { syncAll } from '$lib/server/db/sync';
 import { dev } from '$app/environment';
 import { seed } from '$lib/server/db/seed';
 import { LEMON_PUBLIC_JWK_BASE64 } from '$env/static/private';
+import { db } from '$lib/server/db';
 
 export const init: ServerInit = async () => {
 	console.info('[ServerInit] Syncing database enum tables...');
-	await syncAll();
+	await syncAll(db);
 
 	if (dev) {
 		console.info('[ServerInit] Development environment detected');

@@ -1,14 +1,14 @@
 import { sql } from 'drizzle-orm';
-import { db } from '.';
 import * as schema from './schema';
 import { CHARACTERS as GAME_CHARACTERS } from '$lib/data/game';
+import type { LibSQLDatabase } from 'drizzle-orm/libsql';
 
 const REQUIRED_ROLES = [
 	{ id: 'admin', name: 'Administrator' }, // Has access to all features
 	{ id: 'editor', name: 'Editor' } // Has access to all features except for user management
 ];
 
-async function syncRoles() {
+async function syncRoles(db: LibSQLDatabase<typeof schema>) {
 	console.info('[Sync] Inserting required roles...');
 	await db.insert(schema.role).values(REQUIRED_ROLES).onConflictDoNothing();
 	console.info('[Sync] Inserted required roles');
@@ -29,7 +29,7 @@ const SOCIAL_PLATFORMS = [
 	{ id: 'reddit', name: 'Reddit', url_template: 'https://reddit.com/u/{accountId}' }
 ];
 
-async function syncSocialPlatforms() {
+async function syncSocialPlatforms(db: LibSQLDatabase<typeof schema>) {
 	console.info('[Sync] Inserting social platforms...');
 	await db
 		.insert(schema.social_platform)
@@ -52,7 +52,7 @@ const MAPS = [
 	{ id: 'ocarnus' }
 ] as const;
 
-async function syncMaps() {
+async function syncMaps(db: LibSQLDatabase<typeof schema>) {
 	console.info('[Sync] Inserting maps...');
 	await db
 		.insert(schema.map)
@@ -63,15 +63,15 @@ async function syncMaps() {
 
 const CHARACTERS = GAME_CHARACTERS.map((character) => ({ id: character }));
 
-async function syncCharacters() {
+async function syncCharacters(db: LibSQLDatabase<typeof schema>) {
 	console.info('[Sync] Inserting characters...');
 	await db.insert(schema.character).values(CHARACTERS).onConflictDoNothing();
 	console.info('[Sync] Inserted characters');
 }
 
-export async function syncAll() {
-	await syncRoles();
-	await syncSocialPlatforms();
-	await syncMaps();
-	await syncCharacters();
+export async function syncAll(db: LibSQLDatabase<typeof schema>) {
+	await syncRoles(db);
+	await syncSocialPlatforms(db);
+	await syncMaps(db);
+	await syncCharacters(db);
 }
