@@ -1,18 +1,19 @@
 import type { PageServerLoad } from './$types';
 import type { Team, TeamPlayer } from '$lib/data/teams';
 import { getTeams, getAllTeamsWins } from '$lib/server/data/teams';
-import { getAllPlayersRatings } from '$lib/server/data/players';
+import { getPlayersRatingsByIds } from '$lib/server/data/players';
 import { processImageURL } from '$lib/server/storage';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const teams = await getTeams();
 	const search = url.searchParams.get('search') || '';
 
-	// Get all player ratings (optimized)
-	const allPlayerRatings = await getAllPlayersRatings();
-	const ratingsByPlayerId = new Map(
-		allPlayerRatings.map((rating) => [rating.playerId, rating.rating])
+	// Get ratings only for players present on this page
+	const playerIds = Array.from(
+		new Set(teams.flatMap((team) => (team.players || []).map((tp) => tp.player.id).filter(Boolean)))
 	);
+	const scopedRatings = await getPlayersRatingsByIds(playerIds);
+	const ratingsByPlayerId = new Map(scopedRatings.map((r) => [r.playerId, r.rating]));
 
 	// Collect unique logo URLs and player avatar URLs
 	const uniqueLogoUrls = new Set<string>();
