@@ -9,7 +9,7 @@
 <div class="glass rounded-2xl p-6 md:col-span-3">
 	<h2 class="mb-4 text-xl font-bold">{m['content.players.pro_settings.settings']()}</h2>
 	{#if proSettings}
-		<div class="grid grid-cols-1 gap-4 sm:grid-cols-3 md:grid-cols-5">
+		<div class="grid grid-cols-1 gap-4 sm:grid-cols-3 md:grid-cols-4">
 			<div
 				class="grid grid-cols-[auto_1fr] items-center justify-center gap-4 rounded-lg bg-slate-800/50 p-4 sm:col-span-3 md:col-span-4"
 			>
@@ -26,6 +26,16 @@
 			<div class="rounded-lg bg-slate-800/50 p-4">
 				<div class="text-sm text-gray-400">{m['content.players.pro_settings.sensitivity']()}</div>
 				<div class="text-2xl font-bold text-white">{proSettings.sensitivity ?? '-'}</div>
+			</div>
+			<div class="rounded-lg bg-slate-800/50 p-4">
+				<div class="text-sm text-gray-400">{m['content.players.pro_settings.edpi']()}</div>
+				<div class="text-2xl font-bold text-white">
+					{#if proSettings.dpi && proSettings.sensitivity}
+						{(proSettings.dpi * proSettings.sensitivity).toFixed(2)}
+					{:else}
+						-
+					{/if}
+				</div>
 			</div>
 			<div class="rounded-lg bg-slate-800/50 p-4">
 				<div class="text-sm text-gray-400">{m['content.players.pro_settings.polling_rate']()}</div>
