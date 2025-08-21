@@ -38,7 +38,7 @@
 				| 'regional_slot'
 				| 'exhibition'
 				| 'wildcard';
-			status?: 'active' | 'disqualified' | 'withdrawn';
+			status?: 'active' | 'disqualified' | 'withdrawn' | 'eliminated';
 		};
 	} = $props();
 
@@ -63,7 +63,9 @@
 		class={[
 			'glass group relative min-w-48 overflow-hidden border border-white/10 p-4 transition-all hover:-translate-y-0.5 hover:border-yellow-500/40 hover:shadow-[0_8px_30px_rgba(255,199,0,0.15)]',
 			['withdrawn', 'disqualified'].includes(participant.status ?? '') &&
-				'overflow-visible bg-gradient-to-b from-gray-900 to-gray-900/50 opacity-80 brightness-90 contrast-95'
+				'overflow-visible bg-gradient-to-b from-gray-900 to-gray-900/50 opacity-80 brightness-90 contrast-95',
+			participant.status === 'eliminated' &&
+				'overflow-visible bg-gradient-to-b from-gray-800 to-gray-800/50'
 		]}
 	>
 		{#if participant.entry === 'invited'}
@@ -87,12 +89,20 @@
 				{m['content.teams.status.withdrawn']()}
 			</span>
 		{/if}
+		{#if participant.status === 'eliminated'}
+			<span
+				class="pointer-events-none absolute top-3 right-2 z-10 -rotate-12 rounded border-2 border-black bg-black/10 px-2 py-1 text-xl font-black tracking-widest text-black uppercase shadow-[inset_0_0_0_1px_rgba(0,0,0,0.2)]"
+			>
+				{m['content.teams.status.eliminated']()}
+			</span>
+		{/if}
 
 		<div
 			class={[
 				'grid grid-cols-2 grid-rows-[auto_1fr_auto] gap-2',
 				['withdrawn', 'disqualified'].includes(participant.status ?? '') &&
-					'opacity-80 brightness-90 contrast-95 grayscale'
+					'opacity-80 brightness-90 contrast-95 grayscale',
+				participant.status === 'eliminated' && 'opacity-90 brightness-90 contrast-90'
 			]}
 		>
 			<h3 class="col-span-2 text-lg font-bold md:text-xl">

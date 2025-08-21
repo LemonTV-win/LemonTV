@@ -106,7 +106,7 @@ export function toDatabaseEvent(
 		format: data.format,
 		region: data.region as Region,
 		image: data.image,
-		status: data.status,
+		status: data.status as 'upcoming' | 'live' | 'finished' | 'cancelled' | 'postponed',
 		capacity: data.capacity,
 		date: data.date as
 			| `${string}-${string}-${string}`
@@ -629,7 +629,7 @@ export async function getEvent(id: string): Promise<AppEvent | undefined> {
 				| 'regional_slot'
 				| 'exhibition'
 				| 'wildcard';
-			status?: 'active' | 'disqualified' | 'withdrawn';
+			status?: 'active' | 'disqualified' | 'withdrawn' | 'eliminated';
 		}
 	>();
 

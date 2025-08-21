@@ -730,6 +730,7 @@
 			"status": {
 				"status": "Статус",
 				"active": "Активны",
+				"eliminated": "Выбыли",
 				"disqualified": "Дисквалифицированы",
 				"withdrawn": "Снялись"
 			}

@@ -144,7 +144,7 @@ export async function seed() {
 		).values()
 	);
 
-	// Showcase examples for UI: invited, disqualified, withdrawn
+	// Showcase examples for UI: invited, disqualified, withdrawn, eliminated
 	const EVENT_TEAM_OVERRIDES: Array<{
 		eventId: string;
 		teamId: string;
@@ -157,12 +157,13 @@ export async function seed() {
 			| 'regional_slot'
 			| 'exhibition'
 			| 'wildcard';
-		status?: 'active' | 'disqualified' | 'withdrawn';
+		status?: 'active' | 'disqualified' | 'withdrawn' | 'eliminated';
 	}> = [
 		{ eventId: EVENTS[0].id, teamId: TEAMS[0].id, entry: 'invited', status: 'active' },
 		{ eventId: EVENTS[1].id, teamId: TEAMS[4].id, entry: 'invited', status: 'active' },
 		{ eventId: EVENTS[1].id, teamId: TEAMS[5].id, entry: 'qualified', status: 'disqualified' },
-		{ eventId: EVENTS[1].id, teamId: TEAMS[6].id, entry: 'open', status: 'withdrawn' }
+		{ eventId: EVENTS[1].id, teamId: TEAMS[6].id, entry: 'open', status: 'withdrawn' },
+		{ eventId: EVENTS[1].id, teamId: TEAMS[7].id, entry: 'open', status: 'eliminated' }
 	];
 
 	for (const o of EVENT_TEAM_OVERRIDES) {

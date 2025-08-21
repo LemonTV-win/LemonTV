@@ -721,6 +721,7 @@
 			"status": {
 				"status": "狀態",
 				"active": "參賽中",
+				"eliminated": "淘汰",
 				"disqualified": "取消資格",
 				"withdrawn": "退賽"
 			}

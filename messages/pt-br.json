@@ -724,6 +724,7 @@
 			"status": {
 				"status": "Status",
 				"active": "Ativo",
+				"eliminated": "Eliminado",
 				"disqualified": "Desclassificado",
 				"withdrawn": "Retirado"
 			}

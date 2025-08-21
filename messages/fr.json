@@ -725,7 +725,8 @@
 				"status": "Statut",
 				"active": "Actif",
 				"disqualified": "Disqualifié",
-				"withdrawn": "Retiré"
+				"withdrawn": "Retiré",
+				"eliminated": "Eliminé"
 			}
 		},
 		"players": {

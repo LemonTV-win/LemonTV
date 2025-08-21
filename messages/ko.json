@@ -721,6 +721,7 @@
 			"status": {
 				"status": "상태",
 				"active": "참가 중",
+				"eliminated": "탈락",
 				"disqualified": "실격",
 				"withdrawn": "기권"
 			}

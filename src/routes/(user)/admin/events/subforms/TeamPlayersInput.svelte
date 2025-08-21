@@ -29,7 +29,7 @@
 				| 'regional_slot'
 				| 'exhibition'
 				| 'wildcard';
-			status: 'active' | 'disqualified' | 'withdrawn';
+			status: 'active' | 'disqualified' | 'withdrawn' | 'eliminated';
 		}>;
 		teamPlayers: Array<{
 			teamId: string;
@@ -66,7 +66,7 @@
 		'exhibition',
 		'wildcard'
 	] as const;
-	const statusOptions = ['active', 'disqualified', 'withdrawn'] as const;
+	const statusOptions = ['active', 'disqualified', 'withdrawn', 'eliminated'] as const;
 
 	const ENTRY_NAMES: Record<(typeof entryOptions)[number], () => string> = {
 		open: m['content.teams.entry.open'],
@@ -82,7 +82,8 @@
 	const STATUS_NAMES: Record<(typeof statusOptions)[number], () => string> = {
 		active: m['content.teams.status.active'],
 		disqualified: m['content.teams.status.disqualified'],
-		withdrawn: m['content.teams.status.withdrawn']
+		withdrawn: m['content.teams.status.withdrawn'],
+		eliminated: m['content.teams.status.eliminated']
 	};
 
 	function upsertEventTeamMeta(

@@ -730,6 +730,7 @@
 			"status": {
 				"status": "Статус",
 				"active": "Активні",
+				"eliminated": "Вибули",
 				"disqualified": "Дискваліфіковано",
 				"withdrawn": "Знято з участі"
 			}

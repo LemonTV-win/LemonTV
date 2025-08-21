@@ -75,7 +75,12 @@ export const eventTeam = sqliteTable(
 			.notNull()
 			.default('open'),
 		status: text('status', {
-			enum: ['active', 'disqualified', 'withdrawn']
+			enum: [
+				'active', // unmarked
+				'disqualified', // disqualified due to violation,
+				'withdrawn', // withdrew from the event due to player absence, etc.
+				'eliminated' // eliminated from from Knockout Stage / Playoffs
+			]
 		})
 			.notNull()
 			.default('active'),

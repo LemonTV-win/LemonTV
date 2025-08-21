@@ -111,7 +111,8 @@
 				"status": "Status",
 				"active": "Active",
 				"disqualified": "Disqualified",
-				"withdrawn": "Withdrawn"
+				"withdrawn": "Withdrawn",
+				"eliminated": "Eliminated"
 			}
 		},
 		"players": {

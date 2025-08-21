@@ -76,7 +76,7 @@ export interface EventParticipant {
 		| 'regional_slot'
 		| 'exhibition'
 		| 'wildcard';
-	status?: 'active' | 'disqualified' | 'withdrawn';
+	status?: 'active' | 'disqualified' | 'withdrawn' | 'eliminated';
 }
 
 export interface Event {

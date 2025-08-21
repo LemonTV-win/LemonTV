@@ -33,8 +33,24 @@
 	let activeStage = $state<Stage | null>(data.initialStage ?? null);
 	const participantsSorted = $derived(
 		[...data.event.participants].sort((a, b) => {
-			const aStatusWeight = a.status === 'disqualified' || a.status === 'withdrawn' ? 1 : 0;
-			const bStatusWeight = b.status === 'disqualified' || b.status === 'withdrawn' ? 1 : 0;
+			// Status priority: Active > Eliminated > Withdrawn > Disqualified
+			const getStatusWeight = (status: string | undefined) => {
+				switch (status) {
+					case 'active':
+						return 0;
+					case 'eliminated':
+						return 1;
+					case 'withdrawn':
+						return 2;
+					case 'disqualified':
+						return 3;
+					default:
+						return 0;
+				}
+			};
+
+			const aStatusWeight = getStatusWeight(a.status);
+			const bStatusWeight = getStatusWeight(b.status);
 			if (aStatusWeight !== bStatusWeight) return aStatusWeight - bStatusWeight;
 
 			const aEntryWeight = a.entry === 'invited' ? 0 : 1;

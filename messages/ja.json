@@ -721,6 +721,7 @@
 			"status": {
 				"status": "ステータス",
 				"active": "参加中",
+				"eliminated": "敗退",
 				"disqualified": "失格",
 				"withdrawn": "辞退"
 			}
