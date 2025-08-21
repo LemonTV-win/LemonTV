@@ -78,7 +78,7 @@ function parseFormData(formData: FormData) {
 }
 
 // export const load: PageServerLoad = async ({ locals, params }) => {
-// 	const startTime = Date.now();
+// 	const startTime = performance.now();
 // 	console.log(`[Admin][Matches][Event][Load] Starting load function for event: ${params.eventId}`);
 
 // 	const result = checkPermissions(locals, ['admin', 'editor']);
@@ -200,7 +200,7 @@ function parseFormData(formData: FormData) {
 // 	// Get all teams for dropdowns
 // 	const teams = await db.select().from(table.team);
 
-// 	const totalEndTime = Date.now();
+// 	const totalEndTime = performance.now();
 // 	console.log(
 // 		`[Admin][Matches][Event][Load] Total load function time: ${totalEndTime - startTime}ms`
 // 	);
@@ -486,8 +486,8 @@ function parseFormData(formData: FormData) {
 // };
 
 export const load: PageServerLoad = async ({ locals, params }) => {
-	console.log('[Admin][Matches][Load] Starting...');
-	const startTime = Date.now();
+	console.log('[Admin][Matches][Event][Load] Starting...');
+	const startTime = performance.now();
 
 	// --- 1. Permissions and Basic Setup ---
 	checkPermissions(locals, ['admin', 'editor']); // This will throw on error
@@ -495,18 +495,26 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 	// --- 2. Fetch Core Event Data ---
 	// Get the specific event first. If it doesn't exist, we can't continue.
+	const eventQueryStart = performance.now();
 	const event = await db.query.event.findFirst({
 		where: eq(table.event.id, eventId)
 	});
+	console.info(
+		`[Admin][Matches][Event][Load] Event query took ${performance.now() - eventQueryStart}ms`
+	);
 
 	if (!event) {
 		throw error(404, 'Event not found');
 	}
 
 	// Get all stages for this specific event
+	const stagesQueryStart = performance.now();
 	const stages = await db.query.stage.findMany({
 		where: eq(table.stage.eventId, eventId)
 	});
+	console.info(
+		`[Admin][Matches][Event][Load] Stages query took ${performance.now() - stagesQueryStart}ms (returned ${stages.length})`
+	);
 	const stageIds = stages.map((s) => s.id);
 
 	// If there are no stages, we can stop fetching stage-related data
@@ -516,9 +524,9 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 	// --- 3. Fetch All Related Data in Parallel ---
 	// Instead of a huge JOIN or sequential queries, we run them all at once.
-	const [matches, stageRounds, stageNodes, teamRostersRaw, teamsForEvent] = await Promise.all([
-		// Get all matches for all stages in this event
-		db.query.match.findMany({
+	const matchesQueryStart = performance.now();
+	const matchesPromise = db.query.match
+		.findMany({
 			where: inArray(table.match.stageId, stageIds),
 			with: {
 				matchTeams: { with: { team: true } },
@@ -532,15 +540,50 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 					}
 				}
 			}
-		}),
-		// Get bracket data scoped to the event's stages
-		db.query.stageRound.findMany({ where: inArray(table.stageRound.stageId, stageIds) }),
-		db.query.stageNode.findMany({
-			where: inArray(table.stageNode.stageId, stageIds),
-			with: { dependencies: true }
-		}),
-		// Get team rosters scoped to this event
-		db.query.eventTeamPlayer.findMany({
+		})
+		.then((result) => {
+			// Compute nested sizes to understand read amplification
+			const matchCount = result.length;
+			const gameCount = result.reduce((acc, m) => acc + (m.games?.length || 0), 0);
+			const scoreCount = result.reduce(
+				(acc, m) =>
+					acc + (m.games?.reduce((sa, g) => sa + (g.gamePlayerScores?.length || 0), 0) || 0),
+				0
+			);
+			const vodCount = result.reduce(
+				(acc, m) => acc + (m.games?.reduce((sa, g) => sa + (g.gameVods?.length || 0), 0) || 0),
+				0
+			);
+			console.info(
+				`[Admin][Matches][Event][Load] Matches query took ${performance.now() - matchesQueryStart}ms (matches=${matchCount}, games=${gameCount}, playerScores=${scoreCount}, vods=${vodCount})`
+			);
+			return result;
+		});
+
+	const stageRoundsQueryStart = performance.now();
+	const stageRoundsPromise = db.query.stageRound
+		.findMany({ where: inArray(table.stageRound.stageId, stageIds) })
+		.then((rows) => {
+			console.info(
+				`[Admin][Matches][Event][Load] StageRounds query took ${performance.now() - stageRoundsQueryStart}ms (rows=${rows.length})`
+			);
+			return rows;
+		});
+
+	const stageNodesQueryStart = performance.now();
+	const stageNodesPromise = db.query.stageNode
+		.findMany({ where: inArray(table.stageNode.stageId, stageIds), with: { dependencies: true } })
+		.then((rows) => {
+			const depCount = rows.reduce((acc, n) => acc + (n.dependencies?.length || 0), 0);
+			console.info(
+				`[Admin][Matches][Event][Load] StageNodes query took ${performance.now() - stageNodesQueryStart}ms (nodes=${rows.length}, dependencies=${depCount})`
+			);
+			return rows;
+		});
+
+	const teamRostersQueryStart = performance.now();
+	const teamRostersPromise = db.query.eventTeamPlayer
+		.findMany({
 			where: eq(table.eventTeamPlayer.eventId, eventId),
 			with: {
 				player: {
@@ -551,9 +594,18 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 					}
 				}
 			}
-		}),
-		// Get only the teams that are actually in this event
-		db.query.team.findMany({
+		})
+		.then((rows) => {
+			const players = rows.filter((r) => r.player).length;
+			console.info(
+				`[Admin][Matches][Event][Load] TeamRosters query took ${performance.now() - teamRostersQueryStart}ms (rows=${rows.length}, players=${players})`
+			);
+			return rows;
+		});
+
+	const teamsQueryStart = performance.now();
+	const teamsForEventPromise = db.query.team
+		.findMany({
 			where: inArray(
 				table.team.id,
 				db
@@ -562,6 +614,19 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 					.where(eq(table.eventTeamPlayer.eventId, eventId))
 			)
 		})
+		.then((rows) => {
+			console.info(
+				`[Admin][Matches][Event][Load] Teams query took ${performance.now() - teamsQueryStart}ms (rows=${rows.length})`
+			);
+			return rows;
+		});
+
+	const [matches, stageRounds, stageNodes, teamRostersRaw, teamsForEvent] = await Promise.all([
+		matchesPromise,
+		stageRoundsPromise,
+		stageNodesPromise,
+		teamRostersPromise,
+		teamsForEventPromise
 	]);
 
 	type StageMatch = (typeof matches)[number];
@@ -638,7 +703,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			}
 		>
 	);
-	console.log(`[Admin][Matches][Load] Total load time: ${Date.now() - startTime}ms`);
+	console.log(`[Admin][Matches][Event][Load] Total load time: ${performance.now() - startTime}ms`);
 
 	return {
 		event: processedEvent,
