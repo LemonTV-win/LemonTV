@@ -42,9 +42,9 @@
 			if (result.type === 'success') {
 				onSuccess();
 			} else if (result.type === 'failure') {
-				errorMessage = result.data?.error || 'Failed to save stage';
+				errorMessage = result.data?.error || m.failed_to_save_stage();
 			} else if (result.type === 'error') {
-				errorMessage = result.error?.message || 'An error occurred';
+				errorMessage = result.error?.message || m.error_generic_title();
 			}
 		};
 	}}
@@ -81,7 +81,9 @@
 			<input type="hidden" name="eventId" value={eventId} />
 
 			<div>
-				<label class="block text-sm font-medium text-slate-300" for="title">Title</label>
+				<label class="block text-sm font-medium text-slate-300" for="title"
+					>{m.stage_title_label()}</label
+				>
 				<input
 					type="text"
 					id="title"
@@ -93,7 +95,9 @@
 			</div>
 
 			<div>
-				<label class="block text-sm font-medium text-slate-300" for="stage">Stage Type</label>
+				<label class="block text-sm font-medium text-slate-300" for="stage"
+					>{m.stage_type_label()}</label
+				>
 				<select
 					id="stage"
 					name="stage"
@@ -108,7 +112,9 @@
 			</div>
 
 			<div>
-				<label class="block text-sm font-medium text-slate-300" for="format">Format</label>
+				<label class="block text-sm font-medium text-slate-300" for="format"
+					>{m.stage_format_label()}</label
+				>
 				<select
 					id="format"
 					name="format"
@@ -136,7 +142,7 @@
 			type="submit"
 			class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600"
 		>
-			{stage ? 'Update' : 'Create'}
+			{stage ? m.update_stage() : m.create_stage()}
 		</button>
 	</div>
 </form>
