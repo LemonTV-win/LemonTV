@@ -1911,6 +1911,82 @@ export async function getAllPlayersRatings(limit?: number): Promise<PlayerRating
 	return sortedResult;
 }
 
+// Optimized ratings function scoped to a subset of players
+export async function getPlayersRatingsByIds(playerIds: string[]): Promise<PlayerRating[]> {
+	const totalStart = performance.now();
+	if (playerIds.length === 0) return [];
+
+	// Fetch only the players we need
+	const playersQueryStart = performance.now();
+	const playersSubset = await db.select().from(player).where(inArray(player.id, playerIds));
+	const playersQueryDuration = performance.now() - playersQueryStart;
+	console.info(
+		`[Players] Scoped players query took ${playersQueryDuration.toFixed(2)}ms (ids=${playerIds.length}, rows=${playersSubset.length})`
+	);
+
+	if (playersSubset.length === 0) return [];
+
+	// Fetch only game accounts for these players
+	const accountsQueryStart = performance.now();
+	const subsetAccounts = await db
+		.select()
+		.from(gameAccount)
+		.where(
+			inArray(
+				gameAccount.playerId,
+				playersSubset.map((p) => p.id)
+			)
+		);
+	const accountsQueryDuration = performance.now() - accountsQueryStart;
+	console.info(
+		`[Players] Scoped game accounts query took ${accountsQueryDuration.toFixed(2)}ms (rows=${subsetAccounts.length})`
+	);
+
+	const accountsByPlayer = new Map<string, number[]>();
+	for (const acc of subsetAccounts) {
+		if (!accountsByPlayer.has(acc.playerId)) accountsByPlayer.set(acc.playerId, []);
+		accountsByPlayer.get(acc.playerId)!.push(acc.accountId);
+	}
+
+	const allAccountIds = subsetAccounts.map((a) => a.accountId);
+	if (allAccountIds.length === 0) {
+		return playersSubset.map((p) => ({ playerId: p.id, rating: 0 }));
+	}
+
+	// Fetch only scores for these accounts
+	const scoresQueryStart = performance.now();
+	const subsetScores = await db
+		.select({ accountId: schema.gamePlayerScore.accountId, score: schema.gamePlayerScore.score })
+		.from(schema.gamePlayerScore)
+		.where(inArray(schema.gamePlayerScore.accountId, allAccountIds));
+	const scoresQueryDuration = performance.now() - scoresQueryStart;
+	console.info(
+		`[Players] Scoped player scores query took ${scoresQueryDuration.toFixed(2)}ms (rows=${subsetScores.length})`
+	);
+
+	// Build ratings
+	const result: PlayerRating[] = [];
+	for (const p of playersSubset) {
+		const ids = accountsByPlayer.get(p.id) || [];
+		if (ids.length === 0) {
+			result.push({ playerId: p.id, rating: 0 });
+			continue;
+		}
+		const playerScores = subsetScores.filter((s) => ids.includes(s.accountId));
+		let totalScore = 0;
+		for (const s of playerScores) totalScore += s.score;
+		const averageScore = playerScores.length > 0 ? totalScore / playerScores.length : 0;
+		const rating = averageScore / 200;
+		result.push({ playerId: p.id, rating });
+	}
+
+	const totalDuration = performance.now() - totalStart;
+	console.info(
+		`[Players] Total getPlayersRatingsByIds took ${totalDuration.toFixed(2)}ms (players=${playerIds.length})`
+	);
+	return result;
+}
+
 // Get essential stats for all players (optimized for lists)
 export async function getAllPlayersEssentialStats(): Promise<PlayerEssentialStats[]> {
 	console.info('[Players] Fetching essential stats for all players');
