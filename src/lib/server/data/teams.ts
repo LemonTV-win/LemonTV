@@ -1,5 +1,10 @@
 import type { Character, Region } from '$lib/data/game';
-import { getServerPlayerKD, getServerPlayerAgents, getAllPlayersRatings } from './players';
+import {
+	getServerPlayerKD,
+	getServerPlayerAgents,
+	getAllPlayersRatings,
+	getPlayersRatingsByIds
+} from './players';
 
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
@@ -37,11 +42,9 @@ export async function getTeamMemberStatistics(team: Team): Promise<Record<
 		return null;
 	}
 
-	// Get all player ratings (optimized)
-	const allPlayerRatings = await getAllPlayersRatings();
-	const ratingsByPlayerId = new Map(
-		allPlayerRatings.map((rating) => [rating.playerId, rating.rating])
-	);
+	// Get ratings only for these players
+	const scopedRatings = await getPlayersRatingsByIds(playerIds);
+	const ratingsByPlayerId = new Map(scopedRatings.map((r) => [r.playerId, r.rating]));
 
 	// Get KD and agents for each player
 	const result: Record<string, { kd: number; rating: number; characters: [Character, number][] }> =
