@@ -714,7 +714,7 @@
 		<h1 class="text-2xl font-bold">{m.matches()}</h1>
 		<button
 			onclick={() => goto('/admin/matches')}
-			class="glass cursor-pointer rounded-md px-4 py-2 text-gray-400 backdrop-blur-2xl transition-colors hover:text-white"
+			class="cursor-pointer rounded-md border border-white/20 px-4 py-2 text-slate-400 backdrop-blur-2xl transition-colors hover:text-white"
 		>
 			← Back to Event Selection
 		</button>
