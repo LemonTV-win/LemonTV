@@ -60,13 +60,18 @@ async function syncMaps() {
 		.onConflictDoNothing();
 	console.info('[Sync] Inserted maps');
 }
+
+const CHARACTERS = GAME_CHARACTERS.map((character) => ({ id: character }));
+
+async function syncCharacters() {
+	console.info('[Sync] Inserting characters...');
+	await db.insert(schema.character).values(CHARACTERS).onConflictDoNothing();
+	console.info('[Sync] Inserted characters');
 }
 
 export async function syncAll() {
-	console.info('[Sync] Inserting required roles...');
 	await syncRoles();
-	console.info('[Sync] Inserting social platforms...');
 	await syncSocialPlatforms();
-	console.info('[Sync] Inserting maps...');
 	await syncMaps();
+	await syncCharacters();
 }
