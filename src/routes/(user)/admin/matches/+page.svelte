@@ -493,7 +493,10 @@
 				const searchLower = searchQuery.toLowerCase();
 				return (
 					eventData.event.name.toLowerCase().includes(searchLower) ||
-					eventData.event.slug.toLowerCase().includes(searchLower)
+					eventData.event.slug.toLowerCase().includes(searchLower) ||
+					Object.values(eventData.stages).some((stage) =>
+						stage.matches.some((match) => match.id.toLowerCase().includes(searchLower))
+					)
 				);
 			})
 			.map((eventData) => eventData.event)
