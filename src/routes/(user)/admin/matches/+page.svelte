@@ -1212,53 +1212,47 @@
 </div>
 
 {#if editingMatch}
-	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-		<div
-			class="mx-auto flex h-[90vh] w-full max-w-3xl flex-col rounded-lg border border-slate-800 bg-slate-900/95 p-6"
-		>
-			<MatchEdit
-				match={editingMatch.match}
-				matchTeams={editingMatch.matchTeams}
-				matchMaps={editingMatch.matchMaps.map((map) => ({
-					...map,
-					action: map.action as 'ban' | 'pick' | 'decider' | null
-				}))}
-				teams={data.teams}
-				maps={data.maps}
-				stages={Object.values(data.events)
-					.flatMap((eventData) =>
-						Object.values(eventData.stages).map((stageData) => ({
-							id: stageData.stage.id.toString(),
-							name: stageData.stage.title,
-							eventName: eventData.event.name
-						}))
-					)
-					.filter((stage, index, self) => index === self.findIndex((s) => s.id === stage.id))}
-				onCancel={() => {
-					editingMatch = null;
-					action = null;
-					actionParams = null;
-					goto(`/admin/matches?event=${selectedEventId}`, {
-						replaceState: true,
-						noScroll: true,
-						keepFocus: true
-					});
-				}}
-				onSuccess={() => {
-					editingMatch = null;
-					action = null;
-					actionParams = null;
-					goto(`/admin/matches?event=${selectedEventId}`, {
-						replaceState: true,
-						noScroll: true,
-						keepFocus: true
-					});
-					// Refresh the page to show updated data
-					invalidateAll();
-				}}
-			/>
-		</div>
-	</div>
+	<MatchEdit
+		match={editingMatch.match}
+		matchTeams={editingMatch.matchTeams}
+		matchMaps={editingMatch.matchMaps.map((map) => ({
+			...map,
+			action: map.action as 'ban' | 'pick' | 'decider' | null
+		}))}
+		teams={data.teams}
+		maps={data.maps}
+		stages={Object.values(data.events)
+			.flatMap((eventData) =>
+				Object.values(eventData.stages).map((stageData) => ({
+					id: stageData.stage.id.toString(),
+					name: stageData.stage.title,
+					eventName: eventData.event.name
+				}))
+			)
+			.filter((stage, index, self) => index === self.findIndex((s) => s.id === stage.id))}
+		onCancel={() => {
+			editingMatch = null;
+			action = null;
+			actionParams = null;
+			goto(`/admin/matches?event=${selectedEventId}`, {
+				replaceState: true,
+				noScroll: true,
+				keepFocus: true
+			});
+		}}
+		onSuccess={() => {
+			editingMatch = null;
+			action = null;
+			actionParams = null;
+			goto(`/admin/matches?event=${selectedEventId}`, {
+				replaceState: true,
+				noScroll: true,
+				keepFocus: true
+			});
+			// Refresh the page to show updated data
+			invalidateAll();
+		}}
+	/>
 {/if}
 
 {#if showDeleteModal && editingMatch}

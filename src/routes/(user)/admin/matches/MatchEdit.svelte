@@ -10,6 +10,7 @@
 	import IconParkSolidAdd from '~icons/icon-park-solid/add';
 	import { SvelteMap } from 'svelte/reactivity';
 	import { MAP_NAMES } from '$lib/data/game';
+	import Modal from '$lib/components/Modal.svelte';
 	let {
 		match,
 		matchTeams,
@@ -109,245 +110,247 @@
 	}
 </script>
 
-<form
-	method="POST"
-	action={match.id ? '?/update' : '?/create'}
-	use:enhance={() => {
-		return ({ result }: { result: ActionResult }) => {
-			if (result.type === 'success') {
-				onsuccess();
-			} else if (result.type === 'failure') {
-				errorMessage = result.data?.error || m.failed_to_change_password();
-			} else if (result.type === 'error') {
-				errorMessage = result.error?.message || m.error_occurred();
-			}
-		};
-	}}
-	class="flex h-full flex-col"
->
-	{#if errorMessage}
-		<div class="mb-4 rounded-md bg-red-900/50 p-4 text-red-200" role="alert">
-			<span class="block sm:inline">{errorMessage}</span>
-		</div>
-	{/if}
-
-	{#if successMessage}
-		<div class="mb-4 rounded-md bg-green-900/50 p-4 text-green-200" role="alert">
-			<span class="block sm:inline">{successMessage}</span>
-		</div>
-	{/if}
-
-	<div class="styled-scroll flex-1 space-y-4 overflow-y-auto pr-2">
-		{#if match.id}
-			<div>
-				<label class="block text-sm font-medium text-slate-300" for="matchId">ID</label>
-				<input
-					type="text"
-					id="matchId"
-					name="id"
-					value={match.id}
-					readonly
-					class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800/50 px-3 py-2 text-slate-400 placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none [&:read-only]:cursor-default [&:read-only]:opacity-75 [&:read-only]:select-none"
-				/>
+<Modal show={true} title={m.edit_match()} onClose={() => {}}>
+	<form
+		method="POST"
+		action={match.id ? '?/update' : '?/create'}
+		use:enhance={() => {
+			return ({ result }: { result: ActionResult }) => {
+				if (result.type === 'success') {
+					onsuccess();
+				} else if (result.type === 'failure') {
+					errorMessage = result.data?.error || m.failed_to_change_password();
+				} else if (result.type === 'error') {
+					errorMessage = result.error?.message || m.error_occurred();
+				}
+			};
+		}}
+		class="flex h-full flex-col"
+	>
+		{#if errorMessage}
+			<div class="mb-4 rounded-md bg-red-900/50 p-4 text-red-200" role="alert">
+				<span class="block sm:inline">{errorMessage}</span>
 			</div>
 		{/if}
 
-		<div>
-			<label class="block text-sm font-medium text-slate-300" for="matchStage">
-				{m.stage()}
-			</label>
-			<select
-				id="matchStage"
-				name="stageId"
-				bind:value={newMatch.stageId}
-				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-			>
-				<option value={null}>{m.select_stage()}</option>
-				{#each [...stagesByEvent] as [eventName, eventStages], i (i)}
-					<optgroup label={eventName}>
-						{#each eventStages as stage, j (`${i}-${j}`)}
-							<option value={stage.id}>{stage.name}</option>
-						{/each}
-					</optgroup>
-				{/each}
-			</select>
-		</div>
+		{#if successMessage}
+			<div class="mb-4 rounded-md bg-green-900/50 p-4 text-green-200" role="alert">
+				<span class="block sm:inline">{successMessage}</span>
+			</div>
+		{/if}
 
-		<div>
-			<label class="block text-sm font-medium text-slate-300" for="matchFormat">
-				{m.match_format()}
-			</label>
-			<select
-				id="matchFormat"
-				name="format"
-				bind:value={newMatch.format}
-				class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-			>
-				{#each formatOptions as format (format)}
-					<option value={format}>{format}</option>
-				{/each}
-			</select>
-		</div>
+		<div class="styled-scroll flex-1 space-y-4 overflow-y-auto pr-2">
+			{#if match.id}
+				<div>
+					<label class="block text-sm font-medium text-slate-300" for="matchId">ID</label>
+					<input
+						type="text"
+						id="matchId"
+						name="id"
+						value={match.id}
+						readonly
+						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800/50 px-3 py-2 text-slate-400 placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none [&:read-only]:cursor-default [&:read-only]:opacity-75 [&:read-only]:select-none"
+					/>
+				</div>
+			{/if}
 
-		<fieldset>
-			<legend class="block text-sm font-medium text-slate-300">{m.teams()}</legend>
-			<div class="mt-2 space-y-4">
-				{#each teamData as team, position (position)}
-					<div class="rounded-lg border border-slate-700 bg-slate-800 p-4">
-						<div class="grid grid-cols-[1fr_auto_auto] gap-4">
-							<div>
-								<label class="block text-sm font-medium text-slate-300" for="team-{position}">
-									{m.team()}
-								</label>
-								<input type="hidden" name="teams[{position}].position" value={position} />
-								<Combobox
-									id="team-{position}"
-									name="teams[{position}].teamId"
-									items={teams.map((t) => ({
-										id: t.id,
-										name: t.name,
-										slug: t.slug,
-										abbr: t.abbr,
-										group: teamData.some((td) => td.teamId === t.id) ? 'selected' : 'available'
-									}))}
-									bind:value={team.teamId}
-									placeholder={m.select_team()}
-									searchLabels={['slug', 'abbr', 'aliases']}
-									groups={[
-										{ id: 'selected', label: m.attending_teams() },
-										{ id: 'available', label: m.other_teams() }
-									]}
-									class="mt-1 px-3 py-2"
-								/>
-							</div>
-							<div>
-								<label class="block text-sm font-medium text-slate-300" for="score-{position}">
-									{m.score()}
-								</label>
-								<input
-									type="number"
-									id="score-{position}"
-									name="teams[{position}].score"
-									bind:value={team.score}
-									min="0"
-									class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-								/>
-							</div>
-							<div class="flex items-center">
-								<button
-									type="button"
-									class="mt-[1.625rem] text-red-400 hover:text-red-300"
-									onclick={() => removeTeam(position)}
-									title={m.remove_team()}
-								>
-									<IconParkSolidDelete class="h-5 w-5" />
-								</button>
+			<div>
+				<label class="block text-sm font-medium text-slate-300" for="matchStage">
+					{m.stage()}
+				</label>
+				<select
+					id="matchStage"
+					name="stageId"
+					bind:value={newMatch.stageId}
+					class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+				>
+					<option value={null}>{m.select_stage()}</option>
+					{#each [...stagesByEvent] as [eventName, eventStages], i (i)}
+						<optgroup label={eventName}>
+							{#each eventStages as stage, j (`${i}-${j}`)}
+								<option value={stage.id}>{stage.name}</option>
+							{/each}
+						</optgroup>
+					{/each}
+				</select>
+			</div>
+
+			<div>
+				<label class="block text-sm font-medium text-slate-300" for="matchFormat">
+					{m.match_format()}
+				</label>
+				<select
+					id="matchFormat"
+					name="format"
+					bind:value={newMatch.format}
+					class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+				>
+					{#each formatOptions as format (format)}
+						<option value={format}>{format}</option>
+					{/each}
+				</select>
+			</div>
+
+			<fieldset>
+				<legend class="block text-sm font-medium text-slate-300">{m.teams()}</legend>
+				<div class="mt-2 space-y-4">
+					{#each teamData as team, position (position)}
+						<div class="rounded-lg border border-slate-700 bg-slate-800 p-4">
+							<div class="grid grid-cols-[1fr_auto_auto] gap-4">
+								<div>
+									<label class="block text-sm font-medium text-slate-300" for="team-{position}">
+										{m.team()}
+									</label>
+									<input type="hidden" name="teams[{position}].position" value={position} />
+									<Combobox
+										id="team-{position}"
+										name="teams[{position}].teamId"
+										items={teams.map((t) => ({
+											id: t.id,
+											name: t.name,
+											slug: t.slug,
+											abbr: t.abbr,
+											group: teamData.some((td) => td.teamId === t.id) ? 'selected' : 'available'
+										}))}
+										bind:value={team.teamId}
+										placeholder={m.select_team()}
+										searchLabels={['slug', 'abbr', 'aliases']}
+										groups={[
+											{ id: 'selected', label: m.attending_teams() },
+											{ id: 'available', label: m.other_teams() }
+										]}
+										class="mt-1 px-3 py-2"
+									/>
+								</div>
+								<div>
+									<label class="block text-sm font-medium text-slate-300" for="score-{position}">
+										{m.score()}
+									</label>
+									<input
+										type="number"
+										id="score-{position}"
+										name="teams[{position}].score"
+										bind:value={team.score}
+										min="0"
+										class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+									/>
+								</div>
+								<div class="flex items-center">
+									<button
+										type="button"
+										class="mt-[1.625rem] text-red-400 hover:text-red-300"
+										onclick={() => removeTeam(position)}
+										title={m.remove_team()}
+									>
+										<IconParkSolidDelete class="h-5 w-5" />
+									</button>
+								</div>
 							</div>
 						</div>
-					</div>
-				{/each}
-				<button
-					type="button"
-					class="flex w-full items-center justify-center gap-2 rounded-md border border-dashed border-slate-700 bg-slate-800/50 px-4 py-2 text-yellow-500 transition-colors hover:border-yellow-500 hover:bg-slate-800"
-					onclick={addTeam}
-				>
-					<IconParkSolidAdd class="h-5 w-5" />
-					<span>{m.add_team()}</span>
-				</button>
-			</div>
-		</fieldset>
+					{/each}
+					<button
+						type="button"
+						class="flex w-full items-center justify-center gap-2 rounded-md border border-dashed border-slate-700 bg-slate-800/50 px-4 py-2 text-yellow-500 transition-colors hover:border-yellow-500 hover:bg-slate-800"
+						onclick={addTeam}
+					>
+						<IconParkSolidAdd class="h-5 w-5" />
+						<span>{m.add_team()}</span>
+					</button>
+				</div>
+			</fieldset>
 
-		<fieldset>
-			<legend class="block text-sm font-medium text-slate-300">{m.maps()}</legend>
-			<div class="mt-2 space-y-4">
-				{#each mapData as map, index (index)}
-					<div class="rounded-lg border border-slate-700 bg-slate-800 p-4">
-						<div class="grid grid-cols-[1fr_1fr_1fr_auto] gap-4">
-							<div>
-								<label class="block text-sm font-medium text-slate-300" for="map-{index}">
-									{m.map()}
-								</label>
-								<select
-									id="map-{index}"
-									name="maps[{index}].mapId"
-									bind:value={map.mapId}
-									class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-								>
-									<option value={null}>{m.select_map()}</option>
-									{#each maps as mapOption (mapOption.id)}
-										<option value={mapOption.id}>{MAP_NAMES[mapOption.id]}</option>
-									{/each}
-								</select>
-							</div>
-							<div>
-								<label class="block text-sm font-medium text-slate-300" for="action-{index}">
-									{m.action()}
-								</label>
-								<select
-									id="action-{index}"
-									name="maps[{index}].action"
-									bind:value={map.action}
-									class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-								>
-									<option value={null}>{m.none()}</option>
-									{#each mapActionOptions as action (action)}
-										<option value={action}>{action}</option>
-									{/each}
-								</select>
-							</div>
-							<div>
-								<label class="block text-sm font-medium text-slate-300" for="side-{index}">
-									{m.side()}
-								</label>
-								<select
-									id="side-{index}"
-									name="maps[{index}].side"
-									bind:value={map.side}
-									class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-								>
-									<option value={null}>{m.none()}</option>
-									<option value={0}>{m.attack()}</option>
-									<option value={1}>{m.defense()}</option>
-								</select>
-							</div>
-							<div class="flex items-center">
-								<button
-									type="button"
-									class="mt-[1.625rem] text-red-400 hover:text-red-300"
-									onclick={() => removeMap(index)}
-									title={m.remove_map()}
-								>
-									<IconParkSolidDelete class="h-5 w-5" />
-								</button>
+			<fieldset>
+				<legend class="block text-sm font-medium text-slate-300">{m.maps()}</legend>
+				<div class="mt-2 space-y-4">
+					{#each mapData as map, index (index)}
+						<div class="rounded-lg border border-slate-700 bg-slate-800 p-4">
+							<div class="grid grid-cols-[1fr_1fr_1fr_auto] gap-4">
+								<div>
+									<label class="block text-sm font-medium text-slate-300" for="map-{index}">
+										{m.map()}
+									</label>
+									<select
+										id="map-{index}"
+										name="maps[{index}].mapId"
+										bind:value={map.mapId}
+										class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+									>
+										<option value={null}>{m.select_map()}</option>
+										{#each maps as mapOption (mapOption.id)}
+											<option value={mapOption.id}>{MAP_NAMES[mapOption.id]}</option>
+										{/each}
+									</select>
+								</div>
+								<div>
+									<label class="block text-sm font-medium text-slate-300" for="action-{index}">
+										{m.action()}
+									</label>
+									<select
+										id="action-{index}"
+										name="maps[{index}].action"
+										bind:value={map.action}
+										class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+									>
+										<option value={null}>{m.none()}</option>
+										{#each mapActionOptions as action (action)}
+											<option value={action}>{action}</option>
+										{/each}
+									</select>
+								</div>
+								<div>
+									<label class="block text-sm font-medium text-slate-300" for="side-{index}">
+										{m.side()}
+									</label>
+									<select
+										id="side-{index}"
+										name="maps[{index}].side"
+										bind:value={map.side}
+										class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+									>
+										<option value={null}>{m.none()}</option>
+										<option value={0}>{m.attack()}</option>
+										<option value={1}>{m.defense()}</option>
+									</select>
+								</div>
+								<div class="flex items-center">
+									<button
+										type="button"
+										class="mt-[1.625rem] text-red-400 hover:text-red-300"
+										onclick={() => removeMap(index)}
+										title={m.remove_map()}
+									>
+										<IconParkSolidDelete class="h-5 w-5" />
+									</button>
+								</div>
 							</div>
 						</div>
-					</div>
-				{/each}
-				<button
-					type="button"
-					class="flex w-full items-center justify-center gap-2 rounded-md border border-dashed border-slate-700 bg-slate-800/50 px-4 py-2 text-yellow-500 transition-colors hover:border-yellow-500 hover:bg-slate-800"
-					onclick={addMap}
-				>
-					<IconParkSolidAdd class="h-5 w-5" />
-					<span>{m.add_map()}</span>
-				</button>
-			</div>
-		</fieldset>
-	</div>
+					{/each}
+					<button
+						type="button"
+						class="flex w-full items-center justify-center gap-2 rounded-md border border-dashed border-slate-700 bg-slate-800/50 px-4 py-2 text-yellow-500 transition-colors hover:border-yellow-500 hover:bg-slate-800"
+						onclick={addMap}
+					>
+						<IconParkSolidAdd class="h-5 w-5" />
+						<span>{m.add_map()}</span>
+					</button>
+				</div>
+			</fieldset>
+		</div>
 
-	<div class="mt-6 flex justify-end gap-4 border-t border-slate-700 pt-4">
-		<button
-			type="button"
-			class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
-			onclick={onCancel}
-		>
-			{m.cancel()}
-		</button>
-		<button
-			type="submit"
-			class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600"
-		>
-			{match.id ? m.update_match() : m.create_match()}
-		</button>
-	</div>
-</form>
+		<div class="mt-6 flex justify-end gap-4 border-t border-slate-700 pt-4">
+			<button
+				type="button"
+				class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
+				onclick={onCancel}
+			>
+				{m.cancel()}
+			</button>
+			<button
+				type="submit"
+				class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600"
+			>
+				{match.id ? m.update_match() : m.create_match()}
+			</button>
+		</div>
+	</form>
+</Modal>
