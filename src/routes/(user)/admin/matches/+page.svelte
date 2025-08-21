@@ -1220,7 +1220,6 @@
 			action: map.action as 'ban' | 'pick' | 'decider' | null
 		}))}
 		teams={data.teams}
-		maps={data.maps}
 		stages={Object.values(data.events)
 			.flatMap((eventData) =>
 				Object.values(eventData.stages).map((stageData) => ({

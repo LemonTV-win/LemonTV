@@ -9,14 +9,13 @@
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import IconParkSolidAdd from '~icons/icon-park-solid/add';
 	import { SvelteMap } from 'svelte/reactivity';
-	import { MAP_NAMES } from '$lib/data/game';
+	import { MAP_NAMES, MAPS } from '$lib/data/game';
 	import Modal from '$lib/components/Modal.svelte';
 	let {
 		match,
 		matchTeams,
 		matchMaps,
 		teams,
-		maps,
 		stages,
 		onCancel,
 		onSuccess: onsuccess
@@ -25,7 +24,6 @@
 		matchTeams: MatchTeam[];
 		matchMaps: MatchMap[];
 		teams: Team[];
-		maps: GameMap[];
 		stages: { id: string; name: string; eventName: string }[];
 		onCancel: () => void;
 		onSuccess: () => void;
@@ -276,8 +274,8 @@
 										class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 									>
 										<option value={null}>{m.select_map()}</option>
-										{#each maps as mapOption (mapOption.id)}
-											<option value={mapOption.id}>{MAP_NAMES[mapOption.id]()}</option>
+										{#each MAPS as map}
+											<option value={map}>{MAP_NAMES[map]()}</option>
 										{/each}
 									</select>
 								</div>

@@ -755,19 +755,10 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		`[Admin][Matches][Load] Teams query completed in ${teamsQueryEnd - teamsQueryStart}ms, returned ${teams.length} rows`
 	);
 
-	const mapsQueryStart = Date.now();
-	const maps = await db.select().from(table.map);
-	const mapsQueryEnd = Date.now();
-	console.log(
-		`[Admin][Matches][Load] Maps query completed in ${mapsQueryEnd - mapsQueryStart}ms, returned ${maps.length} rows`
-	);
-	// #endregion
-
 	return {
 		events: serializedEvents,
 		event: eventId,
 		teams,
-		maps,
 		action,
 		id,
 		delete: deleteParam,
