@@ -391,54 +391,80 @@ export async function getTeam(slug: string): Promise<(Team & { logoURL: string |
 	return fullTeam;
 }
 
+function computeWinsFromMatchTeamRows(rows: table.MatchTeam[]): Record<string, number> {
+	// Group by match ID
+	const matchesByMatchId = new Map<string, table.MatchTeam[]>();
+	for (const row of rows) {
+		if (!row.matchId || !row.teamId) continue;
+		if (!matchesByMatchId.has(row.matchId)) {
+			matchesByMatchId.set(row.matchId, []);
+		}
+		matchesByMatchId.get(row.matchId)!.push(row);
+	}
+
+	// Calculate wins for each team
+	const teamWins = new Map<string, number>();
+
+	for (const [, matchTeams] of matchesByMatchId) {
+		if (matchTeams.length === 2) {
+			const team1 = matchTeams[0];
+			const team2 = matchTeams[1];
+
+			if (!team1.teamId || !team2.teamId) continue;
+
+			const team1Score = team1.score ?? 0;
+			const team2Score = team2.score ?? 0;
+
+			if (team1Score !== team2Score) {
+				const winnerPosition = team1Score > team2Score ? 0 : 1;
+				const winningTeam = matchTeams[winnerPosition];
+
+				if (!winningTeam.teamId) continue;
+
+				const currentWins = teamWins.get(winningTeam.teamId) ?? 0;
+				teamWins.set(winningTeam.teamId, currentWins + 1);
+			}
+			// Draws are ignored
+		}
+	}
+
+	return Object.fromEntries(teamWins);
+}
+
 export async function getServerTeamWins(teamId: string): Promise<number> {
 	console.info('[Teams] Fetching server team wins for:', teamId);
 
-	// Find all matches where this team participated
+	// 1) Get match IDs where this team participated
 	const teamMatches = await db
-		.select({
-			matchId: table.matchTeam.matchId,
-			teamPosition: table.matchTeam.position,
-			teamScore: table.matchTeam.score
-		})
+		.select({ matchId: table.matchTeam.matchId })
 		.from(table.matchTeam)
 		.innerJoin(table.match, eq(table.matchTeam.matchId, table.match.id))
 		.where(eq(table.matchTeam.teamId, teamId));
 
-	// Count wins
-	let wins = 0;
-
-	for (const match of teamMatches) {
-		// Skip if matchId is null
-		if (!match.matchId) continue;
-
-		// Get both teams' scores for this match
-		const matchTeams = await db
-			.select({
-				position: table.matchTeam.position,
-				score: table.matchTeam.score
-			})
-			.from(table.matchTeam)
-			.where(eq(table.matchTeam.matchId, match.matchId))
-			.orderBy(table.matchTeam.position);
-
-		if (matchTeams.length === 2) {
-			const team1Score = matchTeams[0].score ?? 0;
-			const team2Score = matchTeams[1].score ?? 0;
-
-			// Determine winner based on match scores
-			if (team1Score !== team2Score) {
-				const winnerPosition = team1Score > team2Score ? 0 : 1;
-
-				// Check if our team won
-				if (match.teamPosition === winnerPosition) {
-					wins++;
-				}
-			}
-			// If scores are equal, it's a draw - no winner
-		}
+	const matchIds = Array.from(
+		new Set(teamMatches.map((m) => m.matchId).filter(Boolean))
+	) as string[];
+	if (matchIds.length === 0) {
+		console.info('[Teams] Team', teamId, 'has', 0, 'match wins');
+		return 0;
 	}
 
+	// 2) Fetch all match_team rows for those matches
+	const allMatchTeamsForTeamMatches = await db
+		.select({
+			matchId: table.matchTeam.matchId,
+			teamId: table.matchTeam.teamId,
+			position: table.matchTeam.position,
+			score: table.matchTeam.score
+		})
+		.from(table.matchTeam)
+		.innerJoin(table.match, eq(table.matchTeam.matchId, table.match.id))
+		.where(inArray(table.matchTeam.matchId, matchIds))
+		.orderBy(table.matchTeam.position);
+
+	// 3) Compute wins for these matches and return only this team's wins
+	const winsByTeam = computeWinsFromMatchTeamRows(allMatchTeamsForTeamMatches as table.MatchTeam[]);
+	const wins = winsByTeam[teamId] ?? 0;
 	console.info('[Teams] Team', teamId, 'has', wins, 'match wins');
 	return wins;
 }
@@ -463,55 +489,14 @@ export async function getAllTeamsWins(): Promise<Record<string, number>> {
 	console.info(`[Teams] Batch match teams query took ${queryDuration.toFixed(2)}ms`);
 
 	const processingStart = performance.now();
-	// Group by match ID
-	const matchesByMatchId = new Map<string, typeof allMatchTeams>();
-	for (const matchTeam of allMatchTeams) {
-		// Skip entries with null matchId or teamId
-		if (!matchTeam.matchId || !matchTeam.teamId) continue;
-
-		if (!matchesByMatchId.has(matchTeam.matchId)) {
-			matchesByMatchId.set(matchTeam.matchId, []);
-		}
-		matchesByMatchId.get(matchTeam.matchId)!.push(matchTeam);
-	}
-
-	// Calculate wins for each team
-	const teamWins = new Map<string, number>();
-
-	for (const [matchId, matchTeams] of matchesByMatchId) {
-		if (matchTeams.length === 2) {
-			const team1 = matchTeams[0];
-			const team2 = matchTeams[1];
-
-			// Skip if either team has null teamId
-			if (!team1.teamId || !team2.teamId) continue;
-
-			const team1Score = team1.score ?? 0;
-			const team2Score = team2.score ?? 0;
-
-			// Determine winner based on match scores
-			if (team1Score !== team2Score) {
-				const winnerPosition = team1Score > team2Score ? 0 : 1;
-				const winningTeam = matchTeams[winnerPosition];
-
-				// Skip if winning team has null teamId
-				if (!winningTeam.teamId) continue;
-
-				// Increment wins for the winning team
-				const currentWins = teamWins.get(winningTeam.teamId) ?? 0;
-				teamWins.set(winningTeam.teamId, currentWins + 1);
-			}
-			// If scores are equal, it's a draw - no winner
-		}
-	}
-
+	const winsByTeam = computeWinsFromMatchTeamRows(allMatchTeams);
 	const processingDuration = performance.now() - processingStart;
 	console.info(`[Teams] Batch wins processing took ${processingDuration.toFixed(2)}ms`);
 
 	const totalDuration = performance.now() - totalStart;
 	console.info(`[Teams] Total getAllTeamsWins took ${totalDuration.toFixed(2)}ms`);
 
-	return Object.fromEntries(teamWins);
+	return winsByTeam;
 }
 
 export async function getServerTeamDetailedMatches(teamId: string): Promise<
@@ -715,22 +700,21 @@ export async function getTeamStatistics(team: Team): Promise<{
 	ranking: number;
 	wins: number;
 }> {
-	// TODO: More efficent algorithm
-	const teams = await getTeams();
-	const teamsWithWins = await Promise.all(
-		teams.map(async (t) => ({
-			...t,
-			wins: await getServerTeamWins(t.id)
-		}))
-	);
+	const allTeamWins = await getAllTeamsWins();
 
-	const sortedByWins = teamsWithWins.sort((a, b) => b.wins - a.wins);
+	const wins = allTeamWins[team.id] ?? 0;
 
-	const currentTeamIndex = sortedByWins.findIndex((t) => t.id === team.id);
+	// Ranking is 1 + number of teams with strictly more wins
+	let higherWinsCount = 0;
+	for (const value of Object.values(allTeamWins)) {
+		if (value > wins) {
+			higherWinsCount++;
+		}
+	}
 
 	return {
-		ranking: currentTeamIndex + 1,
-		wins: sortedByWins[currentTeamIndex]?.wins ?? 0
+		ranking: higherWinsCount + 1,
+		wins
 	};
 }
 
