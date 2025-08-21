@@ -277,7 +277,7 @@
 									>
 										<option value={null}>{m.select_map()}</option>
 										{#each maps as mapOption (mapOption.id)}
-											<option value={mapOption.id}>{MAP_NAMES[mapOption.id]}</option>
+											<option value={mapOption.id}>{MAP_NAMES[mapOption.id]()}</option>
 										{/each}
 									</select>
 								</div>
