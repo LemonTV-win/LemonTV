@@ -52,11 +52,11 @@
 				id: number;
 				matchId: string;
 				mapId: string;
-				order: number;
-				side: number;
+				order: number | null;
+				side: number | null;
 				action: string | null;
-				map_picker_position: number;
-				side_picker_position: number;
+				map_picker_position: number | null;
+				side_picker_position: number | null;
 				map: {
 					id: string;
 				};

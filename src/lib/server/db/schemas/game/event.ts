@@ -1,4 +1,4 @@
-import { sql } from 'drizzle-orm';
+import { relations, sql } from 'drizzle-orm';
 import { sqliteTable, text, integer, primaryKey } from 'drizzle-orm/sqlite-core';
 import { organizer } from './organizer';
 import { team } from './team';
@@ -13,7 +13,9 @@ export const event = sqliteTable('event', {
 	format: text('format').notNull(),
 	region: text('region').notNull(),
 	image: text('image').notNull(),
-	status: text('status').notNull(),
+	status: text('status')
+		.$type<'upcoming' | 'live' | 'finished' | 'cancelled' | 'postponed'>() //  'tba' | 'unknown' | 'hidden' | 'wip'
+		.notNull(),
 	capacity: integer('capacity').notNull(),
 	// '2025-08-25' | '2025-08-25/2025-08-26'
 	date: text('date')
@@ -185,3 +187,19 @@ export type EventResult = typeof eventResult.$inferSelect;
 export type EventWebsite = typeof eventWebsite.$inferSelect;
 export type EventVideo = typeof eventVideo.$inferSelect;
 export type EventCaster = typeof eventCaster.$inferSelect;
+
+// Add relations for eventTeamPlayer
+export const eventTeamPlayerRelations = relations(eventTeamPlayer, ({ one }) => ({
+	event: one(event, {
+		fields: [eventTeamPlayer.eventId],
+		references: [event.id]
+	}),
+	team: one(team, {
+		fields: [eventTeamPlayer.teamId],
+		references: [team.id]
+	}),
+	player: one(player, {
+		fields: [eventTeamPlayer.playerId],
+		references: [player.id]
+	})
+}));

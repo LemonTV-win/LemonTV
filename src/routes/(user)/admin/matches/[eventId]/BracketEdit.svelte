@@ -49,26 +49,34 @@
 		id: string;
 		format: string | null;
 		stageId: number | null;
-		teams: Array<{
+		teams: {
 			matchId: string | null;
 			teamId: string | null;
 			position: number;
 			score: number;
 			team: Team;
-		}>;
-		maps: Array<{
+		}[];
+		maps: {
 			id: number;
 			matchId: string;
 			mapId: string;
-			order: number;
-			side: number;
-			action: string | null;
-			map_picker_position: number;
-			side_picker_position: number;
+			order: number | null;
+			side: number | null;
+			action: 'set' | 'ban' | 'pick' | 'decider' | null;
+			map_picker_position: number | null;
+			side_picker_position: number | null;
 			map: {
-				id: string;
+				id:
+					| 'base_404'
+					| 'area_88'
+					| 'port_euler'
+					| 'windy_town'
+					| 'space_lab'
+					| 'cauchy_district'
+					| 'cosmite'
+					| 'ocarnus';
 			};
-		}>;
+		}[];
 	};
 
 	export type Stage = {
@@ -727,7 +735,7 @@
 							battleOf: (match.format as 'BO1' | 'BO3' | 'BO5') || 'BO1',
 							maps: match.maps.map((map) => ({
 								map: map.map.id as GameMap,
-								pickerId: map.map_picker_position,
+								pickerId: map.map_picker_position ?? undefined,
 								pickedSide: map.side === 0 ? 'Attack' : 'Defense'
 							})),
 							games: [] // TODO: Add games

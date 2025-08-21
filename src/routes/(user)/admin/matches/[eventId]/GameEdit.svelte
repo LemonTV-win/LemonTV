@@ -29,8 +29,8 @@
 			game?: any;
 			matchId: string;
 			teams: [
-				{ id: string; name: string; logo?: string },
-				{ id: string; name: string; logo?: string }
+				{ id: string; name: string; logo?: string | null } | null,
+				{ id: string; name: string; logo?: string | null } | null
 			];
 			rosters: [
 				{
@@ -124,14 +124,14 @@
 					position: 0,
 					score: data.game.teams[0].score
 				}
-			: { teamId: data.teams[0].id, position: 0, score: 0 },
+			: { teamId: data.teams[0]?.id || '', position: 0, score: 0 },
 		data.game?.teams?.[1]
 			? {
 					teamId: data.game.teams[1].teamId,
 					position: 1,
 					score: data.game.teams[1].score
 				}
-			: { teamId: data.teams[1].id, position: 1, score: 0 }
+			: { teamId: data.teams[1]?.id || '', position: 1, score: 0 }
 	]);
 
 	$inspect('[admin/matches/GameEdit] teamData', teamData);
@@ -509,7 +509,7 @@
 			{/snippet}
 			<div>
 				<h3 class="block text-sm font-medium text-slate-300">
-					{m.player_scores()} ({data.teams[0].name})
+					{m.player_scores()} ({data.teams[0]?.name || m.team_a()})
 				</h3>
 				<div class="mt-2 grid grid-cols-1 gap-2">
 					{#each playerScoresA as ps, idx (idx)}
@@ -537,7 +537,7 @@
 			</div>
 			<div>
 				<h3 class="block text-sm font-medium text-slate-300">
-					{m.player_scores()} ({data.teams[1].name})
+					{m.player_scores()} ({data.teams[1]?.name || m.team_b()})
 				</h3>
 				<div class="mt-2 grid grid-cols-1 gap-2">
 					{#each playerScoresB as ps, idx (idx)}

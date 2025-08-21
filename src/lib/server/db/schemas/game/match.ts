@@ -1,10 +1,12 @@
 import { sql } from 'drizzle-orm';
 import { sqliteTable, text, integer, check, primaryKey } from 'drizzle-orm/sqlite-core';
+import { relations } from 'drizzle-orm';
 import { team } from './team';
 import { map } from './game';
 import type { GameMap } from '$lib/data/game';
 import { player } from './player';
 import type { TLanguageCode } from 'countries-list';
+import { stage } from './stage';
 
 // #region Match
 export const match = sqliteTable(
@@ -146,4 +148,89 @@ export type Game = typeof game.$inferSelect;
 export type GameTeam = typeof gameTeam.$inferSelect;
 export type GamePlayerScore = typeof gamePlayerScore.$inferSelect;
 export type GameVod = typeof gameVod.$inferSelect;
+// #endregion
+
+// #region Relations
+export const matchRelations = relations(match, ({ one, many }) => ({
+	stage: one(stage, {
+		fields: [match.stageId],
+		references: [stage.id]
+	}),
+	matchTeams: many(matchTeam),
+	matchMaps: many(matchMap),
+	games: many(game)
+}));
+
+export const matchTeamRelations = relations(matchTeam, ({ one }) => ({
+	match: one(match, {
+		fields: [matchTeam.matchId],
+		references: [match.id]
+	}),
+	team: one(team, {
+		fields: [matchTeam.teamId],
+		references: [team.id]
+	})
+}));
+
+export const matchMapRelations = relations(matchMap, ({ one }) => ({
+	match: one(match, {
+		fields: [matchMap.matchId],
+		references: [match.id]
+	}),
+	map: one(map, {
+		fields: [matchMap.mapId],
+		references: [map.id]
+	})
+}));
+
+export const gameRelations = relations(game, ({ one, many }) => ({
+	match: one(match, {
+		fields: [game.matchId],
+		references: [match.id]
+	}),
+	map: one(map, {
+		fields: [game.mapId],
+		references: [map.id]
+	}),
+	gameTeams: many(gameTeam),
+	gamePlayerScores: many(gamePlayerScore),
+	gameVods: many(gameVod)
+}));
+
+export const gameTeamRelations = relations(gameTeam, ({ one }) => ({
+	game: one(game, {
+		fields: [gameTeam.gameId],
+		references: [game.id]
+	}),
+	team: one(team, {
+		fields: [gameTeam.teamId],
+		references: [team.id]
+	})
+}));
+
+export const gamePlayerScoreRelations = relations(gamePlayerScore, ({ one }) => ({
+	game: one(game, {
+		fields: [gamePlayerScore.gameId],
+		references: [game.id]
+	}),
+	team: one(team, {
+		fields: [gamePlayerScore.teamId],
+		references: [team.id]
+	})
+}));
+
+export const gameVodRelations = relations(gameVod, ({ one }) => ({
+	game: one(game, {
+		fields: [gameVod.gameId],
+		references: [game.id]
+	}),
+	player: one(player, {
+		fields: [gameVod.playerId],
+		references: [player.id]
+	}),
+	team: one(team, {
+		fields: [gameVod.teamId],
+		references: [team.id]
+	})
+}));
 // #endregion

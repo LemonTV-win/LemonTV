@@ -411,7 +411,7 @@
 						</td>
 						<td class="min-w-max px-4 py-1">
 							<a
-								href="/admin/matches?event={event.id}"
+								href="/admin/matches/{event.id}"
 								class="inline-flex items-center gap-1 rounded-full bg-yellow-500 px-2 py-1 text-xs text-black transition-colors hover:bg-yellow-600"
 								title="View matches for this event"
 							>

@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm';
 import { sqliteTable, text, integer, check } from 'drizzle-orm/sqlite-core';
+import { relations } from 'drizzle-orm';
 import { event } from './event';
 import { match } from './match';
 
@@ -93,3 +94,55 @@ export const stageNodeDependency = sqliteTable('stage_node_dependency', {
 		.notNull()
 		.default(sql`(unixepoch() * 1000)`)
 });
+
+export type Stage = typeof stage.$inferSelect;
+export type StageRound = typeof stageRound.$inferSelect;
+export type StageNode = typeof stageNode.$inferSelect;
+export type StageNodeDependency = typeof stageNodeDependency.$inferSelect;
+
+// #region Relations
+export const stageRelations = relations(stage, ({ one, many }) => ({
+	event: one(event, {
+		fields: [stage.eventId],
+		references: [event.id]
+	}),
+	matches: many(match),
+	rounds: many(stageRound),
+	nodes: many(stageNode)
+}));
+
+export const stageRoundRelations = relations(stageRound, ({ one, many }) => ({
+	stage: one(stage, {
+		fields: [stageRound.stageId],
+		references: [stage.id]
+	}),
+	nodes: many(stageNode)
+}));
+
+export const stageNodeRelations = relations(stageNode, ({ one, many }) => ({
+	stage: one(stage, {
+		fields: [stageNode.stageId],
+		references: [stage.id]
+	}),
+	match: one(match, {
+		fields: [stageNode.matchId],
+		references: [match.id]
+	}),
+	round: one(stageRound, {
+		fields: [stageNode.roundId],
+		references: [stageRound.id]
+	}),
+	dependencies: many(stageNodeDependency)
+}));
+
+export const stageNodeDependencyRelations = relations(stageNodeDependency, ({ one }) => ({
+	node: one(stageNode, {
+		fields: [stageNodeDependency.nodeId],
+		references: [stageNode.id]
+	}),
+	dependencyMatch: one(match, {
+		fields: [stageNodeDependency.dependencyMatchId],
+		references: [match.id]
+	})
+}));
+// #endregion

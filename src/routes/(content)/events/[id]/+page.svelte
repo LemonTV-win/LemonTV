@@ -71,7 +71,7 @@
 			{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
 				<ContentActionLink href={`/admin/events?action=edit&id=${data.event.id}`} type="edit" />
 				<ContentActionLink
-					href={`/admin/matches?event=${data.event.id}`}
+					href={`/admin/matches/${data.event.id}`}
 					type="edit"
 					label={m.edit_matches()}
 				/>
@@ -175,11 +175,11 @@
 				<div class="flex gap-2">
 					{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
 						<ContentActionLink
-							href={`/admin/matches?event=${data.event.id}&action=editStage&stageId=${activeStage.id}`}
+							href={`/admin/matches/${data.event.id}&action=editStage&stageId=${activeStage.id}`}
 							type="edit"
 						/>
 						<ContentActionLink
-							href={`/admin/matches?event=${data.event.id}&action=editBracket&stageId=${activeStage.id}`}
+							href={`/admin/matches/${data.event.id}&action=editBracket&stageId=${activeStage.id}`}
 							type="edit"
 							label={m.edit_bracket()}
 						/>
