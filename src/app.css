@@ -3,7 +3,7 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 body {
-	@apply bg-gradient-to-b from-gray-950 to-gray-900 text-white;
+	@apply bg-black bg-gradient-to-b from-gray-950 to-gray-900 text-white;
 	font-family: 'Saira Variable', 'Noto Sans CJK JP', 'Noto Sans CJK SC', sans-serif;
 }
 
