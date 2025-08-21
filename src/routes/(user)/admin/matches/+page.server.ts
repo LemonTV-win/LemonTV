@@ -4,6 +4,8 @@ import * as table from '$lib/server/db/schema';
 import { desc, eq } from 'drizzle-orm';
 import { checkPermissions } from '$lib/server/security/permission';
 import type { PageServerLoad } from './$types';
+import { unique } from 'drizzle-orm/sqlite-core';
+import { processImageURL } from '$lib/server/storage';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const startTime = Date.now();
@@ -83,9 +85,26 @@ export const load: PageServerLoad = async ({ locals }) => {
 	const totalEndTime = Date.now();
 	console.log(`[Admin][Matches][Load] Total load function time: ${totalEndTime - startTime}ms`);
 
+	const uniqueImageUrls = new Set<string>();
+
+	for (const event of events) {
+		if (event.image) uniqueImageUrls.add(event.image);
+	}
+
+	// Step 2: Process all image URLs in parallel
+	const imageUrlMap = new Map<string, string>();
+
+	await Promise.all(
+		Array.from(uniqueImageUrls).map(async (url) => {
+			const processed = await processImageURL(url);
+			imageUrlMap.set(url, processed);
+		})
+	);
+
 	return {
 		events: events.map((event) => ({
 			...event,
+			imageURL: imageUrlMap.get(event.image) || event.image,
 			stats: eventStatsMap.get(event.id) || { stageCount: 0, matchCount: 0, gameCount: 0 }
 		}))
 	};

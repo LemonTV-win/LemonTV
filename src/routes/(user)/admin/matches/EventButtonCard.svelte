@@ -11,6 +11,7 @@
 			name: string;
 			slug: string;
 			image?: string;
+			imageURL?: string;
 			status: string;
 			server: string;
 			format: string;
@@ -35,8 +36,8 @@
 	}}
 >
 	<div class="mb-2 flex items-center gap-3">
-		{#if event.image}
-			<img src={event.image} alt={event.name} class="h-12 w-12 rounded-lg object-cover" />
+		{#if event.imageURL}
+			<img src={event.imageURL} alt={event.name} class="h-12 w-12 rounded-lg object-cover" />
 		{/if}
 		<div>
 			<h3 class="font-semibold text-white transition-colors group-hover:text-yellow-400">
