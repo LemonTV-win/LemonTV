@@ -13,7 +13,7 @@
 	let {
 		playersTeams,
 		playersAgents,
-		sortBy,
+		sortBy = $bindable('rating-desc'),
 		players
 	}: {
 		playersTeams: Record<string, Team[]>;

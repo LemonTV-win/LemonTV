@@ -197,7 +197,7 @@
 		<PlayerTable
 			playersTeams={data.playersTeams}
 			playersAgents={data.playersAgents}
-			{sortBy}
+			bind:sortBy
 			players={filtered}
 		/>
 	{/if}
