@@ -9,7 +9,8 @@
 		onClose = () => {},
 		children,
 		actionArea,
-		dismissible = true
+		dismissible = true,
+		size = 'default'
 	}: {
 		show: boolean;
 		title: string;
@@ -17,6 +18,7 @@
 		children: Snippet;
 		actionArea?: Snippet<[]>;
 		dismissible?: boolean;
+		size?: 'compact' | 'default' | 'large';
 	} = $props();
 
 	function handleBackdropClick(event: MouseEvent) {
@@ -41,6 +43,19 @@
 			document.body.style.overflow = '';
 		};
 	});
+
+	// Size classes
+	const sizeClasses = {
+		compact: 'max-w-lg',
+		default: 'max-w-2xl',
+		large: 'max-w-4xl'
+	};
+
+	const contentHeightClasses = {
+		compact: 'h-auto max-h-[60vh]',
+		default: 'h-[calc(90vh-8rem)]',
+		large: 'h-[calc(90vh-6rem)]'
+	};
 </script>
 
 {#if show}
@@ -53,7 +68,9 @@
 		tabindex="0"
 	>
 		<div
-			class="styled-scroll relative max-h-[90vh] w-full max-w-2xl rounded-lg border border-slate-800 bg-slate-900/95 p-6 shadow-lg"
+			class="styled-scroll relative max-h-[90vh] w-full {sizeClasses[
+				size
+			]} rounded-lg border border-slate-800 bg-slate-900/95 p-6 shadow-lg"
 			role="dialog"
 			aria-modal="true"
 			aria-labelledby="modal-title"
@@ -73,7 +90,7 @@
 					</button>
 				{/if}
 			</div>
-			<div class="modal-content styled-scrollbar h-[calc(90vh-8rem)] overflow-y-auto">
+			<div class="modal-content styled-scrollbar {contentHeightClasses[size]} overflow-y-auto">
 				{@render children()}
 			</div>
 		</div>

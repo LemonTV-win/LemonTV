@@ -1295,14 +1295,12 @@
 
 <!-- Stage Edit Modal -->
 {#if showStageEdit}
-	<Modal show={true} title={m.edit_stage()} onClose={closeStageEdit}>
-		<StageEdit
-			stage={selectedStage}
-			eventId={selectedEvent}
-			onCancel={closeStageEdit}
-			onSuccess={handleStageSuccess}
-		/>
-	</Modal>
+	<StageEdit
+		stage={selectedStage}
+		eventId={selectedEvent}
+		onCancel={closeStageEdit}
+		onSuccess={handleStageSuccess}
+	/>
 {/if}
 
 <!-- Bracket Edit Modal -->
