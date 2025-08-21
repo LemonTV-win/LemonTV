@@ -97,7 +97,7 @@
 	>
 		<div class="flex items-center justify-between">
 			<nav class="my-2 flex gap-4 rounded-sm">
-				{#each data.match.maps as map, index (index)}
+				{#each data.match.maps ?? [] as map, index (index)}
 					<button
 						class="cursor-pointer overflow-clip rounded-md bg-white/40 text-center backdrop-blur-sm"
 						onclick={() => (currentMapID = index)}
@@ -134,7 +134,7 @@
 			<VodDisplay
 				vods={data.match.games[currentMapID].vods || []}
 				gameId={data.match.games[currentMapID].id}
-				mapName={MAP_NAMES[data.match.maps[currentMapID].map]()}
+				mapName={MAP_NAMES[data.match.maps?.[currentMapID]?.map ?? 'base_404']()}
 			/>
 		</div>
 	{/if}

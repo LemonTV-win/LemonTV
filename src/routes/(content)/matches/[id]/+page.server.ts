@@ -15,7 +15,10 @@ export const load: PageServerLoad = async ({ params }) => {
 		match: {
 			...match,
 			teams: await Promise.all(
-				match.teams.map(async (participant) => {
+				(match.teams ?? []).map(async (participant) => {
+					if (!participant?.team?.id) {
+						return participant;
+					}
 					const team = await getTeam(participant.team.id);
 					return {
 						...participant,
