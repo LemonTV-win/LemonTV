@@ -1,6 +1,7 @@
 import { sql } from 'drizzle-orm';
 import { db } from '.';
 import * as schema from './schema';
+import { CHARACTERS as GAME_CHARACTERS } from '$lib/data/game';
 
 const REQUIRED_ROLES = [
 	{ id: 'admin', name: 'Administrator' }, // Has access to all features
@@ -8,7 +9,9 @@ const REQUIRED_ROLES = [
 ];
 
 async function syncRoles() {
+	console.info('[Sync] Inserting required roles...');
 	await db.insert(schema.role).values(REQUIRED_ROLES).onConflictDoNothing();
+	console.info('[Sync] Inserted required roles');
 }
 
 const SOCIAL_PLATFORMS = [
@@ -27,6 +30,7 @@ const SOCIAL_PLATFORMS = [
 ];
 
 async function syncSocialPlatforms() {
+	console.info('[Sync] Inserting social platforms...');
 	await db
 		.insert(schema.social_platform)
 		.values(SOCIAL_PLATFORMS)
@@ -34,6 +38,7 @@ async function syncSocialPlatforms() {
 			target: [schema.social_platform.id],
 			set: { name: sql`excluded.name`, url_template: sql`excluded.url_template` }
 		});
+	console.info('[Sync] Inserted social platforms');
 }
 
 const MAPS = [
@@ -48,10 +53,13 @@ const MAPS = [
 ] as const;
 
 async function syncMaps() {
+	console.info('[Sync] Inserting maps...');
 	await db
 		.insert(schema.map)
 		.values([...MAPS])
 		.onConflictDoNothing();
+	console.info('[Sync] Inserted maps');
+}
 }
 
 export async function syncAll() {
