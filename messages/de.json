@@ -12,6 +12,9 @@
 	"attended_events": "Besuchte Events",
 	"recent_matches": "Letzte Matches",
 	"wins": "Siege",
+	"on": "An",
+	"off": "Aus",
+	"unknown": "Unbekannt",
 	"game": {
 		"character": {
 			"Ming": "Ming",
@@ -749,7 +752,23 @@
 					}
 				}
 			],
-			"top_characters": "Am Häufigsten"
+			"top_characters": "Am Häufigsten Verwendet",
+			"pro_settings": {
+				"settings": "Einstellungen",
+				"dpi": "DPI",
+				"sensitivity": "Empfindlichkeit",
+				"polling_rate": "Abfragefrequenz",
+				"windows_pointer_speed": "Windows-Zeiger-Geschwindigkeit",
+				"mouse_smoothing": "Maus-Glättung",
+				"mouse_model": "Maus-Modell",
+				"vertical_sens_multiplier": "Vertikaler Empfindlichkeits-Multiplikator",
+				"shoulder_fire_sens_multiplier": "Schulterfeuer-Empfindlichkeits-Multiplikator",
+				"ads_sens_1_25x": "ADS-Empfindlichkeit 1.25x",
+				"ads_sens_1_5x": "ADS-Empfindlichkeit 1.5x",
+				"ads_sens_2_5x": "ADS-Empfindlichkeit 2.5x",
+				"ads_sens_4_0x": "ADS-Empfindlichkeit 4.0x",
+				"no_settings_available": "Keine Einstellungen verfügbar. Wenn Sie die Einstellungen dieses Spielers kennen, {linkStart}kontaktieren Sie uns bitte{linkEnd}."
+			}
 		}
 	}
 }

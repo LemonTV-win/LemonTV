@@ -12,6 +12,9 @@
 	"attended_events": "參加賽事",
 	"recent_matches": "最近比賽",
 	"wins": "勝場",
+	"on": "開啟",
+	"off": "關閉",
+	"unknown": "未知",
 	"game": {
 		"character": {
 			"Ming": "明",
@@ -743,7 +746,23 @@
 					}
 				}
 			],
-			"top_characters": "常用超弦體"
+			"top_characters": "最常用",
+			"pro_settings": {
+				"settings": "設定",
+				"dpi": "DPI",
+				"sensitivity": "靈敏度",
+				"polling_rate": "輪詢率",
+				"windows_pointer_speed": "Windows指標速度",
+				"mouse_smoothing": "滑鼠平滑",
+				"mouse_model": "滑鼠型號",
+				"vertical_sens_multiplier": "垂直靈敏度倍數",
+				"shoulder_fire_sens_multiplier": "肩射靈敏度倍數",
+				"ads_sens_1_25x": "ADS靈敏度1.25x",
+				"ads_sens_1_5x": "ADS靈敏度1.5x",
+				"ads_sens_2_5x": "ADS靈敏度2.5x",
+				"ads_sens_4_0x": "ADS靈敏度4.0x",
+				"no_settings_available": "暫無設定可用。如果您知道這位玩家的設定，請{linkStart}聯絡我們{linkEnd}。"
+			}
 		}
 	}
 }

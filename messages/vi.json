@@ -12,6 +12,9 @@
 	"attended_events": "Sự kiện đã tham gia",
 	"recent_matches": "Trận đấu gần đây",
 	"wins": "Chiến thắng",
+	"on": "Bật",
+	"off": "Tắt",
+	"unknown": "Không xác định",
 	"game": {
 		"character": {
 			"Ming": "Ming",
@@ -743,7 +746,23 @@
 					}
 				}
 			],
-			"top_characters": "Dùng Nhiều Nhất"
+			"top_characters": "Sử dụng nhiều nhất",
+			"pro_settings": {
+				"settings": "Cài đặt",
+				"dpi": "DPI",
+				"sensitivity": "Độ nhạy",
+				"polling_rate": "Tần suất thăm dò",
+				"windows_pointer_speed": "Tốc độ con trỏ Windows",
+				"mouse_smoothing": "Làm mượt chuột",
+				"mouse_model": "Mẫu chuột",
+				"vertical_sens_multiplier": "Hệ số nhân độ nhạy dọc",
+				"shoulder_fire_sens_multiplier": "Hệ số nhân độ nhạy bắn vai",
+				"ads_sens_1_25x": "Độ nhạy ADS 1.25x",
+				"ads_sens_1_5x": "Độ nhạy ADS 1.5x",
+				"ads_sens_2_5x": "Độ nhạy ADS 2.5x",
+				"ads_sens_4_0x": "Độ nhạy ADS 4.0x",
+				"no_settings_available": "Không có cài đặt nào khả dụng. Nếu bạn biết cài đặt của người chơi này, vui lòng {linkStart}liên hệ với chúng tôi{linkEnd}."
+			}
 		}
 	}
 }

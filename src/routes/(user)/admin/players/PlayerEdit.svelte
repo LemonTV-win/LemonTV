@@ -15,6 +15,7 @@
 	import type { ActionResult } from '@sveltejs/kit';
 	import { SITE_CANONICAL_HOST } from '$lib/consts';
 	import ImageUpload from '$lib/components/ImageUpload.svelte';
+	import type { ProSettings } from '$lib/server/db/schema';
 
 	let {
 		player,
@@ -22,7 +23,8 @@
 		topCountries,
 		users,
 		onCancel,
-		onSuccess: onsuccess
+		onSuccess: onsuccess,
+		playerProSettings
 	}: {
 		player: Partial<Player>;
 		socialPlatforms: { id: string; name: string; url_template: string | null }[];
@@ -30,6 +32,7 @@
 		users: { id: string; username: string }[];
 		onCancel: () => void;
 		onSuccess: () => void;
+		playerProSettings?: ProSettings;
 	} = $props();
 
 	let newPlayer = $state({ ...player });
@@ -46,8 +49,46 @@
 	);
 	let playerAvatar = $state(player.avatar ?? null);
 
+	// Pro settings state (optional)
+	let proSettings = $state({
+		dpi: '' as string | number,
+		sensitivity: '' as string | number,
+		pollingRateHz: '' as string | number,
+		windowsPointerSpeed: '' as string | number,
+		mouseSmoothing: '' as string, // '', 'true', 'false'
+		mouseModel: '' as string,
+		verticalSensMultiplier: '' as string | number,
+		shoulderFireSensMultiplier: '' as string | number,
+		adsSens1_25x: '' as string | number,
+		adsSens1_5x: '' as string | number,
+		adsSens2_5x: '' as string | number,
+		adsSens4_0x: '' as string | number
+	});
+
 	$effect(() => {
 		newPlayer.avatar = playerAvatar || undefined;
+	});
+
+	$effect(() => {
+		if (playerProSettings && player?.id) {
+			proSettings.dpi = playerProSettings.dpi ?? '';
+			proSettings.sensitivity = playerProSettings.sensitivity ?? '';
+			proSettings.pollingRateHz = playerProSettings.pollingRateHz ?? '';
+			proSettings.windowsPointerSpeed = playerProSettings.windowsPointerSpeed ?? '';
+			proSettings.mouseSmoothing =
+				playerProSettings.mouseSmoothing === undefined
+					? ''
+					: playerProSettings.mouseSmoothing
+						? 'true'
+						: 'false';
+			proSettings.mouseModel = playerProSettings.mouseModel ?? '';
+			proSettings.verticalSensMultiplier = playerProSettings.verticalSensMultiplier ?? '';
+			proSettings.shoulderFireSensMultiplier = playerProSettings.shoulderFireSensMultiplier ?? '';
+			proSettings.adsSens1_25x = playerProSettings.adsSens1_25x ?? '';
+			proSettings.adsSens1_5x = playerProSettings.adsSens1_5x ?? '';
+			proSettings.adsSens2_5x = playerProSettings.adsSens2_5x ?? '';
+			proSettings.adsSens4_0x = playerProSettings.adsSens4_0x ?? '';
+		}
 	});
 
 	const filteredUsers = $derived(
@@ -519,6 +560,170 @@
 					<IconParkSolidAdd class="h-5 w-5" />
 					<span>{m.add_game_account()}</span>
 				</button>
+			</div>
+		</div>
+
+		<div>
+			<h3 class="block text-sm font-medium text-slate-300">
+				{m['content.players.pro_settings.settings']()}
+			</h3>
+			<div
+				class="mt-2 grid grid-cols-1 gap-4 rounded-lg border border-slate-700 bg-slate-800 p-4 md:grid-cols-2"
+			>
+				<div>
+					<label class="block text-xs text-slate-400" for="dpi"
+						>{m['content.players.pro_settings.dpi']()}</label
+					>
+					<input
+						name="dpi"
+						id="dpi"
+						type="number"
+						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+						bind:value={proSettings.dpi}
+					/>
+				</div>
+				<div>
+					<label class="block text-xs text-slate-400" for="sensitivity"
+						>{m['content.players.pro_settings.sensitivity']()}</label
+					>
+					<input
+						name="sensitivity"
+						id="sensitivity"
+						type="number"
+						step="0.0001"
+						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+						bind:value={proSettings.sensitivity}
+					/>
+				</div>
+				<div>
+					<label class="block text-xs text-slate-400" for="pollingRateHz"
+						>{m['content.players.pro_settings.polling_rate']()}</label
+					>
+					<input
+						name="pollingRateHz"
+						id="pollingRateHz"
+						type="number"
+						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+						bind:value={proSettings.pollingRateHz}
+					/>
+				</div>
+				<div>
+					<label class="block text-xs text-slate-400" for="windowsPointerSpeed"
+						>{m['content.players.pro_settings.windows_pointer_speed']()}</label
+					>
+					<input
+						name="windowsPointerSpeed"
+						id="windowsPointerSpeed"
+						type="number"
+						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+						bind:value={proSettings.windowsPointerSpeed}
+					/>
+				</div>
+				<div>
+					<label class="block text-xs text-slate-400" for="mouseSmoothing">
+						{m['content.players.pro_settings.mouse_smoothing']()}
+					</label>
+					<select
+						name="mouseSmoothing"
+						id="mouseSmoothing"
+						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+						bind:value={proSettings.mouseSmoothing}
+					>
+						<option value="">-</option>
+						<option value="true">{m.on()}</option>
+						<option value="false">{m.off()}</option>
+					</select>
+				</div>
+				<div class="md:col-span-2">
+					<label class="block text-xs text-slate-400" for="mouseModel"
+						>{m['content.players.pro_settings.mouse_model']()}</label
+					>
+					<input
+						name="mouseModel"
+						id="mouseModel"
+						type="text"
+						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+						bind:value={proSettings.mouseModel}
+					/>
+				</div>
+				<div>
+					<label class="block text-xs text-slate-400" for="verticalSensMultiplier"
+						>{m['content.players.pro_settings.vertical_sens_multiplier']()}</label
+					>
+					<input
+						name="verticalSensMultiplier"
+						id="verticalSensMultiplier"
+						type="number"
+						step="0.0001"
+						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+						bind:value={proSettings.verticalSensMultiplier}
+					/>
+				</div>
+				<div>
+					<label class="block text-xs text-slate-400" for="shoulderFireSensMultiplier"
+						>{m['content.players.pro_settings.shoulder_fire_sens_multiplier']()}</label
+					>
+					<input
+						name="shoulderFireSensMultiplier"
+						id="shoulderFireSensMultiplier"
+						type="number"
+						step="0.0001"
+						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+						bind:value={proSettings.shoulderFireSensMultiplier}
+					/>
+				</div>
+				<div>
+					<label class="block text-xs text-slate-400" for="adsSens1_25x"
+						>{m['content.players.pro_settings.ads_sens_1_25x']()}</label
+					>
+					<input
+						name="adsSens1_25x"
+						id="adsSens1_25x"
+						type="number"
+						step="0.0001"
+						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+						bind:value={proSettings.adsSens1_25x}
+					/>
+				</div>
+				<div>
+					<label class="block text-xs text-slate-400" for="adsSens1_5x"
+						>{m['content.players.pro_settings.ads_sens_1_5x']()}</label
+					>
+					<input
+						name="adsSens1_5x"
+						id="adsSens1_5x"
+						type="number"
+						step="0.0001"
+						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+						bind:value={proSettings.adsSens1_5x}
+					/>
+				</div>
+				<div>
+					<label class="block text-xs text-slate-400" for="adsSens2_5x"
+						>{m['content.players.pro_settings.ads_sens_2_5x']()}</label
+					>
+					<input
+						name="adsSens2_5x"
+						id="adsSens2_5x"
+						type="number"
+						step="0.0001"
+						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+						bind:value={proSettings.adsSens2_5x}
+					/>
+				</div>
+				<div>
+					<label class="block text-xs text-slate-400" for="adsSens4_0x"
+						>{m['content.players.pro_settings.ads_sens_4_0x']()}</label
+					>
+					<input
+						name="adsSens4_0x"
+						id="adsSens4_0x"
+						type="number"
+						step="0.0001"
+						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+						bind:value={proSettings.adsSens4_0x}
+					/>
+				</div>
 			</div>
 		</div>
 

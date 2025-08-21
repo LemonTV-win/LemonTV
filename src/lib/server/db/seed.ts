@@ -24,6 +24,7 @@ import { DISCORD_SERVERS, COMMUNITY_TAGS, DISCORD_SERVER_TAGS } from './seeds/co
 import { GAMES, GAME_TEAMS, GAME_PLAYER_SCORES } from './seeds/games';
 import { GAME_ACCOUNTS } from './seeds/game-accounts';
 import { GAME_VODS } from './seeds/game-vods';
+import { PRO_SETTINGS } from './seeds/pro-settings';
 
 export async function seed() {
 	console.info('[SEED] Starting seeding...');
@@ -31,6 +32,8 @@ export async function seed() {
 	// Clear only game-related tables, preserving user data
 	console.info('[SEED] Clearing existing game data...');
 	// Delete child records first
+	await db.delete(schema.mouseSettings);
+	console.info('[SEED] - Deleted proSettings');
 	await db.delete(schema.gamePlayerScore);
 	console.info('[SEED] - Deleted gamePlayerScore');
 	await db.delete(schema.gameTeam);
@@ -103,6 +106,9 @@ export async function seed() {
 
 	console.info('[SEED] Seeding player additional nationalities...');
 	await db.insert(schema.playerAdditionalNationality).values(PLAYER_ADDITIONAL_NATIONALITIES);
+
+	console.info('[SEED] Seeding pro settings...');
+	await db.insert(schema.mouseSettings).values(PRO_SETTINGS);
 
 	console.info('[SEED] Seeding teams...');
 	await db.insert(schema.team).values(TEAMS);

@@ -12,6 +12,9 @@
 	"attended_events": "Attended Events",
 	"recent_matches": "Recent Matches",
 	"wins": "Wins",
+	"on": "On",
+	"off": "Off",
+	"unknown": "Unknown",
 	"game": {
 		"character": {
 			"Ming": "Ming",
@@ -142,7 +145,23 @@
 					}
 				}
 			],
-			"top_characters": "Top Used"
+			"top_characters": "Top Used",
+			"pro_settings": {
+				"settings": "Settings",
+				"dpi": "DPI",
+				"sensitivity": "Sensitivity",
+				"polling_rate": "Polling Rate",
+				"windows_pointer_speed": "Windows Pointer Speed",
+				"mouse_smoothing": "Mouse Smoothing",
+				"mouse_model": "Mouse Model",
+				"vertical_sens_multiplier": "Vertical Sens Multiplier",
+				"shoulder_fire_sens_multiplier": "Shoulder Fire Sens Multiplier",
+				"ads_sens_1_25x": "ADS Sens 1.25x",
+				"ads_sens_1_5x": "ADS Sens 1.5x",
+				"ads_sens_2_5x": "ADS Sens 2.5x",
+				"ads_sens_4_0x": "ADS Sens 4.0x",
+				"no_settings_available": "No settings available. If you know this player's settings, please {linkStart}contact us{linkEnd}."
+			}
 		}
 	},
 	"name": "Name",

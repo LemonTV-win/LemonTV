@@ -1,4 +1,6 @@
 import { fail } from '@sveltejs/kit';
+import * as schema from '$lib/server/db/schema';
+import { sql } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 import {
 	createPlayer,
@@ -22,6 +24,7 @@ export const load: PageServerLoad = async ({ url }) => {
 	const socialPlatforms = await db.select().from(social_platform);
 	const playersTeams = await getPlayersTeams();
 	const users = await getUsers();
+	const proSettings = await db.select().from(schema.mouseSettings);
 
 	const action = url.searchParams.get('action');
 	const id = url.searchParams.get('id');
@@ -45,7 +48,8 @@ export const load: PageServerLoad = async ({ url }) => {
 		users,
 		action,
 		id,
-		searchQuery
+		searchQuery,
+		proSettings
 	};
 };
 
@@ -80,7 +84,7 @@ export const actions = {
 		}
 
 		try {
-			await createPlayer(
+			const newPlayerId = await createPlayer(
 				{
 					slug,
 					name,
@@ -93,6 +97,52 @@ export const actions = {
 				},
 				result.userId
 			);
+
+			// Pro settings (optional on create) - reuse the same formData
+			const getNum = (key: string) => {
+				const v = formData.get(key) as string | null;
+				if (v === null || v === '') return undefined;
+				const n = Number(v);
+				return Number.isFinite(n) ? n : undefined;
+			};
+			const getStr = (key: string) => {
+				const v = formData.get(key) as string | null;
+				return v && v.trim() !== '' ? v : undefined;
+			};
+			const getBool = (key: string) => {
+				const v = formData.get(key) as string | null;
+				if (v === null || v === '') return undefined;
+				return v === 'true' || v === 'on' || v === '1';
+			};
+
+			const ps = {
+				dpi: getNum('dpi'),
+				sensitivity: getNum('sensitivity'),
+				pollingRateHz: getNum('pollingRateHz'),
+				windowsPointerSpeed: getNum('windowsPointerSpeed'),
+				mouseSmoothing: getBool('mouseSmoothing'),
+				mouseModel: getStr('mouseModel'),
+				verticalSensMultiplier: getNum('verticalSensMultiplier'),
+				shoulderFireSensMultiplier: getNum('shoulderFireSensMultiplier'),
+				adsSens1_25x: getNum('adsSens1_25x'),
+				adsSens1_5x: getNum('adsSens1_5x'),
+				adsSens2_5x: getNum('adsSens2_5x'),
+				adsSens4_0x: getNum('adsSens4_0x')
+			};
+
+			const anyPsProvided = Object.values(ps).some((v) => v !== undefined);
+			if (anyPsProvided && newPlayerId) {
+				await db
+					.insert(schema.mouseSettings)
+					.values({
+						playerId: newPlayerId,
+						...ps
+					})
+					.onConflictDoUpdate({
+						target: schema.mouseSettings.playerId,
+						set: { ...ps, updatedAt: sql`(unixepoch() * 1000)` }
+					});
+			}
 
 			return {
 				success: true
@@ -171,6 +221,74 @@ export const actions = {
 				},
 				result.userId
 			);
+
+			const ps = {
+				dpi: (() => {
+					const v = formData.get('dpi') as string | null;
+					return v ? Number(v) : undefined;
+				})(),
+				sensitivity: (() => {
+					const v = formData.get('sensitivity') as string | null;
+					return v ? Number(v) : undefined;
+				})(),
+				pollingRateHz: (() => {
+					const v = formData.get('pollingRateHz') as string | null;
+					return v ? Number(v) : undefined;
+				})(),
+				windowsPointerSpeed: (() => {
+					const v = formData.get('windowsPointerSpeed') as string | null;
+					return v ? Number(v) : undefined;
+				})(),
+				mouseSmoothing: (() => {
+					const v = formData.get('mouseSmoothing') as string | null;
+					if (v === null || v === '') return undefined; // unknown
+					if (v === 'true') return true;
+					if (v === 'false') return false;
+					return undefined;
+				})(),
+				mouseModel: (() => {
+					const v = formData.get('mouseModel') as string | null;
+					return v && v.trim() !== '' ? v : undefined;
+				})(),
+				verticalSensMultiplier: (() => {
+					const v = formData.get('verticalSensMultiplier') as string | null;
+					return v ? Number(v) : undefined;
+				})(),
+				shoulderFireSensMultiplier: (() => {
+					const v = formData.get('shoulderFireSensMultiplier') as string | null;
+					return v ? Number(v) : undefined;
+				})(),
+				adsSens1_25x: (() => {
+					const v = formData.get('adsSens1_25x') as string | null;
+					return v ? Number(v) : undefined;
+				})(),
+				adsSens1_5x: (() => {
+					const v = formData.get('adsSens1_5x') as string | null;
+					return v ? Number(v) : undefined;
+				})(),
+				adsSens2_5x: (() => {
+					const v = formData.get('adsSens2_5x') as string | null;
+					return v ? Number(v) : undefined;
+				})(),
+				adsSens4_0x: (() => {
+					const v = formData.get('adsSens4_0x') as string | null;
+					return v ? Number(v) : undefined;
+				})()
+			};
+
+			const anyPsProvided = Object.values(ps).some((v) => v !== undefined);
+			if (anyPsProvided) {
+				await db
+					.insert(schema.mouseSettings)
+					.values({
+						playerId: id,
+						...ps
+					})
+					.onConflictDoUpdate({
+						target: schema.mouseSettings.playerId,
+						set: { ...ps, updatedAt: sql`(unixepoch() * 1000)` }
+					});
+			}
 
 			return {
 				success: true

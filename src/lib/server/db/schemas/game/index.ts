@@ -7,3 +7,4 @@ export * from './organizer';
 export * from './game';
 export * from './match';
 export * from './stage';
+export * from './pro-settings';

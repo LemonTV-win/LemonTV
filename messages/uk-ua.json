@@ -12,6 +12,9 @@
 	"attended_events": "Відвіданні події",
 	"recent_matches": "Нещодавні матчі",
 	"wins": "Перемоги",
+	"on": "Увімкнено",
+	"off": "Вимкнено",
+	"unknown": "Невідомо",
 	"game": {
 		"character": {
 			"Ming": "Мінг",
@@ -761,7 +764,23 @@
 					}
 				}
 			],
-			"top_characters": "Найчастіше"
+			"top_characters": "Найчастіше використовуються",
+			"pro_settings": {
+				"settings": "Налаштування",
+				"dpi": "DPI",
+				"sensitivity": "Чутливість",
+				"polling_rate": "Частота опитування",
+				"windows_pointer_speed": "Швидкість покажчика Windows",
+				"mouse_smoothing": "Згладжування миші",
+				"mouse_model": "Модель миші",
+				"vertical_sens_multiplier": "Множник вертикальної чутливості",
+				"shoulder_fire_sens_multiplier": "Множник чутливості стрільби з плеча",
+				"ads_sens_1_25x": "Чутливість ADS 1.25x",
+				"ads_sens_1_5x": "Чутливість ADS 1.5x",
+				"ads_sens_2_5x": "Чутливість ADS 2.5x",
+				"ads_sens_4_0x": "Чутливість ADS 4.0x",
+				"no_settings_available": "Налаштування недоступні. Якщо ви знаєте налаштування цього гравця, будь ласка, {linkStart}зв'яжіться з нами{linkEnd}."
+			}
 		}
 	}
 }

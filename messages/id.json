@@ -12,6 +12,9 @@
 	"attended_events": "Acara yang Dihadiri",
 	"recent_matches": "Pertandingan Terbaru",
 	"wins": "Kemenangan",
+	"on": "Aktif",
+	"off": "Nonaktif",
+	"unknown": "Tidak diketahui",
 	"game": {
 		"character": {
 			"Ming": "Ming",
@@ -743,7 +746,23 @@
 					}
 				}
 			],
-			"top_characters": "Superstring Teratas"
+			"top_characters": "Paling Sering Digunakan",
+			"pro_settings": {
+				"settings": "Pengaturan",
+				"dpi": "DPI",
+				"sensitivity": "Sensitivitas",
+				"polling_rate": "Tingkat polling",
+				"windows_pointer_speed": "Kecepatan pointer Windows",
+				"mouse_smoothing": "Pemulusan mouse",
+				"mouse_model": "Model mouse",
+				"vertical_sens_multiplier": "Pengali sensitivitas vertikal",
+				"shoulder_fire_sens_multiplier": "Pengali sensitivitas tembakan bahu",
+				"ads_sens_1_25x": "Sensitivitas ADS 1.25x",
+				"ads_sens_1_5x": "Sensitivitas ADS 1.5x",
+				"ads_sens_2_5x": "Sensitivitas ADS 2.5x",
+				"ads_sens_4_0x": "Sensitivitas ADS 4.0x",
+				"no_settings_available": "Tidak ada pengaturan yang tersedia. Jika Anda mengetahui pengaturan pemain ini, silakan {linkStart}hubungi kami{linkEnd}."
+			}
 		}
 	}
 }

@@ -1,0 +1,105 @@
+<script lang="ts">
+	import { m } from '$lib/paraglide/messages';
+	import type { ProSettings } from '$lib/server/db/schema';
+	import MaterialSymbolsMouse from '~icons/material-symbols/mouse';
+
+	let { proSettings }: { proSettings: ProSettings | undefined } = $props();
+</script>
+
+<div class="glass rounded-2xl p-6 md:col-span-3">
+	<h2 class="mb-4 text-xl font-bold">{m['content.players.pro_settings.settings']()}</h2>
+	{#if proSettings}
+		<div class="grid grid-cols-1 gap-4 sm:grid-cols-3 md:grid-cols-5">
+			<div
+				class="grid grid-cols-[auto_1fr] items-center justify-center gap-4 rounded-lg bg-slate-800/50 p-4 sm:col-span-3 md:col-span-4"
+			>
+				<MaterialSymbolsMouse class="size-12" />
+				<div class="flex flex-col">
+					<div class="text-sm text-gray-400">{m['content.players.pro_settings.mouse_model']()}</div>
+					<div class="text-2xl font-bold text-white">{proSettings.mouseModel ?? '-'}</div>
+				</div>
+			</div>
+			<div class="rounded-lg bg-slate-800/50 p-4">
+				<div class="text-sm text-gray-400">{m['content.players.pro_settings.dpi']()}</div>
+				<div class="text-2xl font-bold text-white">{proSettings.dpi ?? '-'}</div>
+			</div>
+			<div class="rounded-lg bg-slate-800/50 p-4">
+				<div class="text-sm text-gray-400">{m['content.players.pro_settings.sensitivity']()}</div>
+				<div class="text-2xl font-bold text-white">{proSettings.sensitivity ?? '-'}</div>
+			</div>
+			<div class="rounded-lg bg-slate-800/50 p-4">
+				<div class="text-sm text-gray-400">{m['content.players.pro_settings.polling_rate']()}</div>
+				<div class="text-2xl font-bold text-white">
+					{#if proSettings.pollingRateHz}
+						{proSettings.pollingRateHz}<span class="text-base"> Hz</span>
+					{:else}
+						-
+					{/if}
+				</div>
+			</div>
+			<div class="rounded-lg bg-slate-800/50 p-4">
+				<div class="text-sm text-gray-400">
+					{m['content.players.pro_settings.windows_pointer_speed']()}
+				</div>
+				<div class="text-2xl font-bold text-white">
+					{proSettings.windowsPointerSpeed ?? '-'}
+				</div>
+			</div>
+			<div class="rounded-lg bg-slate-800/50 p-4">
+				<div class="text-sm text-gray-400">
+					{m['content.players.pro_settings.mouse_smoothing']()}
+				</div>
+				<div class="text-2xl font-bold text-white">
+					{#if proSettings.mouseSmoothing === true}
+						{m.on()}
+					{:else if proSettings.mouseSmoothing === false}
+						{m.off()}
+					{:else}
+						-
+					{/if}
+				</div>
+			</div>
+
+			<div class="rounded-lg bg-slate-800/50 p-4">
+				<div class="text-sm text-gray-400">
+					{m['content.players.pro_settings.vertical_sens_multiplier']()}
+				</div>
+				<div class="text-2xl font-bold text-white">{proSettings.verticalSensMultiplier ?? '-'}</div>
+			</div>
+			<div class="rounded-lg bg-slate-800/50 p-4">
+				<div class="text-sm text-gray-400">
+					{m['content.players.pro_settings.shoulder_fire_sens_multiplier']()}
+				</div>
+				<div class="text-2xl font-bold text-white">
+					{proSettings.shoulderFireSensMultiplier ?? '-'}
+				</div>
+			</div>
+			<div class="rounded-lg bg-slate-800/50 p-4">
+				<div class="text-sm text-gray-400">
+					{m['content.players.pro_settings.ads_sens_1_25x']()}
+				</div>
+				<div class="text-2xl font-bold text-white">{proSettings.adsSens1_25x ?? '-'}</div>
+			</div>
+			<div class="rounded-lg bg-slate-800/50 p-4">
+				<div class="text-sm text-gray-400">{m['content.players.pro_settings.ads_sens_1_5x']()}</div>
+				<div class="text-2xl font-bold text-white">{proSettings.adsSens1_5x ?? '-'}</div>
+			</div>
+			<div class="rounded-lg bg-slate-800/50 p-4">
+				<div class="text-sm text-gray-400">{m['content.players.pro_settings.ads_sens_2_5x']()}</div>
+				<div class="text-2xl font-bold text-white">{proSettings.adsSens2_5x ?? '-'}</div>
+			</div>
+			<div class="rounded-lg bg-slate-800/50 p-4">
+				<div class="text-sm text-gray-400">{m['content.players.pro_settings.ads_sens_4_0x']()}</div>
+				<div class="text-2xl font-bold text-white">{proSettings.adsSens4_0x ?? '-'}</div>
+			</div>
+		</div>
+	{:else}
+		<div class="text-gray-400">{m.no_data()}</div>
+		<p class="mt-4 text-center text-sm text-gray-400">
+			{@html m['content.players.pro_settings.no_settings_available']({
+				linkStart: `<a class="text-yellow-500 hover:underline" href="/about">`,
+				linkEnd: '</a>'
+			})}
+		</p>
+	{/if}
+</div>

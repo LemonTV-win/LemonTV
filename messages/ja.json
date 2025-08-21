@@ -12,6 +12,9 @@
 	"attended_events": "参加イベント",
 	"recent_matches": "最近の試合",
 	"wins": "勝利",
+	"on": "オン",
+	"off": "オフ",
+	"unknown": "不明",
 	"game": {
 		"character": {
 			"Ming": "明",
@@ -743,7 +746,23 @@
 					}
 				}
 			],
-			"top_characters": "トップ超弦体"
+			"top_characters": "最も使用",
+			"pro_settings": {
+				"settings": "設定",
+				"dpi": "DPI",
+				"sensitivity": "感度",
+				"polling_rate": "ポーリングレート",
+				"windows_pointer_speed": "Windowsポインター速度",
+				"mouse_smoothing": "マウススムージング",
+				"mouse_model": "マウスモデル",
+				"vertical_sens_multiplier": "垂直感度倍率",
+				"shoulder_fire_sens_multiplier": "肩撃ち感度倍率",
+				"ads_sens_1_25x": "ADS感度1.25x",
+				"ads_sens_1_5x": "ADS感度1.5x",
+				"ads_sens_2_5x": "ADS感度2.5x",
+				"ads_sens_4_0x": "ADS感度4.0x",
+				"no_settings_available": "設定が利用できません。このプレイヤーの設定をご存知でしたら、{linkStart}お問い合わせください{linkEnd}。"
+			}
 		}
 	}
 }

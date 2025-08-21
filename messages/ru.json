@@ -12,6 +12,9 @@
 	"attended_events": "Посещённые События",
 	"recent_matches": "Недавние Матчи",
 	"wins": "Победы",
+	"on": "Включено",
+	"off": "Выключено",
+	"unknown": "Неизвестно",
 	"game": {
 		"character": {
 			"Ming": "Минг",
@@ -761,7 +764,23 @@
 					}
 				}
 			],
-			"top_characters": "Чаще всего"
+			"top_characters": "Чаще всего используются",
+			"pro_settings": {
+				"settings": "Настройки",
+				"dpi": "DPI",
+				"sensitivity": "Чувствительность",
+				"polling_rate": "Частота опроса",
+				"windows_pointer_speed": "Скорость указателя Windows",
+				"mouse_smoothing": "Сглаживание мыши",
+				"mouse_model": "Модель мыши",
+				"vertical_sens_multiplier": "Множитель вертикальной чувствительности",
+				"shoulder_fire_sens_multiplier": "Множитель чувствительности стрельбы с плеча",
+				"ads_sens_1_25x": "Чувствительность ADS 1.25x",
+				"ads_sens_1_5x": "Чувствительность ADS 1.5x",
+				"ads_sens_2_5x": "Чувствительность ADS 2.5x",
+				"ads_sens_4_0x": "Чувствительность ADS 4.0x",
+				"no_settings_available": "Настройки недоступны. Если вы знаете настройки этого игрока, пожалуйста, {linkStart}свяжитесь с нами{linkEnd}."
+			}
 		}
 	}
 }

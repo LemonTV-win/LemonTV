@@ -7,6 +7,9 @@ import {
 	getServerPlayerDetailedMatches
 } from '$lib/server/data/players';
 import { processImageURL } from '$lib/server/storage';
+import { db } from '$lib/server/db';
+import * as schema from '$lib/server/db/schema';
+import { eq } from 'drizzle-orm';
 import type { Character } from '$lib/data/game';
 
 export const load: PageServerLoad = async ({ params, locals: { user } }) => {
@@ -25,6 +28,11 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 
 	// Get unified server stats
 	const serverStats = await getServerPlayerStats(playerID);
+
+	// Get simplified latest pro settings
+	const proSettings = await db.query.mouseSettings.findFirst({
+		where: (t, { eq }) => eq(t.playerId, playerID)
+	});
 
 	// Get detailed match data for the player
 	const playerDetailedMatches = await getServerPlayerDetailedMatches(playerID);
@@ -106,6 +114,7 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 			...player,
 			avatarURL: playerAvatarURL
 		},
+		proSettings,
 		playerEvents: serverEvents,
 		playerMatches: transformedMatches,
 		playerWins: serverStats.wins,

@@ -329,6 +329,9 @@
 				socialPlatforms={data.socialPlatforms}
 				{topCountries}
 				users={data.users}
+				playerProSettings={selectedPlayer
+					? data.proSettings?.find((ps) => ps.playerId === selectedPlayer?.id)
+					: undefined}
 				onSuccess={() => {
 					handleCancel();
 					successMessage = isAddingNew

@@ -12,6 +12,9 @@
 	"attended_events": "참가 이벤트",
 	"recent_matches": "최근 경기",
 	"wins": "승리",
+	"on": "켜짐",
+	"off": "꺼짐",
+	"unknown": "알 수 없음",
 	"game": {
 		"character": {
 			"Ming": "밍",
@@ -743,7 +746,23 @@
 					}
 				}
 			],
-			"top_characters": "가장 많이 사용"
+			"top_characters": "가장 많이 사용",
+			"pro_settings": {
+				"settings": "설정",
+				"dpi": "DPI",
+				"sensitivity": "감도",
+				"polling_rate": "폴링 레이트",
+				"windows_pointer_speed": "Windows 포인터 속도",
+				"mouse_smoothing": "마우스 스무딩",
+				"mouse_model": "마우스 모델",
+				"vertical_sens_multiplier": "수직 감도 배율",
+				"shoulder_fire_sens_multiplier": "어깨 발사 감도 배율",
+				"ads_sens_1_25x": "ADS 감도 1.25x",
+				"ads_sens_1_5x": "ADS 감도 1.5x",
+				"ads_sens_2_5x": "ADS 감도 2.5x",
+				"ads_sens_4_0x": "ADS 감도 4.0x",
+				"no_settings_available": "사용 가능한 설정이 없습니다. 이 선수의 설정을 알고 계시다면 {linkStart}연락해 주세요{linkEnd}."
+			}
 		}
 	}
 }

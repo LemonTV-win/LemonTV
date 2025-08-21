@@ -14,6 +14,7 @@
 	import PlayerAgents from './PlayerAgents.svelte';
 	import PlayerRadarGraph from '$lib/components/PlayerRadarGraph.svelte';
 	import PlayerNetWLGraph from './PlayerNetWLGraph.svelte';
+	import PlayerSettings from './PlayerSettings.svelte';
 	import { onMount } from 'svelte';
 	import { safeGetTimestamp } from '$lib/utils/date';
 	import { isActive, isCoaching, isFormer } from '$lib/data/teams';
@@ -335,6 +336,8 @@
 			<PlayerRadarGraph playerStats={data.playerStats} />
 
 			<PlayerNetWLGraph playerStats={data.playerStats} playerMatches={data.playerMatches} />
+
+			<PlayerSettings proSettings={data.proSettings} />
 
 			{#if data.playerEvents}
 				<div class="md:col-span-3">
