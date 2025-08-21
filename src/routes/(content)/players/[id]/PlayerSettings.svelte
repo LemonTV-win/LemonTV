@@ -16,7 +16,19 @@
 				<MaterialSymbolsMouse class="size-12" />
 				<div class="flex flex-col">
 					<div class="text-sm text-gray-400">{m['content.players.pro_settings.mouse_model']()}</div>
-					<div class="text-2xl font-bold text-white">{proSettings.mouseModel ?? '-'}</div>
+					<div class="text-2xl font-bold text-white">
+						{#if !proSettings.mouseModel}
+							-
+						{:else}
+							<a
+								href={`https://google.com/search?q=${proSettings.mouseModel}`}
+								class="hover:underline"
+								target="_blank"
+							>
+								{proSettings.mouseModel}
+							</a>
+						{/if}
+					</div>
 				</div>
 			</div>
 			<div class="rounded-lg bg-slate-800/50 p-4">
