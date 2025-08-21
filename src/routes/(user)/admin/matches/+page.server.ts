@@ -6,7 +6,7 @@ import { processImageURL } from '$lib/server/storage';
 import type { TCountryCode, TLanguageCode } from 'countries-list';
 import type { Region, GameMap } from '$lib/data/game';
 import { MAPS } from '$lib/data/game';
-import type { PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 import { dev } from '$app/environment';
 import { checkPermissions } from '$lib/server/security/permission';
 
@@ -769,7 +769,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 };
 
 const MATCH_ACTIONS = {
-	create: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
+	create: async ({ request, locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
 		if (result.status === 'error') {
 			return fail(result.statusCode, {
@@ -852,7 +852,7 @@ const MATCH_ACTIONS = {
 		}
 	},
 
-	update: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
+	update: async ({ request, locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
 		if (result.status === 'error') {
 			return fail(result.statusCode, {
@@ -953,7 +953,7 @@ const MATCH_ACTIONS = {
 		}
 	},
 
-	delete: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
+	delete: async ({ request, locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
 		if (result.status === 'error') {
 			return fail(result.statusCode, {
@@ -1009,10 +1009,10 @@ const MATCH_ACTIONS = {
 			});
 		}
 	}
-};
+} satisfies Actions;
 
 const STAGE_ACTIONS = {
-	createStage: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
+	createStage: async ({ request, locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
 		if (result.status === 'error') {
 			return fail(result.statusCode, {
@@ -1069,7 +1069,7 @@ const STAGE_ACTIONS = {
 		}
 	},
 
-	updateStage: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
+	updateStage: async ({ request, locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
 		if (result.status === 'error') {
 			return fail(result.statusCode, {
@@ -1149,7 +1149,7 @@ const STAGE_ACTIONS = {
 		}
 	},
 
-	deleteStage: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
+	deleteStage: async ({ request, locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
 		if (result.status === 'error') {
 			return fail(result.statusCode, {
@@ -1208,11 +1208,11 @@ const STAGE_ACTIONS = {
 			});
 		}
 	}
-};
+} satisfies Actions;
 
 const STAGE_ROUND_ACTIONS = {
 	// New bracket structure actions
-	createStageRound: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
+	createStageRound: async ({ request, locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
 		if (result.status === 'error') {
 			return fail(result.statusCode, {
@@ -1274,7 +1274,7 @@ const STAGE_ROUND_ACTIONS = {
 		}
 	},
 
-	updateStageRound: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
+	updateStageRound: async ({ request, locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
 		if (result.status === 'error') {
 			return fail(result.statusCode, {
@@ -1353,7 +1353,7 @@ const STAGE_ROUND_ACTIONS = {
 		}
 	},
 
-	deleteStageRound: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
+	deleteStageRound: async ({ request, locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
 		if (result.status === 'error') {
 			return fail(result.statusCode, {
@@ -1412,10 +1412,10 @@ const STAGE_ROUND_ACTIONS = {
 			});
 		}
 	}
-};
+} satisfies Actions;
 
 const STAGE_NODE_ACTIONS = {
-	createStageNode: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
+	createStageNode: async ({ request, locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
 		if (result.status === 'error') {
 			return fail(result.statusCode, {
@@ -1478,7 +1478,7 @@ const STAGE_NODE_ACTIONS = {
 		}
 	},
 
-	updateStageNode: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
+	updateStageNode: async ({ request, locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
 		if (result.status === 'error') {
 			return fail(result.statusCode, {
@@ -1558,7 +1558,7 @@ const STAGE_NODE_ACTIONS = {
 		}
 	},
 
-	deleteStageNode: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
+	deleteStageNode: async ({ request, locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
 		if (result.status === 'error') {
 			return fail(result.statusCode, {
@@ -1617,16 +1617,10 @@ const STAGE_NODE_ACTIONS = {
 			});
 		}
 	}
-};
+} satisfies Actions;
 
 const STAGE_NODE_DEPENDENCY_ACTIONS = {
-	createStageNodeDependency: async ({
-		request,
-		locals
-	}: {
-		request: Request;
-		locals: App.Locals;
-	}) => {
+	createStageNodeDependency: async ({ request, locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
 		if (result.status === 'error') {
 			return fail(result.statusCode, {
@@ -1684,13 +1678,7 @@ const STAGE_NODE_DEPENDENCY_ACTIONS = {
 		}
 	},
 
-	deleteStageNodeDependency: async ({
-		request,
-		locals
-	}: {
-		request: Request;
-		locals: App.Locals;
-	}) => {
+	deleteStageNodeDependency: async ({ request, locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
 		if (result.status === 'error') {
 			return fail(result.statusCode, {
@@ -1749,11 +1737,11 @@ const STAGE_NODE_DEPENDENCY_ACTIONS = {
 			});
 		}
 	}
-};
+} satisfies Actions;
 
 const GAME_ACTIONS = {
 	// Game management actions
-	createGame: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
+	createGame: async ({ request, locals }) => {
 		const permissionResult = checkPermissions(locals, ['admin', 'editor']);
 		if (permissionResult.status === 'error') {
 			return fail(permissionResult.statusCode, {
@@ -1967,7 +1955,7 @@ const GAME_ACTIONS = {
 		}
 	},
 
-	updateGame: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
+	updateGame: async ({ request, locals }) => {
 		const permissionResult = checkPermissions(locals, ['admin', 'editor']);
 		if (permissionResult.status === 'error') {
 			return fail(permissionResult.statusCode, {
@@ -2153,7 +2141,7 @@ const GAME_ACTIONS = {
 		}
 	},
 
-	deleteGame: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
+	deleteGame: async ({ request, locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
 		if (result.status === 'error') {
 			return fail(result.statusCode, {
@@ -2210,10 +2198,10 @@ const GAME_ACTIONS = {
 			});
 		}
 	}
-};
+} satisfies Actions;
 
 const VOD_ACTIONS = {
-	saveGameVod: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
+	saveGameVod: async ({ request, locals }) => {
 		const permissionResult = checkPermissions(locals, ['admin', 'editor']);
 		if (permissionResult.status === 'error') {
 			return fail(permissionResult.statusCode, {
@@ -2326,7 +2314,7 @@ const VOD_ACTIONS = {
 		}
 	},
 
-	deleteGameVod: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
+	deleteGameVod: async ({ request, locals }) => {
 		const permissionResult = checkPermissions(locals, ['admin', 'editor']);
 		if (permissionResult.status === 'error') {
 			return fail(permissionResult.statusCode, {
@@ -2385,7 +2373,7 @@ const VOD_ACTIONS = {
 			});
 		}
 	}
-};
+} satisfies Actions;
 
 export const actions = {
 	...MATCH_ACTIONS,
