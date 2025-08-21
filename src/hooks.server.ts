@@ -34,6 +34,45 @@ const handleParaglide: Handle = ({ event, resolve }) => {
 };
 
 const handleAuth: Handle = async ({ event, resolve }) => {
+	// Define public routes that don't need authentication
+	const publicRoutes = [
+		'/',
+		'/login',
+		'/register',
+		'/reset-password',
+		'/sitemap.xml',
+		'/webmanifest.json',
+		'/robots.txt',
+		'/.well-known/',
+		'/api/public/',
+		'/assets/',
+		'/images/',
+		'/css/',
+		'/js/'
+	];
+
+	// Check if this is a public route
+	const isPublicRoute = publicRoutes.some(
+		(route) =>
+			event.url.pathname === route ||
+			event.url.pathname.startsWith(route) ||
+			event.url.pathname.endsWith('.css') ||
+			event.url.pathname.endsWith('.js') ||
+			event.url.pathname.endsWith('.png') ||
+			event.url.pathname.endsWith('.jpg') ||
+			event.url.pathname.endsWith('.jpeg') ||
+			event.url.pathname.endsWith('.svg') ||
+			event.url.pathname.endsWith('.ico')
+	);
+
+	// Skip authentication for public routes
+	if (isPublicRoute) {
+		event.locals.user = null;
+		event.locals.session = null;
+		return resolve(event);
+	}
+
+	// Only run authentication for protected routes
 	const sessionToken = event.cookies.get(auth.sessionCookieName);
 
 	if (!sessionToken) {
