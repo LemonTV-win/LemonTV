@@ -32,13 +32,11 @@ export async function recalculateAllPlayerStats(
 		`${logp} starting... ${opts.sinceMs ? `(since ${new Date(opts.sinceMs).toISOString()} — ignored for now)` : ''}`
 	);
 
-	// Begin a transaction (IMMEDIATE to lock early on SQLite/libSQL).
-	await db.run(sql`BEGIN IMMEDIATE`);
-	try {
-		// ───────────────────────────── Phase 1: Overall player aggregates ─────────────────────────────
+	await db.transaction(async (tx) => {
+		// ───────────────────────────── Phase 1 ─────────────────────────────
 		console.info(`${logp} Phase 1: aggregating overall player stats`);
 
-		const coreStatsAgg = db
+		const coreStatsAgg = tx
 			.select({
 				playerId: schema.gameAccount.playerId,
 				totalGames: sql<number>`count(distinct ${schema.gamePlayerScore.gameId})`.as('totalGames'),
@@ -59,7 +57,7 @@ export async function recalculateAllPlayerStats(
 			.groupBy(schema.gameAccount.playerId)
 			.as('core_stats');
 
-		const winAgg = db
+		const winAgg = tx
 			.select({
 				playerId: schema.gameAccount.playerId,
 				totalWins: sql<number>`count(distinct ${schema.game}.id)`.as('totalWins')
@@ -81,7 +79,7 @@ export async function recalculateAllPlayerStats(
 			.groupBy(schema.gameAccount.playerId)
 			.as('win_stats');
 
-		const eventAgg = db
+		const eventAgg = tx
 			.select({
 				playerId: schema.eventTeamPlayer.playerId,
 				eventsCount: sql<number>`count(distinct ${schema.eventTeamPlayer.eventId})`.as(
@@ -94,7 +92,7 @@ export async function recalculateAllPlayerStats(
 			.groupBy(schema.eventTeamPlayer.playerId)
 			.as('event_stats');
 
-		const allPlayerStatsData = await db
+		const allPlayerStatsData = await tx
 			.select({
 				playerId: schema.player.id,
 				totalGames: sql<number>`coalesce(${coreStatsAgg.totalGames}, 0)`,
@@ -166,7 +164,7 @@ export async function recalculateAllPlayerStats(
 		console.info(`${logp} Phase 1: upserting ${playerRows.length} player rows`);
 		for (let i = 0; i < playerRows.length; i += batchSize) {
 			const batch = playerRows.slice(i, i + batchSize);
-			await db
+			await tx
 				.insert(schema.playerStats)
 				.values(batch)
 				.onConflictDoUpdate({
@@ -269,7 +267,7 @@ export async function recalculateAllPlayerStats(
 			totalDamage: number;
 		};
 
-		const charRowsRaw = (await db.all(characterStatsQuery)) as CharAggRow[];
+		const charRowsRaw = (await tx.all(characterStatsQuery)) as CharAggRow[];
 
 		const charRows = charRowsRaw.map((r) => {
 			const tg = Number(r.totalGames || 0);
@@ -316,7 +314,7 @@ export async function recalculateAllPlayerStats(
 		console.info(`${logp} Phase 2: upserting ${charRows.length} character rows`);
 		for (let i = 0; i < charRows.length; i += batchSize) {
 			const batch = charRows.slice(i, i + batchSize);
-			await db
+			await tx
 				.insert(schema.playerCharacterStats)
 				.values(batch)
 				.onConflictDoUpdate({
@@ -345,9 +343,9 @@ export async function recalculateAllPlayerStats(
 		// ───────────────────────────── Phase 3 (optional): history snapshot ─────────────────────────────
 		if (opts.snapshotReason) {
 			console.info(`${logp} Phase 3: creating history snapshot (reason="${opts.snapshotReason}")`);
-			const nowDate = new Date(); // Drizzle timestamp_ms expects Date
+			const nowDate = new Date();
 
-			const currentPlayers = (await db
+			const currentPlayers = (await tx
 				.select()
 				.from(schema.playerStats)) as (typeof schema.playerStats.$inferSelect)[];
 			const playerHistoryRows = currentPlayers.map((p) => ({
@@ -373,12 +371,12 @@ export async function recalculateAllPlayerStats(
 				// createdAt has default
 			}));
 			for (let i = 0; i < playerHistoryRows.length; i += batchSize) {
-				await db
+				await tx
 					.insert(schema.playerStatsHistory)
 					.values(playerHistoryRows.slice(i, i + batchSize));
 			}
 
-			const currentCharStats = (await db
+			const currentCharStats = (await tx
 				.select()
 				.from(schema.playerCharacterStats)) as (typeof schema.playerCharacterStats.$inferSelect)[];
 			const charHistoryRows = currentCharStats.map((c) => ({
@@ -401,24 +399,18 @@ export async function recalculateAllPlayerStats(
 				superstringPower: c.superstringPower,
 				snapshotDate: nowDate,
 				reason: opts.snapshotReason!
-				// createdAt has default
 			}));
 			for (let i = 0; i < charHistoryRows.length; i += batchSize) {
-				await db
+				await tx
 					.insert(schema.playerCharacterStatsHistory)
 					.values(charHistoryRows.slice(i, i + batchSize));
 			}
 
 			console.info(`${logp} Phase 3: history snapshot done`);
 		}
+	}); // end transaction
 
-		await db.run(sql`COMMIT`);
 		console.info(`${logp} success`);
-	} catch (e) {
-		await db.run(sql`ROLLBACK`);
-		console.error(`${logp} failed, transaction rolled back`, e);
-		throw e;
-	}
 }
 
 export interface PlayerRating {
