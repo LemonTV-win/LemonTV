@@ -8,3 +8,4 @@ export * from './game';
 export * from './match';
 export * from './stage';
 export * from './pro-settings';
+export * from './player-stats';

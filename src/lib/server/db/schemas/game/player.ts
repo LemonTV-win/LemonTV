@@ -42,6 +42,11 @@ export const playerRelations = relations(player, ({ many, one }) => ({
 	additionalNationalities: many(playerAdditionalNationality),
 	socialAccounts: many(player_social_account),
 	teamMemberships: many(teamPlayer),
+	stats: one(playerStats, {
+		fields: [player.id],
+		references: [playerStats.playerId]
+	}),
+	characterStats: many(playerCharacterStats),
 	user: one(user, {
 		fields: [player.userId],
 		references: [user.id]
