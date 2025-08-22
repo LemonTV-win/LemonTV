@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { Team } from '$lib/data/teams';
 	import type { Character } from '$lib/data/game';
 	import { m } from '$lib/paraglide/messages.js';
 	import TypcnArrowUnsorted from '~icons/typcn/arrow-unsorted';
@@ -11,19 +10,10 @@
 	import PlayerFrequentAgents from './PlayerFrequentAgents.svelte';
 
 	let {
-		playersTeams,
 		playersAgents,
 		sortBy = $bindable('rating-desc'),
 		players
 	}: {
-		playersTeams: Record<
-			string,
-			{
-				id: string;
-				slug: string;
-				name: string;
-			}[]
-		>;
 		playersAgents: Record<string, [Character, number][]>;
 		sortBy: string;
 		players: {
@@ -41,6 +31,7 @@
 				names?: string[];
 			}[];
 			aliases?: string[];
+			teams: { id: string; name: string; slug: string }[];
 		}[];
 	} = $props();
 </script>
@@ -188,11 +179,11 @@
 						</a>
 					</td>
 					<td class="px-4 py-1 text-sm">
-						{#each playersTeams[player.id ?? ''] as team, i (team.id)}
+						{#each player.teams as team, i (team.id)}
 							<a
 								href={`/teams/${team.slug}`}
 								class="transition-all duration-200 hover:text-yellow-400">{team.name}</a
-							>{#if i < playersTeams[player.id ?? ''].length - 1}
+							>{#if i < player.teams.length - 1}
 								<span class="mx-1 text-gray-400">|</span>
 							{/if}
 						{/each}

@@ -114,11 +114,11 @@ export const load: PageServerLoad = async ({ locals: { user } }) => {
 				rating: stats.averageScore,
 				kd: stats.kd,
 				eventsCount: stats.eventsCount,
-				playerRating: stats.playerRating
+				playerRating: stats.playerRating,
+				teams: playersTeams[player.id] ?? []
 			};
 		}),
 		playersAgents,
-		playersTeams,
 		superstringPowerData,
 		user
 	};

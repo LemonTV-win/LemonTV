@@ -75,12 +75,12 @@
 			} else if (sortBy === 'region-desc') {
 				return b.nationalities[0]?.localeCompare(a.nationalities[0] ?? '') ?? 0;
 			} else if (sortBy === 'team-asc') {
-				const aTeams = data.playersTeams[a.id ?? '']?.map((t) => t.name).join(', ') ?? '';
-				const bTeams = data.playersTeams[b.id ?? '']?.map((t) => t.name).join(', ') ?? '';
+				const aTeams = a.teams.map((t) => t.name).join(', ') ?? '';
+				const bTeams = b.teams.map((t) => t.name).join(', ') ?? '';
 				return aTeams.localeCompare(bTeams);
 			} else if (sortBy === 'team-desc') {
-				const aTeams = data.playersTeams[a.id ?? '']?.map((t) => t.name).join(', ') ?? '';
-				const bTeams = data.playersTeams[b.id ?? '']?.map((t) => t.name).join(', ') ?? '';
+				const aTeams = a.teams.map((t) => t.name).join(', ') ?? '';
+				const bTeams = b.teams.map((t) => t.name).join(', ') ?? '';
 				return bTeams.localeCompare(aTeams);
 			} else if (sortBy === 'kd-asc') {
 				return a.kd - b.kd;
@@ -194,12 +194,7 @@
 			bind:selectedSuperstrings
 		/>
 
-		<PlayerTable
-			playersTeams={data.playersTeams}
-			playersAgents={data.playersAgents}
-			bind:sortBy
-			players={filtered}
-		/>
+		<PlayerTable playersAgents={data.playersAgents} bind:sortBy players={filtered} />
 	{/if}
 
 	{#if activeTab === 'region-ranking'}
@@ -210,7 +205,6 @@
 		<SuperstringRanking
 			players={data.players}
 			superstringPowerData={data.superstringPowerData}
-			playersTeams={data.playersTeams}
 			selectedCharacter={selectedSuperstrings[0]}
 			sortBy={superstringSortBy}
 		/>

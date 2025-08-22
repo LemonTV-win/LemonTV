@@ -20,7 +20,6 @@
 	let {
 		players,
 		superstringPowerData,
-		playersTeams,
 		selectedCharacter = $bindable('Yvette' as Character),
 		sortBy = $bindable('power-desc')
 	}: {
@@ -34,12 +33,12 @@
 			slug: string;
 			nationalities: TCountryCode[];
 			aliases?: string[];
+			teams: { id: string; name: string; slug: string }[];
 		}[];
 		superstringPowerData: Record<
 			string,
 			{ playerId: string; power: number; gamesPlayed: number; wins: number }[]
 		>;
-		playersTeams: Record<string, any[]>;
 		selectedCharacter: Character;
 		sortBy:
 			| 'power-asc'
@@ -84,6 +83,7 @@
 			superstringPower: number;
 			gamesPlayed: number;
 			wins: number;
+			teams: { id: string; name: string; slug: string }[];
 		}[];
 		return playerData.sort((a, b) => {
 			if (sortBy === 'power-asc') {
@@ -260,9 +260,9 @@
 						</td>
 
 						<td class="px-4 py-2 text-sm whitespace-nowrap">
-							{#each playersTeams[player.id ?? ''] as team, i (team.id)}
+							{#each player.teams as team, i (team.id)}
 								<a href={`/teams/${team.slug}`}>{team.name}</a>
-								{#if i < playersTeams[player.id ?? ''].length - 1}
+								{#if i < player.teams.length - 1}
 									<span class="mx-1 text-gray-400">|</span>
 								{/if}
 							{/each}
