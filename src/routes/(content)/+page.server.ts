@@ -7,6 +7,7 @@ import { getEssentialEvents } from '$lib/server/data/events';
 import { getTeams } from '$lib/server/data/teams';
 import type { EssentialEvent } from '$lib/components/EventCard.svelte';
 import type { Event } from '$lib/data/events';
+import { db } from '$lib/server/db';
 
 export const load: PageServerLoad = async () => {
 	const totalStart = performance.now();
@@ -25,7 +26,7 @@ export const load: PageServerLoad = async () => {
 
 	// Get top 5 player ratings (optimized)
 	const playersRatingsQueryStart = performance.now();
-	const playersRatings = await getAllPlayersRatings(5);
+	const playersRatings = await getAllPlayersRatings(db, 5);
 	const playersRatingsQueryDuration = performance.now() - playersRatingsQueryStart;
 	console.info(`[HomePage] Players ratings query took ${playersRatingsQueryDuration.toFixed(2)}ms`);
 

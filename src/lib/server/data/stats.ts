@@ -1,7 +1,7 @@
-import { db } from '$lib/server/db';
 import { and, eq, sql } from 'drizzle-orm';
 import * as schema from '$lib/server/db/schemas';
 import { randomUUID } from 'crypto';
+import type { LibSQLDatabase } from 'drizzle-orm/libsql';
 
 type RecalcOptions = {
 	/** Save a snapshot into history tables with this reason (optional). */
@@ -16,7 +16,10 @@ type RecalcOptions = {
  * Recalculates all player stats (overall + per-character) using set-based SQL
  * and safe upserts. Time fields are intentionally left NULL for now.
  */
-export async function recalculateAllPlayerStats(opts: RecalcOptions = {}): Promise<void> {
+export async function recalculateAllPlayerStats(
+	db: LibSQLDatabase<typeof schema>,
+	opts: RecalcOptions = {}
+): Promise<void> {
 	const logp = '[PlayerStats][recalculateAllPlayerStats]';
 	const batchSize = opts.batchSize ?? 500;
 
@@ -417,7 +420,10 @@ export interface PlayerRating {
 /**
  * Get player ratings from the materialized table
  */
-export async function getAllPlayersRatings(limit: number = 1000): Promise<PlayerRating[]> {
+export async function getAllPlayersRatings(
+	db: LibSQLDatabase<typeof schema>,
+	limit: number = 1000
+): Promise<PlayerRating[]> {
 	const stats = await db
 		.select({
 			playerId: schema.playerStats.playerId,

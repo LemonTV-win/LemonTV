@@ -22,7 +22,7 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 
 	// Get all player ratings for global ranking
 	// TODO: Optimize further
-	const allPlayerRatings = await getAllPlayersRatings();
+	const allPlayerRatings = await getAllPlayersRatings(db);
 	const globalRankingByPlayerId = new Map(
 		allPlayerRatings.map((rating, index) => [rating.playerId, index + 1])
 	);
