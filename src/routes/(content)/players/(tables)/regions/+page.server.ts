@@ -6,9 +6,8 @@ import { sql, isNotNull, eq } from 'drizzle-orm';
 async function getRegionRankingData() {}
 
 export const load: PageServerLoad = async ({ locals: { user } }) => {
-	// TODO: 1. Use layout to help tab and move this to a sub page with separated data acquirement
-	// TODO: 2. Use a summary table specifically for region ranking
-	// TODO: 3. Account for players with multiple nationalities (additionalNationalities)
+	// TODO: 1. Use a summary table specifically for region ranking
+	// TODO: 2. Account for players with multiple nationalities (additionalNationalities)
 	const regionRankingData = await db
 		.select({
 			nationality: schema.player.nationality,
