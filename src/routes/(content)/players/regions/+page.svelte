@@ -9,7 +9,7 @@
 
 	$effect(() => {
 		const params = new URLSearchParams(window.location.search);
-		if (sortBy) params.set('regionSortBy', sortBy);
+		if (sortBy) params.set('sortBy', sortBy);
 		goto(`/players/regions?${params.toString()}`, { replaceState: true, noScroll: true });
 	});
 </script>

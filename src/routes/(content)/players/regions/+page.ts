@@ -26,14 +26,14 @@ function isValidRegionSortBy(
 }
 
 export const load: PageLoad = async ({ data, url }) => {
-	const sortBy = url.searchParams.get('regionSortBy') || 'players-desc';
+	const sortBy = url.searchParams.get('sortBy') || 'players-desc';
 
 	return {
 		...data,
 		sortBy: isValidRegionSortBy(sortBy) ? sortBy : 'players-desc',
 		metadata: {
 			title: `${m.region_ranking()} | ${m.strinova_player_profile()} | LemonTV`,
-			description: m.region_ranking()
+			description: m.region_ranking() // TODO: Add description
 		} as PageMetadata
 	};
 };
