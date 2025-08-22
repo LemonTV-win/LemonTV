@@ -1,6 +1,6 @@
 import { and, eq, sql } from 'drizzle-orm';
 import * as schema from '$lib/server/db/schemas';
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 import type { LibSQLDatabase } from 'drizzle-orm/libsql';
 
 type RecalcOptions = {
