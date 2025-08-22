@@ -22,15 +22,10 @@
 		sortBy = $bindable('power-desc')
 	}: {
 		players: {
-			wins: number;
-			rating: number;
-			kd: number;
-			eventsCount: number;
 			id: string;
 			name: string;
 			slug: string;
 			nationalities: TCountryCode[];
-			aliases?: string[];
 			teams: { id: string; name: string; slug: string }[];
 			avatarURL?: string | null;
 		}[];

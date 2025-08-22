@@ -6,7 +6,6 @@
 	import { getAllNames } from '$lib/data/players';
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 	import { SvelteURLSearchParams } from 'svelte/reactivity';
-	import SuperstringRanking from './SuperstringRanking.svelte';
 	import PlayerTable from './PlayerTable.svelte';
 	import PlayerFilters from './PlayerFilters.svelte';
 	import type { TCountryCode } from 'countries-list';
@@ -34,26 +33,6 @@
 		| 'kd-desc'
 		| 'events-asc'
 		| 'events-desc' = $state(data.sortBy || 'rating-desc');
-
-	let regionSortBy:
-		| 'region-asc'
-		| 'region-desc'
-		| 'players-asc'
-		| 'players-desc'
-		| 'wins-asc'
-		| 'wins-desc'
-		| 'rating-asc'
-		| 'rating-desc' = $state('players-desc');
-
-	let superstringSortBy:
-		| 'power-asc'
-		| 'power-desc'
-		| 'games-asc'
-		| 'games-desc'
-		| 'wins-asc'
-		| 'wins-desc'
-		| 'name-asc'
-		| 'name-desc' = $state('power-desc');
 
 	let sorted = $derived(
 		data.players.toSorted((a, b) => {
@@ -193,14 +172,5 @@
 		/>
 
 		<PlayerTable playersAgents={data.playersAgents} bind:sortBy players={filtered} />
-	{/if}
-
-	{#if activeTab === 'superstring-ranking'}
-		<SuperstringRanking
-			players={data.players}
-			superstringPowerData={data.superstringPowerData}
-			selectedCharacter={selectedSuperstrings[0]}
-			sortBy={superstringSortBy}
-		/>
 	{/if}
 </main>
