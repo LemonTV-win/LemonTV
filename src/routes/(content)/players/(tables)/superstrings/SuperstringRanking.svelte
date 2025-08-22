@@ -28,6 +28,11 @@
 			nationalities: TCountryCode[];
 			teams: { id: string; name: string; slug: string }[];
 			avatarURL?: string | null;
+			gameAccounts: {
+				currentName: string;
+				names?: string[];
+			}[];
+			aliases: string[];
 		}[];
 		superstringPowerData: Record<
 			string,
@@ -53,7 +58,7 @@
 	);
 
 	function isPlayer(player: any): player is (typeof players)[number] {
-		return Boolean(player);
+		return player !== null;
 	}
 
 	type AugmentedPlayer = (typeof players)[number] & {
@@ -78,7 +83,7 @@
 					wins
 				};
 			})
-			.filter(isPlayer) as AugmentedPlayer[];
+			.filter((p) => p !== null);
 		return playerData.sort((a, b) => {
 			if (sortBy === 'power-asc') {
 				return a.superstringPower - b.superstringPower;

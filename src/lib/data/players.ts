@@ -51,11 +51,11 @@ export interface SocialAccount {
 
 export function getAllNames(player: {
 	name: string;
-	gameAccounts?: {
+	gameAccounts: {
 		currentName: string;
 		names?: string[];
 	}[];
-	aliases?: string[];
+	aliases: string[];
 }): string[] {
 	return [
 		...new Set([

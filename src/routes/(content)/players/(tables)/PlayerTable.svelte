@@ -30,7 +30,7 @@
 				currentName: string;
 				names?: string[];
 			}[];
-			aliases?: string[];
+			aliases: string[];
 			teams: { id: string; name: string; slug: string }[];
 		}[];
 	} = $props();

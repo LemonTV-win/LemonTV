@@ -1,10 +1,9 @@
 import type { PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
-import * as schema from '$lib/server/db/schema';
 import type { Character } from '$lib/data/game';
 import { processImageURL } from '$lib/server/storage';
 
-export const load = async () => {
+export const load: PageServerLoad = async () => {
 	// Fetch all player character stats from the database
 	const allPlayerCharStats = await db.query.playerCharacterStats.findMany();
 
@@ -31,11 +30,27 @@ export const load = async () => {
 
 	// Fetch all players with their necessary details for the ranking table
 	const allPlayers = await db.query.player.findMany({
-		columns: { id: true, name: true, slug: true, avatar: true, nationality: true },
+		columns: {
+			id: true,
+			name: true,
+			slug: true,
+			avatar: true,
+			nationality: true
+		},
 		with: {
 			teamMemberships: { with: { team: true } },
 			additionalNationalities: {
 				columns: { nationality: true }
+			},
+			gameAccounts: {
+				columns: {
+					currentName: true
+				}
+			},
+			aliases: {
+				columns: {
+					alias: true
+				}
 			}
 			// Other relations like aliases can be added here if needed
 		}
@@ -63,7 +78,8 @@ export const load = async () => {
 					id: team.team.id,
 					name: team.team.name,
 					slug: team.team.slug
-				}))
+				})),
+				aliases: player.aliases.map((alias) => alias.alias)
 			}))
 		),
 		superstringPowerData
