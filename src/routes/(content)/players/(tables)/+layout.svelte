@@ -4,17 +4,23 @@
 
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 	import type { LayoutProps } from './$types';
-	import type { Snippet } from 'svelte';
+	import SearchInput from '$lib/components/SearchInput.svelte';
+	import { goto } from '$app/navigation';
 
-	let {
-		data,
-		children,
-		search
-	}: LayoutProps & {
-		search?: Snippet;
-	} = $props();
+	let { data, children }: LayoutProps = $props();
 
 	let activeTab = $derived(page.url.pathname.split('/').pop() || 'players');
+
+	// TODO: Make search update debounced
+	let search = $state(page.data.search || '');
+
+	$effect(() => {
+		const url = new URL(window.location.href);
+		if (search) {
+			url.searchParams.set('search', search);
+		}
+		goto(url.toString(), { replaceState: true, keepFocus: true });
+	});
 </script>
 
 <main class="mx-auto max-w-screen-lg px-4">
@@ -28,7 +34,11 @@
 			{/if}
 		</div>
 
-		{@render search?.()}
+		{#if page.url.pathname === '/players'}
+			<div class="flex w-full items-center justify-end sm:w-auto">
+				<SearchInput bind:search filtered={page.data.players.length} total={page.data.totalCount} />
+			</div>
+		{/if}
 	</div>
 
 	<!-- Divider -->

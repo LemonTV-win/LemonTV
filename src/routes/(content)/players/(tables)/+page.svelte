@@ -1,10 +1,6 @@
 <script lang="ts">
 	import type { PageProps } from './$types';
 
-	import { m } from '$lib/paraglide/messages.js';
-	import SearchInput from '$lib/components/SearchInput.svelte';
-	import { getAllNames } from '$lib/data/players';
-	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 	import { SvelteURLSearchParams } from 'svelte/reactivity';
 	import PlayerTable from './PlayerTable.svelte';
 	import PlayerFilters from './PlayerFilters.svelte';
@@ -13,7 +9,6 @@
 
 	let { data }: PageProps = $props();
 
-	let searchQuery = $state(data.search || '');
 	let selectedNationalities = $state<TCountryCode[]>(data.nationalities || []);
 	let selectedSuperstrings = $state<Character[]>(data.superstrings || []);
 
@@ -94,7 +89,6 @@
 	$effect(() => {
 		const params = new SvelteURLSearchParams();
 		if (sortBy) params.set('sortBy', sortBy);
-		if (searchQuery) params.set('search', searchQuery);
 		if (selectedNationalities.length) params.set('nationalities', selectedNationalities.join(','));
 		if (selectedSuperstrings.length) params.set('superstrings', selectedSuperstrings.join(','));
 		window.history.replaceState({}, '', `/players?${params.toString()}`);
@@ -118,10 +112,4 @@
 	bind:selectedSuperstrings
 />
 
-<PlayerTable playersAgents={data.playersAgents} bind:sortBy players={filtered} />
-
-{#snippet search()}
-	<div class="flex w-full items-center justify-end sm:w-auto">
-		<SearchInput bind:search={searchQuery} filtered={filtered.length} total={sorted.length} />
-	</div>
-{/snippet}
+<PlayerTable playersAgents={data.playersAgents} bind:sortBy players={data.players} />
