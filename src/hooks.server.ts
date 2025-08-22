@@ -7,6 +7,7 @@ import { dev } from '$app/environment';
 import { seed } from '$lib/server/db/seed';
 import { LEMON_PUBLIC_JWK_BASE64 } from '$env/static/private';
 import { db } from '$lib/server/db';
+import { recalculateAllPlayerStats } from '$lib/server/data/stats';
 
 export const init: ServerInit = async () => {
 	if (dev) {
@@ -15,6 +16,10 @@ export const init: ServerInit = async () => {
 		await syncAll(db);
 		console.info('[ServerInit] Seeding database...');
 		await seed();
+		console.info('[ServerInit] Recalculating player stats...');
+		await recalculateAllPlayerStats({
+			snapshotReason: 'deploy'
+		});
 	}
 };
 

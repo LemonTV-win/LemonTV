@@ -3,7 +3,7 @@ import { relations, sql } from 'drizzle-orm';
 import { player } from './player';
 import { character } from './game';
 
-const UPDATE_REASONS = [
+export const PLAYER_STATS_UPDATE_REASONS = [
 	'periodic', // hourly, daily, weekly, monthly, etc.
 	'manual', // manually triggered by an admin
 	'triggered', // triggered by an event (after game update, etc.)
@@ -124,7 +124,7 @@ export const playerStatsHistory = sqliteTable('player_stats_history', {
 
 	// Metadata
 	snapshotDate: integer('snapshot_date', { mode: 'timestamp_ms' }).notNull(),
-	reason: text('reason', { enum: UPDATE_REASONS }).notNull(),
+	reason: text('reason', { enum: PLAYER_STATS_UPDATE_REASONS }).notNull(),
 	createdAt: integer('created_at', { mode: 'timestamp_ms' })
 		.notNull()
 		.default(sql`(unixepoch() * 1000)`)
@@ -158,7 +158,7 @@ export const playerCharacterStatsHistory = sqliteTable('player_character_stats_h
 
 	// Metadata
 	snapshotDate: integer('snapshot_date', { mode: 'timestamp_ms' }).notNull(),
-	reason: text('reason', { enum: UPDATE_REASONS }).notNull(),
+	reason: text('reason', { enum: PLAYER_STATS_UPDATE_REASONS }).notNull(),
 	createdAt: integer('created_at', { mode: 'timestamp_ms' })
 		.notNull()
 		.default(sql`(unixepoch() * 1000)`)
