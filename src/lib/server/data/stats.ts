@@ -410,29 +410,5 @@ export async function recalculateAllPlayerStats(
 		}
 	}); // end transaction
 
-		console.info(`${logp} success`);
-}
-
-export interface PlayerRating {
-	playerId: string;
-	rating: number;
-}
-
-/**
- * Get player ratings from the materialized table
- */
-export async function getAllPlayersRatings(
-	db: LibSQLDatabase<typeof schema>,
-	limit: number = 1000
-): Promise<PlayerRating[]> {
-	const stats = await db
-		.select({
-			playerId: schema.playerStats.playerId,
-			rating: schema.playerStats.playerRating
-		})
-		.from(schema.playerStats)
-		.orderBy(sql`${schema.playerStats.playerRating} DESC`)
-		.limit(limit);
-
-	return stats;
+	console.info(`${logp} success`);
 }

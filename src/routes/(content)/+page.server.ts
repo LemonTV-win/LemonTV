@@ -2,7 +2,6 @@ import { fail, type Actions } from '@sveltejs/kit';
 import * as auth from '$lib/server/auth';
 import type { PageServerLoad } from './$types';
 import { getPlayers, getPlayersTeams } from '$lib/server/data/players';
-import { getAllPlayersRatings } from '$lib/server/data/stats';
 import { getEssentialEvents } from '$lib/server/data/events';
 import { getTeams } from '$lib/server/data/teams';
 import type { EssentialEvent } from '$lib/components/EventCard.svelte';
@@ -26,14 +25,22 @@ export const load: PageServerLoad = async () => {
 
 	// Get top 5 player ratings (optimized)
 	const playersRatingsQueryStart = performance.now();
-	const playersRatings = await getAllPlayersRatings(db, 5);
+	// TODO: Optimize further
+	const playersRatings = await db.query.playerStats.findMany({
+		where: (playerStats, { inArray }) =>
+			inArray(
+				playerStats.playerId,
+				players.map((p) => p.id)
+			),
+		orderBy: (playerStats, { desc }) => [desc(playerStats.playerRating)]
+	});
 	const playersRatingsQueryDuration = performance.now() - playersRatingsQueryStart;
 	console.info(`[HomePage] Players ratings query took ${playersRatingsQueryDuration.toFixed(2)}ms`);
 
 	// Create a map for quick lookup
 	const dataProcessingStart = performance.now();
 	const ratingsByPlayerId = new Map(
-		playersRatings.map((rating) => [rating.playerId, rating.rating])
+		playersRatings.map((rating) => [rating.playerId, rating.playerRating])
 	);
 
 	// Get players with ratings and limit to top 5
