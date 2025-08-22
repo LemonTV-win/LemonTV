@@ -9,23 +9,16 @@
 	import TypcnArrowSortedUp from '~icons/typcn/arrow-sorted-up';
 
 	let {
-		players,
-		uniqueNationalities,
-		regionSortBy: sortBy = $bindable('players-desc')
+		data,
+		sortBy = $bindable('players-desc')
 	}: {
-		players: {
-			wins: number;
-			rating: number;
-			kd: number;
-			eventsCount: number;
-			id: string;
-			name: string;
-			slug: string;
-			nationalities: TCountryCode[];
-			aliases?: string[];
+		data: {
+			nationality: TCountryCode | null;
+			totalPlayers: number;
+			totalWins: number;
+			avgRating: number;
 		}[];
-		uniqueNationalities: TCountryCode[];
-		regionSortBy:
+		sortBy:
 			| 'region-asc'
 			| 'region-desc'
 			| 'players-asc'
@@ -38,55 +31,34 @@
 
 	// Calculate country statistics
 	let countryStats = $derived(
-		uniqueNationalities
-			.map((nationality) => {
-				const playersInCountry = players.filter((p) => p.nationalities.includes(nationality));
-				const totalPlayers = playersInCountry.length;
-				const totalWins = playersInCountry.reduce((sum, p) => sum + p.wins, 0);
-
-				// Filter out players with rating of 0 for average calculation
-				const playersWithValidRating = playersInCountry.filter((p) => p.rating > 0);
-				const avgRating =
-					playersWithValidRating.length > 0
-						? playersWithValidRating.reduce((sum, p) => sum + p.rating, 0) /
-							playersWithValidRating.length
-						: 0;
-
-				return {
-					nationality,
-					totalPlayers,
-					totalWins,
-					avgRating
-				};
-			})
-			.sort((a, b) => {
-				if (sortBy === 'region-asc') {
-					return (
-						countryCodeToLocalizedName(a.nationality ?? '', getLocale())?.localeCompare(
-							countryCodeToLocalizedName(b.nationality ?? '', getLocale()) ?? ''
-						) ?? 0
-					);
-				} else if (sortBy === 'region-desc') {
-					return (
-						countryCodeToLocalizedName(b.nationality ?? '', getLocale())?.localeCompare(
-							countryCodeToLocalizedName(a.nationality ?? '', getLocale()) ?? ''
-						) ?? 0
-					);
-				} else if (sortBy === 'players-asc') {
-					return a.totalPlayers - b.totalPlayers;
-				} else if (sortBy === 'players-desc') {
-					return b.totalPlayers - a.totalPlayers;
-				} else if (sortBy === 'wins-asc') {
-					return a.totalWins - b.totalWins;
-				} else if (sortBy === 'wins-desc') {
-					return b.totalWins - a.totalWins;
-				} else if (sortBy === 'rating-asc') {
-					return a.avgRating - b.avgRating;
-				} else if (sortBy === 'rating-desc') {
-					return b.avgRating - a.avgRating;
-				}
-				return 0;
-			})
+		data.toSorted((a, b) => {
+			if (sortBy === 'region-asc') {
+				return (
+					countryCodeToLocalizedName(a.nationality ?? '', getLocale())?.localeCompare(
+						countryCodeToLocalizedName(b.nationality ?? '', getLocale()) ?? ''
+					) ?? 0
+				);
+			} else if (sortBy === 'region-desc') {
+				return (
+					countryCodeToLocalizedName(b.nationality ?? '', getLocale())?.localeCompare(
+						countryCodeToLocalizedName(a.nationality ?? '', getLocale()) ?? ''
+					) ?? 0
+				);
+			} else if (sortBy === 'players-asc') {
+				return a.totalPlayers - b.totalPlayers;
+			} else if (sortBy === 'players-desc') {
+				return b.totalPlayers - a.totalPlayers;
+			} else if (sortBy === 'wins-asc') {
+				return a.totalWins - b.totalWins;
+			} else if (sortBy === 'wins-desc') {
+				return b.totalWins - a.totalWins;
+			} else if (sortBy === 'rating-asc') {
+				return a.avgRating - b.avgRating;
+			} else if (sortBy === 'rating-desc') {
+				return b.avgRating - a.avgRating;
+			}
+			return 0;
+		})
 	);
 </script>
 

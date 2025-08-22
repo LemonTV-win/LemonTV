@@ -36,29 +36,6 @@ function isValidSortBy(
 	].includes(value);
 }
 
-function isValidRegionSortBy(
-	value: string
-): value is
-	| 'region-asc'
-	| 'region-desc'
-	| 'players-asc'
-	| 'players-desc'
-	| 'wins-asc'
-	| 'wins-desc'
-	| 'rating-asc'
-	| 'rating-desc' {
-	return [
-		'region-asc',
-		'region-desc',
-		'players-asc',
-		'players-desc',
-		'wins-asc',
-		'wins-desc',
-		'rating-asc',
-		'rating-desc'
-	].includes(value);
-}
-
 function isValidActiveTab(value: string): value is 'players' | 'region-ranking' {
 	return ['players', 'region-ranking'].includes(value);
 }
@@ -76,7 +53,6 @@ export const load: PageLoad = async ({ data, url }) => {
 
 	const search = url.searchParams.get('search') || '';
 	const sortBy = url.searchParams.get('sortBy') || 'rating-desc';
-	const regionSortBy = url.searchParams.get('regionSortBy') || 'players-desc';
 
 	const nationalities = url.searchParams.get('nationalities') || '';
 	const superstrings = url.searchParams.get('superstrings') || '';
@@ -86,7 +62,6 @@ export const load: PageLoad = async ({ data, url }) => {
 		activeTab: isValidActiveTab(activeTab) ? activeTab : 'players',
 		search,
 		sortBy: isValidSortBy(sortBy) ? sortBy : 'rating-desc',
-		regionSortBy: isValidRegionSortBy(regionSortBy) ? regionSortBy : 'players-desc',
 		nationalities: nationalities ? nationalities.split(',').filter(isValidNationality) : [],
 		superstrings: superstrings ? superstrings.split(',').filter(isValidSuperstring) : [],
 		metadata: {

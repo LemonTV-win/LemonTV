@@ -6,7 +6,6 @@
 	import { getAllNames } from '$lib/data/players';
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 	import { SvelteURLSearchParams } from 'svelte/reactivity';
-	import RegionRanking from './RegionRanking.svelte';
 	import SuperstringRanking from './SuperstringRanking.svelte';
 	import PlayerTable from './PlayerTable.svelte';
 	import PlayerFilters from './PlayerFilters.svelte';
@@ -117,7 +116,6 @@
 	$effect(() => {
 		const params = new SvelteURLSearchParams();
 		if (sortBy) params.set('sortBy', sortBy);
-		if (regionSortBy) params.set('regionSortBy', regionSortBy);
 		if (activeTab) params.set('activeTab', activeTab);
 		if (search) params.set('search', search);
 		if (selectedNationalities.length) params.set('nationalities', selectedNationalities.join(','));
@@ -195,10 +193,6 @@
 		/>
 
 		<PlayerTable playersAgents={data.playersAgents} bind:sortBy players={filtered} />
-	{/if}
-
-	{#if activeTab === 'region-ranking'}
-		<RegionRanking players={data.players} {uniqueNationalities} {regionSortBy} />
 	{/if}
 
 	{#if activeTab === 'superstring-ranking'}
