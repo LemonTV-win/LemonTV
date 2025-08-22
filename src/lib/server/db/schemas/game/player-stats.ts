@@ -95,7 +95,13 @@ export const playerCharacterStats = sqliteTable(
 	(table) => [
 		primaryKey({ columns: [table.playerId, table.characterId] }),
 		index('idx_pcs_player').on(table.playerId),
-		index('idx_pcs_character').on(table.characterId)
+		index('idx_pcs_character').on(table.characterId),
+		index('idx_pcs_player_total_games').on(
+			table.playerId,
+			table.totalGames,
+			table.superstringPower,
+			table.totalWins
+		)
 	]
 );
 

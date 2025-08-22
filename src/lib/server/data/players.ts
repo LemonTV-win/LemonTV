@@ -8,7 +8,7 @@ import {
 	editHistory,
 	playerAdditionalNationality
 } from '$lib/server/db/schema';
-import { eq, or, and, inArray } from 'drizzle-orm';
+import { eq, or, and, inArray, sql } from 'drizzle-orm';
 import type { Player, PlayerTeam } from '$lib/data/players';
 import { randomUUID } from 'node:crypto';
 import type { Team } from '$lib/data/teams';
@@ -471,74 +471,45 @@ export async function getServerPlayerAgents(playerId: string): Promise<[Characte
 	return result;
 }
 
+type FrequentAgentsMap = Record<string, [Character, number][]>;
 export async function getServerPlayersAgents(
 	playerIds: string[],
-	limit: number = 3
-): Promise<Record<string, [Character, number][]>> {
-	console.info('[Players] Fetching server players agents for:', playerIds.length, 'players');
+	topN = 3
+): Promise<FrequentAgentsMap> {
+	if (playerIds.length === 0) return {};
+	const ids = [...new Set(playerIds.map((x) => String(x).trim()))];
+	const pcs = schema.playerCharacterStats;
 
-	if (playerIds.length === 0) {
-		return {};
-	}
-
-	// Use a single query with joins to get all character data for all players
-	const allCharacterStats = await db
+	const ranked = db
 		.select({
-			playerId: schema.gameAccount.playerId,
-			characterFirstHalf: schema.gamePlayerScore.characterFirstHalf,
-			characterSecondHalf: schema.gamePlayerScore.characterSecondHalf
+			playerId: pcs.playerId,
+			characterId: pcs.characterId,
+			totalGames: pcs.totalGames,
+			rn: sql<number>`
+        row_number() over (
+          partition by ${pcs.playerId}
+          order by ${pcs.totalGames} desc, ${pcs.superstringPower} desc, ${pcs.totalWins} desc
+        )
+      `
 		})
-		.from(schema.gamePlayerScore)
-		.innerJoin(
-			schema.gameAccount,
-			eq(schema.gamePlayerScore.accountId, schema.gameAccount.accountId)
-		)
-		.where(inArray(schema.gameAccount.playerId, playerIds));
+		.from(pcs)
+		.where(inArray(pcs.playerId, ids))
+		.as('r');
 
-	if (allCharacterStats.length === 0) {
-		console.warn('[Players] No game scores found for any of the players');
-		return Object.fromEntries(playerIds.map((id) => [id, []]));
-	}
+	const whereTopN = topN > 0 ? sql`${ranked.rn} <= ${topN}` : undefined; // ← key change
 
-	// Group character stats by player ID and calculate counts
-	const result: Record<string, [Character, number][]> = {};
+	const rows = await db
+		.select({
+			playerId: ranked.playerId,
+			characterId: ranked.characterId,
+			totalGames: ranked.totalGames
+		})
+		.from(ranked)
+		.where(whereTopN);
 
-	// Initialize result for all player IDs
-	for (const playerId of playerIds) {
-		result[playerId] = [];
-	}
-
-	// Group by player ID and count characters
-	const characterCountsByPlayer = new Map<string, Map<Character, number>>();
-
-	for (const stat of allCharacterStats) {
-		if (!characterCountsByPlayer.has(stat.playerId)) {
-			characterCountsByPlayer.set(stat.playerId, new Map());
-		}
-
-		const playerCharacterCounts = characterCountsByPlayer.get(stat.playerId)!;
-
-		// Count first half character
-		if (stat.characterFirstHalf) {
-			const character = stat.characterFirstHalf as Character;
-			playerCharacterCounts.set(character, (playerCharacterCounts.get(character) ?? 0) + 1);
-		}
-
-		// Count second half character
-		if (stat.characterSecondHalf) {
-			const character = stat.characterSecondHalf as Character;
-			playerCharacterCounts.set(character, (playerCharacterCounts.get(character) ?? 0) + 1);
-		}
-	}
-
-	// Convert to sorted arrays and apply limit
-	for (const [playerId, characterCounts] of characterCountsByPlayer.entries()) {
-		const sortedCharacters = Array.from(characterCounts.entries()).sort((a, b) => b[1] - a[1]);
-		result[playerId] = limit > 0 ? sortedCharacters.slice(0, limit) : sortedCharacters;
-	}
-
-	console.info('[Players] Found agents for', Object.keys(result).length, 'players');
-	return result;
+	const out: FrequentAgentsMap = {};
+	for (const r of rows) (out[r.playerId] ??= []).push([r.characterId as Character, r.totalGames]);
+	return out;
 }
 
 export async function getServerPlayerMapStats(playerId: string): Promise<
