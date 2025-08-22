@@ -1,11 +1,29 @@
 <script lang="ts">
 	import MaterialSymbolsSearchRounded from '~icons/material-symbols/search-rounded';
+	import debounce from 'debounce';
 
 	let {
 		search = $bindable(''),
+		debounce: debounceMs = 250,
+		debounced = $bindable(search),
 		filtered,
 		total
-	}: { search: string; filtered: number; total: number } = $props();
+	}: {
+		search?: string;
+		filtered: number;
+		total: number;
+		debounce?: number;
+		debounced?: string;
+	} = $props();
+
+	const update = debounce((value: string) => (debounced = value), debounceMs);
+
+	$effect(() => {
+		update(search);
+	});
+
+	$inspect('[SearchInput] search', search);
+	$inspect('[SearchInput] debounced', debounced);
 </script>
 
 <div

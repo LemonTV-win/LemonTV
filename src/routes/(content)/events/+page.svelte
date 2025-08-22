@@ -63,7 +63,12 @@
 		</div>
 
 		<div class="flex w-full items-center justify-end sm:w-auto">
-			<SearchInput bind:search filtered={filteredEvents.length} total={sortedEvents.length} />
+			<SearchInput
+				{search}
+				bind:debounced={search}
+				filtered={filteredEvents.length}
+				total={sortedEvents.length}
+			/>
 		</div>
 	</div>
 

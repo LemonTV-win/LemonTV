@@ -11,7 +11,6 @@
 
 	let activeTab = $derived(page.url.pathname.split('/').pop() || 'players');
 
-	// TODO: Make search update debounced
 	let search = $state(page.data.search || '');
 
 	$effect(() => {
@@ -38,7 +37,12 @@
 
 		{#if page.url.pathname === '/players'}
 			<div class="flex w-full items-center justify-end sm:w-auto">
-				<SearchInput bind:search filtered={page.data.players.length} total={page.data.totalCount} />
+				<SearchInput
+					{search}
+					bind:debounced={search}
+					filtered={page.data.players.length}
+					total={page.data.totalCount}
+				/>
 			</div>
 		{/if}
 	</div>

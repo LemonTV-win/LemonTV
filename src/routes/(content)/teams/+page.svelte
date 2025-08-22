@@ -2,7 +2,6 @@
 	import type { PageProps } from './$types';
 
 	import { m } from '$lib/paraglide/messages.js';
-	import { onMount } from 'svelte';
 	import SearchInput from '$lib/components/SearchInput.svelte';
 	import TeamCard from './TeamCard.svelte';
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
@@ -10,6 +9,7 @@
 	let { data }: PageProps = $props();
 
 	let search = $state(data.search || '');
+
 	let filtered = $derived(
 		data.teams
 			.toSorted((a, b) => b.wins - a.wins)
@@ -28,14 +28,6 @@
 		}
 		goto(url.toString(), { replaceState: true, keepFocus: true, noScroll: true });
 	});
-
-	onMount(() => {
-		const url = new URL(window.location.href);
-		const urlSearch = url.searchParams.get('search');
-		if (urlSearch) {
-			search = urlSearch;
-		}
-	});
 </script>
 
 <main class="mx-auto max-w-screen-lg px-4 md:px-4">
@@ -50,7 +42,12 @@
 		</div>
 
 		<div class="flex w-full items-center justify-end sm:w-auto">
-			<SearchInput bind:search filtered={filtered.length} total={data.teams.length} />
+			<SearchInput
+				{search}
+				bind:debounced={search}
+				filtered={filtered.length}
+				total={data.teams.length}
+			/>
 		</div>
 	</div>
 
