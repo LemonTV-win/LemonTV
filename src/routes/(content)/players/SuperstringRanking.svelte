@@ -1,7 +1,5 @@
 <script lang="ts">
 	import { m } from '$lib/paraglide/messages';
-	import { getLocale } from '$lib/paraglide/runtime';
-	import { countryCodeToLocalizedName } from '$lib/utils/strings';
 	import type { TCountryCode } from 'countries-list';
 	import {
 		CHARACTER_NAMES,
@@ -34,6 +32,7 @@
 			nationalities: TCountryCode[];
 			aliases?: string[];
 			teams: { id: string; name: string; slug: string }[];
+			avatarURL?: string | null;
 		}[];
 		superstringPowerData: Record<
 			string,
@@ -58,6 +57,16 @@
 		) as Character[]
 	);
 
+	function isPlayer(player: any): player is (typeof players)[number] {
+		return Boolean(player);
+	}
+
+	type AugmentedPlayer = (typeof players)[number] & {
+		superstringPower: number;
+		gamesPlayed: number;
+		wins: number;
+	};
+
 	// Get players with Superstring Power for the selected character
 	let rankedPlayers = $derived.by(() => {
 		const characterData = superstringPowerData[selectedCharacter] || [];
@@ -74,17 +83,7 @@
 					wins
 				};
 			})
-			.filter(Boolean) as {
-			id: string;
-			name: string;
-			slug: string;
-			nationalities: TCountryCode[];
-			aliases?: string[];
-			superstringPower: number;
-			gamesPlayed: number;
-			wins: number;
-			teams: { id: string; name: string; slug: string }[];
-		}[];
+			.filter(isPlayer) as AugmentedPlayer[];
 		return playerData.sort((a, b) => {
 			if (sortBy === 'power-asc') {
 				return a.superstringPower - b.superstringPower;
@@ -240,13 +239,22 @@
 						</td>
 						<td class="w-full px-4 py-2">
 							<a
-								class="flex flex-col items-baseline gap-1"
+								class="flex items-center gap-3 transition-all duration-200 hover:text-yellow-400"
 								href={`/players/${player.slug ?? player.id}`}
 							>
-								<span>{player.name}</span>
-								{#each getAllNames(player).filter((name) => name !== player.name) as name (name)}
-									<span class="text-xs text-gray-400">({name})</span>
-								{/each}
+								{#if player.avatarURL}
+									<img
+										src={player.avatarURL}
+										alt={player.name}
+										class="h-8 w-8 rounded-full object-cover"
+									/>
+								{/if}
+								<div class="flex flex-col items-baseline gap-1">
+									{player.name}
+									{#each getAllNames(player).filter((name) => name !== player.name) as name (name)}
+										<span class="text-xs text-gray-400">({name})</span>
+									{/each}
+								</div>
 							</a>
 						</td>
 						<td class="px-4 py-2 font-mono text-gray-300">
