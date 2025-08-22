@@ -10,6 +10,7 @@ import {
 import { getAllPlayersRatings } from '$lib/server/data/stats';
 import { error } from '@sveltejs/kit';
 import { processImageURL } from '$lib/server/storage';
+import { db } from '$lib/server/db';
 
 export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 	const team = await getTeam(params.id);

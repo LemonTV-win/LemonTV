@@ -17,9 +17,10 @@ export const init: ServerInit = async () => {
 		console.info('[ServerInit] Seeding database...');
 		await seed();
 		console.info('[ServerInit] Recalculating player stats...');
-		await recalculateAllPlayerStats({
+		await recalculateAllPlayerStats(db, {
 			snapshotReason: 'deploy'
 		});
+		console.info('[ServerInit] Player stats recalculated');
 	}
 };
 
