@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { sqliteTable, text, integer, check, primaryKey } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, check, primaryKey, index } from 'drizzle-orm/sqlite-core';
 import { relations } from 'drizzle-orm';
 import { team } from './team';
 import { map } from './game';
@@ -7,6 +7,7 @@ import type { GameMap } from '$lib/data/game';
 import { player } from './player';
 import type { TLanguageCode } from 'countries-list';
 import { stage } from './stage';
+import { playerStats } from './player-stats';
 
 // #region Match
 export const match = sqliteTable(
@@ -83,30 +84,42 @@ export const gameTeam = sqliteTable(
 	},
 	(t) => [
 		primaryKey({ columns: [t.gameId, t.teamId] }),
-		check('position', sql`${t.position} IN (0, 1)`)
+		check('position', sql`${t.position} IN (0, 1)`),
+		index('idx_gt_game').on(t.gameId),
+		index('idx_gt_team').on(t.teamId)
 	]
 );
 
-export const gamePlayerScore = sqliteTable('game_player_score', {
-	id: integer('id').primaryKey(),
-	gameId: integer('game_id')
-		.references(() => game.id)
-		.notNull(),
-	teamId: text('team_id')
-		.references(() => team.id)
-		.notNull(),
-	accountId: integer('account_id').notNull(),
-	player: text('player').notNull(),
-	characterFirstHalf: text('character_first_half'),
-	characterSecondHalf: text('character_second_half'),
-	score: integer('score').notNull(),
-	damageScore: integer('damage_score').notNull(),
-	kills: integer('kills').notNull(),
-	knocks: integer('knocks').notNull(),
-	deaths: integer('deaths').notNull(),
-	assists: integer('assists').notNull(),
-	damage: integer('damage').notNull()
-});
+export const gamePlayerScore = sqliteTable(
+	'game_player_score',
+	{
+		id: integer('id').primaryKey(),
+		gameId: integer('game_id')
+			.references(() => game.id)
+			.notNull(),
+		teamId: text('team_id')
+			.references(() => team.id)
+			.notNull(),
+		accountId: integer('account_id').notNull(),
+		player: text('player').notNull(),
+		characterFirstHalf: text('character_first_half'),
+		characterSecondHalf: text('character_second_half'),
+		score: integer('score').notNull(),
+		damageScore: integer('damage_score').notNull(),
+		kills: integer('kills').notNull(),
+		knocks: integer('knocks').notNull(),
+		deaths: integer('deaths').notNull(),
+		assists: integer('assists').notNull(),
+		damage: integer('damage').notNull()
+	},
+	(t) => [
+		index('idx_gps_game').on(t.gameId),
+		index('idx_gps_team').on(t.teamId),
+		index('idx_gps_account').on(t.accountId),
+		index('idx_gps_char1').on(t.characterFirstHalf),
+		index('idx_gps_char2').on(t.characterSecondHalf)
+	]
+);
 
 export const gameVod = sqliteTable(
 	'game_vod',
@@ -216,6 +229,11 @@ export const gamePlayerScoreRelations = relations(gamePlayerScore, ({ one }) => 
 	team: one(team, {
 		fields: [gamePlayerScore.teamId],
 		references: [team.id]
+	}),
+	playerStats: one(playerStats, {
+		relationName: 'playerStatsGameScores',
+		fields: [gamePlayerScore.accountId],
+		references: [playerStats.playerId]
 	})
 }));
 

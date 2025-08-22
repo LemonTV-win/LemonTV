@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, real, primaryKey } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, real, primaryKey, index } from 'drizzle-orm/sqlite-core';
 import { relations, sql } from 'drizzle-orm';
 import { player } from './player';
 import { character } from './game';
@@ -92,7 +92,11 @@ export const playerCharacterStats = sqliteTable(
 			.notNull()
 			.default(sql`(unixepoch() * 1000)`)
 	},
-	(table) => [primaryKey({ columns: [table.playerId, table.characterId] })]
+	(table) => [
+		primaryKey({ columns: [table.playerId, table.characterId] }),
+		index('idx_pcs_player').on(table.playerId),
+		index('idx_pcs_character').on(table.characterId)
+	]
 );
 
 export const playerStatsHistory = sqliteTable('player_stats_history', {

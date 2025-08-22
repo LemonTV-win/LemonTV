@@ -3,6 +3,7 @@ import { sqliteTable, text, integer, primaryKey } from 'drizzle-orm/sqlite-core'
 import { organizer } from './organizer';
 import { team } from './team';
 import { player } from './player';
+import { playerStats } from './player-stats';
 
 export const event = sqliteTable('event', {
 	id: text('id').primaryKey(),
@@ -206,5 +207,10 @@ export const eventTeamPlayerRelations = relations(eventTeamPlayer, ({ one }) => 
 	player: one(player, {
 		fields: [eventTeamPlayer.playerId],
 		references: [player.id]
+	}),
+	playerStats: one(playerStats, {
+		relationName: 'playerStatsEventParticipations',
+		fields: [eventTeamPlayer.playerId],
+		references: [playerStats.playerId]
 	})
 }));

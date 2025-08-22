@@ -4,6 +4,7 @@ import { relations } from 'drizzle-orm';
 import { gameAccount } from './game-account';
 import { player_social_account } from './social';
 import { teamPlayer } from './team';
+import { playerCharacterStats, playerStats } from './player-stats';
 
 export const player = sqliteTable('player', {
 	id: text('id').primaryKey(),

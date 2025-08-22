@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, primaryKey } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, primaryKey, index } from 'drizzle-orm/sqlite-core';
 import { player } from './player';
 
 export const gameAccount = sqliteTable(
@@ -12,11 +12,10 @@ export const gameAccount = sqliteTable(
 		currentName: text('current_name').notNull(),
 		region: text('region')
 	},
-	(table) => {
-		return {
-			pk: primaryKey({ columns: [table.server, table.accountId] })
-		};
-	}
+	(table) => [
+		primaryKey({ columns: [table.server, table.accountId] }),
+		index('idx_ga_player').on(table.playerId)
+	]
 );
 
 export type GameAccount = typeof gameAccount.$inferSelect;
