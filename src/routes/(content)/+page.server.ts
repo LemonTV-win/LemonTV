@@ -1,30 +1,48 @@
 import { fail, type Actions } from '@sveltejs/kit';
 import * as auth from '$lib/server/auth';
 import type { PageServerLoad } from './$types';
-import { getPlayers } from '$lib/server/data/players';
 import { getEssentialEvents } from '$lib/server/data/events';
 import { getTeams } from '$lib/server/data/teams';
-import type { EssentialEvent } from '$lib/components/EventCard.svelte';
-import type { Event } from '$lib/data/events';
 import { db } from '$lib/server/db';
+import * as schema from '$lib/server/db/schemas';
+import { sql } from 'drizzle-orm';
 
 export const load: PageServerLoad = async () => {
+	const TOP = 5;
 	const totalStart = performance.now();
 	console.info('[HomePage] Starting home page load');
 
-	// TODO: Only get top players by pre populate player rating and rank them later, then limit to 5
-	const playersQueryStart = performance.now();
-	const players = await getPlayers();
-	const playersQueryDuration = performance.now() - playersQueryStart;
-	console.info(`[HomePage] Players query took ${playersQueryDuration.toFixed(2)}ms`);
+	// 1) Get top-N player ids + rating directly from the materialized table
+	const topStart = performance.now();
+	const topRows = await db.query.playerStats.findMany({
+		columns: {
+			playerId: true,
+			playerRating: true
+		},
+		orderBy: (playerStats, { desc }) => [desc(playerStats.playerRating)],
+		limit: TOP
+	});
+	const topDuration = performance.now() - topStart;
+	console.info(`[HomePage] Top ${TOP} player ids query took ${topDuration.toFixed(2)}ms`);
 
-	const playersTeamsQueryStart = performance.now();
-	const playersTeams = (
-		await db.query.player.findMany({
+	const topIds = topRows.map((r) => r.playerId);
+
+	// 2) In parallel: hydrate only those players + their teams, and fetch events/teams
+	const hydrateStart = performance.now();
+	const [playersWithTeams, events, teams] = await Promise.all([
+		db.query.player.findMany({
 			columns: {
-				id: true
+				id: true,
+				name: true,
+				slug: true,
+				nationality: true
 			},
 			with: {
+				additionalNationalities: {
+					columns: {
+						nationality: true
+					}
+				},
 				teamMemberships: {
 					columns: {
 						teamId: true
@@ -37,87 +55,60 @@ export const load: PageServerLoad = async () => {
 						}
 					}
 				}
-			}
+			},
+			where: (player, { inArray }) => inArray(player.id, topIds)
+		}),
+		getEssentialEvents(), // TODO: { limit: 5 }
+		getTeams()
+	]);
+	const hydrateDuration = performance.now() - hydrateStart;
+	console.info(
+		`[HomePage] Parallel hydrate (players/teams/events/teams) took ${hydrateDuration.toFixed(2)}ms`
+	);
+
+	// If your helpers don’t support ids yet, you can fallback (less optimal):
+	// const players = (await getPlayers()).filter(p => topIds.includes(p.id));
+	// const playersTeams = pickOnlyThoseTeams(await getPlayersTeams(), topIds);
+
+	// 3) Merge + compute ranks (already ordered by DB; keep that order)
+	const buildStart = performance.now();
+	const playersById = new Map(playersWithTeams.map((p) => [p.id, p]));
+	const playersWithRatings = topRows
+		.map((row, index) => {
+			const p = playersById.get(row.playerId);
+			if (!p) return null; // in case of mismatch
+			return {
+				...p,
+				teams: p.teamMemberships.map((t) => t.team.name),
+				nationalities: [p.nationality, ...p.additionalNationalities.map((n) => n.nationality)],
+				rating: row.playerRating,
+				rank: index + 1
+			};
 		})
-	).reduce(
-		(acc, player) => {
-			acc[player.id] = player.teamMemberships.map(({ team }) => team);
-			return acc;
-		},
-		{} as Record<string, { name: string }[]>
-	);
-	const playersTeamsQueryDuration = performance.now() - playersTeamsQueryStart;
-	console.info(`[HomePage] Players teams query took ${playersTeamsQueryDuration.toFixed(2)}ms`);
+		.filter((x) => x !== null);
+	const buildDuration = performance.now() - buildStart;
+	console.info(`[HomePage] Players merge/rank build took ${buildDuration.toFixed(2)}ms`);
 
-	// Get top 5 player ratings (optimized)
-	const playersRatingsQueryStart = performance.now();
-	// TODO: Optimize further
-	const playersRatings = await db.query.playerStats.findMany({
-		where: (playerStats, { inArray }) =>
-			inArray(
-				playerStats.playerId,
-				players.map((p) => p.id)
-			),
-		orderBy: (playerStats, { desc }) => [desc(playerStats.playerRating)]
-	});
-	const playersRatingsQueryDuration = performance.now() - playersRatingsQueryStart;
-	console.info(`[HomePage] Players ratings query took ${playersRatingsQueryDuration.toFixed(2)}ms`);
-
-	// Create a map for quick lookup
-	const dataProcessingStart = performance.now();
-	const ratingsByPlayerId = new Map(
-		playersRatings.map((rating) => [rating.playerId, rating.playerRating])
-	);
-
-	// Get players with ratings and limit to top 5
-	const playersWithRatings = players
-		.filter((player) => ratingsByPlayerId.has(player.id)) // Only include players with ratings
-		.map((player) => ({
-			...player,
-			teams:
-				playersTeams[player.id ?? '']?.map((team) => team?.name ?? undefined).filter(Boolean) ?? [],
-			rating: ratingsByPlayerId.get(player.id) ?? 0
-		}))
-		.toSorted((a, b) => b.rating - a.rating)
-		.slice(0, 5)
-		.map((player, index) => ({
-			...player,
-			rank: index + 1
-		}));
-	const dataProcessingDuration = performance.now() - dataProcessingStart;
-	console.info(`[HomePage] Players data processing took ${dataProcessingDuration.toFixed(2)}ms`);
-
-	// Get events with timing
-	const eventsQueryStart = performance.now();
-	const events = await getEssentialEvents(); // TODO: limit = 5
-	const eventsQueryDuration = performance.now() - eventsQueryStart;
-	console.info(`[HomePage] Events query took ${eventsQueryDuration.toFixed(2)}ms`);
-
-	// Get teams with timing
-	const teamsQueryStart = performance.now();
-	const teams = await getTeams();
-	const teamsQueryDuration = performance.now() - teamsQueryStart;
-	console.info(`[HomePage] Teams query took ${teamsQueryDuration.toFixed(2)}ms`);
-
-	// Process teams data
+	// 4) Process teams ranking
 	const teamsProcessingStart = performance.now();
 	const processedTeams = teams
 		.toSorted((a, b) => (b.wins ?? 0) - (a.wins ?? 0))
-		.map((team, index) => ({
-			...team,
-			rank: index + 1
-		}));
+		.map((team, index) => ({ ...team, rank: index + 1 }));
 	const teamsProcessingDuration = performance.now() - teamsProcessingStart;
 	console.info(`[HomePage] Teams processing took ${teamsProcessingDuration.toFixed(2)}ms`);
 
 	const totalDuration = performance.now() - totalStart;
 	console.info(`[HomePage] Total home page load took ${totalDuration.toFixed(2)}ms`);
 
+	const [{ cnt: totalPlayers }] = await db
+		.select({ cnt: sql<number>`count(*)` })
+		.from(schema.player);
+
 	return {
 		events,
 		teams: processedTeams,
 		players: playersWithRatings,
-		totalPlayers: players.length
+		totalPlayers
 	};
 };
 
