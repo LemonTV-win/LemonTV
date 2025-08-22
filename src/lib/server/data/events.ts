@@ -5,7 +5,7 @@ import { db } from '../db';
 import * as table from '$lib/server/db/schema';
 import { processImageURL } from '$lib/server/storage';
 import type { Region } from '$lib/data/game';
-import { inArray, eq, or, and } from 'drizzle-orm';
+import { inArray, eq, or, and, sql } from 'drizzle-orm';
 import type { EventParticipant, StageNode, Stage, EventResult } from '$lib/data/events';
 import type { Player } from '$lib/data/players';
 import { getPlayer } from '$lib/server/data/players';
@@ -175,137 +175,137 @@ export function getOrganizerChanges(
 
 export async function getEssentialEvents(): Promise<EssentialEvent[]> {
 	const totalStart = performance.now();
-	console.info('[Events] Fetching essential events');
+	console.info('[Events] Fetching essential events (relations + grouped counts)');
 
-	// 1) Base events only
-	const baseStart = performance.now();
-	const events = await db.query.event.findMany();
-	console.info(
-		`[Events] Essential base events query took ${(performance.now() - baseStart).toFixed(2)}ms (rows=${events.length})`
-	);
-	if (events.length === 0) return [];
-
-	const eventIds = events.map((e) => e.id);
-
-	// 2) Organizers per event
-	const orgStart = performance.now();
-	const eventOrganizers = await db
-		.select({ eventId: table.eventOrganizer.eventId, organizer: table.organizer })
-		.from(table.eventOrganizer)
-		.leftJoin(table.organizer, eq(table.organizer.id, table.eventOrganizer.organizerId))
-		.where(inArray(table.eventOrganizer.eventId, eventIds));
-	console.info(
-		`[Events] Essential organizers query took ${(performance.now() - orgStart).toFixed(2)}ms (rows=${eventOrganizers.length})`
-	);
-
-	// 3) Videos per event
-	const vidStart = performance.now();
-	const eventVideos = await db
-		.select({
-			eventId: table.eventVideo.eventId,
-			type: table.eventVideo.type,
-			platform: table.eventVideo.platform,
-			url: table.eventVideo.url,
-			title: table.eventVideo.title
-		})
-		.from(table.eventVideo)
-		.where(inArray(table.eventVideo.eventId, eventIds));
-	console.info(
-		`[Events] Essential videos query took ${(performance.now() - vidStart).toFixed(2)}ms (rows=${eventVideos.length})`
-	);
-
-	// 4) Participants per event (team count)
-	const partStart = performance.now();
-	const eventTeamPlayers = await db
-		.select({ eventId: table.eventTeamPlayer.eventId, teamId: table.eventTeamPlayer.teamId })
-		.from(table.eventTeamPlayer)
-		.where(inArray(table.eventTeamPlayer.eventId, eventIds));
-	console.info(
-		`[Events] Essential participants query took ${(performance.now() - partStart).toFixed(2)}ms (rows=${eventTeamPlayers.length})`
-	);
-
-	// Grouping
-	const organizersByEvent = new Map<string, Organizer[]>();
-	for (const row of eventOrganizers) {
-		const org = row.organizer as Organizer | null;
-		if (!org) continue;
-		const list = organizersByEvent.get(row.eventId) || [];
-		if (!list.some((o) => o.id === org.id)) list.push(org);
-		organizersByEvent.set(row.eventId, list);
-	}
-
-	const videosByEvent = new Map<
-		string,
-		{
-			type: 'stream' | 'clip' | 'vod';
-			platform: 'twitch' | 'youtube' | 'bilibili';
-			url: string;
-			title?: string;
-		}[]
-	>();
-	for (const v of eventVideos) {
-		const list = videosByEvent.get(v.eventId) || [];
-		if (!list.some((x) => x.url === v.url)) {
-			list.push({
-				type: v.type as 'stream' | 'clip' | 'vod',
-				platform: v.platform as 'twitch' | 'youtube' | 'bilibili',
-				url: v.url,
-				title: v.title || undefined
-			});
+	// 1) Fetch events with only the columns we actually need + nested minimal relations
+	const relStart = performance.now();
+	const eventsWithRelations = await db.query.event.findMany({
+		columns: {
+			id: true,
+			slug: true,
+			image: true,
+			name: true,
+			status: true,
+			date: true,
+			capacity: true,
+			region: true,
+			format: true,
+			official: true
+		},
+		with: {
+			organizers: {
+				with: {
+					organizer: {
+						columns: {
+							id: true,
+							slug: true,
+							name: true,
+							logo: true,
+							url: true
+						}
+					}
+				}
+			},
+			videos: {
+				columns: {
+					type: true,
+					platform: true,
+					url: true,
+					title: true
+				}
+			}
 		}
-		videosByEvent.set(v.eventId, list);
-	}
+	});
+	console.info(
+		`[Events] Relations query took ${(performance.now() - relStart).toFixed(2)}ms (rows=${eventsWithRelations.length})`
+	);
 
-	const teamCounts = new Map<string, number>();
-	for (const etp of eventTeamPlayers) {
-		teamCounts.set(etp.eventId, (teamCounts.get(etp.eventId) || 0) + 1);
-	}
+	if (eventsWithRelations.length === 0) return [];
 
-	// Process images in bulk
+	// 2) Get distinct team counts per event in ONE grouped query (no N+1, no row overfetch)
+	const countStart = performance.now();
+	const participantRows = await db
+		.select({
+			eventId: table.event.id,
+			participantCount: sql<number>`coalesce(count(distinct ${table.eventTeamPlayer.teamId}), 0)`
+		})
+		.from(table.event)
+		.leftJoin(table.eventTeamPlayer, eq(table.eventTeamPlayer.eventId, table.event.id))
+		.groupBy(table.event.id);
+
+	const participantCountMap = new Map<string, number>();
+	for (const r of participantRows) participantCountMap.set(r.eventId, r.participantCount);
+	console.info(
+		`[Events] Distinct team counts took ${(performance.now() - countStart).toFixed(2)}ms`
+	);
+
+	// 3) Collect & process images in bulk (deduped, concurrent)
+	const imgStart = performance.now();
 	const uniqueImageUrls = new Set<string>();
-	for (const e of events) {
+	for (const e of eventsWithRelations) {
 		if (e.image) uniqueImageUrls.add(e.image);
-		for (const org of organizersByEvent.get(e.id) || [])
-			if (org.logo) uniqueImageUrls.add(org.logo);
+		for (const eo of e.organizers) {
+			const org = eo.organizer;
+			if (org?.logo) uniqueImageUrls.add(org.logo);
+		}
 	}
 
 	const imageUrlMap = new Map<string, string>();
-	await Promise.all(
+	await Promise.allSettled(
 		Array.from(uniqueImageUrls).map(async (url) => {
-			const processed = await processImageURL(url);
-			imageUrlMap.set(url, processed);
+			try {
+				const processed = await processImageURL(url);
+				imageUrlMap.set(url, processed);
+			} catch {
+				// fall back to original URL on any processing error
+				imageUrlMap.set(url, url);
+			}
 		})
 	);
+	console.info(
+		`[Events] Image processing for ${uniqueImageUrls.size} URLs took ${(performance.now() - imgStart).toFixed(2)}ms`
+	);
 
-	const result: EssentialEvent[] = events.map((e) => {
-		const organizers = organizersByEvent.get(e.id) || [];
-		const videos = videosByEvent.get(e.id) || [];
-		const participantsSize = teamCounts.get(e.id) || 0;
+	// 4) Shape into EssentialEvent[]
+	const result: EssentialEvent[] = eventsWithRelations.map((e) => {
+		const organizers =
+			e.organizers
+				.map((eo) => eo.organizer)
+				.filter((org): org is NonNullable<typeof org> => !!org)
+				.map((org) => ({
+					...org,
+					logo: org.logo ? (imageUrlMap.get(org.logo) ?? org.logo) : org.logo
+				})) || undefined;
+
+		const participantsSize = participantCountMap.get(e.id) ?? 0;
+
 		return {
 			slug: e.slug,
-			imageURL: e.image ? imageUrlMap.get(e.image) || undefined : undefined,
+			imageURL: e.image ? imageUrlMap.get(e.image) : undefined,
 			image: e.image,
 			name: e.name,
 			status: e.status as 'upcoming' | 'live' | 'finished' | 'cancelled' | 'postponed',
 			date: e.date,
-			participants: Array(participantsSize).fill(null),
+			participants: Array.from({ length: participantsSize }),
 			capacity: e.capacity,
 			region: e.region,
 			format: e.format as 'lan' | 'online' | 'hybrid',
 			official: e.official,
-			organizers:
-				organizers.length > 0
-					? organizers.map((org) => ({
-							...org,
-							logo: org.logo ? imageUrlMap.get(org.logo) || org.logo : org.logo
-						}))
-					: undefined,
-			videos: videos.length > 0 ? videos : undefined
+			organizers: organizers && organizers.length ? organizers : undefined,
+			videos: e.videos.length
+				? e.videos.map((v) => ({
+						type: v.type as 'stream' | 'clip' | 'vod',
+						platform: v.platform as 'twitch' | 'youtube' | 'bilibili',
+						url: v.url,
+						title: v.title ?? undefined
+					}))
+				: undefined
 		};
 	});
 
-	const totalDuration = performance.now() - totalStart;
-	console.info(`[Events] Total getEssentialEvents took ${totalDuration.toFixed(2)}ms`);
+	console.info(
+		`[Events] Total getEssentialEvents took ${(performance.now() - totalStart).toFixed(2)}ms`
+	);
 	return result;
 }
 

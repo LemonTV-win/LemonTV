@@ -214,3 +214,82 @@ export const eventTeamPlayerRelations = relations(eventTeamPlayer, ({ one }) => 
 		references: [playerStats.playerId]
 	})
 }));
+
+// Add relations for event
+export const eventRelations = relations(event, ({ many }) => ({
+	organizers: many(eventOrganizer, {
+		relationName: 'eventOrganizers'
+	}),
+	videos: many(eventVideo, {
+		relationName: 'eventVideos'
+	}),
+	teamPlayers: many(eventTeamPlayer, {
+		relationName: 'eventTeamPlayers'
+	}),
+	websites: many(eventWebsite, {
+		relationName: 'eventWebsites'
+	}),
+	results: many(eventResult, {
+		relationName: 'eventResults'
+	}),
+	casters: many(eventCaster, {
+		relationName: 'eventCasters'
+	})
+}));
+
+// Add relations for eventOrganizer
+export const eventOrganizerRelations = relations(eventOrganizer, ({ one }) => ({
+	event: one(event, {
+		fields: [eventOrganizer.eventId],
+		references: [event.id],
+		relationName: 'eventOrganizers'
+	}),
+	organizer: one(organizer, {
+		fields: [eventOrganizer.organizerId],
+		references: [organizer.id]
+	})
+}));
+
+// Add relations for eventVideo
+export const eventVideoRelations = relations(eventVideo, ({ one }) => ({
+	event: one(event, {
+		fields: [eventVideo.eventId],
+		references: [event.id],
+		relationName: 'eventVideos'
+	})
+}));
+
+// Add relations for eventWebsite
+export const eventWebsiteRelations = relations(eventWebsite, ({ one }) => ({
+	event: one(event, {
+		fields: [eventWebsite.eventId],
+		references: [event.id],
+		relationName: 'eventWebsites'
+	})
+}));
+
+// Add relations for eventResult
+export const eventResultRelations = relations(eventResult, ({ one }) => ({
+	event: one(event, {
+		fields: [eventResult.eventId],
+		references: [event.id],
+		relationName: 'eventResults'
+	}),
+	team: one(team, {
+		fields: [eventResult.teamId],
+		references: [team.id]
+	})
+}));
+
+// Add relations for eventCaster
+export const eventCasterRelations = relations(eventCaster, ({ one }) => ({
+	event: one(event, {
+		fields: [eventCaster.eventId],
+		references: [event.id],
+		relationName: 'eventCasters'
+	}),
+	player: one(player, {
+		fields: [eventCaster.playerId],
+		references: [player.id]
+	})
+}));
