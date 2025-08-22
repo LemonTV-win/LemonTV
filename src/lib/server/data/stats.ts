@@ -198,54 +198,63 @@ export async function recalculateAllPlayerStats(
 		console.info(`${logp} Phase 2: aggregating per-character stats`);
 
 		const characterStatsQuery = sql`
-      WITH unpivoted AS (
-        SELECT account_id, game_id, team_id, character_first_half AS character_id, kills, deaths, assists, knocks, score, damage
-        FROM game_player_score WHERE character_first_half IS NOT NULL
-        UNION ALL
-        SELECT account_id, game_id, team_id, character_second_half AS character_id, kills, deaths, assists, knocks, score, damage
-        FROM game_player_score WHERE character_second_half IS NOT NULL
-      ),
-      agg AS (
-        SELECT
-          ga.player_id AS playerId,
-          u.character_id AS characterId,
-          COUNT(DISTINCT u.game_id) AS totalGames,
-          SUM(u.kills) AS totalKills,
-          SUM(u.deaths) AS totalDeaths,
-          SUM(u.assists) AS totalAssists,
-          SUM(u.knocks) AS totalKnocks,
-          SUM(u.score) AS totalScore,
-          SUM(u.damage) AS totalDamage
-        FROM unpivoted u
-        JOIN game_account ga ON ga.account_id = u.account_id
-        JOIN game g ON g.id = u.game_id
-        GROUP BY ga.player_id, u.character_id
-      ),
-      wins AS (
-        SELECT
-          ga.player_id AS playerId,
-          x.character_id AS characterId,
-          COUNT(DISTINCT x.game_id) AS totalWins
-        FROM (
-          SELECT account_id, game_id, team_id, character_first_half AS character_id
-          FROM game_player_score WHERE character_first_half IS NOT NULL
-          UNION ALL
-          SELECT account_id, game_id, team_id, character_second_half AS character_id
-          FROM game_player_score WHERE character_second_half IS NOT NULL
-        ) x
-        JOIN game_account ga ON ga.account_id = x.account_id
-        JOIN game g ON g.id = x.game_id
-        JOIN game_team gt ON gt.game_id = g.id AND gt.team_id = x.team_id
-        WHERE g.winner = gt.position
-        GROUP BY ga.player_id, x.character_id
-      )
-      SELECT
-        a.playerId, a.characterId, a.totalGames,
-        COALESCE(w.totalWins, 0) AS totalWins,
-        a.totalKills, a.totalDeaths, a.totalAssists, a.totalKnocks, a.totalScore, a.totalDamage
-      FROM agg a
-      LEFT JOIN wins w ON w.playerId = a.playerId AND w.characterId = a.characterId
-    `;
+  WITH unpivoted AS (
+    SELECT account_id, game_id, team_id, character_first_half AS character_id, kills, deaths, assists, knocks, score, damage
+    FROM game_player_score WHERE character_first_half IS NOT NULL AND TRIM(character_first_half) <> ''
+    UNION ALL
+    SELECT account_id, game_id, team_id, character_second_half AS character_id, kills, deaths, assists, knocks, score, damage
+    FROM game_player_score WHERE character_second_half IS NOT NULL AND TRIM(character_second_half) <> ''
+  ),
+  -- keep only known characters (avoids FK violations)
+  unpivoted_valid AS (
+    SELECT u.*
+    FROM unpivoted u
+    JOIN character c ON c.id = u.character_id
+  ),
+  agg AS (
+    SELECT
+      ga.player_id AS playerId,
+      u.character_id AS characterId,
+      COUNT(DISTINCT u.game_id) AS totalGames,
+      SUM(u.kills) AS totalKills,
+      SUM(u.deaths) AS totalDeaths,
+      SUM(u.assists) AS totalAssists,
+      SUM(u.knocks) AS totalKnocks,
+      SUM(u.score) AS totalScore,
+      SUM(u.damage) AS totalDamage
+    FROM unpivoted_valid u
+    JOIN game_account ga ON ga.account_id = u.account_id
+    JOIN game g ON g.id = u.game_id
+    GROUP BY ga.player_id, u.character_id
+  ),
+  wins AS (
+    SELECT
+      ga.player_id AS playerId,
+      x.character_id AS characterId,
+      COUNT(DISTINCT x.game_id) AS totalWins
+    FROM (
+      SELECT account_id, game_id, team_id, character_first_half AS character_id
+      FROM game_player_score
+      WHERE character_first_half IS NOT NULL AND TRIM(character_first_half) <> ''
+      UNION ALL
+      SELECT account_id, game_id, team_id, character_second_half AS character_id
+      FROM game_player_score
+      WHERE character_second_half IS NOT NULL AND TRIM(character_second_half) <> ''
+    ) x
+    JOIN character c ON c.id = x.character_id
+    JOIN game_account ga ON ga.account_id = x.account_id
+    JOIN game g ON g.id = x.game_id
+    JOIN game_team gt ON gt.game_id = g.id AND gt.team_id = x.team_id
+    WHERE g.winner = gt.position
+    GROUP BY ga.player_id, x.character_id
+  )
+  SELECT
+    a.playerId, a.characterId, a.totalGames,
+    COALESCE(w.totalWins, 0) AS totalWins,
+    a.totalKills, a.totalDeaths, a.totalAssists, a.totalKnocks, a.totalScore, a.totalDamage
+  FROM agg a
+  LEFT JOIN wins w ON w.playerId = a.playerId AND w.characterId = a.characterId
+`;
 
 		type CharAggRow = {
 			playerId: string;
