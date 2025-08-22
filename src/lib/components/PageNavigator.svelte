@@ -82,7 +82,7 @@
 					<span class="px-3 py-1 text-sm text-gray-400">{pageNum}</span>
 				{:else}
 					<button
-						class="rounded-md px-3 py-1 text-sm {pageNum === currentPage
+						class="cursor-pointer rounded-md px-3 py-1 text-sm {pageNum === currentPage
 							? 'bg-yellow-500 text-black'
 							: 'bg-slate-700 text-white hover:bg-slate-600'}"
 						onclick={() => handlePageClick(pageNum)}
