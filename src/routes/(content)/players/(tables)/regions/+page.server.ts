@@ -12,9 +12,9 @@ export const load: PageServerLoad = async ({ locals: { user } }) => {
 		.select({
 			nationality: schema.player.nationality,
 			totalPlayers: sql<number>`count(${schema.player.id})`.mapWith(Number),
-			totalWins: sql<number>`sum(${schema.playerStats.totalWins})`.mapWith(Number),
+			totalWins: sql<number>`coalesce(sum(${schema.playerStats.totalWins}), 0)`.mapWith(Number),
 			avgRating:
-				sql<number>`avg(case when ${schema.playerStats.playerRating} > 0 then ${schema.playerStats.playerRating} end)`.mapWith(
+				sql<number>`coalesce(avg(case when ${schema.playerStats.playerRating} > 0 then ${schema.playerStats.playerRating} end), 0)`.mapWith(
 					Number
 				)
 		})
