@@ -19,3 +19,13 @@ bun dev
 ```bash
 bun run db:dev:push
 ```
+### Deploys
+
+<!-- Infobox -->
+
+> [!NOTE]
+> We have moved from automatic push to Git repository deployment to manual deployment.
+
+```bash
+bun run deploy
+```
