@@ -7,7 +7,7 @@ export const TEAMS = [
 		name: 'Thunder Wolves',
 		slug: 'thunder-wolves',
 		abbr: 'TW',
-		logo: 'https://picsum.photos/seed=thunder-wolves/256/256?blur',
+		logo: 'https://picsum.photos/seed/thunder-wolves/256/256?blur',
 		region: 'NA',
 		createdAt: new Date().toISOString(),
 		updatedAt: new Date().toISOString()
@@ -17,7 +17,7 @@ export const TEAMS = [
 		name: 'Dragon Phoenix',
 		slug: 'dragon-phoenix',
 		abbr: 'DP',
-		logo: 'https://picsum.photos/seed=dragon-phoenix/256/256?blur',
+		logo: 'https://picsum.photos/seed/dragon-phoenix/256/256?blur',
 		region: 'APAC',
 		createdAt: new Date().toISOString(),
 		updatedAt: new Date().toISOString()
@@ -27,7 +27,7 @@ export const TEAMS = [
 		name: 'Viking Storm',
 		slug: 'viking-storm',
 		abbr: 'VS',
-		logo: 'https://picsum.photos/seed=viking-storm/256/256?blur',
+		logo: 'https://picsum.photos/seed/viking-storm/256/256?blur',
 		region: 'EU',
 		createdAt: new Date().toISOString(),
 		updatedAt: new Date().toISOString()
@@ -37,7 +37,7 @@ export const TEAMS = [
 		name: 'Tiger Blades',
 		slug: 'tiger-blades',
 		abbr: 'TB',
-		logo: 'https://picsum.photos/seed=tiger-blades/256/256?blur',
+		logo: 'https://picsum.photos/seed/tiger-blades/256/256?blur',
 		region: 'APAC',
 		createdAt: new Date().toISOString(),
 		updatedAt: new Date().toISOString()
@@ -47,7 +47,7 @@ export const TEAMS = [
 		name: 'Kangaroo Eagles',
 		slug: 'kangaroo-eagles',
 		abbr: 'KE',
-		logo: 'https://picsum.photos/seed=kangaroo-eagles/256/256?blur',
+		logo: 'https://picsum.photos/seed/kangaroo-eagles/256/256?blur',
 		region: 'APAC',
 		createdAt: new Date().toISOString(),
 		updatedAt: new Date().toISOString()
@@ -57,7 +57,7 @@ export const TEAMS = [
 		name: 'Bear Falcons',
 		slug: 'bear-falcons',
 		abbr: 'BF',
-		logo: 'https://picsum.photos/seed=bear-falcons/256/256?blur',
+		logo: 'https://picsum.photos/seed/bear-falcons/256/256?blur',
 		region: 'EU',
 		createdAt: new Date().toISOString(),
 		updatedAt: new Date().toISOString()
@@ -67,7 +67,7 @@ export const TEAMS = [
 		name: 'Frost Valkyries',
 		slug: 'frost-valkyries',
 		abbr: 'FV',
-		logo: 'https://picsum.photos/seed=frost-valkyries/256/256?blur',
+		logo: 'https://picsum.photos/seed/frost-valkyries/256/256?blur',
 		region: 'EU',
 		createdAt: new Date().toISOString(),
 		updatedAt: new Date().toISOString()
@@ -77,7 +77,7 @@ export const TEAMS = [
 		name: 'Jaguar Condors',
 		slug: 'jaguar-condors',
 		abbr: 'JC',
-		logo: 'https://picsum.photos/seed=jaguar-condors/256/256?blur',
+		logo: 'https://picsum.photos/seed/jaguar-condors/256/256?blur',
 		region: 'SA',
 		createdAt: new Date().toISOString(),
 		updatedAt: new Date().toISOString()
@@ -87,7 +87,7 @@ export const TEAMS = [
 		name: 'Desert Lions',
 		slug: 'desert-lions',
 		abbr: 'DL',
-		logo: 'https://picsum.photos/seed=desert-lions/256/256?blur',
+		logo: 'https://picsum.photos/seed/desert-lions/256/256?blur',
 		region: 'MEA',
 		createdAt: new Date().toISOString(),
 		updatedAt: new Date().toISOString()
@@ -97,7 +97,7 @@ export const TEAMS = [
 		name: 'Tiger Dragons',
 		slug: 'tiger-dragons',
 		abbr: 'TD',
-		logo: 'https://picsum.photos/seed=tiger-dragons/256/256?blur',
+		logo: 'https://picsum.photos/seed/tiger-dragons/256/256?blur',
 		region: 'APAC',
 		createdAt: new Date().toISOString(),
 		updatedAt: new Date().toISOString()
@@ -107,7 +107,7 @@ export const TEAMS = [
 		name: 'Rose Thunder',
 		slug: 'rose-thunder',
 		abbr: 'RT',
-		logo: 'https://picsum.photos/seed=rose-thunder/256/256?blur',
+		logo: 'https://picsum.photos/seed/rose-thunder/256/256?blur',
 		region: 'SA',
 		createdAt: new Date().toISOString(),
 		updatedAt: new Date().toISOString()
@@ -117,7 +117,7 @@ export const TEAMS = [
 		name: 'Aurora Vikings',
 		slug: 'aurora-vikings',
 		abbr: 'AV',
-		logo: 'https://picsum.photos/seed=aurora-vikings/256/256?blur',
+		logo: 'https://picsum.photos/seed/aurora-vikings/256/256?blur',
 		region: 'EU',
 		createdAt: new Date().toISOString(),
 		updatedAt: new Date().toISOString()
@@ -127,7 +127,7 @@ export const TEAMS = [
 		name: 'Shadow Phoenixes',
 		slug: 'shadow-phoenixes',
 		abbr: 'SP',
-		logo: 'https://picsum.photos/seed=shadow-phoenixes/256/256?blur',
+		logo: 'https://picsum.photos/seed/shadow-phoenixes/256/256?blur',
 		region: 'APAC',
 		createdAt: new Date().toISOString(),
 		updatedAt: new Date().toISOString()
@@ -137,7 +137,7 @@ export const TEAMS = [
 		name: 'Storm Eagles',
 		slug: 'storm-eagles',
 		abbr: 'SE',
-		logo: 'https://picsum.photos/seed=storm-eagles/256/256?blur',
+		logo: 'https://picsum.photos/seed/storm-eagles/256/256?blur',
 		region: 'MEA',
 		createdAt: new Date().toISOString(),
 		updatedAt: new Date().toISOString()
