@@ -9,11 +9,11 @@ import { LEMON_PUBLIC_JWK_BASE64 } from '$env/static/private';
 import { db } from '$lib/server/db';
 
 export const init: ServerInit = async () => {
-	console.info('[ServerInit] Syncing database enum tables...');
-	await syncAll(db);
-
 	if (dev) {
 		console.info('[ServerInit] Development environment detected');
+		console.info('[ServerInit] Syncing database enum tables...');
+		await syncAll(db);
+		console.info('[ServerInit] Seeding database...');
 		await seed();
 	}
 };
