@@ -2,5 +2,11 @@
 	"$schema": "https://openapi.vercel.sh/vercel.json",
 	"git": {
 		"deploymentEnabled": false
-	}
+	},
+	"crons": [
+		{
+			"path": "/api/cron/recalculate-player-stats",
+			"schedule": "0 2 * * *"
+		}
+	]
 }
