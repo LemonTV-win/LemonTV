@@ -335,107 +335,94 @@ export async function getPlayer(keyword: string): Promise<Player | null> {
 
 export async function getPlayers(): Promise<Player[]> {
 	const totalStart = performance.now();
-	console.info('[Players] Fetching all players');
+	console.info('[Players] Fetching all players (relational findMany)');
 
-	const playersQueryStart = performance.now();
-	const players = await db.select().from(player);
-	const playersQueryDuration = performance.now() - playersQueryStart;
-	console.info(`[Players] Players query took ${playersQueryDuration.toFixed(2)}ms`);
-
-	const aliasesQueryStart = performance.now();
-	const aliases = await db.select().from(playerAlias);
-	const aliasesQueryDuration = performance.now() - aliasesQueryStart;
-	console.info(`[Players] Aliases query took ${aliasesQueryDuration.toFixed(2)}ms`);
-
-	const accountsQueryStart = performance.now();
-	const accounts = await db.select().from(gameAccount);
-	const accountsQueryDuration = performance.now() - accountsQueryStart;
-	console.info(`[Players] Game accounts query took ${accountsQueryDuration.toFixed(2)}ms`);
-
-	const socialAccountsQueryStart = performance.now();
-	const socialAccounts = await db.select().from(player_social_account);
-	const socialAccountsQueryDuration = performance.now() - socialAccountsQueryStart;
-	console.info(`[Players] Social accounts query took ${socialAccountsQueryDuration.toFixed(2)}ms`);
-
-	const nationalitiesQueryStart = performance.now();
-	const additionalNationalities = await db.select().from(playerAdditionalNationality);
-	const nationalitiesQueryDuration = performance.now() - nationalitiesQueryStart;
-	console.info(
-		`[Players] Additional nationalities query took ${nationalitiesQueryDuration.toFixed(2)}ms`
-	);
-
-	const dataProcessingStart = performance.now();
-	const aliasesByPlayer = new Map<string, string[]>();
-	for (const alias of aliases) {
-		if (!aliasesByPlayer.has(alias.playerId)) {
-			aliasesByPlayer.set(alias.playerId, []);
-		}
-		aliasesByPlayer.get(alias.playerId)!.push(alias.alias);
-	}
-
-	const accountsByPlayer = new Map<string, typeof accounts>();
-	for (const acc of accounts) {
-		if (!accountsByPlayer.has(acc.playerId)) {
-			accountsByPlayer.set(acc.playerId, []);
-		}
-		accountsByPlayer.get(acc.playerId)!.push(acc);
-	}
-
-	const socialAccountsByPlayer = new Map<string, typeof socialAccounts>();
-	for (const acc of socialAccounts) {
-		if (!socialAccountsByPlayer.has(acc.playerId)) {
-			socialAccountsByPlayer.set(acc.playerId, []);
-		}
-		socialAccountsByPlayer.get(acc.playerId)!.push(acc);
-	}
-
-	const additionalNationalitiesByPlayer = new Map<string, string[]>();
-	for (const nat of additionalNationalities) {
-		if (!additionalNationalitiesByPlayer.has(nat.playerId)) {
-			additionalNationalitiesByPlayer.set(nat.playerId, []);
-		}
-		additionalNationalitiesByPlayer.get(nat.playerId)!.push(nat.nationality);
-	}
-
-	const result: Player[] = players.map((p) => ({
-		id: p.id,
-		name: p.name,
-		slug: p.slug,
-		avatar: p.avatar || undefined,
-		nationalities: p.nationality
-			? [
-					p.nationality as TCountryCode,
-					...(additionalNationalitiesByPlayer.get(p.id) || []).map((n) => n as TCountryCode)
-				]
-			: (additionalNationalitiesByPlayer.get(p.id) || []).map((n) => n as TCountryCode),
-		aliases: aliasesByPlayer.get(p.id) ?? [],
-		gameAccounts: (accountsByPlayer.get(p.id) ?? []).map((acc) => ({
-			accountId: acc.accountId,
-			currentName: acc.currentName,
-			region: acc.region as Player['gameAccounts'][0]['region'],
-			server: acc.server as 'Strinova' | 'CalabiYau' // TODO: Add validation
-		})),
-		socialAccounts: (socialAccountsByPlayer.get(p.id) ?? []).map((acc) => ({
-			platformId: acc.platformId,
-			accountId: acc.accountId,
-			overridingUrl: acc.overriding_url || undefined
-		})),
-		user: p.userId
-			? {
-					id: p.userId,
-					username: '',
-					email: '',
-					roles: []
+	// Single logical query using Drizzle's relational API
+	const queryStart = performance.now();
+	const rows = await db.query.player.findMany({
+		// Pull only the columns you actually use
+		columns: {
+			id: true,
+			name: true,
+			slug: true,
+			avatar: true,
+			nationality: true,
+			userId: true
+		},
+		// ⬇️ Adjust relation keys to your configured names in `relations(...)`
+		with: {
+			// e.g. relations(player, ...) -> { aliases: many(playerAlias) }
+			aliases: {
+				columns: { alias: true, playerId: true }
+			},
+			// e.g. { gameAccounts: many(gameAccount) }
+			gameAccounts: {
+				columns: {
+					playerId: true,
+					accountId: true,
+					currentName: true,
+					region: true
+					// if you don't store server, omit it and keep the same mapping you had before
+					// server: true,
 				}
-			: undefined
-	}));
-	const dataProcessingDuration = performance.now() - dataProcessingStart;
-	console.info(`[Players] Data processing took ${dataProcessingDuration.toFixed(2)}ms`);
+			},
+			// e.g. { socialAccounts: many(player_social_account) }
+			socialAccounts: {
+				columns: {
+					playerId: true,
+					platformId: true,
+					accountId: true,
+					overriding_url: true
+				}
+			},
+			// e.g. { additionalNationalities: many(playerAdditionalNationality) }
+			additionalNationalities: {
+				columns: { playerId: true, nationality: true }
+			}
+		}
+	});
+	const queryDuration = performance.now() - queryStart;
+	console.info(`[Players] Relational query took ${queryDuration.toFixed(2)}ms`);
+
+	// Map to your public shape
+	const mapStart = performance.now();
+	const result: Player[] = rows.map((p) => {
+		const extraNats = p.additionalNationalities?.map((n) => n.nationality as TCountryCode) ?? [];
+
+		return {
+			id: p.id,
+			name: p.name,
+			slug: p.slug,
+			avatar: p.avatar || undefined,
+			nationalities: p.nationality
+				? ([p.nationality as TCountryCode, ...extraNats] as TCountryCode[])
+				: extraNats,
+			aliases: p.aliases?.map((a) => a.alias) ?? [],
+			gameAccounts:
+				p.gameAccounts?.map((acc) => ({
+					accountId: acc.accountId,
+					currentName: acc.currentName,
+					region: acc.region as Player['gameAccounts'][0]['region'],
+					// keep your previous assumption for server if it's not stored:
+					server: 'Strinova' as 'Strinova' | 'CalabiYau' // TODO: replace if you persist server
+				})) ?? [],
+			socialAccounts:
+				p.socialAccounts?.map((acc) => ({
+					platformId: acc.platformId,
+					accountId: acc.accountId,
+					overridingUrl: acc.overriding_url || undefined
+				})) ?? [],
+			user: p.userId ? { id: p.userId, username: '', email: '', roles: [] } : undefined
+		};
+	});
+	const mapDuration = performance.now() - mapStart;
+	console.info(`[Players] Data mapping took ${mapDuration.toFixed(2)}ms`);
 
 	const totalDuration = performance.now() - totalStart;
 	console.info(
 		`[Players] Total getPlayers took ${totalDuration.toFixed(2)}ms - Successfully retrieved ${result.length} players`
 	);
+
 	return result;
 }
 
