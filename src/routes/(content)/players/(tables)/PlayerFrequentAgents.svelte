@@ -1,7 +1,7 @@
 <script lang="ts">
 	import CharacterIcon from '$lib/components/CharacterIcon.svelte';
 	import type { Character } from '$lib/data/game';
-	import PlayerAgents from './[id]/PlayerAgents.svelte';
+	import PlayerAgents from '../[id]/PlayerAgents.svelte';
 
 	let {
 		playerAgents,

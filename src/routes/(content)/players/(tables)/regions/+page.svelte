@@ -14,8 +14,4 @@
 	});
 </script>
 
-<div>
-	<h1>Region Ranking</h1>
-</div>
-
 <RegionRanking data={data.regionRankingData} bind:sortBy />

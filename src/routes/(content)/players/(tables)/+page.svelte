@@ -13,10 +13,9 @@
 
 	let { data }: PageProps = $props();
 
-	let search = $state(data.search || '');
+	let searchQuery = $state(data.search || '');
 	let selectedNationalities = $state<TCountryCode[]>(data.nationalities || []);
 	let selectedSuperstrings = $state<Character[]>(data.superstrings || []);
-	let activeTab = $state<'players' | 'region-ranking' | 'superstring-ranking'>(data.activeTab);
 
 	let sortBy:
 		| 'name-abc'
@@ -77,8 +76,8 @@
 		sorted.filter((player) => {
 			const allNames = getAllNames(player);
 			const matchesSearch =
-				search.length === 0 ||
-				allNames.some((name) => name.toLowerCase().includes(search.toLowerCase()));
+				searchQuery.length === 0 ||
+				allNames.some((name) => name.toLowerCase().includes(searchQuery.toLowerCase()));
 			const matchesNationality =
 				selectedNationalities.length === 0 ||
 				player.nationalities.some((nationality) => selectedNationalities.includes(nationality));
@@ -95,8 +94,7 @@
 	$effect(() => {
 		const params = new SvelteURLSearchParams();
 		if (sortBy) params.set('sortBy', sortBy);
-		if (activeTab) params.set('activeTab', activeTab);
-		if (search) params.set('search', search);
+		if (searchQuery) params.set('search', searchQuery);
 		if (selectedNationalities.length) params.set('nationalities', selectedNationalities.join(','));
 		if (selectedSuperstrings.length) params.set('superstrings', selectedSuperstrings.join(','));
 		window.history.replaceState({}, '', `/players?${params.toString()}`);
@@ -113,64 +111,17 @@
 	]);
 </script>
 
-<main class="mx-auto max-w-screen-lg px-4">
-	<div
-		class="mt-6 mb-5 flex flex-col gap-3 px-2 sm:flex-row sm:items-center sm:justify-between sm:px-0"
-	>
-		<div class="flex items-center gap-3 text-white/80">
-			<h1 class="text-2xl font-semibold">{m.players()}</h1>
-			{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
-				<ContentActionLink href="/admin/players" type="edit" />
-			{/if}
-		</div>
+<PlayerFilters
+	{uniqueNationalities}
+	{uniqueSuperstrings}
+	bind:selectedNationalities
+	bind:selectedSuperstrings
+/>
 
-		<div class="flex w-full items-center justify-end sm:w-auto">
-			<SearchInput bind:search filtered={filtered.length} total={sorted.length} />
-		</div>
+<PlayerTable playersAgents={data.playersAgents} bind:sortBy players={filtered} />
+
+{#snippet search()}
+	<div class="flex w-full items-center justify-end sm:w-auto">
+		<SearchInput bind:search={searchQuery} filtered={filtered.length} total={sorted.length} />
 	</div>
-
-	<!-- Divider -->
-	<!-- <div class="my-4 h-px w-full bg-white/25"></div> -->
-
-	<!-- Tab Navigation -->
-	{#snippet tabButton(active: boolean, onclick: () => void, text: string)}
-		<button
-			class={[
-				'flex-1 cursor-pointer border-b-2 px-4 py-2 text-center text-sm font-medium transition-colors',
-				active
-					? 'border-blue-500 bg-slate-700/50 text-blue-400 backdrop-blur-md'
-					: 'border-white/30 bg-transparent text-gray-400 backdrop-blur-md'
-			]}
-			{onclick}
-		>
-			{text}
-		</button>
-	{/snippet}
-
-	<div
-		class="mb-6 flex border border-white/30 border-b-transparent bg-slate-600/50 bg-gradient-to-br to-slate-800/50 backdrop-blur-lg"
-	>
-		{@render tabButton(activeTab === 'players', () => (activeTab = 'players'), m.players())}
-		{@render tabButton(
-			activeTab === 'region-ranking',
-			() => (activeTab = 'region-ranking'),
-			m.region_ranking()
-		)}
-		{@render tabButton(
-			activeTab === 'superstring-ranking',
-			() => (activeTab = 'superstring-ranking'),
-			m.superstring_power()
-		)}
-	</div>
-
-	{#if activeTab === 'players'}
-		<PlayerFilters
-			{uniqueNationalities}
-			{uniqueSuperstrings}
-			bind:selectedNationalities
-			bind:selectedSuperstrings
-		/>
-
-		<PlayerTable playersAgents={data.playersAgents} bind:sortBy players={filtered} />
-	{/if}
-</main>
+{/snippet}

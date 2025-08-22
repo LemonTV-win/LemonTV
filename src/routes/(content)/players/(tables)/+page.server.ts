@@ -1,10 +1,10 @@
-import type { PageServerLoad } from './$types';
+import type { PageServerLoad } from '../$types';
 import { getPlayers, getServerPlayersAgents } from '$lib/server/data/players';
 import { CHARACTERS } from '$lib/data/game';
 import { processImageURL } from '$lib/server/storage';
 import { db } from '$lib/server/db';
 
-export const load: PageServerLoad = async ({ locals: { user } }) => {
+export const load: PageServerLoad = async () => {
 	const players = await getPlayers();
 
 	const playersTeams = (
@@ -119,7 +119,6 @@ export const load: PageServerLoad = async ({ locals: { user } }) => {
 		}),
 
 		playersAgents,
-		superstringPowerData,
-		user
+		superstringPowerData
 	};
 };
