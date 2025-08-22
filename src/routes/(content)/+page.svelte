@@ -115,7 +115,7 @@
 					.slice(0, 5) as player (player.id)}
 					<li>
 						<a
-							href={`/players/${player.id}`}
+							href={`/players/${player.slug}`}
 							class={['grid grid-cols-[1fr_auto] items-center gap-2 px-4 py-2', 'glass-card']}
 						>
 							<span class="flex items-baseline gap-2 text-white">
