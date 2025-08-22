@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { getPlayers, getPlayersTeams, getServerPlayersAgents } from '$lib/server/data/players';
+import { getPlayers, getServerPlayersAgents } from '$lib/server/data/players';
 import { CHARACTERS } from '$lib/data/game';
 import { processImageURL } from '$lib/server/storage';
 import { db } from '$lib/server/db';

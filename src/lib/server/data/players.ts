@@ -426,52 +426,6 @@ export async function getPlayers(): Promise<Player[]> {
 	return result;
 }
 
-export async function getPlayersTeams(): Promise<Record<string, Team[]>> {
-	const totalStart = performance.now();
-	console.info('[Players] Fetching players teams');
-
-	const queryStart = performance.now();
-	const rows = await db
-		.select()
-		.from(schema.player)
-		.innerJoin(schema.teamPlayer, eq(schema.teamPlayer.playerId, schema.player.id))
-		.innerJoin(schema.team, eq(schema.teamPlayer.teamId, schema.team.id));
-	const queryDuration = performance.now() - queryStart;
-	console.info(`[Players] Players teams query took ${queryDuration.toFixed(2)}ms`);
-
-	const processingStart = performance.now();
-	const result: Record<string, Team[]> = {};
-
-	for (const row of rows) {
-		if (!result[row.player.id]) {
-			result[row.player.id] = [];
-		}
-
-		// Check if this team is already added to this player
-		const teamAlreadyExists = result[row.player.id].some((team) => team.id === row.teams.id);
-
-		if (!teamAlreadyExists) {
-			result[row.player.id].push({
-				id: row.teams.id,
-				name: row.teams.name,
-				slug: row.teams.slug,
-				abbr: row.teams.abbr || null,
-				logo: row.teams.logo || null,
-				region: (row.teams.region as Region) || null,
-				createdAt: row.teams.createdAt,
-				updatedAt: row.teams.updatedAt
-			});
-		}
-	}
-
-	const processingDuration = performance.now() - processingStart;
-	console.info(`[Players] Players teams processing took ${processingDuration.toFixed(2)}ms`);
-
-	const totalDuration = performance.now() - totalStart;
-	console.info(`[Players] Total getPlayersTeams took ${totalDuration.toFixed(2)}ms`);
-	return result;
-}
-
 export async function getServerPlayerAgents(playerId: string): Promise<[Character, number][]> {
 	console.info('[Players] Fetching server player agents for:', playerId);
 

@@ -1,7 +1,7 @@
 import { fail, type Actions } from '@sveltejs/kit';
 import * as auth from '$lib/server/auth';
 import type { PageServerLoad } from './$types';
-import { getPlayers, getPlayersTeams } from '$lib/server/data/players';
+import { getPlayers } from '$lib/server/data/players';
 import { getEssentialEvents } from '$lib/server/data/events';
 import { getTeams } from '$lib/server/data/teams';
 import type { EssentialEvent } from '$lib/components/EventCard.svelte';
@@ -19,7 +19,33 @@ export const load: PageServerLoad = async () => {
 	console.info(`[HomePage] Players query took ${playersQueryDuration.toFixed(2)}ms`);
 
 	const playersTeamsQueryStart = performance.now();
-	const playersTeams = await getPlayersTeams();
+	const playersTeams = (
+		await db.query.player.findMany({
+			columns: {
+				id: true
+			},
+			with: {
+				teamMemberships: {
+					columns: {
+						teamId: true
+					},
+					with: {
+						team: {
+							columns: {
+								name: true
+							}
+						}
+					}
+				}
+			}
+		})
+	).reduce(
+		(acc, player) => {
+			acc[player.id] = player.teamMemberships.map(({ team }) => team);
+			return acc;
+		},
+		{} as Record<string, { name: string }[]>
+	);
 	const playersTeamsQueryDuration = performance.now() - playersTeamsQueryStart;
 	console.info(`[HomePage] Players teams query took ${playersTeamsQueryDuration.toFixed(2)}ms`);
 

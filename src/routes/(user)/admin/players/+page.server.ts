@@ -2,13 +2,7 @@ import { fail } from '@sveltejs/kit';
 import * as schema from '$lib/server/db/schema';
 import { sql } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
-import {
-	createPlayer,
-	updatePlayer,
-	getPlayers,
-	deletePlayer,
-	getPlayersTeams
-} from '$lib/server/data/players';
+import { createPlayer, updatePlayer, getPlayers, deletePlayer } from '$lib/server/data/players';
 import type { Player } from '$lib/data/players';
 import type { TCountryCode } from 'countries-list';
 import type { User, UserRole } from '$lib/data/user';
@@ -22,7 +16,33 @@ import { checkPermissions } from '$lib/server/security/permission';
 export const load: PageServerLoad = async ({ url }) => {
 	const players = await getPlayers();
 	const socialPlatforms = await db.select().from(social_platform);
-	const playersTeams = await getPlayersTeams();
+	const playersTeams = (
+		await db.query.player.findMany({
+			columns: {
+				id: true
+			},
+			with: {
+				teamMemberships: {
+					columns: {},
+					with: {
+						team: {
+							columns: {
+								id: true,
+								slug: true,
+								name: true
+							}
+						}
+					}
+				}
+			}
+		})
+	).reduce(
+		(acc, player) => {
+			acc[player.id] = player.teamMemberships.map(({ team }) => team);
+			return acc;
+		},
+		{} as Record<string, { id: string; slug: string; name: string }[]>
+	);
 	const users = await getUsers();
 	const proSettings = await db.select().from(schema.mouseSettings);
 
