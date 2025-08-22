@@ -17,10 +17,14 @@
 		"db:prod:studio": "drizzle-kit studio",
 		"db:prod:dump": "source .env && echo Dumping... $DATABASE_NAME && turso db shell $DATABASE_NAME .dump > dumps/prod-$(date -u +%Y-%m-%dT%H-%M-%SZ).sql && echo Check the dump at dumps/prod-$(date -u +%Y-%m-%dT%H-%M-%SZ).sql, you may need to run again if your login session is expired.",
 		"db:prod:sync": "DEV=false bun scripts/sync-db.ts",
+		"db:prod:recalc-player-stats:deploy": "DEV=false PLAYER_STATS_UPDATE_REASON=deploy bun scripts/db-recalculate-player-stats.ts",
+		"db:prod:recalc-player-stats:manual": "DEV=false PLAYER_STATS_UPDATE_REASON=manual bun scripts/db-recalculate-player-stats.ts",
 		"db:dev:push": "drizzle-kit push --config drizzle-dev.config.ts",
 		"db:dev:migrate": "drizzle-kit migrate --config drizzle-dev.config.ts",
 		"db:dev:studio": "drizzle-kit studio --config drizzle-dev.config.ts",
 		"db:dev:sync": "DEV=true bun scripts/sync-db.ts",
+		"db:dev:recalc-player-stats:deploy": "DEV=true PLAYER_STATS_UPDATE_REASON=deploy bun scripts/db-recalculate-player-stats.ts",
+		"db:dev:recalc-player-stats:manual": "DEV=true PLAYER_STATS_UPDATE_REASON=manual bun scripts/db-recalculate-player-stats.ts",
 		"i18n:check": "bun scripts/check-messages.ts",
 		"knip": "knip",
 		"changelog": "bun scripts/generate-changelog.ts",
@@ -28,7 +32,7 @@
 		"test:e2e": "playwright test",
 		"test": "npm run test:e2e",
 		"deploy:vercel": "vercel --prod",
-		"deploy": "bun run check && bun run build && bun run db:prod:push && bun run db:prod:sync && bun run deploy:vercel"
+		"deploy": "bun run check && bun run build && bun run db:prod:push && bun run db:prod:sync && bun run db:prod:recalc-player-stats:deploy && bun run deploy:vercel"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.3.1",
