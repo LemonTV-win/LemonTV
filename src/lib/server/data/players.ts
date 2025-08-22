@@ -488,33 +488,28 @@ export async function getPlayersTeams(): Promise<Record<string, Team[]>> {
 export async function getServerPlayerAgents(playerId: string): Promise<[Character, number][]> {
 	console.info('[Players] Fetching server player agents for:', playerId);
 
-	// Get the player's game accounts
-	const playerAccounts = await db
-		.select()
-		.from(gameAccount)
-		.where(eq(gameAccount.playerId, playerId));
-
-	if (playerAccounts.length === 0) {
-		console.warn('[Players] No game accounts found for player:', playerId);
-		return [];
-	}
-
-	// Get all account IDs for this player
-	const accountIds = playerAccounts.map((acc) => acc.accountId);
-
-	// Find all games where this player participated
-	const playerScores = await db
+	// Use Drizzle query builder with joins to get character counts in a single query
+	const characterStats = await db
 		.select({
 			characterFirstHalf: schema.gamePlayerScore.characterFirstHalf,
 			characterSecondHalf: schema.gamePlayerScore.characterSecondHalf
 		})
 		.from(schema.gamePlayerScore)
-		.where(inArray(schema.gamePlayerScore.accountId, accountIds));
+		.innerJoin(
+			schema.gameAccount,
+			eq(schema.gamePlayerScore.accountId, schema.gameAccount.accountId)
+		)
+		.where(eq(schema.gameAccount.playerId, playerId));
+
+	if (characterStats.length === 0) {
+		console.warn('[Players] No game scores found for player:', playerId);
+		return [];
+	}
 
 	// Count occurrences of each character (both first and second half)
 	const characterCounts = new Map<Character, number>();
 
-	for (const score of playerScores) {
+	for (const score of characterStats) {
 		// Count first half character
 		if (score.characterFirstHalf) {
 			const character = score.characterFirstHalf as Character;
@@ -545,81 +540,60 @@ export async function getServerPlayersAgents(
 		return {};
 	}
 
-	// Get all game accounts for these players
-	const allPlayerAccounts = await db
-		.select()
-		.from(gameAccount)
-		.where(inArray(gameAccount.playerId, playerIds));
-
-	// Group accounts by player ID
-	const accountsByPlayer = new Map<string, number[]>();
-	for (const account of allPlayerAccounts) {
-		if (!accountsByPlayer.has(account.playerId)) {
-			accountsByPlayer.set(account.playerId, []);
-		}
-		accountsByPlayer.get(account.playerId)!.push(account.accountId);
-	}
-
-	// Get all account IDs
-	const allAccountIds = allPlayerAccounts.map((acc) => acc.accountId);
-
-	if (allAccountIds.length === 0) {
-		console.warn('[Players] No game accounts found for any of the players');
-		return Object.fromEntries(playerIds.map((id) => [id, []]));
-	}
-
-	// Find all games where these players participated
-	const allPlayerScores = await db
+	// Use a single query with joins to get all character data for all players
+	const allCharacterStats = await db
 		.select({
-			accountId: schema.gamePlayerScore.accountId,
+			playerId: schema.gameAccount.playerId,
 			characterFirstHalf: schema.gamePlayerScore.characterFirstHalf,
 			characterSecondHalf: schema.gamePlayerScore.characterSecondHalf
 		})
 		.from(schema.gamePlayerScore)
-		.where(inArray(schema.gamePlayerScore.accountId, allAccountIds));
+		.innerJoin(
+			schema.gameAccount,
+			eq(schema.gamePlayerScore.accountId, schema.gameAccount.accountId)
+		)
+		.where(inArray(schema.gameAccount.playerId, playerIds));
 
-	// Group scores by player ID
-	const scoresByPlayer = new Map<string, typeof allPlayerScores>();
-	for (const score of allPlayerScores) {
-		// Find which player this account belongs to
-		for (const [playerId, accountIds] of accountsByPlayer.entries()) {
-			if (accountIds.includes(score.accountId)) {
-				if (!scoresByPlayer.has(playerId)) {
-					scoresByPlayer.set(playerId, []);
-				}
-				scoresByPlayer.get(playerId)!.push(score);
-				break;
-			}
+	if (allCharacterStats.length === 0) {
+		console.warn('[Players] No game scores found for any of the players');
+		return Object.fromEntries(playerIds.map((id) => [id, []]));
+	}
+
+	// Group character stats by player ID and calculate counts
+	const result: Record<string, [Character, number][]> = {};
+
+	// Initialize result for all player IDs
+	for (const playerId of playerIds) {
+		result[playerId] = [];
+	}
+
+	// Group by player ID and count characters
+	const characterCountsByPlayer = new Map<string, Map<Character, number>>();
+
+	for (const stat of allCharacterStats) {
+		if (!characterCountsByPlayer.has(stat.playerId)) {
+			characterCountsByPlayer.set(stat.playerId, new Map());
+		}
+
+		const playerCharacterCounts = characterCountsByPlayer.get(stat.playerId)!;
+
+		// Count first half character
+		if (stat.characterFirstHalf) {
+			const character = stat.characterFirstHalf as Character;
+			playerCharacterCounts.set(character, (playerCharacterCounts.get(character) ?? 0) + 1);
+		}
+
+		// Count second half character
+		if (stat.characterSecondHalf) {
+			const character = stat.characterSecondHalf as Character;
+			playerCharacterCounts.set(character, (playerCharacterCounts.get(character) ?? 0) + 1);
 		}
 	}
 
-	// Calculate character counts for each player
-	const result: Record<string, [Character, number][]> = {};
-
-	for (const playerId of playerIds) {
-		const playerScores = scoresByPlayer.get(playerId) || [];
-		const characterCounts = new Map<Character, number>();
-
-		for (const score of playerScores) {
-			// Count first half character
-			if (score.characterFirstHalf) {
-				const character = score.characterFirstHalf as Character;
-				characterCounts.set(character, (characterCounts.get(character) ?? 0) + 1);
-			}
-
-			// Count second half character
-			if (score.characterSecondHalf) {
-				const character = score.characterSecondHalf as Character;
-				characterCounts.set(character, (characterCounts.get(character) ?? 0) + 1);
-			}
-		}
-
-		// Convert to array of tuples, sort by count (descending), and limit
+	// Convert to sorted arrays and apply limit
+	for (const [playerId, characterCounts] of characterCountsByPlayer.entries()) {
 		const sortedCharacters = Array.from(characterCounts.entries()).sort((a, b) => b[1] - a[1]);
-
-		const slicedCharacters = limit > 0 ? sortedCharacters.slice(0, limit) : sortedCharacters;
-
-		result[playerId] = slicedCharacters;
+		result[playerId] = limit > 0 ? sortedCharacters.slice(0, limit) : sortedCharacters;
 	}
 
 	console.info('[Players] Found agents for', Object.keys(result).length, 'players');
