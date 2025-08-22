@@ -71,84 +71,177 @@ const CHARACTERS = [
 	'Chiyo'
 ];
 
-// Player names for different teams
+// Player names for different teams - updated for new 12-team structure
 const TEAM_PLAYERS = {
 	[TEAMS[0].id]: [
-		'Alex "Thunder" Chen',
-		'Sarah "Viper" Rodriguez',
-		'Mike "Shadow" Johnson',
+		// Thunder Wolves
+		'Alex "Thunder" Rodriguez',
+		'Sarah "Viper" Chen',
+		'Marcus "Shadow" Johnson',
+		'Jin "Dragon" Kim',
 		'Emma "Frost" Williams',
-		'David "Blitz" Kim'
+		'David "Phoenix" Martinez',
+		'Lisa "Raven" Thompson'
 	],
 	[TEAMS[1].id]: [
-		'Jake "Phoenix" Smith',
-		'Lisa "Nova" Brown',
-		'Tom "Zen" Davis',
-		'Rachel "Echo" Wilson',
-		'Chris "Void" Taylor'
+		// Dragon Phoenix
+		'Hiroshi "Samurai" Tanaka',
+		'Min-ji "Luna" Park',
+		'Wei "Storm" Zhang',
+		'Yuki "Blitz" Yamamoto',
+		'Jae-hyun "Void" Lee',
+		'Xia "Nova" Wang',
+		'Kenji "Zen" Nakamura'
 	],
 	[TEAMS[2].id]: [
-		'Maria "Luna" Garcia',
-		'Kevin "Kai" Lee',
-		'Anna "Aria" Martinez',
-		'Ryan "Shadow" Anderson',
-		'Sophie "Frost" Thompson'
+		// Viking Storm
+		'Lukas "Wolf" Mueller',
+		'Pierre "Eagle" Dubois',
+		'Oliver "Hawk" Smith',
+		'Erik "Viking" Andersson',
+		'Hans "Bear" Weber',
+		'Claude "Fox" Moreau',
+		'Marco "Lion" Rossi'
 	],
 	[TEAMS[3].id]: [
-		'Daniel "Blitz" White',
-		'Jessica "Viper" Clark',
-		'Andrew "Phoenix" Lewis',
-		'Michelle "Nova" Hall',
-		'Robert "Zen" Young'
+		// Tiger Blades
+		'Li "Tiger" Wei',
+		'Ming "Phoenix" Chen',
+		'Kai "Dragon" Wong',
+		'Yuan "Storm" Liu',
+		'Jin "Blade" Tan',
+		'Feng "Thunder" Zhao',
+		'Tai "Shadow" Lin'
 	],
 	[TEAMS[4].id]: [
-		'Emily "Echo" Scott',
-		'James "Void" Green',
-		'Nicole "Luna" Adams',
-		'Michael "Kai" Baker',
-		'Amanda "Aria" Nelson'
+		// Kangaroo Eagles
+		'Jack "Kangaroo" Wilson',
+		'Maya "Kiwi" Thompson',
+		'Gabriel "Eagle" Santos',
+		'Isabella "Koala" Brown',
+		'Liam "Tui" Davis',
+		'Sophia "Wombat" Garcia',
+		'Mateo "Hawk" Cruz'
 	],
 	[TEAMS[5].id]: [
-		'Steven "Shadow" Carter',
-		'Jennifer "Frost" Mitchell',
-		'Brian "Blitz" Perez',
-		'Stephanie "Viper" Roberts',
-		'Jason "Phoenix" Turner'
+		// Bear Falcons
+		'Dmitry "Bear" Petrov',
+		'Olena "Wolf" Kovalenko',
+		'Piotr "Eagle" Kowalski',
+		'Ivan "Tiger" Sokolov',
+		'Anastasia "Falcon" Melnyk',
+		'Tomasz "Lynx" Nowak',
+		'Vladimir "Wolf" Volkov'
 	],
 	[TEAMS[6].id]: [
-		'Melissa "Nova" Phillips',
-		'Eric "Zen" Campbell',
-		'Ashley "Echo" Parker',
-		'Mark "Void" Evans',
-		'Lauren "Luna" Edwards'
+		// Frost Valkyries
+		'Magnus "Viking" Hansen',
+		'Freja "Valkyrie" Nielsen',
+		'Eero "Frost" Virtanen',
+		'Astrid "Storm" Berg',
+		'Lars "Thunder" Jorgensen',
+		'Aino "Aurora" Laaksonen',
+		'Wojciech "Bear" Mazur'
 	],
 	[TEAMS[7].id]: [
-		'Timothy "Kai" Collins',
-		'Rebecca "Aria" Stewart',
-		'Jonathan "Shadow" Morris',
-		'Victoria "Frost" Rogers',
-		'Nicholas "Blitz" Reed'
+		// Jaguar Condors
+		'Rafael "Jaguar" Silva',
+		'Sofia "Condor" Rodriguez',
+		'Diego "Puma" Gonzalez',
+		'Valentina "Llama" Torres',
+		'Carlos "Eagle" Ramirez',
+		'Ana "Jaguar" Morales',
+		'Mateo "Puma" Fernandez'
+	],
+	[TEAMS[8].id]: [
+		// Desert Lions
+		'Ahmed "Desert" Al-Mahmoud',
+		'Fatima "Phoenix" Al-Zahra',
+		'Omar "Lion" Hassan',
+		'Layla "Falcon" Mansour',
+		'Khalid "Eagle" Rahman',
+		'Nour "Storm" El-Sayed',
+		'Zaid "Wolf" Al-Rashid'
+	],
+	[TEAMS[9].id]: [
+		// Tiger Dragons
+		'Priya "Tiger" Patel',
+		'Arjun "Lion" Singh',
+		'Mei "Dragon" Lin',
+		'Raj "Eagle" Kumar',
+		'Yuki "Phoenix" Tanaka',
+		'Aisha "Storm" Khan',
+		'Hiroto "Blade" Yamamoto'
+	],
+	[TEAMS[10].id]: [
+		// Rose Thunder
+		'Isabella "Rose" Santos',
+		'Lucas "Thunder" Costa',
+		'Valentina "Moon" Rodriguez',
+		'Santiago "Sun" Fernandez',
+		'Camila "Star" Silva',
+		'Mateo "Ocean" Torres',
+		'Sofia "River" Morales'
+	],
+	[TEAMS[11].id]: [
+		// Aurora Vikings
+		'Emma "Frost" Johansson',
+		'Lars "Storm" Bergman',
+		'Anna "Aurora" Virtanen',
+		'Johan "Viking" Hansen',
+		'Elin "Snow" Lindberg',
+		'Magnus "Ice" Jorgensen',
+		'Helena "Frost" Virtanen'
+	],
+	[TEAMS[12].id]: [
+		// Shadow Phoenixes
+		'Akira "Shadow" Nakamura',
+		'Zara "Phoenix" Al-Rashid',
+		'Mikhail "Specter" Volkov',
+		'Luna "Eclipse" Santos',
+		'Kai "Wraith" Thompson',
+		'Elena "Viper" Kozlov'
+	],
+	[TEAMS[13].id]: [
+		// Storm Eagles
+		'Hassan "Storm" Ibrahim',
+		'Yuki "Eagle" Tanaka',
+		'Liam "Thunder" O\'Connor',
+		'Aria "Lightning" Kumar',
+		'Viktor "Falcon" Petrov',
+		'Mei "Spark" Chen'
 	]
 };
 
-// Team combinations for different matches (more variety)
-const TEAM_COMBINATIONS = [
-	[TEAMS[0].id, TEAMS[1].id], // Team 1 vs Team 2
-	[TEAMS[2].id, TEAMS[3].id], // Team 3 vs Team 4
-	[TEAMS[4].id, TEAMS[5].id], // Team 5 vs Team 6
-	[TEAMS[6].id, TEAMS[7].id], // Team 7 vs Team 8
-	[TEAMS[0].id, TEAMS[3].id], // Team 1 vs Team 4
-	[TEAMS[1].id, TEAMS[2].id], // Team 2 vs Team 3
-	[TEAMS[4].id, TEAMS[7].id], // Team 5 vs Team 8
-	[TEAMS[5].id, TEAMS[6].id], // Team 6 vs Team 7
-	[TEAMS[0].id, TEAMS[5].id], // Team 1 vs Team 6
-	[TEAMS[1].id, TEAMS[4].id], // Team 2 vs Team 5
-	[TEAMS[2].id, TEAMS[7].id], // Team 3 vs Team 8
-	[TEAMS[3].id, TEAMS[6].id], // Team 4 vs Team 7
-	[TEAMS[0].id, TEAMS[7].id], // Team 1 vs Team 8
-	[TEAMS[1].id, TEAMS[6].id], // Team 2 vs Team 7
-	[TEAMS[2].id, TEAMS[5].id], // Team 3 vs Team 6
-	[TEAMS[3].id, TEAMS[4].id] // Team 4 vs Team 5
+// Team matchups for different stages
+const TEAM_MATCHUPS = [
+	// Qualifier stage - random matchups
+	[TEAMS[0].id, TEAMS[1].id], // Thunder Wolves vs Dragon Phoenix
+	[TEAMS[2].id, TEAMS[3].id], // Viking Storm vs Tiger Blades
+	[TEAMS[4].id, TEAMS[5].id], // Kangaroo Eagles vs Bear Falcons
+	[TEAMS[6].id, TEAMS[7].id], // Frost Valkyries vs Jaguar Condors
+	[TEAMS[8].id, TEAMS[9].id], // Desert Lions vs Tiger Dragons
+	[TEAMS[10].id, TEAMS[11].id], // Rose Thunder vs Aurora Vikings
+	// Cross-region matchups
+	[TEAMS[0].id, TEAMS[6].id], // Thunder Wolves vs Frost Valkyries
+	[TEAMS[1].id, TEAMS[7].id], // Dragon Phoenix vs Jaguar Condors
+	[TEAMS[2].id, TEAMS[8].id], // Viking Storm vs Desert Lions
+	[TEAMS[3].id, TEAMS[9].id], // Tiger Blades vs Tiger Dragons
+	[TEAMS[4].id, TEAMS[10].id], // Kangaroo Eagles vs Rose Thunder
+	[TEAMS[5].id, TEAMS[11].id], // Bear Falcons vs Aurora Vikings
+	// Additional matchups for more variety
+	[TEAMS[0].id, TEAMS[3].id], // Thunder Wolves vs Tiger Blades
+	[TEAMS[1].id, TEAMS[4].id], // Dragon Phoenix vs Kangaroo Eagles
+	[TEAMS[2].id, TEAMS[5].id], // Viking Storm vs Bear Falcons
+	[TEAMS[6].id, TEAMS[9].id], // Frost Valkyries vs Tiger Dragons
+	[TEAMS[7].id, TEAMS[10].id], // Jaguar Condors vs Rose Thunder
+	[TEAMS[8].id, TEAMS[11].id], // Desert Lions vs Aurora Vikings
+	// New teams matchups
+	[TEAMS[12].id, TEAMS[0].id], // Shadow Phoenixes vs Thunder Wolves
+	[TEAMS[13].id, TEAMS[1].id], // Storm Eagles vs Dragon Phoenix
+	[TEAMS[12].id, TEAMS[13].id], // Shadow Phoenixes vs Storm Eagles
+	[TEAMS[12].id, TEAMS[6].id], // Shadow Phoenixes vs Frost Valkyries
+	[TEAMS[13].id, TEAMS[8].id] // Storm Eagles vs Desert Lions
 ];
 
 // Helper functions
@@ -255,8 +348,8 @@ function generateGames() {
 		const matchMaps = getUniqueMapsForMatch(stageType, numGames);
 
 		// Get team combination for this match (cycle through combinations)
-		const teamComboIndex = matchIndex % TEAM_COMBINATIONS.length;
-		const [teamAId, teamBId] = TEAM_COMBINATIONS[teamComboIndex];
+		const teamComboIndex = matchIndex % TEAM_MATCHUPS.length;
+		const [teamAId, teamBId] = TEAM_MATCHUPS[teamComboIndex];
 
 		// Generate games for this match
 		for (let gameIndex = 0; gameIndex < numGames; gameIndex++) {
