@@ -290,7 +290,7 @@ export async function getPlayer(keyword: string): Promise<Player | null> {
 					...(playerData.additionalNationalities?.map((n) => n.nationality as TCountryCode) || [])
 				]
 			: playerData.additionalNationalities?.map((n) => n.nationality as TCountryCode) || [],
-		aliases: playerData.aliases?.map((a) => a.alias) || [],
+		aliases: (playerData.aliases?.map((a) => a.alias) ?? []) as string[],
 		gameAccounts: (playerData.gameAccounts || []).map((acc) => ({
 			accountId: acc.accountId,
 			currentName: acc.currentName,

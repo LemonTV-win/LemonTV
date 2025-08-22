@@ -477,7 +477,8 @@
 					...p,
 					nationalities: (p.nationality ? [p.nationality] : []) as TCountryCode[],
 					gameAccounts: [],
-					avatar: p.avatar || undefined
+					avatar: p.avatar || undefined,
+					aliases: []
 				}))}
 				bind:casters={newEvent.casters}
 			/>
