@@ -631,224 +631,216 @@ export async function getServerPlayerMatches(id: string): Promise<
 		.where(and(eq(schema.eventTeamPlayer.playerId, id), eq(schema.gamePlayerScore.player, id)));
 }
 
-export async function getServerPlayerDetailedMatches(playerId: string): Promise<
-	{
+type DetailedMatchesOut = {
+	id: string;
+	format: string | null;
+	stageId: number | null;
+	teams: Array<{ team: string; teamId: string; score: number }>;
+	games: Array<{ winner: number }>;
+	event: {
 		id: string;
-		format: string | null;
-		stageId: number | null;
-		teams: Array<{
-			team: string;
-			teamId: string;
-			score: number;
-		}>;
-		games: Array<{
-			winner: number;
-		}>;
-		// Event data
-		event: {
-			id: string;
-			slug: string;
-			name: string;
-			image: string;
-			date: string;
-			region: string;
-			format: string;
-			status: string;
-			server: string;
-			capacity: number;
-			official: boolean;
-		};
-		// Player's team index in this match
-		playerTeamIndex: number;
-	}[]
-> {
-	// Get the player's game accounts
-	const playerAccounts = await db
-		.select()
-		.from(gameAccount)
-		.where(eq(gameAccount.playerId, playerId));
+		slug: string;
+		name: string;
+		image: string;
+		date: string;
+		region: string;
+		format: string;
+		status: string;
+		server: string;
+		capacity: number;
+		official: boolean;
+	};
+	playerTeamIndex: number;
+};
 
-	if (playerAccounts.length === 0) {
-		return [];
-	}
+export async function getServerPlayerDetailedMatches(
+	playerId: string
+): Promise<DetailedMatchesOut[]> {
+	// 1) Player’s accounts
+	const accounts = await db
+		.select({ accountId: schema.gameAccount.accountId })
+		.from(schema.gameAccount)
+		.where(eq(schema.gameAccount.playerId, playerId));
 
-	// Get all account IDs for this player
-	const accountIds = playerAccounts.map((acc) => acc.accountId);
+	if (accounts.length === 0) return [];
+	const accountIds = accounts.map((a) => a.accountId);
 
-	// Get all matches where this player participated
-	const playerMatches = await db
+	// 2) Discover matches the player participated in + the player’s team index per match
+	//    We compute team index from game_team.position for any of that match’s games
+	//    (MIN position across games is stable for BOx).
+	const rows = await db
 		.select({
-			// Match data
 			matchId: schema.match.id,
-			format: schema.match.format,
-			stageId: schema.match.stageId,
-			// Event data
-			eventId: schema.event.id,
-			eventSlug: schema.event.slug,
-			eventName: schema.event.name,
-			eventImage: schema.event.image,
-			eventDate: schema.event.date,
-			eventRegion: schema.event.region,
-			eventFormat: schema.event.format,
-			eventStatus: schema.event.status,
-			eventServer: schema.event.server,
-			eventCapacity: schema.event.capacity,
-			eventOfficial: schema.event.official,
-			// Player's team position in this match
-			playerTeamPosition: schema.gameTeam.position
+			playerTeamIndex: sql<number>`min(${schema.gameTeam.position})`.as('player_team_index')
 		})
 		.from(schema.gamePlayerScore)
 		.innerJoin(schema.game, eq(schema.gamePlayerScore.gameId, schema.game.id))
 		.innerJoin(schema.match, eq(schema.game.matchId, schema.match.id))
-		.innerJoin(schema.stage, eq(schema.match.stageId, schema.stage.id))
-		.innerJoin(schema.event, eq(schema.stage.eventId, schema.event.id))
 		.innerJoin(schema.gameTeam, eq(schema.gamePlayerScore.teamId, schema.gameTeam.teamId))
-		.where(
-			and(
-				inArray(schema.gamePlayerScore.accountId, accountIds),
-				eq(schema.gamePlayerScore.gameId, schema.game.id)
-			)
-		);
+		.where(inArray(schema.gamePlayerScore.accountId, accountIds))
+		.groupBy(schema.match.id);
 
-	// Get unique match IDs
-	const matchIds = [...new Set(playerMatches.map((pm) => pm.matchId))];
+	if (rows.length === 0) return [];
 
-	// Get all teams for these matches - try match_team first, fallback to game_team
-	const matchTeams = await db
-		.select({
-			matchId: schema.matchTeam.matchId,
-			teamId: schema.matchTeam.teamId,
-			position: schema.matchTeam.position,
-			score: schema.matchTeam.score,
-			teamName: schema.team.name,
-			teamSlug: schema.team.slug,
-			teamAbbr: schema.team.abbr
-		})
-		.from(schema.matchTeam)
-		.innerJoin(schema.team, eq(schema.matchTeam.teamId, schema.team.id))
-		.where(inArray(schema.matchTeam.matchId, matchIds))
-		.orderBy(schema.matchTeam.position);
+	const matchIds = rows.map((r) => r.matchId);
+	const playerTeamIndexByMatch = new Map<string, number>(
+		rows.map((r) => [r.matchId, r.playerTeamIndex ?? 0])
+	);
 
-	// If we don't have match teams, try to get teams from game_team
-	let fallbackTeams: typeof matchTeams = [];
-	if (matchTeams.length === 0) {
-		fallbackTeams = await db
+	// 3) Pull the whole graph for those matches in one relational query
+	// Relations assumed:
+	// - match.games (game records)
+	// - match.matchTeams (junction) with .team
+	// - match.stage (with .event)
+	const matches = await db.query.match.findMany({
+		where: (m, { inArray }) => inArray(m.id, matchIds),
+		columns: { id: true, format: true, stageId: true },
+		with: {
+			// Games: we only need winner (and id in case we need a fallback)
+			games: {
+				columns: { id: true, winner: true, matchId: true },
+				orderBy: (g, { asc: orderAsc }) => [orderAsc(g.id)]
+			},
+			// Teams on the match; may be empty for legacy data
+			matchTeams: {
+				columns: { matchId: true, teamId: true, position: true, score: true },
+				with: {
+					team: {
+						columns: { id: true, name: true, slug: true, abbr: true }
+					}
+				},
+				orderBy: (mt, { asc: orderAsc }) => [orderAsc(mt.position)]
+			},
+			// Stage -> Event
+			stage: {
+				columns: { id: true, eventId: true },
+				with: {
+					event: {
+						columns: {
+							id: true,
+							slug: true,
+							name: true,
+							image: true,
+							date: true,
+							region: true,
+							format: true,
+							status: true,
+							server: true,
+							capacity: true,
+							official: true
+						}
+					}
+				}
+			}
+		}
+	});
+
+	// 4) Shape the response, with fallback to gameTeam when matchTeams are missing
+	//    To support fallback, we fetch gameTeam on demand for only those matches.
+	const needFallback = matches.filter((m) => (m.matchTeams?.length ?? 0) === 0).map((m) => m.id);
+	let gameTeamFallback: Record<string, { teamId: string; position: number; score: number }[]> = {};
+
+	if (needFallback.length > 0) {
+		const rows = await db
 			.select({
 				matchId: schema.game.matchId,
 				teamId: schema.gameTeam.teamId,
 				position: schema.gameTeam.position,
-				score: schema.gameTeam.score,
-				teamName: schema.team.name,
-				teamSlug: schema.team.slug,
-				teamAbbr: schema.team.abbr
+				score: schema.gameTeam.score
 			})
 			.from(schema.game)
 			.innerJoin(schema.gameTeam, eq(schema.game.id, schema.gameTeam.gameId))
-			.innerJoin(schema.team, eq(schema.gameTeam.teamId, schema.team.id))
-			.where(inArray(schema.game.matchId, matchIds))
-			.orderBy(schema.gameTeam.position);
+			.where(inArray(schema.game.matchId, needFallback));
+
+		// Reduce to one entry per team per match; take MAX score across games (or last)
+		const byMatch = new Map<
+			string,
+			Map<string, { teamId: string; position: number; score: number }>
+		>();
+		for (const r of rows) {
+			const m = byMatch.get(r.matchId) ?? new Map();
+			const prev = m.get(r.teamId);
+			if (!prev || r.score > prev.score) {
+				m.set(r.teamId, { teamId: r.teamId, position: r.position, score: r.score ?? 0 });
+			}
+			byMatch.set(r.matchId, m);
+		}
+		gameTeamFallback = Object.fromEntries(
+			[...byMatch.entries()].map(([mid, teams]) => [
+				mid,
+				[...teams.values()].sort((a, b) => a.position - b.position)
+			])
+		);
 	}
 
-	// Use match teams if available, otherwise use fallback teams
-	const allTeams = matchTeams.length > 0 ? matchTeams : fallbackTeams;
+	const out: DetailedMatchesOut[] = matches.map((m) => {
+		const mt = m.matchTeams ?? [];
+		let teams: Array<{ team: string; teamId: string; score: number }>;
 
-	// Get all games for these matches
-	const matchGames = await db
-		.select({
-			matchId: schema.game.matchId,
-			gameId: schema.game.id,
-			winner: schema.game.winner
-		})
-		.from(schema.game)
-		.where(inArray(schema.game.matchId, matchIds));
-
-	// Group teams by match ID
-	const teamsByMatch = new Map<string, typeof allTeams>();
-	allTeams.forEach((team) => {
-		if (team.matchId) {
-			if (!teamsByMatch.has(team.matchId)) {
-				teamsByMatch.set(team.matchId, []);
-			}
-			teamsByMatch.get(team.matchId)!.push(team);
-		}
-	});
-
-	// Group games by match ID
-	const gamesByMatch = new Map<string, typeof matchGames>();
-	matchGames.forEach((game) => {
-		if (!gamesByMatch.has(game.matchId)) {
-			gamesByMatch.set(game.matchId, []);
-		}
-		gamesByMatch.get(game.matchId)!.push(game);
-	});
-
-	// Build the result
-	const result = playerMatches.map((pm) => {
-		const teams = teamsByMatch.get(pm.matchId) || [];
-		const games = gamesByMatch.get(pm.matchId) || [];
-
-		// Ensure we have exactly 2 teams
-		let processedTeams = teams.map((team) => {
-			const teamName = (team.teamAbbr ||
-				team.teamName ||
-				team.teamSlug ||
-				team.teamId ||
-				'Unknown Team') as string;
-			return {
-				team: teamName,
-				teamId: team.teamId || '',
-				score: team.score || 0
-			};
-		});
-
-		// If we don't have exactly 2 teams, pad with placeholder teams
-		while (processedTeams.length < 2) {
-			processedTeams.push({
-				team: `Team ${processedTeams.length + 1}`,
-				teamId: '',
-				score: 0
+		if (mt.length > 0) {
+			teams = mt.map((t) => {
+				const teamName =
+					t.team?.abbr || t.team?.name || t.team?.slug || t.team?.id || 'Unknown Team';
+				return {
+					team: teamName,
+					teamId: t.team?.id ?? t.teamId ?? '',
+					score: t.score ?? 0
+				};
 			});
+		} else {
+			const fb = gameTeamFallback[m.id] ?? [];
+			teams = fb.map((t) => ({
+				team: t.teamId, // we don’t have names here; you can enrich if needed
+				teamId: t.teamId,
+				score: t.score ?? 0
+			}));
 		}
 
-		// If we have more than 2 teams, take only the first 2
-		if (processedTeams.length > 2) {
-			processedTeams = processedTeams.slice(0, 2);
-		}
+		// Normalize to exactly 2 teams
+		while (teams.length < 2) teams.push({ team: `Team ${teams.length + 1}`, teamId: '', score: 0 });
+		if (teams.length > 2) teams = teams.slice(0, 2);
+
+		const games = (m.games ?? []).map((g) => ({ winner: g.winner }));
 
 		return {
-			id: pm.matchId,
-			format: pm.format,
-			stageId: pm.stageId,
-			teams: processedTeams,
-			games: games.map((game) => ({
-				winner: game.winner
-			})),
-			event: {
-				id: pm.eventId,
-				slug: pm.eventSlug,
-				name: pm.eventName,
-				image: pm.eventImage,
-				date: pm.eventDate,
-				region: pm.eventRegion,
-				format: pm.eventFormat,
-				status: pm.eventStatus,
-				server: pm.eventServer,
-				capacity: pm.eventCapacity,
-				official: pm.eventOfficial
-			},
-			playerTeamIndex: pm.playerTeamPosition
+			id: m.id,
+			format: m.format,
+			stageId: m.stageId,
+			teams,
+			games,
+			event: m.stage?.event
+				? {
+						id: m.stage.event.id,
+						slug: m.stage.event.slug,
+						name: m.stage.event.name,
+						image: m.stage.event.image,
+						date: m.stage.event.date,
+						region: m.stage.event.region,
+						format: m.stage.event.format,
+						status: m.stage.event.status,
+						server: m.stage.event.server,
+						capacity: m.stage.event.capacity,
+						official: m.stage.event.official
+					}
+				: {
+						// very defensive default
+						id: '',
+						slug: '',
+						name: '',
+						image: '',
+						date: '',
+						region: '',
+						format: '',
+						status: '',
+						server: '',
+						capacity: 0,
+						official: false
+					},
+			playerTeamIndex: playerTeamIndexByMatch.get(m.id) ?? 0
 		};
 	});
 
-	// Remove duplicates (same match might appear multiple times for different games)
-	const uniqueMatches = new Map<string, (typeof result)[0]>();
-	result.forEach((match) => {
-		if (!uniqueMatches.has(match.id)) {
-			uniqueMatches.set(match.id, match);
-		}
-	});
-
-	return Array.from(uniqueMatches.values());
+	return out;
 }
 
 export async function getServerPlayerWins(playerId: string): Promise<number> {

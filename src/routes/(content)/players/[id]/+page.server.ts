@@ -8,8 +8,6 @@ import {
 } from '$lib/server/data/players';
 import { processImageURL } from '$lib/server/storage';
 import { db } from '$lib/server/db';
-import * as schema from '$lib/server/db/schema';
-import { eq } from 'drizzle-orm';
 import type { Character } from '$lib/data/game';
 
 export const load: PageServerLoad = async ({ params, locals: { user } }) => {
@@ -35,8 +33,8 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 	});
 
 	// Get detailed match data for the player
-	const playerDetailedMatches = await getServerPlayerDetailedMatches(playerID);
 
+	const playerDetailedMatches = await getServerPlayerDetailedMatches(playerID);
 	// Transform match data to include team objects
 	const transformedMatches = playerDetailedMatches.map((match) => ({
 		...match,
