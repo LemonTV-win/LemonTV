@@ -18,6 +18,8 @@
 		const url = new URL(window.location.href);
 		if (search) {
 			url.searchParams.set('search', search);
+		} else {
+			url.searchParams.delete('search');
 		}
 		goto(url.toString(), { replaceState: true, keepFocus: true });
 	});
