@@ -1,5 +1,5 @@
 import type { Character, Region } from '$lib/data/game';
-import { getServerPlayerKD, getServerPlayerAgents, getPlayersRatingsByIds } from './players';
+import { getServerPlayerKD, getServerPlayerAgents } from './players';
 
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
@@ -38,8 +38,10 @@ export async function getTeamMemberStatistics(team: Team): Promise<Record<
 	}
 
 	// Get ratings only for these players
-	const scopedRatings = await getPlayersRatingsByIds(playerIds);
-	const ratingsByPlayerId = new Map(scopedRatings.map((r) => [r.playerId, r.rating]));
+	const scopedRatings = await db.query.playerStats.findMany({
+		where: (playerStats, { inArray }) => inArray(playerStats.playerId, playerIds)
+	});
+	const ratingsByPlayerId = new Map(scopedRatings.map((r) => [r.playerId, r.playerRating]));
 
 	// Get KD and agents for each player
 	const result: Record<string, { kd: number; rating: number; characters: [Character, number][] }> =

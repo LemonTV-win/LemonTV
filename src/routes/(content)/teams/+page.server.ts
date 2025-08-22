@@ -1,8 +1,8 @@
 import type { PageServerLoad } from './$types';
 import type { Team, TeamPlayer } from '$lib/data/teams';
 import { getTeams, getAllTeamsWins } from '$lib/server/data/teams';
-import { getPlayersRatingsByIds } from '$lib/server/data/players';
 import { processImageURL } from '$lib/server/storage';
+import { db } from '$lib/server/db';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const teams = await getTeams();
@@ -12,8 +12,10 @@ export const load: PageServerLoad = async ({ url }) => {
 	const playerIds = Array.from(
 		new Set(teams.flatMap((team) => (team.players || []).map((tp) => tp.player.id).filter(Boolean)))
 	);
-	const scopedRatings = await getPlayersRatingsByIds(playerIds);
-	const ratingsByPlayerId = new Map(scopedRatings.map((r) => [r.playerId, r.rating]));
+	const scopedRatings = await db.query.playerStats.findMany({
+		where: (playerStats, { inArray }) => inArray(playerStats.playerId, playerIds)
+	});
+	const ratingsByPlayerId = new Map(scopedRatings.map((r) => [r.playerId, r.playerRating]));
 
 	// Collect unique logo URLs and player avatar URLs
 	const uniqueLogoUrls = new Set<string>();
