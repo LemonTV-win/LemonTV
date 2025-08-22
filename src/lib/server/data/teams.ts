@@ -1,10 +1,5 @@
 import type { Character, Region } from '$lib/data/game';
-import {
-	getServerPlayerKD,
-	getServerPlayerAgents,
-	getAllPlayersRatings,
-	getPlayersRatingsByIds
-} from './players';
+import { getServerPlayerKD, getServerPlayerAgents, getPlayersRatingsByIds } from './players';
 
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';

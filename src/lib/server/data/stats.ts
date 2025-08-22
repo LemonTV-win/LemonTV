@@ -408,3 +408,24 @@ export async function recalculateAllPlayerStats(opts: RecalcOptions = {}): Promi
 		throw e;
 	}
 }
+
+export interface PlayerRating {
+	playerId: string;
+	rating: number;
+}
+
+/**
+ * Get player ratings from the materialized table
+ */
+export async function getAllPlayersRatings(limit: number = 1000): Promise<PlayerRating[]> {
+	const stats = await db
+		.select({
+			playerId: schema.playerStats.playerId,
+			rating: schema.playerStats.playerRating
+		})
+		.from(schema.playerStats)
+		.orderBy(sql`${schema.playerStats.playerRating} DESC`)
+		.limit(limit);
+
+	return stats;
+}

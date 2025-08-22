@@ -1,7 +1,8 @@
 import { fail, type Actions } from '@sveltejs/kit';
 import * as auth from '$lib/server/auth';
 import type { PageServerLoad } from './$types';
-import { getPlayers, getPlayersTeams, getAllPlayersRatings } from '$lib/server/data/players';
+import { getPlayers, getPlayersTeams } from '$lib/server/data/players';
+import { getAllPlayersRatings } from '$lib/server/data/stats';
 import { getEssentialEvents } from '$lib/server/data/events';
 import { getTeams } from '$lib/server/data/teams';
 import type { EssentialEvent } from '$lib/components/EventCard.svelte';

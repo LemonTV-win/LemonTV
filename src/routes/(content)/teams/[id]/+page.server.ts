@@ -7,7 +7,7 @@ import {
 	getTeamMemberStatistics,
 	getServerTeamDetailedMatches
 } from '$lib/server/data/teams';
-import { getAllPlayersRatings } from '$lib/server/data/players';
+import { getAllPlayersRatings } from '$lib/server/data/stats';
 import { error } from '@sveltejs/kit';
 import { processImageURL } from '$lib/server/storage';
 
@@ -21,6 +21,7 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 	const teams = await getTeams();
 
 	// Get all player ratings for global ranking
+	// TODO: Optimize further
 	const allPlayerRatings = await getAllPlayersRatings();
 	const globalRankingByPlayerId = new Map(
 		allPlayerRatings.map((rating, index) => [rating.playerId, index + 1])
