@@ -8,7 +8,7 @@ import {
 	editHistory,
 	playerAdditionalNationality
 } from '$lib/server/db/schema';
-import { eq, or, and, inArray, sql } from 'drizzle-orm';
+import { eq, or, and, inArray, sql, desc } from 'drizzle-orm';
 import type { Player, PlayerTeam } from '$lib/data/players';
 import { randomUUID } from 'node:crypto';
 import type { Team } from '$lib/data/teams';
@@ -88,152 +88,80 @@ export interface PlayerEssentialStats {
 }
 
 // Unified function to get all player statistics
-export async function getServerPlayerStats(playerId: string): Promise<PlayerStats> {
-	console.info('[Players] Fetching unified stats for player:', playerId);
+export async function getServerPlayerStats(playerId: string, topAgents = 3): Promise<PlayerStats> {
+	const ps = schema.playerStats;
+	const pcs = schema.playerCharacterStats;
 
-	// Get the player's game accounts
-	const playerAccounts = await db
-		.select()
-		.from(gameAccount)
-		.where(eq(gameAccount.playerId, playerId));
-
-	if (playerAccounts.length === 0) {
-		console.warn('[Players] No game accounts found for player:', playerId);
-		return {
-			wins: 0,
-			losses: 0,
-			totalGames: 0,
-			winRate: 0,
-			kd: 0,
-			totalKills: 0,
-			totalDeaths: 0,
-			totalAssists: 0,
-			totalDamage: 0,
-			averageScore: 0,
-			agents: [],
-			mapStats: [],
-			events: [],
-			matches: []
-		};
-	}
-
-	// Get all account IDs for this player
-	const accountIds = playerAccounts.map((acc) => acc.accountId);
-
-	// Get all games where this player participated
-	const playerGames = await db
+	// 1) materialized aggregate
+	const [row] = await db
 		.select({
-			gameId: schema.game.id,
-			winner: schema.game.winner,
-			teamId: schema.gamePlayerScore.teamId,
-			accountId: schema.gamePlayerScore.accountId,
-			teamPosition: schema.gameTeam.position
+			totalWins: ps.totalWins,
+			totalLosses: ps.totalLosses,
+			totalGames: ps.totalGames,
+			winRate: ps.winRate,
+			kd: ps.kd,
+			totalKills: ps.totalKills,
+			totalDeaths: ps.totalDeaths,
+			totalAssists: ps.totalAssists,
+			totalDamage: ps.totalDamage,
+			totalScore: ps.totalScore,
+			averageScore: ps.averageScore
 		})
-		.from(schema.game)
-		.innerJoin(schema.gamePlayerScore, eq(schema.game.id, schema.gamePlayerScore.gameId))
-		.innerJoin(schema.gameTeam, eq(schema.gamePlayerScore.teamId, schema.gameTeam.teamId))
-		.where(inArray(schema.gamePlayerScore.accountId, accountIds));
+		.from(ps)
+		.where(eq(ps.playerId, playerId))
+		.limit(1);
 
-	// Get all player scores for this player
-	const playerScores = await db
+	const base = row ?? {
+		totalWins: 0,
+		totalLosses: 0,
+		totalGames: 0,
+		winRate: 0,
+		kd: 0,
+		totalKills: 0,
+		totalDeaths: 0,
+		totalAssists: 0,
+		totalDamage: 0,
+		totalScore: 0,
+		averageScore: 0
+	};
+
+	// 2) frequent agents (single query, then slice in JS)
+	const agentsAll = await db
 		.select({
-			characterFirstHalf: schema.gamePlayerScore.characterFirstHalf,
-			characterSecondHalf: schema.gamePlayerScore.characterSecondHalf,
-			kills: schema.gamePlayerScore.kills,
-			deaths: schema.gamePlayerScore.deaths,
-			assists: schema.gamePlayerScore.assists,
-			damage: schema.gamePlayerScore.damage,
-			score: schema.gamePlayerScore.score
+			characterId: pcs.characterId,
+			totalGames: pcs.totalGames,
+			power: pcs.superstringPower,
+			wins: pcs.totalWins
 		})
-		.from(schema.gamePlayerScore)
-		.where(inArray(schema.gamePlayerScore.accountId, accountIds));
+		.from(pcs)
+		.where(eq(pcs.playerId, playerId))
+		.orderBy(desc(pcs.totalGames), desc(pcs.superstringPower), desc(pcs.totalWins));
 
-	// Calculate wins
-	let wins = 0;
-	const processedGames = new Set<number>();
+	const limitedAgents = topAgents > 0 ? agentsAll.slice(0, topAgents) : agentsAll;
 
-	for (const game of playerGames) {
-		if (processedGames.has(game.gameId)) {
-			continue;
-		}
+	const agents: [Character, number][] = limitedAgents.map((r) => [
+		r.characterId as Character,
+		r.totalGames
+	]);
 
-		// Find which team the player was on in this game
-		const playerTeam = playerGames.find(
-			(gt) => gt.gameId === game.gameId && accountIds.includes(gt.accountId)
-		);
+	// 3) keep your existing helpers (swap to materialized later if you add them)
+	const [mapStats, events, matches] = await Promise.all([
+		getServerPlayerMapStats(playerId),
+		getServerPlayerEvents(playerId),
+		getServerPlayerMatches(playerId)
+	]);
 
-		if (playerTeam) {
-			// Check if player's team won using the actual team position
-			// winner: 0 = team A won, 1 = team B won
-			const playerWon = game.winner === playerTeam.teamPosition;
-
-			if (playerWon) {
-				wins++;
-			}
-
-			processedGames.add(game.gameId);
-		}
-	}
-
-	// Calculate KD and other stats
-	let totalKills = 0;
-	let totalDeaths = 0;
-	let totalAssists = 0;
-	let totalDamage = 0;
-	let totalScore = 0;
-
-	for (const score of playerScores) {
-		totalKills += score.kills;
-		totalDeaths += score.deaths;
-		totalAssists += score.assists;
-		totalDamage += score.damage;
-		totalScore += score.score;
-	}
-
-	const kd = totalDeaths > 0 ? totalKills / totalDeaths : totalKills;
-	const averageScore = playerScores.length > 0 ? totalScore / playerScores.length : 0;
-	const totalGames = processedGames.size;
-	const losses = totalGames - wins;
-	const winRate = totalGames > 0 ? (wins / totalGames) * 100 : 0;
-
-	// Calculate agents
-	const characterCounts = new Map<Character, number>();
-
-	for (const score of playerScores) {
-		if (score.characterFirstHalf) {
-			const character = score.characterFirstHalf as Character;
-			characterCounts.set(character, (characterCounts.get(character) ?? 0) + 1);
-		}
-
-		if (score.characterSecondHalf) {
-			const character = score.characterSecondHalf as Character;
-			characterCounts.set(character, (characterCounts.get(character) ?? 0) + 1);
-		}
-	}
-
-	const agents = Array.from(characterCounts.entries()).sort((a, b) => b[1] - a[1]);
-
-	// Get map stats
-	const mapStats = await getServerPlayerMapStats(playerId);
-
-	// Get events
-	const events = await getServerPlayerEvents(playerId);
-
-	// Get matches
-	const matches = await getServerPlayerMatches(playerId);
-
-	console.info('[Players] Successfully retrieved unified stats for player:', playerId);
 	return {
-		wins,
-		losses, // Total games - wins
-		totalGames,
-		winRate,
-		kd,
-		totalKills,
-		totalDeaths,
-		totalAssists,
-		totalDamage,
-		averageScore,
+		wins: base.totalWins,
+		losses: base.totalLosses,
+		totalGames: base.totalGames,
+		winRate: base.winRate,
+		kd: base.kd,
+		totalKills: base.totalKills,
+		totalDeaths: base.totalDeaths,
+		totalAssists: base.totalAssists,
+		totalDamage: base.totalDamage,
+		averageScore: base.averageScore,
 		agents,
 		mapStats,
 		events,
