@@ -2,7 +2,7 @@ import { sql } from 'drizzle-orm';
 import { sqliteTable, text, integer, check, primaryKey, index } from 'drizzle-orm/sqlite-core';
 import { relations } from 'drizzle-orm';
 import { team } from './team';
-import { map } from './game';
+import { character, map } from './game';
 import type { GameMap } from '$lib/data/game';
 import { player } from './player';
 import type { TLanguageCode } from 'countries-list';
@@ -102,8 +102,8 @@ export const gamePlayerScore = sqliteTable(
 			.notNull(),
 		accountId: integer('account_id').notNull(),
 		player: text('player').notNull(),
-		characterFirstHalf: text('character_first_half'),
-		characterSecondHalf: text('character_second_half'),
+		characterFirstHalf: text('character_first_half').references(() => character.id),
+		characterSecondHalf: text('character_second_half').references(() => character.id),
 		score: integer('score').notNull(),
 		damageScore: integer('damage_score').notNull(),
 		kills: integer('kills').notNull(),
