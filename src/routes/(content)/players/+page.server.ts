@@ -3,18 +3,24 @@ import {
 	getPlayers,
 	getPlayersTeams,
 	getServerPlayersAgents,
-	getAllPlayersEssentialStats,
 	getAllPlayersSuperstringPower
 } from '$lib/server/data/players';
 import { CHARACTERS } from '$lib/data/game';
 import { processImageURL } from '$lib/server/storage';
+import { db } from '$lib/server/db';
 
 export const load: PageServerLoad = async ({ locals: { user } }) => {
 	const players = await getPlayers();
 	const playersTeams = await getPlayersTeams();
 
 	// Get essential stats for all players (optimized)
-	const playersEssentialStats = await getAllPlayersEssentialStats();
+	const playersEssentialStats = await db.query.playerStats.findMany({
+		where: (playerStats, { inArray }) =>
+			inArray(
+				playerStats.playerId,
+				players.map((p) => p.id)
+			)
+	});
 
 	// Get server-side agents for all players (optimized)
 	const playerIds = players.map((p) => p.id);
@@ -56,16 +62,20 @@ export const load: PageServerLoad = async ({ locals: { user } }) => {
 				wins: 0,
 				rating: 0,
 				kd: 0,
-				eventsCount: 0
+				eventsCount: 0,
+				playerRating: 0,
+				totalWins: 0,
+				averageScore: 0
 			};
 
 			return {
 				...player,
 				avatarURL: player.avatar ? avatarUrlMap.get(player.avatar) || null : null,
-				wins: stats.wins,
-				rating: stats.rating,
+				wins: stats.totalWins,
+				rating: stats.averageScore,
 				kd: stats.kd,
-				eventsCount: stats.eventsCount
+				eventsCount: stats.eventsCount,
+				playerRating: stats.playerRating
 			};
 		}),
 		playersAgents,
