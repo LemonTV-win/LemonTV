@@ -111,13 +111,13 @@ export const load: PageServerLoad = async ({ locals: { user } }) => {
 				...player,
 				avatarURL: player.avatar ? avatarUrlMap.get(player.avatar) || null : null,
 				wins: stats.totalWins,
-				rating: stats.averageScore,
+				rating: stats.playerRating,
 				kd: stats.kd,
 				eventsCount: stats.eventsCount,
-				playerRating: stats.playerRating,
 				teams: playersTeams[player.id] ?? []
 			};
 		}),
+
 		playersAgents,
 		superstringPowerData,
 		user
