@@ -105,6 +105,12 @@
 					date: eventToEdit.date as
 						| `${string}-${string}-${string}`
 						| `${string}-${string}-${string}/${string}-${string}-${string}`,
+					status: eventToEdit.status as
+						| 'upcoming'
+						| 'live'
+						| 'finished'
+						| 'cancelled'
+						| 'postponed',
 					createdAt: new Date(),
 					updatedAt: new Date(),
 					organizers: (eventToEdit.organizers || []).map((org) => ({
@@ -428,6 +434,12 @@
 											date: event.date as
 												| `${string}-${string}-${string}`
 												| `${string}-${string}-${string}/${string}-${string}-${string}`,
+											status: event.status as
+												| 'upcoming'
+												| 'live'
+												| 'finished'
+												| 'cancelled'
+												| 'postponed',
 											createdAt: new Date(),
 											updatedAt: new Date(),
 											organizers: (event.organizers || []).map((org) => ({
@@ -454,6 +466,12 @@
 											date: event.date as
 												| `${string}-${string}-${string}`
 												| `${string}-${string}-${string}/${string}-${string}-${string}`,
+											status: event.status as
+												| 'upcoming'
+												| 'live'
+												| 'finished'
+												| 'cancelled'
+												| 'postponed',
 											createdAt: new Date(),
 											updatedAt: new Date(),
 											organizers: (event.organizers || []).map((org) => ({
