@@ -6,7 +6,40 @@ import { db } from '$lib/server/db';
 
 export const load: PageServerLoad = async ({ locals: { user } }) => {
 	const players = await getPlayers();
-	const playersTeams = await getPlayersTeams();
+
+	const playersTeams = (
+		await db.query.player.findMany({
+			columns: {
+				id: true
+			},
+			with: {
+				teamMemberships: {
+					columns: {
+						teamId: true
+					},
+					with: {
+						team: {
+							columns: {
+								id: true,
+								name: true,
+								slug: true
+							}
+						}
+					}
+				}
+			}
+		})
+	).reduce(
+		(acc, player) => {
+			acc[player.id] = player.teamMemberships.map(({ team }) => ({
+				id: team.id,
+				name: team.name,
+				slug: team.slug
+			}));
+			return acc;
+		},
+		{} as Record<string, { id: string; name: string; slug: string }[]>
+	);
 
 	// Get essential stats for all players (optimized)
 	const playersEssentialStats = await db.query.playerStats.findMany({

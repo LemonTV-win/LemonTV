@@ -16,7 +16,14 @@
 		sortBy = $bindable('rating-desc'),
 		players
 	}: {
-		playersTeams: Record<string, Team[]>;
+		playersTeams: Record<
+			string,
+			{
+				id: string;
+				slug: string;
+				name: string;
+			}[]
+		>;
 		playersAgents: Record<string, [Character, number][]>;
 		sortBy: string;
 		players: {
