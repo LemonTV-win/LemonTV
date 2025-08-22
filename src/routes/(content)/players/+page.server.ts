@@ -1,10 +1,5 @@
 import type { PageServerLoad } from './$types';
-import {
-	getPlayers,
-	getPlayersTeams,
-	getServerPlayersAgents,
-	getAllPlayersSuperstringPower
-} from '$lib/server/data/players';
+import { getPlayers, getPlayersTeams, getServerPlayersAgents } from '$lib/server/data/players';
 import { CHARACTERS } from '$lib/data/game';
 import { processImageURL } from '$lib/server/storage';
 import { db } from '$lib/server/db';
@@ -33,7 +28,18 @@ export const load: PageServerLoad = async ({ locals: { user } }) => {
 	> = {};
 
 	for (const character of CHARACTERS) {
-		superstringPowerData[character] = await getAllPlayersSuperstringPower(character);
+		superstringPowerData[character] = await db.query.playerCharacterStats
+			.findMany({
+				where: (playerCharacterStats, { eq }) => eq(playerCharacterStats.characterId, character)
+			})
+			.then((stats) => {
+				return stats.map((stat) => ({
+					playerId: stat.playerId,
+					power: stat.superstringPower,
+					gamesPlayed: stat.totalGames,
+					wins: stat.totalWins
+				}));
+			});
 	}
 
 	// Collect unique avatar URLs
