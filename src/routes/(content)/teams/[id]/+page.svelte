@@ -226,26 +226,6 @@
 		<!-- Statistics -->
 		<!-- Achievements -->
 		<!-- Previous members -->
-		<!-- TODO: Add server matches -->
-		<!-- 
-		<h2 class="my-5 flex items-center text-xl font-bold">
-			<IconParkSolidCalendar class="mr-2 inline-block text-yellow-300" />{m.matches()}
-		</h2>
-		{#if data.teamMatches}
-			<ul class="grid grid-cols-1 gap-3">
-				{#each data.teamMatches.toSorted((a, b) => {
-					// Safe date parsing to prevent RangeError
-					const dateA = safeGetTimestamp(a.event.date);
-					const dateB = safeGetTimestamp(b.event.date);
-					return dateB - dateA;
-				}) as match (match.id)}
-					{#if match}
-						<MatchCard {match} event={match.event} teamIndex={match.teamIndex} teams={data.teams} />
-					{/if}
-				{/each}
-			</ul>
-		{/if} -->
-
 		<h2 class="my-5 flex items-center text-xl font-bold">
 			<IconParkSolidCalendar class="mr-2 inline-block text-yellow-300" />{m.recent_matches()}
 		</h2>

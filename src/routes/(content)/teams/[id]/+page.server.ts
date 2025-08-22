@@ -3,7 +3,6 @@ import type { PageServerLoad } from './$types';
 import {
 	getTeam,
 	getTeamStatistics,
-	getTeams,
 	getTeamMemberStatistics,
 	getServerTeamDetailedMatches
 } from '$lib/server/data/teams';
@@ -17,8 +16,6 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 	if (!team) {
 		throw error(404, 'Team not found');
 	}
-
-	const teams = await getTeams();
 
 	// Get all player ratings for global ranking
 	// TODO: Optimize further
@@ -79,7 +76,6 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 				globalRank: globalRankingByPlayerId.get(teamPlayer.player.id) ?? 0
 			}))
 		},
-		teams: new Map(teams.map((team) => [team.abbr ?? team.id ?? team.name ?? team.slug, team])), // TODO: remove this
 		teamMemberStatistics: await getTeamMemberStatistics(team),
 		teamStatistics: await getTeamStatistics(team),
 		teamMatches: transformedMatches,

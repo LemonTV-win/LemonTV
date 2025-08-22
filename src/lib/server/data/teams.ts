@@ -65,10 +65,6 @@ export async function getTeamMemberStatistics(team: Team): Promise<Record<
 }
 
 export async function getTeams(): Promise<(Team & { logoURL: string | null })[]> {
-	return getTeamsFromRelations();
-}
-
-export async function getTeamsFromRelations(): Promise<(Team & { logoURL: string | null })[]> {
 	const totalStart = performance.now();
 	console.info('[Teams] Fetching all teams with relations');
 
