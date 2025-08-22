@@ -1,11 +1,11 @@
 import { json } from '@sveltejs/kit';
 import { recalculateAllPlayerStats } from '$lib/server/data/stats';
 import { db } from '$lib/server/db';
+import { CRON_SECRET } from '$env/static/private';
 
 export async function GET({ request }) {
 	// Verify this is a legitimate Vercel cron job request
-	const userAgent = request.headers.get('user-agent');
-	if (userAgent !== 'vercel-cron/1.0') {
+	if (request.headers.get('Authorization') !== `Bearer ${CRON_SECRET}`) {
 		return json({ error: 'Unauthorized' }, { status: 401 });
 	}
 
