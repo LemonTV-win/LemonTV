@@ -5,12 +5,13 @@ import { gameAccount } from './game-account';
 import { player_social_account } from './social';
 import { teamPlayer } from './team';
 import { playerCharacterStats, playerStats } from './player-stats';
+import type { TCountryCode } from 'countries-list';
 
 export const player = sqliteTable('player', {
 	id: text('id').primaryKey(),
 	slug: text('slug').notNull().unique(),
 	name: text('name').notNull(),
-	nationality: text('nationality'),
+	nationality: text('nationality').$type<TCountryCode>(),
 	avatar: text('avatar'),
 	userId: text('user_id').references(() => user.id)
 });
@@ -28,7 +29,7 @@ export const playerAdditionalNationality = sqliteTable(
 		playerId: text('player_id')
 			.notNull()
 			.references(() => player.id),
-		nationality: text('nationality').notNull()
+		nationality: text('nationality').notNull().$type<TCountryCode>()
 	},
 	(t) => [primaryKey({ columns: [t.playerId, t.nationality] })]
 );
