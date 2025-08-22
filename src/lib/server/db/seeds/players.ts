@@ -406,7 +406,7 @@ export const PLAYERS = [
 		nationality: 'UY',
 		avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=player56&backgroundColor=ffdfbf'
 	}
-];
+] as schema.Player[];
 
 export const PLAYER_ADDITIONAL_NATIONALITIES = [
 	{
@@ -437,4 +437,4 @@ export const PLAYER_ADDITIONAL_NATIONALITIES = [
 		playerId: PLAYERS[22].id, // Player 23 (CN)
 		nationality: 'TW' // Adding Taiwanese nationality
 	}
-];
+] as schema.PlayerAdditionalNationality[];
