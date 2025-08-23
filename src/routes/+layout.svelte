@@ -13,7 +13,8 @@
 	import IconQq from '~icons/simple-icons/qq';
 	import UserAvatar from '$lib/components/UserAvatar.svelte';
 	import Switch from '$lib/components/ui/Switch.svelte';
-	import { settings } from '$lib/settings.svelte';
+	import { settings, bannerStore } from '$lib/settings.svelte';
+	import SimpleIconsKofi from '~icons/simple-icons/kofi';
 	import type { LayoutProps } from './$types';
 	import { page } from '$app/state';
 	import {
@@ -26,6 +27,7 @@
 	} from '$lib/consts';
 	import GameSelect from './GameSelect.svelte';
 	import LanguageSelect from './LanguageSelect.svelte';
+	import { browser } from '$app/environment';
 
 	let { data, children }: LayoutProps = $props();
 
@@ -39,6 +41,24 @@
 
 	let mobileMenuOpen = $state(false);
 	let userMenuOpen = $state(false);
+
+	// One-time dismissible Ko-fi banner (uses centralized settings storage)
+	const DONATION_BANNER_ID = 'donation';
+	const DONATION_BANNER_VERSION = 1;
+	const DONATION_BANNER_RESHOW_MS = 1000 * 60 * 60 * 24 * 15; // 30 days
+	let showDonationBanner = $state(false);
+
+	// Initialize banner visibility on client only
+	if (browser) {
+		showDonationBanner = !bannerStore.isDismissed(DONATION_BANNER_ID, DONATION_BANNER_VERSION);
+	}
+
+	function dismissDonationBanner() {
+		showDonationBanner = false;
+		bannerStore.dismiss(DONATION_BANNER_ID, DONATION_BANNER_VERSION, {
+			expiresAt: Date.now() + DONATION_BANNER_RESHOW_MS
+		});
+	}
 
 	function toggleMobileMenu() {
 		mobileMenuOpen = !mobileMenuOpen;
@@ -110,6 +130,37 @@
 </svelte:head>
 
 <div class="flex min-h-dvh flex-col">
+	{#if showDonationBanner}
+		<div
+			class="flex items-center justify-center border-b-1 border-yellow-400/40 bg-yellow-500/15 px-3 py-3 text-yellow-100"
+		>
+			<div class="mx-auto flex w-full max-w-5xl items-start gap-3 md:items-center">
+				<p class="flex-1 text-sm leading-snug md:text-base">
+					<strong class="font-semibold">🍋 Support LemonTV:</strong>
+					Hi! I'm mkpoli, the founder of LemonTV ❤️. This fan-run site costs about $1,200/year just to
+					keep online out of my own pocket 💸🥺. If you find it useful, please consider being a supporter
+					☕!
+				</p>
+				<a
+					href="https://ko-fi.com/mkpoli/"
+					target="_blank"
+					rel="noopener noreferrer nofollow"
+					class="flex shrink-0 items-center gap-2 rounded-md bg-yellow-400 px-3 py-1.5 text-sm font-semibold text-black transition-colors hover:bg-yellow-300 focus:ring-2 focus:ring-yellow-300 focus:outline-none"
+				>
+					<SimpleIconsKofi class="h-4 w-4" />
+					Support on Ko‑fi
+				</a>
+				<button
+					class="ml-2 inline-flex cursor-pointer items-center rounded p-1 text-yellow-200 hover:bg-yellow-400/10 hover:text-yellow-100 focus:ring-2 focus:ring-yellow-300 focus:outline-none"
+					onclick={dismissDonationBanner}
+					aria-label="Dismiss donation banner"
+					title="Consider later"
+				>
+					<MaterialSymbolsCloseRounded class="h-6 w-6" />
+				</button>
+			</div>
+		</div>
+	{/if}
 	<header
 		class="relative z-50 flex items-center justify-between border-b-1 border-white/30 bg-gradient-to-br from-slate-600/60 to-slate-800 px-4 py-4 text-white backdrop-blur-lg"
 	>
