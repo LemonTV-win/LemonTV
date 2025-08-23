@@ -75,6 +75,16 @@
 			return `${padded(mins)}:${padded(secs)}`;
 		}
 	}
+
+	let maps: {
+		map: GameMap;
+	}[] = $derived(
+		data.match.maps && data.match.maps.length > 0
+			? data.match.maps
+			: data.match.games.map((g) => ({
+					map: g.map
+				}))
+	);
 </script>
 
 <svelte:head>
@@ -93,11 +103,11 @@
 	/>
 	<div
 		class="banner flex min-h-48 flex-col gap-2 bg-cover bg-top p-4 text-white"
-		style:--banner-image={`url(${MAP_2_IMAGE[data.match.maps?.[currentMapID]?.map ?? 'base_404']})`}
+		style:--banner-image={`url(${MAP_2_IMAGE[maps[currentMapID].map]})`}
 	>
 		<div class="flex items-center justify-between">
 			<nav class="my-2 flex gap-4 rounded-sm">
-				{#each data.match.maps ?? [] as map, index (index)}
+				{#each maps as map, index (index)}
 					<button
 						class="cursor-pointer overflow-clip rounded-md bg-white/40 text-center backdrop-blur-sm"
 						onclick={() => (currentMapID = index)}
