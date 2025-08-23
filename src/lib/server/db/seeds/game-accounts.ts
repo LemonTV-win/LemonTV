@@ -1,4 +1,5 @@
 import { PLAYERS } from './players';
+import type { GameAccountServer, GameAccountRegion } from '$lib/data/players';
 
 // Generate game accounts for players
 // Each player can have multiple game accounts across different servers
@@ -37,7 +38,7 @@ export const GAME_ACCOUNTS = [
 		accountId: 1004,
 		playerId: PLAYERS[3].id, // Jin "Dragon" Kim
 		currentName: 'Dragon_Kim',
-		region: 'KR'
+		region: 'APAC'
 	},
 	{
 		server: 'Strinova' as const,
@@ -66,14 +67,14 @@ export const GAME_ACCOUNTS = [
 		accountId: 1008,
 		playerId: PLAYERS[7].id, // Hiroshi "Samurai" Tanaka
 		currentName: 'Samurai_Tanaka',
-		region: 'JP'
+		region: 'APAC'
 	},
 	{
 		server: 'Strinova' as const,
 		accountId: 1009,
 		playerId: PLAYERS[8].id, // Min-ji "Luna" Park
 		currentName: 'Luna_Park',
-		region: 'KR'
+		region: 'APAC'
 	},
 	{
 		server: 'Strinova' as const,
@@ -87,14 +88,14 @@ export const GAME_ACCOUNTS = [
 		accountId: 1011,
 		playerId: PLAYERS[10].id, // Yuki "Blitz" Yamamoto
 		currentName: 'Blitz_Yamamoto',
-		region: 'JP'
+		region: 'APAC'
 	},
 	{
 		server: 'Strinova' as const,
 		accountId: 1012,
 		playerId: PLAYERS[11].id, // Jae-hyun "Void" Lee
 		currentName: 'Void_Lee',
-		region: 'KR'
+		region: 'APAC'
 	},
 	{
 		server: 'Strinova' as const,
@@ -108,7 +109,7 @@ export const GAME_ACCOUNTS = [
 		accountId: 1014,
 		playerId: PLAYERS[13].id, // Kenji "Zen" Nakamura
 		currentName: 'Zen_Nakamura',
-		region: 'JP'
+		region: 'APAC'
 	},
 	// Team 3 - Viking Storm (Players 14-20)
 	{
@@ -180,7 +181,7 @@ export const GAME_ACCOUNTS = [
 		accountId: 1024,
 		playerId: PLAYERS[23].id, // Kai "Dragon" Wong
 		currentName: 'Dragon_Wong',
-		region: 'HK'
+		region: 'APAC'
 	},
 	{
 		server: 'Strinova' as const,
@@ -194,7 +195,7 @@ export const GAME_ACCOUNTS = [
 		accountId: 1026,
 		playerId: PLAYERS[25].id, // Jin "Blade" Tan
 		currentName: 'Blade_Tan',
-		region: 'SG'
+		region: 'APAC'
 	},
 	{
 		server: 'Strinova' as const,
@@ -208,7 +209,7 @@ export const GAME_ACCOUNTS = [
 		accountId: 1028,
 		playerId: PLAYERS[27].id, // Tai "Shadow" Lin
 		currentName: 'Shadow_Lin',
-		region: 'TW'
+		region: 'APAC'
 	},
 	// Team 5 - Kangaroo Eagles (Players 28-34)
 	{
@@ -366,49 +367,49 @@ export const GAME_ACCOUNTS = [
 		accountId: 1050,
 		playerId: PLAYERS[49].id, // Rafael "Jaguar" Silva
 		currentName: 'Jaguar_Silva',
-		region: 'SA'
+		region: 'NA'
 	},
 	{
 		server: 'Strinova' as const,
 		accountId: 1051,
 		playerId: PLAYERS[50].id, // Sofia "Condor" Rodriguez
 		currentName: 'Condor_Rodriguez',
-		region: 'SA'
+		region: 'NA'
 	},
 	{
 		server: 'Strinova' as const,
 		accountId: 1052,
 		playerId: PLAYERS[51].id, // Diego "Puma" Gonzalez
 		currentName: 'Puma_Gonzalez',
-		region: 'SA'
+		region: 'NA'
 	},
 	{
 		server: 'Strinova' as const,
 		accountId: 1053,
 		playerId: PLAYERS[52].id, // Valentina "Llama" Torres
 		currentName: 'Llama_Torres',
-		region: 'SA'
+		region: 'NA'
 	},
 	{
 		server: 'Strinova' as const,
 		accountId: 1054,
 		playerId: PLAYERS[53].id, // Carlos "Eagle" Ramirez
 		currentName: 'Eagle_Ramirez',
-		region: 'SA'
+		region: 'NA'
 	},
 	{
 		server: 'Strinova' as const,
 		accountId: 1055,
 		playerId: PLAYERS[54].id, // Ana "Jaguar" Morales
 		currentName: 'Jaguar_Morales',
-		region: 'SA'
+		region: 'NA'
 	},
 	{
 		server: 'Strinova' as const,
 		accountId: 1056,
 		playerId: PLAYERS[55].id, // Mateo "Puma" Fernandez
 		currentName: 'Puma_Fernandez',
-		region: 'SA'
+		region: 'NA'
 	},
 	// Team 9 - Desert Lions (Players 56-62)
 	{
@@ -416,49 +417,49 @@ export const GAME_ACCOUNTS = [
 		accountId: 1057,
 		playerId: PLAYERS[56].id, // Ahmed "Desert" Al-Mahmoud
 		currentName: 'Desert_AlMahmoud',
-		region: 'MEA'
+		region: 'EU'
 	},
 	{
 		server: 'Strinova' as const,
 		accountId: 1058,
 		playerId: PLAYERS[57].id, // Fatima "Phoenix" Al-Zahra
 		currentName: 'Phoenix_AlZahra',
-		region: 'MEA'
+		region: 'EU'
 	},
 	{
 		server: 'Strinova' as const,
 		accountId: 1059,
 		playerId: PLAYERS[58].id, // Omar "Lion" Hassan
 		currentName: 'Lion_Hassan',
-		region: 'MEA'
+		region: 'EU'
 	},
 	{
 		server: 'Strinova' as const,
 		accountId: 1060,
 		playerId: PLAYERS[59].id, // Layla "Falcon" Mansour
 		currentName: 'Falcon_Mansour',
-		region: 'MEA'
+		region: 'EU'
 	},
 	{
 		server: 'Strinova' as const,
 		accountId: 1061,
 		playerId: PLAYERS[60].id, // Khalid "Eagle" Rahman
 		currentName: 'Eagle_Rahman',
-		region: 'MEA'
+		region: 'EU'
 	},
 	{
 		server: 'Strinova' as const,
 		accountId: 1062,
 		playerId: PLAYERS[61].id, // Nour "Storm" El-Sayed
 		currentName: 'Storm_ElSayed',
-		region: 'MEA'
+		region: 'EU'
 	},
 	{
 		server: 'Strinova' as const,
 		accountId: 1063,
 		playerId: PLAYERS[62].id, // Zaid "Wolf" Al-Rashid
 		currentName: 'Wolf_AlRashid',
-		region: 'MEA'
+		region: 'EU'
 	},
 	// Team 10 - Tiger Dragons (Players 63-69)
 	{
@@ -516,49 +517,49 @@ export const GAME_ACCOUNTS = [
 		accountId: 1071,
 		playerId: PLAYERS[70].id, // Isabella "Rose" Santos
 		currentName: 'Rose_Santos',
-		region: 'SA'
+		region: 'NA'
 	},
 	{
 		server: 'Strinova' as const,
 		accountId: 1072,
 		playerId: PLAYERS[71].id, // Lucas "Thunder" Costa
 		currentName: 'Thunder_Costa',
-		region: 'SA'
+		region: 'NA'
 	},
 	{
 		server: 'Strinova' as const,
 		accountId: 1073,
 		playerId: PLAYERS[72].id, // Valentina "Moon" Rodriguez
 		currentName: 'Moon_Rodriguez',
-		region: 'SA'
+		region: 'NA'
 	},
 	{
 		server: 'Strinova' as const,
 		accountId: 1074,
 		playerId: PLAYERS[73].id, // Santiago "Sun" Fernandez
 		currentName: 'Sun_Fernandez',
-		region: 'SA'
+		region: 'NA'
 	},
 	{
 		server: 'Strinova' as const,
 		accountId: 1075,
 		playerId: PLAYERS[74].id, // Camila "Star" Silva
 		currentName: 'Star_Silva',
-		region: 'SA'
+		region: 'NA'
 	},
 	{
 		server: 'Strinova' as const,
 		accountId: 1076,
 		playerId: PLAYERS[75].id, // Mateo "Ocean" Torres
 		currentName: 'Ocean_Torres',
-		region: 'SA'
+		region: 'NA'
 	},
 	{
 		server: 'Strinova' as const,
 		accountId: 1077,
 		playerId: PLAYERS[76].id, // Sofia "River" Morales
 		currentName: 'River_Morales',
-		region: 'SA'
+		region: 'NA'
 	},
 	// Team 12 - Aurora Vikings (Players 77-83)
 	{
@@ -624,7 +625,7 @@ export const GAME_ACCOUNTS = [
 		accountId: 1086,
 		playerId: PLAYERS[85].id, // Zara "Phoenix" Al-Rashid
 		currentName: 'Phoenix_AlRashid',
-		region: 'MEA'
+		region: 'EU'
 	},
 	{
 		server: 'Strinova' as const,
@@ -638,7 +639,7 @@ export const GAME_ACCOUNTS = [
 		accountId: 1088,
 		playerId: PLAYERS[87].id, // Luna "Eclipse" Santos
 		currentName: 'Eclipse_Santos',
-		region: 'SA'
+		region: 'NA'
 	},
 	{
 		server: 'Strinova' as const,
@@ -660,7 +661,7 @@ export const GAME_ACCOUNTS = [
 		accountId: 1091,
 		playerId: PLAYERS[90].id, // Hassan "Storm" Ibrahim
 		currentName: 'Storm_Ibrahim',
-		region: 'MEA'
+		region: 'EU'
 	},
 	{
 		server: 'Strinova' as const,
@@ -809,14 +810,14 @@ export const GAME_ACCOUNTS = [
 		accountId: 1111,
 		playerId: PLAYERS[110].id, // Carlos "Sub" Mendoza
 		currentName: 'Sub_Mendoza',
-		region: 'SA'
+		region: 'NA'
 	},
 	{
 		server: 'Strinova' as const,
 		accountId: 1112,
 		playerId: PLAYERS[111].id, // Lucia "Bench" Vargas
 		currentName: 'Bench_Vargas',
-		region: 'SA'
+		region: 'NA'
 	},
 	// Desert Lions substitutes
 	{
@@ -824,14 +825,14 @@ export const GAME_ACCOUNTS = [
 		accountId: 1113,
 		playerId: PLAYERS[112].id, // Amara "Backup" Hassan
 		currentName: 'Backup_Hassan',
-		region: 'MEA'
+		region: 'EU'
 	},
 	{
 		server: 'Strinova' as const,
 		accountId: 1114,
 		playerId: PLAYERS[113].id, // Omar "Reserve" Al-Zahra
 		currentName: 'Reserve_AlZahra',
-		region: 'MEA'
+		region: 'EU'
 	},
 	// Tiger Dragons substitutes
 	{
@@ -854,14 +855,14 @@ export const GAME_ACCOUNTS = [
 		accountId: 1117,
 		playerId: PLAYERS[116].id, // Gabriela "Backup" Lima
 		currentName: 'Backup_Lima',
-		region: 'SA'
+		region: 'NA'
 	},
 	{
 		server: 'Strinova' as const,
 		accountId: 1118,
 		playerId: PLAYERS[117].id, // Diego "Reserve" Castro
 		currentName: 'Reserve_Castro',
-		region: 'SA'
+		region: 'NA'
 	},
 	// Aurora Vikings substitutes
 	{
@@ -891,7 +892,7 @@ export const GAME_ACCOUNTS = [
 		accountId: 1122,
 		playerId: PLAYERS[121].id, // Fatima "Reserve" Al-Mansouri
 		currentName: 'Reserve_AlMansouri',
-		region: 'MEA'
+		region: 'EU'
 	},
 	// Storm Eagles substitutes
 	{
@@ -899,7 +900,7 @@ export const GAME_ACCOUNTS = [
 		accountId: 1123,
 		playerId: PLAYERS[122].id, // Malik "Sub" Ahmed
 		currentName: 'Sub_Ahmed',
-		region: 'MEA'
+		region: 'EU'
 	},
 	{
 		server: 'Strinova' as const,
@@ -908,4 +909,10 @@ export const GAME_ACCOUNTS = [
 		currentName: 'Bench_Sharma',
 		region: 'APAC'
 	}
-];
+] satisfies {
+	server: GameAccountServer;
+	accountId: number;
+	playerId: string;
+	currentName: string;
+	region?: GameAccountRegion;
+}[];
