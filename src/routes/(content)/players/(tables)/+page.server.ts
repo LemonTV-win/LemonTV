@@ -180,6 +180,12 @@ export const load: PageServerLoad = async ({ locals: { user }, url }) => {
 				})
 			: [];
 
+	// Preserve the SQL order from playerIds when constructing the final players list
+	const playersById = new Map(players.map((p) => [p.id, p] as const));
+	const orderedPlayers = playerIds
+		.map((id) => playersById.get(id))
+		.filter((p): p is NonNullable<typeof p> => Boolean(p));
+
 	// -- Fetch additional data (Agents, Superstring Power, etc.) --
 	const playersAgents = await getServerPlayersAgents(playerIds, 0);
 
@@ -207,7 +213,7 @@ export const load: PageServerLoad = async ({ locals: { user }, url }) => {
 	}
 
 	// -- Process Avatars --
-	const uniqueAvatarUrls = new Set(players.map((p) => p.avatar).filter(Boolean) as string[]);
+	const uniqueAvatarUrls = new Set(orderedPlayers.map((p) => p.avatar).filter(Boolean) as string[]);
 	const avatarUrlMap = new Map<string, string>();
 	await Promise.all(
 		Array.from(uniqueAvatarUrls).map(async (url) => {
@@ -218,7 +224,7 @@ export const load: PageServerLoad = async ({ locals: { user }, url }) => {
 
 	// -- Return final structured data --
 	return {
-		players: players.map((player) => {
+		players: orderedPlayers.map((player) => {
 			const stats = player.stats ?? { totalWins: 0, playerRating: 0, kd: 0, eventsCount: 0 };
 			return {
 				...player,
