@@ -1,3 +1,4 @@
+import { SITE_CANONICAL_HOST } from '$lib/consts';
 export interface PageMetadata {
 	title: string;
 	description: string;
@@ -16,5 +17,6 @@ export function buildOgImageUrl(args: {
 	if (args.description) params.set('description', args.description);
 	if (args.image) params.set('image', args.image);
 	if (args.url) params.set('url', args.url);
-	return `/api/og?${params.toString()}`;
+	const base = typeof window === 'undefined' ? SITE_CANONICAL_HOST : window.location.origin;
+	return `${base}/api/og?${params.toString()}`;
 }
