@@ -80,16 +80,7 @@ export async function getTeams(): Promise<(Team & { logoURL: string | null })[]>
 							aliases: true,
 							additionalNationalities: true,
 							gameAccounts: true,
-							socialAccounts: true,
-							user: {
-								with: {
-									roles: {
-										with: {
-											role: true
-										}
-									}
-								}
-							}
+							socialAccounts: true
 						}
 					}
 				}
@@ -152,18 +143,6 @@ export async function getTeams(): Promise<(Team & { logoURL: string | null })[]>
 								overridingUrl: sa.overriding_url ?? undefined
 							})) || [];
 
-						// Process user and roles
-						let user: User | undefined;
-						if (player.user) {
-							const roles = player.user.roles?.map((ur: any) => ur.role.name as UserRole) || [];
-							user = {
-								id: player.user.id,
-								email: player.user.email,
-								username: player.user.username,
-								roles
-							};
-						}
-
 						// Create the player object
 						const playerObj: Player = {
 							id: player.id,
@@ -173,8 +152,7 @@ export async function getTeams(): Promise<(Team & { logoURL: string | null })[]>
 							nationalities,
 							aliases,
 							gameAccounts,
-							socialAccounts,
-							user
+							socialAccounts
 						};
 
 						// Create the team player role object
