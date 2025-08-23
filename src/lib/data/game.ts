@@ -104,4 +104,14 @@ export const CHARACTER_NAMES: Record<Character, () => string> = {
 	Celestia: m['game.character.Celestia']
 };
 
+export const FACTIONS = ['PUS', 'Scissors', 'Urbino'] as const;
+
+export type Faction = (typeof FACTIONS)[number];
+
+export const FACTION_NAMES: Record<Faction, () => string> = {
+	PUS: m['game.faction.PUS'],
+	Scissors: m['game.faction.Scissors'],
+	Urbino: m['game.faction.Urbino']
+};
+
 // #endregion
