@@ -758,6 +758,7 @@
 			"pro_settings": {
 				"settings": "设置",
 				"dpi": "DPI",
+				"edpi": "eDPI",
 				"sensitivity": "灵敏度",
 				"polling_rate": "轮询率",
 				"windows_pointer_speed": "Windows指针速度",

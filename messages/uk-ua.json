@@ -776,6 +776,7 @@
 			"pro_settings": {
 				"settings": "Налаштування",
 				"dpi": "DPI",
+				"edpi": "eDPI",
 				"sensitivity": "Чутливість",
 				"polling_rate": "Частота опитування",
 				"windows_pointer_speed": "Швидкість покажчика Windows",

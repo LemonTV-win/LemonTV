@@ -758,6 +758,7 @@
 			"pro_settings": {
 				"settings": "Pengaturan",
 				"dpi": "DPI",
+				"edpi": "eDPI",
 				"sensitivity": "Sensitivitas",
 				"polling_rate": "Tingkat polling",
 				"windows_pointer_speed": "Kecepatan pointer Windows",

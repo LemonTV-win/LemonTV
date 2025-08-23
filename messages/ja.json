@@ -758,6 +758,7 @@
 			"pro_settings": {
 				"settings": "設定",
 				"dpi": "DPI",
+				"edpi": "eDPI",
 				"sensitivity": "感度",
 				"polling_rate": "ポーリングレート",
 				"windows_pointer_speed": "Windowsポインター速度",

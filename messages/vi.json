@@ -758,6 +758,7 @@
 			"pro_settings": {
 				"settings": "Cài đặt",
 				"dpi": "DPI",
+				"edpi": "eDPI",
 				"sensitivity": "Độ nhạy",
 				"polling_rate": "Tần suất thăm dò",
 				"windows_pointer_speed": "Tốc độ con trỏ Windows",
