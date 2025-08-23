@@ -5,7 +5,7 @@
 	import LogosBilibili from '~icons/ant-design/bilibili-outlined';
 	import LogosInstagram from '~icons/skill-icons/instagram';
 	import LogosTiktokIcon from '~icons/logos/tiktok-icon';
-	// TODO: import LogosDiscord from '~icons/logos/discord-icon';
+	import LogosDiscord from '~icons/logos/discord-icon';
 	import LogosFacebook from '~icons/logos/facebook';
 	import LogosLinkedin from '~icons/logos/linkedin-icon';
 	import LogosGithub from '~icons/logos/github-icon';
@@ -21,16 +21,11 @@
 		socialPlatforms: Array<{ id: string; name: string; url_template: string | null }>;
 		iconSize?: string;
 	} = $props();
-
-	// Filter out Discord from social accounts
-	let visibleSocialAccounts = $derived(
-		socialAccounts.filter((account) => account.platformId !== 'discord')
-	);
 </script>
 
-{#if visibleSocialAccounts.length}
+{#if socialAccounts.length}
 	<div class="flex gap-0.5">
-		{#each visibleSocialAccounts as account (account.platformId)}
+		{#each socialAccounts as account (account.platformId)}
 			{#each socialPlatforms as platform (platform.id)}
 				{#if platform.id === account.platformId}
 					<a
@@ -56,6 +51,8 @@
 							<LogosInstagram class={iconSize} />
 						{:else if platform.id === 'tiktok'}
 							<LogosTiktokIcon class={iconSize} />
+						{:else if platform.id === 'discord'}
+							<LogosDiscord class={iconSize} />
 						{:else if platform.id === 'facebook'}
 							<LogosFacebook class={iconSize} />
 						{:else if platform.id === 'linkedin'}

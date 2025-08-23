@@ -5,7 +5,7 @@
 	import LogosBilibili from '~icons/ant-design/bilibili-outlined';
 	import LogosInstagram from '~icons/skill-icons/instagram';
 	import LogosTiktokIcon from '~icons/logos/tiktok-icon';
-	// TODO: import LogosDiscord from '~icons/logos/discord-icon';
+	import LogosDiscord from '~icons/logos/discord-icon';
 	import LogosFacebook from '~icons/logos/facebook';
 	import LogosLinkedin from '~icons/logos/linkedin-icon';
 	import LogosGithub from '~icons/logos/github-icon';
@@ -22,9 +22,6 @@
 		platforms?: Array<{ id: string; name: string; url_template: string | null }>;
 		onChange: (platformId: string) => void;
 	} = $props();
-
-	// Filter out Discord from platforms
-	let visiblePlatforms = $derived(platforms.filter((p) => p.id !== 'discord'));
 
 	let isOpen = $state(false);
 
@@ -75,6 +72,8 @@
 					<LogosInstagram class="h-4 w-4 text-gray-400" />
 				{:else if value === 'tiktok'}
 					<LogosTiktokIcon class="h-4 w-4 text-gray-400" />
+				{:else if value === 'discord'}
+					<LogosDiscord class="h-4 w-4 text-gray-400" />
 				{:else if value === 'facebook'}
 					<LogosFacebook class="h-4 w-4 text-gray-400" />
 				{:else if value === 'linkedin'}
@@ -86,7 +85,7 @@
 				{:else if value === 'homepage'}
 					<IconGlobe class="h-4 w-4 text-gray-400" />
 				{/if}
-				{#each visiblePlatforms as platform (platform.id)}
+				{#each platforms as platform (platform.id)}
 					{#if platform.id === value}
 						<span>{platform.name}</span>
 					{/if}
@@ -119,7 +118,7 @@
 			>
 				<span class="text-gray-400">{m.select_platform()}</span>
 			</button>
-			{#each visiblePlatforms as platform (platform.id)}
+			{#each platforms as platform (platform.id)}
 				<button
 					type="button"
 					class="flex w-full items-center gap-2 px-3 py-2 text-left text-white hover:bg-slate-700"
@@ -137,6 +136,8 @@
 						<LogosInstagram class="h-4 w-4 text-gray-400" />
 					{:else if platform.id === 'tiktok'}
 						<LogosTiktokIcon class="h-4 w-4 text-gray-400" />
+					{:else if platform.id === 'discord'}
+						<LogosDiscord class="h-4 w-4 text-gray-400" />
 					{:else if platform.id === 'facebook'}
 						<LogosFacebook class="h-4 w-4 text-gray-400" />
 					{:else if platform.id === 'linkedin'}
