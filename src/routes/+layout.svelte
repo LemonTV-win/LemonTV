@@ -73,12 +73,13 @@
 	let pageTitle = $derived(page.data.metadata?.title || `LemonTV – ${m.title_description()}`);
 	let pageDescription = $derived(page.data.metadata?.description || m['about.tagline']());
 	let ogImageUrl = $derived(
-		buildOgImageUrl({
-			title: pageTitle,
-			description: pageDescription,
-			url: `${SITE_CANONICAL_HOST}${page.url.pathname}`,
-			image: page.data.metadata?.image
-		})
+		page.data.metadata?.ogImageUrl ||
+			buildOgImageUrl({
+				title: pageTitle,
+				description: pageDescription,
+				url: `${SITE_CANONICAL_HOST}${page.url.pathname}`,
+				image: page.data.metadata?.image
+			})
 	);
 </script>
 
