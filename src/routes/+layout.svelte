@@ -26,7 +26,6 @@
 	} from '$lib/consts';
 	import GameSelect from './GameSelect.svelte';
 	import LanguageSelect from './LanguageSelect.svelte';
-	import { buildOgImageUrl } from '$lib/seo';
 
 	let { data, children }: LayoutProps = $props();
 
@@ -73,13 +72,7 @@
 	let pageTitle = $derived(page.data.metadata?.title || `LemonTV – ${m.title_description()}`);
 	let pageDescription = $derived(page.data.metadata?.description || m['about.tagline']());
 	let ogImageUrl = $derived(
-		page.data.metadata?.ogImageUrl ||
-			buildOgImageUrl({
-				title: pageTitle,
-				description: pageDescription,
-				url: `${SITE_CANONICAL_HOST}${page.url.pathname}`,
-				image: page.data.metadata?.image
-			})
+		page.data.metadata?.ogImageUrl || `${SITE_CANONICAL_HOST}/screenshot.png`
 	);
 </script>
 
