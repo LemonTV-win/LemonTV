@@ -156,8 +156,12 @@
 								matchId: match.id,
 								teams: [match.matchTeams[0].team, match.matchTeams[1].team],
 								rosters: [
-									data.teamRosters.get(data.event.id)?.get(match.matchTeams[0].team?.id) ?? [],
-									data.teamRosters.get(data.event.id)?.get(match.matchTeams[1].team?.id) ?? []
+									match.matchTeams[0]?.team?.id
+										? (data.teamRosters.get(match.matchTeams[0].team.id) ?? [])
+										: [],
+									match.matchTeams[1]?.team?.id
+										? (data.teamRosters.get(match.matchTeams[1].team.id) ?? [])
+										: []
 								],
 								match: {
 									maps: match.matchMaps.map((map) => ({
@@ -196,8 +200,12 @@
 							matchId: match.id,
 							teams: [match.matchTeams[0].team, match.matchTeams[1].team],
 							rosters: [
-								data.teamRosters.get(data.event.id)?.get(match.matchTeams[0].team?.id) ?? [],
-								data.teamRosters.get(data.event.id)?.get(match.matchTeams[1].team?.id) ?? []
+								match.matchTeams[0]?.team?.id
+									? (data.teamRosters.get(match.matchTeams[0].team.id) ?? [])
+									: [],
+								match.matchTeams[1]?.team?.id
+									? (data.teamRosters.get(match.matchTeams[1].team.id) ?? [])
+									: []
 							],
 							match: {
 								maps: match.matchMaps.map((map) => ({
@@ -463,8 +471,12 @@
 			matchId: match.id,
 			teams: [match.matchTeams[0].team, match.matchTeams[1].team],
 			rosters: [
-				data.teamRosters.get(eventId)?.get(match.matchTeams[0].team?.id) ?? [],
-				data.teamRosters.get(eventId)?.get(match.matchTeams[1].team?.id) ?? []
+				match.matchTeams[0]?.team?.id
+					? (data.teamRosters.get(match.matchTeams[0].team.id) ?? [])
+					: [],
+				match.matchTeams[1]?.team?.id
+					? (data.teamRosters.get(match.matchTeams[1].team.id) ?? [])
+					: []
 			],
 			match: {
 				maps: match.matchMaps.map((map) => ({
