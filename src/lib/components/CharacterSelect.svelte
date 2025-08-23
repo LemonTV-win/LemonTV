@@ -5,29 +5,27 @@
 		CHARACTERS,
 		CHARACTER_NAMES,
 		type Character,
-		// --- Start: Added imports for faction grouping ---
 		PUS_CHARACTERS,
 		SCISORS_CHARACTERS,
 		URBINO_CHARACTERS,
 		FACTION_NAMES,
 		type Faction
-		// --- End: Added imports for faction grouping ---
 	} from '$lib/data/game';
-
-	// TODO: Add side filter (attacker/defender)
 
 	let {
 		value = null,
 		onChange,
 		class: className = '',
 		name = '',
-		characters = CHARACTERS
+		characters = CHARACTERS,
+		side = 'unknown'
 	}: {
 		value?: Character | null;
 		onChange?: (character: Character | null) => void;
 		class?: string;
 		name?: string;
 		characters?: readonly Character[];
+		side?: 'unknown' | 'attacker' | 'defender';
 	} = $props();
 
 	let isOpen = $state(false);
@@ -35,7 +33,6 @@
 
 	function toggle() {
 		isOpen = !isOpen;
-		// Delay focus to ensure the input is rendered
 		setTimeout(() => searchInput?.focus(), 0);
 	}
 
@@ -63,7 +60,14 @@
 
 	let searchInput: HTMLInputElement | null = $state(null);
 
-	// --- Start: Logic to group and filter characters by faction ---
+	let allowedFactions = $derived(
+		side === 'attacker'
+			? (['Urbino', 'Scissors'] as Faction[])
+			: side === 'defender'
+				? (['Urbino', 'PUS'] as Faction[])
+				: (['Urbino', 'Scissors', 'PUS'] as Faction[])
+	);
+
 	let characterGroups = $derived(
 		[
 			{
@@ -81,7 +85,9 @@
 				characters: URBINO_CHARACTERS.filter((c) => characters.includes(c)),
 				color: 'text-yellow-500'
 			}
-		].filter((group) => group.characters.length > 0)
+		]
+			.filter((group) => allowedFactions.includes(group.faction))
+			.filter((group) => group.characters.length > 0)
 	);
 
 	let filteredGroups = $derived(
@@ -96,7 +102,6 @@
 					.filter((group) => group.characters.length > 0)
 			: characterGroups
 	);
-	// --- End: Logic to group and filter characters by faction ---
 </script>
 
 <div class={['character-select relative w-full', className]}>

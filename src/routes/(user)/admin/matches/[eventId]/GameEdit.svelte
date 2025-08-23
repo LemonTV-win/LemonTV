@@ -237,6 +237,15 @@
 	]);
 
 	$inspect('[admin/matches/GameEdit] compiledGameAccountIDMaps', compiledGameAccountIDMaps);
+
+	let teamAFirstHalfSide: 'unknown' | 'attacker' | 'defender' = $state('unknown');
+	let teamBFirstHalfSide: 'unknown' | 'attacker' | 'defender' = $derived(
+		teamAFirstHalfSide === 'unknown'
+			? 'unknown'
+			: teamAFirstHalfSide === 'attacker'
+				? 'defender'
+				: 'attacker'
+	);
 </script>
 
 <Modal
@@ -361,280 +370,319 @@
 					{/each}
 				</div>
 			</fieldset>
-			<!-- Player scores editing -->
-			<div class="mb-4 flex items-center justify-between">
+			<section class="flex flex-col gap-4">
+				<!-- Player scores editing -->
 				<h3 class="text-sm font-medium text-slate-300">{m.player_scores()}</h3>
-			</div>
-			{#snippet playerScoreInput(
-				team: 'A' | 'B',
-				ps: {
-					accountId: number;
-					player: string;
-					characterFirstHalf: string | null;
-					characterSecondHalf: string | null;
-					score: number;
-					damageScore: number;
-					kills: number;
-					knocks: number;
-					deaths: number;
-					assists: number;
-					damage: number;
-				},
-				idx: number,
-				availableCharactersFirstHalf: readonly Character[],
-				availableCharactersSecondHalf: readonly Character[]
-			)}
-				<div class="flex flex-col gap-1 rounded bg-slate-900 p-2">
-					<AccountIdCombobox
-						value={ps.accountId}
-						options={new Map(
-							Array.from(compiledGameAccountIDMaps[team === 'A' ? 0 : 1].entries()).map(
-								([accountId, roster]) => {
-									// Find the specific game account to get the server
-									const account = roster.player.gameAccounts.find((a) => a.accountId === accountId);
-									const serverName =
-										account?.server === 'Strinova' ? m.strinova_server() : m.calabiyau_server();
-									return [
-										accountId,
-										`${roster.player.name} ${roster.player.aliases.map((a) => `(${a})`).join(' ')} (${serverName})`
-									];
-								}
-							)
-						)}
-						placeholder={m.enter_account_id()}
-						name={`playerScores${team}[${idx}].accountId`}
-						onchange={(value) => {
-							ps.accountId = value;
-							if (!ps.player) {
-								const roster = compiledGameAccountIDMaps[team === 'A' ? 0 : 1].get(value);
-								if (roster) {
-									const account = roster.player.gameAccounts.find((a) => a.accountId === value);
-									if (account) {
-										ps.player = account.currentName;
+				{#snippet playerScoreInput(
+					team: 'A' | 'B',
+					firstHalfSide: 'attacker' | 'defender' | 'unknown',
+					ps: {
+						accountId: number;
+						player: string;
+						characterFirstHalf: string | null;
+						characterSecondHalf: string | null;
+						score: number;
+						damageScore: number;
+						kills: number;
+						knocks: number;
+						deaths: number;
+						assists: number;
+						damage: number;
+					},
+					idx: number,
+					availableCharactersFirstHalf: readonly Character[],
+					availableCharactersSecondHalf: readonly Character[]
+				)}
+					<div class="flex flex-col gap-1 rounded bg-slate-900 p-2">
+						<AccountIdCombobox
+							value={ps.accountId}
+							options={new Map(
+								Array.from(compiledGameAccountIDMaps[team === 'A' ? 0 : 1].entries()).map(
+									([accountId, roster]) => {
+										// Find the specific game account to get the server
+										const account = roster.player.gameAccounts.find(
+											(a) => a.accountId === accountId
+										);
+										const serverName =
+											account?.server === 'Strinova' ? m.strinova_server() : m.calabiyau_server();
+										return [
+											accountId,
+											`${roster.player.name} ${roster.player.aliases.map((a) => `(${a})`).join(' ')} (${serverName})`
+										];
+									}
+								)
+							)}
+							placeholder={m.enter_account_id()}
+							name={`playerScores${team}[${idx}].accountId`}
+							onchange={(value) => {
+								ps.accountId = value;
+								if (!ps.player) {
+									const roster = compiledGameAccountIDMaps[team === 'A' ? 0 : 1].get(value);
+									if (roster) {
+										const account = roster.player.gameAccounts.find((a) => a.accountId === value);
+										if (account) {
+											ps.player = account.currentName;
+										}
 									}
 								}
-							}
-						}}
-					/>
-					<div class="flex gap-1">
-						<input
-							type="text"
-							name={`playerScores${team}[${idx}].player`}
-							bind:value={ps.player}
-							placeholder={m.player()}
-							class="col-span-2 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-							required
+							}}
 						/>
-						<CharacterSelect
-							value={ps.characterFirstHalf as Character | null}
-							onChange={(v) => (ps.characterFirstHalf = v)}
-							name={`playerScores${team}[${idx}].characterFirstHalf`}
-							class="col-span-1"
-							characters={availableCharactersFirstHalf}
-						/>
-						<CharacterSelect
-							value={ps.characterSecondHalf as Character | null}
-							onChange={(v) => (ps.characterSecondHalf = v)}
-							name={`playerScores${team}[${idx}].characterSecondHalf`}
-							class="col-span-1"
-							characters={availableCharactersSecondHalf}
-						/>
-					</div>
-					<div class="grid grid-cols-7 gap-1">
-						<input
-							type="number"
-							name={`playerScores${team}[${idx}].score`}
-							bind:value={ps.score}
-							placeholder={m.performance_score()}
-							title={m.performance_score()}
-							onfocus={(e) => e.currentTarget.select()}
-							class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-						/>
-						<input
-							type="number"
-							name={`playerScores${team}[${idx}].damageScore`}
-							bind:value={ps.damageScore}
-							placeholder={m.damage_score()}
-							title={m.damage_score()}
-							onfocus={(e) => e.currentTarget.select()}
-							class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-						/>
-						<input
-							type="number"
-							name={`playerScores${team}[${idx}].kills`}
-							bind:value={ps.kills}
-							placeholder={m.kills()}
-							title={m.kills()}
-							onfocus={(e) => e.currentTarget.select()}
-							class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-						/>
-						<input
-							type="number"
-							name={`playerScores${team}[${idx}].knocks`}
-							bind:value={ps.knocks}
-							placeholder={m.knocks()}
-							title={m.knocks()}
-							onfocus={(e) => e.currentTarget.select()}
-							class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-						/>
-						<input
-							type="number"
-							name={`playerScores${team}[${idx}].deaths`}
-							bind:value={ps.deaths}
-							placeholder={m.deaths()}
-							title={m.deaths()}
-							onfocus={(e) => e.currentTarget.select()}
-							class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-						/>
-						<input
-							type="number"
-							name={`playerScores${team}[${idx}].assists`}
-							bind:value={ps.assists}
-							placeholder={m.assists()}
-							title={m.assists()}
-							onfocus={(e) => e.currentTarget.select()}
-							class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-						/>
-						<input
-							type="number"
-							name={`playerScores${team}[${idx}].damage`}
-							bind:value={ps.damage}
-							placeholder={m.damage()}
-							title={m.damage()}
-							onfocus={(e) => e.currentTarget.select()}
-							class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
-						/>
-					</div>
-				</div>
-			{/snippet}
-			<div>
-				<h3 class="block text-sm font-medium text-slate-300">
-					{m.player_scores()} ({data.teams[0]?.name || m.team_a()})
-				</h3>
-				<div class="mt-2 grid grid-cols-1 gap-2">
-					{#each playerScoresA as ps, idx (idx)}
-						{@render playerScoreInput(
-							'A',
-							ps,
-							idx,
-							CHARACTERS.filter(
-								(char) =>
-									!playerScoresA.some(
-										(ps: GamePlayerScore, i: number) =>
-											i !== idx && ps.player && ps.characterFirstHalf === char
-									)
-							),
-							CHARACTERS.filter(
-								(char) =>
-									!playerScoresA.some(
-										(ps: GamePlayerScore, i: number) =>
-											i !== idx && ps.player && ps.characterSecondHalf === char
-									)
-							)
-						)}
-					{/each}
-				</div>
-			</div>
-			<div>
-				<h3 class="block text-sm font-medium text-slate-300">
-					{m.player_scores()} ({data.teams[1]?.name || m.team_b()})
-				</h3>
-				<div class="mt-2 grid grid-cols-1 gap-2">
-					{#each playerScoresB as ps, idx (idx)}
-						{@render playerScoreInput(
-							'B',
-							ps,
-							idx,
-							CHARACTERS.filter(
-								(char) =>
-									!playerScoresB.some(
-										(ps: GamePlayerScore, i: number) =>
-											i !== idx && ps.player && ps.characterFirstHalf === char
-									)
-							),
-							CHARACTERS.filter(
-								(char) =>
-									!playerScoresB.some(
-										(ps: GamePlayerScore, i: number) =>
-											i !== idx && ps.player && ps.characterSecondHalf === char
-									)
-							)
-						)}
-					{/each}
-				</div>
-			</div>
-
-			<!-- VOD creation for new games -->
-			{#if !data.game}
-				<div class="mt-8 border-t border-slate-700 pt-6">
-					<GameVodEdit
-						mode="create"
-						vods={[]}
-						onSuccess={() => {
-							// VODs will be included in the form submission via hidden inputs
-						}}
-					/>
-				</div>
-			{/if}
-
-			{#if data.game}
-				<div class="mt-8 border-t border-slate-700 pt-6">
-					<GameVodEdit
-						gameId={data.game.id}
-						vods={data.game.vods || []}
-						onSuccess={() => {
-							// Refresh the page data
-							window.location.reload();
-						}}
-					/>
-				</div>
-			{/if}
-
-			{#if data.game}
-				<div class="mt-8 border-t border-slate-700 pt-6">
-					<h3 class="mb-2 text-sm font-semibold text-red-400">{m.danger_zone()}</h3>
-					{#if showDeleteConfirm}
-						<div class="mb-4 rounded-md bg-red-900/60 p-4 text-red-200">
-							<p>{m.delete_game_confirm()}</p>
-							<div class="mt-4 flex justify-end gap-2">
-								<button
-									type="button"
-									class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
-									onclick={() => (showDeleteConfirm = false)}
-									disabled={isDeleting}>{m.cancel()}</button
-								>
-								<button
-									type="button"
-									class="rounded-md bg-red-600 px-4 py-2 font-medium text-white hover:bg-red-700"
-									onclick={handleDelete}
-									disabled={isDeleting}>{isDeleting ? m.deleting() : m.delete_game()}</button
-								>
-							</div>
+						<div class="flex gap-1">
+							<input
+								type="text"
+								name={`playerScores${team}[${idx}].player`}
+								bind:value={ps.player}
+								placeholder={m.player()}
+								class="col-span-2 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
+								required
+							/>
+							<CharacterSelect
+								value={ps.characterFirstHalf as Character | null}
+								onChange={(v) => (ps.characterFirstHalf = v)}
+								name={`playerScores${team}[${idx}].characterFirstHalf`}
+								class="col-span-1"
+								characters={availableCharactersFirstHalf}
+								side={firstHalfSide === 'unknown' ? 'unknown' : firstHalfSide}
+							/>
+							<CharacterSelect
+								value={ps.characterSecondHalf as Character | null}
+								onChange={(v) => (ps.characterSecondHalf = v)}
+								name={`playerScores${team}[${idx}].characterSecondHalf`}
+								class="col-span-1"
+								characters={availableCharactersSecondHalf}
+								side={firstHalfSide === 'unknown'
+									? 'unknown'
+									: firstHalfSide === 'attacker'
+										? 'defender'
+										: 'attacker'}
+							/>
 						</div>
-					{:else}
-						<button
-							type="button"
-							class="rounded-md border border-red-700 bg-red-900/30 px-4 py-2 text-red-300 hover:bg-red-800/60"
-							onclick={() => (showDeleteConfirm = true)}
+						<div class="grid grid-cols-7 gap-1">
+							<input
+								type="number"
+								name={`playerScores${team}[${idx}].score`}
+								bind:value={ps.score}
+								placeholder={m.performance_score()}
+								title={m.performance_score()}
+								onfocus={(e) => e.currentTarget.select()}
+								class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
+							/>
+							<input
+								type="number"
+								name={`playerScores${team}[${idx}].damageScore`}
+								bind:value={ps.damageScore}
+								placeholder={m.damage_score()}
+								title={m.damage_score()}
+								onfocus={(e) => e.currentTarget.select()}
+								class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
+							/>
+							<input
+								type="number"
+								name={`playerScores${team}[${idx}].kills`}
+								bind:value={ps.kills}
+								placeholder={m.kills()}
+								title={m.kills()}
+								onfocus={(e) => e.currentTarget.select()}
+								class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
+							/>
+							<input
+								type="number"
+								name={`playerScores${team}[${idx}].knocks`}
+								bind:value={ps.knocks}
+								placeholder={m.knocks()}
+								title={m.knocks()}
+								onfocus={(e) => e.currentTarget.select()}
+								class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
+							/>
+							<input
+								type="number"
+								name={`playerScores${team}[${idx}].deaths`}
+								bind:value={ps.deaths}
+								placeholder={m.deaths()}
+								title={m.deaths()}
+								onfocus={(e) => e.currentTarget.select()}
+								class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
+							/>
+							<input
+								type="number"
+								name={`playerScores${team}[${idx}].assists`}
+								bind:value={ps.assists}
+								placeholder={m.assists()}
+								title={m.assists()}
+								onfocus={(e) => e.currentTarget.select()}
+								class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
+							/>
+							<input
+								type="number"
+								name={`playerScores${team}[${idx}].damage`}
+								bind:value={ps.damage}
+								placeholder={m.damage()}
+								title={m.damage()}
+								onfocus={(e) => e.currentTarget.select()}
+								class="col-span-1 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-200"
+							/>
+						</div>
+					</div>
+				{/snippet}
+				<section>
+					<div class="flex items-center justify-between">
+						<h4 class="block text-sm font-medium text-slate-300">
+							{data.teams[0]?.name || m.team_a()}
+						</h4>
+						<!-- TODO: Based on map ban-pick -->
+						<select
+							name="firstHalfSide"
+							bind:value={teamAFirstHalfSide}
+							class="min-w-48 rounded-md border border-slate-700 bg-slate-800 px-2 py-1 text-slate-300 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 						>
-							{m.delete_game()}
-						</button>
-					{/if}
-				</div>
-			{/if}
+							<option value="attacker">{m.attack()}</option>
+							<option value="defender">{m.defense()}</option>
+							<option value="unknown">{m.unknown()}</option>
+						</select>
+					</div>
+					<div class="mt-2 grid grid-cols-1 gap-2">
+						{#each playerScoresA as ps, idx (idx)}
+							{@render playerScoreInput(
+								'A',
+								teamAFirstHalfSide,
+								ps,
+								idx,
+								CHARACTERS.filter(
+									(char) =>
+										!playerScoresA.some(
+											(ps: GamePlayerScore, i: number) =>
+												i !== idx && ps.player && ps.characterFirstHalf === char
+										)
+								),
+								CHARACTERS.filter(
+									(char) =>
+										!playerScoresA.some(
+											(ps: GamePlayerScore, i: number) =>
+												i !== idx && ps.player && ps.characterSecondHalf === char
+										)
+								)
+							)}
+						{/each}
+					</div>
+				</section>
+				<section>
+					<div class="flex items-center justify-between">
+						<h4 class="block text-sm font-medium text-slate-300">
+							{data.teams[1]?.name || m.team_b()}
+						</h4>
+						<input
+							name="teamBFirstHalfSide"
+							value={teamBFirstHalfSide === 'attacker'
+								? m.attack()
+								: teamBFirstHalfSide === 'defender'
+									? m.defense()
+									: m.unknown()}
+							readonly
+							class="min-w-48 rounded-md border border-slate-700 bg-slate-800 px-2 py-1 text-slate-300 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+						/>
+					</div>
+					<div class="mt-2 grid grid-cols-1 gap-2">
+						{#each playerScoresB as ps, idx (idx)}
+							{@render playerScoreInput(
+								'B',
+								teamBFirstHalfSide,
+								ps,
+								idx,
+								CHARACTERS.filter(
+									(char) =>
+										!playerScoresB.some(
+											(ps: GamePlayerScore, i: number) =>
+												i !== idx && ps.player && ps.characterFirstHalf === char
+										)
+								),
+								CHARACTERS.filter(
+									(char) =>
+										!playerScoresB.some(
+											(ps: GamePlayerScore, i: number) =>
+												i !== idx && ps.player && ps.characterSecondHalf === char
+										)
+								)
+							)}
+						{/each}
+					</div>
+				</section>
+			</section>
+
+			<section>
+				<!-- VOD creation for new games -->
+				{#if !data.game}
+					<div class="mt-8 border-t border-slate-700 pt-6">
+						<GameVodEdit
+							mode="create"
+							vods={[]}
+							onSuccess={() => {
+								// VODs will be included in the form submission via hidden inputs
+							}}
+						/>
+					</div>
+				{/if}
+
+				{#if data.game}
+					<div class="mt-8 border-t border-slate-700 pt-6">
+						<GameVodEdit
+							gameId={data.game.id}
+							vods={data.game.vods || []}
+							onSuccess={() => {
+								// Refresh the page data
+								window.location.reload();
+							}}
+						/>
+					</div>
+				{/if}
+			</section>
+
+			<section>
+				{#if data.game}
+					<div class="mt-8 border-t border-slate-700 pt-6">
+						<h3 class="mb-2 text-sm font-semibold text-red-400">{m.danger_zone()}</h3>
+						{#if showDeleteConfirm}
+							<div class="mb-4 rounded-md bg-red-900/60 p-4 text-red-200">
+								<p>{m.delete_game_confirm()}</p>
+								<div class="mt-4 flex justify-end gap-2">
+									<button
+										type="button"
+										class="cursor-pointer rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
+										onclick={() => (showDeleteConfirm = false)}
+										disabled={isDeleting}>{m.cancel()}</button
+									>
+									<button
+										type="button"
+										class="cursor-pointer rounded-md bg-red-600 px-4 py-2 font-medium text-white hover:bg-red-700"
+										onclick={handleDelete}
+										disabled={isDeleting}>{isDeleting ? m.deleting() : m.delete_game()}</button
+									>
+								</div>
+							</div>
+						{:else}
+							<button
+								type="button"
+								class="cursor-pointer rounded-md border border-red-700 bg-red-900/30 px-4 py-2 text-red-300 hover:bg-red-800/60"
+								onclick={() => (showDeleteConfirm = true)}
+							>
+								{m.delete_game()}
+							</button>
+						{/if}
+					</div>
+				{/if}
+			</section>
 		</div>
 
 		<div class="mt-6 flex justify-end gap-4 border-t border-slate-700 pt-4">
 			<button
 				type="button"
-				class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
+				class="cursor-pointer rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
 				onclick={onCancel}
 			>
 				{m.cancel()}
 			</button>
 			<button
 				type="submit"
-				class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600"
+				class="cursor-pointer rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600"
 			>
 				{data.game ? m.save_game() : m.add_game()}
 			</button>
