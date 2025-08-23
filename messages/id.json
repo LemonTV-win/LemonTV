@@ -40,6 +40,11 @@
 			"Galatea": "Galatea",
 			"Chiyo": "Chiyo"
 		},
+		"faction": {
+			"PUS": "P.U.S",
+			"Scissors": "Gunting",
+			"Urbino": "Urbino"
+		},
 		"map": {
 			"base_404": "Pangkalan 404",
 			"area_88": "Area 88",

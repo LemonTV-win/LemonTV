@@ -40,6 +40,11 @@
 			"Galatea": "Galatea",
 			"Chiyo": "Chiyo"
 		},
+		"faction": {
+			"PUS": "P.U.S",
+			"Scissors": "Die Scheren",
+			"Urbino": "Urbino"
+		},
 		"map": {
 			"base_404": "Basis 404",
 			"area_88": "Area 88",

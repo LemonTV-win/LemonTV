@@ -40,6 +40,11 @@
 			"Galatea": "갈라테아",
 			"Chiyo": "치요"
 		},
+		"faction": {
+			"PUS": "PUS",
+			"Scissors": "시저스",
+			"Urbino": "우르비노"
+		},
 		"map": {
 			"base_404": "베이스 404",
 			"area_88": "에어리어 88",

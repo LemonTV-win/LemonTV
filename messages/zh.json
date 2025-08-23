@@ -40,6 +40,11 @@
 			"Galatea": "加拉蒂亚",
 			"Chiyo": "千代"
 		},
+		"faction": {
+			"PUS": "欧泊",
+			"Scissors": "剪刀手",
+			"Urbino": "乌尔比诺"
+		},
 		"map": {
 			"base_404": "404基地",
 			"area_88": "88区",
