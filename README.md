@@ -7,6 +7,18 @@
 
 LemonTV – Comprehensive esports coverage, live scores, rankings, and news for the competitive Strinova scene.
 
+## Support
+
+LemonTV is a fan-run project built with ❤️ by one developer and our community. Hosting and infrastructure currently cost ~\$1200 USD/year. If you enjoy LemonTV or find it useful, please consider supporting the project on Ko‑fi — any amount helps.
+
+[![Support me on Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/mkpoli)
+
+### Sponsors
+
+Current supporters (1):
+
+- Eaterrius 💛
+
 ## Developing
 
 ```bash
