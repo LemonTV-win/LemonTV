@@ -181,7 +181,14 @@
 				>
 				</iframe>
 			{:else if stream.platform === 'youtube'}
-				<!-- TODO: YouTube -->
+				<iframe
+					src={`https://www.youtube.com/embed/${stream.url.split('/').pop()}`}
+					height="100%"
+					width="100%"
+					allowfullscreen
+					title={stream.title ?? `${event.name} - ${stream.platform}`}
+				>
+				</iframe>
 			{:else if stream.platform === 'bilibili'}
 				<iframe
 					src={`https://player.bilibili.com/player.html?bvid=${stream.url.split('/').pop()}&page=1&high_quality=1&danmaku=0`}
