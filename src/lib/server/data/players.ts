@@ -486,28 +486,26 @@ export async function getServerPlayerMapStats(playerId: string): Promise<
 	// Group games by map and calculate wins/losses
 	const mapStats = new Map<GameMap, { wins: number; losses: number }>();
 
+	// Ensure we count each game only once (deduplicate by gameId)
+	const processedGames = new Set<number>();
+
 	for (const game of playerGames) {
+		if (processedGames.has(game.gameId)) continue;
+		processedGames.add(game.gameId);
+
 		if (!mapStats.has(game.mapId)) {
 			mapStats.set(game.mapId, { wins: 0, losses: 0 });
 		}
 
 		const stats = mapStats.get(game.mapId)!;
 
-		// Find which team the player was on in this game
-		const playerTeam = playerGames.find(
-			(gt) => gt.gameId === game.gameId && gt.accountId === game.accountId
-		);
+		// winner: 0 = team A won, 1 = team B won
+		const playerWon = game.winner === game.teamPosition;
 
-		if (playerTeam) {
-			// Check if player's team won using the actual team position
-			// winner: 0 = team A won, 1 = team B won
-			const playerWon = game.winner === playerTeam.teamPosition;
-
-			if (playerWon) {
-				stats.wins++;
-			} else {
-				stats.losses++;
-			}
+		if (playerWon) {
+			stats.wins++;
+		} else {
+			stats.losses++;
 		}
 	}
 
