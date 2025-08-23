@@ -9,7 +9,7 @@ import { MAPS } from '$lib/data/game';
 import type { ActionData, Actions, PageServerLoad, RequestEvent } from './$types';
 import { dev } from '$app/environment';
 import { checkPermissions } from '$lib/server/security/permission';
-import type { GameAccount, Player } from '$lib/data/players';
+import type { GameAccount, GameAccountRegion, GameAccountServer, Player } from '$lib/data/players';
 
 type MapAction = 'ban' | 'pick' | 'decider' | 'set' | null;
 
@@ -19,10 +19,10 @@ export type GameParticipant = {
 	aliases: string[];
 	nationalities: TCountryCode[];
 	gameAccounts: Array<{
-		server: 'Strinova' | 'CalabiYau';
+		server: GameAccountServer;
 		accountId: number;
 		currentName: string;
-		region?: Region;
+		region?: GameAccountRegion;
 	}>;
 };
 

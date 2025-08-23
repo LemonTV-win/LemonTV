@@ -5,10 +5,10 @@
 		nationalities?: TCountryCode[];
 		aliases?: string[];
 		gameAccounts?: {
-			server: 'Strinova' | 'CalabiYau';
+			server: GameAccountServer;
 			accountId: number;
 			currentName: string;
-			region?: Region;
+			region?: GameAccountRegion;
 		}[];
 		socialAccounts?: {
 			platformId: string;
@@ -36,6 +36,7 @@
 	import { deserialize } from '$app/forms';
 	import { m } from '$lib/paraglide/messages';
 	import type { Region } from '$lib/data/game';
+	import type { GameAccountRegion, GameAccountServer } from '$lib/data/players';
 
 	let {
 		showModal,
@@ -471,10 +472,10 @@ interface PlayerImportData {
 }
 
 interface GameAccount {
-  server: 'Strinova' | 'CalabiYau'; // Required: Game server
+  server: 'Strinova' | 'CalabiYau'; // Required: Game server, 'CalabiYau' for CN server, 'Strinova' for global server (NA, EU, APAC)
   accountId: number;                 // Required: Unique account identifier
   currentName: string;               // Required: Current in-game name
-  region?: string;                   // Optional: Server region (e.g., "NA", "EU", "JP")
+  region?: 'APAC' | 'NA' | 'EU' | 'CN'; // Optional: Server region (e.g., "NA", "EU", "JP")
 }
 
 interface SocialAccount {

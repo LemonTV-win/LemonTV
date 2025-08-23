@@ -9,7 +9,13 @@ import {
 	playerAdditionalNationality
 } from '$lib/server/db/schema';
 import { eq, or, and, inArray, sql, desc } from 'drizzle-orm';
-import type { Player, PlayerTeam } from '$lib/data/players';
+import {
+	getGameAccountServer,
+	type GameAccountRegion,
+	type GameAccountServer,
+	type Player,
+	type PlayerTeam
+} from '$lib/data/players';
 import { randomUUID } from 'node:crypto';
 import type { Team } from '$lib/data/teams';
 import type { Character, GameMap, Region } from '$lib/data/game';
@@ -223,7 +229,7 @@ export async function getPlayer(keyword: string): Promise<Player | null> {
 			accountId: acc.accountId,
 			currentName: acc.currentName,
 			region: acc.region as Player['gameAccounts'][0]['region'],
-			server: acc.server as 'Strinova' | 'CalabiYau' // TODO: Add validation
+			server: acc.server
 		})),
 		socialAccounts: (playerData.socialAccounts || []).map((acc) => ({
 			platformId: acc.platformId,
@@ -289,9 +295,8 @@ export async function getPlayers(): Promise<Player[]> {
 					playerId: true,
 					accountId: true,
 					currentName: true,
-					region: true
-					// if you don't store server, omit it and keep the same mapping you had before
-					// server: true,
+					region: true,
+					server: true
 				}
 			},
 			// e.g. { socialAccounts: many(player_social_account) }
@@ -331,8 +336,7 @@ export async function getPlayers(): Promise<Player[]> {
 					accountId: acc.accountId,
 					currentName: acc.currentName,
 					region: acc.region as Player['gameAccounts'][0]['region'],
-					// keep your previous assumption for server if it's not stored:
-					server: 'Strinova' as 'Strinova' | 'CalabiYau' // TODO: replace if you persist server
+					server: acc.server
 				})) ?? [],
 			socialAccounts:
 				p.socialAccounts?.map((acc) => ({
@@ -1100,7 +1104,7 @@ export async function createPlayer(
 			await transaction.insert(gameAccount).values(
 				data.gameAccounts.map((account) => ({
 					playerId: id,
-					server: account.region === 'CN' ? 'CalabiYau' : 'Strinova',
+					server: getGameAccountServer(account.region),
 					accountId: account.accountId,
 					currentName: account.currentName,
 					region: account.region
@@ -1362,7 +1366,7 @@ export async function updatePlayer(
 			await tx.insert(gameAccount).values(
 				data.gameAccounts.map((account) => ({
 					playerId: data.id,
-					server: account.region === 'CN' ? 'CalabiYau' : 'Strinova',
+					server: getGameAccountServer(account.region),
 					accountId: account.accountId,
 					currentName: account.currentName,
 					region: account.region

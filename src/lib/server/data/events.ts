@@ -584,7 +584,7 @@ export async function getEvent(id: string): Promise<AppEvent | undefined> {
 			!player.gameAccounts.some((a) => a.accountId === ga.accountId && a.server === ga.server)
 		) {
 			player.gameAccounts.push({
-				server: ga.server as 'Strinova' | 'CalabiYau',
+				server: ga.server,
 				accountId: ga.accountId,
 				currentName: ga.currentName,
 				region: ga.region as Player['gameAccounts'][0]['region']

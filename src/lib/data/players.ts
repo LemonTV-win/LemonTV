@@ -30,12 +30,33 @@ export interface PlayerTeam {
 	note?: string;
 }
 
+export type GameAccountServer = 'Strinova' | 'CalabiYau';
+export type GameAccountRegion = 'APAC' | 'NA' | 'EU' | 'CN';
+
 export interface GameAccount {
-	server: 'Strinova' | 'CalabiYau';
+	server: GameAccountServer;
 	accountId: number;
 	currentName: string;
-	region?: Region;
+	region?: GameAccountRegion;
 	names?: string[];
+}
+
+/**
+ * Get the server from the region
+ *
+ * The game has two servers, CN Server that is called CalabiYau, and later release global server that is called Strinova.
+ *
+ * CalabiYau only has one region of CN, and Strinova has three of APAC, NA (covers NA and SA), EU (covers EMEA).
+ *
+ * So if the region is CN, we use CalabiYau, otherwise we use Strinova. If no region is provided, we use Strinova as a default.
+ *
+ * @param region - The region of the player
+ * @returns The server of the player
+ */
+export function getGameAccountServer(region: GameAccountRegion | undefined): GameAccountServer {
+	// Default to Strinova if no region is provided
+	if (!region) return 'Strinova';
+	return region === 'CN' ? 'CalabiYau' : 'Strinova';
 }
 
 export const SERVER_ABBREVIATIONS: Record<string, string> = {

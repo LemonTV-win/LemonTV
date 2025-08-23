@@ -7,6 +7,7 @@ import { createPlayer } from '$lib/server/data/players';
 import type { Region } from '$lib/data/game';
 import { processImageURL } from '$lib/server/storage';
 import { checkPermissions } from '$lib/server/security/permission';
+import type { GameAccountRegion, GameAccountServer } from '$lib/data/players';
 
 export const load: PageServerLoad = async ({ url, locals }) => {
 	const teamsList = await db.select().from(table.team);
@@ -240,10 +241,10 @@ export const actions = {
 						nationalities?: string[];
 						aliases?: string[];
 						gameAccounts?: {
-							server: 'Strinova' | 'CalabiYau';
+							server: GameAccountServer;
 							accountId: number;
 							currentName: string;
-							region?: string;
+							region?: GameAccountRegion;
 						}[];
 						socialAccounts?: {
 							platformId: string;

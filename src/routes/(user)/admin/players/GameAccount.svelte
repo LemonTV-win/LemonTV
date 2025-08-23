@@ -1,6 +1,9 @@
 <script lang="ts">
-	import type { Region } from '$lib/data/game';
-	import { SERVER_ABBREVIATIONS } from '$lib/data/players';
+	import {
+		SERVER_ABBREVIATIONS,
+		type GameAccountRegion,
+		type GameAccountServer
+	} from '$lib/data/players';
 
 	let {
 		account
@@ -8,8 +11,8 @@
 		account: {
 			accountId: number;
 			currentName: string;
-			region?: Region;
-			server: 'Strinova' | 'CalabiYau';
+			region?: GameAccountRegion;
+			server: GameAccountServer;
 		};
 	} = $props();
 </script>

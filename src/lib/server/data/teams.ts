@@ -3,7 +3,7 @@ import { getServerPlayerKD, getServerPlayerAgents } from './players';
 
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { eq, or, inArray } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 
 import type { Team, TeamPlayer, TeamPlayerRole } from '$lib/data/teams';
 import type { Player } from '$lib/data/players';
@@ -128,16 +128,16 @@ export async function getTeams(): Promise<(Team & { logoURL: string | null })[]>
 
 						// Process game accounts
 						const gameAccounts =
-							player.gameAccounts?.map((ga: any) => ({
-								server: ga.server as 'Strinova' | 'CalabiYau',
+							player.gameAccounts?.map((ga) => ({
+								server: ga.server,
 								accountId: ga.accountId,
 								currentName: ga.currentName,
-								region: (ga.region as Region) ?? undefined
+								region: ga.region ?? undefined
 							})) || [];
 
 						// Process social accounts
 						const socialAccounts =
-							player.socialAccounts?.map((sa: any) => ({
+							player.socialAccounts?.map((sa) => ({
 								platformId: sa.platformId,
 								accountId: sa.accountId,
 								overridingUrl: sa.overriding_url ?? undefined
@@ -279,11 +279,11 @@ export async function getTeam(slug: string): Promise<(Team & { logoURL: string |
 
 				// Process game accounts
 				const gameAccounts =
-					player.gameAccounts?.map((ga: any) => ({
-						server: ga.server as 'Strinova' | 'CalabiYau',
+					player.gameAccounts?.map((ga) => ({
+						server: ga.server,
 						accountId: ga.accountId,
 						currentName: ga.currentName,
-						region: (ga.region as Region) ?? undefined
+						region: ga.region ?? undefined
 					})) || [];
 
 				// Process social accounts
