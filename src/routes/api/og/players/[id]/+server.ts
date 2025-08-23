@@ -93,118 +93,106 @@ export const GET: RequestHandler = async ({ params, url }) => {
 
 		console.info(`[API][OG][Players] Building markup`);
 		const statBoxStyle =
-			'display: flex; flex-direction: column; background: rgba(29,41,61,0.65); border-radius: 12px; padding: 16px 18px;  min-width:150px; align-items:flex-start;';
+			'display: flex; flex-direction: column; background: rgba(29,41,61,0.65); border-radius: 14px; padding: 20px 22px; min-width: 180px; align-items: flex-start;';
+		const statBoxLabelStyle = 'display: flex; font-size: 20px; color: #cbd5e1';
+		const statBoxValueStyle = 'display: flex; font-size: 36px; font-weight: 800';
 		const markup = html`
 			<div
-				style="display:flex; flex-direction:column; width:1200px; height:630px; position:relative; font-family: Saira, 'Noto Sans JP', sans-serif; background: black;"
+				style="display: flex; flex-direction: column; width: 1200px; height: 630px; position: relative; font-family: Saira, 'Noto Sans JP', sans-serif; background: black;"
 			>
 				<!-- Background image -->
 				<img
 					src="${bgImage}"
-					style="display:flex; position:absolute; top:0; left:0; width:1200px; height:630px; object-fit:cover; filter:blur(18px); opacity:0.45"
+					style="display: flex; position: absolute; top: 0; left: 0; width: 1200px; height: 630px; object-fit: cover; filter: blur(18px); opacity: 0.45;"
 				/>
 				<!-- Branding header -->
 				<div
-					style="display:flex; flex-direction:row; align-items:center; gap: 10px; opacity:0.95; padding: 20px 64px; margin-top: 20px;"
+					style="display: flex; flex-direction: row; align-items: center; gap: 12px; opacity: 0.95; padding: 18px 56px; margin-top: 14px;"
 				>
 					<img
 						src="${logo}"
-						style="display: flex; width: 52px; height: 52px; border-radius: 8px;"
+						style="display: flex; width: 58px; height: 58px; border-radius: 10px;"
 					/>
 					<div
-						style="display: flex; font-size:40px; font-weight:700; letter-spacing:0.5px; color:white;"
+						style="display: flex; font-size:46px; font-weight:700; letter-spacing:0.5px; color:white;"
 					>
 						LemonTV
 					</div>
 				</div>
+				<!-- Main content -->
 				<div
-					style="display:flex; position:relative; flex-direction:row; align-items:center; justify-content:center; padding: 64px; width:100%"
+					style="display: flex; position: relative; flex-direction: row; align-items: center; justify-content: center; padding: 32px 48px 56px; width:100%"
 				>
+					<!-- Card -->
 					<div
-						style="display:flex; flex-direction:row; gap:28px; align-items:center; background:linear-gradient(135deg, rgba(71,85,105,0.65), rgba(30,41,59,0.88)); border:1px solid rgba(255,255,255,0.30); border-radius:20px; padding:28px 32px; box-shadow:0 10px 36px rgba(0,0,0,0.45); width:1040px;"
+						style="display:flex; flex-direction:row; gap:32px; align-items:center; background:linear-gradient(135deg, rgba(71,85,105,0.68), rgba(30,41,59,0.90)); border:1px solid rgba(255,255,255,0.30); border-radius:24px; padding:32px 36px; box-shadow:0 12px 42px rgba(0,0,0,0.5); width:1120px;"
 					>
 						<!-- Left: Avatar inside card -->
 						<div
-							style="display:flex; flex-direction:column; width:200px; height:200px; border-radius:100%; overflow:hidden; box-shadow:0 8px 30px rgba(0,0,0,0.35)"
+							style="display:flex; flex-direction:column; width:240px; height:240px; border-radius:100%; overflow:hidden; box-shadow:0 10px 36px rgba(0,0,0,0.4)"
 						>
 							<img
 								src="${avatarURL}"
-								width="200"
-								height="200"
-								style="display:flex; object-fit:cover; width:200px; height:200px; background:black;"
+								width="240"
+								height="240"
+								style="display:flex; object-fit:cover; width:240px; height:240px; background:black;"
 							/>
 						</div>
 						<!-- Right: Branding, name, meta, stats, footer -->
 						<div
-							style="display:flex; flex-direction:column; gap:14px; color:#f8fafc; flex:1; min-width:0;"
+							style="display:flex; flex-direction:column; gap:18px; color:#f8fafc; flex:1; min-width:0;"
 						>
 							<!-- Title row with name and rank badge -->
-							<div style="display:flex; flex-direction:row; align-items:baseline; gap:14px;">
+							<div style="display:flex; flex-direction:row; align-items:baseline; gap:16px;">
 								<div
-									style="display:flex; font-size:56px; font-weight:800; line-height:1.1; text-shadow:0 2px 6px rgba(0,0,0,0.4); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"
+									style="display:flex; font-size:68px; font-weight:800; line-height:1.1; text-shadow:0 2px 6px rgba(0,0,0,0.4); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"
 								>
 									${player.name}
 								</div>
 								<!-- Player rank -->
-								<div style="display:flex; font-size: 32px; font-weight:700; color:#7dd3fc;">
-									#${rank}
+								<div style="display:flex; font-size: 36px; font-weight:700; color:#7dd3fc;">
+									${m.rank(undefined, { locale })} #${rank}
 								</div>
 							</div>
 							<!-- Meta row for team and latest event -->
 							<div
-								style="display:flex; flex-direction:row; flex-wrap:wrap; gap:18px; color:#e2e8f0; font-size:18px;"
+								style="display: flex; flex-direction: row; flex-wrap: wrap; gap: 22px; color: #e2e8f0; font-size: 22px;"
 							>
 								<div style="display:flex; flex-direction:row;">
 									${labelTeam}:
-									<span style="color:#fff; font-weight:600; margin-left:6px;"
+									<span style="color: #fff; font-weight: 600; margin-left: 8px;"
 										>${currentTeamLabel || '—'}</span
 									>
 								</div>
 								<div style="display:flex; flex-direction:row;">
 									${labelLatestEvent} (${eventsCount}):
-									<span style="color:#fff; font-weight:600; margin-left:6px;"
+									<span style="color: #fff; font-weight: 600; margin-left: 8px;"
 										>${latestEventName || '—'}</span
 									>
 								</div>
 							</div>
 							<!-- Stats row -->
-							<div style="display:flex; flex-direction:row; gap:16px; margin-top:8px;">
+							<div style="display: flex; flex-direction: row; gap: 18px; margin-top: 10px;">
 								<div style="${statBoxStyle}">
-									<div style="display:flex; font-size:16px; color:#cbd5e1">
-										${m.wins(undefined, { locale })}
-									</div>
-									<div style="display:flex; font-size:28px; font-weight:800">
-										${String(stats.wins)}
-									</div>
+									<div style="${statBoxLabelStyle}">${m.wins(undefined, { locale })}</div>
+									<div style="${statBoxValueStyle}">${String(stats.wins)}</div>
 								</div>
 								<div style="${statBoxStyle}">
-									<div style="display:flex; font-size:16px; color:#cbd5e1">
-										${m.win_rate(undefined, { locale })}
-									</div>
-									<div style="display:flex; font-size:28px; font-weight:800">
-										${(stats.winRate || 0).toFixed(1)}%
-									</div>
+									<div style="${statBoxLabelStyle}">${m.win_rate(undefined, { locale })}</div>
+									<div style="${statBoxValueStyle}">${(stats.winRate || 0).toFixed(1)}%</div>
 								</div>
 								<div style="${statBoxStyle}">
-									<div style="display:flex; font-size:16px; color:#cbd5e1">
-										${m.kd_ratio(undefined, { locale })}
-									</div>
-									<div style="display:flex; font-size:28px; font-weight:800">
-										${(stats.kd || 0).toFixed(2)}
-									</div>
+									<div style="${statBoxLabelStyle}">${m.kd_ratio(undefined, { locale })}</div>
+									<div style="${statBoxValueStyle}">${(stats.kd || 0).toFixed(2)}</div>
 								</div>
 								<div style="${statBoxStyle}">
-									<div style="display:flex; font-size:16px; color:#cbd5e1">
-										${m.rating(undefined, { locale })}
-									</div>
-									<div style="display:flex; font-size:28px; font-weight:800">
-										${rating.toFixed(2)}
-									</div>
+									<div style="${statBoxLabelStyle}">${m.rating(undefined, { locale })}</div>
+									<div style="${statBoxValueStyle}">${rating.toFixed(2)}</div>
 								</div>
 							</div>
 							<!-- Footer row: profile label + canonical URL -->
 							<div
-								style="display: flex; flex-direction: row; gap: 14px; color: cbd5e1; font-size: 18px; margin-top: 12px; justify-content: space-between;"
+								style="display: flex; flex-direction: row; gap: 14px; color: #cbd5e1; font-size: 20px; margin-top: 14px; justify-content: space-between;"
 							>
 								<div style="display: flex; color: white;">${profileLabel}</div>
 								<div style="display: flex; color: #94a3b8;">${canonicalUrl}</div>
