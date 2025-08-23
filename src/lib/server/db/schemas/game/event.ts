@@ -1,5 +1,5 @@
 import { relations, sql } from 'drizzle-orm';
-import { sqliteTable, text, integer, primaryKey } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, primaryKey, index } from 'drizzle-orm/sqlite-core';
 import { organizer } from './organizer';
 import { team } from './team';
 import { player } from './player';
@@ -49,7 +49,7 @@ export const eventOrganizer = sqliteTable(
 			.notNull()
 			.default(sql`(unixepoch() * 1000)`)
 	},
-	(t) => [primaryKey({ columns: [t.eventId, t.organizerId] })]
+	(t) => [primaryKey({ columns: [t.eventId, t.organizerId] }), index('idx_eo_event').on(t.eventId)]
 );
 
 export const eventTeam = sqliteTable(
@@ -111,7 +111,10 @@ export const eventTeamPlayer = sqliteTable(
 			.default(sql`(unixepoch() * 1000)`),
 		updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
 	},
-	(t) => [primaryKey({ columns: [t.eventId, t.teamId, t.playerId] })]
+	(t) => [
+		primaryKey({ columns: [t.eventId, t.teamId, t.playerId] }),
+		index('idx_etp_event').on(t.eventId)
+	]
 );
 
 export const eventResult = sqliteTable('event_result', {
@@ -149,22 +152,26 @@ export const eventWebsite = sqliteTable('event_website', {
 		.default(sql`(unixepoch() * 1000)`)
 });
 
-export const eventVideo = sqliteTable('event_video', {
-	id: text('id').primaryKey(),
-	eventId: text('event_id')
-		.references(() => event.id)
-		.notNull(),
-	type: text('type', { enum: ['stream', 'clip', 'vod'] }).notNull(),
-	url: text('url').notNull(),
-	platform: text('platform').notNull(),
-	title: text('title'),
-	createdAt: integer('created_at', { mode: 'timestamp_ms' })
-		.notNull()
-		.default(sql`(unixepoch() * 1000)`),
-	updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
-		.notNull()
-		.default(sql`(unixepoch() * 1000)`)
-});
+export const eventVideo = sqliteTable(
+	'event_video',
+	{
+		id: text('id').primaryKey(),
+		eventId: text('event_id')
+			.references(() => event.id)
+			.notNull(),
+		type: text('type', { enum: ['stream', 'clip', 'vod'] }).notNull(),
+		url: text('url').notNull(),
+		platform: text('platform').notNull(),
+		title: text('title'),
+		createdAt: integer('created_at', { mode: 'timestamp_ms' })
+			.notNull()
+			.default(sql`(unixepoch() * 1000)`),
+		updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
+			.notNull()
+			.default(sql`(unixepoch() * 1000)`)
+	},
+	(t) => [index('idx_ev_event').on(t.eventId)]
+);
 
 export const eventCaster = sqliteTable(
 	'event_caster',

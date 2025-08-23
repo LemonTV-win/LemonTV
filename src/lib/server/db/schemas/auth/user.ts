@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, primaryKey } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, primaryKey, index } from 'drizzle-orm/sqlite-core';
 import { relations } from 'drizzle-orm';
 import { player } from '../game/player';
 
@@ -27,7 +27,9 @@ export const userRole = sqliteTable(
 	},
 	(table) => {
 		return {
-			pk: primaryKey({ columns: [table.userId, table.roleId] })
+			pk: primaryKey({ columns: [table.userId, table.roleId] }),
+			idx_user: index('idx_user_role_user').on(table.userId),
+			idx_role: index('idx_user_role_role').on(table.roleId)
 		};
 	}
 );

@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { text, sqliteTable, unique, integer } from 'drizzle-orm/sqlite-core';
+import { text, sqliteTable, unique, integer, index } from 'drizzle-orm/sqlite-core';
 import { relations } from 'drizzle-orm';
 import { player } from './player';
 
@@ -14,17 +14,25 @@ export const team = sqliteTable('teams', {
 	updatedAt: text('updated_at').default(sql`CURRENT_TIMESTAMP`)
 });
 
-export const teamPlayer = sqliteTable('team_player', {
-	id: integer('id').primaryKey(),
-	teamId: text('team_id')
-		.notNull()
-		.references(() => team.id),
-	playerId: text('player_id').notNull(),
-	role: text('role').notNull(), // 'active' | 'substitute' | 'former' | 'coach' | 'manager' | 'owner'
-	startedOn: text('started_on'), // format: YYYY-MM-DD
-	endedOn: text('ended_on'), // format: YYYY-MM-DD
-	note: text('note')
-});
+export const teamPlayer = sqliteTable(
+	'team_player',
+	{
+		id: integer('id').primaryKey(),
+		teamId: text('team_id')
+			.notNull()
+			.references(() => team.id),
+		playerId: text('player_id').notNull(),
+		role: text('role').notNull(), // 'active' | 'substitute' | 'former' | 'coach' | 'manager' | 'owner'
+		startedOn: text('started_on'), // format: YYYY-MM-DD
+		endedOn: text('ended_on'), // format: YYYY-MM-DD
+		note: text('note')
+	},
+	(t) => [
+		index('idx_tp_team').on(t.teamId),
+		index('idx_tp_player').on(t.playerId),
+		index('idx_tp_role').on(t.role)
+	]
+);
 
 export const teamAlias = sqliteTable(
 	'team_alias',
@@ -35,7 +43,7 @@ export const teamAlias = sqliteTable(
 			.references(() => team.id),
 		alias: text('alias').notNull()
 	},
-	(t) => [unique().on(t.teamId, t.alias)]
+	(t) => [unique().on(t.teamId, t.alias), index('idx_ta_team').on(t.teamId)]
 );
 
 export type Team = typeof team.$inferSelect;

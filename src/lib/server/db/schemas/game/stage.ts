@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { sqliteTable, text, integer, check } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, check, index } from 'drizzle-orm/sqlite-core';
 import { relations } from 'drizzle-orm';
 import { event } from './event';
 import { match } from './match';
@@ -23,7 +23,8 @@ export const stage = sqliteTable(
 	},
 	(t) => [
 		check('stage', sql`${t.stage} IN ('group', 'qualifier', 'showmatch', 'playoff')`),
-		check('format', sql`${t.format} IN ('single', 'double', 'swiss', 'round-robin')`)
+		check('format', sql`${t.format} IN ('single', 'double', 'swiss', 'round-robin')`),
+		index('idx_stage_event').on(t.eventId)
 	]
 );
 

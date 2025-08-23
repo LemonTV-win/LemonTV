@@ -105,70 +105,88 @@ export const playerCharacterStats = sqliteTable(
 	]
 );
 
-export const playerStatsHistory = sqliteTable('player_stats_history', {
-	id: text('id').primaryKey(),
-	playerId: text('player_id')
-		.notNull()
-		.references(() => player.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+export const playerStatsHistory = sqliteTable(
+	'player_stats_history',
+	{
+		id: text('id').primaryKey(),
+		playerId: text('player_id')
+			.notNull()
+			.references(() => player.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
 
-	// Snapshot of stats at a point in time
-	totalGames: integer('total_games').notNull(),
-	totalWins: integer('total_wins').notNull(),
-	totalLosses: integer('total_losses').notNull(),
-	totalKills: integer('total_kills').notNull(),
-	totalDeaths: integer('total_deaths').notNull(),
-	totalAssists: integer('total_assists').notNull(),
-	totalKnocks: integer('total_knocks').notNull(),
-	totalScore: integer('total_score').notNull(),
-	totalDamage: integer('total_damage').notNull(),
-	winRate: real('win_rate').notNull(),
-	kd: real('kd').notNull(),
-	averageScore: real('average_score').notNull(),
-	averageDamage: real('average_damage').notNull(),
-	playerRating: real('player_rating').notNull(),
-	eventsCount: integer('events_count').notNull(),
+		// Snapshot of stats at a point in time
+		totalGames: integer('total_games').notNull(),
+		totalWins: integer('total_wins').notNull(),
+		totalLosses: integer('total_losses').notNull(),
+		totalKills: integer('total_kills').notNull(),
+		totalDeaths: integer('total_deaths').notNull(),
+		totalAssists: integer('total_assists').notNull(),
+		totalKnocks: integer('total_knocks').notNull(),
+		totalScore: integer('total_score').notNull(),
+		totalDamage: integer('total_damage').notNull(),
+		winRate: real('win_rate').notNull(),
+		kd: real('kd').notNull(),
+		averageScore: real('average_score').notNull(),
+		averageDamage: real('average_damage').notNull(),
+		playerRating: real('player_rating').notNull(),
+		eventsCount: integer('events_count').notNull(),
 
-	// Metadata
-	snapshotDate: integer('snapshot_date', { mode: 'timestamp_ms' }).notNull(),
-	reason: text('reason', { enum: PLAYER_STATS_UPDATE_REASONS }).notNull(),
-	createdAt: integer('created_at', { mode: 'timestamp_ms' })
-		.notNull()
-		.default(sql`(unixepoch() * 1000)`)
-});
+		// Metadata
+		snapshotDate: integer('snapshot_date', { mode: 'timestamp_ms' }).notNull(),
+		reason: text('reason', { enum: PLAYER_STATS_UPDATE_REASONS }).notNull(),
+		createdAt: integer('created_at', { mode: 'timestamp_ms' })
+			.notNull()
+			.default(sql`(unixepoch() * 1000)`)
+	},
+	(t) => [
+		index('idx_psh_player').on(t.playerId),
+		index('idx_psh_snapshot').on(t.snapshotDate),
+		index('idx_psh_player_snapshot').on(t.playerId, t.snapshotDate)
+	]
+);
 
 // Character stats history table
-export const playerCharacterStatsHistory = sqliteTable('player_character_stats_history', {
-	id: text('id').primaryKey(),
-	playerId: text('player_id')
-		.notNull()
-		.references(() => player.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
-	characterId: text('character_id')
-		.notNull()
-		.references(() => character.id), // Character name/enum
+export const playerCharacterStatsHistory = sqliteTable(
+	'player_character_stats_history',
+	{
+		id: text('id').primaryKey(),
+		playerId: text('player_id')
+			.notNull()
+			.references(() => player.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+		characterId: text('character_id')
+			.notNull()
+			.references(() => character.id), // Character name/enum
 
-	// Snapshot of character-specific stats at a point in time
-	totalGames: integer('total_games').notNull(),
-	totalWins: integer('total_wins').notNull(),
-	totalLosses: integer('total_losses').notNull(),
-	totalKills: integer('total_kills').notNull(),
-	totalDeaths: integer('total_deaths').notNull(),
-	totalAssists: integer('total_assists').notNull(),
-	totalKnocks: integer('total_knocks').notNull(),
-	totalScore: integer('total_score').notNull(),
-	totalDamage: integer('total_damage').notNull(),
-	winRate: real('win_rate').notNull(),
-	kd: real('kd').notNull(),
-	averageScore: real('average_score').notNull(),
-	averageDamage: real('average_damage').notNull(),
-	superstringPower: real('superstring_power').notNull(),
+		// Snapshot of character-specific stats at a point in time
+		totalGames: integer('total_games').notNull(),
+		totalWins: integer('total_wins').notNull(),
+		totalLosses: integer('total_losses').notNull(),
+		totalKills: integer('total_kills').notNull(),
+		totalDeaths: integer('total_deaths').notNull(),
+		totalAssists: integer('total_assists').notNull(),
+		totalKnocks: integer('total_knocks').notNull(),
+		totalScore: integer('total_score').notNull(),
+		totalDamage: integer('total_damage').notNull(),
+		winRate: real('win_rate').notNull(),
+		kd: real('kd').notNull(),
+		averageScore: real('average_score').notNull(),
+		averageDamage: real('average_damage').notNull(),
+		superstringPower: real('superstring_power').notNull(),
 
-	// Metadata
-	snapshotDate: integer('snapshot_date', { mode: 'timestamp_ms' }).notNull(),
-	reason: text('reason', { enum: PLAYER_STATS_UPDATE_REASONS }).notNull(),
-	createdAt: integer('created_at', { mode: 'timestamp_ms' })
-		.notNull()
-		.default(sql`(unixepoch() * 1000)`)
-});
+		// Metadata
+		snapshotDate: integer('snapshot_date', { mode: 'timestamp_ms' }).notNull(),
+		reason: text('reason', { enum: PLAYER_STATS_UPDATE_REASONS }).notNull(),
+		createdAt: integer('created_at', { mode: 'timestamp_ms' })
+			.notNull()
+			.default(sql`(unixepoch() * 1000)`)
+	},
+	(t) => [
+		index('idx_pcsh_player').on(t.playerId),
+		index('idx_pcsh_character').on(t.characterId),
+		index('idx_pcsh_snapshot').on(t.snapshotDate),
+		index('idx_pcsh_player_character').on(t.playerId, t.characterId),
+		index('idx_pcsh_player_snapshot').on(t.playerId, t.snapshotDate)
+	]
+);
 
 export type PlayerStats = typeof playerStats.$inferSelect;
 export type PlayerCharacterStats = typeof playerCharacterStats.$inferSelect;

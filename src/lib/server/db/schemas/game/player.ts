@@ -1,4 +1,4 @@
-import { primaryKey, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { primaryKey, sqliteTable, text, index } from 'drizzle-orm/sqlite-core';
 import { user } from '../auth/user';
 import { relations } from 'drizzle-orm';
 import { gameAccount } from './game-account';
@@ -14,14 +14,19 @@ export const player = sqliteTable('player', {
 	nationality: text('nationality').$type<TCountryCode>(),
 	avatar: text('avatar'),
 	userId: text('user_id').references(() => user.id)
-});
+}, (t) => [
+	index('idx_player_user').on(t.userId),
+	index('idx_player_nationality').on(t.nationality)
+]);
 
 export const playerAlias = sqliteTable('player_alias', {
 	playerId: text('player_id')
 		.notNull()
 		.references(() => player.id),
 	alias: text('alias').notNull()
-});
+}, (t) => [
+	index('idx_pa_player').on(t.playerId)
+]);
 
 export const playerAdditionalNationality = sqliteTable(
 	'player_additional_nationality',
@@ -31,7 +36,11 @@ export const playerAdditionalNationality = sqliteTable(
 			.references(() => player.id),
 		nationality: text('nationality').notNull().$type<TCountryCode>()
 	},
-	(t) => [primaryKey({ columns: [t.playerId, t.nationality] })]
+	(t) => [
+		primaryKey({ columns: [t.playerId, t.nationality] }),
+		index('idx_pan_player').on(t.playerId),
+		index('idx_pan_nationality').on(t.nationality)
+	]
 );
 
 export type Player = typeof player.$inferSelect;

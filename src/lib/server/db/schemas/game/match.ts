@@ -17,7 +17,10 @@ export const match = sqliteTable(
 		format: text('format'),
 		stageId: integer('stage_id')
 	},
-	(t) => [check('format', sql`${t.format} IN ('BO1', 'BO3', 'BO5')`)]
+	(t) => [
+		check('format', sql`${t.format} IN ('BO1', 'BO3', 'BO5')`),
+		index('idx_match_stage').on(t.stageId)
+	]
 );
 
 export const matchTeam = sqliteTable(
@@ -68,7 +71,9 @@ export const game = sqliteTable('game', {
 		.notNull(),
 	duration: integer('duration').notNull(),
 	winner: integer('winner').notNull()
-});
+}, (t) => [
+	index('idx_game_match').on(t.matchId)
+]);
 
 export const gameTeam = sqliteTable(
 	'game_team',
