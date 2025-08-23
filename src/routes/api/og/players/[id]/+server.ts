@@ -100,6 +100,15 @@ export const GET: RequestHandler = async ({ params, url }) => {
 			if (processed) avatarURL = processed;
 		}
 
+		let avatarImageBase64: string | null = null;
+		try {
+			const fetchedAvatarImage = await fetch(avatarURL);
+			const avatarImage = await fetchedAvatarImage.blob();
+			avatarImageBase64 = Buffer.from(await avatarImage.arrayBuffer()).toString('base64');
+		} catch (error) {
+			console.error(`[API][OG][Players] Failed to fetch avatar image: ${error}`);
+		}
+
 		// Nationality names from country codes
 		const nationalityNames = (player.nationalities || []).join(', ');
 
@@ -161,7 +170,9 @@ export const GET: RequestHandler = async ({ params, url }) => {
 								style="display: flex; flex-direction: column; width: 240px; height: 240px; border-radius: 100%; overflow: hidden; box-shadow: 0 10px 36px rgba(0,0,0,0.4)"
 							>
 								<img
-									src="${avatarURL}"
+									src="${avatarImageBase64
+										? `data:image/png;base64,${avatarImageBase64}`
+										: avatarURL}"
 									width="240"
 									height="240"
 									style="display: flex; object-fit: cover; width: 240px; height: 240px; background: black;"
