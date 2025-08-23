@@ -410,13 +410,24 @@
 	let showBracketEdit = $state(false);
 	let errorMessage = $state('');
 	let successMessage = $state('');
-	let editingGame = $state<{
+
+	type EditingGame = {
 		game?: {
 			id: number;
 			matchId: string;
 			mapId: string;
 			duration: number;
 			winner: number;
+			playerScores: GamePlayerScore[];
+			teams: {
+				teamId: string;
+				position: number;
+				score: number;
+			}[];
+			vods: GameVod[];
+			map: {
+				id: GameMap;
+			};
 		}; // For editing, undefined for new
 		matchId: string;
 		teams: [
@@ -453,7 +464,9 @@
 				winner: number;
 			}>;
 		};
-	} | null>(null);
+	};
+
+	let editingGame = $state<EditingGame | null>(null);
 	$inspect('[admin/matches] editingGame', editingGame);
 
 	let deletingGame = $state<{ game: any; matchId: string } | null>(null);
@@ -462,7 +475,25 @@
 	function openGameModal(
 		match: (typeof data.stages)[number]['matches'][number],
 		eventId: string,
-		game?: any
+		game?:
+			| {
+					id: number;
+					matchId: string;
+					mapId: string;
+					duration: number;
+					winner: number;
+					playerScores: GamePlayerScore[];
+					teams: {
+						teamId: string;
+						position: number;
+						score: number;
+					}[];
+					vods: GameVod[];
+					map: {
+						id: GameMap;
+					};
+			  }
+			| undefined
 	) {
 		action = game ? 'editGame' : 'newGame';
 		actionParams = game ? { gameId: game.id } : null;

@@ -7,7 +7,7 @@
 	import GameJsonExport from './GameJsonExport.svelte';
 	import GameVodEdit from './GameVodEdit.svelte';
 	import type { GameParticipant } from './+page.server';
-	import type { GamePlayerScore } from '$lib/server/db/schemas';
+	import type { GamePlayerScore, GameVod } from '$lib/server/db/schemas';
 	import type { Character } from '$lib/data/game';
 	import { CHARACTERS, MAP_NAMES, MAPS } from '$lib/data/game';
 	import IconTrophy from '~icons/icon-park-solid/trophy';
@@ -26,7 +26,20 @@
 		onCancel: () => void;
 		onSuccess: () => void;
 		data: {
-			game?: any;
+			game?: {
+				id: number;
+				matchId: string;
+				mapId: string;
+				duration: number;
+				winner: number;
+				teams: {
+					teamId: string;
+					position: number;
+					score: number;
+				}[];
+				playerScores: GamePlayerScore[];
+				vods: GameVod[];
+			};
 			matchId: string;
 			teams: [
 				{ id: string; name: string; logo?: string | null } | null,
@@ -136,7 +149,9 @@
 
 	$inspect('[admin/matches/GameEdit] teamData', teamData);
 
-	let playerScoresA: GamePlayerScore[] = $state(
+	let playerScoresA: (Omit<GamePlayerScore, 'id' | 'gameId' | 'accountId'> & {
+		accountId: number | null;
+	})[] = $state(
 		data.game?.playerScores?.filter((ps: GamePlayerScore) => ps.teamId === teamData[0].teamId) ??
 			Array(5)
 				.fill(null)
@@ -151,7 +166,7 @@
 					deaths: 0,
 					assists: 0,
 					damage: 0,
-					accountId: '',
+					accountId: null,
 					teamId: teamData[0].teamId
 				}))
 	);
@@ -170,7 +185,7 @@
 					deaths: 0,
 					assists: 0,
 					damage: 0,
-					accountId: '',
+					accountId: null,
 					teamId: teamData[1].teamId
 				}))
 	);
@@ -193,7 +208,7 @@
 		errorMessage = '';
 		try {
 			const formData = new FormData();
-			formData.append('id', data.game.id);
+			formData.append('id', data.game.id.toString());
 			const res = await fetch('?/deleteGame', { method: 'POST', body: formData });
 			if (res.ok) {
 				onSuccess();
@@ -377,7 +392,7 @@
 					team: 'A' | 'B',
 					firstHalfSide: 'attacker' | 'defender' | 'unknown',
 					ps: {
-						accountId: number;
+						accountId: number | null;
 						player: string;
 						characterFirstHalf: string | null;
 						characterSecondHalf: string | null;
@@ -395,7 +410,7 @@
 				)}
 					<div class="flex flex-col gap-1 rounded bg-slate-900 p-2">
 						<AccountIdCombobox
-							value={ps.accountId}
+							value={ps.accountId ?? ''}
 							options={new Map(
 								Array.from(compiledGameAccountIDMaps[team === 'A' ? 0 : 1].entries()).map(
 									([accountId, roster]) => {
@@ -550,15 +565,23 @@
 								CHARACTERS.filter(
 									(char) =>
 										!playerScoresA.some(
-											(ps: GamePlayerScore, i: number) =>
-												i !== idx && ps.player && ps.characterFirstHalf === char
+											(
+												ps: Omit<GamePlayerScore, 'id' | 'gameId' | 'accountId'> & {
+													accountId: number | null;
+												},
+												i: number
+											) => i !== idx && ps.player && ps.characterFirstHalf === char
 										)
 								),
 								CHARACTERS.filter(
 									(char) =>
 										!playerScoresA.some(
-											(ps: GamePlayerScore, i: number) =>
-												i !== idx && ps.player && ps.characterSecondHalf === char
+											(
+												ps: Omit<GamePlayerScore, 'id' | 'gameId' | 'accountId'> & {
+													accountId: number | null;
+												},
+												i: number
+											) => i !== idx && ps.player && ps.characterSecondHalf === char
 										)
 								)
 							)}
@@ -591,15 +614,23 @@
 								CHARACTERS.filter(
 									(char) =>
 										!playerScoresB.some(
-											(ps: GamePlayerScore, i: number) =>
-												i !== idx && ps.player && ps.characterFirstHalf === char
+											(
+												ps: Omit<GamePlayerScore, 'id' | 'gameId' | 'accountId'> & {
+													accountId: number | null;
+												},
+												i: number
+											) => i !== idx && ps.player && ps.characterFirstHalf === char
 										)
 								),
 								CHARACTERS.filter(
 									(char) =>
 										!playerScoresB.some(
-											(ps: GamePlayerScore, i: number) =>
-												i !== idx && ps.player && ps.characterSecondHalf === char
+											(
+												ps: Omit<GamePlayerScore, 'id' | 'gameId' | 'accountId'> & {
+													accountId: number | null;
+												},
+												i: number
+											) => i !== idx && ps.player && ps.characterSecondHalf === char
 										)
 								)
 							)}
@@ -689,11 +720,12 @@
 		</div>
 	</form>
 
+	<!-- TODO: Fix types, don't use as -->
 	{#if showImportModal}
 		<GameJsonInput
 			showModal={showImportModal}
-			{playerScoresA}
-			{playerScoresB}
+			playerScoresA={playerScoresA as GamePlayerScore[]}
+			playerScoresB={playerScoresB as GamePlayerScore[]}
 			{teamData}
 			{compiledGameAccountIDMaps}
 			bind:formData
@@ -704,8 +736,8 @@
 	{#if showExportModal}
 		<GameJsonExport
 			showModal={showExportModal}
-			{playerScoresA}
-			{playerScoresB}
+			playerScoresA={playerScoresA as GamePlayerScore[]}
+			playerScoresB={playerScoresB as GamePlayerScore[]}
 			{teamData}
 			{formData}
 			onClose={() => (showExportModal = false)}

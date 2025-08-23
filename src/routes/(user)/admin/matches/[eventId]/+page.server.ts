@@ -557,7 +557,15 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			console.info(
 				`[Admin][Matches][Event][Load] Matches query took ${performance.now() - matchesQueryStart}ms (matches=${matchCount}, games=${gameCount}, playerScores=${scoreCount}, vods=${vodCount})`
 			);
-			return result;
+			return result.map((m) => ({
+				...m,
+				games: m.games?.map((g) => ({
+					...g,
+					teams: g.gameTeams,
+					playerScores: g.gamePlayerScores,
+					vods: g.gameVods
+				}))
+			}));
 		});
 
 	const stageRoundsQueryStart = performance.now();
