@@ -221,7 +221,9 @@ export const GET: RequestHandler = async ({ params, url }) => {
 								</div>
 								<div style="${statBoxStyle}">
 									<div style="${statBoxLabelStyle}">${m.win_rate(undefined, { locale })}</div>
-									<div style="${winRateValueStyle}">${(stats.winRate || 0).toFixed(1)}%</div>
+									<div style="${winRateValueStyle}">
+										${((stats.winRate ?? 0) * 100).toFixed(1)}%
+									</div>
 								</div>
 								<div style="${statBoxStyle}">
 									<div style="${statBoxLabelStyle}">${m.kd_ratio(undefined, { locale })}</div>

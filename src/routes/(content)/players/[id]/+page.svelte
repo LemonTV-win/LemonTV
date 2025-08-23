@@ -250,7 +250,7 @@
 					<div class="rounded-lg bg-slate-800/50 p-4">
 						<div class="text-sm text-gray-400">{m.win_rate()}</div>
 						<div class="text-2xl font-bold text-white">
-							{data.playerStats.winRate.toFixed(1)}%
+							{((data.playerStats.winRate ?? 0) * 100).toFixed(1)}%
 						</div>
 					</div>
 					<div class="rounded-lg bg-slate-800/50 p-4">
