@@ -468,19 +468,39 @@ export async function getServerPlayerMapStats(playerId: string): Promise<
 	// Get all account IDs for this player
 	const accountIds = playerAccounts.map((acc) => acc.accountId);
 
-	// Find all games where this player participated with map and team information
+	// Compute player's stable team index per match (reassigned position)
+	const teamIndexRows = await db
+		.select({
+			matchId: schema.match.id,
+			playerTeamIndex: sql<number>`min(${schema.gameTeam.position})`.as('player_team_index')
+		})
+		.from(schema.gamePlayerScore)
+		.innerJoin(schema.game, eq(schema.gamePlayerScore.gameId, schema.game.id))
+		.innerJoin(schema.match, eq(schema.game.matchId, schema.match.id))
+		.innerJoin(
+			schema.gameTeam,
+			and(
+				eq(schema.gamePlayerScore.teamId, schema.gameTeam.teamId),
+				eq(schema.gameTeam.gameId, schema.game.id)
+			)
+		)
+		.where(inArray(schema.gamePlayerScore.accountId, accountIds))
+		.groupBy(schema.match.id);
+
+	const playerTeamIndexByMatch = new Map<string, number>(
+		teamIndexRows.map((r) => [r.matchId, r.playerTeamIndex ?? 0])
+	);
+
+	// Find all games where this player participated with map and winner information
 	const playerGames = await db
 		.select({
 			gameId: schema.game.id,
 			mapId: schema.game.mapId,
 			winner: schema.game.winner,
-			teamId: schema.gamePlayerScore.teamId,
-			accountId: schema.gamePlayerScore.accountId,
-			teamPosition: schema.gameTeam.position
+			matchId: schema.game.matchId
 		})
 		.from(schema.game)
 		.innerJoin(schema.gamePlayerScore, eq(schema.game.id, schema.gamePlayerScore.gameId))
-		.innerJoin(schema.gameTeam, eq(schema.gamePlayerScore.teamId, schema.gameTeam.teamId))
 		.where(inArray(schema.gamePlayerScore.accountId, accountIds));
 
 	// Group games by map and calculate wins/losses
@@ -499,8 +519,9 @@ export async function getServerPlayerMapStats(playerId: string): Promise<
 
 		const stats = mapStats.get(game.mapId)!;
 
-		// winner: 0 = team A won, 1 = team B won
-		const playerWon = game.winner === game.teamPosition;
+		// winner: 0 = team A won, 1 = team B won; compare to stable match team index
+		const teamIdx = playerTeamIndexByMatch.get(game.matchId) ?? 0;
+		const playerWon = game.winner === teamIdx;
 
 		if (playerWon) {
 			stats.wins++;
@@ -678,7 +699,13 @@ export async function getServerPlayerDetailedMatches(
 		.from(schema.gamePlayerScore)
 		.innerJoin(schema.game, eq(schema.gamePlayerScore.gameId, schema.game.id))
 		.innerJoin(schema.match, eq(schema.game.matchId, schema.match.id))
-		.innerJoin(schema.gameTeam, eq(schema.gamePlayerScore.teamId, schema.gameTeam.teamId))
+		.innerJoin(
+			schema.gameTeam,
+			and(
+				eq(schema.gamePlayerScore.teamId, schema.gameTeam.teamId),
+				eq(schema.gameTeam.gameId, schema.game.id)
+			)
+		)
 		.where(inArray(schema.gamePlayerScore.accountId, accountIds))
 		.groupBy(schema.match.id);
 
@@ -862,18 +889,38 @@ export async function getServerPlayerWins(playerId: string): Promise<number> {
 	// Get all account IDs for this player
 	const accountIds = playerAccounts.map((acc) => acc.accountId);
 
+	// Compute player's stable team index per match (reassigned position)
+	const teamIndexRows = await db
+		.select({
+			matchId: schema.match.id,
+			playerTeamIndex: sql<number>`min(${schema.gameTeam.position})`.as('player_team_index')
+		})
+		.from(schema.gamePlayerScore)
+		.innerJoin(schema.game, eq(schema.gamePlayerScore.gameId, schema.game.id))
+		.innerJoin(schema.match, eq(schema.game.matchId, schema.match.id))
+		.innerJoin(
+			schema.gameTeam,
+			and(
+				eq(schema.gamePlayerScore.teamId, schema.gameTeam.teamId),
+				eq(schema.gameTeam.gameId, schema.game.id)
+			)
+		)
+		.where(inArray(schema.gamePlayerScore.accountId, accountIds))
+		.groupBy(schema.match.id);
+
+	const playerTeamIndexByMatch = new Map<string, number>(
+		teamIndexRows.map((r) => [r.matchId, r.playerTeamIndex ?? 0])
+	);
+
 	// Find all games where this player participated with winner information
 	const playerGames = await db
 		.select({
 			gameId: schema.game.id,
 			winner: schema.game.winner,
-			teamId: schema.gamePlayerScore.teamId,
-			accountId: schema.gamePlayerScore.accountId,
-			teamPosition: schema.gameTeam.position
+			matchId: schema.game.matchId
 		})
 		.from(schema.game)
 		.innerJoin(schema.gamePlayerScore, eq(schema.game.id, schema.gamePlayerScore.gameId))
-		.innerJoin(schema.gameTeam, eq(schema.gamePlayerScore.teamId, schema.gameTeam.teamId))
 		.where(inArray(schema.gamePlayerScore.accountId, accountIds));
 
 	// Count wins
@@ -886,23 +933,11 @@ export async function getServerPlayerWins(playerId: string): Promise<number> {
 			continue;
 		}
 
-		// Find which team the player was on in this game
-		const playerTeam = playerGames.find(
-			(gt) => gt.gameId === game.gameId && accountIds.includes(gt.accountId)
-		);
-
-		if (playerTeam) {
-			// Check if player's team won using the actual team position
-			// winner: 0 = team A won, 1 = team B won
-			const playerWon = game.winner === playerTeam.teamPosition;
-
-			if (playerWon) {
-				wins++;
-			}
-
-			// Mark this game as processed
-			processedGames.add(game.gameId);
-		}
+		// Compare vs stable team index for the match
+		const teamIdx = playerTeamIndexByMatch.get(game.matchId) ?? 0;
+		const playerWon = game.winner === teamIdx;
+		if (playerWon) wins++;
+		processedGames.add(game.gameId);
 	}
 
 	console.info('[Players] Player', playerId, 'has', wins, 'wins');
@@ -1655,18 +1690,47 @@ export async function getServerPlayerSuperstringPower(
 	// Get all account IDs for this player
 	const accountIds = playerAccounts.map((acc) => acc.accountId);
 
+	// Compute player's stable team index per match (reassigned position)
+	const teamIndexRows = await db
+		.select({
+			matchId: schema.match.id,
+			playerTeamIndex: sql<number>`min(${schema.gameTeam.position})`.as('player_team_index')
+		})
+		.from(schema.gamePlayerScore)
+		.innerJoin(schema.game, eq(schema.gamePlayerScore.gameId, schema.game.id))
+		.innerJoin(schema.match, eq(schema.game.matchId, schema.match.id))
+		.innerJoin(
+			schema.gameTeam,
+			and(
+				eq(schema.gamePlayerScore.teamId, schema.gameTeam.teamId),
+				eq(schema.gameTeam.gameId, schema.game.id)
+			)
+		)
+		.where(
+			and(
+				inArray(schema.gamePlayerScore.accountId, accountIds),
+				or(
+					eq(schema.gamePlayerScore.characterFirstHalf, character),
+					eq(schema.gamePlayerScore.characterSecondHalf, character)
+				)
+			)
+		)
+		.groupBy(schema.match.id);
+
+	const playerTeamIndexByMatch = new Map<string, number>(
+		teamIndexRows.map((r) => [r.matchId, r.playerTeamIndex ?? 0])
+	);
+
 	// Find all games where this player used the specific character with game results
 	const playerGames = await db
 		.select({
 			score: schema.gamePlayerScore.score,
 			gameId: schema.gamePlayerScore.gameId,
-			teamId: schema.gamePlayerScore.teamId,
 			winner: schema.game.winner,
-			teamPosition: schema.gameTeam.position
+			matchId: schema.game.matchId
 		})
 		.from(schema.gamePlayerScore)
 		.innerJoin(schema.game, eq(schema.game.id, schema.gamePlayerScore.gameId))
-		.innerJoin(schema.gameTeam, eq(schema.gamePlayerScore.teamId, schema.gameTeam.teamId))
 		.where(
 			and(
 				inArray(schema.gamePlayerScore.accountId, accountIds),
@@ -1691,9 +1755,9 @@ export async function getServerPlayerSuperstringPower(
 			continue;
 		}
 
-		// Check if player's team won using the actual team position
-		// winner: 0 = team A won, 1 = team B won
-		const playerWon = game.winner === game.teamPosition;
+		// winner: 0 = team A won, 1 = team B won; compare to stable match team index
+		const teamIdx = playerTeamIndexByMatch.get(game.matchId) ?? 0;
+		const playerWon = game.winner === teamIdx;
 
 		if (playerWon) {
 			wins++;
