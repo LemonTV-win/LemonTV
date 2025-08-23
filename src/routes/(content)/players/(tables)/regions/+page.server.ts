@@ -23,6 +23,8 @@ export const load: PageServerLoad = async ({ locals: { user } }) => {
 		.where(isNotNull(schema.player.nationality))
 		.groupBy(schema.player.nationality);
 
+	console.info('[/players/regions] regionRankingData:', regionRankingData);
+
 	return {
 		regionRankingData
 	};

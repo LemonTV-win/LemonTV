@@ -32,6 +32,16 @@
 	// Calculate country statistics
 	let countryStats = $derived(
 		data.toSorted((a, b) => {
+			// Log the actual values being passed to countryCodeToLocalizedName
+			if (sortBy === 'region-asc' || sortBy === 'region-desc') {
+				const aName = a.nationality ? countryCodeToLocalizedName(a.nationality, getLocale()) : '';
+				const bName = b.nationality ? countryCodeToLocalizedName(b.nationality, getLocale()) : '';
+				console.log('[RegionRanking] countryCodeToLocalizedName results:', {
+					a: { nationality: a.nationality, result: aName },
+					b: { nationality: b.nationality, result: bName }
+				});
+			}
+
 			if (sortBy === 'region-asc') {
 				return (
 					countryCodeToLocalizedName(a.nationality ?? '', getLocale())?.localeCompare(
@@ -138,7 +148,11 @@
 					<td class="px-4 py-2">
 						<div class="flex items-center gap-2">
 							<NationalityFlag nationality={stat.nationality ?? ''} />
-							<span>{countryCodeToLocalizedName(stat.nationality ?? '', getLocale())}</span>
+							<span
+								>{stat.nationality
+									? countryCodeToLocalizedName(stat.nationality, getLocale())
+									: ''}</span
+							>
 						</div>
 					</td>
 					<td class="px-4 py-2 text-gray-300">{stat.totalPlayers}</td>
