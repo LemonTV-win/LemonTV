@@ -226,7 +226,7 @@
 	}
 
 	function addRound() {
-		console.log('[BracketEdit] add round');
+		console.info('[BracketEdit] add round');
 		const newRoundIndex = rounds.length;
 		const maxRoundID = Math.max(...rounds.map((r) => r.id || 0));
 

@@ -14,7 +14,6 @@
 	const options = getContext<Option[]>('options');
 
 	onMount(() => {
-		console.log('options', options);
 		options.push({
 			value,
 			label,

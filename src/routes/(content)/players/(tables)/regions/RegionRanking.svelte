@@ -36,10 +36,6 @@
 			if (sortBy === 'region-asc' || sortBy === 'region-desc') {
 				const aName = a.nationality ? countryCodeToLocalizedName(a.nationality, getLocale()) : '';
 				const bName = b.nationality ? countryCodeToLocalizedName(b.nationality, getLocale()) : '';
-				console.log('[RegionRanking] countryCodeToLocalizedName results:', {
-					a: { nationality: a.nationality, result: aName },
-					b: { nationality: b.nationality, result: bName }
-				});
 			}
 
 			if (sortBy === 'region-asc') {

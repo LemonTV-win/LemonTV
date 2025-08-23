@@ -94,8 +94,6 @@
 			return;
 		}
 
-		console.log('[Admin][Teams][TeamEdit] Form data:', [...formData.entries()]);
-
 		return async ({ result }) => {
 			if (result.type === 'success') {
 				onCancel();

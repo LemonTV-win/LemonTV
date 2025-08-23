@@ -13,7 +13,7 @@ export const load: PageServerLoad = async ({ params }) => {
 		throw error(404, 'Organizer not found');
 	}
 
-	console.log(`[Content][Organizer][${organizer.name}] Organizer ID: ${organizer.id}`);
+	console.info(`[Content][Organizer][${organizer.name}] Organizer ID: ${organizer.id}`);
 
 	// Direct Drizzle query for essential event data only
 	const serverEvents = await db
@@ -30,7 +30,7 @@ export const load: PageServerLoad = async ({ params }) => {
 		.innerJoin(table.eventOrganizer, eq(table.eventOrganizer.eventId, table.event.id))
 		.where(eq(table.eventOrganizer.organizerId, organizer.id));
 
-	console.log(
+	console.info(
 		`[Content][Organizer][${organizer.name}] Found ${serverEvents.length} server events`,
 		serverEvents.map((e) => ({ id: e.id, name: e.name }))
 	);

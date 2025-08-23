@@ -486,7 +486,7 @@ function parseFormData(formData: FormData) {
 // };
 
 export const load: PageServerLoad = async ({ locals, params }) => {
-	console.log('[Admin][Matches][Event][Load] Starting...');
+	console.info('[Admin][Matches][Event][Load] Starting...');
 	const startTime = performance.now();
 
 	// --- 1. Permissions and Basic Setup ---
@@ -703,7 +703,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			}
 		>
 	);
-	console.log(`[Admin][Matches][Event][Load] Total load time: ${performance.now() - startTime}ms`);
+	console.info(`[Admin][Matches][Event][Load] Total load time: ${performance.now() - startTime}ms`);
 
 	return {
 		event: processedEvent,
@@ -1708,7 +1708,7 @@ const GAME_ACTIONS = {
 
 		const formData = await request.formData();
 		if (dev) {
-			console.log(JSON.stringify(Object.fromEntries(formData.entries()), null, 2));
+			console.info(JSON.stringify(Object.fromEntries(formData.entries()), null, 2));
 		}
 		const gameData = {
 			matchId: formData.get('matchId') as string,
@@ -1922,7 +1922,7 @@ const GAME_ACTIONS = {
 
 		const formData = await request.formData();
 		if (dev) {
-			console.log(JSON.stringify(Object.fromEntries(formData.entries()), null, 2));
+			console.info(JSON.stringify(Object.fromEntries(formData.entries()), null, 2));
 		}
 		const gameData = {
 			id: parseInt(formData.get('id') as string),

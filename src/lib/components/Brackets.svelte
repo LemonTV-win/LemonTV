@@ -92,11 +92,6 @@
 
 	$inspect('container', container);
 
-	// $inspect('positions', positions);
-	$effect(() => {
-		console.log('positions', positions);
-	});
-
 	let matchRefs = new SvelteMap<string, HTMLElement>();
 
 	onMount(() => {
@@ -176,7 +171,6 @@
 			class="match"
 			onmouseenter={() => {
 				tooltipID = match.id;
-				console.log('Tooltip triggered for match:', match.id, 'Games:', match.games?.length);
 			}}
 			onmouseleave={() => (tooltipID = undefined)}
 		>

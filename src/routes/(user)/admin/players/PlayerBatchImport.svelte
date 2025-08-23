@@ -602,7 +602,7 @@ const players: PlayerImportData[] = [
 			});
 
 			const result = deserialize(await response.text());
-			console.log('Import result:', result); // Debug log
+			console.info('[Admin][Players][BatchImport] Import result:', result); // Debug log
 
 			if (result.type === 'failure') {
 				importError = (result.data?.error as string) || 'Failed to import players';
@@ -610,7 +610,6 @@ const players: PlayerImportData[] = [
 				// Close the dialog and show success message
 				handleClose();
 				const createdCount = result.data?.createdCount || 0;
-				console.log('Created count:', createdCount); // Debug log
 				onSuccess(`Successfully imported ${createdCount} players`);
 			} else {
 				importError = 'Unexpected response from server';

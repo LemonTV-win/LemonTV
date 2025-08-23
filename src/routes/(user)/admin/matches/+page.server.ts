@@ -9,14 +9,14 @@ import { processImageURL } from '$lib/server/storage';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const startTime = Date.now();
-	console.log('[Admin][Matches][Load] Starting load function');
+	console.info('[Admin][Matches][Load] Starting load function');
 
 	const result = checkPermissions(locals, ['admin', 'editor']);
 	if (result.status === 'error') {
 		throw error(result.statusCode, result.error);
 	}
 
-	console.log('[Admin][Matches][Load] Starting events query');
+	console.info('[Admin][Matches][Load] Starting events query');
 	const queryStartTime = Date.now();
 
 	// Only load basic event information - no joins, no cartesian products
@@ -39,7 +39,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 		.orderBy(desc(table.event.createdAt));
 
 	const queryEndTime = Date.now();
-	console.log(
+	console.info(
 		`[Admin][Matches][Load] Events query completed in ${queryEndTime - queryStartTime}ms, returned ${events.length} rows`
 	);
 
@@ -101,12 +101,12 @@ export const load: PageServerLoad = async ({ locals }) => {
 	}
 
 	const statsEndTime = Date.now();
-	console.log(
+	console.info(
 		`[Admin][Matches][Load] Aggregated stats queries completed in ${statsEndTime - statsStartTime}ms`
 	);
 
 	const totalEndTime = Date.now();
-	console.log(`[Admin][Matches][Load] Total load function time: ${totalEndTime - startTime}ms`);
+	console.info(`[Admin][Matches][Load] Total load function time: ${totalEndTime - startTime}ms`);
 
 	const uniqueImageUrls = new Set<string>();
 

@@ -196,7 +196,7 @@
 			.writeText(exportData)
 			.then(() => {
 				// Could add a toast notification here
-				console.log('Data copied to clipboard');
+				console.info('Data copied to clipboard');
 			})
 			.catch((err) => {
 				console.error('Failed to copy to clipboard:', err);

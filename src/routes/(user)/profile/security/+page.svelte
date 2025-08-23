@@ -18,15 +18,15 @@
 			if (result.type === 'error') {
 				error = result.error?.message || m.error_occurred();
 				success = false;
-				console.log('error', error);
+				console.error('error', error);
 			} else if (result.type === 'success') {
 				error = null;
 				success = true;
-				console.log('success', success);
+				console.info('success', success);
 			} else if (result.type === 'failure') {
 				error = result.data?.error || m.failed_to_change_password();
 				success = false;
-				console.log('error', error);
+				console.error('error', error);
 			}
 		};
 	}

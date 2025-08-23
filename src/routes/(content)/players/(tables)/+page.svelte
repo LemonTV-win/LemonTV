@@ -11,9 +11,6 @@
 
 	let { data }: PageProps = $props();
 
-	console.log(`[/players] data:`, data);
-	console.log(`[/players] playersAgents keys:`, Object.keys(data.playersAgents || {}));
-	console.log(`[/players] players IDs:`, data.players?.map((p) => p.id) || []);
 	let selectedNationalities = $state<TCountryCode[]>(data.nationalities || []);
 	let selectedSuperstrings = $state<Character[]>(data.superstrings || []);
 
@@ -48,9 +45,6 @@
 
 	// Get unique nationalities and superstrings for filter options
 	let uniqueNationalities = $derived([...new Set(data.players.flatMap((p) => p.nationalities))]);
-	console.log(`[/players] uniqueNationalities:`, [
-		...new Set(data.players.flatMap((p) => p.nationalities))
-	]);
 	let uniqueSuperstrings = $derived([
 		...new Set(
 			Object.values(data.playersAgents)

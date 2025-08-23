@@ -690,7 +690,7 @@ const teams: TeamImportData[] = [
 			});
 
 			const result = deserialize(await response.text());
-			console.log('Import result:', result); // Debug log
+			console.info('[Admin][Teams][BatchImport] Import result:', result); // Debug log
 
 			if (result.type === 'failure') {
 				importError = (result.data?.error as string) || 'Failed to import teams';
@@ -698,7 +698,6 @@ const teams: TeamImportData[] = [
 				// Close the dialog and show success message
 				handleClose();
 				const createdCount = result.data?.createdCount || 0;
-				console.log('Created count:', createdCount); // Debug log
 				onSuccess(`Successfully imported ${createdCount} teams`);
 			} else {
 				importError = 'Unexpected response from server';
