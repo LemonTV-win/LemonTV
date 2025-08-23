@@ -189,7 +189,13 @@
 						{/each}
 					</td>
 					<td class="hidden flex-wrap gap-1 text-center align-middle sm:table-cell">
-						<PlayerFrequentAgents playerAgents={playersAgents[player.id ?? '']} {playerIndex} />
+						{#if playersAgents[player.id ?? ''] && playersAgents[player.id ?? ''].length > 0}
+							<PlayerFrequentAgents playerAgents={playersAgents[player.id ?? '']} {playerIndex} />
+						{:else}
+							<div class="flex items-center justify-center gap-1 py-2 text-gray-500">
+								<span class="text-xs">{m.no_data()}</span>
+							</div>
+						{/if}
 					</td>
 					<td class="px-4 py-1 text-center text-gray-300">{player.wins}</td>
 					<td class="px-4 py-1 text-center text-gray-300" title={m.rating() + ' ' + player.rating}>
