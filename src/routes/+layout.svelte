@@ -26,6 +26,7 @@
 	} from '$lib/consts';
 	import GameSelect from './GameSelect.svelte';
 	import LanguageSelect from './LanguageSelect.svelte';
+	import { buildOgImageUrl } from '$lib/seo';
 
 	let { data, children }: LayoutProps = $props();
 
@@ -71,6 +72,14 @@
 
 	let pageTitle = $derived(page.data.metadata?.title || `LemonTV – ${m.title_description()}`);
 	let pageDescription = $derived(page.data.metadata?.description || m['about.tagline']());
+	let ogImageUrl = $derived(
+		buildOgImageUrl({
+			title: pageTitle,
+			description: pageDescription,
+			url: `${SITE_CANONICAL_HOST}${page.url.pathname}`,
+			image: page.data.metadata?.image
+		})
+	);
 </script>
 
 <svelte:head>
@@ -86,15 +95,14 @@
 	<meta property="og:title" content={pageTitle} />
 	<meta property="og:description" content={pageDescription} />
 	<meta property="og:type" content="website" />
-	<!-- TODO: Generate og:image for sub pages such as Team / Player -->
-	<meta property="og:image" content="https://lemontv.win/screenshot.png" />
+	<meta property="og:image" content={ogImageUrl} />
 
 	<!-- Twitter Card -->
 	<meta property="twitter:card" content="summary_large_image" />
 	<meta property="twitter:title" content={pageTitle} />
 	<meta property="twitter:description" content={pageDescription} />
 	<meta property="twitter:creator" content="@mkpoli" />
-	<meta property="twitter:image" content="https://lemontv.win/screenshot.png" />
+	<meta property="twitter:image" content={ogImageUrl} />
 	<meta property="twitter:url" content={`${SITE_CANONICAL_HOST}${page.url.pathname}`} />
 
 	<!-- Schema.org Structured Data -->
