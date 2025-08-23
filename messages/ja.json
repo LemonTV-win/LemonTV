@@ -773,5 +773,11 @@
 				"no_settings_available": "設定が利用できません。このプレイヤーの設定をご存知でしたら、{linkStart}お問い合わせください{linkEnd}。"
 			}
 		}
+	},
+	"donation": {
+		"banner_title": "🍋 LemonTVを支援してください",
+		"banner_message": "こんにちは！LemonTV の創設者 mkpoli です ❤️。このファン運営サイトの維持には年間約 $1,200 かかっており、現在は私個人の負担です 💸🥺。役に立ったと感じたら、ご支援をご検討ください ☕！",
+		"banner_button": "Ko‑fi で支援する",
+		"banner_dismiss_title": "あとで考える"
 	}
 }

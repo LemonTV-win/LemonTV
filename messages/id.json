@@ -773,5 +773,11 @@
 				"no_settings_available": "Tidak ada pengaturan yang tersedia. Jika Anda mengetahui pengaturan pemain ini, silakan {linkStart}hubungi kami{linkEnd}."
 			}
 		}
+	},
+	"donation": {
+		"banner_title": "🍋 Dukung LemonTV",
+		"banner_message": "Halo! Saya mkpoli, pendiri LemonTV ❤️. Situs buatan komunitas ini membutuhkan sekitar $1.200/tahun untuk tetap online — saat ini dari kantong saya sendiri 💸🥺. Jika LemonTV bermanfaat, mohon pertimbangkan untuk mendukung ☕!",
+		"banner_button": "Dukung di Ko‑fi",
+		"banner_dismiss_title": "Nanti saja"
 	}
 }

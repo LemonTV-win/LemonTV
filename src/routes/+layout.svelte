@@ -136,10 +136,8 @@
 		>
 			<div class="mx-auto flex w-full max-w-5xl items-start gap-3 md:items-center">
 				<p class="flex-1 text-sm leading-snug md:text-base">
-					<strong class="font-semibold">🍋 Support LemonTV:</strong>
-					Hi! I'm mkpoli, the founder of LemonTV ❤️. This fan-run site costs about $1,200/year just to
-					keep online out of my own pocket 💸🥺. If you find it useful, please consider being a supporter
-					☕!
+					<strong class="font-semibold">{m['donation.banner_title']()}</strong>
+					{m['donation.banner_message']()}
 				</p>
 				<a
 					href="https://ko-fi.com/mkpoli/"
@@ -148,13 +146,13 @@
 					class="flex shrink-0 items-center gap-2 rounded-md bg-yellow-400 px-3 py-1.5 text-sm font-semibold text-black transition-colors hover:bg-yellow-300 focus:ring-2 focus:ring-yellow-300 focus:outline-none"
 				>
 					<SimpleIconsKofi class="h-4 w-4" />
-					Support on Ko‑fi
+					{m['donation.banner_button']()}
 				</a>
 				<button
 					class="ml-2 inline-flex cursor-pointer items-center rounded p-1 text-yellow-200 hover:bg-yellow-400/10 hover:text-yellow-100 focus:ring-2 focus:ring-yellow-300 focus:outline-none"
 					onclick={dismissDonationBanner}
-					aria-label="Dismiss donation banner"
-					title="Consider later"
+					aria-label={m['donation.banner_dismiss_title']()}
+					title={m['donation.banner_dismiss_title']()}
 				>
 					<MaterialSymbolsCloseRounded class="h-6 w-6" />
 				</button>

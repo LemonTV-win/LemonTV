@@ -779,5 +779,11 @@
 				"no_settings_available": "Nenhuma configuração disponível. Se você conhece as configurações deste jogador, por favor {linkStart}entre em contato conosco{linkEnd}."
 			}
 		}
+	},
+	"donation": {
+		"banner_title": "🍋 Apoie o LemonTV",
+		"banner_message": "Olá! Eu sou o mkpoli, fundador do LemonTV ❤️. Manter este site feito pela comunidade custa cerca de US$ 1.200 por ano — hoje do meu próprio bolso 💸🥺. Se o LemonTV for útil para você, considere apoiar ☕!",
+		"banner_button": "Apoiar no Ko‑fi",
+		"banner_dismiss_title": "Talvez depois"
 	}
 }

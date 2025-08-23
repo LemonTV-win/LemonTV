@@ -785,5 +785,11 @@
 	"archive": "Archive",
 	"highlights": "Highlights",
 	"analysis": "Analysis",
-	"avatar": "Avatar"
+	"avatar": "Avatar",
+	"donation": {
+		"banner_title": "🍋 Support LemonTV",
+		"banner_message": "Hi! I'm mkpoli, the founder of LemonTV ❤️. This fan-run site costs about $1,200/year just to keep online out of my own pocket 💸🥺. If you find it useful, please consider being a supporter ☕!",
+		"banner_button": "Support on Ko‑fi",
+		"banner_dismiss_title": "Consider later"
+	}
 }

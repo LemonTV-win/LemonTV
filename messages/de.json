@@ -779,5 +779,11 @@
 				"no_settings_available": "Keine Einstellungen verfügbar. Wenn Sie die Einstellungen dieses Spielers kennen, {linkStart}kontaktieren Sie uns bitte{linkEnd}."
 			}
 		}
+	},
+	"donation": {
+		"banner_title": "🍋 LemonTV unterstützen",
+		"banner_message": "Hi! Ich bin mkpoli, der Gründer von LemonTV ❤️. Diese von Fans betriebene Seite kostet rund 1.200 $ pro Jahr, um online zu bleiben – derzeit aus meiner eigenen Tasche 💸🥺. Wenn dir die Seite gefällt oder sie dir hilft, erwäge bitte, Unterstützer zu werden ☕!",
+		"banner_button": "Auf Ko‑fi unterstützen",
+		"banner_dismiss_title": "Vielleicht später"
 	}
 }

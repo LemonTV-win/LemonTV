@@ -773,5 +773,11 @@
 				"no_settings_available": "Không có cài đặt nào khả dụng. Nếu bạn biết cài đặt của người chơi này, vui lòng {linkStart}liên hệ với chúng tôi{linkEnd}."
 			}
 		}
+	},
+	"donation": {
+		"banner_title": "🍋 Ủng hộ LemonTV",
+		"banner_message": "Xin chào! Mình là mkpoli, người sáng lập LemonTV ❤️. Duy trì trang web do cộng đồng vận hành này tốn khoảng $1.200/năm — hiện do mình tự chi 💸🥺. Nếu thấy hữu ích, hãy cân nhắc ủng hộ nhé ☕!",
+		"banner_button": "Ủng hộ trên Ko‑fi",
+		"banner_dismiss_title": "Để sau"
 	}
 }
