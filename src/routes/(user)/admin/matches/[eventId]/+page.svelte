@@ -921,10 +921,12 @@
 					<tbody>
 						{#each getSortedMatches(stage.matches) as match (match.id)}
 							<tr class="border-b border-gray-700 hover:bg-gray-700/50">
+								<!-- Match ID -->
 								<td class="min-w-max px-4 py-1 whitespace-nowrap">
 									<a
 										href="/matches/{match.id}"
-										class="text-xs text-gray-300 transition-colors hover:text-yellow-500"
+										class="inline-block max-w-[8ch] overflow-hidden text-xs text-ellipsis text-gray-300 transition-colors hover:text-yellow-500"
+										title={match.id}
 									>
 										{match.id}
 									</a>
