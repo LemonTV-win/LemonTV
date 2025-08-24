@@ -60,20 +60,22 @@ export type MatchMap = typeof matchMap.$inferSelect;
 
 // #region Game
 
-export const game = sqliteTable('game', {
-	id: integer('id').primaryKey(),
-	matchId: text('match_id')
-		.references(() => match.id)
-		.notNull(),
-	mapId: text('map_id')
-		.$type<GameMap>()
-		.references(() => map.id)
-		.notNull(),
-	duration: integer('duration').notNull(),
-	winner: integer('winner').notNull()
-}, (t) => [
-	index('idx_game_match').on(t.matchId)
-]);
+export const game = sqliteTable(
+	'game',
+	{
+		id: integer('id').primaryKey(),
+		matchId: text('match_id')
+			.references(() => match.id)
+			.notNull(),
+		mapId: text('map_id')
+			.$type<GameMap>()
+			.references(() => map.id)
+			.notNull(),
+		duration: integer('duration').notNull(),
+		winner: integer('winner').$type<0 | 1>().notNull()
+	},
+	(t) => [index('idx_game_match').on(t.matchId)]
+);
 
 export const gameTeam = sqliteTable(
 	'game_team',

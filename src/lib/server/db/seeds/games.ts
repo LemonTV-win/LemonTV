@@ -317,7 +317,7 @@ function generateGames() {
 		matchId: string;
 		mapId: GameMap;
 		duration: number;
-		winner: number;
+		winner: 0 | 1;
 	}[] = [];
 	const gameTeams: GameTeam[] = [];
 	const gamePlayerScores: GamePlayerScore[] = [];
@@ -366,7 +366,7 @@ function generateGames() {
 				matchId: match.id,
 				mapId: mapId as GameMap,
 				duration,
-				winner
+				winner: winner as 0 | 1
 			};
 			games.push(game);
 
