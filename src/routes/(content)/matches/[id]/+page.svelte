@@ -41,7 +41,11 @@
 	import { goto } from '$app/navigation';
 	import { MAP_IMAGES } from '$lib/data/game';
 
-	let currentMapID: number = $state(0);
+	function getMapIDFromGameId(gameId: number): number {
+		return data.match.games.findIndex((g) => g.id === gameId);
+	}
+
+	let currentMapID: number = $state(data.gameId ? getMapIDFromGameId(data.gameId) : 0);
 
 	function formatDuration(seconds: number): string {
 		const hrs = Math.floor(seconds / 3600);

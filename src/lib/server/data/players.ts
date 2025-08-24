@@ -659,7 +659,14 @@ type DetailedMatchesOut = {
 	format: string | null;
 	stageId: number | null;
 	teams: Array<{ team: string; teamId: string; score: number }>;
-	games: Array<{ winner: number }>;
+	games: Array<{
+		id: number;
+		winner: number;
+		mapId?: GameMap | null;
+		teamScores?: [number, number];
+		playerPlayed?: boolean;
+		playerStats?: { kills: number; deaths: number; assists: number; score: number; damage: number };
+	}>;
 	event: {
 		id: string;
 		slug: string;
@@ -738,9 +745,9 @@ export async function getServerPlayerDetailedMatches(
 		where: (m, { inArray }) => inArray(m.id, matchIds),
 		columns: { id: true, format: true, stageId: true },
 		with: {
-			// Games: we only need winner (and id in case we need a fallback)
+			// Games: winner, id, match and map
 			games: {
-				columns: { id: true, winner: true, matchId: true },
+				columns: { id: true, winner: true, matchId: true, mapId: true },
 				orderBy: (g, { asc: orderAsc }) => [orderAsc(g.id)]
 			},
 			// Teams on the match; may be empty for legacy data
@@ -776,6 +783,81 @@ export async function getServerPlayerDetailedMatches(
 			}
 		}
 	});
+
+	// Also compute per-game team scores and player scores
+	const allGameIds = matches.flatMap((mm) => mm.games?.map((g) => g.id) || []);
+	const gameTeamRows = await db
+		.select({
+			gameId: schema.gameTeam.gameId,
+			position: schema.gameTeam.position,
+			score: schema.gameTeam.score,
+			teamId: schema.gameTeam.teamId
+		})
+		.from(schema.gameTeam)
+		.where(inArray(schema.gameTeam.gameId, allGameIds));
+	const scoresByGame = new Map<number, [number, number]>();
+	const teamIdByGameAndPos = new Map<number, Map<number, string>>();
+	for (const r of gameTeamRows) {
+		const cur = scoresByGame.get(r.gameId) ?? [0, 0];
+		const pos = r.position === 1 ? 0 : r.position === 2 ? 1 : (r.position ?? 0);
+		cur[pos as 0 | 1] = r.score ?? 0;
+		scoresByGame.set(r.gameId, cur);
+		const mapPos = teamIdByGameAndPos.get(r.gameId) ?? new Map<number, string>();
+		mapPos.set(pos, r.teamId);
+		teamIdByGameAndPos.set(r.gameId, mapPos);
+	}
+
+	// Player score rows with full details
+	const psRows = await db
+		.select({
+			gameId: schema.gamePlayerScore.gameId,
+			teamId: schema.gamePlayerScore.teamId,
+			accountId: schema.gamePlayerScore.accountId,
+			player: schema.gamePlayerScore.player,
+			characterFirstHalf: schema.gamePlayerScore.characterFirstHalf,
+			characterSecondHalf: schema.gamePlayerScore.characterSecondHalf,
+			score: schema.gamePlayerScore.score,
+			damageScore: schema.gamePlayerScore.damageScore,
+			kills: schema.gamePlayerScore.kills,
+			knocks: schema.gamePlayerScore.knocks,
+			deaths: schema.gamePlayerScore.deaths,
+			assists: schema.gamePlayerScore.assists,
+			damage: schema.gamePlayerScore.damage
+		})
+		.from(schema.gamePlayerScore)
+		.where(inArray(schema.gamePlayerScore.gameId, allGameIds));
+
+	// Map player names to slugs
+	const uniqueNames = Array.from(new Set(psRows.map((r) => r.player)));
+	const nameToSlug = new Map<string, string>();
+	for (const nm of uniqueNames) {
+		const p = await getPlayer(nm);
+		if (p?.slug) nameToSlug.set(nm, p.slug);
+	}
+
+	const playerScoresByGame = new Map<number, { A: PlayerScore[]; B: PlayerScore[] }>();
+	for (const r of psRows) {
+		const posMap = teamIdByGameAndPos.get(r.gameId) ?? new Map<number, string>();
+		// Determine side by matching teamId to pos 0/1
+		let side: 0 | 1 = 0;
+		for (const [pos, tid] of posMap.entries()) if (tid === r.teamId) side = pos as 0 | 1;
+		const entry = playerScoresByGame.get(r.gameId) ?? { A: [], B: [] };
+		const ps: PlayerScore = {
+			accountId: r.accountId,
+			player: r.player,
+			playerSlug: nameToSlug.get(r.player),
+			characters: [r.characterFirstHalf as any, r.characterSecondHalf as any],
+			score: r.score,
+			damageScore: r.damageScore,
+			kills: r.kills,
+			knocks: r.knocks,
+			deaths: r.deaths,
+			assists: r.assists,
+			damage: r.damage
+		};
+		(side === 0 ? entry.A : entry.B).push(ps);
+		playerScoresByGame.set(r.gameId, entry);
+	}
 
 	// 4) Shape the response, with fallback to gameTeam when matchTeams are missing
 	//    To support fallback, we fetch gameTeam on demand for only those matches.
@@ -855,7 +937,10 @@ export async function getServerPlayerDetailedMatches(
 		const games = (m.games ?? []).map((g) => ({
 			id: g.id,
 			winner: g.winner,
-			playerPlayed: playedGameIds.has(g.id)
+			mapId: (g as any).mapId ?? null,
+			teamScores: scoresByGame.get(g.id),
+			playerPlayed: playedGameIds.has(g.id),
+			playerScores: playerScoresByGame.get(g.id)
 		}));
 
 		return {
