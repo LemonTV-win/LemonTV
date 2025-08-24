@@ -48,6 +48,7 @@
 				team: { name: string };
 				score: number;
 			}>;
+			games?: Array<{ id: number; winner: number; playerPlayed: boolean }>;
 		}>;
 	}
 
@@ -243,34 +244,30 @@
 			return dateA - dateB; // Sort by date ascending (oldest first)
 		});
 
-		const data = [];
+		const data = [] as any[];
 		let netWins = 0;
+		let counter = 0;
 
-		for (let i = 0; i < sortedMatches.length; i++) {
-			const match = sortedMatches[i];
-			const playerTeam = match.teams[match.playerTeamIndex];
-			const otherTeam = match.teams[1 - match.playerTeamIndex]; // Assuming 2 teams
-
-			// Determine if player's team won
-			const isWin = playerTeam.score > otherTeam.score;
-
-			if (isWin) {
-				netWins++;
-			} else {
-				netWins--;
+		for (const match of sortedMatches) {
+			const playerIdx = match.playerTeamIndex;
+			const games = match.games ?? [];
+			for (const g of games) {
+				if (!g.playerPlayed) continue;
+				const isWin = g.winner === playerIdx;
+				netWins += isWin ? 1 : -1;
+				counter++;
+				data.push({
+					game: counter,
+					netWins,
+					matchId: match.id,
+					date: match.event.date,
+					playerScore: isWin ? 1 : 0,
+					opponentScore: isWin ? 0 : 1
+				});
 			}
-
-			data.push({
-				game: i + 1,
-				netWins: netWins,
-				matchId: match.id,
-				date: match.event.date,
-				playerScore: playerTeam.score,
-				opponentScore: otherTeam.score
-			});
 		}
 
-		console.log('Generated real data:', data);
+		console.log('Generated real data (game-based):', data);
 		return data;
 	}
 

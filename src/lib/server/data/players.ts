@@ -716,6 +716,19 @@ export async function getServerPlayerDetailedMatches(
 		rows.map((r) => [r.matchId, r.playerTeamIndex ?? 0])
 	);
 
+	// Discover which specific games within those matches the player actually played
+	const playedGameRows = await db
+		.select({ gameId: schema.gamePlayerScore.gameId })
+		.from(schema.gamePlayerScore)
+		.innerJoin(schema.game, eq(schema.gamePlayerScore.gameId, schema.game.id))
+		.where(
+			and(
+				inArray(schema.game.matchId, matchIds),
+				inArray(schema.gamePlayerScore.accountId, accountIds)
+			)
+		);
+	const playedGameIds = new Set<number>(playedGameRows.map((g) => g.gameId));
+
 	// 3) Pull the whole graph for those matches in one relational query
 	// Relations assumed:
 	// - match.games (game records)
@@ -822,7 +835,7 @@ export async function getServerPlayerDetailedMatches(
 			const fb = gameTeamFallback[m.id] ?? [];
 			positions = fb.map((t) => t.position ?? 0);
 			teams = fb.map((t) => ({
-				team: t.teamId, // we don’t have names here; you can enrich if needed
+				team: t.teamId,
 				teamId: t.teamId,
 				score: t.score ?? 0
 			}));
@@ -839,7 +852,11 @@ export async function getServerPlayerDetailedMatches(
 		if (idx === -1 && positions.length > 0) idx = positions[0] <= rawPos ? 0 : 1; // fallback
 		if (idx < 0 || idx > 1) idx = 0;
 
-		const games = (m.games ?? []).map((g) => ({ winner: g.winner }));
+		const games = (m.games ?? []).map((g) => ({
+			id: g.id,
+			winner: g.winner,
+			playerPlayed: playedGameIds.has(g.id)
+		}));
 
 		return {
 			id: m.id,
@@ -862,7 +879,6 @@ export async function getServerPlayerDetailedMatches(
 						official: m.stage.event.official
 					}
 				: {
-						// very defensive default
 						id: '',
 						slug: '',
 						name: '',
