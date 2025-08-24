@@ -917,16 +917,16 @@
 										} | null;
 										position: number | null;
 									})}
-										<a
-											href={`/teams/${team.team?.id}`}
-											target="_blank"
-											class={[
-												'w-fit-content flex min-w-32 items-center gap-1.5 rounded-lg bg-gray-700/50 px-1.5 py-1.5',
-												'text-nowrap break-keep text-ellipsis',
-												'hover:bg-gray-700/90'
-											]}
-										>
-											{#if team}
+										{#if team}
+											<a
+												href={`/teams/${team.team?.id}`}
+												target="_blank"
+												class={[
+													'w-fit-content flex min-w-32 items-center gap-1.5 rounded-lg bg-gray-700/50 px-1.5 py-1.5',
+													'text-nowrap break-keep text-ellipsis',
+													'hover:bg-gray-700/90'
+												]}
+											>
 												<div class="h-6 w-6 rounded bg-gray-700/50">
 													{#if team.team?.logo}
 														<img
@@ -939,10 +939,12 @@
 													{/if}
 												</div>
 												<span class=" text-gray-300">{team.team?.name || m.tbd()}</span>
-											{:else}
+											</a>
+										{:else}
+											<div class="flex items-center gap-1.5">
 												<span class="text-gray-500">{m.tbd()}</span>
-											{/if}
-										</a>
+											</div>
+										{/if}
 									{/snippet}
 									<div class="flex items-center justify-center gap-4">
 										{@render teamBadge(match.matchTeams[0])}
