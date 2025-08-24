@@ -124,7 +124,10 @@
 				{/each}
 			</nav>
 			{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
-				<ContentActionLink href={`/admin/matches/${data.match.event.id}`} type="edit" />
+				<ContentActionLink
+					href={`/admin/matches/${data.match.event.id}?action=editMatch&id=${data.match.id}`}
+					type="edit"
+				/>
 			{/if}
 		</div>
 		<!-- Scoreboard -->
