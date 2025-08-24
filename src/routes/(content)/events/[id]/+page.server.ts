@@ -2,12 +2,12 @@ import type { PageServerLoad } from './$types';
 import type { Event, EventResult, EventParticipant } from '$lib/data/events';
 
 import { getEvent as getServerEvent } from '$lib/server/data/events';
-import { getTeams } from '$lib/server/data/teams';
 import { error } from '@sveltejs/kit';
 import type { Team } from '$lib/data/teams';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { eq, inArray } from 'drizzle-orm';
+import { processImageURL } from '$lib/server/storage';
 
 export const load: PageServerLoad = async ({ params }) => {
 	let event: Event | undefined = await getServerEvent(params.id);
@@ -16,41 +16,71 @@ export const load: PageServerLoad = async ({ params }) => {
 		throw error(404, 'Event not found');
 	}
 
-	const teams = await getTeams();
+	// Extract all team IDs that appear in this event (matches and participants)
+	const eventTeamIds = new Set<string>();
 
-	// Get all team abbreviations that appear in the event's matches
-	const matchTeamAbbrs = new Set<string>();
-	event.stages?.forEach((stage) => {
-		stage.matches?.forEach((match) => {
-			match.teams.forEach((team) => {
+	// Add teams from matches
+	for (const stage of event.stages) {
+		for (const match of stage.matches) {
+			for (const team of match.teams) {
 				if (team.team) {
-					matchTeamAbbrs.add(team.team.id);
+					eventTeamIds.add(team.team.id);
 				}
-			});
-		});
-	});
-
-	// Filter teams to include those that appear in matches or participants
-	const filteredTeams = teams.filter(
-		(t) =>
-			event &&
-			(matchTeamAbbrs.has(t.abbr || '') || event.participants.some((p) => p.team.id === t.id))
-	);
-
-	// Create team map with multiple keys for each team (abbr, id, name, slug)
-	const teamMap = new Map<string, Team & { logoURL: string | null }>();
-	filteredTeams.forEach((team) => {
-		// Add team with abbreviation as key
-		if (team.abbr) {
-			teamMap.set(team.abbr, team);
+			}
 		}
-		// Add team with ID as key
-		teamMap.set(team.id, team);
-		// Add team with name as key
-		teamMap.set(team.name, team);
-		// Add team with slug as key
-		teamMap.set(team.slug, team);
-	});
+	}
+
+	// Add teams from participants
+	for (const participant of event.participants) {
+		eventTeamIds.add(participant.team.id);
+	}
+
+	type EssentialTeam = {
+		id: string;
+		name: string;
+		slug: string;
+		abbr: string | null;
+		logo: string | null;
+		region: string | null;
+	};
+
+	// Fetch only the teams needed for this event
+	let teams: EssentialTeam[] = [];
+	if (eventTeamIds.size > 0) {
+		teams = await db
+			.select({
+				id: table.team.id,
+				name: table.team.name,
+				slug: table.team.slug,
+				abbr: table.team.abbr,
+				logo: table.team.logo,
+				region: table.team.region
+			})
+			.from(table.team)
+			.where(inArray(table.team.id, Array.from(eventTeamIds)));
+
+		const uniqueImageUrls = new Set<string>();
+		for (const team of teams) {
+			if (team.logo) {
+				uniqueImageUrls.add(team.logo);
+			}
+		}
+
+		const imageUrlMap = new Map<string, string>();
+		await Promise.all(
+			Array.from(uniqueImageUrls).map(async (imageUrl) => {
+				const processed = await processImageURL(imageUrl);
+				imageUrlMap.set(imageUrl, processed);
+			})
+		);
+
+		teams = teams.map((team) => ({
+			...team,
+			logoURL: imageUrlMap.get(team.logo || '') || team.logo
+		}));
+	}
+
+	const teamMap = new Map<string, EssentialTeam>(teams.map((team) => [team.id, team]));
 
 	// Fetch detailed game data for all matches in the event
 	const matchIds = new Set<string>();

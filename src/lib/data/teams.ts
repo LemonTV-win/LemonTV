@@ -19,8 +19,8 @@ export interface Team {
 	abbr: string | null;
 	region: string | null;
 	logo: string | null;
-	createdAt: string | null;
-	updatedAt: string | null;
+	createdAt?: string | null;
+	updatedAt?: string | null;
 	players?: TeamPlayer[];
 	wins?: number;
 	aliases?: string[];
