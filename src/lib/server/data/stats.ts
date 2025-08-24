@@ -1,7 +1,7 @@
 import { LibSQLDatabase } from 'drizzle-orm/libsql';
 import { and, eq, sql, inArray } from 'drizzle-orm';
 import * as math from 'mathjs';
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 import * as schema from '$lib/server/db/schemas';
 
 type RecalcOptions = {
