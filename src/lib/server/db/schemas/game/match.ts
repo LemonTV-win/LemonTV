@@ -72,7 +72,7 @@ export const game = sqliteTable(
 			.references(() => map.id)
 			.notNull(),
 		duration: integer('duration').notNull(),
-		winner: integer('winner').$type<0 | 1>().notNull()
+		winner: integer('winner').$type<0 | 1 | -1>().notNull() // 0 = Team A, 1 = Team B, -1 = Tie or no winner
 	},
 	(t) => [index('idx_game_match').on(t.matchId)]
 );

@@ -119,7 +119,7 @@
 		} else if (teamData[1].score > teamData[0].score) {
 			return '1'; // Team B wins
 		} else {
-			return ''; // Tie or no winner
+			return '-1'; // Tie or no winner
 		}
 	});
 
@@ -261,6 +261,8 @@
 				? 'defender'
 				: 'attacker'
 	);
+
+	$inspect('[admin/matches/GameEdit] calculatedWinner', calculatedWinner);
 </script>
 
 <Modal

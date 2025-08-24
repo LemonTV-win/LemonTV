@@ -1937,9 +1937,13 @@ const GAME_ACTIONS = {
 		if (dev) {
 			console.info(JSON.stringify(Object.fromEntries(formData.entries()), null, 2));
 		}
-		if (formData.get('winner') !== '0' && formData.get('winner') !== '1') {
+		if (
+			formData.get('winner') !== '0' &&
+			formData.get('winner') !== '1' &&
+			formData.get('winner') !== '-1'
+		) {
 			return fail(400, {
-				error: 'Winner must be either 0 or 1'
+				error: 'Winner must be either 0, 1, or -1'
 			});
 		}
 		const gameData = {
@@ -1947,7 +1951,7 @@ const GAME_ACTIONS = {
 			matchId: formData.get('matchId') as string,
 			mapId: formData.get('mapId') as string,
 			duration: parseInt(formData.get('duration') as string),
-			winner: parseInt(formData.get('winner') as string) as 0 | 1
+			winner: parseInt(formData.get('winner') as string) as 0 | 1 | -1
 		};
 
 		// Parse gameTeams
