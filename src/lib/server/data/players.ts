@@ -805,8 +805,10 @@ export async function getServerPlayerDetailedMatches(
 	const out: DetailedMatchesOut[] = matches.map((m) => {
 		const mt = m.matchTeams ?? [];
 		let teams: Array<{ team: string; teamId: string; score: number }>;
+		let positions: number[] = [];
 
 		if (mt.length > 0) {
+			positions = mt.map((t) => t.position ?? 0);
 			teams = mt.map((t) => {
 				const teamName =
 					t.team?.abbr || t.team?.name || t.team?.slug || t.team?.id || 'Unknown Team';
@@ -818,6 +820,7 @@ export async function getServerPlayerDetailedMatches(
 			});
 		} else {
 			const fb = gameTeamFallback[m.id] ?? [];
+			positions = fb.map((t) => t.position ?? 0);
 			teams = fb.map((t) => ({
 				team: t.teamId, // we don’t have names here; you can enrich if needed
 				teamId: t.teamId,
@@ -828,6 +831,13 @@ export async function getServerPlayerDetailedMatches(
 		// Normalize to exactly 2 teams
 		while (teams.length < 2) teams.push({ team: `Team ${teams.length + 1}`, teamId: '', score: 0 });
 		if (teams.length > 2) teams = teams.slice(0, 2);
+
+		// Map raw team position to 0-based index into the teams array
+		const rawPos = playerTeamIndexByMatch.get(m.id) ?? 0;
+		let idx = positions.indexOf(rawPos);
+		if (idx === -1) idx = positions.indexOf(rawPos - 1); // handle 1/2 -> 0/1
+		if (idx === -1 && positions.length > 0) idx = positions[0] <= rawPos ? 0 : 1; // fallback
+		if (idx < 0 || idx > 1) idx = 0;
 
 		const games = (m.games ?? []).map((g) => ({ winner: g.winner }));
 
@@ -865,7 +875,7 @@ export async function getServerPlayerDetailedMatches(
 						capacity: 0,
 						official: false
 					},
-			playerTeamIndex: playerTeamIndexByMatch.get(m.id) ?? 0
+			playerTeamIndex: idx
 		};
 	});
 
