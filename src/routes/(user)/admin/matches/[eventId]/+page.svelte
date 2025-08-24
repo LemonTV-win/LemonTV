@@ -27,6 +27,7 @@
 	import GameEdit from './GameEdit.svelte';
 	import type { GameParticipant } from './+page.server';
 	import { MAP_NAMES, type GameMap } from '$lib/data/game';
+	import IconParkSolidPeoples from '~icons/icon-park-solid/peoples';
 
 	let { data }: PageProps = $props();
 
@@ -931,28 +932,40 @@
 										{match.id}
 									</a>
 								</td>
+								<!-- Match Format -->
 								<td class="min-w-max px-4 py-1 whitespace-nowrap text-gray-300">{match.format}</td>
 								<!-- Matchup -->
 								<td class="px-4 py-1">
-									<div class="flex items-center justify-center gap-4">
+									{#snippet teamBadge(team: {
+										team: {
+											logo: string | null;
+											name: string | null;
+										} | null;
+										position: number | null;
+									})}
 										<div
-											class="flex min-w-32 items-center gap-2 rounded-lg bg-gray-700/50 px-3 py-1 text-nowrap break-keep"
+											class="w-fit-content flex min-w-32 items-center gap-1.5 rounded-lg bg-gray-700/50 px-1.5 py-1.5 text-nowrap break-keep text-ellipsis"
 										>
-											{#if match.matchTeams[0]}
-												{#if match.matchTeams[0].team?.logo}
-													<img
-														src={match.matchTeams[0].team.logo}
-														alt={match.matchTeams[0].team.name}
-														class="h-6 w-6 rounded"
-													/>
-												{/if}
-												<span class="text-gray-300"
-													>{match.matchTeams[0].team?.name || m.tbd()}</span
-												>
+											{#if team}
+												<div class="h-6 w-6 rounded bg-gray-700/50">
+													{#if team.team?.logo}
+														<img
+															src={team.team.logo}
+															alt={team.team.name}
+															class="h-6 w-6 rounded"
+														/>
+													{:else}
+														<IconParkSolidPeoples class="h-6 w-6" />
+													{/if}
+												</div>
+												<span class=" text-gray-300">{team.team?.name || m.tbd()}</span>
 											{:else}
 												<span class="text-gray-500">{m.tbd()}</span>
 											{/if}
 										</div>
+									{/snippet}
+									<div class="flex items-center justify-center gap-4">
+										{@render teamBadge(match.matchTeams[0])}
 										<div class="flex items-center gap-2">
 											<span
 												class="font-semibold {getScoreColor(
@@ -970,24 +983,7 @@
 												)}">{match.matchTeams[1]?.score ?? '-'}</span
 											>
 										</div>
-										<div
-											class="flex min-w-32 items-center gap-2 rounded-lg bg-gray-700/50 px-3 py-1 text-nowrap break-keep"
-										>
-											{#if match.matchTeams[1]}
-												{#if match.matchTeams[1].team?.logo}
-													<img
-														src={match.matchTeams[1].team.logo}
-														alt={match.matchTeams[1].team.name}
-														class="h-6 w-6 rounded"
-													/>
-												{/if}
-												<span class="text-gray-300"
-													>{match.matchTeams[1].team?.name || m.tbd()}</span
-												>
-											{:else}
-												<span class="text-gray-500">{m.tbd()}</span>
-											{/if}
-										</div>
+										{@render teamBadge(match.matchTeams[1])}
 									</div>
 								</td>
 								<!-- Maps -->
