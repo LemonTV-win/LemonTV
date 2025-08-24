@@ -48,7 +48,7 @@
 				team: { name: string };
 				score: number;
 			}>;
-			games?: Array<{ id: number; winner: number; playerPlayed: boolean }>;
+			games?: Array<{ id?: number; winner: number; playerPlayed?: boolean }>;
 		}>;
 	}
 

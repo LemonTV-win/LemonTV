@@ -170,6 +170,7 @@
 									teamIndex={match.playerTeamIndex}
 									event={match.event}
 									playerSlug={data.player.slug}
+									playerId={data.player.id}
 								/>
 							{/if}
 						{/each}

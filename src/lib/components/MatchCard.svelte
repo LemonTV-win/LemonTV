@@ -31,7 +31,7 @@
 				score: number;
 			}[];
 			games: {
-				id: number;
+				id?: number;
 				winner: number;
 				mapId?: GameMap | null;
 				teamScores?: [number, number];
@@ -116,7 +116,7 @@
 		<!-- Toggle anchored to bottom-right of the card -->
 		<button
 			type="button"
-			class="absolute top-1/2 right-2 z-20 flex h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md border border-white/10 bg-gray-800/80 p-1 text-gray-300 shadow-sm backdrop-blur transition-all duration-200 hover:scale-105 hover:text-white active:scale-95"
+			class="absolute right-2 bottom-2 z-20 flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border border-white/10 bg-gray-800/80 p-1 text-gray-300 shadow-sm backdrop-blur transition-all duration-200 hover:scale-105 hover:text-white active:scale-95"
 			onclick={() => (expanded = !expanded)}
 			aria-expanded={expanded}
 			aria-label={expanded ? 'Hide maps' : 'Show maps'}
