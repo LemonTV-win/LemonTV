@@ -827,14 +827,6 @@ export async function getServerPlayerDetailedMatches(
 		.from(schema.gamePlayerScore)
 		.where(inArray(schema.gamePlayerScore.gameId, allGameIds));
 
-	// Map player names to slugs
-	const uniqueNames = Array.from(new Set(psRows.map((r) => r.player)));
-	const nameToSlug = new Map<string, string>();
-	for (const nm of uniqueNames) {
-		const p = await getPlayer(nm);
-		if (p?.slug) nameToSlug.set(nm, p.slug);
-	}
-
 	const playerScoresByGame = new Map<number, { A: PlayerScore[]; B: PlayerScore[] }>();
 	for (const r of psRows) {
 		const posMap = teamIdByGameAndPos.get(r.gameId) ?? new Map<number, string>();
@@ -845,7 +837,6 @@ export async function getServerPlayerDetailedMatches(
 		const ps: PlayerScore = {
 			accountId: r.accountId,
 			player: r.player,
-			playerSlug: nameToSlug.get(r.player),
 			characters: [r.characterFirstHalf as any, r.characterSecondHalf as any],
 			score: r.score,
 			damageScore: r.damageScore,

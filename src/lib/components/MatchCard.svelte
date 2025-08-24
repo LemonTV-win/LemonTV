@@ -21,7 +21,6 @@
 		match,
 		teamIndex,
 		event,
-		playerSlug,
 		playerId,
 		playerAccountIds
 	}: {
@@ -56,7 +55,6 @@
 					capacity: number;
 					official: boolean;
 			  };
-		playerSlug?: string;
 		playerId?: string;
 		playerAccountIds?: number[];
 	} = $props();
@@ -161,8 +159,7 @@
 										: playerId
 											? (g.playerScores.A.find((ps) => String(ps.accountId) === String(playerId)) ??
 												g.playerScores.B.find((ps) => String(ps.accountId) === String(playerId)))
-											: (g.playerScores.A.find((ps) => ps.playerSlug === playerSlug) ??
-												g.playerScores.B.find((ps) => ps.playerSlug === playerSlug))}
+											: null}
 								{#if mine}
 									<div class="flex items-center gap-4 text-xs text-gray-200">
 										<span class="flex flex-col items-center gap-1">
