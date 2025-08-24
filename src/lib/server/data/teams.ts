@@ -582,8 +582,7 @@ export async function getServerTeamDetailedMatches(teamId: string): Promise<
 			matchId: table.game.matchId,
 			gameId: table.game.id,
 			winner: table.game.winner,
-			// mapId might not exist in schema typings; cast as any
-			mapId: (table.game as any).mapId
+			mapId: table.game.mapId
 		})
 		.from(table.game)
 		.where(inArray(table.game.matchId, matchIds));
@@ -634,6 +633,7 @@ export async function getServerTeamDetailedMatches(teamId: string): Promise<
 		const games = gamesByMatch.get(tm.matchId) || [];
 
 		// Ensure we have exactly 2 teams
+		const positions = teams.map((t) => t.position ?? 0);
 		let processedTeams = teams.map((team) => {
 			const teamName = (team.teamAbbr ||
 				team.teamName ||
@@ -659,6 +659,13 @@ export async function getServerTeamDetailedMatches(teamId: string): Promise<
 			processedTeams = processedTeams.slice(0, 2);
 		}
 
+		// Map raw team position to 0-based index into the processedTeams array
+		const rawPos = tm.teamPosition ?? 0;
+		let idx = positions.indexOf(rawPos);
+		if (idx === -1) idx = positions.indexOf(rawPos - 1); // handle 1/2 positions
+		if (idx === -1 && positions.length > 0) idx = positions[0] <= rawPos ? 0 : 1; // fallback
+		if (idx < 0 || idx > 1) idx = 0;
+
 		return {
 			id: tm.matchId,
 			format: tm.format,
@@ -671,9 +678,16 @@ export async function getServerTeamDetailedMatches(teamId: string): Promise<
 					const pos = gt.position === 1 ? 0 : gt.position === 2 ? 1 : (gt.position ?? 0);
 					scores[pos as 0 | 1] = gt.score ?? 0;
 				}
+				// Normalize winner to 0/1 using computed scores when available
+				let normalizedWinner = game.winner as number;
+				if (perGame.length >= 2) {
+					if (scores[0] !== scores[1]) {
+						normalizedWinner = scores[0] > scores[1] ? 0 : 1;
+					}
+				}
 				return {
 					id: game.gameId,
-					winner: game.winner,
+					winner: normalizedWinner,
 					mapId: (game as any).mapId ?? null,
 					teamScores: perGame.length ? scores : undefined
 				};
@@ -691,7 +705,7 @@ export async function getServerTeamDetailedMatches(teamId: string): Promise<
 				capacity: tm.eventCapacity,
 				official: tm.eventOfficial
 			},
-			teamIndex: tm.teamPosition || 0
+			teamIndex: idx
 		};
 	});
 
