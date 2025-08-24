@@ -943,14 +943,33 @@ export async function getServerPlayerDetailedMatches(
 			playerScores: playerScoresByGame.get(g.id)
 		}));
 
-		// Compute match score from game winners to ensure header winner is correct
-		let team0Wins = 0;
-		let team1Wins = 0;
-		for (const g of games) {
-			if (g.winner === 0) team0Wins++;
-			else if (g.winner === 1) team1Wins++;
+		// Compute match score aligned to the displayed teams using per-game teamIds
+		// Build a fast lookup from teamId -> index in the teams array
+		const teamIndexById = new Map<string, number>();
+		for (let i = 0; i < teams.length; i++) {
+			const tid = teams[i].teamId;
+			if (tid) teamIndexById.set(tid, i);
 		}
-		const finalTeams = teams.map((t, i) => ({ ...t, score: i === 0 ? team0Wins : team1Wins }));
+		const winsByTeamIndex: number[] = [0, 0];
+		for (const g of games) {
+			// Determine winner side for this game
+			let side: 0 | 1 | null = null;
+			const sc = g.teamScores;
+			if (sc && sc[0] !== sc[1]) {
+				side = sc[0] > sc[1] ? 0 : 1;
+			} else if (g.winner === 0 || g.winner === 1) {
+				side = g.winner as 0 | 1;
+			}
+			if (side === null) continue;
+			// Map side -> teamId using per-game mapping
+			const posMap = teamIdByGameAndPos.get(g.id) ?? new Map<number, string>();
+			const winTeamId = posMap.get(side) ?? '';
+			const teamIdx = teamIndexById.get(winTeamId);
+			if (teamIdx === 0 || teamIdx === 1) {
+				winsByTeamIndex[teamIdx]++;
+			}
+		}
+		const finalTeams = teams.map((t, i) => ({ ...t, score: winsByTeamIndex[i] ?? 0 }));
 
 		return {
 			id: m.id,
