@@ -971,6 +971,36 @@ export async function getServerPlayerDetailedMatches(
 		}
 		const finalTeams = teams.map((t, i) => ({ ...t, score: winsByTeamIndex[i] ?? 0 }));
 
+		// Derive player's actual team index by mapping their account to a teamId via per-game sides
+		const candidateTeamCounts = new Map<string, number>();
+		for (const g of games) {
+			const ps = playerScoresByGame.get(g.id);
+			if (!ps) continue;
+			const inA = ps.A.some((s) => accountIds.includes(s.accountId));
+			const inB = ps.B.some((s) => accountIds.includes(s.accountId));
+			let side: 0 | 1 | null = null;
+			if (inA) side = 0;
+			else if (inB) side = 1;
+			if (side === null) continue;
+			const posMap = teamIdByGameAndPos.get(g.id) ?? new Map<number, string>();
+			const tid = posMap.get(side);
+			if (!tid) continue;
+			candidateTeamCounts.set(tid, (candidateTeamCounts.get(tid) ?? 0) + 1);
+		}
+		let derivedIdx: number | undefined;
+		if (candidateTeamCounts.size > 0) {
+			let bestTid = '';
+			let bestCount = -1;
+			for (const [tid, cnt] of candidateTeamCounts.entries()) {
+				if (cnt > bestCount) {
+					bestTid = tid;
+					bestCount = cnt;
+				}
+			}
+			const maybeIdx = teamIndexById.get(bestTid);
+			if (maybeIdx === 0 || maybeIdx === 1) derivedIdx = maybeIdx;
+		}
+
 		return {
 			id: m.id,
 			format: m.format,
@@ -1004,7 +1034,7 @@ export async function getServerPlayerDetailedMatches(
 						capacity: 0,
 						official: false
 					},
-			playerTeamIndex: idx
+			playerTeamIndex: derivedIdx ?? idx
 		};
 	});
 
