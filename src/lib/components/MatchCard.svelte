@@ -22,7 +22,8 @@
 		teamIndex,
 		event,
 		playerSlug,
-		playerId
+		playerId,
+		playerAccountIds
 	}: {
 		match: {
 			id: string;
@@ -57,6 +58,7 @@
 			  };
 		playerSlug?: string;
 		playerId?: string;
+		playerAccountIds?: number[];
 	} = $props();
 
 	let expanded = $state(false);
@@ -152,11 +154,15 @@
 							</div>
 
 							{#if g.playerScores}
-								{@const mine = playerId
-									? (g.playerScores.A.find((ps) => String(ps.accountId) === String(playerId)) ??
-										g.playerScores.B.find((ps) => String(ps.accountId) === String(playerId)))
-									: (g.playerScores.A.find((ps) => ps.playerSlug === playerSlug) ??
-										g.playerScores.B.find((ps) => ps.playerSlug === playerSlug))}
+								{@const mine =
+									playerAccountIds && playerAccountIds.length > 0
+										? (g.playerScores.A.find((ps) => playerAccountIds.includes(ps.accountId)) ??
+											g.playerScores.B.find((ps) => playerAccountIds.includes(ps.accountId)))
+										: playerId
+											? (g.playerScores.A.find((ps) => String(ps.accountId) === String(playerId)) ??
+												g.playerScores.B.find((ps) => String(ps.accountId) === String(playerId)))
+											: (g.playerScores.A.find((ps) => ps.playerSlug === playerSlug) ??
+												g.playerScores.B.find((ps) => ps.playerSlug === playerSlug))}
 								{#if mine}
 									<div class="flex items-center gap-4 text-xs text-gray-200">
 										<span class="flex flex-col items-center gap-1">
