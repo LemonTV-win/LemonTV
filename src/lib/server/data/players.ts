@@ -934,14 +934,45 @@ export async function getServerPlayerDetailedMatches(
 		if (idx === -1 && positions.length > 0) idx = positions[0] <= rawPos ? 0 : 1; // fallback
 		if (idx < 0 || idx > 1) idx = 0;
 
-		const games = (m.games ?? []).map((g) => ({
-			id: g.id,
-			winner: g.winner,
-			mapId: (g as any).mapId ?? null,
-			teamScores: scoresByGame.get(g.id),
-			playerPlayed: playedGameIds.has(g.id),
-			playerScores: playerScoresByGame.get(g.id)
-		}));
+		const games = (m.games ?? []).map((g) => {
+			const origScores = scoresByGame.get(g.id);
+			const posMap = teamIdByGameAndPos.get(g.id) ?? new Map<number, string>();
+			// Normalize winner to match teams[] order
+			let winSide: 0 | 1 | null = null;
+			if (origScores && origScores[0] !== origScores[1]) {
+				winSide = origScores[0] > origScores[1] ? 0 : 1;
+			} else if (g.winner === 0 || g.winner === 1) {
+				winSide = g.winner as 0 | 1;
+			}
+			let normalizedWinner: 0 | 1 = 0;
+			if (winSide !== null) {
+				const winTeamId = posMap.get(winSide);
+				const mapped = winTeamId ? teams.findIndex((t) => t.teamId === winTeamId) : -1;
+				normalizedWinner = (mapped === 1 ? 1 : 0) as 0 | 1;
+			}
+			// Reorder scores to match teams[] order if available
+			let teamOrderedScores: [number, number] | undefined = undefined;
+			if (origScores) {
+				const indexForTeam = (teamIdx: number): 0 | 1 => {
+					const tid = teams[teamIdx]?.teamId;
+					for (const [side, id] of posMap.entries()) {
+						if (id === tid) return side as 0 | 1;
+					}
+					return 0;
+				};
+				const side0 = indexForTeam(0);
+				const side1 = indexForTeam(1);
+				teamOrderedScores = [origScores[side0] ?? 0, origScores[side1] ?? 0];
+			}
+			return {
+				id: g.id,
+				winner: normalizedWinner,
+				mapId: (g as any).mapId ?? null,
+				teamScores: teamOrderedScores ?? origScores,
+				playerPlayed: playedGameIds.has(g.id),
+				playerScores: playerScoresByGame.get(g.id)
+			};
+		});
 
 		// Compute match score aligned to the displayed teams using per-game teamIds
 		// Build a fast lookup from teamId -> index in the teams array
