@@ -136,7 +136,7 @@
 							{#each data.playerEvents as event (event.slug)}
 								{#if event}
 									<lib
-										class="grid grid-rows-[auto] gap-2 overflow-hidden rounded-sm bg-gray-800 shadow-2xl"
+										class="glass-card grid grid-rows-[auto] gap-2 overflow-hidden rounded-sm bg-gray-800 shadow-2xl"
 									>
 										<a href="/events/{event.slug}" class="contents">
 											<div class="flex h-full w-full items-center justify-center bg-gray-700">
