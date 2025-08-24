@@ -88,7 +88,7 @@
 			>
 			<span
 				class="mx-auto grid w-18 grid-cols-[1fr_auto_1fr] items-center justify-center gap-1 p-4 text-center text-white"
-				class:bg-green-500={(() => {
+				class:bg-yellow-500={(() => {
 					const winnerIndex = calculateWinnerIndex(match);
 					return winnerIndex !== null && winnerIndex === teamIndex + 1;
 				})()}
