@@ -172,7 +172,6 @@ export const load: PageServerLoad = async ({ params }) => {
 	// Transform match data to include team objects
 	event.stages?.forEach((stage) => {
 		stage.matches?.forEach((match) => {
-			// Transform match teams to include full team objects
 			const transformedTeams = match.teams.map((teamData) => {
 				if (!teamData) {
 					// Return a default team object if no team data
@@ -191,42 +190,33 @@ export const load: PageServerLoad = async ({ params }) => {
 					};
 				}
 
-				// Find the team object from the teamMap
-				const team = teamMap.get(teamData.team.id) || {
-					id: teamData.team.id,
-					name: teamData.team.name,
-					slug: teamData.team.slug,
-					abbr: teamData.team.abbr,
-					region: teamData.team.region,
-					logo: teamData.team.logo,
-					createdAt: teamData.team.createdAt,
-					updatedAt: teamData.team.updatedAt
-				};
+				// Find the team object from the teamMap to get additional data (logoURL, etc.)
+				const enrichedTeam = teamMap.get(teamData.team.id);
+				if (enrichedTeam) {
+					// Use enriched team data but preserve original score and order
+					return {
+						team: enrichedTeam,
+						score: teamData.score
+					};
+				}
 
+				// Fallback to original team data if not found in teamMap
 				return {
-					team,
+					team: {
+						id: teamData.team.id,
+						name: teamData.team.name,
+						slug: teamData.team.slug,
+						abbr: teamData.team.abbr,
+						region: teamData.team.region,
+						logo: teamData.team.logo,
+						createdAt: teamData.team.createdAt,
+						updatedAt: teamData.team.updatedAt
+					},
 					score: teamData.score
 				};
 			});
 
-			// Ensure we have exactly 2 teams
-			while (transformedTeams.length < 2) {
-				transformedTeams.push({
-					team: {
-						id: 'unknown',
-						name: 'Unknown Team',
-						slug: 'unknown',
-						abbr: 'UNK',
-						region: null,
-						logo: null,
-						createdAt: null,
-						updatedAt: null
-					},
-					score: 0
-				});
-			}
-
-			match.teams = transformedTeams.slice(0, 2) as [
+			match.teams = transformedTeams as [
 				(typeof transformedTeams)[0],
 				(typeof transformedTeams)[1]
 			];
@@ -234,29 +224,46 @@ export const load: PageServerLoad = async ({ params }) => {
 			// Transform game data to include team objects
 			match.games?.forEach((game) => {
 				// Find team objects for the game teams
-				const team1 = teamMap.get(game.teams[0]) || {
+				const teamA = teamMap.get(game.teams[0]) || {
 					id: game.teams[0],
 					name: game.teams[0],
 					slug: game.teams[0].toLowerCase(),
 					abbr: game.teams[0],
 					region: null,
-					logo: null,
-					createdAt: null,
-					updatedAt: null
+					logo: null
 				};
-				const team2 = teamMap.get(game.teams[1]) || {
+				const teamB = teamMap.get(game.teams[1]) || {
 					id: game.teams[1],
 					name: game.teams[1],
 					slug: game.teams[1].toLowerCase(),
 					abbr: game.teams[1],
 					region: null,
-					logo: null,
-					createdAt: null,
-					updatedAt: null
+					logo: null
 				};
 
-				// Update the game teams to use team objects instead of strings
-				(game as any).teams = [team1, team2];
+				// CRITICAL: Align game teams with match teams by team ID, not by gameTeam position
+				// The brackets component expects game.teams[0] to be the same team as match.teams[0]
+				// and game.teams[1] to be the same team as match.teams[1]
+				const matchTeamA = match.teams[0]?.team;
+				const matchTeamB = match.teams[1]?.team;
+
+				// Find which game team corresponds to which match team
+				const gameTeamA =
+					game.teams[0] === matchTeamA?.id
+						? teamA
+						: game.teams[1] === matchTeamA?.id
+							? teamB
+							: teamA;
+				const gameTeamB =
+					game.teams[0] === matchTeamB?.id
+						? teamA
+						: game.teams[1] === matchTeamB?.id
+							? teamB
+							: teamB;
+
+				// Update the game teams to use team objects in the correct order
+				// [match.teams[0], match.teams[1]] for consistent bracket display
+				(game as any).teams = [gameTeamA, gameTeamB];
 			});
 		});
 	});
