@@ -937,6 +937,23 @@ export async function getServerPlayerDetailedMatches(
 		const games = (m.games ?? []).map((g) => {
 			const origScores = scoresByGame.get(g.id);
 			const posMap = teamIdByGameAndPos.get(g.id) ?? new Map<number, string>();
+			const teamIdToPos = new Map<string, 0 | 1>();
+			for (const [side, tid] of posMap.entries()) {
+				if (tid) teamIdToPos.set(tid, side as 0 | 1);
+			}
+			const sideToTeamIdx = (side: 0 | 1): 0 | 1 => {
+				// Map via teamId first
+				for (let i = 0; i < teams.length; i++) {
+					const tid = teams[i]?.teamId;
+					if (tid && teamIdToPos.get(tid) === side) return i as 0 | 1;
+				}
+				// Fallback via positions mapping (positions[teamIdx] holds 1/2)
+				const idxByPos = positions.indexOf((side + 1) as number);
+				if (idxByPos === 0 || idxByPos === 1) return idxByPos as 0 | 1;
+				// Last resort, keep side as is
+				return side;
+			};
+
 			// Normalize winner to match teams[] order
 			let winSide: 0 | 1 | null = null;
 			if (origScores && origScores[0] !== origScores[1]) {
@@ -946,23 +963,17 @@ export async function getServerPlayerDetailedMatches(
 			}
 			let normalizedWinner: 0 | 1 = 0;
 			if (winSide !== null) {
-				const winTeamId = posMap.get(winSide);
-				const mapped = winTeamId ? teams.findIndex((t) => t.teamId === winTeamId) : -1;
-				normalizedWinner = (mapped === 1 ? 1 : 0) as 0 | 1;
+				normalizedWinner = sideToTeamIdx(winSide);
 			}
+
 			// Reorder scores to match teams[] order if available
 			let teamOrderedScores: [number, number] | undefined = undefined;
 			if (origScores) {
-				const indexForTeam = (teamIdx: number): 0 | 1 => {
-					const tid = teams[teamIdx]?.teamId;
-					for (const [side, id] of posMap.entries()) {
-						if (id === tid) return side as 0 | 1;
-					}
-					return 0;
-				};
-				const side0 = indexForTeam(0);
-				const side1 = indexForTeam(1);
-				teamOrderedScores = [origScores[side0] ?? 0, origScores[side1] ?? 0];
+				const idx0 = sideToTeamIdx(0);
+				const idx1 = sideToTeamIdx(1);
+				teamOrderedScores = [0, 0];
+				teamOrderedScores[idx0] = origScores[0] ?? 0;
+				teamOrderedScores[idx1] = origScores[1] ?? 0;
 			}
 			return {
 				id: g.id,
@@ -983,21 +994,9 @@ export async function getServerPlayerDetailedMatches(
 		}
 		const winsByTeamIndex: number[] = [0, 0];
 		for (const g of games) {
-			// Determine winner side for this game
-			let side: 0 | 1 | null = null;
-			const sc = g.teamScores;
-			if (sc && sc[0] !== sc[1]) {
-				side = sc[0] > sc[1] ? 0 : 1;
-			} else if (g.winner === 0 || g.winner === 1) {
-				side = g.winner as 0 | 1;
-			}
-			if (side === null) continue;
-			// Map side -> teamId using per-game mapping
-			const posMap = teamIdByGameAndPos.get(g.id) ?? new Map<number, string>();
-			const winTeamId = posMap.get(side) ?? '';
-			const teamIdx = teamIndexById.get(winTeamId);
-			if (teamIdx === 0 || teamIdx === 1) {
-				winsByTeamIndex[teamIdx]++;
+			// winner is already normalized to teams[] order above
+			if (g.winner === 0 || g.winner === 1) {
+				winsByTeamIndex[g.winner]++;
 			}
 		}
 		const finalTeams = teams.map((t, i) => ({ ...t, score: winsByTeamIndex[i] ?? 0 }));
