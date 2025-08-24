@@ -1,4 +1,4 @@
-import type { Character, Region } from '$lib/data/game';
+import type { Character, Region, GameMap } from '$lib/data/game';
 import { getServerPlayerKD, getServerPlayerAgents } from './players';
 
 import { db } from '$lib/server/db';
@@ -483,7 +483,10 @@ export async function getServerTeamDetailedMatches(teamId: string): Promise<
 			score: number;
 		}>;
 		games: Array<{
+			id?: number;
 			winner: number;
+			mapId?: GameMap | null;
+			teamScores?: [number, number];
 		}>;
 		// Event data
 		event: {
@@ -573,15 +576,37 @@ export async function getServerTeamDetailedMatches(teamId: string): Promise<
 	// Use match teams if available, otherwise use fallback teams
 	const allTeams = matchTeams.length > 0 ? matchTeams : fallbackTeams;
 
-	// Get all games for these matches
+	// Get all games for these matches (also try to include mapId if present)
 	const matchGames = await db
 		.select({
 			matchId: table.game.matchId,
 			gameId: table.game.id,
-			winner: table.game.winner
+			winner: table.game.winner,
+			// mapId might not exist in schema typings; cast as any
+			mapId: (table.game as any).mapId
 		})
 		.from(table.game)
 		.where(inArray(table.game.matchId, matchIds));
+
+	// Build scores for each game from game_team
+	const gameIds = matchGames.map((g) => g.gameId).filter(Boolean) as number[];
+	let gameTeamRows: Array<{
+		gameId: number;
+		position: number | null;
+		teamId: string | null;
+		score: number | null;
+	}> = [];
+	if (gameIds.length) {
+		gameTeamRows = await db
+			.select({
+				gameId: table.gameTeam.gameId,
+				position: table.gameTeam.position,
+				teamId: table.gameTeam.teamId,
+				score: table.gameTeam.score
+			})
+			.from(table.gameTeam)
+			.where(inArray(table.gameTeam.gameId, gameIds));
+	}
 
 	// Group teams by match ID
 	const teamsByMatch = new Map<string, typeof allTeams>();
@@ -639,9 +664,20 @@ export async function getServerTeamDetailedMatches(teamId: string): Promise<
 			format: tm.format,
 			stageId: tm.stageId,
 			teams: processedTeams,
-			games: games.map((game) => ({
-				winner: game.winner
-			})),
+			games: games.map((game) => {
+				const perGame = gameTeamRows.filter((gt) => gt.gameId === game.gameId);
+				const scores: [number, number] = [0, 0];
+				for (const gt of perGame) {
+					const pos = gt.position === 1 ? 0 : gt.position === 2 ? 1 : (gt.position ?? 0);
+					scores[pos as 0 | 1] = gt.score ?? 0;
+				}
+				return {
+					id: game.gameId,
+					winner: game.winner,
+					mapId: (game as any).mapId ?? null,
+					teamScores: perGame.length ? scores : undefined
+				};
+			}),
 			event: {
 				id: tm.eventId,
 				slug: tm.eventSlug,
