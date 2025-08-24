@@ -28,12 +28,6 @@
 		| 'player-asc'
 		| 'player-desc' = $state(data.sortBy || 'score-desc');
 
-	$effect(() => {
-		const url = new URL(window.location.href);
-		url.searchParams.set('sortBy', sortBy);
-		goto(url.toString(), { replaceState: true, noScroll: true, keepFocus: true });
-	});
-
 	import Scoreboard from './Scoreboard.svelte';
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
@@ -46,6 +40,16 @@
 	}
 
 	let currentMapID: number = $state(data.gameId ? getMapIDFromGameId(data.gameId) : 0);
+	let currentGameId: number | undefined = $derived(data.match.games[currentMapID]?.id);
+
+	$effect(() => {
+		const url = new URL(window.location.href);
+		url.searchParams.set('sortBy', sortBy);
+		if (currentGameId !== undefined) {
+			url.searchParams.set('game', currentGameId.toString());
+		}
+		goto(url.toString(), { replaceState: true, noScroll: true, keepFocus: true });
+	});
 
 	function formatDuration(seconds: number): string {
 		const hrs = Math.floor(seconds / 3600);
