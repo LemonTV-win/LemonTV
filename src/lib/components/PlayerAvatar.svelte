@@ -5,7 +5,14 @@
 	let {
 		player,
 		class: className = ''
-	}: { player: Player & { avatarURL?: string | null }; class: string } = $props();
+	}: {
+		player: {
+			avatarURL?: string | null;
+			avatar?: string | null;
+			name: string;
+		};
+		class: string;
+	} = $props();
 </script>
 
 <img
