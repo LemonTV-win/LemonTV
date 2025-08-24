@@ -171,6 +171,7 @@
 									event={match.event}
 									playerSlug={data.player.slug}
 									playerId={data.player.id}
+									playerAccountIds={data.player.gameAccounts?.map((a) => a.accountId)}
 								/>
 							{/if}
 						{/each}
