@@ -178,8 +178,8 @@
 				class={[
 					'flex w-full justify-between gap-4 border-b-1 border-l-4 border-gray-500 px-2 py-1',
 					isWinner(match, match.teams[0].team)
-						? 'border-l-yellow-400 font-semibold'
-						: 'border-l-red-500 text-gray-300'
+						? 'border-l-win font-semibold'
+						: 'border-l-loss text-gray-300'
 				]}
 				onmouseenter={() => (highlightingTeam = match.teams[0].team.id)}
 				onmouseleave={() => (highlightingTeam = undefined)}
@@ -194,8 +194,8 @@
 				class={[
 					'flex w-full justify-between gap-4 border-l-4 border-gray-500 px-2 py-1',
 					isWinner(match, match.teams[1].team)
-						? 'border-l-4 border-yellow-500 font-semibold'
-						: 'border-l-4 border-red-500 text-gray-300'
+						? 'border-win border-l-4 font-semibold'
+						: 'border-loss border-l-4 text-gray-300'
 				]}
 				onmouseenter={() => (highlightingTeam = match.teams[1].team.id)}
 				onmouseleave={() => (highlightingTeam = undefined)}
@@ -221,9 +221,9 @@
 							class:border-l={colIndex > 0}
 							class:border-t={rowIndex > 0}
 							class:bg-blue-500={result[0] === result[1]}
-							class:bg-yellow-500={(rowIndex === 0 && result[0] > result[1]) ||
+							class:bg-win={(rowIndex === 0 && result[0] > result[1]) ||
 								(rowIndex === 1 && result[0] < result[1])}
-							class:bg-red-500={(rowIndex === 0 && result[0] < result[1]) ||
+							class:bg-loss={(rowIndex === 0 && result[0] < result[1]) ||
 								(rowIndex === 1 && result[0] > result[1])}
 						>
 							{result[rowIndex]}
@@ -237,7 +237,7 @@
 
 <div
 	bind:this={container}
-	class="relative grid auto-rows-min justify-items-center gap-x-8 gap-y-0 overflow-x-auto bg-zinc-900 px-4 py-8"
+	class="relative grid auto-rows-min justify-items-center gap-x-8 gap-y-0 overflow-x-auto bg-zinc-900/60 px-4 py-8 backdrop-blur-xl"
 	style="grid-template-columns: repeat({gridColumns}, 1fr);"
 >
 	{#each rounds as r, i (`round-header-${i}`)}
