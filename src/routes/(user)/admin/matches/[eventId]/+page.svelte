@@ -617,17 +617,9 @@
 	function getScoreColor(score1: number | null, score2: number | null, position: number): string {
 		if (score1 === null || score2 === null) return 'text-gray-500';
 		if (position === 0) {
-			return score1 > score2
-				? 'text-yellow-500'
-				: score1 < score2
-					? 'text-red-500'
-					: 'text-gray-500';
+			return score1 > score2 ? 'text-win' : score1 < score2 ? 'text-loss' : 'text-draw';
 		} else {
-			return score2 > score1
-				? 'text-yellow-500'
-				: score2 < score1
-					? 'text-red-500'
-					: 'text-gray-500';
+			return score2 > score1 ? 'text-win' : score2 < score1 ? 'text-loss' : 'text-draw';
 		}
 	}
 

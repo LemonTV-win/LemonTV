@@ -10,6 +10,9 @@ body {
 @theme {
 	--font-emoji: 'Noto Color Emoji', sans-serif;
 	--font-saira: 'Saira Variable', 'Noto Sans CJK JP', 'Noto Sans CJK SC', sans-serif;
+	--color-win: #f59e0b;
+	--color-loss: #ef4444;
+	--color-draw: #6b7280;
 }
 
 @layer components {

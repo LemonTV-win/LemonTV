@@ -55,7 +55,7 @@
 					{/if}
 				</a>
 				<p class="mt-1 text-right text-gray-400 md:mt-0">
-					<span class="text-yellow-500">{wins}</span> wins
+					<span class="text-win">{wins}</span> wins
 				</p>
 			</div>
 		</div>

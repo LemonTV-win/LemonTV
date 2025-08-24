@@ -88,15 +88,15 @@
 			>
 			<span
 				class="mx-auto grid w-18 grid-cols-[1fr_auto_1fr] items-center justify-center gap-1 p-4 text-center text-white"
-				class:bg-yellow-500={(() => {
+				class:bg-win={(() => {
 					const winnerIndex = calculateWinnerIndex(match);
 					return winnerIndex !== null && winnerIndex === teamIndex + 1;
 				})()}
-				class:bg-red-500={(() => {
+				class:bg-loss={(() => {
 					const winnerIndex = calculateWinnerIndex(match);
 					return winnerIndex !== null && winnerIndex !== teamIndex + 1;
 				})()}
-				class:bg-gray-500={(() => {
+				class:bg-draw={(() => {
 					const winnerIndex = calculateWinnerIndex(match);
 					return winnerIndex === null; // Draw
 				})()}
@@ -203,12 +203,12 @@
 							<div class="flex items-center justify-end gap-3 text-sm">
 								{#if g.teamScores}
 									<span
-										class={`rounded px-2 py-0.5 text-white ${g.winner === teamIndex ? 'bg-yellow-600' : 'bg-red-600'}`}
+										class={`rounded px-2 py-0.5 text-white ${g.winner === teamIndex ? 'bg-win' : 'bg-loss'}`}
 									>
 										{g.teamScores[0] ?? 0} - {g.teamScores[1] ?? 0}
 									</span>
 								{/if}
-								<span class={g.winner === teamIndex ? 'text-yellow-400' : 'text-red-400'}>
+								<span class={g.winner === teamIndex ? 'text-win' : 'text-loss'}>
 									{g.winner === teamIndex ? m.wins_label() : m.losses_label()}
 								</span>
 							</div>
