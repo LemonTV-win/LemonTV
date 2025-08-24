@@ -943,11 +943,20 @@ export async function getServerPlayerDetailedMatches(
 			playerScores: playerScoresByGame.get(g.id)
 		}));
 
+		// Compute match score from game winners to ensure header winner is correct
+		let team0Wins = 0;
+		let team1Wins = 0;
+		for (const g of games) {
+			if (g.winner === 0) team0Wins++;
+			else if (g.winner === 1) team1Wins++;
+		}
+		const finalTeams = teams.map((t, i) => ({ ...t, score: i === 0 ? team0Wins : team1Wins }));
+
 		return {
 			id: m.id,
 			format: m.format,
 			stageId: m.stageId,
-			teams,
+			teams: finalTeams,
 			games,
 			event: m.stage?.event
 				? {
