@@ -150,7 +150,7 @@
 									<div class="h-6 w-10 rounded bg-gray-700"></div>
 									<span class="font-semibold">Unknown Map</span>
 								{/if}
-								<span class="text-gray-400 italic" class:hidden={!g.playerPlayed}>({m.dnp()})</span>
+								<span class="text-gray-400 italic" class:hidden={g.playerPlayed}>({m.dnp()})</span>
 							</div>
 
 							{#if g.playerScores}
