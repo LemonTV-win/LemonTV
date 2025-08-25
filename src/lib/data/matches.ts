@@ -22,6 +22,7 @@ export interface CompiledParticipant extends Participant {
 
 export interface Match {
 	id: string;
+	result?: [number, number];
 	teams: [Participant, Participant];
 	battleOf: 'BO1' | 'BO3' | 'BO5';
 	maps: {
