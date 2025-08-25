@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Organizer } from '$lib/data/organizer';
 
-	export let organizer: Pick<Organizer, 'slug' | 'name' | 'logo'> & { logoURL: string | null };
+	export let organizer: Pick<Organizer, 'slug' | 'name' | 'logo'> & { logoURL?: string };
 </script>
 
 <a

@@ -3,6 +3,7 @@ export interface Organizer {
 	slug: string;
 	name: string;
 	logo: string;
+	logoURL?: string;
 	description?: string;
 	url?: string;
 	type?: string;
