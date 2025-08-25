@@ -1,4 +1,4 @@
-import { LibSQLDatabase } from 'drizzle-orm/libsql';
+import type { LibSQLDatabase } from 'drizzle-orm/libsql';
 import { and, eq, sql, inArray } from 'drizzle-orm';
 import * as math from 'mathjs';
 import { randomUUID } from 'node:crypto';
