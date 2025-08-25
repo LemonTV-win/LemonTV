@@ -44,10 +44,6 @@
 			id: string;
 			event: { date: string };
 			playerTeamIndex: number;
-			teams: Array<{
-				team: { name: string };
-				score: number;
-			}>;
 			games?: Array<{ id?: number; winner: number; playerPlayed?: boolean }>;
 		}>;
 	}

@@ -20,7 +20,7 @@
 		match,
 		teamIndex,
 		event,
-		player
+		player = false
 	}: {
 		match: {
 			id: string;
@@ -61,7 +61,7 @@
 			  };
 		playerId?: string;
 		playerAccountIds?: number[];
-		player: boolean;
+		player?: boolean;
 	} = $props();
 
 	let expanded = $state(false);
