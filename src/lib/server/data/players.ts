@@ -404,10 +404,7 @@ export async function getPlayerAgents(playerId: string): Promise<[Character, num
 }
 
 type FrequentAgentsMap = Record<string, [Character, number][]>;
-export async function getPlayersAgents(
-	playerIds: string[],
-	topN = 3
-): Promise<FrequentAgentsMap> {
+export async function getPlayersAgents(playerIds: string[], topN = 3): Promise<FrequentAgentsMap> {
 	if (playerIds.length === 0) return {};
 	const ids = [...new Set(playerIds.map((x) => String(x).trim()))];
 	const pcs = schema.playerCharacterStats;
@@ -658,7 +655,7 @@ type DetailedMatchesOut = {
 	id: string;
 	format: string | null;
 	stageId: number | null;
-	teams: Array<{ team: string; teamId: string; score: number }>;
+	teams: Array<{ team: string | null; teamId: string | null; score: number }>;
 	games: Array<{
 		id: number;
 		winner: number;
@@ -683,10 +680,9 @@ type DetailedMatchesOut = {
 	playerTeamIndex: number;
 };
 
-export async function getPlayerDetailedMatches(
-	playerId: string
-): Promise<DetailedMatchesOut[]> {
-	// 1) Player’s accounts
+export async function getPlayerDetailedMatches(playerId: string): Promise<DetailedMatchesOut[]> {
+	// STEP 1: Simplified Discovery
+	// Get all game accounts for the player.
 	const accounts = await db
 		.select({ accountId: schema.gameAccount.accountId })
 		.from(schema.gameAccount)
@@ -695,373 +691,127 @@ export async function getPlayerDetailedMatches(
 	if (accounts.length === 0) return [];
 	const accountIds = accounts.map((a) => a.accountId);
 
-	// 2) Discover matches the player participated in + the player’s team index per match
-	//    We compute team index from game_team.position for any of that match’s games
-	//    (MIN position across games is stable for BOx).
-	const rows = await db
-		.select({
-			matchId: schema.match.id,
-			playerTeamIndex: sql<number>`min(${schema.gameTeam.position})`.as('player_team_index')
-		})
+	// Find all unique match IDs the player has a score in.
+	const matchIdRows = await db
+		.selectDistinct({ matchId: schema.game.matchId })
 		.from(schema.gamePlayerScore)
 		.innerJoin(schema.game, eq(schema.gamePlayerScore.gameId, schema.game.id))
-		.innerJoin(schema.match, eq(schema.game.matchId, schema.match.id))
-		.innerJoin(
-			schema.gameTeam,
-			and(
-				eq(schema.gamePlayerScore.teamId, schema.gameTeam.teamId),
-				eq(schema.gameTeam.gameId, schema.game.id)
-			)
-		)
-		.where(inArray(schema.gamePlayerScore.accountId, accountIds))
-		.groupBy(schema.match.id);
+		.where(inArray(schema.gamePlayerScore.accountId, accountIds));
 
-	if (rows.length === 0) return [];
+	if (matchIdRows.length === 0) return [];
+	const matchIds = matchIdRows.map((r) => r.matchId!);
 
-	const matchIds = rows.map((r) => r.matchId);
-	const playerTeamIndexByMatch = new Map<string, number>(
-		rows.map((r) => [r.matchId, r.playerTeamIndex ?? 0])
-	);
-
-	// Discover which specific games within those matches the player actually played
-	const playedGameRows = await db
-		.select({ gameId: schema.gamePlayerScore.gameId })
-		.from(schema.gamePlayerScore)
-		.innerJoin(schema.game, eq(schema.gamePlayerScore.gameId, schema.game.id))
-		.where(
-			and(
-				inArray(schema.game.matchId, matchIds),
-				inArray(schema.gamePlayerScore.accountId, accountIds)
-			)
-		);
-	const playedGameIds = new Set<number>(playedGameRows.map((g) => g.gameId));
-
-	// 3) Pull the whole graph for those matches in one relational query
-	// Relations assumed:
-	// - match.games (game records)
-	// - match.matchTeams (junction) with .team
-	// - match.stage (with .event)
+	// STEP 2: Complete Hydration with a Single Relational Query
+	// Fetch the entire data graph for all relevant matches at once.
 	const matches = await db.query.match.findMany({
 		where: (m, { inArray }) => inArray(m.id, matchIds),
 		columns: { id: true, format: true, stageId: true },
 		with: {
-			// Games: winner, id, match and map
-			games: {
-				columns: { id: true, winner: true, matchId: true, mapId: true },
-				orderBy: (g, { asc: orderAsc }) => [orderAsc(g.id)]
-			},
-			// Teams on the match; may be empty for legacy data
-			matchTeams: {
-				columns: { matchId: true, teamId: true, position: true, score: true },
-				with: {
-					team: {
-						columns: { id: true, name: true, slug: true, abbr: true }
-					}
-				},
-				orderBy: (mt, { asc: orderAsc }) => [orderAsc(mt.position)]
-			},
-			// Stage -> Event
 			stage: {
-				columns: { id: true, eventId: true },
 				with: {
-					event: {
-						columns: {
-							id: true,
-							slug: true,
-							name: true,
-							image: true,
-							date: true,
-							region: true,
-							format: true,
-							status: true,
-							server: true,
-							capacity: true,
-							official: true
-						}
-					}
+					event: true
+				}
+			},
+			matchTeams: {
+				with: {
+					team: true
+				},
+				orderBy: (mt, { asc }) => [asc(mt.position)]
+			},
+			// Fetch all game-level details directly.
+			games: {
+				orderBy: (g, { asc }) => [asc(g.id)],
+				with: {
+					map: { columns: { id: true } },
+					// This replaces the separate `gameTeamRows` query.
+					gameTeams: {
+						with: { team: { columns: { id: true, name: true } } },
+						orderBy: (gt, { asc }) => [asc(gt.position)]
+					},
+					// This replaces the separate `psRows` query.
+					gamePlayerScores: true
 				}
 			}
 		}
 	});
 
-	// Also compute per-game team scores and player scores
-	const allGameIds = matches.flatMap((mm) => mm.games?.map((g) => g.id) || []);
-	const gameTeamRows = await db
-		.select({
-			gameId: schema.gameTeam.gameId,
-			position: schema.gameTeam.position,
-			score: schema.gameTeam.score,
-			teamId: schema.gameTeam.teamId
-		})
-		.from(schema.gameTeam)
-		.where(inArray(schema.gameTeam.gameId, allGameIds));
-	const scoresByGame = new Map<number, [number, number]>();
-	const teamIdByGameAndPos = new Map<number, Map<number, string>>();
-	for (const r of gameTeamRows) {
-		const cur = scoresByGame.get(r.gameId) ?? [0, 0];
-		const pos = r.position === 1 ? 0 : r.position === 2 ? 1 : (r.position ?? 0);
-		cur[pos as 0 | 1] = r.score ?? 0;
-		scoresByGame.set(r.gameId, cur);
-		const mapPos = teamIdByGameAndPos.get(r.gameId) ?? new Map<number, string>();
-		mapPos.set(pos, r.teamId);
-		teamIdByGameAndPos.set(r.gameId, mapPos);
-	}
+	// STEP 3: Simplified Post-Processing
+	// All the data is now neatly nested, making transformations much easier.
+	const out: DetailedMatchesOut[] = matches.map((match) => {
+		// Determine the teams playing in the match (with fallback).
+		let teams = (match.matchTeams ?? []).map((mt) => ({
+			team: mt.team?.name ?? mt.teamId,
+			teamId: mt.team?.id ?? mt.teamId,
+			score: mt.score ?? 0
+		}));
 
-	// Player score rows with full details
-	const psRows = await db
-		.select({
-			gameId: schema.gamePlayerScore.gameId,
-			teamId: schema.gamePlayerScore.teamId,
-			accountId: schema.gamePlayerScore.accountId,
-			player: schema.gamePlayerScore.player,
-			characterFirstHalf: schema.gamePlayerScore.characterFirstHalf,
-			characterSecondHalf: schema.gamePlayerScore.characterSecondHalf,
-			score: schema.gamePlayerScore.score,
-			damageScore: schema.gamePlayerScore.damageScore,
-			kills: schema.gamePlayerScore.kills,
-			knocks: schema.gamePlayerScore.knocks,
-			deaths: schema.gamePlayerScore.deaths,
-			assists: schema.gamePlayerScore.assists,
-			damage: schema.gamePlayerScore.damage
-		})
-		.from(schema.gamePlayerScore)
-		.where(inArray(schema.gamePlayerScore.gameId, allGameIds));
-
-	const playerScoresByGame = new Map<number, { A: PlayerScore[]; B: PlayerScore[] }>();
-	for (const r of psRows) {
-		const posMap = teamIdByGameAndPos.get(r.gameId) ?? new Map<number, string>();
-		// Determine side by matching teamId to pos 0/1
-		let side: 0 | 1 = 0;
-		for (const [pos, tid] of posMap.entries()) if (tid === r.teamId) side = pos as 0 | 1;
-		const entry = playerScoresByGame.get(r.gameId) ?? { A: [], B: [] };
-		const ps: PlayerScore = {
-			accountId: r.accountId,
-			player: r.player,
-			characters: [r.characterFirstHalf as any, r.characterSecondHalf as any],
-			score: r.score,
-			damageScore: r.damageScore,
-			kills: r.kills,
-			knocks: r.knocks,
-			deaths: r.deaths,
-			assists: r.assists,
-			damage: r.damage
-		};
-		(side === 0 ? entry.A : entry.B).push(ps);
-		playerScoresByGame.set(r.gameId, entry);
-	}
-
-	// 4) Shape the response, with fallback to gameTeam when matchTeams are missing
-	//    To support fallback, we fetch gameTeam on demand for only those matches.
-	const needFallback = matches.filter((m) => (m.matchTeams?.length ?? 0) === 0).map((m) => m.id);
-	let gameTeamFallback: Record<string, { teamId: string; position: number; score: number }[]> = {};
-
-	if (needFallback.length > 0) {
-		const rows = await db
-			.select({
-				matchId: schema.game.matchId,
-				teamId: schema.gameTeam.teamId,
-				position: schema.gameTeam.position,
-				score: schema.gameTeam.score
-			})
-			.from(schema.game)
-			.innerJoin(schema.gameTeam, eq(schema.game.id, schema.gameTeam.gameId))
-			.where(inArray(schema.game.matchId, needFallback));
-
-		// Reduce to one entry per team per match; take MAX score across games (or last)
-		const byMatch = new Map<
-			string,
-			Map<string, { teamId: string; position: number; score: number }>
-		>();
-		for (const r of rows) {
-			const m = byMatch.get(r.matchId) ?? new Map();
-			const prev = m.get(r.teamId);
-			if (!prev || r.score > prev.score) {
-				m.set(r.teamId, { teamId: r.teamId, position: r.position, score: r.score ?? 0 });
-			}
-			byMatch.set(r.matchId, m);
-		}
-		gameTeamFallback = Object.fromEntries(
-			[...byMatch.entries()].map(([mid, teams]) => [
-				mid,
-				[...teams.values()].sort((a, b) => a.position - b.position)
-			])
-		);
-	}
-
-	const out: DetailedMatchesOut[] = matches.map((m) => {
-		const mt = m.matchTeams ?? [];
-		let teams: Array<{ team: string; teamId: string; score: number }>;
-		let positions: number[] = [];
-
-		if (mt.length > 0) {
-			positions = mt.map((t) => t.position ?? 0);
-			teams = mt.map((t) => {
-				const teamName =
-					t.team?.abbr || t.team?.name || t.team?.slug || t.team?.id || 'Unknown Team';
-				return {
-					team: teamName,
-					teamId: t.team?.id ?? t.teamId ?? '',
-					score: t.score ?? 0
-				};
-			});
-		} else {
-			const fb = gameTeamFallback[m.id] ?? [];
-			positions = fb.map((t) => t.position ?? 0);
-			teams = fb.map((t) => ({
-				team: t.teamId,
-				teamId: t.teamId,
-				score: t.score ?? 0
+		// Fallback if matchTeams is empty (for legacy data).
+		if (teams.length === 0 && match.games.length > 0) {
+			const firstGameTeams = match.games[0].gameTeams;
+			teams = firstGameTeams.map((gt) => ({
+				team: gt.team?.name ?? gt.teamId,
+				teamId: gt.team?.id ?? gt.teamId,
+				score: 0 // Match score is calculated later
 			}));
 		}
 
-		// Normalize to exactly 2 teams
-		while (teams.length < 2) teams.push({ team: `Team ${teams.length + 1}`, teamId: '', score: 0 });
-		if (teams.length > 2) teams = teams.slice(0, 2);
+		// Process each game within the match.
+		const games = match.games.map((game) => {
+			const playerStats = game.gamePlayerScores.find((ps) => accountIds.includes(ps.accountId));
 
-		// Map raw team position to 0-based index into the teams array
-		const rawPos = playerTeamIndexByMatch.get(m.id) ?? 0;
-		let idx = positions.indexOf(rawPos);
-		if (idx === -1) idx = positions.indexOf(rawPos - 1); // handle 1/2 -> 0/1
-		if (idx === -1 && positions.length > 0) idx = positions[0] <= rawPos ? 0 : 1; // fallback
-		if (idx < 0 || idx > 1) idx = 0;
+			const teamScores: [number, number] = [
+				game.gameTeams.find((gt) => gt.position === 0)?.score ?? 0,
+				game.gameTeams.find((gt) => gt.position === 1)?.score ?? 0
+			];
 
-		const games = (m.games ?? []).map((g) => {
-			const origScores = scoresByGame.get(g.id);
-			const posMap = teamIdByGameAndPos.get(g.id) ?? new Map<number, string>();
-			const teamIdToPos = new Map<string, 0 | 1>();
-			for (const [side, tid] of posMap.entries()) {
-				if (tid) teamIdToPos.set(tid, side as 0 | 1);
-			}
-			const sideToTeamIdx = (side: 0 | 1): 0 | 1 => {
-				// Map via teamId first
-				for (let i = 0; i < teams.length; i++) {
-					const tid = teams[i]?.teamId;
-					if (tid && teamIdToPos.get(tid) === side) return i as 0 | 1;
-				}
-				// Fallback via positions mapping (positions[teamIdx] holds 1/2)
-				const idxByPos = positions.indexOf((side + 1) as number);
-				if (idxByPos === 0 || idxByPos === 1) return idxByPos as 0 | 1;
-				// Last resort, keep side as is
-				return side;
-			};
-
-			// Normalize winner to match teams[] order
-			let winSide: 0 | 1 | null = null;
-			if (origScores && origScores[0] !== origScores[1]) {
-				winSide = origScores[0] > origScores[1] ? 0 : 1;
-			} else if (g.winner === 0 || g.winner === 1) {
-				winSide = g.winner as 0 | 1;
-			}
-			let normalizedWinner: 0 | 1 = 0;
-			if (winSide !== null) {
-				normalizedWinner = sideToTeamIdx(winSide);
-			}
-
-			// Reorder scores to match teams[] order if available
-			let teamOrderedScores: [number, number] | undefined = undefined;
-			if (origScores) {
-				const idx0 = sideToTeamIdx(0);
-				const idx1 = sideToTeamIdx(1);
-				teamOrderedScores = [0, 0];
-				teamOrderedScores[idx0] = origScores[0] ?? 0;
-				teamOrderedScores[idx1] = origScores[1] ?? 0;
-			}
 			return {
-				id: g.id,
-				winner: normalizedWinner,
-				mapId: (g as any).mapId ?? null,
-				teamScores: teamOrderedScores ?? origScores,
-				playerPlayed: playedGameIds.has(g.id),
-				playerScores: playerScoresByGame.get(g.id)
+				id: game.id,
+				winner: game.winner,
+				mapId: game.map?.id,
+				teamScores,
+				playerPlayed: !!playerStats,
+				playerStats: playerStats
+					? {
+							kills: playerStats.kills,
+							deaths: playerStats.deaths,
+							assists: playerStats.assists,
+							score: playerStats.score,
+							damage: playerStats.damage
+						}
+					: undefined
 			};
 		});
 
-		// Compute match score aligned to the displayed teams using per-game teamIds
-		// Build a fast lookup from teamId -> index in the teams array
-		const teamIndexById = new Map<string, number>();
-		for (let i = 0; i < teams.length; i++) {
-			const tid = teams[i].teamId;
-			if (tid) teamIndexById.set(tid, i);
-		}
-		const winsByTeamIndex: number[] = [0, 0];
-		for (const g of games) {
-			// winner is already normalized to teams[] order above
-			if (g.winner === 0 || g.winner === 1) {
-				winsByTeamIndex[g.winner]++;
-			}
-		}
-		const finalTeams = teams.map((t, i) => ({ ...t, score: winsByTeamIndex[i] ?? 0 }));
+		// Calculate final match score based on game wins.
+		const wins: [number, number] = [0, 0];
+		games.forEach((game) => {
+			if (game.winner === 0) wins[0]++;
+			if (game.winner === 1) wins[1]++;
+		});
+		teams.forEach((team, i) => (team.score = wins[i] ?? 0));
 
-		// Derive player's actual team index by mapping their account to a teamId via per-game sides
-		const candidateTeamCounts = new Map<string, number>();
-		for (const g of games) {
-			const ps = playerScoresByGame.get(g.id);
-			if (!ps) continue;
-			const inA = ps.A.some((s) => accountIds.includes(s.accountId));
-			const inB = ps.B.some((s) => accountIds.includes(s.accountId));
-			let side: 0 | 1 | null = null;
-			if (inA) side = 0;
-			else if (inB) side = 1;
-			if (side === null) continue;
-			const posMap = teamIdByGameAndPos.get(g.id) ?? new Map<number, string>();
-			const tid = posMap.get(side);
-			if (!tid) continue;
-			candidateTeamCounts.set(tid, (candidateTeamCounts.get(tid) ?? 0) + 1);
-		}
-		let derivedIdx: number | undefined;
-		if (candidateTeamCounts.size > 0) {
-			let bestTid = '';
-			let bestCount = -1;
-			for (const [tid, cnt] of candidateTeamCounts.entries()) {
-				if (cnt > bestCount) {
-					bestTid = tid;
-					bestCount = cnt;
-				}
-			}
-			const maybeIdx = teamIndexById.get(bestTid);
-			if (maybeIdx === 0 || maybeIdx === 1) derivedIdx = maybeIdx;
-		}
+		// Determine which team the player is on.
+		const playerTeamId = match.games
+			.flatMap((g) => g.gamePlayerScores)
+			.find((ps) => accountIds.includes(ps.accountId))?.teamId;
+		const playerTeamIndex = Math.max(
+			0,
+			teams.findIndex((t) => t.teamId === playerTeamId)
+		);
 
 		return {
-			id: m.id,
-			format: m.format,
-			stageId: m.stageId,
-			teams: finalTeams,
+			id: match.id,
+			format: match.format,
+			stageId: match.stageId,
+			teams,
 			games,
-			event: m.stage?.event
-				? {
-						id: m.stage.event.id,
-						slug: m.stage.event.slug,
-						name: m.stage.event.name,
-						image: m.stage.event.image,
-						date: m.stage.event.date,
-						region: m.stage.event.region,
-						format: m.stage.event.format,
-						status: m.stage.event.status,
-						server: m.stage.event.server,
-						capacity: m.stage.event.capacity,
-						official: m.stage.event.official
-					}
-				: {
-						id: '',
-						slug: '',
-						name: '',
-						image: '',
-						date: '',
-						region: '',
-						format: '',
-						status: '',
-						server: '',
-						capacity: 0,
-						official: false
-					},
-			playerTeamIndex: derivedIdx ?? idx
+			event: match.stage!.event, // Use non-null assertion if event is guaranteed.
+			playerTeamIndex
 		};
 	});
 
 	return out;
 }
-
 export async function getPlayerWins(playerId: string): Promise<number> {
 	console.info('[Players] Fetching server player wins for:', playerId);
 
