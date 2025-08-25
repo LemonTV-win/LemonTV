@@ -4,13 +4,12 @@
 	import { calculateWinnerIndex } from '$lib/data';
 	import { safeFormatDate } from '$lib/utils/date';
 	import IconChevronDown from '~icons/mdi/chevron-down';
-	import IconChevronUp from '~icons/mdi/chevron-up';
 	import MapIcon from '$lib/components/MapIcon.svelte';
 	import type { PlayerScore } from '$lib/data/matches';
 
 	import { getLocale } from '$lib/paraglide/runtime';
 	import { MAP_NAMES, type GameMap } from '$lib/data/game';
-	import { damage, m } from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 	const dateFormatter = new Intl.DateTimeFormat(getLocale(), {
 		month: 'short',
 		day: 'numeric',
@@ -21,13 +20,18 @@
 		match,
 		teamIndex,
 		event,
-		playerId,
-		playerAccountIds
+		player
 	}: {
 		match: {
 			id: string;
 			teams: {
-				team: Team;
+				team: Omit<Team, 'id' | 'slug' | 'name' | 'logo' | 'region' | 'createdAt' | 'updatedAt'> & {
+					id: string | null;
+					slug: string | null;
+					name: string | null;
+					logo: string | null;
+					region: string | null;
+				};
 				score: number;
 			}[];
 			games: {
@@ -36,7 +40,7 @@
 				mapId?: GameMap | null;
 				teamScores?: [number, number];
 				playerPlayed?: boolean;
-				playerScores?: { A: PlayerScore[]; B: PlayerScore[] };
+				playerStats?: Omit<PlayerScore, 'playerSlug' | 'player' | 'accountId'>;
 			}[];
 		};
 		teamIndex: number;
@@ -57,6 +61,7 @@
 			  };
 		playerId?: string;
 		playerAccountIds?: number[];
+		player: boolean;
 	} = $props();
 
 	let expanded = $state(false);
@@ -151,57 +156,46 @@
 								<span class="text-gray-400 italic" class:hidden={g.playerPlayed}>({m.dnp()})</span>
 							</div>
 
-							{#if g.playerScores}
-								{@const mine =
-									playerAccountIds && playerAccountIds.length > 0
-										? (g.playerScores.A.find((ps) => playerAccountIds.includes(ps.accountId)) ??
-											g.playerScores.B.find((ps) => playerAccountIds.includes(ps.accountId)))
-										: playerId
-											? (g.playerScores.A.find((ps) => String(ps.accountId) === String(playerId)) ??
-												g.playerScores.B.find((ps) => String(ps.accountId) === String(playerId)))
-											: null}
-								{#if mine}
-									<div class="flex items-center gap-4 text-xs text-gray-200">
-										<span class="flex flex-col items-center gap-1">
-											<span class="font-bold">{m.performance_score()}</span>
-											{mine.score}
-										</span>
-										<span class="flex flex-col items-center gap-1">
-											<span class="font-bold">{m.damage_score()}</span>
-											{mine.damageScore}
-										</span>
+							{#if player && g.playerStats}
+								<div class="flex items-center gap-4 text-xs text-gray-200">
+									<span class="flex flex-col items-center gap-1">
+										<span class="font-bold">{m.performance_score()}</span>
+										{g.playerStats.score}
+									</span>
+									<span class="flex flex-col items-center gap-1">
+										<span class="font-bold">{m.damage_score()}</span>
+										{g.playerStats.damageScore}
+									</span>
 
-										<span class="flex flex-col items-center gap-1">
-											<span class="font-bold">{m.kills()}</span>
-											{mine.kills}
-										</span>
-										<span class="flex flex-col items-center gap-1">
-											<span class="font-bold">({m.knocks()})</span>
-											({mine.knocks})
-										</span>
-										<span class="flex flex-col items-center gap-1 text-gray-400">
-											<span class="font-bold">/</span>
-											/
-										</span>
-										<span class="flex flex-col items-center gap-1">
-											<span class="font-bold">{m.deaths()}</span>
-											{mine.deaths}
-										</span>
-										<span class="flex flex-col items-center gap-1 text-gray-400">
-											<span class="font-bold">/</span>
-											/
-										</span>
-										<span class="flex flex-col items-center gap-1">
-											<span class="font-bold">{m.assists()}</span>
-											{mine.assists}
-										</span>
-
-										<span class="flex flex-col items-center gap-1">
-											<span class="font-bold">{m.damage()}</span>
-											{mine.damage}
-										</span>
-									</div>
-								{/if}
+									<span class="flex flex-col items-center gap-1">
+										<span class="font-bold">{m.kills()}</span>
+										{g.playerStats.kills}
+									</span>
+									<span class="flex flex-col items-center gap-1">
+										<span class="font-bold">({m.knocks()})</span>
+										({g.playerStats.knocks})
+									</span>
+									<span class="flex flex-col items-center gap-1 text-gray-400">
+										<span class="font-bold">/</span>
+										/
+									</span>
+									<span class="flex flex-col items-center gap-1">
+										<span class="font-bold">{m.deaths()}</span>
+										{g.playerStats.deaths}
+									</span>
+									<span class="flex flex-col items-center gap-1 text-gray-400">
+										<span class="font-bold">/</span>
+										/
+									</span>
+									<span class="flex flex-col items-center gap-1">
+										<span class="font-bold">{m.assists()}</span>
+										{g.playerStats.assists}
+									</span>
+									<span class="flex flex-col items-center gap-1">
+										<span class="font-bold">{m.damage()}</span>
+										{g.playerStats.damage}
+									</span>
+								</div>
 							{/if}
 							<div class="flex items-center justify-end gap-3 text-sm">
 								{#if g.teamScores}

@@ -662,7 +662,16 @@ type DetailedMatchesOut = {
 		mapId?: GameMap | null;
 		teamScores?: [number, number];
 		playerPlayed?: boolean;
-		playerStats?: { kills: number; deaths: number; assists: number; score: number; damage: number };
+		playerStats?: {
+			characters: [Character | null, Character | null];
+			score: number;
+			damageScore: number;
+			kills: number;
+			knocks: number;
+			deaths: number;
+			assists: number;
+			damage: number;
+		};
 	}>;
 	event: {
 		id: string;
@@ -784,13 +793,19 @@ export async function getPlayerDetailedMatches(playerId: string): Promise<Detail
 				teamScores,
 				playerPlayed: !!playerStats,
 				playerStats: playerStats
-					? {
+					? ({
+							characters: [
+								playerStats.characterFirstHalf as Character | null,
+								playerStats.characterSecondHalf as Character | null
+							],
+							score: playerStats.score,
+							damageScore: playerStats.damageScore,
 							kills: playerStats.kills,
+							knocks: playerStats.knocks,
 							deaths: playerStats.deaths,
 							assists: playerStats.assists,
-							score: playerStats.score,
 							damage: playerStats.damage
-						}
+						} satisfies Omit<PlayerScore, 'playerSlug' | 'player' | 'accountId'>)
 					: undefined
 			};
 		});
@@ -825,6 +840,7 @@ export async function getPlayerDetailedMatches(playerId: string): Promise<Detail
 
 	return out;
 }
+
 export async function getPlayerWins(playerId: string): Promise<number> {
 	console.info('[Players] Fetching server player wins for:', playerId);
 

@@ -165,13 +165,7 @@
 							return dateB - dateA;
 						}) as match (match.id)}
 							{#if match}
-								<MatchCard
-									{match}
-									teamIndex={match.playerTeamIndex}
-									event={match.event}
-									playerId={data.player.id}
-									playerAccountIds={data.player.gameAccounts?.map((a) => a.accountId)}
-								/>
+								<MatchCard {match} teamIndex={match.playerTeamIndex} event={match.event} player />
 							{/if}
 						{/each}
 					{:else}
