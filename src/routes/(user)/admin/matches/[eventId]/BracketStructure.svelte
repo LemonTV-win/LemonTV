@@ -75,7 +75,7 @@
 	});
 	let isDragging = $state(false);
 	// State to determine if dropping before or after a node
-	let dropPosition: 'before' | 'after' = 'before';
+	let dropPosition: 'before' | 'after' = $state('before');
 
 	// Drag event handlers
 	function handleDragStart(event: DragEvent, node: Node) {

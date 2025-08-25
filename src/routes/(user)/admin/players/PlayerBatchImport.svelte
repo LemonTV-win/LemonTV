@@ -789,6 +789,7 @@ const players: PlayerImportData[] = [
 																href="/admin/players/{existingPlayer.id}"
 																target="_blank"
 																class="inline-flex items-center gap-1 text-blue-400 hover:text-blue-300"
+																aria-label="View existing player"
 															>
 																<svg
 																	class="h-3 w-3"
@@ -816,6 +817,7 @@ const players: PlayerImportData[] = [
 																	href="/admin/players/{existingPlayer.id}"
 																	target="_blank"
 																	class="inline-flex items-center gap-1 text-blue-400 hover:text-blue-300"
+																	aria-label="View existing player"
 																>
 																	<svg
 																		class="h-3 w-3"

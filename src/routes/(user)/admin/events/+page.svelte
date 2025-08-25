@@ -20,19 +20,12 @@
 	import type { Region } from '$lib/data/game';
 
 	let { data }: { data: PageData } = $props();
-	let {
-		events,
-		action,
-		id,
-		organizers,
-		eventOrganizers,
-		searchQuery: initialSearchQuery
-	} = $derived(data);
+	let { events, action, id, organizers, eventOrganizers } = $derived(data);
 
 	$inspect('[admin/events] data', data);
 
 	let selectedEvent: EventWithOrganizers | null = $state(null);
-	let searchQuery = $state(initialSearchQuery || '');
+	let searchQuery = $state(data.searchQuery || '');
 	let sortBy:
 		| 'name-asc'
 		| 'name-desc'

@@ -54,7 +54,7 @@
 
 	let { playerStats, playerMatches = [] }: Props = $props();
 
-	let canvas: HTMLCanvasElement;
+	let canvas: HTMLCanvasElement | null = $state(null);
 	let chart: Chart | null = null;
 	let chartData = $state<any[]>([]);
 	let stats = $state<any>({});
