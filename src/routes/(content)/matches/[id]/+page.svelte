@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { error } from '@sveltejs/kit';
 	import type { PageProps } from './$types';
 
 	import { MAP_NAMES, type GameMap } from '$lib/data/game';
@@ -7,10 +6,6 @@
 	let { data }: PageProps = $props();
 
 	$inspect(`[Content][Match][${data.match.id}]`, data.match);
-
-	if (!data.match) {
-		throw error(404, 'Event not found');
-	}
 
 	let sortBy:
 		| 'score-asc'
