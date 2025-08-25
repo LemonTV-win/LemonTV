@@ -102,7 +102,7 @@ export async function getMatch(id: string): Promise<(AppMatch & { event: Event }
 			const gameTeamA = game.gameTeams.find((gt) => gt.teamId === canonicalTeamA?.teamId);
 			const gameTeamB = game.gameTeams.find((gt) => gt.teamId === canonicalTeamB?.teamId);
 
-			let normalizedWinner: 0 | 1 | null = null;
+			let normalizedWinner: 0 | 1 | -1 = game.winner ?? -1;
 			if (game.winner === 0 || game.winner === 1) {
 				const originalWinningTeam = game.gameTeams.find((gt) => gt.position === game.winner);
 				if (originalWinningTeam?.teamId === canonicalTeamA?.teamId) {
