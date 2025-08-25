@@ -65,6 +65,9 @@ export async function getMatch(id: string): Promise<(AppMatch & { event: Event }
 	const playerNames = matchData.games.flatMap((g) => g.gamePlayerScores.map((ps) => ps.player));
 	const playerSlugMap = await mapPlayerNamesToSlugs(Array.from(new Set(playerNames)));
 
+	const canonicalTeamA = matchData.matchTeams.find((mt) => mt.position === 0);
+	const canonicalTeamB = matchData.matchTeams.find((mt) => mt.position === 1);
+
 	// Shape the final response object from the nested data
 	const { format } = matchData;
 	const event = {
@@ -89,10 +92,6 @@ export async function getMatch(id: string): Promise<(AppMatch & { event: Event }
 		participants: []
 	};
 
-	const validTeams = matchData.matchTeams.filter(
-		(t): t is typeof t & { team: NonNullable<typeof t.team> } => t.team !== null
-	);
-
 	const validMaps = matchData.matchMaps.filter(
 		(m): m is typeof m & { map: NonNullable<typeof m.map> } => m.map !== null && m.action !== 'ban'
 	);
@@ -100,8 +99,8 @@ export async function getMatch(id: string): Promise<(AppMatch & { event: Event }
 	const transformedGames = matchData.games
 		.filter((g): g is typeof g & { map: NonNullable<typeof g.map> } => g.map !== null)
 		.map((game) => {
-			const teamA = game.gameTeams.find((gt) => gt.position === 0);
-			const teamB = game.gameTeams.find((gt) => gt.position === 1);
+			const gameTeamA = game.gameTeams.find((gt) => gt.teamId === canonicalTeamA?.teamId);
+			const gameTeamB = game.gameTeams.find((gt) => gt.teamId === canonicalTeamB?.teamId);
 
 			const mapPlayerScores = (teamId: string | undefined | null) =>
 				game.gamePlayerScores
@@ -123,8 +122,8 @@ export async function getMatch(id: string): Promise<(AppMatch & { event: Event }
 						damage: ps.damage
 					}));
 
-			const teamAScores = mapPlayerScores(teamA?.teamId);
-			const teamBScores = mapPlayerScores(teamB?.teamId);
+			const teamAScores = mapPlayerScores(gameTeamA?.teamId);
+			const teamBScores = mapPlayerScores(gameTeamB?.teamId);
 
 			const fixedScores = (
 				scores: typeof teamAScores
@@ -135,8 +134,8 @@ export async function getMatch(id: string): Promise<(AppMatch & { event: Event }
 				id: game.id,
 				map: game.map.id as GameMap,
 				duration: game.duration,
-				teams: [teamA?.team?.id || '', teamB?.team?.id || ''] as [string, string],
-				result: [teamA?.score || 0, teamB?.score || 0] as [number, number],
+				teams: [gameTeamA?.team?.id || '', gameTeamB?.team?.id || ''] as [string, string],
+				result: [gameTeamA?.score || 0, gameTeamB?.score || 0] as [number, number],
 				scores: [fixedScores(teamAScores), fixedScores(teamBScores)] as [
 					A: [PlayerScore, PlayerScore, PlayerScore, PlayerScore, PlayerScore],
 					B: [PlayerScore, PlayerScore, PlayerScore, PlayerScore, PlayerScore]
@@ -161,10 +160,8 @@ export async function getMatch(id: string): Promise<(AppMatch & { event: Event }
 
 	return {
 		id: matchData.id,
-		result: [matchData.matchTeams[0].score || 0, matchData.matchTeams[1].score || 0] as [
-			number,
-			number
-		],
+		// The top-level result is now guaranteed to be consistent with the games' results
+		result: [canonicalTeamA?.score || 0, canonicalTeamB?.score || 0],
 		battleOf: (format || 'BO1') as 'BO1' | 'BO3' | 'BO5',
 		maps: validMaps.map((m) => ({
 			map: m.map.id as GameMap,
@@ -172,10 +169,12 @@ export async function getMatch(id: string): Promise<(AppMatch & { event: Event }
 			pickedSide: m.side === 0 ? 'Attack' : 'Defense'
 		})),
 		teams: (() => {
-			const teamArray = validTeams.map((t) => ({
-				team: t.team,
-				score: t.score || 0
-			}));
+			const teamArray = (matchData.matchTeams ?? [])
+				.filter((t): t is typeof t & { team: NonNullable<typeof t.team> } => t.team !== null)
+				.map((t) => ({
+					team: t.team,
+					score: t.score || 0
+				}));
 
 			while (teamArray.length < 2) {
 				teamArray.push({
