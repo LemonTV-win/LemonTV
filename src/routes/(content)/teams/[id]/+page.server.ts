@@ -4,7 +4,7 @@ import {
 	getTeam,
 	getTeamStatistics,
 	getTeamMemberStatistics,
-	getServerTeamDetailedMatches
+	getTeamDetailedMatches
 } from '$lib/server/data/teams';
 import { error } from '@sveltejs/kit';
 import { processImageURL } from '$lib/server/storage';
@@ -44,7 +44,7 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 	);
 
 	// Get detailed match data for the team
-	const teamDetailedMatches = await getServerTeamDetailedMatches(team.id);
+	const teamDetailedMatches = await getTeamDetailedMatches(team.id);
 	console.log(`[teams/[id]] teamDetailedMatches`, teamDetailedMatches);
 
 	// Transform match data to include team objects

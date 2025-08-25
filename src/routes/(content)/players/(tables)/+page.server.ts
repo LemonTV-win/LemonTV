@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { getServerPlayersAgents } from '$lib/server/data/players';
+import { getPlayersAgents } from '$lib/server/data/players';
 import { CHARACTERS } from '$lib/data/game';
 import { processImageURL } from '$lib/server/storage';
 import { db } from '$lib/server/db';
@@ -187,7 +187,7 @@ export const load: PageServerLoad = async ({ locals: { user }, url }) => {
 		.filter((p): p is NonNullable<typeof p> => Boolean(p));
 
 	// -- Fetch additional data (Agents, Superstring Power, etc.) --
-	const playersAgents = await getServerPlayersAgents(playerIds, 0);
+	const playersAgents = await getPlayersAgents(playerIds, 0);
 
 	const superstringPowerData: Record<
 		string,

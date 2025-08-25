@@ -2,9 +2,9 @@ import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import {
 	getPlayer,
-	getServerPlayerStats,
+	getPlayerStats,
 	getSocialPlatforms,
-	getServerPlayerDetailedMatches
+	getPlayerDetailedMatches
 } from '$lib/server/data/players';
 import { processImageURL } from '$lib/server/storage';
 import { db } from '$lib/server/db';
@@ -25,7 +25,7 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 	}
 
 	// Get unified server stats
-	const serverStats = await getServerPlayerStats(playerID);
+	const serverStats = await getPlayerStats(playerID);
 
 	// Get simplified latest pro settings
 	const proSettings = await db.query.mouseSettings.findFirst({
@@ -34,7 +34,7 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 
 	// Get detailed match data for the player
 
-	const playerDetailedMatches = await getServerPlayerDetailedMatches(playerID);
+	const playerDetailedMatches = await getPlayerDetailedMatches(playerID);
 	// Transform match data to include team objects
 	const transformedMatches = playerDetailedMatches.map((match) => ({
 		...match,

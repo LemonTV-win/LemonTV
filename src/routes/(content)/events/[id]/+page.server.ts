@@ -1,7 +1,7 @@
 import type { PageServerLoad } from './$types';
 import type { Event, EventResult, EventParticipant } from '$lib/data/events';
 
-import { getEvent as getServerEvent } from '$lib/server/data/events';
+import { getEvent } from '$lib/server/data/events';
 import { error } from '@sveltejs/kit';
 import type { Team } from '$lib/data/teams';
 import { db } from '$lib/server/db';
@@ -10,7 +10,7 @@ import { eq, inArray } from 'drizzle-orm';
 import { processImageURL } from '$lib/server/storage';
 
 export const load: PageServerLoad = async ({ params }) => {
-	let event: Event | undefined = await getServerEvent(params.id);
+	let event: Event | undefined = await getEvent(params.id);
 
 	if (!event) {
 		throw error(404, 'Event not found');

@@ -1,5 +1,5 @@
 import type { Character, Region, GameMap } from '$lib/data/game';
-import { getServerPlayerKD, getServerPlayerAgents } from './players';
+import { getPlayerKD, getPlayerAgents } from './players';
 
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
@@ -50,8 +50,8 @@ export async function getTeamMemberStatistics(team: Team): Promise<Record<
 	for (const teamPlayer of team.players) {
 		if (!teamPlayer.player.id) continue;
 
-		const kd = await getServerPlayerKD(teamPlayer.player.id);
-		const characters = await getServerPlayerAgents(teamPlayer.player.id);
+		const kd = await getPlayerKD(teamPlayer.player.id);
+		const characters = await getPlayerAgents(teamPlayer.player.id);
 		const rating = ratingsByPlayerId.get(teamPlayer.player.id) ?? 0;
 
 		result[teamPlayer.player.id] = {
@@ -252,7 +252,7 @@ export async function getTeam(slug: string): Promise<(Team & { logoURL: string |
 	const processingStart = performance.now();
 
 	// Get team wins
-	const wins = await getServerTeamWins(teamWithRelations.id);
+	const wins = await getTeamWins(teamWithRelations.id);
 
 	// Process players with the new structure
 	const players =
@@ -405,7 +405,7 @@ function computeWinsFromMatchTeamRows(rows: table.MatchTeam[]): Record<string, n
 	return Object.fromEntries(teamWins);
 }
 
-export async function getServerTeamWins(teamId: string): Promise<number> {
+export async function getTeamWins(teamId: string): Promise<number> {
 	console.info('[Teams] Fetching server team wins for:', teamId);
 
 	// 1) Get match IDs where this team participated
@@ -473,7 +473,7 @@ export async function getAllTeamsWins(): Promise<Record<string, number>> {
 	return winsByTeam;
 }
 
-export async function getServerTeamDetailedMatches(teamId: string): Promise<
+export async function getTeamDetailedMatches(teamId: string): Promise<
 	{
 		id: string;
 		format: string | null;

@@ -94,7 +94,7 @@ export interface PlayerEssentialStats {
 }
 
 // Unified function to get all player statistics
-export async function getServerPlayerStats(playerId: string, topAgents = 3): Promise<PlayerStats> {
+export async function getPlayerStats(playerId: string, topAgents = 3): Promise<PlayerStats> {
 	const ps = schema.playerStats;
 	const pcs = schema.playerCharacterStats;
 
@@ -152,9 +152,9 @@ export async function getServerPlayerStats(playerId: string, topAgents = 3): Pro
 
 	// 3) keep your existing helpers (swap to materialized later if you add them)
 	const [mapStats, events, matches] = await Promise.all([
-		getServerPlayerMapStats(playerId),
-		getServerPlayerEvents(playerId),
-		getServerPlayerMatches(playerId)
+		getPlayerMapStats(playerId),
+		getPlayerEvents(playerId),
+		getPlayerMatches(playerId)
 	]);
 
 	return {
@@ -358,7 +358,7 @@ export async function getPlayers(): Promise<Player[]> {
 	return result;
 }
 
-export async function getServerPlayerAgents(playerId: string): Promise<[Character, number][]> {
+export async function getPlayerAgents(playerId: string): Promise<[Character, number][]> {
 	console.info('[Players] Fetching server player agents for:', playerId);
 
 	// Use Drizzle query builder with joins to get character counts in a single query
@@ -404,7 +404,7 @@ export async function getServerPlayerAgents(playerId: string): Promise<[Characte
 }
 
 type FrequentAgentsMap = Record<string, [Character, number][]>;
-export async function getServerPlayersAgents(
+export async function getPlayersAgents(
 	playerIds: string[],
 	topN = 3
 ): Promise<FrequentAgentsMap> {
@@ -444,7 +444,7 @@ export async function getServerPlayersAgents(
 	return out;
 }
 
-export async function getServerPlayerMapStats(playerId: string): Promise<
+export async function getPlayerMapStats(playerId: string): Promise<
 	{
 		mapId: GameMap;
 		wins: number;
@@ -557,7 +557,7 @@ export async function getServerPlayerMapStats(playerId: string): Promise<
 	return result;
 }
 
-export async function getServerPlayerEvents(id: string): Promise<
+export async function getPlayerEvents(id: string): Promise<
 	{
 		id: string;
 		slug: string;
@@ -595,7 +595,7 @@ export async function getServerPlayerEvents(id: string): Promise<
 		.where(eq(schema.eventTeamPlayer.playerId, id));
 }
 
-export async function getServerPlayerMatches(id: string): Promise<
+export async function getPlayerMatches(id: string): Promise<
 	{
 		id: string;
 		format: string | null;
@@ -683,7 +683,7 @@ type DetailedMatchesOut = {
 	playerTeamIndex: number;
 };
 
-export async function getServerPlayerDetailedMatches(
+export async function getPlayerDetailedMatches(
 	playerId: string
 ): Promise<DetailedMatchesOut[]> {
 	// 1) Player’s accounts
@@ -1062,7 +1062,7 @@ export async function getServerPlayerDetailedMatches(
 	return out;
 }
 
-export async function getServerPlayerWins(playerId: string): Promise<number> {
+export async function getPlayerWins(playerId: string): Promise<number> {
 	console.info('[Players] Fetching server player wins for:', playerId);
 
 	// Get the player's game accounts
@@ -1134,7 +1134,7 @@ export async function getServerPlayerWins(playerId: string): Promise<number> {
 	return wins;
 }
 
-export async function getServerPlayerKD(playerId: string): Promise<number> {
+export async function getPlayerKD(playerId: string): Promise<number> {
 	console.info('[Players] Fetching server player KD for:', playerId);
 
 	// Get the player's game accounts
@@ -1855,7 +1855,7 @@ export function calculateSuperstringPower(
 	};
 }
 
-export async function getServerPlayerSuperstringPower(
+export async function getPlayerSuperstringPower(
 	playerId: string,
 	character: Character
 ): Promise<{ power: number; gamesPlayed: number; wins: number }> {

@@ -1,7 +1,7 @@
 import { ImageResponse } from '@vercel/og';
 import type { RequestHandler } from './$types';
 import { SITE_CANONICAL_HOST } from '$lib/consts';
-import { getPlayer, getServerPlayerStats } from '$lib/server/data/players';
+import { getPlayer, getPlayerStats } from '$lib/server/data/players';
 import { processImageURL } from '$lib/server/storage';
 import { html } from 'satori-html';
 import { m } from '$lib/paraglide/messages';
@@ -48,7 +48,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
 		console.info(`[API][OG][Players] Player found: ${player.name}`);
 
 		console.info(`[API][OG][Players] Fetching aggregated stats`);
-		const stats = await getServerPlayerStats(player.id);
+		const stats = await getPlayerStats(player.id);
 
 		console.info(`[API][OG][Players] Fetching materialized rating/events`);
 		const mat = await db.query.playerStats.findFirst({

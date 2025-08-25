@@ -1,11 +1,11 @@
 import type { PageServerLoad } from './$types';
 
-import { getMatch as getServerMatch } from '$lib/server/data/matches';
+import { getMatch } from '$lib/server/data/matches';
 import { error } from '@sveltejs/kit';
 import { getTeam } from '$lib/server/data/teams';
 
 export const load: PageServerLoad = async ({ params }) => {
-	const match = await getServerMatch(params.id);
+	const match = await getMatch(params.id);
 
 	if (!match) {
 		throw error(404, 'Match not found');
