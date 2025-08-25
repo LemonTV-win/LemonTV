@@ -106,27 +106,29 @@
 				{/each}
 			</nav>
 
-			<!-- Match Score Display -->
 			<div class="flex items-center gap-4">
-				{#if data.match.games && data.match.games.length > 0}
-					{@const team0Wins =
-						data.match.result?.[0] ?? data.match.games.filter((g) => g.winner === 0).length}
-					{@const team1Wins =
-						data.match.result?.[1] ?? data.match.games.filter((g) => g.winner === 1).length}
-					<div class="rounded-md bg-white/20 px-4 py-2 text-center backdrop-blur-sm">
-						<div class="text-2xl font-bold">{team0Wins} - {team1Wins}</div>
-						<div class="text-xs text-gray-300">
-							{data.match.battleOf ?? m.match()}
-						</div>
-					</div>
-				{/if}
-
 				{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
 					<ContentActionLink
 						href={`/admin/matches/${data.match.event.id}?action=editMatch&id=${data.match.id}`}
 						type="edit"
 					/>
 				{/if}
+
+				<!-- Match Score Display -->
+				<div class="flex items-center gap-4">
+					{#if data.match.games && data.match.games.length > 0}
+						{@const team0Wins =
+							data.match.result?.[0] ?? data.match.games.filter((g) => g.winner === 0).length}
+						{@const team1Wins =
+							data.match.result?.[1] ?? data.match.games.filter((g) => g.winner === 1).length}
+						<div class="rounded-md bg-white/20 px-4 py-2 text-center backdrop-blur-sm">
+							<div class="text-2xl font-bold">{team0Wins} - {team1Wins}</div>
+							<div class="text-xs text-gray-300">
+								{data.match.battleOf ?? m.match()}
+							</div>
+						</div>
+					{/if}
+				</div>
 			</div>
 		</div>
 		<!-- Scoreboard -->
