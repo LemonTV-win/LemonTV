@@ -211,7 +211,7 @@
 				<BracketGraph {stage} />
 			{/each}
 		{/if}
-		{#if data.event.results}
+		{#if data.event.results && data.event.results.length > 0}
 			<EventResults results={data.event.results} />
 		{/if}
 		{#if data.event.videos?.some((v) => v.type === 'clip')}

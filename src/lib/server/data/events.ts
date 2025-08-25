@@ -818,19 +818,6 @@ export async function getEvent(id: string): Promise<AppEvent | undefined> {
 				})) satisfies StageNode[]
 			}
 		}))
-		// teamPlayers: eventData.teamPlayers.map((teamPlayer) => ({
-		// 	...teamPlayer,
-		// 	team: teamPlayer.team,
-		// 	player: teamPlayer.player,
-		// 	eventTeam: teamPlayer.eventTeam,
-		// }))
-		// participants: eventData.teamPlayers.map((teamPlayer) => ({
-		// 	main: [],
-		// 	reserve: [],
-		// 	coach: [],
-		// 	entry: teamPlayer.eventTeam?.entry,
-		// 	status: teamPlayer.eventTeam?.status
-		// }))
 	};
 
 	console.info(
