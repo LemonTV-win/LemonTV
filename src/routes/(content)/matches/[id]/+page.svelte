@@ -34,6 +34,7 @@
 	import VodDisplay from './VodDisplay.svelte';
 	import { goto } from '$app/navigation';
 	import { MAP_IMAGES } from '$lib/data/game';
+	import { m } from '$lib/paraglide/messages';
 
 	function getMapIDFromGameId(gameId: number): number {
 		return data.match.games.findIndex((g) => g.id === gameId);
@@ -86,6 +87,7 @@
 			`/events/${data.match.event.id}/matches`
 		]}
 	/>
+
 	<div
 		class="banner flex min-h-48 flex-col gap-2 bg-cover bg-top p-4 text-white"
 		style:--banner-image={`url(${MAP_IMAGES[maps[currentMapID].map]})`}
@@ -108,12 +110,28 @@
 					</button>
 				{/each}
 			</nav>
-			{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
-				<ContentActionLink
-					href={`/admin/matches/${data.match.event.id}?action=editMatch&id=${data.match.id}`}
-					type="edit"
-				/>
-			{/if}
+
+			<!-- Match Score Display -->
+			<div class="flex items-center gap-4">
+				{#if data.match.games && data.match.games.length > 0}
+					<!-- TODO: Use upstream -->
+					{@const team0Wins = data.match.games.filter((g) => g.winner === 0).length}
+					{@const team1Wins = data.match.games.filter((g) => g.winner === 1).length}
+					<div class="rounded-md bg-white/20 px-4 py-2 text-center backdrop-blur-sm">
+						<div class="text-2xl font-bold">{team0Wins} - {team1Wins}</div>
+						<div class="text-xs text-gray-300">
+							{data.match.battleOf ?? m.match()}
+						</div>
+					</div>
+				{/if}
+
+				{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
+					<ContentActionLink
+						href={`/admin/matches/${data.match.event.id}?action=editMatch&id=${data.match.id}`}
+						type="edit"
+					/>
+				{/if}
+			</div>
 		</div>
 		<!-- Scoreboard -->
 		{#if data.match.games?.[currentMapID] && data.match.teams[0]?.team && data.match.teams[1]?.team}
@@ -138,12 +156,3 @@
 		</div>
 	{/if}
 {/if}
-
-<style lang="postcss">
-	.banner {
-		background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 1)), var(--banner-image);
-	}
-	.active {
-		box-shadow: 0 0 10px 0 rgba(221, 255, 255, 0.8);
-	}
-</style>
