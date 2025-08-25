@@ -53,6 +53,8 @@
 			{#each player.nationalities as nationality, idx (idx)}
 				<NationalityFlag {nationality} />
 			{/each}
+		{:else}
+			<NationalityFlag nationality={null} />
 		{/if}
 		{player.name}
 	</a>
