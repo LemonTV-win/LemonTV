@@ -154,3 +154,12 @@
 		</div>
 	{/if}
 {/if}
+
+<style lang="postcss">
+	.banner {
+		background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 1)), var(--banner-image);
+	}
+	.active {
+		box-shadow: 0 0 10px 0 rgba(221, 255, 255, 0.8);
+	}
+</style>
