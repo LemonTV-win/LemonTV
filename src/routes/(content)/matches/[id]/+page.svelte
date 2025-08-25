@@ -83,6 +83,53 @@
 		]}
 	/>
 
+	{#if data.match.games && data.match.games.length > 0}
+		{@const team0Wins =
+			data.match.result?.[0] ?? data.match.games.filter((g) => g.winner === 0).length}
+		{@const team1Wins =
+			data.match.result?.[1] ?? data.match.games.filter((g) => g.winner === 1).length}
+		<div
+			class="flex w-full flex-col items-center justify-center border-y border-white/20 bg-slate-700/50 px-4 py-3 backdrop-blur-lg"
+		>
+			<div class="grid grid-cols-[1fr_2em_auto_2em_1fr] items-center justify-center gap-8">
+				<span class={['text-2xl font-semibold', team0Wins > team1Wins ? 'text-win' : 'text-loss']}
+					>{data.match.teams[0]?.team?.name}</span
+				>
+				<div class="flex flex-col items-center">
+					<span
+						class={[
+							'text-3xl font-bold',
+							team0Wins > team1Wins
+								? 'text-win drop-shadow-[0_0_4px_rgba(245,158,11,0.3)]'
+								: 'text-loss'
+						]}>{team0Wins}</span
+					>
+				</div>
+				<div class="text-xl font-semibold text-gray-300">&ndash;</div>
+				<div class="flex flex-col items-center">
+					<span
+						class={[
+							'text-3xl font-bold',
+							team0Wins < team1Wins
+								? 'text-win drop-shadow-[0_0_4px_rgba(245,158,11,0.3)]'
+								: 'text-loss'
+						]}>{team1Wins}</span
+					>
+				</div>
+				<span
+					class={[
+						'text-2xl font-semibold',
+						team0Wins < team1Wins
+							? 'text-win drop-shadow-[0_0_4px_rgba(245,158,11,0.3)]'
+							: 'text-loss'
+					]}>{data.match.teams[1]?.team?.name}</span
+				>
+			</div>
+			<div class="text-xs text-gray-300">
+				{data.match.battleOf ?? m.match()}
+			</div>
+		</div>
+	{/if}
 	<div
 		class="banner flex min-h-48 flex-col gap-2 bg-cover bg-top p-4 text-white"
 		style:--banner-image={`url(${MAP_IMAGES[maps[currentMapID].map]})`}
@@ -91,15 +138,16 @@
 			<nav class="my-2 flex gap-4 rounded-sm">
 				{#each maps as map, index (index)}
 					<button
-						class="cursor-pointer overflow-clip rounded-md bg-white/40 text-center backdrop-blur-sm"
+						class="relative cursor-pointer overflow-clip rounded-md bg-white/40 text-center backdrop-blur-sm"
 						onclick={() => (currentMapID = index)}
 						disabled={index >= (data.match.games?.length ?? 0)}
 						style:opacity={index >= (data.match.games?.length ?? 0) ? '0.5' : '1'}
 						class:active={index === currentMapID}
 					>
 						<img src={MAP_IMAGES[map.map]} class="h-10 w-full" alt={MAP_NAMES[map.map]()} />
-						<span class="px-4 text-sm">{MAP_NAMES[map.map]()}</span>
-						<span class="px-4 text-sm text-yellow-300"
+
+						<span class="px-2 text-sm">{MAP_NAMES[map.map]()}</span>
+						<span class="px-2 text-sm text-yellow-300"
 							>{formatDuration(data.match.games?.[index]?.duration ?? 0)}</span
 						>
 					</button>
@@ -114,21 +162,26 @@
 					/>
 				{/if}
 
-				<!-- Match Score Display -->
-				<div class="flex items-center gap-4">
-					{#if data.match.games && data.match.games.length > 0}
-						{@const team0Wins =
-							data.match.result?.[0] ?? data.match.games.filter((g) => g.winner === 0).length}
-						{@const team1Wins =
-							data.match.result?.[1] ?? data.match.games.filter((g) => g.winner === 1).length}
-						<div class="rounded-md bg-white/20 px-4 py-2 text-center backdrop-blur-sm">
-							<div class="text-2xl font-bold">{team0Wins} - {team1Wins}</div>
-							<div class="text-xs text-gray-300">
-								{data.match.battleOf ?? m.match()}
-							</div>
-						</div>
-					{/if}
-				</div>
+				<!-- Game Score Display -->
+				<span class="rounded-md bg-white/40 px-3 py-1 text-center text-2xl backdrop-blur-sm">
+					<span
+						class={[
+							data.match.games?.[currentMapID]?.winner === 0 && 'text-yellow-400',
+							data.match.games?.[currentMapID]?.winner === 1 && 'text-red-500'
+						]}
+					>
+						{data.match.games?.[currentMapID]?.result?.[0]}
+					</span>
+					<span class="text-gray-300">&ndash;</span>
+					<span
+						class={[
+							data.match.games?.[currentMapID]?.winner === 1 && 'text-yellow-400',
+							data.match.games?.[currentMapID]?.winner === 0 && 'text-red-500'
+						]}
+					>
+						{data.match.games?.[currentMapID]?.result?.[1]}
+					</span>
+				</span>
 			</div>
 		</div>
 		<!-- Scoreboard -->
@@ -145,7 +198,7 @@
 
 	<!-- VOD Display -->
 	{#if data.match.games?.[currentMapID]?.vods}
-		<div class="px-8 py-4">
+		<div class="p-4">
 			<VodDisplay
 				vods={data.match.games[currentMapID].vods || []}
 				gameId={data.match.games[currentMapID].id}

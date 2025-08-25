@@ -159,43 +159,10 @@
 	</tr>
 {/snippet}
 
-<div class="overflow-hidden rounded-md bg-white/10">
+<div class="overflow-hidden rounded-t-md bg-white/10">
 	<!-- Results Display -->
-	<div
-		class="border-b border-white/20 bg-gradient-to-b from-slate-700/75 to-slate-800/80 p-4 text-center backdrop-blur-lg"
-	>
-		<!-- Game Result -->
-		<div class="flex items-center justify-center gap-8">
-			<div class="flex flex-col items-center">
-				<span
-					class={[
-						'text-3xl font-bold',
-						winner === 0 ? 'text-win drop-shadow-[0_0_4px_rgba(245,158,11,0.3)]' : 'text-loss'
-					]}>{result[0]}</span
-				>
-				<span class={['text-sm font-semibold', winner === 0 ? 'text-win' : 'text-loss']}
-					>{teams[0].name}</span
-				>
-			</div>
-			<div class="text-xl font-semibold text-gray-300">vs</div>
-			<div class="flex flex-col items-center">
-				<span
-					class={[
-						'text-3xl font-bold',
-						winner === 1 ? 'text-win drop-shadow-[0_0_4px_rgba(245,158,11,0.3)]' : 'text-loss'
-					]}>{result[1]}</span
-				>
-				<span
-					class={[
-						'text-sm font-semibold',
-						winner === 1 ? 'text-win drop-shadow-[0_0_4px_rgba(245,158,11,0.3)]' : 'text-loss'
-					]}>{teams[1].name}</span
-				>
-			</div>
-		</div>
-	</div>
 
-	<table class="mt-4 w-full">
+	<table class="w-full">
 		<thead>
 			<tr
 				class="border-b-2 border-white/20 bg-gradient-to-b from-white/20 to-white/30 text-center backdrop-blur-md"
