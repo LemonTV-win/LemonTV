@@ -35,6 +35,7 @@ export const stageRound = sqliteTable('stage_round', {
 		.notNull(),
 	type: text('type', {
 		enum: [
+			'round',
 			'quarterfinals',
 			'semifinals',
 			'final',

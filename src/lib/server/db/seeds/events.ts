@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { ORGANIZERS } from './organizers';
 import { TEAMS } from './teams';
 import { PLAYERS } from './players';
+import * as schema from '$lib/server/db/schemas';
 
 export const EVENTS = [
 	{
@@ -89,7 +90,7 @@ export const EVENTS = [
 		official: true,
 		server: 'strinova' as const,
 		format: 'online' as const,
-		region: 'OC',
+		region: 'APAC',
 		image: 'https://picsum.photos/seed/imaginary-cup-7/300/200?blur',
 		status: 'upcoming' as const,
 		capacity: 32,
@@ -102,13 +103,13 @@ export const EVENTS = [
 		official: false,
 		server: 'calabiyau' as const,
 		format: 'lan' as const,
-		region: 'AF',
+		region: 'EU',
 		image: 'https://picsum.photos/seed/imaginary-cup-8/300/200?blur',
 		status: 'upcoming' as const,
 		capacity: 24,
 		date: '2024-09-01' as const
 	}
-];
+] satisfies (typeof schema.event.$inferInsert)[];
 
 export const EVENT_WEBSITES = [
 	// Event 1 websites
@@ -209,7 +210,7 @@ export const EVENT_WEBSITES = [
 		url: 'https://imaginary-cup-8.com/rules',
 		label: 'Rules'
 	}
-];
+] satisfies (typeof schema.eventWebsite.$inferInsert)[];
 
 export const EVENT_ORGANIZERS = [
 	{
@@ -228,7 +229,7 @@ export const EVENT_ORGANIZERS = [
 		eventId: EVENTS[2].id,
 		organizerId: ORGANIZERS[1].id
 	}
-];
+] satisfies (typeof schema.eventOrganizer.$inferInsert)[];
 
 export const EVENT_TEAM_PLAYERS = [
 	// Event 1 - Team 1 players (using players 0-6)
@@ -661,7 +662,7 @@ export const EVENT_TEAM_PLAYERS = [
 		playerId: PLAYERS[55].id,
 		role: 'coach' as const
 	}
-];
+] satisfies (typeof schema.eventTeamPlayer.$inferInsert)[];
 
 export const EVENT_RESULTS = [
 	// Event 1 (Imaginary Cup 1) Results
@@ -1065,7 +1066,7 @@ export const EVENT_RESULTS = [
 		prizeAmount: 20000,
 		prizeCurrency: 'Bablo'
 	}
-];
+] satisfies (typeof schema.eventResult.$inferInsert)[];
 
 export const EVENT_VIDEOS = [
 	{
@@ -1098,7 +1099,7 @@ export const EVENT_VIDEOS = [
 		createdAt: new Date(),
 		updatedAt: new Date()
 	}
-];
+] satisfies (typeof schema.eventVideo.$inferInsert)[];
 
 export const EVENT_CASTERS = [
 	// Event 1 casters
@@ -1160,4 +1161,4 @@ export const EVENT_CASTERS = [
 		createdAt: new Date(),
 		updatedAt: new Date()
 	}
-];
+] satisfies (typeof schema.eventCaster.$inferInsert)[];

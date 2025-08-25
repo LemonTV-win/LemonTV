@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import * as schema from '$lib/server/db/schemas';
 import { EVENTS } from './events';
 
 export const STAGES = [
@@ -77,7 +78,7 @@ export const STAGES = [
 		stage: 'playoff',
 		format: 'double'
 	}
-];
+] satisfies (typeof schema.stage.$inferInsert)[];
 
 export const MATCHES = [
 	// Event 1: Open Qualifiers
@@ -295,7 +296,7 @@ export const MATCHES = [
 		format: 'BO5',
 		stageId: STAGES[9].id
 	}
-];
+] satisfies (typeof schema.match.$inferInsert)[];
 
 export const STAGE_ROUNDS = [
 	// Example stage rounds for Event 1 (Open Qualifiers)
@@ -490,7 +491,7 @@ export const STAGE_ROUNDS = [
 		bracket: 'upper' as const,
 		parallelGroup: 1
 	}
-];
+] satisfies (typeof schema.stageRound.$inferInsert)[];
 
 export const STAGE_NODES = [
 	// Event 1: Open Qualifiers
@@ -793,7 +794,7 @@ export const STAGE_NODES = [
 		roundId: STAGE_ROUNDS[22].id,
 		order: 1
 	}
-];
+] satisfies (typeof schema.stageNode.$inferInsert)[];
 
 export const STAGE_NODE_DEPENDENCIES = [
 	// Example dependencies for Event 1 (Open Qualifiers)
@@ -888,4 +889,4 @@ export const STAGE_NODE_DEPENDENCIES = [
 		dependencyMatchId: MATCHES[25].id,
 		outcome: 'loser' as const
 	}
-];
+] satisfies (typeof schema.stageNodeDependency.$inferInsert)[];
