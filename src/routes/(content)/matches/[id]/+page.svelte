@@ -120,6 +120,7 @@
 			<Scoreboard
 				scores={data.match.games?.[currentMapID].scores}
 				winner={data.match.games?.[currentMapID].winner}
+				result={data.match.games?.[currentMapID].result}
 				teams={[data.match.teams[0].team, data.match.teams[1].team]}
 				bind:sortBy
 			/>

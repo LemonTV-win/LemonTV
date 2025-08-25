@@ -14,11 +14,13 @@
 		scores,
 		winner,
 		teams,
+		result,
 		sortBy = $bindable('score-desc')
 	}: {
 		scores: [PlayerScore[], PlayerScore[]];
 		winner: number;
 		teams: [Team, Team];
+		result: [number, number];
 		sortBy:
 			| 'score-asc'
 			| 'score-desc'
@@ -136,14 +138,20 @@
 	{/each}
 {/snippet}
 
-{#snippet teamName(team: Team)}
+{#snippet teamName(team: Team, winner: boolean)}
 	<tr>
 		<td colspan="2"></td>
 		<td class="text-center">
 			<a
 				href={`/teams/${team.id}`}
 				class="flex items-center justify-center gap-3 px-5 py-2 font-bold transition-all duration-200 hover:from-slate-700/80 hover:to-slate-600/80 hover:text-yellow-300 hover:underline"
+				class:text-win={winner}
 			>
+				{#if winner}
+					<span class="text-yellow-400 drop-shadow-[0_0_8px_rgba(255,215,0,0.4)]" title="Winner">
+						🏆
+					</span>
+				{/if}
 				{team.name}
 			</a>
 		</td>
@@ -152,7 +160,40 @@
 {/snippet}
 
 <div class="overflow-hidden rounded-md bg-white/10">
-	<table class="w-full">
+	<!-- Results Display -->
+	<div
+		class="border-b border-white/20 bg-gradient-to-b from-white/15 to-white/25 p-4 text-center backdrop-blur-sm"
+	>
+		<div class=" flex items-center justify-center gap-8">
+			<div class="flex flex-col items-center">
+				<span
+					class="text-2xl font-bold"
+					class:text-win={winner === 0}
+					class:text-loss={winner === 1}>{result[0]}</span
+				>
+				<span
+					class="text-sm font-bold opacity-80"
+					class:text-win={winner === 0}
+					class:text-loss={winner === 1}>{teams[0].name}</span
+				>
+			</div>
+			<div class="text-lg font-semibold text-gray-400">vs</div>
+			<div class="flex flex-col items-center">
+				<span
+					class="text-2xl font-bold"
+					class:text-win={winner === 1}
+					class:text-loss={winner === 0}>{result[1]}</span
+				>
+				<span
+					class="text-sm font-bold opacity-80"
+					class:text-win={winner === 1}
+					class:text-loss={winner === 0}>{teams[1].name}</span
+				>
+			</div>
+		</div>
+	</div>
+
+	<table class="mt-4 w-full">
 		<thead>
 			<tr
 				class="border-b-2 border-white/20 bg-gradient-to-b from-white/20 to-white/30 text-center backdrop-blur-md"
@@ -263,11 +304,11 @@
 			</tr>
 		</thead>
 		<tbody>
-			{@render teamName(teams[0])}
+			{@render teamName(teams[0], winner === 0)}
 
 			{@render playerscores(sortedScores[0], winner === 0)}
 
-			{@render teamName(teams[1])}
+			{@render teamName(teams[1], winner === 1)}
 
 			{@render playerscores(sortedScores[1], winner === 1)}
 		</tbody>
