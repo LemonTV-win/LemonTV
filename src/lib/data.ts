@@ -11,7 +11,9 @@ export function identifyPlayer(id: string, player: Player | string): boolean {
 		player.slug === id ||
 		player.name === id ||
 		(player.gameAccounts?.some(
-			(account) => account.currentName === id || account.names?.includes(id)
+			(account) => account.currentName === id
+			// TODO:
+			// || account.names?.includes(id)
 		) ??
 			false) ||
 		(player.aliases?.includes(id) ?? false)

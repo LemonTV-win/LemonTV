@@ -721,6 +721,10 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	};
 };
 
+function isValidMatchFormat(format: string): format is 'BO1' | 'BO3' | 'BO5' {
+	return format === 'BO1' || format === 'BO3' || format === 'BO5';
+}
+
 const MATCH_ACTIONS = {
 	create: async ({ request, locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
@@ -743,6 +747,12 @@ const MATCH_ACTIONS = {
 
 			return fail(400, {
 				error: `Missing required fields: ${missingFields.join(', ')}`
+			});
+		}
+
+		if (!isValidMatchFormat(matchData.format)) {
+			return fail(400, {
+				error: 'Invalid match format'
 			});
 		}
 
@@ -822,6 +832,12 @@ const MATCH_ACTIONS = {
 		if (!matchData.id || !matchData.format || !matchData.stageId) {
 			return fail(400, {
 				error: 'ID, format, and stage are required'
+			});
+		}
+
+		if (!isValidMatchFormat(matchData.format)) {
+			return fail(400, {
+				error: 'Invalid match format'
 			});
 		}
 
@@ -964,6 +980,20 @@ const MATCH_ACTIONS = {
 	}
 } satisfies Actions;
 
+function isValidStageFormat(
+	format: string
+): format is 'single' | 'double' | 'swiss' | 'round-robin' {
+	return (
+		format === 'single' || format === 'double' || format === 'swiss' || format === 'round-robin'
+	);
+}
+
+function isValidStageStage(
+	stage: string
+): stage is 'group' | 'qualifier' | 'showmatch' | 'playoff' {
+	return stage === 'group' || stage === 'qualifier' || stage === 'showmatch' || stage === 'playoff';
+}
+
 const STAGE_ACTIONS = {
 	createStage: async ({ request, locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
@@ -984,6 +1014,18 @@ const STAGE_ACTIONS = {
 		if (!stageData.eventId || !stageData.title || !stageData.stage || !stageData.format) {
 			return fail(400, {
 				error: 'All fields are required'
+			});
+		}
+
+		if (!isValidStageFormat(stageData.format)) {
+			return fail(400, {
+				error: 'Invalid stage format'
+			});
+		}
+
+		if (!isValidStageStage(stageData.stage)) {
+			return fail(400, {
+				error: 'Invalid stage stage'
 			});
 		}
 
@@ -1048,6 +1090,18 @@ const STAGE_ACTIONS = {
 		) {
 			return fail(400, {
 				error: 'All fields are required'
+			});
+		}
+
+		if (!isValidStageFormat(stageData.format)) {
+			return fail(400, {
+				error: 'Invalid stage format'
+			});
+		}
+
+		if (!isValidStageStage(stageData.stage)) {
+			return fail(400, {
+				error: 'Invalid stage stage'
 			});
 		}
 

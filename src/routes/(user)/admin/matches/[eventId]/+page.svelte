@@ -131,7 +131,7 @@
 			// Pre-populate stageId if provided in URL
 			editingMatch = {
 				match: {
-					format: 'bo1',
+					format: 'BO1',
 					stageId: stageId
 				},
 				matchTeams: [],

@@ -17,6 +17,7 @@
 	import OrganizerChip from '$lib/components/OrganizerChip.svelte';
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 	import { safeFormatEventDate, safeGetTimestamp } from '$lib/utils/date';
+	import type { Region } from '$lib/data/game';
 
 	let { data }: { data: PageData } = $props();
 	let {
@@ -111,6 +112,9 @@
 						| 'finished'
 						| 'cancelled'
 						| 'postponed',
+					server: eventToEdit.server as 'calabiyau' | 'strinova',
+					region: eventToEdit.region as Region,
+					format: eventToEdit.format as 'lan' | 'online' | 'hybrid',
 					createdAt: new Date(),
 					updatedAt: new Date(),
 					organizers: (eventToEdit.organizers || []).map((org) => ({
@@ -440,6 +444,9 @@
 												| 'finished'
 												| 'cancelled'
 												| 'postponed',
+											server: event.server as 'calabiyau' | 'strinova',
+											region: event.region as Region,
+											format: event.format as 'lan' | 'online' | 'hybrid',
 											createdAt: new Date(),
 											updatedAt: new Date(),
 											organizers: (event.organizers || []).map((org) => ({
@@ -472,6 +479,9 @@
 												| 'finished'
 												| 'cancelled'
 												| 'postponed',
+											server: event.server as 'calabiyau' | 'strinova',
+											region: event.region as Region,
+											format: event.format as 'lan' | 'online' | 'hybrid',
 											createdAt: new Date(),
 											updatedAt: new Date(),
 											organizers: (event.organizers || []).map((org) => ({
