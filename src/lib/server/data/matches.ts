@@ -26,247 +26,157 @@ async function mapPlayerNamesToSlugs(playerNames: string[]): Promise<Record<stri
 }
 
 export async function getMatch(id: string): Promise<(AppMatch & { event: Event }) | null> {
-	const [match] = await db
-		.select({
-			match: table.match,
-			stage: table.stage,
-			event: table.event
-		})
-		.from(table.match)
-		.leftJoin(table.stage, eq(table.match.stageId, table.stage.id))
-		.leftJoin(table.event, eq(table.stage.eventId, table.event.id))
-		.where(eq(table.match.id, id));
+	// Fetch the entire data graph in a single, comprehensive query
+	const matchData = await db.query.match.findFirst({
+		where: eq(table.match.id, id),
+		with: {
+			stage: {
+				with: {
+					event: true
+				}
+			},
+			matchTeams: {
+				with: { team: true },
+				orderBy: (mt, { asc }) => [asc(mt.position)]
+			},
+			matchMaps: {
+				with: { map: true },
+				orderBy: (mm, { asc }) => [asc(mm.order)]
+			},
+			games: {
+				orderBy: (g, { asc }) => [asc(g.id)],
+				with: {
+					map: true,
+					gameTeams: {
+						with: { team: true }
+					},
+					gamePlayerScores: true,
+					gameVods: true
+				}
+			}
+		}
+	});
 
-	if (!match || !match.event) {
+	if (!matchData || !matchData.stage?.event) {
 		return null;
 	}
 
-	const { format } = match.match;
+	// Collect player names to fetch their slugs in a single batch
+	const playerNames = matchData.games.flatMap((g) => g.gamePlayerScores.map((ps) => ps.player));
+	const playerSlugMap = await mapPlayerNamesToSlugs(Array.from(new Set(playerNames)));
 
-	// Get teams data
-	const teams = await db
-		.select({
-			team: table.team,
-			matchTeam: table.matchTeam
-		})
-		.from(table.matchTeam)
-		.leftJoin(table.team, eq(table.matchTeam.teamId, table.team.id))
-		.where(eq(table.matchTeam.matchId, id))
-		.orderBy(table.matchTeam.position);
-
-	// Get maps data
-	const maps = await db
-		.select({
-			map: table.map,
-			matchMap: table.matchMap
-		})
-		.from(table.matchMap)
-		.leftJoin(table.map, eq(table.matchMap.mapId, table.map.id))
-		.where(eq(table.matchMap.matchId, id))
-		.orderBy(table.matchMap.order);
-
-	// Get games data
-	const games = await db
-		.select({
-			game: table.game,
-			map: table.map
-		})
-		.from(table.game)
-		.leftJoin(table.map, eq(table.game.mapId, table.map.id))
-		.where(eq(table.game.matchId, id))
-		.orderBy(table.game.id);
-
-	// Get game teams data
-	const gameTeams = await db
-		.select({
-			gameTeam: table.gameTeam,
-			team: table.team
-		})
-		.from(table.gameTeam)
-		.leftJoin(table.team, eq(table.gameTeam.teamId, table.team.id))
-		.where(
-			inArray(
-				table.gameTeam.gameId,
-				games.map((g) => g.game.id)
-			)
-		);
-
-	// Get player scores data
-	const playerScores = await db
-		.select({
-			gamePlayerScore: table.gamePlayerScore,
-			team: table.team
-		})
-		.from(table.gamePlayerScore)
-		.leftJoin(table.team, eq(table.gamePlayerScore.teamId, table.team.id))
-		.where(
-			inArray(
-				table.gamePlayerScore.gameId,
-				games.map((g) => g.game.id)
-			)
-		);
-
-	// Get VOD data
-	const vods = await db
-		.select({
-			gameVod: table.gameVod
-		})
-		.from(table.gameVod)
-		.where(
-			inArray(
-				table.gameVod.gameId,
-				games.map((g) => g.game.id)
-			)
-		);
-
-	// Filter out any null teams or maps
-	const validTeams = teams.filter(
-		(t): t is typeof t & { team: NonNullable<typeof t.team> } => t.team !== null
-	);
-
-	// Filter out banned maps and null maps
-	const validMaps = maps.filter(
-		(m): m is typeof m & { map: NonNullable<typeof m.map> } =>
-			m.map !== null && m.matchMap.action !== 'ban'
-	);
-
-	const validGames = games.filter(
-		(g): g is typeof g & { map: NonNullable<typeof g.map> } => g.map !== null
-	);
-
-	// Extract all player names for slug mapping
-	const playerNames: string[] = [];
-	for (const ps of playerScores) {
-		playerNames.push(ps.gamePlayerScore.player);
-	}
-
-	// Map player names to their slugs
-	const playerSlugMap = await mapPlayerNamesToSlugs(playerNames);
-
-	// Transform database event to expected Event type
-	const event: Event = {
-		...match.event,
-		server: (match.event.server === 'calabiyau' ? 'calabiyau' : 'strinova') as
+	// Shape the final response object from the nested data
+	const { format } = matchData;
+	const event = {
+		...matchData.stage.event,
+		server: (matchData.stage.event.server === 'calabiyau' ? 'calabiyau' : 'strinova') as
 			| 'calabiyau'
 			| 'strinova',
-		format: (match.event.format === 'lan'
+		format: (matchData.stage.event.format === 'lan'
 			? 'lan'
-			: match.event.format === 'online'
+			: matchData.stage.event.format === 'online'
 				? 'online'
 				: 'hybrid') as 'lan' | 'online' | 'hybrid',
-		region: match.event.region as Region,
-		status: match.event.status as 'upcoming' | 'live' | 'finished' | 'cancelled' | 'postponed',
+		region: matchData.stage.event.region as Region,
+		status: matchData.stage.event.status as
+			| 'upcoming'
+			| 'live'
+			| 'finished'
+			| 'cancelled'
+			| 'postponed',
 		stages: [],
 		organizers: [],
 		participants: []
 	};
 
-	// Transform games data
-	const transformedGames = validGames.map((game) => {
-		const gameTeamData = gameTeams.filter((gt) => gt.gameTeam.gameId === game.game.id);
-		const teamA = gameTeamData.find((gt) => gt.gameTeam.position === 0);
-		const teamB = gameTeamData.find((gt) => gt.gameTeam.position === 1);
+	const validTeams = matchData.matchTeams.filter(
+		(t): t is typeof t & { team: NonNullable<typeof t.team> } => t.team !== null
+	);
 
-		const playerScoreData = playerScores.filter((ps) => ps.gamePlayerScore.gameId === game.game.id);
-		const gameVods = vods.filter((v) => v.gameVod.gameId === game.game.id);
+	const validMaps = matchData.matchMaps.filter(
+		(m): m is typeof m & { map: NonNullable<typeof m.map> } => m.map !== null && m.action !== 'ban'
+	);
 
-		const teamAScores = playerScoreData
-			.filter((ps) => ps.gamePlayerScore.teamId === teamA?.gameTeam.teamId)
-			.map((ps) => ({
-				accountId: ps.gamePlayerScore.accountId,
-				player: ps.gamePlayerScore.player,
-				playerSlug: playerSlugMap[ps.gamePlayerScore.player],
-				characters: [
-					ps.gamePlayerScore.characterFirstHalf,
-					ps.gamePlayerScore.characterSecondHalf
-				] as [string | null, string | null],
-				score: ps.gamePlayerScore.score,
-				damageScore: ps.gamePlayerScore.damageScore,
-				kills: ps.gamePlayerScore.kills,
-				knocks: ps.gamePlayerScore.knocks,
-				deaths: ps.gamePlayerScore.deaths,
-				assists: ps.gamePlayerScore.assists,
-				damage: ps.gamePlayerScore.damage
-			}));
+	const transformedGames = matchData.games
+		.filter((g): g is typeof g & { map: NonNullable<typeof g.map> } => g.map !== null)
+		.map((game) => {
+			const teamA = game.gameTeams.find((gt) => gt.position === 0);
+			const teamB = game.gameTeams.find((gt) => gt.position === 1);
 
-		const teamBScores = playerScoreData
-			.filter((ps) => ps.gamePlayerScore.teamId === teamB?.gameTeam.teamId)
-			.map((ps) => ({
-				accountId: ps.gamePlayerScore.accountId,
-				player: ps.gamePlayerScore.player,
-				playerSlug: playerSlugMap[ps.gamePlayerScore.player],
-				characters: [
-					ps.gamePlayerScore.characterFirstHalf,
-					ps.gamePlayerScore.characterSecondHalf
-				] as [string | null, string | null],
-				score: ps.gamePlayerScore.score,
-				damageScore: ps.gamePlayerScore.damageScore,
-				kills: ps.gamePlayerScore.kills,
-				knocks: ps.gamePlayerScore.knocks,
-				deaths: ps.gamePlayerScore.deaths,
-				assists: ps.gamePlayerScore.assists,
-				damage: ps.gamePlayerScore.damage
-			}));
+			const mapPlayerScores = (teamId: string | undefined | null) =>
+				game.gamePlayerScores
+					.filter((ps) => ps.teamId === teamId)
+					.map((ps) => ({
+						accountId: ps.accountId,
+						player: ps.player,
+						playerSlug: playerSlugMap[ps.player],
+						characters: [ps.characterFirstHalf, ps.characterSecondHalf] as [
+							string | null,
+							string | null
+						],
+						score: ps.score,
+						damageScore: ps.damageScore,
+						kills: ps.kills,
+						knocks: ps.knocks,
+						deaths: ps.deaths,
+						assists: ps.assists,
+						damage: ps.damage
+					}));
 
-		// Ensure we have exactly 5 players per team
-		const teamAScoresFixed = teamAScores.slice(0, 5) as [
-			PlayerScore,
-			PlayerScore,
-			PlayerScore,
-			PlayerScore,
-			PlayerScore
-		];
-		const teamBScoresFixed = teamBScores.slice(0, 5) as [
-			PlayerScore,
-			PlayerScore,
-			PlayerScore,
-			PlayerScore,
-			PlayerScore
-		];
+			const teamAScores = mapPlayerScores(teamA?.teamId);
+			const teamBScores = mapPlayerScores(teamB?.teamId);
 
-		return {
-			id: game.game.id,
-			map: game.map.id as GameMap,
-			duration: game.game.duration,
-			teams: [teamA?.team?.id || '', teamB?.team?.id || ''] as [string, string],
-			result: [teamA?.gameTeam.score || 0, teamB?.gameTeam.score || 0] as [number, number],
-			scores: [teamAScoresFixed, teamBScoresFixed] as [
-				A: [PlayerScore, PlayerScore, PlayerScore, PlayerScore, PlayerScore],
-				B: [PlayerScore, PlayerScore, PlayerScore, PlayerScore, PlayerScore]
-			],
-			winner: game.game.winner,
-			vods: gameVods.map((v) => ({
-				url: v.gameVod.url,
-				type: v.gameVod.type,
-				playerId: v.gameVod.playerId || undefined,
-				teamId: v.gameVod.teamId || undefined,
-				language: v.gameVod.language || undefined,
-				platform: v.gameVod.platform || undefined,
-				title: v.gameVod.title || undefined,
-				official: v.gameVod.official,
-				startTime: v.gameVod.startTime || undefined,
-				available: v.gameVod.available,
-				createdAt: v.gameVod.createdAt,
-				updatedAt: v.gameVod.updatedAt
-			}))
-		};
-	});
+			const fixedScores = (
+				scores: typeof teamAScores
+			): [PlayerScore, PlayerScore, PlayerScore, PlayerScore, PlayerScore] =>
+				scores.slice(0, 5) as any;
 
-	const result: AppMatch & { event: Event } = {
-		id: match.match.id,
+			return {
+				id: game.id,
+				map: game.map.id as GameMap,
+				duration: game.duration,
+				teams: [teamA?.team?.id || '', teamB?.team?.id || ''] as [string, string],
+				result: [teamA?.score || 0, teamB?.score || 0] as [number, number],
+				scores: [fixedScores(teamAScores), fixedScores(teamBScores)] as [
+					A: [PlayerScore, PlayerScore, PlayerScore, PlayerScore, PlayerScore],
+					B: [PlayerScore, PlayerScore, PlayerScore, PlayerScore, PlayerScore]
+				],
+				winner: game.winner,
+				vods: game.gameVods.map((v) => ({
+					url: v.url,
+					type: v.type,
+					playerId: v.playerId || undefined,
+					teamId: v.teamId || undefined,
+					language: v.language || undefined,
+					platform: v.platform || undefined,
+					title: v.title || undefined,
+					official: v.official,
+					startTime: v.startTime || undefined,
+					available: v.available,
+					createdAt: v.createdAt,
+					updatedAt: v.updatedAt
+				}))
+			};
+		});
+
+	return {
+		id: matchData.id,
+		result: [matchData.matchTeams[0].score || 0, matchData.matchTeams[1].score || 0] as [
+			number,
+			number
+		],
 		battleOf: (format || 'BO1') as 'BO1' | 'BO3' | 'BO5',
 		maps: validMaps.map((m) => ({
 			map: m.map.id as GameMap,
-			pickerId: m.matchMap.map_picker_position ?? undefined,
-			pickedSide: m.matchMap.side === 0 ? 'Attack' : ('Defense' as 'Attack' | 'Defense')
+			pickerId: m.map_picker_position ?? undefined,
+			pickedSide: m.side === 0 ? 'Attack' : 'Defense'
 		})),
 		teams: (() => {
 			const teamArray = validTeams.map((t) => ({
 				team: t.team,
-				score: t.matchTeam.score || 0
+				score: t.score || 0
 			}));
 
-			// Ensure exactly 2 teams
 			while (teamArray.length < 2) {
 				teamArray.push({
 					team: {
@@ -282,12 +192,9 @@ export async function getMatch(id: string): Promise<(AppMatch & { event: Event }
 					score: 0
 				});
 			}
-
 			return teamArray.slice(0, 2) as [AppMatch['teams'][0], AppMatch['teams'][1]];
 		})(),
 		games: transformedGames,
 		event
 	};
-
-	return result;
 }
