@@ -4,6 +4,7 @@ import { GAME_ACCOUNTS } from './game-accounts';
 import type { GameTeam } from '../schema';
 import type { GamePlayerScore } from '../schema';
 import type { GameMap } from '$lib/data/game';
+import { MATCH_TEAMS } from './matches';
 
 // Game metadata and configuration
 const GAME_CONFIG = {
@@ -347,9 +348,19 @@ function generateGames() {
 		// Get unique maps for this match
 		const matchMaps = getUniqueMapsForMatch(stageType, numGames);
 
+		const teamsForThisMatch = MATCH_TEAMS.filter((mt) => mt.matchId === match.id);
+
 		// Get team combination for this match (cycle through combinations)
-		const teamComboIndex = matchIndex % TEAM_MATCHUPS.length;
-		const [teamAId, teamBId] = TEAM_MATCHUPS[teamComboIndex];
+		const teamAEntry = teamsForThisMatch.find((mt) => mt.position === 0);
+		const teamBEntry = teamsForThisMatch.find((mt) => mt.position === 1);
+		if (!teamAEntry || !teamBEntry) {
+			console.warn(
+				`No teams found in MATCH_TEAMS for matchId: ${match.id}. Skipping game generation.`
+			);
+			return; // Skips to the next match in the forEach loop
+		}
+		const teamAId = teamAEntry.teamId;
+		const teamBId = teamBEntry.teamId;
 
 		// Generate games for this match
 		for (let gameIndex = 0; gameIndex < numGames; gameIndex++) {
