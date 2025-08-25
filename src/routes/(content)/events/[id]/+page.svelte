@@ -169,7 +169,7 @@
 				<button
 					onclick={() => (activeStage = stage)}
 					class={[
-						'px-4 py-2 hover:bg-gray-200 hover:text-black',
+						'cursor-pointer px-4 py-2 hover:bg-gray-200 hover:text-black',
 						activeStage?.id === stage.id
 							? 'bg-gray-300 font-bold text-black'
 							: 'bg-transparent font-normal'
