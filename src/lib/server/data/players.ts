@@ -739,34 +739,47 @@ export async function getPlayerDetailedMatches(playerId: string): Promise<Detail
 	// All the data is now neatly nested, making transformations much easier.
 	const out: DetailedMatchesOut[] = matches.map((match) => {
 		// Determine the teams playing in the match (with fallback).
-		let teams = (match.matchTeams ?? []).map((mt) => ({
+		const canonicalTeams = (match.matchTeams ?? []).map((mt) => ({
 			team: mt.team?.name ?? mt.teamId,
 			teamId: mt.team?.id ?? mt.teamId,
 			score: mt.score ?? 0
 		}));
 
 		// Fallback if matchTeams is empty (for legacy data).
-		if (teams.length === 0 && match.games.length > 0) {
-			const firstGameTeams = match.games[0].gameTeams;
-			teams = firstGameTeams.map((gt) => ({
-				team: gt.team?.name ?? gt.teamId,
-				teamId: gt.team?.id ?? gt.teamId,
-				score: 0 // Match score is calculated later
-			}));
+		if (canonicalTeams.length === 0 && match.games.length > 0) {
+			match.games[0].gameTeams.forEach((gt) => {
+				canonicalTeams.push({
+					team: gt.team?.name ?? gt.teamId,
+					teamId: gt.team?.id ?? gt.teamId,
+					score: 0
+				});
+			});
 		}
+
+		const canonicalTeamA = canonicalTeams[0];
+		const canonicalTeamB = canonicalTeams[1];
 
 		// Process each game within the match.
 		const games = match.games.map((game) => {
 			const playerStats = game.gamePlayerScores.find((ps) => accountIds.includes(ps.accountId));
 
-			const teamScores: [number, number] = [
-				game.gameTeams.find((gt) => gt.position === 0)?.score ?? 0,
-				game.gameTeams.find((gt) => gt.position === 1)?.score ?? 0
-			];
+			const gameTeamA = game.gameTeams.find((gt) => gt.teamId === canonicalTeamA?.teamId);
+			const gameTeamB = game.gameTeams.find((gt) => gt.teamId === canonicalTeamB?.teamId);
+
+			let normalizedWinner: 0 | 1 | -1 = game.winner ?? -1;
+			if (game.winner === 0 || game.winner === 1) {
+				const originalWinningTeam = game.gameTeams.find((gt) => gt.position === game.winner);
+				if (originalWinningTeam?.teamId === canonicalTeamA?.teamId) {
+					normalizedWinner = 0;
+				} else if (originalWinningTeam?.teamId === canonicalTeamB?.teamId) {
+					normalizedWinner = 1;
+				}
+			}
+			const teamScores: [number, number] = [gameTeamA?.score ?? 0, gameTeamB?.score ?? 0];
 
 			return {
 				id: game.id,
-				winner: game.winner,
+				winner: normalizedWinner,
 				mapId: game.map?.id,
 				teamScores,
 				playerPlayed: !!playerStats,
@@ -788,7 +801,7 @@ export async function getPlayerDetailedMatches(playerId: string): Promise<Detail
 			if (game.winner === 0) wins[0]++;
 			if (game.winner === 1) wins[1]++;
 		});
-		teams.forEach((team, i) => (team.score = wins[i] ?? 0));
+		canonicalTeams.forEach((team, i) => (team.score = wins[i] ?? 0));
 
 		// Determine which team the player is on.
 		const playerTeamId = match.games
@@ -796,14 +809,14 @@ export async function getPlayerDetailedMatches(playerId: string): Promise<Detail
 			.find((ps) => accountIds.includes(ps.accountId))?.teamId;
 		const playerTeamIndex = Math.max(
 			0,
-			teams.findIndex((t) => t.teamId === playerTeamId)
+			canonicalTeams.findIndex((t) => t.teamId === playerTeamId)
 		);
 
 		return {
 			id: match.id,
 			format: match.format,
 			stageId: match.stageId,
-			teams,
+			teams: canonicalTeams,
 			games,
 			event: match.stage!.event, // Use non-null assertion if event is guaranteed.
 			playerTeamIndex
