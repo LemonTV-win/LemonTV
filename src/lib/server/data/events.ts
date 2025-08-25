@@ -7,7 +7,7 @@ import { processImageURL } from '$lib/server/storage';
 import type { Region } from '$lib/data/game';
 import { eq, or, sql } from 'drizzle-orm';
 import type { EventParticipant, StageNode, Stage, EventResult } from '$lib/data/events';
-import type { Player } from '$lib/data/players';
+import type { GameAccount, GameAccountRegion, GameAccountServer, Player } from '$lib/data/players';
 import { normalizePlayer } from '$lib/server/data/players';
 import type { PlayerScore } from '$lib/data/matches';
 import type { EssentialEvent } from '$lib/components/EventCard.svelte';
@@ -401,6 +401,18 @@ export async function getEvent(id: string): Promise<AppEvent | undefined> {
 							name: true,
 							slug: true,
 							nationality: true
+						},
+						with: {
+							additionalNationalities: {
+								columns: {
+									nationality: true
+								}
+							},
+							aliases: {
+								columns: {
+									alias: true
+								}
+							}
 						}
 					}
 				}
@@ -581,6 +593,26 @@ export async function getEvent(id: string): Promise<AppEvent | undefined> {
 
 	const eventPostprocessingStart = performance.now();
 
+	function normalizePlayerGameAccount<
+		T extends {
+			gameAccounts: {
+				server: string;
+				accountId: number;
+				currentName: string;
+				region: string | null;
+			}[];
+		}
+	>(player: T): Omit<T, 'gameAccounts'> & { gameAccounts: GameAccount[] } {
+		return {
+			...player,
+			gameAccounts: player.gameAccounts.map((ga) => ({
+				...ga,
+				region: ga.region ? (ga.region as GameAccountRegion) : undefined,
+				server: ga.server as GameAccountServer
+			}))
+		};
+	}
+
 	const teamPlayersMap = new Map<string, EventParticipant>();
 	for (const teamPlayer of eventData.teamPlayers) {
 		if (!teamPlayer.team || !teamPlayer.player) continue;
@@ -596,11 +628,11 @@ export async function getEvent(id: string): Promise<AppEvent | undefined> {
 		}
 		const teamData = teamPlayersMap.get(teamPlayer.team.id)!;
 		if (teamPlayer.role === 'main') {
-			teamData.main.push(normalizePlayer(teamPlayer.player));
+			teamData.main.push(normalizePlayerGameAccount(normalizePlayer(teamPlayer.player)));
 		} else if (teamPlayer.role === 'sub') {
-			teamData.reserve.push(normalizePlayer(teamPlayer.player));
+			teamData.reserve.push(normalizePlayerGameAccount(normalizePlayer(teamPlayer.player)));
 		} else if (teamPlayer.role === 'coach') {
-			teamData.coach.push(normalizePlayer(teamPlayer.player));
+			teamData.coach.push(normalizePlayerGameAccount(normalizePlayer(teamPlayer.player)));
 		}
 
 		if (teamPlayer.eventTeam) {
@@ -817,6 +849,10 @@ export async function getEvent(id: string): Promise<AppEvent | undefined> {
 					order: node.order
 				})) satisfies StageNode[]
 			}
+		})),
+		casters: eventData.casters.map((caster) => ({
+			...caster,
+			player: normalizePlayer(caster.player)
 		}))
 	};
 

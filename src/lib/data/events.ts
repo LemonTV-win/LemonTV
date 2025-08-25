@@ -109,7 +109,10 @@ export interface Event {
 		title?: string;
 	}[];
 	casters?: Array<{
-		player: Pick<Player, 'id' | 'name' | 'slug' | 'avatar'>;
+		player: Pick<Player, 'id' | 'name' | 'slug' | 'avatar'> & {
+			nationalities: string[];
+			aliases: string[];
+		};
 		role: 'host' | 'analyst' | 'commentator';
 	}>;
 	results?: EventResult[];

@@ -1976,37 +1976,27 @@ export async function getServerPlayerSuperstringPower(
 	return result;
 }
 
-export function normalizePlayer(player: {
-	id: string;
-	name: string;
-	slug: string;
-	nationality: TCountryCode | null;
-	aliases: { alias: string }[];
-	additionalNationalities: { nationality: TCountryCode }[];
-	gameAccounts: Omit<GameAccountDB, 'playerId'>[];
-	socialAccounts: { platformId: string; accountId: string }[];
-}): {
-	id: string;
-	name: string;
-	slug: string;
+// Apply nationality normalization to player data
+export function normalizePlayer<
+	T extends {
+		nationality: TCountryCode | null;
+		additionalNationalities: { nationality: TCountryCode }[];
+		aliases: {
+			alias: string;
+		}[];
+	}
+>(
+	player: T
+): Omit<T, 'nationalities' | 'aliases'> & {
 	nationalities: TCountryCode[];
 	aliases: string[];
-	gameAccounts: GameAccount[];
-	socialAccounts: { platformId: string; accountId: string }[];
 } {
 	return {
-		id: player.id,
-		name: player.name,
-		slug: player.slug,
+		...player,
 		nationalities: [
 			player.nationality,
 			...player.additionalNationalities.map((a) => a.nationality)
 		].filter((n) => n !== null),
-		aliases: player.aliases.map((a) => a.alias),
-		gameAccounts: player.gameAccounts.map((ga) => ({
-			...ga,
-			region: ga.region ?? undefined
-		})),
-		socialAccounts: player.socialAccounts
+		aliases: player.aliases.map((a) => a.alias)
 	};
 }
