@@ -5,15 +5,14 @@ import { db } from '../db';
 import * as table from '$lib/server/db/schema';
 import { processImageURL } from '$lib/server/storage';
 import type { Region } from '$lib/data/game';
-import { inArray, eq, or, and, sql } from 'drizzle-orm';
+import { eq, or, sql } from 'drizzle-orm';
 import type { EventParticipant, StageNode, Stage, EventResult } from '$lib/data/events';
 import type { Player } from '$lib/data/players';
-import { getPlayer } from '$lib/server/data/players';
-import type { UserRole } from '$lib/data/user';
-import type { TCountryCode } from 'countries-list';
-import type { Participant, PlayerScore } from '$lib/data/matches';
+import { normalizePlayer } from '$lib/server/data/players';
+import type { PlayerScore } from '$lib/data/matches';
 import type { EssentialEvent } from '$lib/components/EventCard.svelte';
-import type { GameMap } from '$lib/data/game';
+import type { LocalizedString } from '$lib/data/string';
+import type { Team } from '$lib/data/teams';
 
 // Types for the application layer
 export interface EventWithOrganizers extends Event {
@@ -84,6 +83,7 @@ export interface EventMatchData {
 			updatedAt: string | null;
 		};
 		score: number;
+		position: number;
 	} | null>;
 	maps: Array<{
 		map: string;
@@ -102,8 +102,8 @@ export function toDatabaseEvent(
 		name: data.name,
 		slug: data.slug,
 		official: data.official,
-		server: data.server,
-		format: data.format,
+		server: data.server as 'calabiyau' | 'strinova',
+		format: data.format as 'lan' | 'online' | 'hybrid',
 		region: data.region as Region,
 		image: data.image,
 		status: data.status as 'upcoming' | 'live' | 'finished' | 'cancelled' | 'postponed',
@@ -309,820 +309,561 @@ export async function getEssentialEvents(): Promise<EssentialEvent[]> {
 	return result;
 }
 
+// before: 80ms
+
+function fakeLocalizedString(str: string): LocalizedString {
+	return {
+		en: str,
+		es: str,
+		fr: str,
+		de: str,
+		ja: str,
+		'pt-br': str,
+		ko: str,
+		zh: str,
+		ru: str,
+		id: str,
+		'uk-ua': str,
+		'zh-tw': str,
+		vi: str
+	};
+}
+
 export async function getEvent(id: string): Promise<AppEvent | undefined> {
 	const totalStart = performance.now();
 	console.info(`[Events] Fetching single event: ${id}`);
 
 	// Simple query to get basic event data first
+	// #region Event query
 	const eventQueryStart = performance.now();
-	const [eventData] = await db
-		.select({
-			event: table.event,
-			organizer: table.organizer
-		})
-		.from(table.event)
-		.leftJoin(table.eventOrganizer, eq(table.eventOrganizer.eventId, table.event.id))
-		.leftJoin(table.organizer, eq(table.organizer.id, table.eventOrganizer.organizerId))
-		.where(or(eq(table.event.id, id), eq(table.event.slug, id)));
-	const eventQueryDuration = performance.now() - eventQueryStart;
-	console.info(`[Events] Event query took ${eventQueryDuration.toFixed(2)}ms`);
+	const eventData = await db.query.event.findFirst({
+		where: or(eq(table.event.id, id), eq(table.event.slug, id)),
+		columns: {
+			id: true,
+			slug: true,
+			name: true,
+			official: true,
+			server: true,
+			format: true,
+			region: true,
+			image: true,
+			status: true,
+			capacity: true,
+			date: true
+		},
+		with: {
+			organizers: {
+				with: {
+					organizer: {
+						columns: {
+							id: true,
+							slug: true,
+							name: true,
+							logo: true,
+							url: true
+						}
+					}
+				}
+			},
+			results: {
+				columns: {
+					rank: true,
+					rankTo: true,
+					prizeAmount: true,
+					prizeCurrency: true
+				},
+				with: {
+					team: true
+				}
+			},
+			websites: {
+				columns: {
+					url: true,
+					label: true
+				}
+			},
+			videos: {
+				columns: {
+					type: true,
+					platform: true,
+					url: true,
+					title: true
+				}
+			},
+			casters: {
+				columns: {
+					role: true
+				},
+				with: {
+					player: {
+						columns: {
+							id: true,
+							name: true,
+							slug: true,
+							nationality: true
+						}
+					}
+				}
+			},
+			teamPlayers: {
+				columns: {
+					role: true
+				},
+				with: {
+					team: {
+						columns: {
+							id: true,
+							name: true,
+							slug: true,
+							logo: true,
+							abbr: true,
+							region: true
+						}
+					},
+					player: {
+						columns: {
+							id: true,
+							name: true,
+							slug: true,
+							nationality: true
+						},
+						with: {
+							aliases: {
+								columns: {
+									alias: true
+								}
+							},
+							additionalNationalities: {
+								columns: {
+									nationality: true
+								}
+							},
+							gameAccounts: {
+								columns: {
+									accountId: true,
+									server: true,
+									currentName: true,
+									region: true
+								}
+							},
+							socialAccounts: {
+								columns: {
+									platformId: true,
+									accountId: true
+								}
+							}
+						}
+					},
+					eventTeam: {
+						columns: {
+							entry: true,
+							status: true
+						}
+						// with: {
+						// 	team: {
+						// 		columns: {
+						// 			id: true,
+						// 			slug: true,
+						// 			name: true,
+						// 			abbr: true,
+						// 			logo: true,
+						// 			region: true
+						// 		}
+						// 	}
+						// }
+					}
+				}
+			},
+			stages: {
+				columns: {
+					id: true,
+					title: true,
+					stage: true,
+					format: true
+				},
+				with: {
+					rounds: {
+						columns: {
+							id: true,
+							type: true,
+							title: true,
+							parallelGroup: true
+						}
+					},
+					nodes: {
+						columns: {
+							matchId: true,
+							roundId: true,
+							order: true
+						},
+						with: {
+							dependencies: {
+								columns: {
+									dependencyMatchId: true,
+									outcome: true
+								}
+							}
+						}
+					},
+					matches: {
+						columns: {
+							id: true,
+							format: true
+						},
+						with: {
+							games: {
+								with: {
+									gameTeams: {
+										with: {
+											team: true
+										}
+									},
+									gameVods: true,
+									gamePlayerScores: true,
+									map: {
+										columns: {
+											id: true
+										}
+									}
+								}
+							},
+							matchMaps: {
+								columns: {
+									map_picker_position: true,
+									side: true
+								},
+								with: {
+									map: {
+										columns: {
+											id: true
+										}
+									}
+								}
+							},
+							matchTeams: {
+								columns: {
+									teamId: true,
+									score: true,
+									position: true
+								},
+								with: {
+									team: {
+										columns: {
+											id: true,
+											slug: true,
+											name: true,
+											abbr: true,
+											logo: true,
+											region: true,
+											createdAt: true,
+											updatedAt: true
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	});
+	console.info(`[Events] Event query took ${(performance.now() - eventQueryStart).toFixed(2)}ms`);
 
-	if (!eventData?.event) {
+	if (!eventData) {
 		console.info(`[Events] Event not found: ${id}`);
 		return undefined;
 	}
+	console.info(`[Events] Event data: ${JSON.stringify(eventData, null, 2)}`);
 
-	// Get organizers separately
-	const organizersQueryStart = performance.now();
-	const organizers = await db
-		.select({
-			organizer: table.organizer
-		})
-		.from(table.eventOrganizer)
-		.leftJoin(table.organizer, eq(table.organizer.id, table.eventOrganizer.organizerId))
-		.where(eq(table.eventOrganizer.eventId, eventData.event.id));
-	const organizersQueryDuration = performance.now() - organizersQueryStart;
-	console.info(`[Events] Organizers query took ${organizersQueryDuration.toFixed(2)}ms`);
+	// #endregion
 
-	// Get event results separately
-	const resultsQueryStart = performance.now();
-	const eventResults = await db
-		.select({
-			eventId: table.eventResult.eventId,
-			teamId: table.eventResult.teamId,
-			rank: table.eventResult.rank,
-			rankTo: table.eventResult.rankTo,
-			prizeAmount: table.eventResult.prizeAmount,
-			prizeCurrency: table.eventResult.prizeCurrency,
-			team: table.team
-		})
-		.from(table.eventResult)
-		.leftJoin(table.team, eq(table.team.id, table.eventResult.teamId))
-		.where(eq(table.eventResult.eventId, eventData.event.id));
-	const resultsQueryDuration = performance.now() - resultsQueryStart;
-	console.info(`[Events] Results query took ${resultsQueryDuration.toFixed(2)}ms`);
+	// #region Event postprocessing
 
-	// Get event websites separately
-	const websitesQueryStart = performance.now();
-	const websites = await db
-		.select({
-			url: table.eventWebsite.url,
-			label: table.eventWebsite.label
-		})
-		.from(table.eventWebsite)
-		.where(eq(table.eventWebsite.eventId, eventData.event.id));
-	const websitesQueryDuration = performance.now() - websitesQueryStart;
-	console.info(`[Events] Websites query took ${websitesQueryDuration.toFixed(2)}ms`);
+	const eventPostprocessingStart = performance.now();
 
-	// Get event videos separately
-	const videosQueryStart = performance.now();
-	const videos = await db
-		.select({
-			type: table.eventVideo.type,
-			platform: table.eventVideo.platform,
-			url: table.eventVideo.url,
-			title: table.eventVideo.title
-		})
-		.from(table.eventVideo)
-		.where(eq(table.eventVideo.eventId, eventData.event.id));
-	const videosQueryDuration = performance.now() - videosQueryStart;
-	console.info(`[Events] Videos query took ${videosQueryDuration.toFixed(2)}ms`);
+	const teamPlayersMap = new Map<string, EventParticipant>();
+	for (const teamPlayer of eventData.teamPlayers) {
+		if (!teamPlayer.team || !teamPlayer.player) continue;
+		if (!teamPlayersMap.has(teamPlayer.team.id)) {
+			teamPlayersMap.set(teamPlayer.team.id, {
+				main: [],
+				reserve: [],
+				coach: [],
+				entry: teamPlayer.eventTeam?.entry as typeof teamData.entry,
+				status: teamPlayer.eventTeam?.status as typeof teamData.status,
+				team: teamPlayer.team
+			});
+		}
+		const teamData = teamPlayersMap.get(teamPlayer.team.id)!;
+		if (teamPlayer.role === 'main') {
+			teamData.main.push(normalizePlayer(teamPlayer.player));
+		} else if (teamPlayer.role === 'sub') {
+			teamData.reserve.push(normalizePlayer(teamPlayer.player));
+		} else if (teamPlayer.role === 'coach') {
+			teamData.coach.push(normalizePlayer(teamPlayer.player));
+		}
 
-	// Get event casters separately
-	const castersQueryStart = performance.now();
-	const casters = await db
-		.select({
-			role: table.eventCaster.role,
-			player: table.player
-		})
-		.from(table.eventCaster)
-		.leftJoin(table.player, eq(table.player.id, table.eventCaster.playerId))
-		.where(eq(table.eventCaster.eventId, eventData.event.id));
-	const castersQueryDuration = performance.now() - castersQueryStart;
-	console.info(`[Events] Casters query took ${castersQueryDuration.toFixed(2)}ms`);
+		if (teamPlayer.eventTeam) {
+			teamData.entry = teamPlayer.eventTeam.entry as typeof teamData.entry;
+			teamData.status = teamPlayer.eventTeam.status as typeof teamData.status;
+			teamData.team = teamPlayer.team;
+		}
+	}
 
-	// Get event team players and team meta (entry/status) separately
-	const teamPlayersQueryStart = performance.now();
-	const teamPlayers = await db
-		.select({
-			team: table.team,
-			player: table.player,
-			role: table.eventTeamPlayer.role,
-			eventTeam: table.eventTeam
-		})
-		.from(table.eventTeamPlayer)
-		.leftJoin(table.team, eq(table.team.id, table.eventTeamPlayer.teamId))
-		.leftJoin(table.player, eq(table.player.id, table.eventTeamPlayer.playerId))
-		.leftJoin(
-			table.eventTeam,
-			and(
-				eq(table.eventTeam.teamId, table.eventTeamPlayer.teamId),
-				eq(table.eventTeam.eventId, table.eventTeamPlayer.eventId)
-			)
-		)
-		.where(eq(table.eventTeamPlayer.eventId, eventData.event.id));
-	const teamPlayersQueryDuration = performance.now() - teamPlayersQueryStart;
-	console.info(`[Events] Team players query took ${teamPlayersQueryDuration.toFixed(2)}ms`);
+	const participants = Array.from(teamPlayersMap.values()).map(
+		(teamData) =>
+			({
+				main: teamData.main,
+				reserve: teamData.reserve,
+				coach: teamData.coach,
+				entry: teamData.entry,
+				status: teamData.status,
+				team: teamData.team
+			}) satisfies EventParticipant
+	);
 
-	// Get stages and related data separately
-	const stagesQueryStart = performance.now();
-	const stages = await db
-		.select({
-			stage: table.stage,
-			stageRound: table.stageRound,
-			stageNode: table.stageNode,
-			stageNodeDependency: table.stageNodeDependency,
-			match: table.match
-		})
-		.from(table.stage)
-		.leftJoin(table.stageRound, eq(table.stageRound.stageId, table.stage.id))
-		.leftJoin(table.stageNode, eq(table.stageNode.stageId, table.stage.id))
-		.leftJoin(table.stageNodeDependency, eq(table.stageNodeDependency.nodeId, table.stageNode.id))
-		.leftJoin(table.match, eq(table.match.id, table.stageNode.matchId))
-		.where(eq(table.stage.eventId, eventData.event.id));
-	const stagesQueryDuration = performance.now() - stagesQueryStart;
-	console.info(`[Events] Stages query took ${stagesQueryDuration.toFixed(2)}ms`);
-
-	// Process the data
-	const processingStart = performance.now();
-
-	// Process organizers
-	const processedOrganizers = organizers
-		.filter(
-			(o): o is typeof o & { organizer: NonNullable<typeof o.organizer> } => o.organizer !== null
-		)
-		.map((o) => o.organizer);
-
-	// Process results
-	const processedResults = eventResults
-		.filter(
-			(r): r is typeof r & { team: NonNullable<typeof r.team> } =>
-				r.team !== null && r.rank !== null && r.prizeAmount !== null && r.prizeCurrency !== null
-		)
-		.map(async (r) => ({
-			rank: r.rank,
-			rankTo: r.rankTo ?? undefined,
-			team: {
-				...r.team,
-				logoURL: r.team.logo ? await processImageURL(r.team.logo) : null
-			},
+	const compiledEventData = {
+		...eventData,
+		websites: eventData.websites.map((website) => ({
+			...website,
+			label: website.label ?? undefined
+		})),
+		organizers: eventData.organizers.map((organizer) => {
+			return {
+				...organizer.organizer,
+				url: organizer.organizer.url ?? undefined
+			};
+		}),
+		results: eventData.results.map((result) => ({
+			...result,
+			rankTo: result.rankTo ?? undefined,
+			team: result.team,
 			prizes: [
 				{
-					amount: r.prizeAmount,
-					currency: r.prizeCurrency
+					amount: result.prizeAmount ?? 0,
+					currency: result.prizeCurrency ?? 'Bablo' // TODO: Good default
 				}
 			]
-		}));
-
-	// Process websites
-	const processedWebsites = websites.map((w) => ({
-		url: w.url,
-		label: w.label || undefined
-	}));
-
-	// Process videos
-	const processedVideos = videos.map((v) => ({
-		type: v.type as 'stream' | 'clip' | 'vod',
-		platform: v.platform as 'twitch' | 'youtube' | 'bilibili',
-		url: v.url,
-		title: v.title || undefined
-	}));
-
-	// Process casters
-	const processedCasters = await Promise.all(
-		casters
-			.filter((c): c is typeof c & { player: NonNullable<typeof c.player> } => c.player !== null)
-			.map(async (c) => {
-				const player = await getPlayer(c.player.id);
-				return player ? { player, role: c.role as 'host' | 'analyst' | 'commentator' } : null;
-			})
-	);
-	const validCasters = processedCasters.filter((c): c is NonNullable<typeof c> => c !== null);
-
-	// Get full player data for team players
-	const uniquePlayerIds = Array.from(
-		new Set(
-			teamPlayers
-				.map((tp) => tp.player?.id)
-				.filter((id): id is string => id !== undefined && id !== null)
-		)
-	);
-
-	// Fetch all player data in a single batch query
-	const playerRows = await db
-		.select({
-			player: table.player,
-			playerAlias: table.playerAlias,
-			gameAccount: table.gameAccount,
-			socialAccount: table.player_social_account,
-			user: table.user,
-			userRole: table.userRole,
-			playerAdditionalNationality: table.playerAdditionalNationality
-		})
-		.from(table.player)
-		.leftJoin(table.playerAlias, eq(table.playerAlias.playerId, table.player.id))
-		.leftJoin(table.gameAccount, eq(table.gameAccount.playerId, table.player.id))
-		.leftJoin(
-			table.player_social_account,
-			eq(table.player_social_account.playerId, table.player.id)
-		)
-		.leftJoin(table.user, eq(table.user.id, table.player.userId))
-		.leftJoin(table.userRole, eq(table.userRole.userId, table.user.id))
-		.leftJoin(
-			table.playerAdditionalNationality,
-			eq(table.playerAdditionalNationality.playerId, table.player.id)
-		)
-		.where(inArray(table.player.id, uniquePlayerIds));
-
-	// Group data by player
-	const playerMap: Record<string, Player> = {};
-	for (const row of playerRows) {
-		const p = row.player;
-		if (!p?.id) continue;
-
-		if (!playerMap[p.id]) {
-			playerMap[p.id] = {
-				id: p.id,
-				name: p.name,
-				slug: p.slug,
-				nationalities: p.nationality ? [p.nationality as TCountryCode] : [],
-				aliases: [],
-				gameAccounts: [],
-				socialAccounts: [],
-				user: row.user
-					? {
-							id: row.user.id,
-							username: row.user.username,
-							email: row.user.email,
-							roles: []
-						}
-					: undefined
-			};
-		}
-
-		const player = playerMap[p.id];
-
-		// Add additional nationality
-		const additionalNationality = row.playerAdditionalNationality?.nationality;
-		if (
-			additionalNationality &&
-			!player.nationalities.includes(additionalNationality as TCountryCode)
-		) {
-			player.nationalities.push(additionalNationality as TCountryCode);
-		}
-
-		// Add alias
-		const alias = row.playerAlias?.alias;
-		if (alias && !player.aliases!.includes(alias)) {
-			player.aliases!.push(alias);
-		}
-
-		// Add game account
-		const ga = row.gameAccount;
-		if (
-			ga?.accountId &&
-			!player.gameAccounts.some((a) => a.accountId === ga.accountId && a.server === ga.server)
-		) {
-			player.gameAccounts.push({
-				server: ga.server,
-				accountId: ga.accountId,
-				currentName: ga.currentName,
-				region: ga.region as Player['gameAccounts'][0]['region']
-			});
-		}
-
-		// Add social account
-		const sa = row.socialAccount;
-		if (
-			sa?.platformId &&
-			!player.socialAccounts!.some(
-				(a) => a.platformId === sa.platformId && a.accountId === sa.accountId
-			)
-		) {
-			player.socialAccounts!.push({
-				platformId: sa.platformId,
-				accountId: sa.accountId,
-				overridingUrl: sa.overriding_url || undefined
-			});
-		}
-
-		// Add user role
-		const role = row.userRole?.roleId;
-		if (player.user && role && !player.user.roles.includes(role as UserRole)) {
-			player.user.roles.push(role as UserRole);
-		}
-	}
-
-	// Group team players by team
-	const teamPlayersMap = new Map<
-		string,
-		{
-			main: Player[];
-			reserve: Player[];
-			coach: Player[];
-			entry?:
-				| 'open'
-				| 'invited'
-				| 'qualified'
-				| 'host'
-				| 'defending_champion'
-				| 'regional_slot'
-				| 'exhibition'
-				| 'wildcard';
-			status?: 'active' | 'disqualified' | 'withdrawn' | 'eliminated';
-		}
-	>();
-
-	teamPlayers.forEach(({ team, player, role, eventTeam }) => {
-		if (!team || !player) return;
-
-		const fullPlayer = playerMap[player.id];
-		if (!fullPlayer) return;
-
-		if (!teamPlayersMap.has(team.id)) {
-			teamPlayersMap.set(team.id, { main: [], reserve: [], coach: [] });
-		}
-		const teamData = teamPlayersMap.get(team.id)!;
-		if (role === 'main') {
-			teamData.main.push(fullPlayer);
-		} else if (role === 'sub') {
-			teamData.reserve.push(fullPlayer);
-		} else if (role === 'coach') {
-			teamData.coach.push(fullPlayer);
-		}
-
-		if (eventTeam) {
-			teamData.entry = eventTeam.entry as typeof teamData.entry;
-			teamData.status = eventTeam.status as typeof teamData.status;
-		}
-	});
-
-	// Convert to participants
-	const participants = await Promise.all(
-		Array.from(teamPlayersMap.entries()).map(async ([teamId, players]) => {
-			const teamObj = teamPlayers.find((t) => t.team?.id === teamId)?.team;
-			// Always create a team object, even if we don't have the full team data
-			const team = teamObj
-				? {
-						...teamObj,
-						logoURL: teamObj.logo ? await processImageURL(teamObj.logo) : null
-					}
-				: {
-						id: teamId,
-						name: teamId,
-						slug: teamId.toLowerCase(),
-						abbr: teamId,
-						region: null,
-						logo: null,
-						createdAt: null,
-						updatedAt: null,
-						logoURL: null
-					};
-
-			return {
-				team,
-				main: players.main,
-				reserve: players.reserve,
-				coach: players.coach,
-				entry: players.entry,
-				status: players.status
-			} as EventParticipant;
-		})
-	);
-
-	// Process stages with matches
-	const stageMap = new Map<
-		number,
-		{
-			stage: typeof table.stage.$inferSelect;
-			rounds: Map<
-				number,
-				{
-					round: typeof table.stageRound.$inferSelect;
-					nodes: Array<{
-						node: typeof table.stageNode.$inferSelect;
-						dependencies: Array<{
-							dependencyMatchId: string;
-							outcome: string;
-						}>;
-					}>;
-				}
-			>;
-		}
-	>();
-
-	stages.forEach((row) => {
-		if (!row.stage) return;
-
-		if (!stageMap.has(row.stage.id)) {
-			stageMap.set(row.stage.id, {
-				stage: row.stage,
-				rounds: new Map()
-			});
-		}
-
-		const stageData = stageMap.get(row.stage.id)!;
-
-		if (row.stageRound) {
-			if (!stageData.rounds.has(row.stageRound.id)) {
-				stageData.rounds.set(row.stageRound.id, {
-					round: row.stageRound,
-					nodes: []
-				});
-			}
-
-			const roundData = stageData.rounds.get(row.stageRound.id)!;
-
-			if (row.stageNode) {
-				const nodeData = {
-					node: row.stageNode,
-					dependencies: [] as Array<{
-						dependencyMatchId: string;
-						outcome: string;
-					}>
-				};
-
-				if (row.stageNodeDependency) {
-					nodeData.dependencies.push({
-						dependencyMatchId: row.stageNodeDependency.dependencyMatchId,
-						outcome: row.stageNodeDependency.outcome
-					});
-				}
-
-				roundData.nodes.push(nodeData);
-			}
-		}
-	});
-
-	// Get all match IDs from stages
-	const allMatchIds = new Set<string>();
-	Array.from(stageMap.values()).forEach((stageData) => {
-		stageData.rounds.forEach((roundData) => {
-			roundData.nodes.forEach((nodeData) => {
-				if (nodeData.node.matchId) {
-					allMatchIds.add(nodeData.node.matchId);
-				}
-			});
-		});
-	});
-
-	// Query all matches for this event
-	let eventMatches: EventMatchData[] = [];
-	if (allMatchIds.size > 0) {
-		const matchData = await db
-			.select({
-				match: table.match,
-				matchTeam: table.matchTeam,
-				team: table.team
-			})
-			.from(table.match)
-			.leftJoin(table.matchTeam, eq(table.matchTeam.matchId, table.match.id))
-			.leftJoin(table.team, eq(table.team.id, table.matchTeam.teamId))
-			.where(inArray(table.match.id, Array.from(allMatchIds)));
-
-		// Group match data by match ID
-		const matchMap = new Map<string, EventMatchData>();
-		matchData.forEach(({ match, matchTeam, team }) => {
-			if (!matchMap.has(match.id)) {
-				matchMap.set(match.id, {
-					...match,
-					id: match.id,
-					teams: [null, null],
-					maps: []
-				});
-			}
-			if (team && matchTeam && matchTeam.position !== null) {
-				const matchObj = matchMap.get(match.id);
-				if (matchObj) {
-					matchObj.teams[matchTeam.position] = {
-						team: {
-							id: team.id,
-							name: team.name,
-							slug: team.slug,
-							abbr: team.abbr,
-							logo: team.logo,
-							region: team.region as Region,
-							createdAt: team.createdAt,
-							updatedAt: team.updatedAt
-						},
-						score: matchTeam.score || 0
-					};
-				}
-			}
-		});
-		eventMatches = Array.from(matchMap.values());
-	}
-
-	// Get games data for all matches in this event
-	const gamesQueryStart = performance.now();
-	const games = await db
-		.select({
-			game: table.game,
-			map: table.map,
-			match: table.match
-		})
-		.from(table.game)
-		.leftJoin(table.map, eq(table.game.mapId, table.map.id))
-		.leftJoin(table.match, eq(table.game.matchId, table.match.id))
-		.where(inArray(table.match.id, Array.from(allMatchIds)))
-		.orderBy(table.game.id);
-	const gamesQueryDuration = performance.now() - gamesQueryStart;
-	console.info(`[Events] Games query took ${gamesQueryDuration.toFixed(2)}ms`);
-
-	// Get game teams data
-	const gameTeamsQueryStart = performance.now();
-	const gameTeams = await db
-		.select({
-			gameTeam: table.gameTeam,
-			team: table.team
-		})
-		.from(table.gameTeam)
-		.leftJoin(table.team, eq(table.gameTeam.teamId, table.team.id))
-		.where(
-			inArray(
-				table.gameTeam.gameId,
-				games.map((g) => g.game.id)
-			)
-		);
-	const gameTeamsQueryDuration = performance.now() - gameTeamsQueryStart;
-	console.info(`[Events] Game teams query took ${gameTeamsQueryDuration.toFixed(2)}ms`);
-
-	// Get player scores data
-	const playerScoresQueryStart = performance.now();
-	const playerScores = await db
-		.select({
-			gamePlayerScore: table.gamePlayerScore,
-			team: table.team
-		})
-		.from(table.gamePlayerScore)
-		.leftJoin(table.team, eq(table.gamePlayerScore.teamId, table.team.id))
-		.where(
-			inArray(
-				table.gamePlayerScore.gameId,
-				games.map((g) => g.game.id)
-			)
-		);
-	const playerScoresQueryDuration = performance.now() - playerScoresQueryStart;
-	console.info(`[Events] Player scores query took ${playerScoresQueryDuration.toFixed(2)}ms`);
-
-	// Get VOD data
-	const vodsQueryStart = performance.now();
-	const vods = await db
-		.select({
-			gameVod: table.gameVod
-		})
-		.from(table.gameVod)
-		.where(
-			inArray(
-				table.gameVod.gameId,
-				games.map((g) => g.game.id)
-			)
-		);
-	const vodsQueryDuration = performance.now() - vodsQueryStart;
-	console.info(`[Events] VODs query took ${vodsQueryDuration.toFixed(2)}ms`);
-
-	// Process games data
-	const validGames = games.filter(
-		(g): g is typeof g & { map: NonNullable<typeof g.map>; match: NonNullable<typeof g.match> } =>
-			g.map !== null && g.match !== null
-	);
-
-	// Group games by match ID
-	const gamesByMatch = new Map<string, typeof validGames>();
-	validGames.forEach((game) => {
-		if (!gamesByMatch.has(game.match.id)) {
-			gamesByMatch.set(game.match.id, []);
-		}
-		gamesByMatch.get(game.match.id)!.push(game);
-	});
-
-	// Group game teams by game ID
-	const gameTeamsByGame = new Map<number, typeof gameTeams>();
-	gameTeams.forEach((gt) => {
-		if (!gameTeamsByGame.has(gt.gameTeam.gameId)) {
-			gameTeamsByGame.set(gt.gameTeam.gameId, []);
-		}
-		gameTeamsByGame.get(gt.gameTeam.gameId)!.push(gt);
-	});
-
-	// Group player scores by game ID
-	const playerScoresByGame = new Map<number, typeof playerScores>();
-	playerScores.forEach((ps) => {
-		if (!playerScoresByGame.has(ps.gamePlayerScore.gameId)) {
-			playerScoresByGame.set(ps.gamePlayerScore.gameId, []);
-		}
-		playerScoresByGame.get(ps.gamePlayerScore.gameId)!.push(ps);
-	});
-
-	// Group VODs by game ID
-	const vodsByGame = new Map<number, typeof vods>();
-	vods.forEach((v) => {
-		if (!vodsByGame.has(v.gameVod.gameId)) {
-			vodsByGame.set(v.gameVod.gameId, []);
-		}
-		vodsByGame.get(v.gameVod.gameId)!.push(v);
-	});
-
-	// Convert stages to expected format with matches
-	const processedStages: Stage[] = Array.from(stageMap.values()).map((stageData) => {
-		// Get matches for this stage
-		const stageMatches = eventMatches
-			.filter((match) =>
-				Array.from(stageData.rounds.values()).some((roundData) =>
-					roundData.nodes.some((nodeData) => nodeData.node.matchId === match.id)
-				)
-			)
-			.map((match) => {
-				// Get games for this match
-				const matchGames = gamesByMatch.get(match.id) || [];
-				const processedGames = matchGames.map((game) => {
-					const gameTeams = gameTeamsByGame.get(game.game.id) || [];
-					const playerScores = playerScoresByGame.get(game.game.id) || [];
-					const gameVods = vodsByGame.get(game.game.id) || [];
-
-					// Get team A and B data
-					const teamA = gameTeams.find((gt) => gt.gameTeam.position === 0);
-					const teamB = gameTeams.find((gt) => gt.gameTeam.position === 1);
-
-					// Process player scores for team A
-					const teamAScores = playerScores
-						.filter((ps) => ps.gamePlayerScore.teamId === teamA?.gameTeam.teamId)
-						.map((ps) => ({
-							accountId: ps.gamePlayerScore.accountId,
-							player: ps.gamePlayerScore.player,
-							playerSlug: undefined, // We don't have slug mapping here
-							characters: [
-								ps.gamePlayerScore.characterFirstHalf,
-								ps.gamePlayerScore.characterSecondHalf
-							] as [string | null, string | null],
-							score: ps.gamePlayerScore.score,
-							damageScore: ps.gamePlayerScore.damageScore,
-							kills: ps.gamePlayerScore.kills,
-							knocks: ps.gamePlayerScore.knocks,
-							deaths: ps.gamePlayerScore.deaths,
-							assists: ps.gamePlayerScore.assists,
-							damage: ps.gamePlayerScore.damage
-						}));
-
-					// Process player scores for team B
-					const teamBScores = playerScores
-						.filter((ps) => ps.gamePlayerScore.teamId === teamB?.gameTeam.teamId)
-						.map((ps) => ({
-							accountId: ps.gamePlayerScore.accountId,
-							player: ps.gamePlayerScore.player,
-							playerSlug: undefined, // We don't have slug mapping here
-							characters: [
-								ps.gamePlayerScore.characterFirstHalf,
-								ps.gamePlayerScore.characterSecondHalf
-							] as [string | null, string | null],
-							score: ps.gamePlayerScore.score,
-							damageScore: ps.gamePlayerScore.damageScore,
-							kills: ps.gamePlayerScore.kills,
-							knocks: ps.gamePlayerScore.knocks,
-							deaths: ps.gamePlayerScore.deaths,
-							assists: ps.gamePlayerScore.assists,
-							damage: ps.gamePlayerScore.damage
-						}));
-
-					// Ensure we have exactly 5 players per team
-					const teamAScoresFixed = teamAScores.slice(0, 5) as [
-						PlayerScore,
-						PlayerScore,
-						PlayerScore,
-						PlayerScore,
-						PlayerScore
-					];
-					const teamBScoresFixed = teamBScores.slice(0, 5) as [
-						PlayerScore,
-						PlayerScore,
-						PlayerScore,
-						PlayerScore,
-						PlayerScore
-					];
-
-					return {
-						id: game.game.id,
-						map: game.map.id as GameMap,
-						duration: game.game.duration,
-						teams: [teamA?.team?.id || '', teamB?.team?.id || ''] as [string, string],
-						result: [teamA?.gameTeam.score || 0, teamB?.gameTeam.score || 0] as [number, number],
-						scores: [teamAScoresFixed, teamBScoresFixed] as [
-							A: [PlayerScore, PlayerScore, PlayerScore, PlayerScore, PlayerScore],
-							B: [PlayerScore, PlayerScore, PlayerScore, PlayerScore, PlayerScore]
-						],
-						winner: game.game.winner,
-						vods: gameVods.map((v) => ({
-							url: v.gameVod.url,
-							type: v.gameVod.type,
-							playerId: v.gameVod.playerId || undefined,
-							teamId: v.gameVod.teamId || undefined,
-							language: v.gameVod.language || undefined,
-							platform: v.gameVod.platform || undefined,
-							title: v.gameVod.title || undefined,
-							official: v.gameVod.official,
-							startTime: v.gameVod.startTime || undefined,
-							available: v.gameVod.available,
-							createdAt: v.gameVod.createdAt,
-							updatedAt: v.gameVod.updatedAt
-						}))
-					};
-				});
+		})),
+		videos: eventData.videos.map((video) => ({
+			...video,
+			platform: video.platform as 'twitch' | 'youtube' | 'bilibili',
+			title: video.title ?? undefined
+		})),
+		participants,
+		stages: eventData.stages.map((stage) => ({
+			id: stage.id,
+			title: stage.title,
+			stage: stage.stage,
+			format: stage.format,
+			matches: stage.matches.map((match) => {
+				const teamA = match.matchTeams.find((mt) => mt.position === 0);
+				const teamB = match.matchTeams.find((mt) => mt.position === 1);
 
 				return {
 					id: match.id,
 					teams: [
 						{
-							team: match.teams[0]?.team || '',
-							score: match.teams[0]?.score || 0,
-							roaster: [],
-							substitutes: []
+							team: teamA?.team ?? {
+								id: 'unknown-a',
+								slug: 'unknown',
+								name: 'Unknown',
+								abbr: 'UNK',
+								region: 'unknown',
+								logo: 'unknown',
+								createdAt: 'unknown',
+								updatedAt: 'unknown'
+							},
+							score: teamA?.score ?? 0,
+							roaster: [], // TODO:,
+							substitutes: [] // TODO:
 						},
 						{
-							team: match.teams[1]?.team || '',
-							score: match.teams[1]?.score || 0,
-							roaster: [],
-							substitutes: []
+							team: teamB?.team ?? {
+								id: 'unknown-b',
+								slug: 'unknown',
+								name: 'Unknown',
+								abbr: 'UNK',
+								region: 'unknown',
+								logo: 'unknown',
+								createdAt: 'unknown',
+								updatedAt: 'unknown'
+							},
+							score: teamB?.score ?? 0,
+							roaster: [], // TODO:,
+							substitutes: [] // TODO:
 						}
-					] as [Participant, Participant],
-					battleOf: match.format as 'BO1' | 'BO3' | 'BO5',
-					maps: (match.maps || []).map(
-						(mapData: { map: string; map_picker_position: number; side: number }) => ({
-							map: mapData.map as GameMap,
-							pickerId: mapData.map_picker_position,
-							pickedSide: mapData.side === 0 ? ('Attack' as const) : ('Defense' as const)
-						})
-					),
-					games: processedGames
+					] satisfies [
+						{
+							team: Team;
+							score: number;
+							roaster: Player[];
+							substitutes: Player[];
+						},
+						{
+							team: Team;
+							score: number;
+							roaster: Player[];
+							substitutes: Player[];
+						}
+					],
+					battleOf: match.format ?? 'BO3', // TODO: Should be non-null
+					maps: match.matchMaps.map((map) => ({
+						map: map.map.id,
+						map_picker_position: map.map_picker_position,
+						side: map.side === 0 ? 'Attack' : 'Defense'
+					})),
+					games: match.games.map((game) => {
+						const teamA = game.gameTeams.find((gt) => gt.position === 0);
+						const teamB = game.gameTeams.find((gt) => gt.position === 1);
+
+						const teamAScores = game.gamePlayerScores
+							.filter((ps) => ps.teamId === teamA?.team?.id)
+							.map((ps) => ({
+								accountId: ps.accountId,
+								player: ps.player,
+								playerSlug: undefined, // We don't have slug mapping here
+								characters: [ps.characterFirstHalf, ps.characterSecondHalf] satisfies [
+									string | null,
+									string | null
+								],
+								score: ps.score,
+								damageScore: ps.damageScore,
+								kills: ps.kills,
+								knocks: ps.knocks,
+								deaths: ps.deaths,
+								assists: ps.assists,
+								damage: ps.damage
+							}));
+
+						const teamBScores = game.gamePlayerScores
+							.filter((ps) => ps.teamId === teamB?.team?.id)
+							.map((ps) => ({
+								accountId: ps.accountId,
+								player: ps.player,
+								playerSlug: undefined, // We don't have slug mapping here
+								characters: [ps.characterFirstHalf, ps.characterSecondHalf] satisfies [
+									string | null,
+									string | null
+								],
+								score: ps.score,
+								damageScore: ps.damageScore,
+								kills: ps.kills,
+								knocks: ps.knocks,
+								deaths: ps.deaths,
+								assists: ps.assists,
+								damage: ps.damage
+							}));
+
+						const teamAScoresFixed = teamAScores.slice(0, 5) as [
+							PlayerScore,
+							PlayerScore,
+							PlayerScore,
+							PlayerScore,
+							PlayerScore
+						];
+						const teamBScoresFixed = teamBScores.slice(0, 5) as [
+							PlayerScore,
+							PlayerScore,
+							PlayerScore,
+							PlayerScore,
+							PlayerScore
+						];
+
+						return {
+							id: game.id,
+							map: game.map?.id,
+							duration: game.duration,
+							teams: [teamA?.team?.id ?? '', teamB?.team?.id ?? ''] satisfies [string, string],
+							result: [teamA?.score ?? 0, teamB?.score ?? 0] satisfies [number, number],
+							winner: game.winner,
+							vods: game.gameVods.map((vod) => ({
+								url: vod.url,
+								type: vod.type,
+								platform: vod.platform ?? 'youtube', // TODO: Should be non-null
+								playerId: vod.playerId ?? undefined,
+								teamId: vod.teamId ?? undefined,
+								language: vod.language ?? undefined,
+								title: vod.title ?? undefined,
+								official: vod.official,
+								startTime: vod.startTime ?? undefined,
+								available: vod.available,
+								createdAt: vod.createdAt,
+								updatedAt: vod.updatedAt
+							})),
+							scores: [teamAScoresFixed, teamBScoresFixed] satisfies [
+								A: [PlayerScore, PlayerScore, PlayerScore, PlayerScore, PlayerScore],
+								B: [PlayerScore, PlayerScore, PlayerScore, PlayerScore, PlayerScore]
+							]
+							// teams: match.teamsg.map((team) => team?.team)
+						};
+					})
 				};
-			});
-
-		return {
-			id: stageData.stage.id,
-			title: stageData.stage.title,
-			stage: stageData.stage.stage as 'qualifier' | 'playoff' | 'group' | 'showmatch',
-			format: stageData.stage.format as 'single' | 'double' | 'swiss' | 'round-robin',
-			matches: stageMatches,
+			}),
 			structure: {
-				rounds: Array.from(stageData.rounds.values()).map((roundData) => ({
-					id: roundData.round.id,
-					type: roundData.round.type as
-						| 'quarterfinals'
-						| 'semifinals'
-						| 'final'
-						| 'top16'
-						| 'group'
-						| 'thirdplace'
-						| 'lower'
-						| 'grandfinal',
-					title: roundData.round.title
-						? {
-								en: roundData.round.title,
-								es: roundData.round.title,
-								zh: roundData.round.title,
-								ko: roundData.round.title,
-								ja: roundData.round.title,
-								'pt-br': roundData.round.title,
-								de: roundData.round.title,
-								ru: roundData.round.title,
-								'zh-tw': roundData.round.title,
-								vi: roundData.round.title,
-								id: roundData.round.title,
-								fr: roundData.round.title,
-								'uk-ua': roundData.round.title
-							}
-						: undefined,
-					parallelGroup: roundData.round.parallelGroup ?? undefined
+				rounds: stage.rounds.map((round) => ({
+					id: round.id,
+					type: round.type,
+					title: round.title ? fakeLocalizedString(round.title) : undefined,
+					parallelGroup: round.parallelGroup ?? undefined
 				})),
-				nodes: Array.from(stageData.rounds.values()).flatMap((roundData) =>
-					roundData.nodes.map(
-						(nodeData) =>
-							({
-								matchId: nodeData.node.matchId,
-								round: nodeData.node.roundId,
-								dependsOn: nodeData.dependencies?.map((dep) => ({
-									matchId: dep.dependencyMatchId,
-									outcome: dep.outcome as 'winner' | 'loser'
-								})),
-								order: nodeData.node.order
-							}) as StageNode
-					)
-				)
+				nodes: stage.nodes.map((node) => ({
+					matchId: node.matchId,
+					round: node.roundId,
+					dependsOn: node.dependencies?.map((dep) => ({
+						matchId: dep.dependencyMatchId,
+						outcome: dep.outcome
+					})),
+					order: node.order
+				})) satisfies StageNode[]
 			}
-		};
-	});
+		}))
+		// teamPlayers: eventData.teamPlayers.map((teamPlayer) => ({
+		// 	...teamPlayer,
+		// 	team: teamPlayer.team,
+		// 	player: teamPlayer.player,
+		// 	eventTeam: teamPlayer.eventTeam,
+		// }))
+		// participants: eventData.teamPlayers.map((teamPlayer) => ({
+		// 	main: [],
+		// 	reserve: [],
+		// 	coach: [],
+		// 	entry: teamPlayer.eventTeam?.entry,
+		// 	status: teamPlayer.eventTeam?.status
+		// }))
+	};
 
-	const processingDuration = performance.now() - processingStart;
-	console.info(`[Events] Data processing took ${processingDuration.toFixed(2)}ms`);
+	console.info(
+		`[Events] Event postprocessing took ${(performance.now() - eventPostprocessingStart).toFixed(2)}ms`
+	);
 
-	// Step 1: Collect unique image URLs
+	// #endregion
+
+	// #region Image URL processing
+	const imageUrlProcessingStart = performance.now();
+
 	const uniqueImageUrls = new Set<string>();
 
-	if (eventData.event.image) uniqueImageUrls.add(eventData.event.image);
-	for (const organizer of processedOrganizers) {
+	if (compiledEventData.image) uniqueImageUrls.add(compiledEventData.image);
+	for (const organizer of compiledEventData.organizers) {
 		if (organizer.logo) uniqueImageUrls.add(organizer.logo);
 	}
+	for (const result of compiledEventData.results) {
+		if (result.team.logo) uniqueImageUrls.add(result.team.logo);
+	}
+	for (const participant of compiledEventData.participants) {
+		for (const player of participant.main) {
+			if (player.avatar) uniqueImageUrls.add(player.avatar);
+		}
+	}
+	for (const stage of compiledEventData.stages) {
+		for (const match of stage.matches) {
+			for (const team of match.teams) {
+				if (team.team.logo) uniqueImageUrls.add(team.team.logo);
+			}
+		}
+	}
 
-	// Step 2: Process all image URLs in parallel
 	const imageUrlMap = new Map<string, string>();
 
 	await Promise.all(
@@ -1132,47 +873,22 @@ export async function getEvent(id: string): Promise<AppEvent | undefined> {
 		})
 	);
 
-	// Step 3: Apply processed URLs to the data
-	const processedOrganizersWithImages = processedOrganizers.map((organizer) => ({
-		...organizer,
-		logo: organizer.logo ? imageUrlMap.get(organizer.logo) || organizer.logo : organizer.logo,
-		description: organizer.description ?? undefined,
-		url: organizer.url ?? undefined,
-		type: organizer.type ?? undefined
-	}));
-
-	// Build the final event object
-	const event: AppEvent = {
-		id: eventData.event.id,
-		slug: eventData.event.slug,
-		name: eventData.event.name,
-		official: Boolean(eventData.event.official),
-		server: eventData.event.server as 'calabiyau' | 'strinova',
-		format: eventData.event.format as 'lan' | 'online' | 'hybrid',
-		region: eventData.event.region as Region,
-		image: eventData.event.image,
-		imageURL: eventData.event.image
-			? imageUrlMap.get(eventData.event.image) || undefined
-			: undefined,
-		status: eventData.event.status as 'upcoming' | 'live' | 'finished' | 'cancelled' | 'postponed',
-		stages: processedStages,
-		organizers: processedOrganizersWithImages,
-		capacity: eventData.event.capacity,
-		date: eventData.event.date,
-		websites: processedWebsites.length > 0 ? processedWebsites : undefined,
-		participants: participants,
-		videos: processedVideos.length > 0 ? processedVideos : undefined,
-		casters: validCasters.length > 0 ? validCasters : undefined,
-		results:
-			processedResults.length > 0
-				? ((await Promise.all(processedResults)) as EventResult[])
-				: undefined
+	const compiledEventDataWithImageURLs = {
+		...compiledEventData,
+		imageURL: imageUrlMap.get(compiledEventData.image),
+		organizers: compiledEventData.organizers.map((organizer) => ({
+			...organizer,
+			logoURL: imageUrlMap.get(organizer.logo)
+		}))
 	};
 
-	const totalDuration = performance.now() - totalStart;
-	console.info(`[Events] Total getEvent took ${totalDuration.toFixed(2)}ms`);
+	console.info(
+		`[Events] Image URL processing took ${(performance.now() - imageUrlProcessingStart).toFixed(2)}ms`
+	);
 
-	return event;
+	// #endregion
+
+	return compiledEventDataWithImageURLs;
 }
 
 export async function getEventsForAdminPage(): Promise<

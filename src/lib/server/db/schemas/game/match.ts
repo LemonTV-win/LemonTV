@@ -14,7 +14,9 @@ export const match = sqliteTable(
 	'match',
 	{
 		id: text('id').primaryKey(),
-		format: text('format'),
+		format: text('format', {
+			enum: ['BO1', 'BO3', 'BO5']
+		}),
 		stageId: integer('stage_id')
 	},
 	(t) => [

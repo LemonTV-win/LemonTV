@@ -17,6 +17,7 @@ export interface Stage {
 export interface StageRound {
 	id: number;
 	type:
+		| 'round'
 		| 'quarterfinals'
 		| 'semifinals'
 		| 'final'
@@ -108,7 +109,7 @@ export interface Event {
 		title?: string;
 	}[];
 	casters?: Array<{
-		player: Player;
+		player: Pick<Player, 'id' | 'name' | 'slug' | 'avatar'>;
 		role: 'host' | 'analyst' | 'commentator';
 	}>;
 	results?: EventResult[];

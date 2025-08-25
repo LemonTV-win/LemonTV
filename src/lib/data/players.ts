@@ -38,7 +38,7 @@ export interface GameAccount {
 	accountId: number;
 	currentName: string;
 	region?: GameAccountRegion;
-	names?: string[];
+	// names?: string[];  // TODO:
 }
 
 /**

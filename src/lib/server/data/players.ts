@@ -6,13 +6,13 @@ import {
 	player_social_account,
 	social_platform,
 	editHistory,
-	playerAdditionalNationality
+	playerAdditionalNationality,
+	type GameAccount as GameAccountDB
 } from '$lib/server/db/schema';
 import { eq, or, and, inArray, sql, desc } from 'drizzle-orm';
 import {
 	getGameAccountServer,
-	type GameAccountRegion,
-	type GameAccountServer,
+	type GameAccount,
 	type Player,
 	type PlayerTeam
 } from '$lib/data/players';
@@ -1974,4 +1974,39 @@ export async function getServerPlayerSuperstringPower(
 		'wins'
 	);
 	return result;
+}
+
+export function normalizePlayer(player: {
+	id: string;
+	name: string;
+	slug: string;
+	nationality: TCountryCode | null;
+	aliases: { alias: string }[];
+	additionalNationalities: { nationality: TCountryCode }[];
+	gameAccounts: Omit<GameAccountDB, 'playerId'>[];
+	socialAccounts: { platformId: string; accountId: string }[];
+}): {
+	id: string;
+	name: string;
+	slug: string;
+	nationalities: TCountryCode[];
+	aliases: string[];
+	gameAccounts: GameAccount[];
+	socialAccounts: { platformId: string; accountId: string }[];
+} {
+	return {
+		id: player.id,
+		name: player.name,
+		slug: player.slug,
+		nationalities: [
+			player.nationality,
+			...player.additionalNationalities.map((a) => a.nationality)
+		].filter((n) => n !== null),
+		aliases: player.aliases.map((a) => a.alias),
+		gameAccounts: player.gameAccounts.map((ga) => ({
+			...ga,
+			region: ga.region ?? undefined
+		})),
+		socialAccounts: player.socialAccounts
+	};
 }

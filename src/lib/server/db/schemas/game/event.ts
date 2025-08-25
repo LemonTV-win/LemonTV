@@ -4,15 +4,17 @@ import { organizer } from './organizer';
 import { team } from './team';
 import { player } from './player';
 import { playerStats } from './player-stats';
+import { stage } from './stage';
+import type { Region } from '$lib/data/game';
 
 export const event = sqliteTable('event', {
 	id: text('id').primaryKey(),
 	slug: text('slug').notNull().unique(),
 	name: text('name').notNull(),
 	official: integer('official', { mode: 'boolean' }).notNull(),
-	server: text('server').notNull(),
-	format: text('format').notNull(),
-	region: text('region').notNull(),
+	server: text('server', { enum: ['calabiyau', 'strinova'] }).notNull(), // TODO: Normalize with GameAccount.server ('Strinova' | 'CalabiYau')
+	format: text('format', { enum: ['lan', 'online', 'hybrid'] }).notNull(),
+	region: text('region').$type<Region>().notNull(),
 	image: text('image').notNull(),
 	status: text('status')
 		.$type<'upcoming' | 'live' | 'finished' | 'cancelled' | 'postponed'>() //  'tba' | 'unknown' | 'hidden' | 'wip'
@@ -204,6 +206,7 @@ export type EventCaster = typeof eventCaster.$inferSelect;
 // Add relations for eventTeamPlayer
 export const eventTeamPlayerRelations = relations(eventTeamPlayer, ({ one }) => ({
 	event: one(event, {
+		relationName: 'eventTeamPlayers',
 		fields: [eventTeamPlayer.eventId],
 		references: [event.id]
 	}),
@@ -219,6 +222,10 @@ export const eventTeamPlayerRelations = relations(eventTeamPlayer, ({ one }) => 
 		relationName: 'playerStatsEventParticipations',
 		fields: [eventTeamPlayer.playerId],
 		references: [playerStats.playerId]
+	}),
+	eventTeam: one(eventTeam, {
+		fields: [eventTeamPlayer.eventId, eventTeamPlayer.teamId],
+		references: [eventTeam.eventId, eventTeam.teamId]
 	})
 }));
 
@@ -241,6 +248,12 @@ export const eventRelations = relations(event, ({ many }) => ({
 	}),
 	casters: many(eventCaster, {
 		relationName: 'eventCasters'
+	}),
+	teamResults: many(eventResult, {
+		relationName: 'eventTeamResults'
+	}),
+	stages: many(stage, {
+		relationName: 'eventStages'
 	})
 }));
 
@@ -298,5 +311,12 @@ export const eventCasterRelations = relations(eventCaster, ({ one }) => ({
 	player: one(player, {
 		fields: [eventCaster.playerId],
 		references: [player.id]
+	})
+}));
+
+export const eventTeamRelations = relations(eventTeam, ({ one }) => ({
+	event: one(event, {
+		fields: [eventTeam.eventId],
+		references: [event.id]
 	})
 }));

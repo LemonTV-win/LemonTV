@@ -12,8 +12,8 @@ export const stage = sqliteTable(
 			.references(() => event.id)
 			.notNull(),
 		title: text('title').notNull(),
-		stage: text('stage').notNull(),
-		format: text('format').notNull(),
+		stage: text('stage', { enum: ['group', 'qualifier', 'showmatch', 'playoff'] }).notNull(),
+		format: text('format', { enum: ['single', 'double', 'swiss', 'round-robin'] }).notNull(),
 		createdAt: integer('created_at', { mode: 'timestamp_ms' })
 			.notNull()
 			.default(sql`(unixepoch() * 1000)`),
@@ -35,7 +35,6 @@ export const stageRound = sqliteTable('stage_round', {
 		.notNull(),
 	type: text('type', {
 		enum: [
-			'round',
 			'quarterfinals',
 			'semifinals',
 			'final',
@@ -104,6 +103,7 @@ export type StageNodeDependency = typeof stageNodeDependency.$inferSelect;
 // #region Relations
 export const stageRelations = relations(stage, ({ one, many }) => ({
 	event: one(event, {
+		relationName: 'eventStages',
 		fields: [stage.eventId],
 		references: [event.id]
 	}),
