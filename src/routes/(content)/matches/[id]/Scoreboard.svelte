@@ -144,13 +144,13 @@
 		<td class="text-center">
 			<a
 				href={`/teams/${team.id}`}
-				class="flex items-center justify-center gap-3 px-5 py-2 font-bold transition-all duration-200 hover:from-slate-700/80 hover:to-slate-600/80 hover:text-yellow-300 hover:underline"
-				class:text-win={winner}
+				class={[
+					'flex items-center justify-center gap-3 px-5 py-2 font-bold transition-all duration-200 hover:from-slate-700/80 hover:to-slate-600/80 hover:text-yellow-300 hover:underline',
+					winner && 'text-win drop-shadow-[0_0_4px_rgba(245,158,11,0.3)]'
+				]}
 			>
 				{#if winner}
-					<span class="text-yellow-400 drop-shadow-[0_0_8px_rgba(255,215,0,0.4)]" title="Winner">
-						🏆
-					</span>
+					<span title="Winner"> 🏆 </span>
 				{/if}
 				{team.name}
 			</a>
@@ -162,32 +162,34 @@
 <div class="overflow-hidden rounded-md bg-white/10">
 	<!-- Results Display -->
 	<div
-		class="border-b border-white/20 bg-gradient-to-b from-white/15 to-white/25 p-4 text-center backdrop-blur-sm"
+		class="border-b border-white/20 bg-gradient-to-b from-slate-700/75 to-slate-800/80 p-4 text-center backdrop-blur-lg"
 	>
-		<div class=" flex items-center justify-center gap-8">
+		<!-- Game Result -->
+		<div class="flex items-center justify-center gap-8">
 			<div class="flex flex-col items-center">
 				<span
-					class="text-2xl font-bold"
-					class:text-win={winner === 0}
-					class:text-loss={winner === 1}>{result[0]}</span
+					class={[
+						'text-3xl font-bold',
+						winner === 0 ? 'text-win drop-shadow-[0_0_4px_rgba(245,158,11,0.3)]' : 'text-loss'
+					]}>{result[0]}</span
 				>
-				<span
-					class="text-sm font-bold opacity-80"
-					class:text-win={winner === 0}
-					class:text-loss={winner === 1}>{teams[0].name}</span
+				<span class={['text-sm font-semibold', winner === 0 ? 'text-win' : 'text-loss']}
+					>{teams[0].name}</span
 				>
 			</div>
-			<div class="text-lg font-semibold text-gray-400">vs</div>
+			<div class="text-xl font-semibold text-gray-300">vs</div>
 			<div class="flex flex-col items-center">
 				<span
-					class="text-2xl font-bold"
-					class:text-win={winner === 1}
-					class:text-loss={winner === 0}>{result[1]}</span
+					class={[
+						'text-3xl font-bold',
+						winner === 1 ? 'text-win drop-shadow-[0_0_4px_rgba(245,158,11,0.3)]' : 'text-loss'
+					]}>{result[1]}</span
 				>
 				<span
-					class="text-sm font-bold opacity-80"
-					class:text-win={winner === 1}
-					class:text-loss={winner === 0}>{teams[1].name}</span
+					class={[
+						'text-sm font-semibold',
+						winner === 1 ? 'text-win drop-shadow-[0_0_4px_rgba(245,158,11,0.3)]' : 'text-loss'
+					]}>{teams[1].name}</span
 				>
 			</div>
 		</div>
