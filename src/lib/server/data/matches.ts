@@ -102,6 +102,16 @@ export async function getMatch(id: string): Promise<(AppMatch & { event: Event }
 			const gameTeamA = game.gameTeams.find((gt) => gt.teamId === canonicalTeamA?.teamId);
 			const gameTeamB = game.gameTeams.find((gt) => gt.teamId === canonicalTeamB?.teamId);
 
+			let normalizedWinner: 0 | 1 | null = null;
+			if (game.winner === 0 || game.winner === 1) {
+				const originalWinningTeam = game.gameTeams.find((gt) => gt.position === game.winner);
+				if (originalWinningTeam?.teamId === canonicalTeamA?.teamId) {
+					normalizedWinner = 0;
+				} else if (originalWinningTeam?.teamId === canonicalTeamB?.teamId) {
+					normalizedWinner = 1;
+				}
+			}
+
 			const mapPlayerScores = (teamId: string | undefined | null) =>
 				game.gamePlayerScores
 					.filter((ps) => ps.teamId === teamId)
@@ -140,7 +150,7 @@ export async function getMatch(id: string): Promise<(AppMatch & { event: Event }
 					A: [PlayerScore, PlayerScore, PlayerScore, PlayerScore, PlayerScore],
 					B: [PlayerScore, PlayerScore, PlayerScore, PlayerScore, PlayerScore]
 				],
-				winner: game.winner,
+				winner: normalizedWinner,
 				vods: game.gameVods.map((v) => ({
 					url: v.url,
 					type: v.type,
