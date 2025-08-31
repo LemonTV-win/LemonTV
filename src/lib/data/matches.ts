@@ -95,3 +95,13 @@ export const ROUND_NAMES: Record<Round, () => string> = {
 	grandfinal: m.grandfinal,
 	top16: m.top16
 };
+
+export const STAGE_FORMAT_NAMES: Record<
+	'single' | 'double' | 'swiss' | 'round-robin',
+	() => string
+> = {
+	single: m['content.stages.format.single'],
+	double: m['content.stages.format.double'],
+	swiss: m['content.stages.format.swiss'],
+	'round-robin': m['content.stages.format.round-robin']
+};

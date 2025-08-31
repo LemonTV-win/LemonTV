@@ -169,6 +169,14 @@
 				"ads_sens_4_0x": "ADS Sens 4.0x",
 				"no_settings_available": "No settings available. If you know this player's settings, please {linkStart}contact us{linkEnd}."
 			}
+		},
+		"stages": {
+			"format": {
+				"single": "Single Elimination",
+				"double": "Double Elimination",
+				"swiss": "Swiss System",
+				"round-robin": "Round-Robin"
+			}
 		}
 	},
 	"name": "Name",

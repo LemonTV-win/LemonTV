@@ -3,7 +3,7 @@
 	import { enhance } from '$app/forms';
 	import { m } from '$lib/paraglide/messages';
 	import type { ActionResult } from '@sveltejs/kit';
-
+	import { STAGE_FORMAT_NAMES } from '$lib/data/matches';
 	import Modal from '$lib/components/Modal.svelte';
 
 	let {
@@ -126,7 +126,7 @@
 						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 					>
 						{#each formatOptions as formatOption (formatOption)}
-							<option value={formatOption}>{formatOption}</option>
+							<option value={formatOption}>{STAGE_FORMAT_NAMES[formatOption]}</option>
 						{/each}
 					</select>
 				</div>

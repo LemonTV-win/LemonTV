@@ -784,7 +784,7 @@
 						{m.stage_info({
 							title: stage.stage.title,
 							stage: stage.stage.stage,
-							format: stage.stage.format
+							format: STAGE_FORMAT_NAMES[stage.stage.format]()
 						})}
 					</a>
 				</h3>

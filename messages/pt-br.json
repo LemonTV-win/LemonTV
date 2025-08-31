@@ -783,6 +783,14 @@
 				"ads_sens_4_0x": "Sensibilidade ADS 4.0x",
 				"no_settings_available": "Nenhuma configuração disponível. Se você conhece as configurações deste jogador, por favor {linkStart}entre em contato conosco{linkEnd}."
 			}
+		},
+		"stages": {
+			"format": {
+				"single": "Eliminação Simples",
+				"double": "Eliminação Dupla",
+				"swiss": "Sistema Suíço",
+				"round-robin": "Todos contra todos"
+			}
 		}
 	},
 	"donation": {

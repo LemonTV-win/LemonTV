@@ -777,6 +777,14 @@
 				"ads_sens_4_0x": "Độ nhạy ADS 4.0x",
 				"no_settings_available": "Không có cài đặt nào khả dụng. Nếu bạn biết cài đặt của người chơi này, vui lòng {linkStart}liên hệ với chúng tôi{linkEnd}."
 			}
+		},
+		"stages": {
+			"format": {
+				"single": "Loại trực tiếp",
+				"double": "Loại kép",
+				"swiss": "Thể thức Thụy Sĩ",
+				"round-robin": "Vòng tròn"
+			}
 		}
 	},
 	"donation": {

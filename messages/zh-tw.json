@@ -777,6 +777,14 @@
 				"ads_sens_4_0x": "ADS靈敏度4.0x",
 				"no_settings_available": "暫無設定可用。如果您知道這位玩家的設定，請{linkStart}聯絡我們{linkEnd}。"
 			}
+		},
+		"stages": {
+			"format": {
+				"single": "單淘汰",
+				"double": "雙淘汰",
+				"swiss": "瑞士輪",
+				"round-robin": "循環賽"
+			}
 		}
 	},
 	"donation": {

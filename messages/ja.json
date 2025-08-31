@@ -54,6 +54,14 @@
 			"cauchy_district": "コーシー街区",
 			"cosmite": "キスメット",
 			"ocarnus": "オルカヌス"
+		},
+		"stages": {
+			"format": {
+				"single": "シングルエリミネーション",
+				"double": "ダブルエリミネーション",
+				"swiss": "スイス式",
+				"round-robin": "総当たり"
+			}
 		}
 	},
 	"name": "名前",

@@ -777,6 +777,14 @@
 				"ads_sens_4_0x": "ADS 감도 4.0x",
 				"no_settings_available": "사용 가능한 설정이 없습니다. 이 선수의 설정을 알고 계시다면 {linkStart}연락해 주세요{linkEnd}."
 			}
+		},
+		"stages": {
+			"format": {
+				"single": "싱글 엘리미네이션",
+				"double": "더블 엘리미네이션",
+				"swiss": "스위스 시스템",
+				"round-robin": "라운드 로빈"
+			}
 		}
 	},
 	"donation": {

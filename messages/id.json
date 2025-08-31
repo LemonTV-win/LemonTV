@@ -777,6 +777,14 @@
 				"ads_sens_4_0x": "Sensitivitas ADS 4.0x",
 				"no_settings_available": "Tidak ada pengaturan yang tersedia. Jika Anda mengetahui pengaturan pemain ini, silakan {linkStart}hubungi kami{linkEnd}."
 			}
+		},
+		"stages": {
+			"format": {
+				"single": "Eliminasi Tunggal",
+				"double": "Eliminasi Ganda",
+				"swiss": "Sistem Swiss",
+				"round-robin": "Round-robin"
+			}
 		}
 	},
 	"donation": {

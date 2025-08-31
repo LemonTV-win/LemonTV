@@ -783,6 +783,14 @@
 				"ads_sens_4_0x": "Sensibilité ADS 4.0x",
 				"no_settings_available": "Aucun paramètre disponible. Si vous connaissez les paramètres de ce joueur, veuillez {linkStart}nous contacter{linkEnd}."
 			}
+		},
+		"stages": {
+			"format": {
+				"single": "Élimination simple",
+				"double": "Double élimination",
+				"swiss": "Système suisse",
+				"round-robin": "Round-robin"
+			}
 		}
 	},
 	"donation": {

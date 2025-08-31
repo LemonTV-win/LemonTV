@@ -783,6 +783,14 @@
 				"ads_sens_4_0x": "ADS-Empfindlichkeit 4.0x",
 				"no_settings_available": "Keine Einstellungen verfügbar. Wenn Sie die Einstellungen dieses Spielers kennen, {linkStart}kontaktieren Sie uns bitte{linkEnd}."
 			}
+		},
+		"stages": {
+			"format": {
+				"single": "Einzelausscheidung",
+				"double": "Doppelte Ausscheidung",
+				"swiss": "Schweizer System",
+				"round-robin": "Jeder gegen jeden"
+			}
 		}
 	},
 	"donation": {
