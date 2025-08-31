@@ -153,50 +153,7 @@
 					for (const match of stageData.matches) {
 						const game = match.games?.find((g) => g.id === gameId);
 						if (game) {
-							editingGame = {
-								game: {
-									id: game.id,
-									matchId: game.matchId,
-									mapId: game.map?.id ?? game.mapId,
-									duration: game.duration,
-									winner: game.winner,
-									teams: (game.gameTeams ?? []).map((gt) => ({
-										teamId: gt.teamId,
-										position: gt.position,
-										score: gt.score
-									})),
-									playerScores: game.gamePlayerScores ?? [],
-									vods: game.gameVods ?? [],
-									map: { id: (game.map?.id ?? game.mapId) as GameMap }
-								},
-								matchId: match.id,
-								teams: [match.matchTeams[0].team, match.matchTeams[1].team],
-								rosters: [
-									match.matchTeams[0]?.team?.id
-										? (data.teamRosters.get(match.matchTeams[0].team.id) ?? [])
-										: [],
-									match.matchTeams[1]?.team?.id
-										? (data.teamRosters.get(match.matchTeams[1].team.id) ?? [])
-										: []
-								],
-								match: {
-									maps: match.matchMaps.map((map) => ({
-										id: map.id,
-										matchId: map.matchId,
-										mapId: map.mapId,
-										// Convert nullable fields to non-nullable for GameEdit
-										order: map.order ?? 0,
-										side: map.side ?? 0,
-										map_picker_position: map.map_picker_position ?? 0,
-										side_picker_position: map.side_picker_position ?? 0,
-										// Add the missing map property with proper type
-										map: { id: map.map?.id || map.mapId },
-										// Only include action when defined
-										...(map.action ? { action: map.action } : {})
-									})),
-									games: match.games
-								}
-							};
+							editingGame = prepareGameEditData(match, game);
 							break;
 						}
 					}
@@ -212,35 +169,7 @@
 				for (const stageData of Object.values(data.stages)) {
 					const match = stageData.matches.find((m) => m.id === matchId);
 					if (match) {
-						editingGame = {
-							matchId: match.id,
-							teams: [match.matchTeams[0].team, match.matchTeams[1].team],
-							rosters: [
-								match.matchTeams[0]?.team?.id
-									? (data.teamRosters.get(match.matchTeams[0].team.id) ?? [])
-									: [],
-								match.matchTeams[1]?.team?.id
-									? (data.teamRosters.get(match.matchTeams[1].team.id) ?? [])
-									: []
-							],
-							match: {
-								maps: match.matchMaps.map((map) => ({
-									id: map.id,
-									matchId: map.matchId,
-									mapId: map.mapId,
-									// Convert nullable fields to non-nullable for GameEdit
-									order: map.order ?? 0,
-									side: map.side ?? 0,
-									map_picker_position: map.map_picker_position ?? 0,
-									side_picker_position: map.side_picker_position ?? 0,
-									// Add the missing map property with proper type
-									map: { id: map.map?.id || map.mapId },
-									// Only include action when defined
-									...(map.action ? { action: map.action } : {})
-								})),
-								games: match.games
-							}
-						};
+						editingGame = prepareGameEditData(match);
 						break;
 					}
 				}
@@ -482,33 +411,30 @@
 	let deletingGame = $state<{ game: any; matchId: string } | null>(null);
 	let isDeletingGame = $state(false);
 
-	function openGameModal(
-		match: (typeof data.stages)[number]['matches'][number],
-		eventId: string,
-		game?:
-			| {
-					id: number;
-					matchId: string;
-					mapId: string;
-					duration: number;
-					winner: number;
-					playerScores: GamePlayerScore[];
-					teams: {
-						teamId: string;
-						position: number;
-						score: number;
-					}[];
-					vods: GameVod[];
-					map: {
-						id: GameMap;
-					};
-			  }
-			| undefined
-	) {
-		action = game ? 'editGame' : 'newGame';
-		actionParams = game ? { gameId: game.id } : null;
-		editingGame = {
-			game,
+	type StageMatchType = (typeof data.stages)[number]['matches'][number];
+
+	function prepareGameEditData(
+		match: StageMatchType,
+		game?: StageMatchType['games'][number]
+	): EditingGame {
+		return {
+			game: game
+				? {
+						id: game.id,
+						matchId: game.matchId,
+						mapId: (game.map?.id ?? game.mapId) as string,
+						duration: game.duration,
+						winner: game.winner,
+						teams: (game.gameTeams ?? []).map((gt) => ({
+							teamId: gt.teamId,
+							position: gt.position,
+							score: gt.score
+						})),
+						playerScores: game.gamePlayerScores ?? [],
+						vods: game.gameVods ?? [],
+						map: { id: (game.map?.id ?? game.mapId) as GameMap }
+					}
+				: undefined,
 			matchId: match.id,
 			teams: [match.matchTeams[0].team, match.matchTeams[1].team],
 			rosters: [
@@ -531,12 +457,21 @@
 					side_picker_position: map.side_picker_position ?? 0,
 					// Add the missing map property with proper type
 					map: { id: map.map?.id || map.mapId },
-					// Only include action when defined
 					...(map.action ? { action: map.action } : {})
 				})),
 				games: match.games
 			}
 		};
+	}
+
+	function openGameModal(
+		match: (typeof data.stages)[number]['matches'][number],
+		eventId: string,
+		game?: (typeof match)['games'][number]
+	) {
+		action = game ? 'editGame' : 'newGame';
+		actionParams = game ? { gameId: game.id } : null;
+		editingGame = prepareGameEditData(match, game);
 	}
 
 	function closeGameModal() {
@@ -1050,22 +985,7 @@
 										{#each match.games.sort((a, b) => a.id - b.id) as game, idx (idx)}
 											<button
 												class="group flex w-full min-w-80 cursor-pointer items-center justify-between gap-2 rounded-lg bg-gray-700/50 px-3 py-1 text-left transition-all hover:scale-[1.02] hover:bg-gray-600 hover:shadow-lg hover:shadow-gray-900/50"
-												onclick={() =>
-													openGameModal(match, data.event.id, {
-														id: game.id,
-														matchId: game.matchId,
-														mapId: game.map?.id ?? game.mapId,
-														duration: game.duration,
-														winner: game.winner,
-														teams: (game.gameTeams ?? []).map((gt) => ({
-															teamId: gt.teamId,
-															position: gt.position,
-															score: gt.score
-														})),
-														playerScores: game.gamePlayerScores ?? [],
-														vods: game.gameVods ?? [],
-														map: { id: (game.map?.id ?? game.mapId) as GameMap }
-													})}
+												onclick={() => openGameModal(match, data.event.id, game)}
 											>
 												<div class="flex items-center gap-2">
 													<img
