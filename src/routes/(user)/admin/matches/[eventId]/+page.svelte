@@ -785,7 +785,10 @@
 						{m.stage_info({
 							title: stage.stage.title,
 							stage: stage.stage.stage,
-							format: STAGE_FORMAT_NAMES[stage.stage.format]()
+							format:
+								STAGE_FORMAT_NAMES[
+									stage.stage.format as 'single' | 'double' | 'swiss' | 'round-robin'
+								]()
 						})}
 					</a>
 				</h3>
