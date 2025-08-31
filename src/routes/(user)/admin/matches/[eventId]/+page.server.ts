@@ -1,7 +1,7 @@
 import { error, fail } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { desc, eq, and, inArray, type InferSelectModel } from 'drizzle-orm';
+import { desc, eq, and, inArray } from 'drizzle-orm';
 import { processImageURL } from '$lib/server/storage';
 import type { TCountryCode, TLanguageCode } from 'countries-list';
 import type { Region, GameMap } from '$lib/data/game';
@@ -755,11 +755,13 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 					format: string;
 				};
 				matches: (Omit<StageMatch, 'games' | 'matchTeams'> & {
-					matchTeams: (InferSelectModel<typeof table.matchTeam> & {
-						team: (InferSelectModel<typeof table.team> & { logoURL: string | null }) | null;
+					matchTeams: (StageMatch['matchTeams'][number] & {
+						team: (StageMatch['matchTeams'][number]['team'] & { logoURL: string | null }) | null;
 					})[];
-					games: (InferSelectModel<typeof table.game> & {
-						teams: (InferSelectModel<typeof table.team> & { logoURL: string | null })[];
+					games: (Omit<StageMatch['games'][number], 'teams'> & {
+						teams: (StageMatch['games'][number]['teams'][number]['team'] & {
+							logoURL: string | null;
+						})[];
 					})[];
 				})[];
 				rounds: StageRound[];
