@@ -28,6 +28,7 @@
 	import type { GameParticipant } from './+page.server';
 	import { MAP_IMAGES, MAP_NAMES, type GameMap } from '$lib/data/game';
 	import IconParkSolidPeoples from '~icons/icon-park-solid/peoples';
+	import { STAGE_FORMAT_NAMES } from '$lib/data/matches';
 
 	let { data }: PageProps = $props();
 
