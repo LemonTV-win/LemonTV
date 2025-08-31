@@ -74,6 +74,23 @@
 	});
 
 	$inspect(activeStage);
+
+	const STAGE_WEIGHTS = {
+		group: 0,
+		qualifier: 1,
+		playoff: 2,
+		showmatch: 3
+	};
+	let sortedStages = $derived(
+		data.event.stages.toSorted((a, b) => {
+			const aWeight = STAGE_WEIGHTS[a.stage];
+			const bWeight = STAGE_WEIGHTS[b.stage];
+			if (aWeight !== bWeight) {
+				return aWeight - bWeight;
+			}
+			return a.title.localeCompare(b.title);
+		})
+	);
 </script>
 
 {#if data.event}
@@ -165,7 +182,7 @@
 
 			<!-- TODO: Results 1st place, 2nd place, 3rd place -->
 
-			{#each data.event.stages as stage (stage.id)}
+			{#each sortedStages as stage (stage.id)}
 				<button
 					onclick={() => (activeStage = stage)}
 					class={[
@@ -204,7 +221,7 @@
 			</div>
 			<BracketGraph stage={activeStage} />
 		{:else}
-			{#each data.event.stages as stage (stage.id)}
+			{#each sortedStages as stage (stage.id)}
 				<h2 class="text-2xl font-bold text-white">
 					{stage.title === 'Main Bracket' ? m.main_bracket() : stage.title}
 				</h2>
