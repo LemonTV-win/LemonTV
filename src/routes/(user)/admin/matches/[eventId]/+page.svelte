@@ -154,7 +154,21 @@
 						const game = match.games?.find((g) => g.id === gameId);
 						if (game) {
 							editingGame = {
-								game,
+								game: {
+									id: game.id,
+									matchId: game.matchId,
+									mapId: game.map?.id ?? game.mapId,
+									duration: game.duration,
+									winner: game.winner,
+									teams: (game.gameTeams ?? []).map((gt) => ({
+										teamId: gt.teamId,
+										position: gt.position,
+										score: gt.score
+									})),
+									playerScores: game.gamePlayerScores ?? [],
+									vods: game.gameVods ?? [],
+									map: { id: (game.map?.id ?? game.mapId) as GameMap }
+								},
 								matchId: match.id,
 								teams: [match.matchTeams[0].team, match.matchTeams[1].team],
 								rosters: [
@@ -421,16 +435,10 @@
 			duration: number;
 			winner: number;
 			playerScores: GamePlayerScore[];
-			teams: {
-				teamId: string;
-				position: number;
-				score: number;
-			}[];
+			teams: { teamId: string; position: number; score: number }[];
 			vods: GameVod[];
-			map: {
-				id: GameMap;
-			};
-		}; // For editing, undefined for new
+			map: { id: GameMap };
+		}; // accepts server game shape directly
 		matchId: string;
 		teams: [
 			{ id: string; name: string; logo?: string | null } | null,
@@ -1042,7 +1050,22 @@
 										{#each match.games.sort((a, b) => a.id - b.id) as game, idx (idx)}
 											<button
 												class="group flex w-full min-w-80 cursor-pointer items-center justify-between gap-2 rounded-lg bg-gray-700/50 px-3 py-1 text-left transition-all hover:scale-[1.02] hover:bg-gray-600 hover:shadow-lg hover:shadow-gray-900/50"
-												onclick={() => openGameModal(match, data.event.id, game)}
+												onclick={() =>
+													openGameModal(match, data.event.id, {
+														id: game.id,
+														matchId: game.matchId,
+														mapId: game.map?.id ?? game.mapId,
+														duration: game.duration,
+														winner: game.winner,
+														teams: (game.gameTeams ?? []).map((gt) => ({
+															teamId: gt.teamId,
+															position: gt.position,
+															score: gt.score
+														})),
+														playerScores: game.gamePlayerScores ?? [],
+														vods: game.gameVods ?? [],
+														map: { id: (game.map?.id ?? game.mapId) as GameMap }
+													})}
 											>
 												<div class="flex items-center gap-2">
 													<img
