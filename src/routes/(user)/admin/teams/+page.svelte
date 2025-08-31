@@ -201,10 +201,6 @@
 	});
 </script>
 
-<svelte:head>
-	<title>{m.teams()} | {m.admin_panel()} | LemonTV</title>
-</svelte:head>
-
 <main class="mx-auto max-w-screen-lg px-4">
 	<div class="mb-6 flex items-center justify-between">
 		<div class="flex items-center gap-4">

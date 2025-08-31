@@ -13,7 +13,7 @@ import { formatSlug } from '$lib/utils/strings';
 import { processImageURL } from '$lib/server/storage';
 import { checkPermissions } from '$lib/server/security/permission';
 
-export const load: PageServerLoad = async ({ url }) => {
+export const load: PageServerLoad = async () => {
 	const players = await getPlayers();
 	const socialPlatforms = await db.select().from(social_platform);
 	const playersTeams = (
@@ -46,10 +46,6 @@ export const load: PageServerLoad = async ({ url }) => {
 	const users = await getUsers();
 	const proSettings = await db.select().from(schema.mouseSettings);
 
-	const action = url.searchParams.get('action');
-	const id = url.searchParams.get('id');
-	const searchQuery = url.searchParams.get('searchQuery');
-
 	const avatarMap = new Map<string, string>();
 	for await (const player of players) {
 		if (player.avatar) {
@@ -66,9 +62,6 @@ export const load: PageServerLoad = async ({ url }) => {
 		socialPlatforms,
 		playersTeams,
 		users,
-		action,
-		id,
-		searchQuery,
 		proSettings
 	};
 };

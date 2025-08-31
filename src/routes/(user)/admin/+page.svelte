@@ -14,10 +14,6 @@
 	let { data }: { data: PageData } = $props();
 </script>
 
-<svelte:head>
-	<title>{m.admin_panel()} | LemonTV</title>
-</svelte:head>
-
 {#snippet adminCard(
 	href: string,
 	Icon: Component,

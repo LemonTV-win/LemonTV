@@ -5,7 +5,7 @@ import * as table from '$lib/server/db/schema';
 import { eq, sql } from 'drizzle-orm';
 import { processImageURL } from '$lib/server/storage';
 import { checkPermissions } from '$lib/server/security/permission';
-export const load: PageServerLoad = async ({ url }) => {
+export const load: PageServerLoad = async () => {
 	const organizersList = await db.select().from(table.organizer);
 
 	// Collect unique logo URLs
@@ -31,15 +31,8 @@ export const load: PageServerLoad = async ({ url }) => {
 		logoURL: logoUrlMap.get(organizer.logo) || organizer.logo
 	}));
 
-	const action = url.searchParams.get('action');
-	const id = url.searchParams.get('id');
-	const searchQuery = url.searchParams.get('searchQuery');
-
 	return {
-		organizers: organizersWithLogos,
-		action,
-		id,
-		searchQuery
+		organizers: organizersWithLogos
 	};
 };
 

@@ -23,21 +23,13 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		throw redirect(302, `/login?redirect=${encodeURIComponent(fullUrl)}`);
 	}
 
-	const searchParams = url.searchParams;
-	const action = searchParams.get('action');
-	const id = searchParams.get('id');
-	const searchQuery = searchParams.get('searchQuery');
-
 	if (!['admin', 'editor'].some((role) => user.roles.includes(role))) {
 		throw redirect(302, '/');
 	}
 
 	return {
 		discordServers: await getDiscordServers(),
-		tags: await getTags(),
-		action,
-		id,
-		searchQuery
+		tags: await getTags()
 	};
 };
 

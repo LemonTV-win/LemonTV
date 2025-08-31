@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { PageServerData } from './$types';
+	import type { PageProps } from './$types';
 	import { m } from '$lib/paraglide/messages';
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
@@ -9,7 +9,7 @@
 	import IconParkSolidShield from '~icons/icon-park-solid/shield';
 	import IconParkSolidDeleteFive from '~icons/icon-park-solid/delete-five';
 
-	let { data }: { data: PageServerData } = $props();
+	let { data }: PageProps = $props();
 	let searchQuery = $state(data.searchQuery || '');
 	let errorMessage = $state('');
 	let successMessage = $state('');
@@ -111,10 +111,6 @@
 		showRolePanel = !showRolePanel;
 	}
 </script>
-
-<svelte:head>
-	<title>{m.users()} | {m.admin_panel()} | LemonTV</title>
-</svelte:head>
 
 <svelte:window bind:innerWidth />
 

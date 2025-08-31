@@ -9,7 +9,7 @@ import { processImageURL } from '$lib/server/storage';
 import { checkPermissions } from '$lib/server/security/permission';
 import type { GameAccountRegion, GameAccountServer } from '$lib/data/players';
 
-export const load: PageServerLoad = async ({ url, locals }) => {
+export const load: PageServerLoad = async ({ locals }) => {
 	const teamsList = await db.select().from(table.team);
 	const teamPlayers = await db.select().from(table.teamPlayer);
 	const teamAliases = await db.select().from(table.teamAlias);
@@ -53,18 +53,12 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 		logoURL: team.logo ? logoUrlMap.get(team.logo) || null : null
 	}));
 
-	const action = url.searchParams.get('action');
-	const id = url.searchParams.get('id');
-	const searchQuery = url.searchParams.get('searchQuery');
 	return {
 		teams: teamsWithLogos,
 		teamPlayers,
 		teamAliases,
 		players,
-		user: locals.user,
-		action,
-		id,
-		searchQuery
+		user: locals.user
 	};
 };
 
