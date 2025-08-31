@@ -60,6 +60,32 @@
 	let errorMessage = $state('');
 	let successMessage = $state('');
 
+	let showDeleteConfirm = $state(false);
+	let isDeleting = $state(false);
+
+	async function handleDelete() {
+		isDeleting = true;
+		errorMessage = '';
+		try {
+			if (!match.id) return;
+			const formData = new FormData();
+			formData.append('id', String(match.id));
+			const res = await fetch('?/delete', { method: 'POST', body: formData });
+			if (res.ok) {
+				onsuccess();
+			} else {
+				const data = await res.json().catch(() => ({}));
+				errorMessage = data?.error || m.error_occurred();
+			}
+		} catch (e) {
+			console.error('Error deleting match:', e);
+			errorMessage = m.error_occurred();
+		} finally {
+			isDeleting = false;
+			showDeleteConfirm = false;
+		}
+	}
+
 	const formatOptions = ['BO1', 'BO3', 'BO5'];
 	const mapActionOptions = ['pick', 'ban', 'decider', 'set'] as const;
 
@@ -333,6 +359,39 @@
 					</button>
 				</div>
 			</fieldset>
+
+			{#if match.id}
+				<div class="mt-8 border-t border-slate-700 pt-6">
+					<h3 class="mb-2 text-sm font-semibold text-red-400">{m.danger_zone()}</h3>
+					{#if showDeleteConfirm}
+						<div class="mb-4 rounded-md bg-red-900/60 p-4 text-red-200">
+							<p>{m.delete_match_confirmation()}</p>
+							<div class="mt-4 flex justify-end gap-2">
+								<button
+									type="button"
+									class="rounded-md border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
+									onclick={() => (showDeleteConfirm = false)}
+									disabled={isDeleting}>{m.cancel()}</button
+								>
+								<button
+									type="button"
+									class="rounded-md bg-red-600 px-4 py-2 font-medium text-white hover:bg-red-700"
+									onclick={handleDelete}
+									disabled={isDeleting}>{isDeleting ? m.deleting() : m.delete_match()}</button
+								>
+							</div>
+						</div>
+					{:else}
+						<button
+							type="button"
+							class="rounded-md border border-red-700 bg-red-900/30 px-4 py-2 text-red-300 hover:bg-red-800/60"
+							onclick={() => (showDeleteConfirm = true)}
+						>
+							{m.delete_match()}
+						</button>
+					{/if}
+				</div>
+			{/if}
 		</div>
 
 		<div class="mt-6 flex justify-end gap-4 border-t border-slate-700 pt-4">
