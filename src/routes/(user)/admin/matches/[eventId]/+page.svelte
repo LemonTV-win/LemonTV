@@ -293,23 +293,24 @@
 					id: string;
 					format: string | null;
 					stageId: number | null;
-					teams: Array<{
+					matchTeams: Array<{
 						matchId: string | null;
 						teamId: string | null;
 						position: number | null;
 						score: number | null;
 						team: {
 							id: string;
-							name: string;
-							slug: string;
-							abbr: string;
-							logo: string;
-							region: string;
-							createdAt: Date | null;
-							updatedAt: Date | null;
-						};
+							name: string | null;
+							slug: string | null;
+							abbr: string | null;
+							logo: string | null;
+							region: string | null;
+							createdAt: string | null;
+							updatedAt: string | null;
+							logoURL: string | null;
+						} | null;
 					}>;
-					maps: Array<{
+					matchMaps: Array<{
 						id: number;
 						matchId: string;
 						mapId: string;
@@ -331,8 +332,7 @@
 						map: {
 							id: GameMap;
 						};
-						teams: Array<{
-							gameId: number;
+						gameTeams: Array<{
 							teamId: string;
 							position: number;
 							score: number;
@@ -345,7 +345,7 @@
 								region: string;
 							};
 						}>;
-						playerScores: Array<{
+						gamePlayerScores: Array<{
 							id: number;
 							gameId: number;
 							teamId: string;
@@ -361,7 +361,7 @@
 							assists: number;
 							damage: number;
 						}>;
-						vods?: GameVod[];
+						gameVods: GameVod[];
 					}>;
 				}>;
 				rounds: Array<{
@@ -912,8 +912,8 @@
 									{#snippet teamBadge(team: {
 										team: {
 											id: string;
-											logo: string | null;
-											name: string | null;
+											logoURL?: string | null;
+											name?: string | null;
 										} | null;
 										position: number | null;
 									})}
@@ -928,9 +928,9 @@
 												]}
 											>
 												<div class="h-6 w-6 rounded bg-gray-700/50">
-													{#if team.team?.logo}
+													{#if team.team?.logoURL}
 														<img
-															src={team.team.logo}
+															src={team.team.logoURL}
 															alt={team.team.name}
 															class="h-6 w-6 rounded"
 														/>

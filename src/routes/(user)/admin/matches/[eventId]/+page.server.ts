@@ -1,7 +1,7 @@
 import { error, fail } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { desc, eq, and, inArray } from 'drizzle-orm';
+import { desc, eq, and, inArray, type InferSelectModel } from 'drizzle-orm';
 import { processImageURL } from '$lib/server/storage';
 import type { TCountryCode, TLanguageCode } from 'countries-list';
 import type { Region, GameMap } from '$lib/data/game';
@@ -557,6 +557,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			console.info(
 				`[Admin][Matches][Event][Load] Matches query took ${performance.now() - matchesQueryStart}ms (matches=${matchCount}, games=${gameCount}, playerScores=${scoreCount}, vods=${vodCount})`
 			);
+
 			return result.map((m) => ({
 				...m,
 				games: m.games?.map((g) => ({
@@ -679,6 +680,31 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		})()
 	]);
 
+	// Process matches[i].games[j].teams[k]'s & matches[i].matchTeams[j]'s image URLs
+	const uniqueImageUrls = new Set<string>();
+	for (const match of matches) {
+		for (const team of match.matchTeams) {
+			if (team.team?.logo) {
+				uniqueImageUrls.add(team.team.logo);
+			}
+		}
+		for (const game of match.games) {
+			for (const team of game.teams) {
+				if (team.team.logo) {
+					uniqueImageUrls.add(team.team.logo);
+				}
+			}
+		}
+	}
+
+	const imageUrlMap = new Map<string, string>();
+	await Promise.all(
+		Array.from(uniqueImageUrls).map(async (url) => {
+			const processed = await processImageURL(url);
+			imageUrlMap.set(url, processed);
+		})
+	);
+
 	// --- 5. Assemble Final Data Structure (Simplified) ---
 	// The data is already structured by the queries, so assembly is much easier.
 	const finalStages = stages.reduce(
@@ -690,7 +716,30 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 					stage: stage.stage,
 					format: stage.format
 				},
-				matches: matches.filter((m) => m.stageId === stage.id),
+				matches: matches
+					.filter((m) => m.stageId === stage.id)
+					.map((m) => ({
+						...m,
+						matchTeams: m.matchTeams.map((mt) => ({
+							matchId: mt.matchId,
+							teamId: mt.teamId,
+							position: mt.position,
+							score: mt.score,
+							team: mt.team
+								? {
+										...mt.team,
+										logoURL: mt.team.logo ? (imageUrlMap.get(mt.team.logo) ?? mt.team.logo) : null
+									}
+								: null
+						})),
+						games: m.games.map((g) => ({
+							...g,
+							teams: g.teams.map((gt) => ({
+								...gt.team,
+								logoURL: gt.team.logo ? (imageUrlMap.get(gt.team.logo) ?? gt.team.logo) : null
+							}))
+						}))
+					})),
 				rounds: stageRounds.filter((r) => r.stageId === stage.id),
 				nodes: stageNodes.filter((n) => n.stageId === stage.id)
 			};
@@ -705,7 +754,14 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 					stage: string;
 					format: string;
 				};
-				matches: StageMatch[];
+				matches: (Omit<StageMatch, 'games' | 'matchTeams'> & {
+					matchTeams: (InferSelectModel<typeof table.matchTeam> & {
+						team: (InferSelectModel<typeof table.team> & { logoURL: string | null }) | null;
+					})[];
+					games: (InferSelectModel<typeof table.game> & {
+						teams: (InferSelectModel<typeof table.team> & { logoURL: string | null })[];
+					})[];
+				})[];
 				rounds: StageRound[];
 				nodes: StageNode[];
 			}
