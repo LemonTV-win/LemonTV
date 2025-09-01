@@ -126,7 +126,7 @@
 						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 					>
 						{#each formatOptions as formatOption (formatOption)}
-							<option value={formatOption}>{STAGE_FORMAT_NAMES[formatOption]}</option>
+							<option value={formatOption}>{STAGE_FORMAT_NAMES[formatOption]()}</option>
 						{/each}
 					</select>
 				</div>
