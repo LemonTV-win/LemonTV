@@ -80,10 +80,10 @@
 		};
 	} = $props();
 
-	$inspect('[admin/matches/GameEdit] game', data.game);
-	$inspect('[admin/matches/GameEdit] teams', data.teams);
-	$inspect('[admin/matches/GameEdit] rosters', data.rosters);
-	$inspect('[admin/matches/GameEdit] match', data.match);
+	$inspect('[admin/matches/GameEdit] game', data?.game);
+	$inspect('[admin/matches/GameEdit] teams', data?.teams);
+	$inspect('[admin/matches/GameEdit] rosters', data?.rosters);
+	$inspect('[admin/matches/GameEdit] match', data?.match);
 
 	// Calculate the next map to be played based on match's map pick order
 	function getNextMapToPlay(): string {
@@ -247,8 +247,8 @@
 	}
 
 	let compiledGameAccountIDMaps = $derived([
-		rostersToGameAccountIDMap(data.rosters[0]),
-		rostersToGameAccountIDMap(data.rosters[1])
+		rostersToGameAccountIDMap(data?.rosters?.[0] ?? []),
+		rostersToGameAccountIDMap(data?.rosters?.[1] ?? [])
 	]);
 
 	$inspect('[admin/matches/GameEdit] compiledGameAccountIDMaps', compiledGameAccountIDMaps);
