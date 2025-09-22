@@ -542,6 +542,7 @@
 	"history": "History",
 	"update_event": "Update Event",
 	"create_event": "Create Event",
+	"create_event_from": "Create Event from...",
 	"official_event": "Official Event",
 	"unofficial_event": "Unofficial Event",
 	"description": "Description",

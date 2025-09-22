@@ -23,7 +23,11 @@
 		players,
 		teamPlayers,
 		onCancel,
-		onSuccess: onsuccess
+		onSuccess: onsuccess,
+		// When provided, we will prefill from this template event id while creating
+		templateEventId,
+		// Optional list of events to select as template sources
+		templateEvents
 	}: {
 		event: Partial<Event> & {
 			results?: Array<{
@@ -55,9 +59,21 @@
 		}>;
 		onCancel: () => void;
 		onSuccess: () => void;
+		templateEventId?: string | null;
+		templateEvents?: Array<{
+			id: string;
+			name: string;
+			slug: string;
+			date: string;
+		}>;
 	} = $props();
 
 	$inspect('[EventEdit] event', event);
+
+	// Local template selection from within the editor (create mode only)
+	let internalTemplateEventId: string | null = $state(templateEventId || null);
+	let templateIdInput = $state('');
+	let templateSelectId = $state('');
 
 	let newEvent = $state({
 		id: event.id || '',
@@ -193,6 +209,85 @@
 		}
 	});
 
+	// If creating from a template, prefill all fields except results
+	$effect(() => {
+		const tid = internalTemplateEventId || templateEventId;
+		if (!event.id && tid) {
+			(async () => {
+				try {
+					const res = await fetch(`/api/events/${tid}/template`);
+					if (!res.ok) throw new Error('Template API error');
+					const snapshot = await res.json();
+
+					const tpl = snapshot.event || {};
+
+					// Prefill base fields
+					newEvent.name = tpl.name || '';
+					newEvent.slug = '';
+					newEvent.server = tpl.server || 'strinova';
+					newEvent.format = tpl.format || 'online';
+					newEvent.region = tpl.region || 'Global';
+					newEvent.status = tpl.status || 'upcoming';
+					newEvent.capacity = tpl.capacity || 0;
+					newEvent.date = new Date().toISOString().split('T')[0];
+					newEvent.image = tpl.image || '';
+					newEvent.official = !!tpl.official;
+					newEvent.websites = (snapshot.websites || []).map((w: any) => ({
+						url: w.url,
+						label: w.label
+					}));
+					newEvent.videos = (snapshot.videos || []).map((v: any) => ({
+						type: v.type || 'stream',
+						platform: v.platform || 'twitch',
+						url: v.url || '',
+						title: v.title || ''
+					}));
+					newEvent.casters = (snapshot.casters || []).map((c: any) => ({
+						playerId: c.playerId,
+						role: c.role
+					}));
+
+					// Organizers
+					if (Array.isArray(eventOrganizers) && eventOrganizers.length) {
+						newEvent.organizers = eventOrganizers.map((eo) => eo.organizerId);
+					} else if (Array.isArray(snapshot.organizerIds)) {
+						newEvent.organizers = snapshot.organizerIds;
+					}
+
+					// Event team meta and team players
+					eventTeams = (snapshot.eventTeams || []).map((et: any) => ({
+						teamId: et.teamId,
+						entry: et.entry,
+						status: et.status
+					}));
+					eventTeamPlayers = (snapshot.teamPlayers || []).map((tp: any) => ({
+						teamId: tp.teamId,
+						playerId: tp.playerId,
+						role: tp.role
+					}));
+					selectedTeams = [...new Set(eventTeamPlayers.map((tp) => tp.teamId))];
+
+					// Do NOT prefill results
+					results = [];
+
+					// Update visible date range inputs based on newEvent.date
+					dateRange.start = newEvent.date;
+					dateRange.end = newEvent.date;
+				} catch (e) {
+					console.error('Failed to prefill from template event', e);
+					errorMessage = 'Failed to load template';
+				}
+			})();
+		}
+	});
+
+	function applyTemplateFromInput() {
+		const value = templateIdInput.trim();
+		if (!value) return;
+		internalTemplateEventId = value;
+		errorMessage = '';
+	}
+
 	// Update newEvent.date when dateRange changes
 	$effect(() => {
 		if (dateRange.start && dateRange.end) {
@@ -286,6 +381,38 @@
 		{/if}
 
 		<div class="styled-scroll flex-1 space-y-4 overflow-y-auto pr-2">
+			{#if !event.id}
+				<!-- Create from template (inline) -->
+				<div class="rounded-md border border-slate-700 bg-slate-800/50 p-3">
+					<div class="mb-2 text-sm font-medium text-slate-300">{m.create_event_from()}</div>
+					<div class="flex items-center gap-2">
+						<select
+							bind:value={templateSelectId}
+							class="flex-1 rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+						>
+							<option value="">-- Select an event --</option>
+							{#each templateEvents || [] as te (te.id)}
+								<option value={te.id}>{te.name} ({te.slug})</option>
+							{/each}
+						</select>
+						<button
+							type="button"
+							class="rounded-md bg-slate-700 px-3 py-2 text-sm text-white hover:bg-slate-600"
+							onclick={() => {
+								if (templateSelectId) {
+									internalTemplateEventId = templateSelectId;
+									errorMessage = '';
+								}
+							}}
+						>
+							Load
+						</button>
+					</div>
+					{#if internalTemplateEventId}
+						<div class="mt-2 text-xs text-slate-400">Using template: {internalTemplateEventId}</div>
+					{/if}
+				</div>
+			{/if}
 			{#if event.id}
 				<div>
 					<label class="block text-sm font-medium text-slate-300" for="eventId">ID</label>

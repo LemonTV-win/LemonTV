@@ -10,6 +10,7 @@
 	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import IconParkSolidHistory from '~icons/icon-park-solid/history-query';
+	import IconParkSolidAdd from '~icons/icon-park-solid/add';
 	import TypcnArrowUnsorted from '~icons/typcn/arrow-unsorted';
 	import TypcnArrowSortedDown from '~icons/typcn/arrow-sorted-down';
 	import TypcnArrowSortedUp from '~icons/typcn/arrow-sorted-up';
@@ -40,14 +41,51 @@
 	let isAddingNew = $state(false);
 	let isEditing = $state(false);
 	let showHistoryModal = $state(false);
+	let templateEventId: string | null = $state(null);
+	let hasBootstrappedFromURL = $state(false);
 
 	$effect(() => {
 		const url = new URL(window.location.href);
+		// Always sync searchQuery
 		if (searchQuery) {
 			url.searchParams.set('searchQuery', searchQuery);
 		} else {
 			url.searchParams.delete('searchQuery');
 		}
+
+		if (!hasBootstrappedFromURL) {
+			// Avoid clobbering action/id from initial URL before we apply it
+			goto(url.toString(), { replaceState: true, noScroll: true, keepFocus: true });
+			return;
+		}
+
+		// Sync action/id with current UI state
+		let actionParam: string | null = null;
+		let idParam: string | null = null;
+
+		if (isEditing && selectedEvent?.id) {
+			actionParam = 'edit';
+			idParam = selectedEvent.id;
+		} else if (isAddingNew) {
+			actionParam = 'create';
+			idParam = templateEventId || null;
+		} else if (showHistoryModal && selectedEvent?.id) {
+			actionParam = 'history';
+			idParam = selectedEvent.id;
+		}
+
+		if (actionParam) {
+			url.searchParams.set('action', actionParam);
+		} else {
+			url.searchParams.delete('action');
+		}
+
+		if (idParam) {
+			url.searchParams.set('id', idParam);
+		} else {
+			url.searchParams.delete('id');
+		}
+
 		goto(url.toString(), { replaceState: true, noScroll: true, keepFocus: true });
 	});
 
@@ -90,6 +128,11 @@
 	// Handle URL parameters
 	$effect(() => {
 		if (action === 'create') {
+			if (id) {
+				templateEventId = id;
+			} else {
+				templateEventId = null;
+			}
 			handleAddEvent();
 		} else if (action === 'edit' && id) {
 			const eventToEdit = events.find((e) => e.id === id);
@@ -120,7 +163,38 @@
 					}))
 				});
 			}
+		} else if (action === 'history' && id) {
+			const eventToShow = events.find((e) => e.id === id);
+			if (eventToShow) {
+				selectedEvent = {
+					...eventToShow,
+					date: eventToShow.date as
+						| `${string}-${string}-${string}`
+						| `${string}-${string}-${string}/${string}-${string}-${string}`,
+					status: eventToShow.status as
+						| 'upcoming'
+						| 'live'
+						| 'finished'
+						| 'cancelled'
+						| 'postponed',
+					server: eventToShow.server as 'calabiyau' | 'strinova',
+					region: eventToShow.region as Region,
+					format: eventToShow.format as 'lan' | 'online' | 'hybrid',
+					createdAt: new Date(),
+					updatedAt: new Date(),
+					organizers: (eventToShow.organizers || []).map((org) => ({
+						...org,
+						description: org.description ?? null,
+						url: org.url ?? null,
+						type: org.type ?? null,
+						createdAt: new Date(),
+						updatedAt: new Date()
+					}))
+				};
+				showHistoryModal = true;
+			}
 		}
+		hasBootstrappedFromURL = true;
 	});
 
 	function handleAddEvent() {
@@ -139,6 +213,7 @@
 		isAddingNew = false;
 		isEditing = false;
 		selectedEvent = null;
+		templateEventId = null;
 		goto('/admin/events', { replaceState: true, noScroll: true, keepFocus: true });
 	}
 
@@ -146,6 +221,7 @@
 		isAddingNew = false;
 		isEditing = false;
 		selectedEvent = null;
+		templateEventId = null;
 		goto('/admin/events', { invalidateAll: true, noScroll: true, keepFocus: true });
 	}
 
@@ -173,6 +249,7 @@
 				selectedEvent = null;
 				isAddingNew = true;
 				isEditing = false;
+				templateEventId = null;
 			}}
 		>
 			{m.create_event()}
@@ -184,9 +261,9 @@
 			event={selectedEvent ?? {}}
 			{organizers}
 			eventOrganizers={(() => {
-				if (!selectedEvent) return [];
-				const event = selectedEvent as EventWithOrganizers;
-				return eventOrganizers.filter((eo) => eo.eventId === event.id);
+				const eid = selectedEvent ? (selectedEvent as EventWithOrganizers).id : templateEventId;
+				if (!eid) return [];
+				return eventOrganizers.filter((eo) => eo.eventId === eid);
 			})()}
 			teams={data.teams}
 			players={data.players}
@@ -199,6 +276,8 @@
 			}))}
 			onCancel={handleCancel}
 			onSuccess={handleSuccess}
+			{templateEventId}
+			templateEvents={events.map((e) => ({ id: e.id, name: e.name, slug: e.slug, date: e.date }))}
 		/>
 	{/if}
 
@@ -446,6 +525,18 @@
 									title={m.edit()}
 								>
 									<IconParkSolidEdit class="h-4 w-4" />
+								</button>
+								<button
+									class="flex items-center gap-1 text-green-500 hover:text-green-400"
+									onclick={() => {
+										templateEventId = event.id;
+										selectedEvent = null;
+										isAddingNew = true;
+										isEditing = false;
+									}}
+									title={m.create_event_from()}
+								>
+									<IconParkSolidAdd class="h-4 w-4" />
 								</button>
 								<button
 									class="text-gray-400 hover:text-gray-300"
