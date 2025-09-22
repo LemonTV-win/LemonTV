@@ -180,33 +180,26 @@
 	</div>
 
 	{#if isAddingNew || isEditing}
-		<Modal
-			show={true}
-			title={isAddingNew ? m.add_new() : m.edit()}
-			onClose={handleCancel}
-			dismissible={false}
-		>
-			<EventEdit
-				event={selectedEvent ?? {}}
-				{organizers}
-				eventOrganizers={(() => {
-					if (!selectedEvent) return [];
-					const event = selectedEvent as EventWithOrganizers;
-					return eventOrganizers.filter((eo) => eo.eventId === event.id);
-				})()}
-				teams={data.teams}
-				players={data.players}
-				teamPlayers={data.teamPlayers.map((tp) => ({
-					teamId: tp.teamId,
-					playerId: tp.playerId,
-					role: tp.role as 'active' | 'substitute' | 'coach' | 'manager' | 'owner' | 'former',
-					startedOn: tp.startedOn || undefined,
-					endedOn: tp.endedOn || undefined
-				}))}
-				onCancel={handleCancel}
-				onSuccess={handleSuccess}
-			/>
-		</Modal>
+		<EventEdit
+			event={selectedEvent ?? {}}
+			{organizers}
+			eventOrganizers={(() => {
+				if (!selectedEvent) return [];
+				const event = selectedEvent as EventWithOrganizers;
+				return eventOrganizers.filter((eo) => eo.eventId === event.id);
+			})()}
+			teams={data.teams}
+			players={data.players}
+			teamPlayers={data.teamPlayers.map((tp) => ({
+				teamId: tp.teamId,
+				playerId: tp.playerId,
+				role: tp.role as 'active' | 'substitute' | 'coach' | 'manager' | 'owner' | 'former',
+				startedOn: tp.startedOn || undefined,
+				endedOn: tp.endedOn || undefined
+			}))}
+			onCancel={handleCancel}
+			onSuccess={handleSuccess}
+		/>
 	{/if}
 
 	{#if showHistoryModal}
