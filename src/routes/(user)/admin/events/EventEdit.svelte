@@ -228,7 +228,12 @@
 	);
 </script>
 
-<Modal show={true} title={event.id ? m.edit() : m.add_new()} onClose={onCancel} dismissible={false}>
+<Modal
+	show={true}
+	title={event.id ? m.update_event() : m.create_event()}
+	onClose={onCancel}
+	dismissible={false}
+>
 	<form
 		method="POST"
 		action={event.id ? '?/update' : '?/create'}
