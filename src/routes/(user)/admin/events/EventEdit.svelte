@@ -298,8 +298,8 @@
 
 	const statusOptions = ['upcoming', 'live', 'finished', 'cancelled', 'postponed'];
 	const serverOptions = {
-		strinova: 'Strinova',
-		calabiyau: 'CalabiYau'
+		strinova: m.strinova_server,
+		calabiyau: m.calabiyau_server
 	};
 	const formatOptions = ['online', 'lan', 'hybrid'];
 	const regionOptions = ['Global', 'APAC', 'EU', 'CN', 'NA', 'SA', 'AF', 'OC'];
@@ -461,8 +461,8 @@
 					required
 					class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 				>
-					{#each Object.entries(serverOptions) as [server, label] (server)}
-						<option value={server}>{label}</option>
+					{#each Object.entries(serverOptions) as [server, labelFn] (server)}
+						<option value={server}>{labelFn()}</option>
 					{/each}
 				</select>
 			</div>
