@@ -80,9 +80,31 @@
 		}
 
 		try {
+			// Check if input needs to be wrapped with square brackets
+			let dataToParse = importJsonData.trim();
+
+			// If the input doesn't start and end with exactly one `[` and `]`,
+			// it might be incomplete JSON - try wrapping it
+			if (!dataToParse.startsWith('[') || !dataToParse.endsWith(']')) {
+				// Count opening and closing brackets to see if it's truly incomplete
+				const openBrackets = (dataToParse.match(/\[/g) || []).length;
+				const closeBrackets = (dataToParse.match(/\]/g) || []).length;
+
+				// If there are fewer closing brackets than opening brackets,
+				// or if it doesn't start/end with brackets, try wrapping
+				if (
+					openBrackets === 0 ||
+					closeBrackets < openBrackets ||
+					!dataToParse.startsWith('[') ||
+					!dataToParse.endsWith(']')
+				) {
+					dataToParse = `[${dataToParse}]`;
+				}
+			}
+
 			// Use the utility function to parse and validate
 			const result = parseData<TeamImportData>(
-				importJsonData,
+				dataToParse,
 				(parsedData): parsedData is TeamImportData[] => {
 					// Validate the data
 					if (!Array.isArray(parsedData)) {
