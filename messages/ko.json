@@ -787,6 +787,19 @@
 			}
 		}
 	},
+	"slogans": {
+		"existing_slogans": "기존 슬로건",
+		"slogan": "슬로건",
+		"language": "언어",
+		"select_language": "언어 선택",
+		"event_optional": "이벤트 (선택사항)",
+		"select_event_optional": "이벤트 선택 (선택사항)",
+		"event_id": "이벤트ID",
+		"add_slogan": "슬로건 추가",
+		"select_language_optional": "언어 선택 (선택사항)",
+		"select_event_optional_alt": "이벤트 선택 (선택사항)",
+		"event_id_optional": "이벤트ID (선택사항)"
+	},
 	"donation": {
 		"banner_title": "🍋 LemonTV를 응원해 주세요",
 		"banner_message": "안녕하세요! 저는 LemonTV의 설립자 mkpoli입니다 ❤️. 이 팬이 운영하는 사이트 유지에는 연간 약 $1,200가 들며, 현재는 개인 부담입니다 💸🥺. 도움이 되었다면 후원을 검토해 주세요 ☕!",

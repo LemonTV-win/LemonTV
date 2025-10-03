@@ -802,5 +802,18 @@
 		"banner_message": "Hi! I'm mkpoli, the founder of LemonTV ❤️. This fan-run site costs about $1,200/year just to keep online out of my own pocket 💸🥺. If you find it useful, please consider being a supporter ☕!",
 		"banner_button": "Support on Ko‑fi",
 		"banner_dismiss_title": "Consider later"
+	},
+	"slogans": {
+		"existing_slogans": "Existing Slogans",
+		"slogan": "Slogan",
+		"language": "Language",
+		"select_language": "Select language",
+		"event_optional": "Event (optional)",
+		"select_event_optional": "Select event (optional)",
+		"event_id": "event-id",
+		"add_slogan": "Add slogan",
+		"select_language_optional": "Select language (optional)",
+		"select_event_optional_alt": "Select event (optional)",
+		"event_id_optional": "event-id (optional)"
 	}
 }

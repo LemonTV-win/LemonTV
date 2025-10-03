@@ -787,6 +787,19 @@
 			}
 		}
 	},
+	"slogans": {
+		"existing_slogans": "現有口號",
+		"slogan": "口號",
+		"language": "語言",
+		"select_language": "選擇語言",
+		"event_optional": "賽事（可選）",
+		"select_event_optional": "選擇賽事（可選）",
+		"event_id": "賽事ID",
+		"add_slogan": "新增口號",
+		"select_language_optional": "選擇語言（可選）",
+		"select_event_optional_alt": "選擇賽事（可選）",
+		"event_id_optional": "賽事ID（可選）"
+	},
 	"donation": {
 		"banner_title": "🍋 支持 LemonTV",
 		"banner_message": "嗨！我是 LemonTV 的創辦人 mkpoli ❤️。這個由粉絲維運的網站每年約需 $1,200 的成本，目前都由我自掏腰包 💸🥺。如果你覺得有幫助，歡迎考慮支持我們 ☕！",

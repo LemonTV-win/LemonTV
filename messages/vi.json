@@ -787,6 +787,19 @@
 			}
 		}
 	},
+	"slogans": {
+		"existing_slogans": "Khẩu hiệu hiện có",
+		"slogan": "Khẩu hiệu",
+		"language": "Ngôn ngữ",
+		"select_language": "Chọn ngôn ngữ",
+		"event_optional": "Sự kiện (tùy chọn)",
+		"select_event_optional": "Chọn sự kiện (tùy chọn)",
+		"event_id": "id-sự kiện",
+		"add_slogan": "Thêm khẩu hiệu",
+		"select_language_optional": "Chọn ngôn ngữ (tùy chọn)",
+		"select_event_optional_alt": "Chọn sự kiện (tùy chọn)",
+		"event_id_optional": "id-sự kiện (tùy chọn)"
+	},
 	"donation": {
 		"banner_title": "🍋 Ủng hộ LemonTV",
 		"banner_message": "Xin chào! Mình là mkpoli, người sáng lập LemonTV ❤️. Duy trì trang web do cộng đồng vận hành này tốn khoảng $1.200/năm — hiện do mình tự chi 💸🥺. Nếu thấy hữu ích, hãy cân nhắc ủng hộ nhé ☕!",

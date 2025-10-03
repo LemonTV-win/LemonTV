@@ -793,6 +793,19 @@
 			}
 		}
 	},
+	"slogans": {
+		"existing_slogans": "Slogans existants",
+		"slogan": "Slogan",
+		"language": "Langue",
+		"select_language": "Sélectionner la langue",
+		"event_optional": "Événement (optionnel)",
+		"select_event_optional": "Sélectionner un événement (optionnel)",
+		"event_id": "id-événement",
+		"add_slogan": "Ajouter un slogan",
+		"select_language_optional": "Sélectionner la langue (optionnel)",
+		"select_event_optional_alt": "Sélectionner un événement (optionnel)",
+		"event_id_optional": "id-événement (optionnel)"
+	},
 	"donation": {
 		"banner_title": "🍋 Soutenez LemonTV",
 		"banner_message": "Salut ! Je suis mkpoli, fondateur de LemonTV ❤️. Faire vivre ce site communautaire coûte environ 1 200 $ par an — actuellement de ma poche 💸🥺. Si LemonTV vous aide, pensez à nous soutenir ☕ !",

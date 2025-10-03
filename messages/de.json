@@ -793,6 +793,19 @@
 			}
 		}
 	},
+	"slogans": {
+		"existing_slogans": "Vorhandene Slogans",
+		"slogan": "Slogan",
+		"language": "Sprache",
+		"select_language": "Sprache auswählen",
+		"event_optional": "Event (optional)",
+		"select_event_optional": "Event auswählen (optional)",
+		"event_id": "event-id",
+		"add_slogan": "Slogan hinzufügen",
+		"select_language_optional": "Sprache auswählen (optional)",
+		"select_event_optional_alt": "Event auswählen (optional)",
+		"event_id_optional": "event-id (optional)"
+	},
 	"donation": {
 		"banner_title": "🍋 LemonTV unterstützen",
 		"banner_message": "Hi! Ich bin mkpoli, der Gründer von LemonTV ❤️. Diese von Fans betriebene Seite kostet rund 1.200 $ pro Jahr, um online zu bleiben – derzeit aus meiner eigenen Tasche 💸🥺. Wenn dir die Seite gefällt oder sie dir hilft, erwäge bitte, Unterstützer zu werden ☕!",
