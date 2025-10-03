@@ -122,6 +122,13 @@
 		}
 	});
 
+	// Auto-hide schema when data is successfully parsed
+	$effect(() => {
+		if (parsedTeams?.type === 'success') {
+			showSchema = false;
+		}
+	});
+
 	let existingAccountIdKeys = $derived(
 		new Set(
 			existingPlayers.flatMap(
