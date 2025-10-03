@@ -32,6 +32,7 @@
 		"changelog": "bun scripts/generate-changelog.ts",
 		"jwt:generate": "bun scripts/generate-jwt-keys.ts",
 		"test:e2e": "playwright test",
+		"test:unit": "bun test src/",
 		"test": "npm run test:e2e",
 		"deploy:vercel": "vercel --prod",
 		"deploy": "bun run check && bun run build && bun run db:prod:push && bun run db:prod:sync && bun run db:prod:recalc-player-stats:deploy && bun run deploy:vercel"

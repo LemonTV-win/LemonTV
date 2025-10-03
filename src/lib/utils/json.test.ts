@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'bun:test';
-import { typescriptToJson, parseData } from './json';
+import { typescriptToJson, parseData, wrapIncompleteJsonArray } from './json';
 
 describe('typescriptToJson', () => {
 	it('should convert TypeScript object literal syntax to valid JSON', () => {
@@ -309,5 +309,79 @@ describe('parseTypescriptData', () => {
 			expect(result.data[0].slug).toBe('mixed-team');
 			expect(result.data[0].abbr).toBe('MT');
 		}
+	});
+});
+
+describe('wrapIncompleteJsonArray', () => {
+	it('should wrap single object with square brackets', () => {
+		const input = '{"name": "Team SoloMid", "slug": "tsm"}';
+		const result = wrapIncompleteJsonArray(input);
+		expect(result).toBe('[{"name": "Team SoloMid", "slug": "tsm"}]');
+	});
+
+	it('should wrap TypeScript object literal with square brackets', () => {
+		const input = "{name: 'Team SoloMid', slug: 'tsm'}";
+		const result = wrapIncompleteJsonArray(input);
+		expect(result).toBe("[{name: 'Team SoloMid', slug: 'tsm'}]");
+	});
+
+	it('should not wrap already complete JSON array', () => {
+		const input = '[{"name": "Team SoloMid", "slug": "tsm"}]';
+		const result = wrapIncompleteJsonArray(input);
+		expect(result).toBe('[{"name": "Team SoloMid", "slug": "tsm"}]');
+	});
+
+	it('should not wrap TypeScript array', () => {
+		const input = "[{name: 'Team SoloMid', slug: 'tsm'}]";
+		const result = wrapIncompleteJsonArray(input);
+		expect(result).toBe("[{name: 'Team SoloMid', slug: 'tsm'}]");
+	});
+
+	it('should wrap incomplete array with missing closing bracket', () => {
+		const input = '[{"name": "Team SoloMid", "slug": "tsm"}';
+		const result = wrapIncompleteJsonArray(input);
+		expect(result).toBe('[[{"name": "Team SoloMid", "slug": "tsm"}]');
+	});
+
+	it('should wrap incomplete array with missing opening bracket', () => {
+		const input = '{"name": "Team SoloMid", "slug": "tsm"}]';
+		const result = wrapIncompleteJsonArray(input);
+		expect(result).toBe('[{"name": "Team SoloMid", "slug": "tsm"}]');
+	});
+
+	it('should handle nested objects correctly', () => {
+		const input = '{"name": "Team SoloMid", "players": [{"name": "Player1"}]}';
+		const result = wrapIncompleteJsonArray(input);
+		expect(result).toBe('[{"name": "Team SoloMid", "players": [{"name": "Player1"}]}]');
+	});
+
+	it('should handle empty string', () => {
+		const input = '';
+		const result = wrapIncompleteJsonArray(input);
+		expect(result).toBe('');
+	});
+
+	it('should handle whitespace-only string', () => {
+		const input = '   \n\t  ';
+		const result = wrapIncompleteJsonArray(input);
+		expect(result).toBe('');
+	});
+
+	it('should handle complex nested structures', () => {
+		const input = `{
+			"name": "Team SoloMid",
+			"players": [
+				{
+					"name": "Player1",
+					"gameAccounts": [
+						{"server": "Strinova", "accountId": 1234567}
+					]
+				}
+			]
+		}`;
+		const result = wrapIncompleteJsonArray(input);
+		expect(result).toContain('[');
+		expect(result).toContain(']');
+		expect(result).toContain('Team SoloMid');
 	});
 });
