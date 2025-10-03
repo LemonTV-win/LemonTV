@@ -12,7 +12,8 @@
 		class: className = '',
 		name = '',
 		onChange,
-		searchLabels = []
+		searchLabels = [],
+		displayFormat = 'name'
 	}: {
 		id?: string;
 		items: Array<{ id: string; name: string; group?: string; [key: string]: any }>;
@@ -24,6 +25,7 @@
 		name?: string;
 		onChange?: (item: { id: string; name: string }) => void;
 		searchLabels?: string[];
+		displayFormat?: 'name' | 'name-accounts';
 	} = $props();
 
 	let isOpen = $state(false);
@@ -32,12 +34,27 @@
 	let selectedIndex = $state(-1);
 	let listboxElement: HTMLDivElement | null = $state(null);
 	let isFocused = $state(false);
+	// Helper function to format display text
+	function formatDisplayText(item: { id: string; name: string; [key: string]: any }): string {
+		if (
+			displayFormat === 'name-accounts' &&
+			item.gameAccounts &&
+			Array.isArray(item.gameAccounts)
+		) {
+			const accountIds = item.gameAccounts.map((acc: any) => acc.accountId).filter(Boolean);
+			if (accountIds.length > 0) {
+				return `${item.name} (${accountIds.join(', ')})`;
+			}
+		}
+		return item.name;
+	}
+
 	// Set initial search value without triggering filter
 	$effect(() => {
 		if (value) {
 			const selectedItem = items.find((item) => item.id === value);
 			if (selectedItem) {
-				search = selectedItem.name;
+				search = formatDisplayText(selectedItem);
 			}
 		}
 	});
@@ -55,7 +72,7 @@
 	});
 
 	function handleSelect(item: { id: string; name: string }) {
-		search = item.name;
+		search = formatDisplayText(item);
 		value = item.id;
 		onChange?.(item);
 		isOpen = false;
@@ -84,7 +101,7 @@
 			if (value) {
 				const selectedItem = items.find((item) => item.id === value);
 				if (selectedItem) {
-					search = selectedItem.name;
+					search = formatDisplayText(selectedItem);
 				}
 			}
 		}, 200);
@@ -99,7 +116,7 @@
 			if (value) {
 				const selectedItem = items.find((item) => item.id === value);
 				if (selectedItem) {
-					search = selectedItem.name;
+					search = formatDisplayText(selectedItem);
 				}
 			}
 		}
@@ -266,7 +283,10 @@
 
 	{#if hasValue}
 		<div id="{id || 'combobox'}-selected" class="sr-only">
-			Selected: {getFlattenedItems().find((item) => item.id === value)?.name}
+			Selected: {(() => {
+				const selectedItem = getFlattenedItems().find((item) => item.id === value);
+				return selectedItem ? formatDisplayText(selectedItem) : '';
+			})()}
 		</div>
 	{/if}
 
@@ -298,7 +318,7 @@
 								: ''}"
 							onmousedown={() => handleSelect(item)}
 						>
-							{item.name}
+							{formatDisplayText(item)}
 						</button>
 					{/each}
 					{#if group.label && !group.id.endsWith('last')}

@@ -1,7 +1,14 @@
 <!-- src/routes/(user)/admin/events/EventEdit.svelte -->
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import type { Event, Organizer, EventOrganizer, Team, Player } from '$lib/server/db/schema';
+	import type {
+		Event,
+		Organizer,
+		EventOrganizer,
+		Team,
+		Player,
+		GameAccount
+	} from '$lib/server/db/schema';
 	import { m } from '$lib/paraglide/messages';
 	import ImageUpload from '$lib/components/ImageUpload.svelte';
 	import Modal from '$lib/components/Modal.svelte';
@@ -49,7 +56,7 @@
 		organizers: Organizer[];
 		eventOrganizers: EventOrganizer[];
 		teams: Team[];
-		players: Player[];
+		players: (Player & { gameAccounts: GameAccount[] })[];
 		teamPlayers: Array<{
 			teamId: string;
 			playerId: string;

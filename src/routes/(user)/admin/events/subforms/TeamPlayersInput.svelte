@@ -5,13 +5,13 @@
 	import IconError from '~icons/tdesign/error-circle';
 	import { m } from '$lib/paraglide/messages';
 	import Combobox from '$lib/components/Combobox.svelte';
-	import type { Team, Player } from '$lib/server/db/schema';
+	import type { Team, Player, GameAccount } from '$lib/server/db/schema';
 	import { SvelteSet } from 'svelte/reactivity';
 	import { isActive, isSubstitute, isCoaching } from '$lib/data/teams';
 
 	interface Props {
 		teams: Team[];
-		players: Player[];
+		players: (Player & { gameAccounts: GameAccount[] })[];
 		selectedTeams: string[];
 		eventTeamPlayers: Array<{
 			teamId: string;
@@ -254,13 +254,15 @@
 					.filter((team) => !selectedTeams.includes(team.id))
 					.map((team) => ({
 						id: team.id,
-						name: team.name
+						name: team.name,
+						gameAccounts: [] // Teams don't have game accounts
 					}))}
 				value=""
 				placeholder={m.select_team()}
 				groups={[]}
 				disabled={false}
 				class="px-3 py-2"
+				displayFormat="name"
 				onChange={(item) => {
 					addTeam(item.id);
 				}}
@@ -408,6 +410,7 @@
 														const filteredPlayers = players.map((p) => ({
 															id: p.id,
 															name: p.name,
+															gameAccounts: p.gameAccounts || [],
 															group: eventTeamPlayers.some(
 																(tp) => tp.teamId === team.id && tp.playerId === p.id
 															)
@@ -424,6 +427,7 @@
 													]}
 													disabled={false}
 													class="px-2 py-1 text-sm"
+													displayFormat="name-accounts"
 												/>
 												{#if teamPlayer.playerId}
 													{#if getPlayerValidationStatus(team.id, teamPlayer.playerId)}

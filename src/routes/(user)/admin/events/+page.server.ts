@@ -40,9 +40,40 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		withTimer('getOrganizers', () => db.select().from(table.organizer))(),
 		withTimer('getEventOrganizers', () => db.select().from(table.eventOrganizer))(),
 		withTimer('getTeams', () => db.select().from(table.team))(),
-		withTimer('getPlayers', () => db.select().from(table.player))(),
+		withTimer('getPlayers', () =>
+			db
+				.select({
+					player: table.player,
+					gameAccount: table.gameAccount
+				})
+				.from(table.player)
+				.leftJoin(table.gameAccount, eq(table.player.id, table.gameAccount.playerId))
+		)(),
 		withTimer('getTeamPlayers', () => db.select().from(table.teamPlayer))()
 	]);
+
+	// Process players with game accounts
+	const processedPlayers = players.reduce(
+		(acc, row) => {
+			const existingPlayer = acc.find((p) => p.id === row.player.id);
+			if (existingPlayer) {
+				if (row.gameAccount) {
+					existingPlayer.gameAccounts.push(row.gameAccount);
+				}
+			} else {
+				acc.push({
+					...row.player,
+					gameAccounts: row.gameAccount ? [row.gameAccount] : []
+				});
+			}
+			return acc;
+		},
+		[] as Array<
+			typeof table.player.$inferSelect & {
+				gameAccounts: Array<typeof table.gameAccount.$inferSelect>;
+			}
+		>
+	);
 
 	const action = url.searchParams.get('action');
 	const id = url.searchParams.get('id');
@@ -53,7 +84,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		organizers,
 		eventOrganizers,
 		teams,
-		players,
+		players: processedPlayers,
 		teamPlayers,
 		action,
 		id,

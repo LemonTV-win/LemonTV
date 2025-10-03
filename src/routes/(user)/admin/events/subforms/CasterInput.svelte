@@ -79,6 +79,7 @@
 							items={players.map((p) => ({
 								id: p.id,
 								name: p.name,
+								gameAccounts: p.gameAccounts || [],
 								group: casters.some((c) => c.playerId === p.id) ? 'selected' : 'available'
 							}))}
 							bind:value={caster.playerId}
@@ -88,6 +89,7 @@
 								{ id: 'available', label: 'Available' }
 							]}
 							class="mt-1 px-4 py-2"
+							displayFormat="name-accounts"
 						/>
 					</div>
 
