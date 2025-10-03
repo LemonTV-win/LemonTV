@@ -234,6 +234,7 @@ export const actions = {
 
 		const formData = await request.formData();
 		const teamsData = formData.get('teams') as string;
+		const eventId = formData.get('eventId') as string | null;
 
 		if (!teamsData) {
 			return fail(400, {
@@ -393,7 +394,7 @@ export const actions = {
 								};
 							}) || [];
 
-						await createTeam(
+						const newTeamId = await createTeam(
 							{
 								name: teamData.name,
 								logo: teamData.logo || undefined,
@@ -407,6 +408,62 @@ export const actions = {
 							tx
 						);
 						createdCount++;
+
+						// If an event is selected, always create eventTeam;
+						// add eventTeamPlayer entries only when there are players
+						if (eventId) {
+							// Add the team to the event with default entry/status
+							await tx.insert(table.eventTeam).values({
+								eventId,
+								teamId: newTeamId,
+								entry: 'open',
+								status: 'active'
+							});
+
+							if (convertedPlayers.length > 0) {
+								// Map team roles to event team player roles
+								const toEventRole = (
+									role: 'active' | 'substitute' | 'former' | 'coach' | 'manager' | 'owner'
+								): 'main' | 'sub' | 'coach' | null => {
+									switch (role) {
+										case 'active':
+											return 'main';
+										case 'substitute':
+											return 'sub';
+										case 'coach':
+											return 'coach';
+										default:
+											return null; // skip non-participating roles
+									}
+								};
+
+								const eventTeamPlayers = convertedPlayers.flatMap((player) => {
+									const eventRole = toEventRole(
+										player.role as
+											| 'active'
+											| 'substitute'
+											| 'former'
+											| 'coach'
+											| 'manager'
+											| 'owner'
+									);
+									return eventRole
+										? [
+												{
+													eventId,
+													teamId: newTeamId,
+													playerId: player.playerId,
+													role: eventRole
+												}
+											]
+										: [];
+								});
+
+								if (eventTeamPlayers.length > 0) {
+									await tx.insert(table.eventTeamPlayer).values(eventTeamPlayers);
+								}
+							}
+						}
 					} catch (error) {
 						console.error(`Error creating team ${teamData.name}:`, error);
 						return fail(500, {

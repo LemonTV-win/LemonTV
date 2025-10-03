@@ -519,4 +519,5 @@
 	}}
 	existingTeams={data.teams}
 	existingPlayers={data.players}
+	events={data.adminEvents}
 />

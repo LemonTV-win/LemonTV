@@ -10,6 +10,7 @@
 	import { deserialize } from '$app/forms';
 	import { m } from '$lib/paraglide/messages';
 	import type { PlayerImportData } from '../players/PlayerBatchImport.svelte';
+	import EventSelect from '$lib/components/forms/EventSelect.svelte';
 
 	interface TeamImportData {
 		name: string;
@@ -39,7 +40,8 @@
 		onClose,
 		onSuccess,
 		existingTeams,
-		existingPlayers
+		existingPlayers,
+		events = []
 	}: {
 		showModal: boolean;
 		onClose: () => void;
@@ -56,12 +58,19 @@
 			slug: string;
 			gameAccounts?: Array<{ accountId: number; server: string }>;
 		}>;
+		events?: Array<{
+			id: string;
+			name: string;
+			date?: string;
+			imageURL?: string;
+		}>;
 	} = $props();
 
 	let importJsonData = $state('');
 	let importError = $state('');
 	let isImporting = $state(false);
 	let showSchema = $state(false);
+	let selectedEventId = $state<string | null>(null);
 
 	type ParsedTeams =
 		| {
@@ -713,6 +722,11 @@ const teams: TeamImportData[] = [
 			const formData = new FormData();
 			formData.append('teams', JSON.stringify(parsedTeams.data));
 
+			// Add event ID if selected
+			if (selectedEventId) {
+				formData.append('eventId', selectedEventId);
+			}
+
 			const response = await fetch('?/batchCreate', {
 				method: 'POST',
 				body: formData
@@ -745,6 +759,7 @@ const teams: TeamImportData[] = [
 		importError = '';
 		parsedTeams = null;
 		showSchema = false;
+		selectedEventId = null;
 		onClose();
 	}
 
@@ -825,6 +840,29 @@ const teams: TeamImportData[] = [
 					</div>
 				{/if}
 			</div>
+
+			{#if parsedTeams && parsedTeams.type === 'success'}
+				<div class="mb-4">
+					<label class="block text-sm font-medium text-slate-300" for="eventSelect">
+						Add teams for Event (optional)
+					</label>
+					<EventSelect
+						id="eventSelect"
+						bind:value={selectedEventId}
+						{events}
+						placeholder="Select an event to add teams to..."
+						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+					/>
+					<p class="mt-1 text-xs text-slate-400">
+						{#if selectedEventId}
+							Teams will be created and added to the selected event with EventTeamPlayer
+							relationships.
+						{:else}
+							Teams will be created without event associations.
+						{/if}
+					</p>
+				</div>
+			{/if}
 
 			{#if importError}
 				<div class="mb-4 rounded-md bg-red-900/50 p-3 text-sm text-red-200">
