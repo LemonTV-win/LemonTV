@@ -155,6 +155,18 @@
 		return data.teamAliases.filter((ta: TeamAlias) => ta.teamId === teamId);
 	}
 
+	function getTeamSlogans(teamId: string) {
+		const slog = (data as any).teamSlogans as Array<any> | undefined;
+		return (slog || [])
+			.filter((ts) => ts.teamId === teamId)
+			.map((s) => ({
+				id: s.id,
+				slogan: s.slogan ?? '',
+				language: s.language ?? null,
+				eventId: s.eventId ?? null
+			}));
+	}
+
 	async function handleExport() {
 		errorMessage = '';
 		successMessage = '';
@@ -443,6 +455,8 @@
 			players={data.players}
 			teamPlayers={getTeamPlayers(selectedTeam?.id || '')}
 			teamAliases={getTeamAliases(selectedTeam?.id || '')}
+			teamSlogans={getTeamSlogans(selectedTeam?.id || '')}
+			events={data.adminEvents}
 			onCancel={handleCancel}
 		/>
 	</Modal>

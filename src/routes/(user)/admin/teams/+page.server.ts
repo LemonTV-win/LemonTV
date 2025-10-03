@@ -2,6 +2,7 @@ import { fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
+import { getAdminEventSummaries } from '$lib/server/data/events';
 import { createTeam, updateTeam, deleteTeam } from '$lib/server/data/teams';
 import { createPlayer } from '$lib/server/data/players';
 import type { Region } from '$lib/data/game';
@@ -13,6 +14,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	const teamsList = await db.select().from(table.team);
 	const teamPlayers = await db.select().from(table.teamPlayer);
 	const teamAliases = await db.select().from(table.teamAlias);
+	const teamSlogans = await db.select().from(table.teamSlogan);
 	const players = await db.query.player.findMany({
 		// TODO:
 		// columns: {
@@ -53,11 +55,16 @@ export const load: PageServerLoad = async ({ locals }) => {
 		logoURL: team.logo ? logoUrlMap.get(team.logo) || null : null
 	}));
 
+	// Minimal admin events: id, name, date, imageURL (processed)
+	const adminEvents = await getAdminEventSummaries();
+
 	return {
 		teams: teamsWithLogos,
 		teamPlayers,
 		teamAliases,
+		teamSlogans,
 		players,
+		adminEvents,
 		user: locals.user
 	};
 };
@@ -85,6 +92,12 @@ export const actions = {
 			endedOn?: string;
 			note?: string;
 		}[];
+		const slogans = JSON.parse((formData.get('slogans') as string) || '[]') as Array<{
+			id?: number;
+			slogan: string;
+			language?: string | null;
+			eventId?: string | null;
+		}>;
 
 		if (!name) {
 			return fail(400, {
@@ -101,7 +114,8 @@ export const actions = {
 					slug: slug || undefined,
 					abbr: abbr || undefined,
 					aliases,
-					players
+					players,
+					slogans
 				},
 				result.userId
 			);
@@ -140,6 +154,12 @@ export const actions = {
 			endedOn?: string;
 			note?: string;
 		}[];
+		const slogans = JSON.parse((formData.get('slogans') as string) || '[]') as Array<{
+			id?: number;
+			slogan: string;
+			language?: string | null;
+			eventId?: string | null;
+		}>;
 
 		if (!id || !name) {
 			return fail(400, {
@@ -157,7 +177,8 @@ export const actions = {
 					slug: slug || undefined,
 					abbr: abbr || undefined,
 					aliases,
-					players
+					players,
+					slogans
 				},
 				result.userId
 			);

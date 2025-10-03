@@ -10,6 +10,7 @@
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 	import { safeGetTimestamp } from '$lib/utils/date';
 	import TeamMember from './TeamMember.svelte';
+	import RiDoubleQuotesL from '~icons/ri/double-quotes-l';
 	import {
 		isActive,
 		isSubstitute,
@@ -29,39 +30,52 @@
 
 		<section class="glass mb-6 rounded-lg p-6">
 			<div class="flex flex-col gap-4 sm:flex-row sm:items-center">
-				<div class="flex items-center gap-4">
-					{#if data.team.logoURL}
-						<img src={data.team.logoURL} alt={data.team.name} class="h-24 w-24 rounded-full" />
-					{/if}
-					<div>
+				{#if data.team.logoURL}
+					<img src={data.team.logoURL} alt={data.team.name} class="h-24 w-24 rounded-full" />
+				{/if}
+
+				<div class="flex flex-col gap-2">
+					<div class="flex flex-col gap-4 sm:flex-row">
 						<h1 class="text-3xl font-bold">
 							{data.team.name}
 						</h1>
-					</div>
-				</div>
 
-				<div class="flex flex-wrap gap-2">
-					{#if data.team.region}
-						<RegionTag region={data.team.region} />
-					{/if}
-					<div
-						class={[
-							'flex items-center gap-2 rounded-sm bg-gray-700/50 px-2 py-1',
-							data.teamStatistics.ranking === 1 && 'bg-yellow-500',
-							data.teamStatistics.ranking === 2 && 'bg-blue-500',
-							data.teamStatistics.ranking === 3 && 'bg-red-500'
-						]}
-					>
-						<PhRankingFill class="h-4 w-4" />
-						<p>
-							{m.global_rank({ number: data.teamStatistics.ranking })}
+						<div class="flex flex-wrap gap-2">
+							{#if data.team.region}
+								<RegionTag region={data.team.region} />
+							{/if}
+							<div
+								class={[
+									'flex items-center gap-2 rounded-sm bg-gray-700/50 px-2 py-1',
+									data.teamStatistics.ranking === 1 && 'bg-yellow-500',
+									data.teamStatistics.ranking === 2 && 'bg-blue-500',
+									data.teamStatistics.ranking === 3 && 'bg-red-500'
+								]}
+							>
+								<PhRankingFill class="h-4 w-4" />
+								<p>
+									{m.global_rank({ number: data.teamStatistics.ranking })}
+								</p>
+							</div>
+							{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
+								<ContentActionLink
+									href={`/admin/teams?action=edit&id=${data.team.id}`}
+									type="edit"
+								/>
+							{/if}
+						</div>
+					</div>
+					{#if data.slogans?.length}
+						{@const s = data.slogans[0]}
+						<p
+							lang={s.language || undefined}
+							class="mt-4 max-w-prose text-slate-300 italic sm:mt-0"
+						>
+							<RiDoubleQuotesL class="mb-2 inline-block w-4" />
+							{s.slogan}
 						</p>
-					</div>
+					{/if}
 				</div>
-
-				{#if ['admin', 'editor'].some((role) => data.user?.roles.includes(role))}
-					<ContentActionLink href={`/admin/teams?action=edit&id=${data.team.id}`} type="edit" />
-				{/if}
 			</div>
 		</section>
 

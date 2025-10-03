@@ -7,22 +7,24 @@
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import ImageUpload from '$lib/components/ImageUpload.svelte';
 	import PlayerInput from '$lib/components/forms/PlayerInput.svelte';
+	import SloganInput from './subforms/SloganInput.svelte';
 	import { formatSlug } from '$lib/utils/strings';
 	import { SITE_CANONICAL_HOST } from '$lib/consts';
 
-	let {
-		team,
-		players,
-		teamPlayers,
-		teamAliases,
-		onCancel
-	}: {
+	let { team, players, teamPlayers, teamAliases, teamSlogans, onCancel, events } = $props<{
 		team: Partial<Team>;
 		players: Player[];
 		teamPlayers: TeamPlayer[];
 		teamAliases: TeamAlias[];
+		teamSlogans?: Array<{
+			id?: number;
+			slogan: string;
+			language?: string | null;
+			eventId?: string | null;
+		}>;
 		onCancel: () => void;
-	} = $props();
+		events?: Array<{ id: string; name: string; date?: string; imageURL?: string }>;
+	}>();
 
 	let newTeam: Partial<Team> & { logo: string | null } = $state({
 		...team,
@@ -67,6 +69,22 @@
 
 	let newAlias = $state('');
 
+	// Slogans state
+	let slogans = $state<
+		Array<{ id?: number; slogan: string; language: string | null; eventId: string | null }>
+	>(
+		(teamSlogans || []).map(
+			(s: { id?: number; slogan: string; language?: string | null; eventId?: string | null }) => ({
+				id: s.id,
+				slogan: s.slogan,
+				language: s.language ?? null,
+				eventId: s.eventId ?? null
+			})
+		)
+	);
+	let newSloganText = $state('');
+	let newSloganLang = $state('');
+
 	function addAlias() {
 		if (newAlias && !aliases.includes(newAlias)) {
 			aliases = [...aliases, newAlias];
@@ -76,6 +94,27 @@
 
 	function removeAlias(alias: string) {
 		aliases = aliases.filter((a) => a !== alias);
+	}
+
+	function addSlogan() {
+		if (newSloganText.trim()) {
+			slogans = [
+				...slogans,
+				{
+					id: undefined,
+					slogan: newSloganText.trim(),
+					language: newSloganLang || null,
+					eventId: null as string | null
+				}
+			];
+			newSloganText = '';
+			newSloganLang = '';
+		}
+	}
+
+	function removeSlogan(index: number) {
+		slogans.splice(index, 1);
+		slogans = [...slogans];
 	}
 </script>
 
@@ -87,6 +126,19 @@
 		formData.append('aliases', JSON.stringify(aliases));
 		// Add players data
 		formData.append('players', JSON.stringify(selectedPlayers));
+		// Add slogans data
+		formData.append(
+			'slogans',
+			JSON.stringify(
+				slogans
+					.filter((s) => s.slogan?.trim())
+					.map((s) => ({
+						slogan: s.slogan.trim(),
+						language: s.language ?? null,
+						eventId: s.eventId ?? null
+					}))
+			)
+		);
 
 		// Prevent submission if there's a pending file upload
 		if (hasFile && !uploaded) {
@@ -271,6 +323,27 @@
 			</div>
 			<div id="players-section" class="mt-2 rounded-lg border border-slate-700 bg-slate-800 p-4">
 				<PlayerInput {players} bind:selectedPlayers />
+			</div>
+		</div>
+
+		<!-- Slogans -->
+		<div>
+			<div class="flex items-center justify-between">
+				<label for="slogans-section" class="block text-sm font-medium text-slate-300">Slogans</label
+				>
+			</div>
+			<div id="slogans-section" class="mt-2 rounded-lg border border-slate-700 bg-slate-800 p-4">
+				<SloganInput
+					bind:slogans
+					events={events?.map(
+						(e: { id: string; name: string; date?: string; imageURL?: string }) => ({
+							id: e.id,
+							name: e.name,
+							date: e.date,
+							imageURL: e.imageURL
+						})
+					) ?? []}
+				/>
 			</div>
 		</div>
 	</div>

@@ -9,6 +9,8 @@ import {
 import { error } from '@sveltejs/kit';
 import { processImageURL } from '$lib/server/storage';
 import { db } from '$lib/server/db';
+import * as table from '$lib/server/db/schema';
+import { eq } from 'drizzle-orm';
 
 export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 	const team = await getTeam(params.id);
@@ -65,6 +67,20 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 		}))
 	}));
 
+	// Load team slogans with optional event info
+	const sloganRows = await db
+		.select({
+			slogan: table.teamSlogan.slogan,
+			language: table.teamSlogan.language,
+			eventId: table.teamSlogan.eventId,
+			eventSlug: table.event.slug,
+			eventName: table.event.name,
+			eventDate: table.event.date
+		})
+		.from(table.teamSlogan)
+		.leftJoin(table.event, eq(table.event.id, table.teamSlogan.eventId))
+		.where(eq(table.teamSlogan.teamId, team.id));
+
 	return {
 		team: {
 			...team,
@@ -80,6 +96,7 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 		teamMemberStatistics: await getTeamMemberStatistics(team),
 		teamStatistics: await getTeamStatistics(team),
 		teamMatches: transformedMatches,
+		slogans: sloganRows,
 		user
 	};
 };

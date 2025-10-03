@@ -1,7 +1,9 @@
 import { sql } from 'drizzle-orm';
-import { text, sqliteTable, unique, integer, index } from 'drizzle-orm/sqlite-core';
+import { text, sqliteTable, unique, integer, index, uniqueIndex } from 'drizzle-orm/sqlite-core';
 import { relations } from 'drizzle-orm';
 import { player } from './player';
+import { event } from './event';
+import type { Locale } from '$lib/paraglide/runtime';
 
 export const team = sqliteTable('teams', {
 	id: text('id').primaryKey(),
@@ -44,6 +46,33 @@ export const teamAlias = sqliteTable(
 		alias: text('alias').notNull()
 	},
 	(t) => [unique().on(t.teamId, t.alias), index('idx_ta_team').on(t.teamId)]
+);
+
+export const teamSlogan = sqliteTable(
+	'team_slogan',
+	{
+		id: integer('id').primaryKey(),
+		teamId: text('team_id')
+			.notNull()
+			.references(() => team.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+		eventId: text('event_id').references(() => event.id, {
+			onDelete: 'set null',
+			onUpdate: 'cascade'
+		}),
+		slogan: text('slogan').notNull(),
+		language: text('language').$type<Locale>(),
+		// Bookkeeping
+		createdAt: text('created_at')
+			.default(sql`CURRENT_TIMESTAMP`)
+			.notNull(),
+		updatedAt: text('updated_at')
+			.default(sql`CURRENT_TIMESTAMP`)
+			.notNull()
+	},
+	(t) => [
+		// Fast lookups
+		uniqueIndex('team_slogan_team_slogan_dupe_guard').on(t.teamId, t.eventId, t.slogan) // prevent exact
+	]
 );
 
 export type Team = typeof team.$inferSelect;

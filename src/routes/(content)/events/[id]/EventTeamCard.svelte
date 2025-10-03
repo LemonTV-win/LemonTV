@@ -2,6 +2,7 @@
 	import NationalityFlag from '$lib/components/NationalityFlag.svelte';
 	import { m } from '$lib/paraglide/messages';
 	import IconParkSolidPeoples from '~icons/icon-park-solid/peoples';
+	import RiDoubleQuotesL from '~icons/ri/double-quotes-l';
 
 	let {
 		participant
@@ -13,6 +14,8 @@
 				logoURL?: string | null;
 				region: string | null;
 				abbr: string | null;
+				slogan?: string | null;
+				sloganLang?: string | null;
 			} | null;
 			main: Array<null | {
 				name: string;
@@ -45,6 +48,8 @@
 	const startersCount = $derived(participant?.main?.filter(Boolean).length ?? 0);
 	const subsCount = $derived(participant?.reserve?.filter(Boolean).length ?? 0);
 	const coachesCount = $derived(participant?.coach?.filter(Boolean).length ?? 0);
+
+	console.log('[Slogans] Participant', participant);
 </script>
 
 {#snippet playerLink(player: { name: string; slug: string; nationalities: string[] })}
@@ -133,6 +138,14 @@
 					>
 						{participant.team.region}
 					</span>
+				{/if}
+				{#if participant.team.slogan}
+					<p
+						lang={participant.team.sloganLang || undefined}
+						class="col-span-2 max-w-prose text-sm text-gray-300 italic"
+					>
+						<RiDoubleQuotesL class="mb-0.5 inline-block w-3" />{participant.team.slogan}
+					</p>
 				{/if}
 			</div>
 			<ul class="text-sm">

@@ -15,3 +15,16 @@ export function formatSlug(name: string): string {
 		.replace(/-+/gu, '-') // Collapse multiple hyphens
 		.replace(/^-+|-+$/gu, ''); // Remove leading/trailing hyphens
 }
+
+/**
+ * Converts a string to title case.
+ *
+ * @param text - The string to convert to title case.
+ * @param locale - The locale to use for the title case.
+ * @returns The title case string.
+ */
+export function toLocaleTitleCase(text: string, locale: string): string {
+	return text
+		.toLocaleLowerCase(locale)
+		.replace(/(?<!\S)\S/gu, (match) => match.toLocaleUpperCase(locale));
+}

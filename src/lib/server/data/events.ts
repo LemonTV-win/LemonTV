@@ -1309,3 +1309,40 @@ export async function updateEventCasters(
 // }
 
 // }
+
+export async function getAdminEventSummaries(): Promise<
+	Array<{ id: string; name: string; date: string; image: string; imageURL?: string }>
+> {
+	const rows = await db.query.event.findMany({
+		columns: { id: true, name: true, date: true, image: true }
+	});
+
+	const uniqueImages = new Set<string>();
+	for (const r of rows) if (r.image) uniqueImages.add(r.image);
+
+	const imageUrlMap = new Map<string, string>();
+	await Promise.all(
+		Array.from(uniqueImages).map(async (url) => {
+			try {
+				const processed = await processImageURL(url);
+				imageUrlMap.set(url, processed);
+			} catch {
+				imageUrlMap.set(url, url);
+			}
+		})
+	);
+
+	return rows
+		.map((e) => ({
+			id: e.id,
+			name: e.name,
+			date: e.date,
+			image: e.image,
+			imageURL: e.image ? imageUrlMap.get(e.image) : undefined
+		}))
+		.sort((a, b) => {
+			const at = Date.parse(a.date.includes('/') ? a.date.split('/')[0] : a.date);
+			const bt = Date.parse(b.date.includes('/') ? b.date.split('/')[0] : b.date);
+			return (Number.isNaN(bt) ? 0 : bt) - (Number.isNaN(at) ? 0 : at);
+		});
+}

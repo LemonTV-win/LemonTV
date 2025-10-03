@@ -757,6 +757,12 @@ export async function createTeam(
 			endedOn?: string;
 			note?: string;
 		}[];
+		slogans?: Array<{
+			id?: number;
+			slogan: string;
+			language?: string | null;
+			eventId?: string | null;
+		}>;
 	},
 	editedBy: string,
 	tx?: Parameters<Parameters<typeof db.transaction>[0]>[0]
@@ -884,6 +890,33 @@ export async function createTeam(
 				});
 			}
 		}
+
+		// Insert slogans if provided
+		if (data.slogans?.length) {
+			await transaction.insert(table.teamSlogan).values(
+				data.slogans
+					.filter((s) => s.slogan?.trim())
+					.map((s) => ({
+						teamId: id,
+						slogan: s.slogan.trim(),
+						language: (s.language as any) ?? null,
+						eventId: s.eventId ?? null
+					}))
+			);
+
+			for (const s of data.slogans) {
+				if (!s.slogan?.trim()) continue;
+				await transaction.insert(editHistory).values({
+					id: randomUUID(),
+					tableName: 'team_slogan',
+					recordId: id,
+					fieldName: 'slogan',
+					oldValue: null,
+					newValue: s.slogan.trim(),
+					editedBy
+				});
+			}
+		}
 	};
 
 	if (tx) {
@@ -913,181 +946,291 @@ export async function updateTeam(
 			endedOn?: string;
 			note?: string;
 		}[];
+		slogans?: Array<{
+			id?: number;
+			slogan: string;
+			language?: string | null;
+			eventId?: string | null;
+		}>;
 	},
 	editedBy: string
 ) {
-	await db.transaction(async (tx) => {
-		// Get the current team data before update
-		const [currentTeam] = await tx.select().from(table.team).where(eq(table.team.id, data.id));
-
-		// Update team
-		await tx
-			.update(table.team)
-			.set({
-				name: data.name,
-				slug: data.slug ?? data.name.toLowerCase().replace(/[^a-z0-9]/g, '-'),
-				abbr: data.abbr,
-				logo: data.logo,
-				region: data.region,
-				updatedAt: new Date().toISOString()
-			})
-			.where(eq(table.team.id, data.id));
-
-		// Track changes in edit_history
-		if (data.name !== currentTeam.name) {
-			await tx.insert(editHistory).values({
-				id: randomUUID(),
-				tableName: 'teams',
-				recordId: data.id,
-				fieldName: 'name',
-				oldValue: currentTeam.name?.toString() || null,
-				newValue: data.name?.toString() || null,
-				editedBy
-			});
-		}
-
-		if (data.region !== currentTeam.region) {
-			await tx.insert(editHistory).values({
-				id: randomUUID(),
-				tableName: 'teams',
-				recordId: data.id,
-				fieldName: 'region',
-				oldValue: currentTeam.region?.toString() || null,
-				newValue: data.region?.toString() || null,
-				editedBy
-			});
-		}
-
-		if (data.abbr !== currentTeam.abbr) {
-			await tx.insert(editHistory).values({
-				id: randomUUID(),
-				tableName: 'teams',
-				recordId: data.id,
-				fieldName: 'abbr',
-				oldValue: currentTeam.abbr?.toString() || null,
-				newValue: data.abbr?.toString() || null,
-				editedBy
-			});
-		}
-
-		if (data.logo !== currentTeam.logo) {
-			await tx.insert(editHistory).values({
-				id: randomUUID(),
-				tableName: 'teams',
-				recordId: data.id,
-				fieldName: 'logo',
-				oldValue: currentTeam.logo?.toString() || null,
-				newValue: data.logo?.toString() || null,
-				editedBy
-			});
-		}
-
-		// Get current aliases
-		const currentAliases = await tx
-			.select()
-			.from(table.teamAlias)
-			.where(eq(table.teamAlias.teamId, data.id));
-
-		// Update aliases
-		await tx.delete(table.teamAlias).where(eq(table.teamAlias.teamId, data.id));
-		if (data.aliases?.length) {
-			await tx.insert(table.teamAlias).values(
-				data.aliases.map((alias) => ({
-					teamId: data.id,
-					alias
-				}))
-			);
-
-			// Track alias changes
-			const oldAliases = currentAliases.map((a) => a.alias);
-			const newAliases = data.aliases;
-
-			// Track removed aliases
-			for (const oldAlias of oldAliases) {
-				if (!newAliases.includes(oldAlias)) {
-					await tx.insert(editHistory).values({
-						id: randomUUID(),
-						tableName: 'team_alias',
-						recordId: data.id,
-						fieldName: 'alias',
-						oldValue: oldAlias.toString(),
-						newValue: null,
-						editedBy
-					});
-				}
-			}
-
-			// Track added aliases
-			for (const newAlias of newAliases) {
-				if (!oldAliases.includes(newAlias)) {
-					await tx.insert(editHistory).values({
-						id: randomUUID(),
-						tableName: 'team_alias',
-						recordId: data.id,
-						fieldName: 'alias',
-						oldValue: null,
-						newValue: newAlias.toString(),
-						editedBy
-					});
-				}
-			}
-		}
-
-		// Get current players
-		const currentPlayers = await tx
-			.select()
-			.from(table.teamPlayer)
-			.where(eq(table.teamPlayer.teamId, data.id));
-
-		// Update players
-		await tx.delete(table.teamPlayer).where(eq(table.teamPlayer.teamId, data.id));
-		if (data.players?.length) {
-			await tx.insert(table.teamPlayer).values(
-				data.players.map((player) => ({
-					teamId: data.id,
-					playerId: player.playerId,
-					role: player.role,
-					startedOn: player.startedOn,
-					endedOn: player.endedOn,
-					note: player.note
-				}))
-			);
-
-			// Track player changes
-			const oldPlayers = currentPlayers.map((p) => p.playerId);
-			const newPlayers = data.players.map((p) => p.playerId);
-
-			// Track removed players
-			for (const oldPlayer of oldPlayers) {
-				if (!newPlayers.includes(oldPlayer)) {
-					await tx.insert(editHistory).values({
-						id: randomUUID(),
-						tableName: 'team_player',
-						recordId: data.id,
-						fieldName: 'player',
-						oldValue: oldPlayer.toString(),
-						newValue: null,
-						editedBy
-					});
-				}
-			}
-
-			// Track added players
-			for (const newPlayer of newPlayers) {
-				if (!oldPlayers.includes(newPlayer)) {
-					await tx.insert(editHistory).values({
-						id: randomUUID(),
-						tableName: 'team_player',
-						recordId: data.id,
-						fieldName: 'player',
-						oldValue: null,
-						newValue: newPlayer.toString(),
-						editedBy
-					});
-				}
-			}
-		}
+	console.info('[Teams][Update] Starting updateTeam', {
+		teamId: data.id,
+		name: data.name,
+		aliasesCount: data.aliases?.length || 0,
+		playersCount: data.players?.length || 0,
+		slogansCount: data.slogans?.length || 0,
+		editedBy
 	});
+
+	try {
+		await db.transaction(async (tx) => {
+			// Get the current team data before update
+			const [currentTeam] = await tx.select().from(table.team).where(eq(table.team.id, data.id));
+
+			// Update team
+			await tx
+				.update(table.team)
+				.set({
+					name: data.name,
+					slug: data.slug ?? data.name.toLowerCase().replace(/[^a-z0-9]/g, '-'),
+					abbr: data.abbr,
+					logo: data.logo,
+					region: data.region,
+					updatedAt: new Date().toISOString()
+				})
+				.where(eq(table.team.id, data.id));
+
+			// Track changes in edit_history
+			if (data.name !== currentTeam.name) {
+				console.info('[Teams][Update] Field changed: name', {
+					from: currentTeam.name ?? null,
+					to: data.name ?? null
+				});
+				await tx.insert(editHistory).values({
+					id: randomUUID(),
+					tableName: 'teams',
+					recordId: data.id,
+					fieldName: 'name',
+					oldValue: currentTeam.name?.toString() || null,
+					newValue: data.name?.toString() || null,
+					editedBy
+				});
+			}
+
+			if (data.region !== currentTeam.region) {
+				console.info('[Teams][Update] Field changed: region', {
+					from: currentTeam.region ?? null,
+					to: data.region ?? null
+				});
+				await tx.insert(editHistory).values({
+					id: randomUUID(),
+					tableName: 'teams',
+					recordId: data.id,
+					fieldName: 'region',
+					oldValue: currentTeam.region?.toString() || null,
+					newValue: data.region?.toString() || null,
+					editedBy
+				});
+			}
+
+			if (data.abbr !== currentTeam.abbr) {
+				console.info('[Teams][Update] Field changed: abbr', {
+					from: currentTeam.abbr ?? null,
+					to: data.abbr ?? null
+				});
+				await tx.insert(editHistory).values({
+					id: randomUUID(),
+					tableName: 'teams',
+					recordId: data.id,
+					fieldName: 'abbr',
+					oldValue: currentTeam.abbr?.toString() || null,
+					newValue: data.abbr?.toString() || null,
+					editedBy
+				});
+			}
+
+			if (data.logo !== currentTeam.logo) {
+				console.info('[Teams][Update] Field changed: logo', {
+					from: currentTeam.logo ?? null,
+					to: data.logo ?? null
+				});
+				await tx.insert(editHistory).values({
+					id: randomUUID(),
+					tableName: 'teams',
+					recordId: data.id,
+					fieldName: 'logo',
+					oldValue: currentTeam.logo?.toString() || null,
+					newValue: data.logo?.toString() || null,
+					editedBy
+				});
+			}
+
+			// Get current aliases
+			const currentAliases = await tx
+				.select()
+				.from(table.teamAlias)
+				.where(eq(table.teamAlias.teamId, data.id));
+
+			// Update aliases
+			await tx.delete(table.teamAlias).where(eq(table.teamAlias.teamId, data.id));
+			if (data.aliases?.length) {
+				await tx.insert(table.teamAlias).values(
+					data.aliases.map((alias) => ({
+						teamId: data.id,
+						alias
+					}))
+				);
+
+				// Track alias changes
+				const oldAliases = currentAliases.map((a) => a.alias);
+				const newAliases = data.aliases;
+
+				const removedAliases = oldAliases.filter((a) => !newAliases.includes(a));
+				const addedAliases = newAliases.filter((a) => !oldAliases.includes(a));
+				console.info('[Teams][Update] Aliases diff', {
+					removed: removedAliases.length,
+					added: addedAliases.length
+				});
+
+				// Track removed aliases
+				for (const oldAlias of oldAliases) {
+					if (!newAliases.includes(oldAlias)) {
+						await tx.insert(editHistory).values({
+							id: randomUUID(),
+							tableName: 'team_alias',
+							recordId: data.id,
+							fieldName: 'alias',
+							oldValue: oldAlias.toString(),
+							newValue: null,
+							editedBy
+						});
+					}
+				}
+
+				// Track added aliases
+				for (const newAlias of newAliases) {
+					if (!oldAliases.includes(newAlias)) {
+						await tx.insert(editHistory).values({
+							id: randomUUID(),
+							tableName: 'team_alias',
+							recordId: data.id,
+							fieldName: 'alias',
+							oldValue: null,
+							newValue: newAlias.toString(),
+							editedBy
+						});
+					}
+				}
+			}
+
+			// Get current players
+			const currentPlayers = await tx
+				.select()
+				.from(table.teamPlayer)
+				.where(eq(table.teamPlayer.teamId, data.id));
+
+			// Update players
+			await tx.delete(table.teamPlayer).where(eq(table.teamPlayer.teamId, data.id));
+			if (data.players?.length) {
+				await tx.insert(table.teamPlayer).values(
+					data.players.map((player) => ({
+						teamId: data.id,
+						playerId: player.playerId,
+						role: player.role,
+						startedOn: player.startedOn,
+						endedOn: player.endedOn,
+						note: player.note
+					}))
+				);
+
+				// Track player changes
+				const oldPlayers = currentPlayers.map((p) => p.playerId);
+				const newPlayers = data.players.map((p) => p.playerId);
+
+				const removedPlayers = oldPlayers.filter((p) => !newPlayers.includes(p));
+				const addedPlayers = newPlayers.filter((p) => !oldPlayers.includes(p));
+				console.info('[Teams][Update] Players diff', {
+					removed: removedPlayers.length,
+					added: addedPlayers.length
+				});
+
+				// Track removed players
+				for (const oldPlayer of oldPlayers) {
+					if (!newPlayers.includes(oldPlayer)) {
+						await tx.insert(editHistory).values({
+							id: randomUUID(),
+							tableName: 'team_player',
+							recordId: data.id,
+							fieldName: 'player',
+							oldValue: oldPlayer.toString(),
+							newValue: null,
+							editedBy
+						});
+					}
+				}
+
+				// Track added players
+				for (const newPlayer of newPlayers) {
+					if (!oldPlayers.includes(newPlayer)) {
+						await tx.insert(editHistory).values({
+							id: randomUUID(),
+							tableName: 'team_player',
+							recordId: data.id,
+							fieldName: 'player',
+							oldValue: null,
+							newValue: newPlayer.toString(),
+							editedBy
+						});
+					}
+				}
+			}
+
+			// Update slogans
+			const currentSlogans = await tx
+				.select()
+				.from(table.teamSlogan)
+				.where(eq(table.teamSlogan.teamId, data.id));
+
+			await tx.delete(table.teamSlogan).where(eq(table.teamSlogan.teamId, data.id));
+			if (data.slogans?.length) {
+				await tx.insert(table.teamSlogan).values(
+					data.slogans
+						.filter((s) => s.slogan?.trim())
+						.map((s) => ({
+							teamId: data.id,
+							slogan: s.slogan.trim(),
+							language: (s.language as any) ?? null,
+							eventId: s.eventId ?? null
+						}))
+				);
+
+				const oldSlogans = currentSlogans.map((s) => s.slogan);
+				const newSlogans = data.slogans.map((s) => s.slogan.trim());
+
+				const removedSlogans = oldSlogans.filter((s) => !newSlogans.includes(s));
+				const addedSlogans = newSlogans.filter((s) => !oldSlogans.includes(s));
+				console.info('[Teams][Update] Slogans diff', {
+					removed: removedSlogans.length,
+					added: addedSlogans.length
+				});
+
+				for (const oldS of oldSlogans) {
+					if (!newSlogans.includes(oldS)) {
+						await tx.insert(editHistory).values({
+							id: randomUUID(),
+							tableName: 'team_slogan',
+							recordId: data.id,
+							fieldName: 'slogan',
+							oldValue: oldS,
+							newValue: null,
+							editedBy
+						});
+					}
+				}
+
+				for (const newS of newSlogans) {
+					if (!oldSlogans.includes(newS)) {
+						await tx.insert(editHistory).values({
+							id: randomUUID(),
+							tableName: 'team_slogan',
+							recordId: data.id,
+							fieldName: 'slogan',
+							oldValue: null,
+							newValue: newS,
+							editedBy
+						});
+					}
+				}
+			}
+		});
+
+		console.info('[Teams][Update] Completed updateTeam', { teamId: data.id });
+	} catch (e) {
+		console.error('[Teams][Update] Failed updateTeam', { teamId: data.id, error: e });
+		throw e;
+	}
 }
 
 export async function deleteTeam(id: string, deletedBy: string) {

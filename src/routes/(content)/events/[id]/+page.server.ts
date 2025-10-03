@@ -42,6 +42,8 @@ export const load: PageServerLoad = async ({ params }) => {
 		abbr: string | null;
 		logo: string | null;
 		region: string | null;
+		slogan?: string | null;
+		sloganLang?: string | null;
 	};
 
 	// Fetch only the teams needed for this event
@@ -74,10 +76,48 @@ export const load: PageServerLoad = async ({ params }) => {
 			})
 		);
 
-		teams = teams.map((team) => ({
-			...team,
-			logoURL: imageUrlMap.get(team.logo || '') || team.logo
-		}));
+		// Fetch slogans for these teams and pick event-specific if available, else any
+		const sloganRows = await db
+			.select({
+				teamId: table.teamSlogan.teamId,
+				slogan: table.teamSlogan.slogan,
+				language: table.teamSlogan.language,
+				eventId: table.teamSlogan.eventId
+			})
+			.from(table.teamSlogan)
+			.where(inArray(table.teamSlogan.teamId, Array.from(eventTeamIds)));
+
+		const byTeam: Record<
+			string,
+			{
+				event?: { slogan: string; language: string | null }[];
+				general?: { slogan: string; language: string | null }[];
+			}
+		> = {};
+		for (const r of sloganRows) {
+			const key = r.teamId as string;
+			if (!byTeam[key]) byTeam[key] = {};
+			const entry = { slogan: r.slogan, language: (r.language as string | null) ?? null };
+			if (r.eventId === event.id) {
+				byTeam[key].event = [...(byTeam[key].event ?? []), entry];
+			} else {
+				byTeam[key].general = [...(byTeam[key].general ?? []), entry];
+			}
+		}
+
+		teams = teams.map((team) => {
+			const slogans = byTeam[team.id];
+			const pick = slogans?.event?.[0] ?? slogans?.general?.[0];
+
+			console.log('[Slogans] Slogans', slogans);
+			console.log('[Slogans] Pick', pick);
+			return {
+				...team,
+				logoURL: imageUrlMap.get(team.logo || '') || team.logo,
+				slogan: pick?.slogan ?? null,
+				sloganLang: pick?.language ?? null
+			};
+		});
 	}
 
 	const teamMap = new Map<string, EssentialTeam>(teams.map((team) => [team.id, team]));
@@ -268,17 +308,25 @@ export const load: PageServerLoad = async ({ params }) => {
 		});
 	});
 
+	// Enrich participants' team with logoURL and slogans
+	const participantsEnriched = event.participants.map((p) => {
+		const enriched = teamMap.get(p.team.id);
+		return enriched ? ({ ...p, team: enriched } as any) : p;
+	});
+
 	// Ensure event has the correct type by creating a new object with only the new format
 	const typedEvent: Omit<Event, 'results'> & {
 		results?: (Omit<EventResult, 'team'> & { team: Team & { logoURL: string | null } })[];
-		participants: (Omit<EventParticipant, 'team'> & { team: Team & { logoURL: string | null } })[];
+		participants: (Omit<EventParticipant, 'team'> & {
+			team: Team & { logoURL: string | null; slogan?: string | null; sloganLang?: string | null };
+		})[];
 	} = {
 		...event,
 		results: event.results as
 			| (Omit<EventResult, 'team'> & { team: Team & { logoURL: string | null } })[]
 			| undefined,
-		participants: event.participants as (Omit<EventParticipant, 'team'> & {
-			team: Team & { logoURL: string | null };
+		participants: participantsEnriched as (Omit<EventParticipant, 'team'> & {
+			team: Team & { logoURL: string | null; slogan?: string | null; sloganLang?: string | null };
 		})[]
 	};
 
