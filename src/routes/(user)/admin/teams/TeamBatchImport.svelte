@@ -18,6 +18,11 @@
 		region?: string;
 		logo?: string;
 		aliases?: string[];
+		slogans?: Array<{
+			slogan: string;
+			language?: string;
+			eventId?: string | null;
+		}>;
 		players?: {
 			player: PlayerImportData;
 			teamPlayer: {
@@ -559,6 +564,11 @@ interface TeamImportData {
   region?: string;                 // Optional: Team region (e.g., "NA", "EU", "KR")
   logo?: string;                   // Optional: Logo URL or path
   aliases?: string[];              // Optional: Alternative names for the team
+  slogans?: {                      // Optional: Team slogans
+    slogan: string;                // Required: The slogan text
+    language?: string;             // Optional: BCP-47 language code (e.g., "en", "ru")
+    eventId?: string | null;       // Optional: Event ID this slogan is tied to
+  }[];
   players?: TeamPlayer[];          // Optional: Team players and their roles
 }
 
@@ -581,6 +591,10 @@ const teams: TeamImportData[] = [
     region: "NA",
     logo: "https://example.com/tsm-logo.png",
     aliases: ["TSM", "Team SoloMid"],
+    slogans: [
+      { slogan: "We are the best", language: "en" },
+      { slogan: "Мы лучшие", language: "ru" }
+    ],
     players: [
       {
         player: {
@@ -616,6 +630,10 @@ const teams: TeamImportData[] = [
     "region": "NA",
     "logo": "https://example.com/tsm-logo.png",
     "aliases": ["TSM", "Team SoloMid"],
+    "slogans": [
+      { "slogan": "We are the best", "language": "en" },
+      { "slogan": "Мы лучшие", "language": "ru" }
+    ],
     "players": [
       {
         "player": {
@@ -649,6 +667,10 @@ const teams: TeamImportData[] = [
     region: 'NA',
     logo: 'https://example.com/tsm-logo.png',
     aliases: ['TSM', 'Team SoloMid'],
+    slogans: [
+      { slogan: 'We are the best', language: 'en' },
+      { slogan: 'Мы лучшие', language: 'ru' }
+    ],
     players: [
       {
         player: {
@@ -826,6 +848,7 @@ const teams: TeamImportData[] = [
 									<th class="px-4 py-1">Region</th>
 									<th class="px-4 py-1">Logo</th>
 									<th class="px-4 py-1">Aliases</th>
+									<th class="px-4 py-1">Slogans</th>
 									<th class="px-4 py-1">Players</th>
 								</tr>
 							</thead>
@@ -862,6 +885,13 @@ const teams: TeamImportData[] = [
 												{#each team.aliases as alias}
 													{alias},
 												{/each}
+											{:else}
+												-
+											{/if}
+										</td>
+										<td class="px-4 py-1 text-gray-300">
+											{#if team.slogans && team.slogans.length > 0}
+												{team.slogans.length}
 											{:else}
 												-
 											{/if}
