@@ -94,18 +94,30 @@
 
 	let showHistoryModal = $state(false);
 
+	function navigateWithSearch(path: string, options: Parameters<typeof goto>[1] = {}) {
+		const url = new URL(path, window.location.origin);
+		if (searchQuery) {
+			url.searchParams.set('searchQuery', searchQuery);
+		}
+		return goto(url.toString(), options);
+	}
+
 	function handleAddTeam() {
 		isAddingNew = true;
 		isEditing = false;
 		selectedTeam = null;
-		goto('/admin/teams?action=new', { replaceState: true, noScroll: true, keepFocus: true });
+		navigateWithSearch('/admin/teams?action=new', {
+			replaceState: true,
+			noScroll: true,
+			keepFocus: true
+		});
 	}
 
 	function handleEditTeam(team: Team) {
 		selectedTeam = team;
 		isEditing = true;
 		isAddingNew = false;
-		goto(`/admin/teams?action=edit&id=${team.id}`, {
+		navigateWithSearch(`/admin/teams?action=edit&id=${team.id}`, {
 			replaceState: true,
 			noScroll: true,
 			keepFocus: true
@@ -116,7 +128,7 @@
 		isAddingNew = false;
 		isEditing = false;
 		selectedTeam = null;
-		goto('/admin/teams', { replaceState: true, noScroll: true, keepFocus: true });
+		navigateWithSearch('/admin/teams', { replaceState: true, noScroll: true, keepFocus: true });
 	}
 
 	async function handleDeleteTeam(team: Team) {
@@ -138,7 +150,11 @@
 			} else {
 				isDeleting = false;
 				teamToDelete = null;
-				await goto('/admin/teams', { invalidateAll: true, noScroll: true, keepFocus: true });
+				await navigateWithSearch('/admin/teams', {
+					invalidateAll: true,
+					noScroll: true,
+					keepFocus: true
+				});
 				successMessage = 'Team deleted successfully';
 			}
 		} catch (e) {
@@ -515,7 +531,7 @@
 	onSuccess={(message) => {
 		successMessage = message;
 		showBatchImportModal = false;
-		goto('/admin/teams', { invalidateAll: true, noScroll: true, keepFocus: true });
+		navigateWithSearch('/admin/teams', { invalidateAll: true, noScroll: true, keepFocus: true });
 	}}
 	existingTeams={data.teams}
 	existingPlayers={data.players}
