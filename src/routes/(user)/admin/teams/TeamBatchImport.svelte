@@ -772,7 +772,7 @@ const teams: TeamImportData[] = [
 	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
 		<div class="w-full max-w-4xl rounded-lg bg-slate-800 p-6 shadow-xl">
 			<div class="mb-4 flex items-center justify-between">
-				<h3 class="text-lg font-semibold text-slate-200">Batch Import Teams</h3>
+				<h3 class="text-lg font-semibold text-slate-200">{m.team_batch_import_title()}</h3>
 				<button
 					type="button"
 					class="text-slate-400 hover:text-slate-200"
@@ -793,14 +793,14 @@ const teams: TeamImportData[] = [
 			<div class="mb-4">
 				<div class="mb-2 flex items-center justify-between">
 					<label class="block text-sm font-medium text-slate-300" for="jsonData">
-						Paste JSON data in TeamImportData format:
+						{m.team_batch_import_paste_json_label()}
 					</label>
 					<button
 						type="button"
 						class="text-sm text-yellow-400 underline hover:text-yellow-300"
 						onclick={() => (showSchema = !showSchema)}
 					>
-						{showSchema ? 'Hide' : 'Show'} TypeScript Schema
+						{showSchema ? m.team_batch_import_hide_schema() : m.team_batch_import_show_schema()}
 					</button>
 				</div>
 
@@ -808,14 +808,14 @@ const teams: TeamImportData[] = [
 					<div class="mb-4 rounded-md border border-slate-600 bg-slate-900 p-4">
 						<div class="mb-2 flex items-center justify-between">
 							<h4 class="text-sm font-medium text-slate-200">
-								TypeScript Schema for LLM Conversion
+								{m.team_batch_import_schema_title()}
 							</h4>
 							<button
 								type="button"
 								class="text-xs text-yellow-400 underline hover:text-yellow-300"
 								onclick={copySchema}
 							>
-								Copy Schema
+								{m.team_batch_import_copy_schema()}
 							</button>
 						</div>
 						<div class="styled-scroll max-h-100 overflow-x-auto overflow-y-auto text-xs">
@@ -836,7 +836,7 @@ const teams: TeamImportData[] = [
 						<div
 							class="h-4 w-4 animate-spin rounded-full border-2 border-yellow-400 border-t-transparent"
 						></div>
-						<span>Parsing data...</span>
+						<span>{m.team_batch_import_parsing_data()}</span>
 					</div>
 				{/if}
 			</div>
@@ -844,21 +844,20 @@ const teams: TeamImportData[] = [
 			{#if parsedTeams && parsedTeams.type === 'success'}
 				<div class="mb-4">
 					<label class="block text-sm font-medium text-slate-300" for="eventSelect">
-						Add teams for Event (optional)
+						{m.team_batch_import_add_teams_for_event()}
 					</label>
 					<EventSelect
 						id="eventSelect"
 						bind:value={selectedEventId}
 						{events}
-						placeholder="Select an event to add teams to..."
+						placeholder={m.team_batch_import_select_event_placeholder()}
 						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 					/>
 					<p class="mt-1 text-xs text-slate-400">
 						{#if selectedEventId}
-							Teams will be created and added to the selected event with EventTeamPlayer
-							relationships.
+							{m.team_batch_import_teams_with_event_description()}
 						{:else}
-							Teams will be created without event associations.
+							{m.team_batch_import_teams_without_event_description()}
 						{/if}
 					</p>
 				</div>
@@ -872,14 +871,16 @@ const teams: TeamImportData[] = [
 
 			{#if parsedTeams && parsedTeams.type === 'error'}
 				<div class="mb-4 rounded-md bg-red-900/50 p-3 text-sm text-red-200">
-					<strong>Parsing Error:</strong>
+					<strong>{m.team_batch_import_parsing_error()}</strong>
 					{parsedTeams.error}
 				</div>
 			{/if}
 
 			{#if parsedTeams && parsedTeams.type === 'success'}
 				<div class="mb-4 rounded-md border border-slate-600 bg-slate-900 p-4">
-					<h4 class="mb-3 text-sm font-medium text-slate-200">Parsed Teams</h4>
+					<h4 class="mb-3 text-sm font-medium text-slate-200">
+						{m.team_batch_import_parsed_teams()}
+					</h4>
 
 					<div
 						class="styled-scroll max-h-64 overflow-x-auto overflow-y-auto rounded-md border border-slate-700 bg-slate-900"
@@ -887,14 +888,14 @@ const teams: TeamImportData[] = [
 						<table class="w-full table-auto border-collapse border-y-2 border-gray-500 bg-gray-800">
 							<thead>
 								<tr class="border-b-2 border-gray-500 text-left text-sm text-gray-400">
-									<th class="px-4 py-1">Name</th>
-									<th class="px-4 py-1">Slug</th>
-									<th class="px-4 py-1">Abbr</th>
-									<th class="px-4 py-1">Region</th>
-									<th class="px-4 py-1">Logo</th>
-									<th class="px-4 py-1">Aliases</th>
-									<th class="px-4 py-1">Slogans</th>
-									<th class="px-4 py-1">Players</th>
+									<th class="px-4 py-1">{m.team_batch_import_table_name()}</th>
+									<th class="px-4 py-1">{m.team_batch_import_table_slug()}</th>
+									<th class="px-4 py-1">{m.team_batch_import_table_abbr()}</th>
+									<th class="px-4 py-1">{m.team_batch_import_table_region()}</th>
+									<th class="px-4 py-1">{m.team_batch_import_table_logo()}</th>
+									<th class="px-4 py-1">{m.team_batch_import_table_aliases()}</th>
+									<th class="px-4 py-1">{m.team_batch_import_table_slogans()}</th>
+									<th class="px-4 py-1">{m.team_batch_import_table_players()}</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -970,10 +971,11 @@ const teams: TeamImportData[] = [
 
 			{#if parsedTeams && hasNewPlayersRequired}
 				<div class="mb-4 rounded-md border border-yellow-700 bg-yellow-900/50 p-4">
-					<h4 class="mb-3 text-sm font-medium text-yellow-200">New Players Required</h4>
+					<h4 class="mb-3 text-sm font-medium text-yellow-200">
+						{m.team_batch_import_new_players_required()}
+					</h4>
 					<p class="mb-3 text-xs text-slate-300">
-						The following players need to be created before importing teams. They will be created
-						automatically during the import process.
+						{m.team_batch_import_new_players_description()}
 					</p>
 					<ParsedPlayersTable
 						players={newPlayersRequired}
@@ -1022,16 +1024,18 @@ const teams: TeamImportData[] = [
 					<div class="flex items-start gap-2">
 						<div class="mt-0.5 h-4 w-4 flex-shrink-0 rounded-full bg-red-500"></div>
 						<div class="flex-1">
-							<p class="mb-1 text-sm font-medium text-red-200">Duplicate issues detected</p>
+							<p class="mb-1 text-sm font-medium text-red-200">
+								{m.team_batch_import_duplicate_issues_detected()}
+							</p>
 							<p class="text-xs text-red-300">
-								Please resolve the duplicate issues highlighted in red above before importing.
+								{m.team_batch_import_resolve_duplicates_message()}
 							</p>
 
 							{#if hasNewPlayerDuplicates}
 								{#if newPlayerDuplicateSlugs.length > 0}
 									<div class="mt-2 rounded border border-red-600 bg-red-900/30 p-2">
 										<p class="mb-1 text-xs font-medium text-red-200">
-											Duplicate slugs in new players:
+											{m.team_batch_import_duplicate_slugs_in_players()}
 										</p>
 										<ul class="space-y-1 text-xs text-red-300">
 											{#each newPlayerDuplicateSlugs as duplicate}
@@ -1043,7 +1047,7 @@ const teams: TeamImportData[] = [
 								{#if newPlayerDuplicateAccountIds.length > 0}
 									<div class="mt-2 rounded border border-red-600 bg-red-900/30 p-2">
 										<p class="mb-1 text-xs font-medium text-red-200">
-											Duplicate account IDs in new players:
+											{m.team_batch_import_duplicate_account_ids_in_players()}
 										</p>
 										<ul class="space-y-1 text-xs text-red-300">
 											{#each newPlayerDuplicateAccountIds as duplicate}
@@ -1058,7 +1062,9 @@ const teams: TeamImportData[] = [
 								{@const duplicateTeams = parsedTeams.data.filter((t) => isDuplicateSlug(t))}
 								{#if duplicateTeams.length > 0}
 									<div class="mt-2 rounded border border-red-600 bg-red-900/30 p-2">
-										<p class="mb-1 text-xs font-medium text-red-200">Duplicate slugs</p>
+										<p class="mb-1 text-xs font-medium text-red-200">
+											{m.team_batch_import_duplicate_slugs()}
+										</p>
 										<div class="styled-scroll max-h-32 overflow-y-auto">
 											<ul class="space-y-1 text-xs text-red-300">
 												{#each duplicateTeams as team}
@@ -1098,7 +1104,9 @@ const teams: TeamImportData[] = [
 								{@const duplicateTeamNames = parsedTeams.data.filter((t) => isDuplicateTeamName(t))}
 								{#if duplicateTeamNames.length > 0}
 									<div class="mt-2 rounded border border-red-600 bg-red-900/30 p-2">
-										<p class="mb-1 text-xs font-medium text-red-200">Duplicate team names</p>
+										<p class="mb-1 text-xs font-medium text-red-200">
+											{m.team_batch_import_duplicate_team_names()}
+										</p>
 										<div class="styled-scroll max-h-32 overflow-y-auto">
 											<ul class="space-y-1 text-xs text-red-300">
 												{#each duplicateTeamNames as team}
@@ -1153,11 +1161,11 @@ const teams: TeamImportData[] = [
 						disabled={isImporting || hasAnyDuplicates}
 					>
 						{#if isImporting}
-							Importing...
+							{m.team_batch_import_importing()}
 						{:else if hasAnyDuplicates}
-							Fix Duplicates First
+							{m.team_batch_import_fix_duplicates_first()}
 						{:else}
-							Import Teams
+							{m.team_batch_import_import_teams_button()}
 						{/if}
 					</button>
 				{/if}
