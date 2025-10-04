@@ -234,11 +234,30 @@
 											name: t.name,
 											slug: t.slug,
 											abbr: t.abbr,
+											// aliases: t.aliases,
+											// TODO: Aliases
 											group: teamData.some((td) => td.teamId === t.id) ? 'selected' : 'available'
 										}))}
 										bind:value={team.teamId}
 										placeholder={m.select_team()}
-										searchLabels={['slug', 'abbr', 'aliases']}
+										filterFunction={(item, searchTerm) => {
+											if (!searchTerm) return true;
+											const searchLower = searchTerm.toLowerCase();
+											return !!(
+												(
+													item.id.toLowerCase().includes(searchLower) ||
+													item.name.toLowerCase().includes(searchLower) ||
+													item.slug.toLowerCase().includes(searchLower) ||
+													item.abbr?.toLowerCase().includes(searchLower)
+												)
+												// || (item.aliases &&
+												// 	Array.isArray(item.aliases) &&
+												// 	item.aliases.some(
+												// 		(alias) =>
+												// 			typeof alias === 'string' && alias.toLowerCase().includes(searchLower)
+												// 	))
+											);
+										}}
 										groups={[
 											{ id: 'selected', label: m.attending_teams() },
 											{ id: 'available', label: m.other_teams() }

@@ -355,7 +355,6 @@
 				groups={[]}
 				disabled={false}
 				class="px-3 py-2"
-				displayFormat="name"
 				onChange={(item) => {
 					addTeam(item.id);
 				}}
@@ -591,7 +590,6 @@
 													]}
 													disabled={false}
 													class="px-2 py-1 text-sm"
-													displayFormat="name-accounts"
 												/>
 												{#if teamPlayer.playerId}
 													{#if getPlayerValidationStatus(team.id, teamPlayer.playerId)}

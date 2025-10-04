@@ -4,6 +4,7 @@
 	import IconParkSolidAdd from '~icons/icon-park-solid/add';
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import Combobox from '$lib/components/Combobox.svelte';
+	import countryCodeToFlagEmoji from 'country-code-to-flag-emoji';
 
 	interface Props {
 		players: Player[];
@@ -59,6 +60,7 @@
 				<Combobox
 					id="playerSelect"
 					items={players.map((p) => ({
+						...p,
 						id: p.id,
 						name: p.name,
 						group: selectedPlayers.some((sp) => sp.playerId === p.id) ? 'team' : 'other'
@@ -70,6 +72,17 @@
 						{ id: 'other', label: m.other_players() }
 					]}
 					class="mt-1 px-4 py-2"
+					filterFunction={(item, searchTerm) => {
+						if (!searchTerm) return true;
+						const searchLower = searchTerm.toLowerCase();
+						return (
+							item.id?.toLowerCase().includes(searchLower) ||
+							item.name?.toLowerCase().includes(searchLower) ||
+							item.slug?.toLowerCase().includes(searchLower)
+						);
+						// TODO: Search for gameAccounts, aliases, etc.
+						// || item.gameAccounts?.some((ga) => ga.currentName?.toLowerCase().includes(searchLower) || ga.accountId.toString().toLowerCase().includes(searchLower));
+					}}
 				/>
 			</div>
 		</div>

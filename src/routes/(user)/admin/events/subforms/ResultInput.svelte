@@ -56,7 +56,10 @@
 						const filteredTeams = teams.map((t) => ({
 							id: t.id,
 							name: t.name,
-							group: selectedTeams.includes(t.id) ? 'participating' : 'other'
+							group: selectedTeams.includes(t.id) ? 'participating' : 'other',
+							abbr: t.abbr,
+							slug: t.slug
+							// TODO: Aliases
 						}));
 						return filteredTeams;
 					})()}
@@ -68,6 +71,16 @@
 					]}
 					disabled={false}
 					class="mt-1 px-4 py-2"
+					filterFunction={(item, searchTerm): boolean => {
+						if (!searchTerm) return true;
+						const searchLower = searchTerm.toLowerCase();
+						return (
+							item.id.toLowerCase().includes(searchLower) ||
+							item.name.toLowerCase().includes(searchLower) ||
+							item.slug.toLowerCase().includes(searchLower) ||
+							(item.abbr !== null && item.abbr.toLowerCase().includes(searchLower))
+						);
+					}}
 				/>
 			</div>
 			<div>

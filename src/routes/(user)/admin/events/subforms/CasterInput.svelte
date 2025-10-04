@@ -4,6 +4,7 @@
 	import IconParkSolidAdd from '~icons/icon-park-solid/add';
 	import type { Player } from '$lib/data/players';
 	import Combobox from '$lib/components/Combobox.svelte';
+	import countryCodeToFlagEmoji from 'country-code-to-flag-emoji';
 
 	type Caster = {
 		playerId: string;
@@ -77,6 +78,7 @@
 						<Combobox
 							id={`caster-player-${i}`}
 							items={players.map((p) => ({
+								...p,
 								id: p.id,
 								name: p.name,
 								gameAccounts: p.gameAccounts || [],
@@ -89,7 +91,15 @@
 								{ id: 'available', label: 'Available' }
 							]}
 							class="mt-1 px-4 py-2"
-							displayFormat="name-accounts"
+							filterFunction={(item, searchTerm) => {
+								if (!searchTerm) return true;
+								const searchLower = searchTerm.toLowerCase();
+								return (
+									item.id?.toLowerCase().includes(searchLower) ||
+									item.name?.toLowerCase().includes(searchLower) ||
+									item.slug?.toLowerCase().includes(searchLower)
+								);
+							}}
 						/>
 					</div>
 

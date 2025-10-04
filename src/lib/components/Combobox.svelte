@@ -1,5 +1,11 @@
-<!-- src/lib/components/Combobox.svelte -->
-<script lang="ts">
+<script
+	lang="ts"
+	generics="Item extends {
+		id: string;
+		name: string;
+		group?: string;
+	}"
+>
 	import { m } from '$lib/paraglide/messages';
 
 	let {
@@ -12,11 +18,15 @@
 		class: className = '',
 		name = '',
 		onChange,
-		searchLabels = [],
-		displayFormat = 'name'
+		displayFunction = (item: Item) => item.name,
+		filterFunction = (item: Item, searchTerm: string) => {
+			if (!searchTerm) return true;
+			const searchLower = searchTerm.toLowerCase();
+			return item.name?.toLowerCase().includes(searchLower);
+		}
 	}: {
 		id?: string;
-		items: Array<{ id: string; name: string; group?: string; [key: string]: any }>;
+		items: Item[];
 		value: string;
 		placeholder: string;
 		groups: Array<{ id: string; label: string }>;
@@ -24,8 +34,8 @@
 		class: string;
 		name?: string;
 		onChange?: (item: { id: string; name: string }) => void;
-		searchLabels?: string[];
-		displayFormat?: 'name' | 'name-accounts';
+		displayFunction?: (item: Item) => string;
+		filterFunction?: (item: Item, searchTerm: string) => boolean;
 	} = $props();
 
 	let isOpen = $state(false);
@@ -34,19 +44,9 @@
 	let selectedIndex = $state(-1);
 	let listboxElement: HTMLDivElement | null = $state(null);
 	let isFocused = $state(false);
-	// Helper function to format display text
-	function formatDisplayText(item: { id: string; name: string; [key: string]: any }): string {
-		if (
-			displayFormat === 'name-accounts' &&
-			item.gameAccounts &&
-			Array.isArray(item.gameAccounts)
-		) {
-			const accountIds = item.gameAccounts.map((acc: any) => acc.accountId).filter(Boolean);
-			if (accountIds.length > 0) {
-				return `${item.name} (${accountIds.join(', ')})`;
-			}
-		}
-		return item.name;
+	// Helper function to format display text using the provided display function
+	function formatDisplayText(item: Item): string {
+		return displayFunction(item);
 	}
 
 	// Set initial search value without triggering filter
@@ -71,7 +71,7 @@
 		selectedIndex = -1;
 	});
 
-	function handleSelect(item: { id: string; name: string }) {
+	function handleSelect(item: Item) {
 		search = formatDisplayText(item);
 		value = item.id;
 		onChange?.(item);
@@ -171,7 +171,7 @@
 	}
 
 	function getFlattenedItems() {
-		const flattened: Array<{ id: string; name: string }> = [];
+		const flattened: Item[] = [];
 		currentItems.forEach((group) => {
 			if (group.items && group.items.length > 0) {
 				flattened.push(...group.items);
@@ -187,39 +187,9 @@
 			: null;
 	}
 
-	// Enhanced search function that checks multiple labels
-	function matchesSearch(item: any, searchTerm: string): boolean {
-		if (!searchTerm) return true;
-
-		const searchLower = searchTerm.toLowerCase();
-
-		// Always check the name field
-		if (item.name?.toLowerCase().includes(searchLower)) {
-			return true;
-		}
-
-		// Check additional search labels if provided
-		for (const label of searchLabels) {
-			const value = item[label];
-			if (value) {
-				// Handle array fields (like aliases)
-				if (Array.isArray(value)) {
-					if (
-						value.some(
-							(v: any) => v && typeof v === 'string' && v.toLowerCase().includes(searchLower)
-						)
-					) {
-						return true;
-					}
-				}
-				// Handle string fields
-				else if (typeof value === 'string' && value.toLowerCase().includes(searchLower)) {
-					return true;
-				}
-			}
-		}
-
-		return false;
+	// Filter function using the provided filter function
+	function matchesSearch(item: Item, searchTerm: string): boolean {
+		return filterFunction(item, searchTerm);
 	}
 
 	$effect(() => {
@@ -305,7 +275,7 @@
 							{group.label}
 						</div>
 					{/if}
-					{#each group.items as item, itemIndex (item.id)}
+					{#each group.items as item (item.id)}
 						{@const flattenedIndex = getFlattenedItems().findIndex((i) => i.id === item.id)}
 						{@const isSelected = selectedIndex === flattenedIndex}
 						<button
