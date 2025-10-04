@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {
-		SERVER_ABBREVIATIONS,
+		formatGameAccountID,
 		type GameAccountRegion,
 		type GameAccountServer
 	} from '$lib/data/players';
@@ -19,7 +19,7 @@
 
 <div class="flex items-center gap-1">
 	<span class="font-mono text-xs text-gray-400" title={`${account.server}: ${account.accountId}`}>
-		{SERVER_ABBREVIATIONS[account.server]}:{account.accountId}
+		{formatGameAccountID(account)}
 	</span>
 	{account.currentName}
 	{#if account.region}

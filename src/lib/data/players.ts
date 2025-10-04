@@ -59,10 +59,22 @@ export function getGameAccountServer(region: GameAccountRegion | undefined): Gam
 	return region === 'CN' ? 'CalabiYau' : 'Strinova';
 }
 
-export const SERVER_ABBREVIATIONS: Record<string, string> = {
+const SERVER_ABBREVIATIONS: Record<string, string> = {
 	Strinova: 'S',
 	CalabiYau: 'C'
 };
+
+/**
+ * Format the game account ID to C:1234567 or S:1234567
+ *
+ * @param gameAccount - The game account to format
+ * @returns The formatted game account ID
+ */
+export function formatGameAccountID(
+	gameAccount: Pick<GameAccount, 'server' | 'accountId'>
+): string {
+	return `${SERVER_ABBREVIATIONS[gameAccount.server]}:${gameAccount.accountId}`;
+}
 
 export interface SocialAccount {
 	platformId: string;
