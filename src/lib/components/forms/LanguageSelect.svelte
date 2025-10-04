@@ -17,7 +17,7 @@
 		value = $bindable<string | null>(null),
 		id = undefined,
 		name = undefined,
-		placeholder = m['slogans.select_language'](), // TODO: Rename slogans.select_language to select_language
+		placeholder = m['select_language'](), // TODO: Rename slogans.select_language to select_language
 		class: className = '',
 		languages = [...locales],
 		includeEmptyOption = true

@@ -607,6 +607,10 @@
 	"stage": "Stage",
 	"select_stage": "Select Stage",
 	"select_team": "Select Team",
+	"select_language": "Select language",
+	"select_event_optional": "Select event (optional)",
+	"select_language_optional": "Select language (optional)",
+	"select_event_optional_alt": "Select event (optional)",
 	"score": "Score",
 	"remove_team": "Remove Team",
 	"add_team": "Add Team",
@@ -832,13 +836,9 @@
 		"existing_slogans": "Existing Slogans",
 		"slogan": "Slogan",
 		"language": "Language",
-		"select_language": "Select language",
 		"event_optional": "Event (optional)",
-		"select_event_optional": "Select event (optional)",
 		"event_id": "event-id",
 		"add_slogan": "Add slogan",
-		"select_language_optional": "Select language (optional)",
-		"select_event_optional_alt": "Select event (optional)",
 		"event_id_optional": "event-id (optional)"
 	}
 }

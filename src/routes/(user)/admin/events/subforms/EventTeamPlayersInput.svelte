@@ -539,7 +539,7 @@
 											(e.target as HTMLSelectElement).value || null;
 									}}
 								>
-									<option value="">{m['slogans.select_language_optional']()}</option>
+									<option value="">{m['select_language_optional']()}</option>
 									<option value="en">English</option>
 									<option value="zh">中文</option>
 									<option value="ja">日本語</option>

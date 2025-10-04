@@ -74,7 +74,7 @@
 								id={`slogan-lang-${i}`}
 								class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 								bind:value={slogans[i].language}
-								placeholder={m['slogans.select_language']()}
+								placeholder={m['select_language']()}
 							/>
 						</div>
 						<div>
@@ -86,7 +86,7 @@
 									id={`slogan-event-${i}`}
 									class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 									bind:value={slogans[i].eventId}
-									placeholder={m['slogans.select_event_optional']()}
+									placeholder={m['select_event_optional']()}
 									{events}
 								/>
 							{:else}
@@ -133,13 +133,13 @@
 			<LanguageSelect
 				class="block w-full rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 				bind:value={newSloganLang}
-				placeholder={m['slogans.select_language_optional']()}
+				placeholder={m['select_language_optional']()}
 			/>
 			{#if events.length}
 				<EventSelect
 					class="block w-full rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 					bind:value={newSloganEventId}
-					placeholder={m['slogans.select_event_optional_alt']()}
+					placeholder={m['select_event_optional_alt']()}
 					{events}
 				/>
 			{:else}
