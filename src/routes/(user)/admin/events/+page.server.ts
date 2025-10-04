@@ -4,6 +4,7 @@ import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { and, eq } from 'drizzle-orm';
 import { uploadImage } from '$lib/server/storage';
+import { randomUUID } from 'node:crypto';
 import {
 	type CreateEventData,
 	type UpdateEventData,
@@ -35,22 +36,24 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		throw error(result.statusCode, result.error);
 	}
 
-	const [events, organizers, eventOrganizers, teams, players, teamPlayers] = await Promise.all([
-		withTimer('getEventsForAdminPage', () => getEventsForAdminPage())(),
-		withTimer('getOrganizers', () => db.select().from(table.organizer))(),
-		withTimer('getEventOrganizers', () => db.select().from(table.eventOrganizer))(),
-		withTimer('getTeams', () => db.select().from(table.team))(),
-		withTimer('getPlayers', () =>
-			db
-				.select({
-					player: table.player,
-					gameAccount: table.gameAccount
-				})
-				.from(table.player)
-				.leftJoin(table.gameAccount, eq(table.player.id, table.gameAccount.playerId))
-		)(),
-		withTimer('getTeamPlayers', () => db.select().from(table.teamPlayer))()
-	]);
+	const [events, organizers, eventOrganizers, teams, players, teamPlayers, teamSlogans] =
+		await Promise.all([
+			withTimer('getEventsForAdminPage', () => getEventsForAdminPage())(),
+			withTimer('getOrganizers', () => db.select().from(table.organizer))(),
+			withTimer('getEventOrganizers', () => db.select().from(table.eventOrganizer))(),
+			withTimer('getTeams', () => db.select().from(table.team))(),
+			withTimer('getPlayers', () =>
+				db
+					.select({
+						player: table.player,
+						gameAccount: table.gameAccount
+					})
+					.from(table.player)
+					.leftJoin(table.gameAccount, eq(table.player.id, table.gameAccount.playerId))
+			)(),
+			withTimer('getTeamPlayers', () => db.select().from(table.teamPlayer))(),
+			withTimer('getTeamSlogans', () => db.select().from(table.teamSlogan))()
+		]);
 
 	// Process players with game accounts
 	const processedPlayers = players.reduce(
@@ -86,6 +89,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		teams,
 		players: processedPlayers,
 		teamPlayers,
+		teamSlogans,
 		action,
 		id,
 		searchQuery
@@ -165,6 +169,65 @@ async function handleEventTeamsUpdate(eventId: string, teamsData: string) {
 	}
 }
 
+// Helper function to handle team slogans update
+async function handleTeamSlogansUpdate(eventId: string, slogansData: string, userId: string) {
+	console.info('[Admin][Events][HandleTeamSlogansUpdate] Updating team slogans for event');
+
+	if (!eventId || !slogansData) {
+		return;
+	}
+
+	try {
+		const slogans = JSON.parse(slogansData) as Array<{
+			id?: number;
+			slogan: string;
+			language: string | null;
+			eventId: string | null;
+			teamId?: string;
+		}>;
+
+		// For each team that has slogans in this event, update them
+		const teamIds = [...new Set(slogans.map((s) => s.teamId).filter(Boolean))] as string[];
+
+		for (const teamId of teamIds) {
+			// Delete existing slogans for this team and event
+			await db
+				.delete(table.teamSlogan)
+				.where(and(eq(table.teamSlogan.teamId, teamId), eq(table.teamSlogan.eventId, eventId)));
+
+			// Insert new slogans for this team and event
+			const teamSlogans = slogans.filter((s) => s.teamId === teamId && s.slogan.trim());
+			if (teamSlogans.length > 0) {
+				await db.insert(table.teamSlogan).values(
+					teamSlogans.map((slogan) => ({
+						teamId: teamId as string,
+						eventId,
+						slogan: slogan.slogan.trim(),
+						language: (slogan.language as any) || null,
+						createdAt: new Date().toISOString(),
+						updatedAt: new Date().toISOString()
+					}))
+				);
+			}
+		}
+
+		// Add edit history for slogan changes
+		await db.insert(table.editHistory).values({
+			id: randomUUID(),
+			tableName: 'team_slogan',
+			recordId: eventId,
+			fieldName: 'slogans',
+			oldValue: null,
+			newValue: JSON.stringify(slogans),
+			editedBy: userId,
+			editedAt: new Date()
+		});
+	} catch (e) {
+		console.error('[Admin][Events][HandleTeamSlogansUpdate] Failed to update team slogans:', e);
+		throw e;
+	}
+}
+
 export const actions = {
 	create: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
@@ -222,7 +285,7 @@ export const actions = {
 		}
 
 		try {
-			const eventId = crypto.randomUUID();
+			const eventId = randomUUID();
 			const dbEvent = toDatabaseEvent(eventData);
 			await db.insert(table.event).values({
 				id: eventId,
@@ -241,7 +304,7 @@ export const actions = {
 				const websiteValues = eventData.websites
 					.filter((website) => website.url) // Only include websites with URLs
 					.map((website) => ({
-						id: crypto.randomUUID(),
+						id: randomUUID(),
 						eventId,
 						url: website.url,
 						label: website.label || null,
@@ -258,7 +321,7 @@ export const actions = {
 			if (eventData.videos && eventData.videos.length > 0) {
 				const videoValues = toDatabaseEventVideos(eventId, eventData.videos).map((video) => ({
 					...video,
-					id: crypto.randomUUID(),
+					id: randomUUID(),
 					createdAt: new Date(),
 					updatedAt: new Date()
 				}));
@@ -299,7 +362,7 @@ export const actions = {
 				if (results.length > 0) {
 					await db.insert(table.eventResult).values(
 						results.map((result) => ({
-							id: crypto.randomUUID(),
+							id: randomUUID(),
 							eventId,
 							teamId: result.teamId,
 							rank: result.rank,
@@ -332,9 +395,15 @@ export const actions = {
 				}
 			}
 
+			// Handle team slogans
+			const teamSlogansData = formData.get('teamSlogans') as string;
+			if (teamSlogansData) {
+				await handleTeamSlogansUpdate(eventId, teamSlogansData, result.userId);
+			}
+
 			// Add edit history
 			await db.insert(table.editHistory).values({
-				id: crypto.randomUUID(),
+				id: randomUUID(),
 				tableName: 'event',
 				recordId: eventId,
 				fieldName: 'creation',
@@ -457,7 +526,7 @@ export const actions = {
 				const websiteValues = eventData.websites
 					.filter((website) => website.url) // Only include websites with URLs
 					.map((website) => ({
-						id: crypto.randomUUID(),
+						id: randomUUID(),
 						eventId: eventData.id,
 						url: website.url,
 						label: website.label || null,
@@ -481,7 +550,7 @@ export const actions = {
 				// Then add the new videos
 				const videoValues = toDatabaseEventVideos(eventData.id, eventData.videos).map((video) => ({
 					...video,
-					id: crypto.randomUUID(),
+					id: randomUUID(),
 					createdAt: new Date(),
 					updatedAt: new Date()
 				}));
@@ -523,7 +592,7 @@ export const actions = {
 				if (results.length > 0) {
 					await db.insert(table.eventResult).values(
 						results.map((result) => ({
-							id: crypto.randomUUID(),
+							id: randomUUID(),
 							eventId: eventData.id,
 							teamId: result.teamId,
 							rank: result.rank,
@@ -556,12 +625,18 @@ export const actions = {
 				}
 			}
 
+			// Handle team slogans
+			const teamSlogansData = formData.get('teamSlogans') as string;
+			if (teamSlogansData) {
+				await handleTeamSlogansUpdate(eventData.id, teamSlogansData, result.userId);
+			}
+
 			// Add edit history if there are changes
 			if (Object.keys(changes).length > 0) {
 				await Promise.all(
 					Object.entries(changes).map(([fieldName, { from, to }]) =>
 						db.insert(table.editHistory).values({
-							id: crypto.randomUUID(),
+							id: randomUUID(),
 							tableName: 'event',
 							recordId: eventData.id,
 							fieldName,
@@ -617,7 +692,7 @@ export const actions = {
 
 			// Add edit history
 			await db.insert(table.editHistory).values({
-				id: crypto.randomUUID(),
+				id: randomUUID(),
 				tableName: 'event',
 				recordId: id,
 				fieldName: 'deletion',
@@ -656,7 +731,7 @@ export const actions = {
 		}
 
 		try {
-			const key = `events/${crypto.randomUUID()}-${file.name}`;
+			const key = `events/${randomUUID()}-${file.name}`;
 			await uploadImage(file, key);
 
 			return {
@@ -706,7 +781,7 @@ export const actions = {
 			// Then insert the new results
 			await db.insert(table.eventResult).values(
 				results.map((result) => ({
-					id: crypto.randomUUID(),
+					id: randomUUID(),
 					eventId,
 					teamId: result.teamId,
 					rank: result.rank,
@@ -720,7 +795,7 @@ export const actions = {
 
 			// Add edit history
 			await db.insert(table.editHistory).values({
-				id: crypto.randomUUID(),
+				id: randomUUID(),
 				tableName: 'event_result',
 				recordId: eventId,
 				fieldName: 'results',

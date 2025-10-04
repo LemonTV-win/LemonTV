@@ -147,6 +147,17 @@
 	// Track selected teams
 	let selectedTeams = $state<string[]>([]);
 
+	// Team slogans for the event
+	let teamSlogans = $state<
+		Array<{
+			id?: number;
+			slogan: string;
+			language: string | null;
+			eventId: string | null;
+			teamId?: string;
+		}>
+	>([]);
+
 	// Load existing team players when editing an event
 	$effect(() => {
 		if (event.id) {
@@ -352,6 +363,8 @@
 			formData.append('videos', JSON.stringify(newEvent.videos));
 			// Add casters data
 			formData.append('casters', JSON.stringify(newEvent.casters));
+			// Add team slogans data
+			formData.append('teamSlogans', JSON.stringify(teamSlogans));
 
 			// Prevent submission if there's a pending file upload
 			if (hasFile && !uploaded) {
@@ -597,6 +610,9 @@
 					bind:selectedTeams
 					bind:eventTeamPlayers
 					bind:eventTeams
+					currentEventId={event.id}
+					{teamSlogans}
+					onSlogansChange={(slogans) => (teamSlogans = slogans)}
 				/>
 			</section>
 

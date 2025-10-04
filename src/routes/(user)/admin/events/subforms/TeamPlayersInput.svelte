@@ -9,6 +9,14 @@
 	import { SvelteSet } from 'svelte/reactivity';
 	import { isActive, isSubstitute, isCoaching } from '$lib/data/teams';
 
+	interface Slogan {
+		id?: number;
+		slogan: string;
+		language: string | null;
+		eventId: string | null;
+		teamId?: string;
+	}
+
 	interface Props {
 		teams: Team[];
 		players: (Player & { gameAccounts: GameAccount[] })[];
@@ -38,6 +46,9 @@
 			startedOn?: string;
 			endedOn?: string;
 		}>;
+		currentEventId?: string | undefined;
+		teamSlogans?: Slogan[];
+		onSlogansChange?: (slogans: Slogan[]) => void;
 	}
 
 	let {
@@ -46,14 +57,24 @@
 		selectedTeams = $bindable([]),
 		eventTeamPlayers = $bindable([]),
 		eventTeams = $bindable([]),
-		teamPlayers
+		teamPlayers,
+		currentEventId,
+		teamSlogans = [],
+		onSlogansChange
 	}: Props = $props();
+
+	// Local slogan state
+	let teamSlogansValue = $state<Slogan[]>(teamSlogans || []);
 
 	$inspect('[TeamPlayersInput] eventTeamPlayers', eventTeamPlayers);
 	$inspect('[TeamPlayersInput] eventTeams', eventTeams);
 
 	// Track which teams are expanded
 	let expandedTeams = new SvelteSet<string>();
+
+	// Slogan management state for each team
+	let teamSlogansState = $state<Record<string, Slogan[]>>({});
+	let newSloganState = $state<Record<string, { text: string; language: string | null }>>({});
 
 	const roleOptions = ['main', 'sub', 'coach'];
 	const entryOptions = [
@@ -188,6 +209,78 @@
 			(tp) => !(tp.teamId === teamPlayer.teamId && tp.playerId === teamPlayer.playerId)
 		);
 	}
+
+	function addTeamSlogan(teamId: string) {
+		const newSlogan = newSloganState[teamId];
+		if (!newSlogan || !newSlogan.text.trim()) return;
+
+		const slogan: Slogan = {
+			id: undefined,
+			slogan: newSlogan.text.trim(),
+			language: newSlogan.language && newSlogan.language !== '' ? newSlogan.language : null,
+			eventId: currentEventId || null,
+			teamId: teamId
+		};
+
+		// Update local state
+		teamSlogansValue = [...teamSlogansValue, slogan];
+
+		// Update local state
+		if (!teamSlogansState[teamId]) {
+			teamSlogansState[teamId] = [];
+		}
+		teamSlogansState[teamId] = [...teamSlogansState[teamId], slogan];
+
+		// Notify parent of change
+		onSlogansChange?.(teamSlogansValue);
+
+		// Reset input
+		newSloganState[teamId] = { text: '', language: '' };
+	}
+
+	function removeTeamSlogan(teamId: string, sloganIndex: number) {
+		if (teamSlogansState[teamId] && teamSlogansState[teamId][sloganIndex]) {
+			const sloganToRemove = teamSlogansState[teamId][sloganIndex];
+
+			// Update local state
+			teamSlogansValue = teamSlogansValue.filter((s: Slogan) => s !== sloganToRemove);
+
+			// Update local state
+			teamSlogansState[teamId] = teamSlogansState[teamId].filter(
+				(_, index) => index !== sloganIndex
+			);
+
+			// Notify parent of change
+			onSlogansChange?.(teamSlogansValue);
+		}
+	}
+
+	function initializeSloganState() {
+		// Initialize slogan state from prop
+		teamSlogansValue = teamSlogans || [];
+		selectedTeams.forEach((teamId) => {
+			const existingSlogans = teamSlogansValue.filter((slogan: Slogan) => slogan.teamId === teamId);
+			if (existingSlogans.length > 0) {
+				teamSlogansState[teamId] = existingSlogans;
+			}
+			if (!newSloganState[teamId]) {
+				newSloganState[teamId] = { text: '', language: '' };
+			}
+		});
+	}
+
+	// Initialize slogan state when component loads or when selected teams change
+	$effect(() => {
+		initializeSloganState();
+	});
+
+	// Sync with prop changes
+	$effect(() => {
+		if (teamSlogans) {
+			teamSlogansValue = teamSlogans;
+			initializeSloganState();
+		}
+	});
 
 	// Helper function to get role counts for a team
 	function getTeamRoleCounts(teamId: string) {
@@ -393,6 +486,77 @@
 								{/each}
 							</select>
 						</div>
+
+						<!-- Slogans Section -->
+						<div class="border-b border-slate-700 pb-4">
+							<div class="mb-3">
+								<h5 class="text-sm font-medium text-slate-300">Team Slogans</h5>
+							</div>
+
+							<!-- Existing Slogans -->
+							{#if teamSlogansState[team.id] && teamSlogansState[team.id].length > 0}
+								<div class="space-y-2">
+									{#each teamSlogansState[team.id] as slogan, sloganIndex (sloganIndex)}
+										<div class="flex items-center gap-2 rounded-md bg-slate-700/50 p-2">
+											<div class="flex-1">
+												<div class="text-sm text-slate-200">{slogan.slogan}</div>
+												{#if slogan.language}
+													<div class="text-xs text-slate-400">{slogan.language}</div>
+												{/if}
+											</div>
+											<button
+												type="button"
+												class="text-red-400 hover:text-red-300"
+												onclick={() => removeTeamSlogan(team.id, sloganIndex)}
+												title={m.remove()}
+											>
+												<IconParkSolidDelete class="h-4 w-4" />
+											</button>
+										</div>
+									{/each}
+								</div>
+							{/if}
+
+							<!-- Add New Slogan -->
+							<div class="mt-3 flex gap-2">
+								<input
+									type="text"
+									value={newSloganState[team.id]?.text || ''}
+									placeholder={m['slogans.add_slogan']()}
+									oninput={(e) => {
+										if (!newSloganState[team.id])
+											newSloganState[team.id] = { text: '', language: '' };
+										newSloganState[team.id].text = (e.target as HTMLInputElement).value;
+									}}
+									class="flex-1 rounded-md border border-slate-600 bg-slate-800 px-2 py-1 text-sm text-white placeholder:text-slate-400 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+								/>
+								<select
+									value={newSloganState[team.id]?.language || ''}
+									class="rounded-md border border-slate-600 bg-slate-800 px-2 py-1 text-sm text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+									onchange={(e) => {
+										if (!newSloganState[team.id])
+											newSloganState[team.id] = { text: '', language: '' };
+										newSloganState[team.id].language =
+											(e.target as HTMLSelectElement).value || null;
+									}}
+								>
+									<option value="">{m['slogans.select_language_optional']()}</option>
+									<option value="en">English</option>
+									<option value="zh">中文</option>
+									<option value="ja">日本語</option>
+									<option value="ko">한국어</option>
+								</select>
+								<button
+									type="button"
+									class="rounded-md bg-yellow-500 px-3 py-1 text-sm font-medium text-black hover:bg-yellow-600 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+									onclick={() => addTeamSlogan(team.id)}
+									disabled={!newSloganState[team.id]?.text.trim()}
+								>
+									<IconParkSolidAdd class="h-4 w-4" />
+								</button>
+							</div>
+						</div>
+
 						{#if eventTeamPlayers.filter((tp) => tp.teamId === team.id).length > 0}
 							<div class="divide-y divide-slate-700">
 								{#each eventTeamPlayers.filter((tp) => tp.teamId === team.id) as teamPlayer, index (teamPlayer.playerId)}
