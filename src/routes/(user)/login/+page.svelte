@@ -225,7 +225,7 @@
 							{isLoading ? m.signing_in() : m.sign_in()}
 						</button>
 					</form>
-
+					<!-- 
 					<div class="relative my-6">
 						<div class="absolute inset-0 flex items-center">
 							<div class="w-full border-t border-slate-700"></div>
@@ -248,7 +248,7 @@
 							<Mail class="h-4 w-4" />
 							Google
 						</button>
-					</div>
+					</div> -->
 				</div>
 			{:else}
 				<!-- Register Form -->
@@ -384,7 +384,7 @@
 							{isLoading ? m.registering() : m.register()}
 						</button>
 					</form>
-
+					<!-- 
 					<div class="relative my-6">
 						<div class="absolute inset-0 flex items-center">
 							<div class="w-full border-t border-slate-700"></div>
@@ -407,7 +407,7 @@
 							<Mail class="h-4 w-4" />
 							Google
 						</button>
-					</div>
+					</div> -->
 				</div>
 			{/if}
 		</div>
