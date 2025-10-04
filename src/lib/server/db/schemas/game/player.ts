@@ -7,26 +7,29 @@ import { teamPlayer } from './team';
 import { playerCharacterStats, playerStats } from './player-stats';
 import type { TCountryCode } from 'countries-list';
 
-export const player = sqliteTable('player', {
-	id: text('id').primaryKey(),
-	slug: text('slug').notNull().unique(),
-	name: text('name').notNull(),
-	nationality: text('nationality').$type<TCountryCode>(),
-	avatar: text('avatar'),
-	userId: text('user_id').references(() => user.id)
-}, (t) => [
-	index('idx_player_user').on(t.userId),
-	index('idx_player_nationality').on(t.nationality)
-]);
+export const player = sqliteTable(
+	'player',
+	{
+		id: text('id').primaryKey(),
+		slug: text('slug').notNull().unique(),
+		name: text('name').notNull(),
+		nationality: text('nationality').$type<TCountryCode>(),
+		avatar: text('avatar'),
+		userId: text('user_id').references(() => user.id)
+	},
+	(t) => [index('idx_player_user').on(t.userId), index('idx_player_nationality').on(t.nationality)]
+);
 
-export const playerAlias = sqliteTable('player_alias', {
-	playerId: text('player_id')
-		.notNull()
-		.references(() => player.id),
-	alias: text('alias').notNull()
-}, (t) => [
-	index('idx_pa_player').on(t.playerId)
-]);
+export const playerAlias = sqliteTable(
+	'player_alias',
+	{
+		playerId: text('player_id')
+			.notNull()
+			.references(() => player.id),
+		alias: text('alias').notNull()
+	},
+	(t) => [index('idx_pa_player').on(t.playerId)]
+);
 
 export const playerAdditionalNationality = sqliteTable(
 	'player_additional_nationality',

@@ -31,6 +31,7 @@ bun dev
 ```bash
 bun run db:dev:push
 ```
+
 ### Deploys
 
 <!-- Infobox -->
