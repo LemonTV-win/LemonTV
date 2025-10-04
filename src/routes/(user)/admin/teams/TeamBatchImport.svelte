@@ -772,7 +772,9 @@ const teams: TeamImportData[] = [
 	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
 		<div class="w-full max-w-4xl rounded-lg bg-slate-800 p-6 shadow-xl">
 			<div class="mb-4 flex items-center justify-between">
-				<h3 class="text-lg font-semibold text-slate-200">{m.team_batch_import_title()}</h3>
+				<h3 class="text-lg font-semibold text-slate-200">
+					{m['editing.batch.batch_import_teams']()}
+				</h3>
 				<button
 					type="button"
 					class="text-slate-400 hover:text-slate-200"
@@ -793,14 +795,14 @@ const teams: TeamImportData[] = [
 			<div class="mb-4">
 				<div class="mb-2 flex items-center justify-between">
 					<label class="block text-sm font-medium text-slate-300" for="jsonData">
-						{m.team_batch_import_paste_json_label()}
+						{m['editing.batch.paste_json_label']()}
 					</label>
 					<button
 						type="button"
 						class="text-sm text-yellow-400 underline hover:text-yellow-300"
 						onclick={() => (showSchema = !showSchema)}
 					>
-						{showSchema ? m.team_batch_import_hide_schema() : m.team_batch_import_show_schema()}
+						{showSchema ? m['editing.batch.hide_schema']() : m['editing.batch.show_schema']()}
 					</button>
 				</div>
 
@@ -808,14 +810,14 @@ const teams: TeamImportData[] = [
 					<div class="mb-4 rounded-md border border-slate-600 bg-slate-900 p-4">
 						<div class="mb-2 flex items-center justify-between">
 							<h4 class="text-sm font-medium text-slate-200">
-								{m.team_batch_import_schema_title()}
+								{m['editing.batch.schema_title']()}
 							</h4>
 							<button
 								type="button"
 								class="text-xs text-yellow-400 underline hover:text-yellow-300"
 								onclick={copySchema}
 							>
-								{m.team_batch_import_copy_schema()}
+								{m['editing.batch.copy_schema']()}
 							</button>
 						</div>
 						<div class="styled-scroll max-h-100 overflow-x-auto overflow-y-auto text-xs">
@@ -836,7 +838,7 @@ const teams: TeamImportData[] = [
 						<div
 							class="h-4 w-4 animate-spin rounded-full border-2 border-yellow-400 border-t-transparent"
 						></div>
-						<span>{m.team_batch_import_parsing_data()}</span>
+						<span>{m['editing.batch.parsing_data']()}</span>
 					</div>
 				{/if}
 			</div>
@@ -844,20 +846,20 @@ const teams: TeamImportData[] = [
 			{#if parsedTeams && parsedTeams.type === 'success'}
 				<div class="mb-4">
 					<label class="block text-sm font-medium text-slate-300" for="eventSelect">
-						{m.team_batch_import_add_teams_for_event()}
+						{m['editing.batch.add_teams_for_event']()}
 					</label>
 					<EventSelect
 						id="eventSelect"
 						bind:value={selectedEventId}
 						{events}
-						placeholder={m.team_batch_import_select_event_placeholder()}
+						placeholder={m['editing.batch.select_event_placeholder']()}
 						class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 					/>
 					<p class="mt-1 text-xs text-slate-400">
 						{#if selectedEventId}
-							{m.team_batch_import_teams_with_event_description()}
+							{m['editing.batch.teams_with_event_description']()}
 						{:else}
-							{m.team_batch_import_teams_without_event_description()}
+							{m['editing.batch.teams_without_event_description']()}
 						{/if}
 					</p>
 				</div>
@@ -871,7 +873,7 @@ const teams: TeamImportData[] = [
 
 			{#if parsedTeams && parsedTeams.type === 'error'}
 				<div class="mb-4 rounded-md bg-red-900/50 p-3 text-sm text-red-200">
-					<strong>{m.team_batch_import_parsing_error()}</strong>
+					<strong>{m['editing.batch.parsing_error']()}</strong>
 					{parsedTeams.error}
 				</div>
 			{/if}
@@ -879,7 +881,7 @@ const teams: TeamImportData[] = [
 			{#if parsedTeams && parsedTeams.type === 'success'}
 				<div class="mb-4 rounded-md border border-slate-600 bg-slate-900 p-4">
 					<h4 class="mb-3 text-sm font-medium text-slate-200">
-						{m.team_batch_import_parsed_teams()}
+						{m['editing.batch.parsed_teams']()}
 					</h4>
 
 					<div
@@ -888,14 +890,14 @@ const teams: TeamImportData[] = [
 						<table class="w-full table-auto border-collapse border-y-2 border-gray-500 bg-gray-800">
 							<thead>
 								<tr class="border-b-2 border-gray-500 text-left text-sm text-gray-400">
-									<th class="px-4 py-1">{m.team_batch_import_table_name()}</th>
-									<th class="px-4 py-1">{m.team_batch_import_table_slug()}</th>
-									<th class="px-4 py-1">{m.team_batch_import_table_abbr()}</th>
-									<th class="px-4 py-1">{m.team_batch_import_table_region()}</th>
-									<th class="px-4 py-1">{m.team_batch_import_table_logo()}</th>
-									<th class="px-4 py-1">{m.team_batch_import_table_aliases()}</th>
-									<th class="px-4 py-1">{m.team_batch_import_table_slogans()}</th>
-									<th class="px-4 py-1">{m.team_batch_import_table_players()}</th>
+									<th class="px-4 py-1">{m.name()}</th>
+									<th class="px-4 py-1">{m.slug()}</th>
+									<th class="px-4 py-1">{m.abbr()}</th>
+									<th class="px-4 py-1">{m.region()}</th>
+									<th class="px-4 py-1">{m.logo()}</th>
+									<th class="px-4 py-1">{m.aliases()}</th>
+									<th class="px-4 py-1">{m['slogans.slogan']()}</th>
+									<th class="px-4 py-1">{m.players()}</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -972,10 +974,10 @@ const teams: TeamImportData[] = [
 			{#if parsedTeams && hasNewPlayersRequired}
 				<div class="mb-4 rounded-md border border-yellow-700 bg-yellow-900/50 p-4">
 					<h4 class="mb-3 text-sm font-medium text-yellow-200">
-						{m.team_batch_import_new_players_required()}
+						{m['editing.batch.new_players_required']()}
 					</h4>
 					<p class="mb-3 text-xs text-slate-300">
-						{m.team_batch_import_new_players_description()}
+						{m['editing.batch.new_players_description']()}
 					</p>
 					<ParsedPlayersTable
 						players={newPlayersRequired}
@@ -1025,17 +1027,17 @@ const teams: TeamImportData[] = [
 						<div class="mt-0.5 h-4 w-4 flex-shrink-0 rounded-full bg-red-500"></div>
 						<div class="flex-1">
 							<p class="mb-1 text-sm font-medium text-red-200">
-								{m.team_batch_import_duplicate_issues_detected()}
+								{m['editing.batch.duplicate_issues_detected']()}
 							</p>
 							<p class="text-xs text-red-300">
-								{m.team_batch_import_resolve_duplicates_message()}
+								{m['editing.batch.resolve_duplicates_message']()}
 							</p>
 
 							{#if hasNewPlayerDuplicates}
 								{#if newPlayerDuplicateSlugs.length > 0}
 									<div class="mt-2 rounded border border-red-600 bg-red-900/30 p-2">
 										<p class="mb-1 text-xs font-medium text-red-200">
-											{m.team_batch_import_duplicate_slugs_in_players()}
+											{m['editing.batch.duplicate_slugs_in_players']()}
 										</p>
 										<ul class="space-y-1 text-xs text-red-300">
 											{#each newPlayerDuplicateSlugs as duplicate}
@@ -1047,7 +1049,7 @@ const teams: TeamImportData[] = [
 								{#if newPlayerDuplicateAccountIds.length > 0}
 									<div class="mt-2 rounded border border-red-600 bg-red-900/30 p-2">
 										<p class="mb-1 text-xs font-medium text-red-200">
-											{m.team_batch_import_duplicate_account_ids_in_players()}
+											{m['editing.batch.duplicate_account_ids_in_players']()}
 										</p>
 										<ul class="space-y-1 text-xs text-red-300">
 											{#each newPlayerDuplicateAccountIds as duplicate}
@@ -1063,7 +1065,7 @@ const teams: TeamImportData[] = [
 								{#if duplicateTeams.length > 0}
 									<div class="mt-2 rounded border border-red-600 bg-red-900/30 p-2">
 										<p class="mb-1 text-xs font-medium text-red-200">
-											{m.team_batch_import_duplicate_slugs()}
+											{m['editing.batch.duplicate_slugs']()}
 										</p>
 										<div class="styled-scroll max-h-32 overflow-y-auto">
 											<ul class="space-y-1 text-xs text-red-300">
@@ -1105,7 +1107,7 @@ const teams: TeamImportData[] = [
 								{#if duplicateTeamNames.length > 0}
 									<div class="mt-2 rounded border border-red-600 bg-red-900/30 p-2">
 										<p class="mb-1 text-xs font-medium text-red-200">
-											{m.team_batch_import_duplicate_team_names()}
+											{m['editing.batch.duplicate_team_names']()}
 										</p>
 										<div class="styled-scroll max-h-32 overflow-y-auto">
 											<ul class="space-y-1 text-xs text-red-300">
@@ -1161,11 +1163,11 @@ const teams: TeamImportData[] = [
 						disabled={isImporting || hasAnyDuplicates}
 					>
 						{#if isImporting}
-							{m.team_batch_import_importing()}
+							{m['editing.batch.importing']()}
 						{:else if hasAnyDuplicates}
-							{m.team_batch_import_fix_duplicates_first()}
+							{m['editing.batch.fix_duplicates_first']()}
 						{:else}
-							{m.team_batch_import_import_teams_button()}
+							{m['editing.batch.import_teams']()}
 						{/if}
 					</button>
 				{/if}
