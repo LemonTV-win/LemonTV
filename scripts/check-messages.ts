@@ -7,6 +7,182 @@ import chalk from 'chalk';
 const messagesPath = path.join(__dirname, '../messages');
 console.log(chalk.blue('[Check Messages]'), 'Checking messages in:', chalk.cyan(messagesPath));
 
+function findDuplicateKeysInJSON(
+	jsonString: string
+): Array<{ key: string; line: number; column: number; path: string }> {
+	// First validate it's valid JSON
+	if (!isValidJSON(jsonString)) {
+		throw new Error('Input is not valid JSON.');
+	}
+
+	const content = jsonString.trim();
+	const duplicates: Array<{ key: string; line: number; column: number; path: string }> = [];
+	let currentIndex = 0;
+
+	function parseValue(parentPath: string): void {
+		skipWhitespace();
+
+		if (currentIndex >= content.length) return;
+
+		const char = content[currentIndex];
+
+		if (char === '{') {
+			parseObject(parentPath);
+		} else if (char === '[') {
+			parseArray(parentPath);
+		} else if (char === '"') {
+			// String value, consume and return
+			parseString();
+		} else if (
+			(char >= '0' && char <= '9') ||
+			char === '-' ||
+			char === 't' ||
+			char === 'f' ||
+			char === 'n'
+		) {
+			parsePrimitive();
+		}
+	}
+
+	function parseObject(parentPath: string): void {
+		currentIndex++; // Skip '{'
+
+		// keys at this object level -> list of occurrences (line,col)
+		const currentLevelKeys = new Map<string, Array<{ line: number; col: number }>>();
+
+		while (currentIndex < content.length) {
+			skipWhitespace();
+			const char = content[currentIndex];
+
+			if (char === '}') {
+				currentIndex++; // Skip '}'
+
+				// Emit duplicates for this object level
+				currentLevelKeys.forEach((occurrences, key) => {
+					if (occurrences.length > 1) {
+						const fullPath = parentPath ? `${parentPath}.${key}` : key;
+						occurrences.forEach(({ line, col }) => {
+							duplicates.push({ key, line, column: col, path: fullPath });
+						});
+					}
+				});
+
+				break;
+			}
+
+			if (char === '"') {
+				const keyStart = currentIndex;
+				const key = parseString();
+
+				// Calculate line and column for this key occurrence
+				const beforeKey = content.substring(0, keyStart);
+				const lines = beforeKey.split('\n');
+				const line = lines.length;
+				const col = lines[lines.length - 1].length + 1;
+
+				if (!currentLevelKeys.has(key)) currentLevelKeys.set(key, []);
+				currentLevelKeys.get(key)!.push({ line, col });
+
+				skipWhitespace();
+				if (content[currentIndex] === ':') {
+					currentIndex++; // Skip ':'
+
+					// Determine child parent path for value
+					const childParentPath = parentPath ? `${parentPath}.${key}` : key;
+					parseValue(childParentPath);
+				}
+
+				skipWhitespace();
+				if (content[currentIndex] === ',') {
+					currentIndex++; // Skip ','
+				}
+			} else {
+				// Unexpected content inside object, advance to avoid infinite loop
+				currentIndex++;
+			}
+		}
+	}
+
+	function parseArray(parentPath: string): void {
+		currentIndex++; // Skip '['
+		let indexInArray = 0;
+
+		while (currentIndex < content.length) {
+			skipWhitespace();
+			const char = content[currentIndex];
+
+			if (char === ']') {
+				currentIndex++; // Skip ']'
+				break;
+			}
+
+			const childPath = `${parentPath}[${indexInArray}]`;
+			parseValue(childPath);
+
+			skipWhitespace();
+			if (content[currentIndex] === ',') {
+				currentIndex++; // Skip ','
+				indexInArray++;
+			}
+		}
+	}
+
+	function parseString(): string {
+		currentIndex++; // Skip opening quote
+		let result = '';
+
+		while (currentIndex < content.length) {
+			const char = content[currentIndex];
+			currentIndex++;
+
+			if (char === '"') {
+				if (content[currentIndex - 2] !== '\\') {
+					break; // Unescaped quote ends the string
+				}
+			}
+			result += char;
+		}
+
+		return result;
+	}
+
+	function parsePrimitive(): void {
+		// Skip to end of primitive value (number, boolean, null)
+		while (currentIndex < content.length) {
+			const char = content[currentIndex];
+			if (char === ',' || char === '}' || char === ']') {
+				break;
+			}
+			currentIndex++;
+		}
+	}
+
+	function skipWhitespace(): void {
+		while (currentIndex < content.length) {
+			const char = content[currentIndex];
+			if (char === ' ' || char === '\t' || char === '\n' || char === '\r') {
+				currentIndex++;
+			} else {
+				break;
+			}
+		}
+	}
+
+	// Kick off by seeking the first value (root must be object or array)
+	parseValue('');
+
+	return duplicates;
+}
+
+function isValidJSON(content: string): boolean {
+	try {
+		JSON.parse(content);
+		return true;
+	} catch {
+		return false;
+	}
+}
+
 const allMessageIDs = new Set<string>();
 const referenceLanguages = ['en', 'zh', 'ja'];
 const referenceMessages: Record<string, any> = {};
@@ -288,6 +464,136 @@ for (const file of fs.readdirSync(messagesPath)) {
 	const messageIDs = extractMessageIDs(messages);
 	if (messageIDs.length !== new Set(messageIDs).size) {
 		console.warn(chalk.yellow(`[Check Messages] ${file} has duplicated translations`));
+		hasWarnings = true;
+	}
+}
+
+// Check for duplicate JSON keys (same key appears multiple times at the same level)
+console.log(chalk.blue('[Check Messages]'), 'Checking for duplicate JSON keys...');
+for (const file of fs.readdirSync(messagesPath)) {
+	try {
+		const content = fs.readFileSync(path.join(messagesPath, file), 'utf8');
+		const messages = JSON.parse(content);
+
+		// Check for duplicate keys using custom implementation and expanded key analysis
+		const duplicateKeys: Array<{ key: string; locations: string[] }> = [];
+
+		// First, use custom implementation to find basic duplicate keys
+		try {
+			const basicDuplicates = findDuplicateKeysInJSON(content);
+			if (basicDuplicates.length > 0) {
+				console.warn(chalk.yellow(`[Check Messages] ${file} has duplicate keys:`));
+
+				// Group duplicates by key to show all occurrences
+				const groupedDuplicates = new Map<
+					string,
+					Array<{ line: number; column: number; path: string }>
+				>();
+				basicDuplicates.forEach((dup) => {
+					if (!groupedDuplicates.has(dup.key)) {
+						groupedDuplicates.set(dup.key, []);
+					}
+					groupedDuplicates.get(dup.key)!.push({
+						line: dup.line,
+						column: dup.column,
+						path: dup.path
+					});
+				});
+
+				groupedDuplicates.forEach((occurrences, key) => {
+					const firstPath = occurrences[0]?.path || key;
+					console.log(chalk.white(`  - "${firstPath}" appears ${occurrences.length} times:`));
+					occurrences.forEach(({ line, column }) => {
+						console.log(chalk.cyan(`    - line ${line}, col ${column}`));
+					});
+				});
+				console.log(''); // Add spacing between files
+				hasWarnings = true;
+			}
+		} catch (error) {
+			console.warn(
+				chalk.yellow(`[Check Messages] Could not check duplicates for ${file}: ${error}`)
+			);
+		}
+
+		// Then, check for duplicate expanded translation keys
+		const expandedKeyCounts = new Map<string, string[]>();
+
+		// Recursively extract all translation key paths
+		function extractExpandedKeys(obj: any, currentPath = '') {
+			if (typeof obj === 'object' && obj !== null) {
+				if (!Array.isArray(obj)) {
+					// Handle Paraglide message objects
+					if (isParaglideMessage(obj)) {
+						const keyPath = currentPath || 'root';
+						if (!expandedKeyCounts.has(keyPath)) {
+							expandedKeyCounts.set(keyPath, []);
+						}
+						expandedKeyCounts.get(keyPath)!.push(keyPath);
+						return;
+					}
+
+					// Regular object - traverse children
+					for (const [key, value] of Object.entries(obj)) {
+						if (key === '$schema') continue;
+
+						const newPath = currentPath ? `${currentPath}.${key}` : key;
+						extractExpandedKeys(value, newPath);
+					}
+				} else {
+					// Handle arrays
+					obj.forEach((item: any, index: number) => {
+						const newPath = currentPath ? `${currentPath}[${index}]` : `[${index}]`;
+						extractExpandedKeys(item, newPath);
+					});
+				}
+			} else {
+				// Leaf value - record the path
+				const keyPath = currentPath || 'root';
+				if (!expandedKeyCounts.has(keyPath)) {
+					expandedKeyCounts.set(keyPath, []);
+				}
+				expandedKeyCounts.get(keyPath)!.push(keyPath);
+			}
+		}
+
+		// Helper to check if object is a Paraglide message
+		function isParaglideMessage(obj: any): boolean {
+			return (
+				obj &&
+				typeof obj === 'object' &&
+				(('selectors' in obj && 'match' in obj) ||
+					'message' in obj ||
+					(Array.isArray(obj) &&
+						obj.some(
+							(item) =>
+								item && typeof item === 'object' && ('selectors' in item || 'message' in item)
+						)))
+			);
+		}
+
+		extractExpandedKeys(messages);
+
+		// Find duplicate expanded keys
+		for (const [keyPath, paths] of expandedKeyCounts.entries()) {
+			if (paths.length > 1) {
+				duplicateKeys.push({ key: keyPath, locations: paths });
+			}
+		}
+
+		if (duplicateKeys.length > 0) {
+			console.warn(
+				chalk.yellow(`[Check Messages] ${file} has duplicate expanded translation keys:`)
+			);
+			duplicateKeys.forEach(({ key, locations }) => {
+				console.log(chalk.white(`  - "${key}"`));
+				console.log(chalk.cyan(`    Appears ${locations.length} times`));
+			});
+			console.log(''); // Add spacing between files
+			hasWarnings = true;
+		}
+	} catch (error) {
+		console.error(chalk.red(`[Check Messages] Error parsing ${file}: ${error}`));
 		hasWarnings = true;
 	}
 }
