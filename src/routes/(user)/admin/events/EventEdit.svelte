@@ -15,7 +15,7 @@
 	import VideoInput from './subforms/VideoInput.svelte';
 	import ResultInput from './subforms/ResultInput.svelte';
 	import WebsiteInput from './subforms/WebsiteInput.svelte';
-	import TeamPlayersInput from './subforms/TeamPlayersInput.svelte';
+	import EventTeamPlayersInput from './subforms/EventTeamPlayersInput.svelte';
 	import OrganizerInput from './subforms/OrganizerInput.svelte';
 	import CasterInput from './subforms/CasterInput.svelte';
 	import type { EventResult } from '$lib/data/events';
@@ -603,7 +603,7 @@
 
 			<section class="mb-6 flex flex-col gap-4">
 				<h3 class="text-lg font-semibold">{m.teams_and_players()}</h3>
-				<TeamPlayersInput
+				<EventTeamPlayersInput
 					{teams}
 					{players}
 					{teamPlayers}
