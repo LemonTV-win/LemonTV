@@ -660,7 +660,9 @@ const players: PlayerImportData[] = [
 	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
 		<div class="w-full max-w-4xl rounded-lg bg-slate-800 p-6 shadow-xl">
 			<div class="mb-4 flex items-center justify-between">
-				<h3 class="text-lg font-semibold text-slate-200">Batch Import Players</h3>
+				<h3 class="text-lg font-semibold text-slate-200">
+					{m['editing.batch.batch_import_players']()}
+				</h3>
 				<button
 					type="button"
 					class="text-slate-400 hover:text-slate-200"
@@ -681,14 +683,14 @@ const players: PlayerImportData[] = [
 			<div class="mb-4">
 				<div class="mb-2 flex items-center justify-between">
 					<label class="block text-sm font-medium text-slate-300" for="jsonData">
-						Paste JSON data in PlayerImportData format:
+						{m['editing.batch.paste_json_label_players']()}
 					</label>
 					<button
 						type="button"
 						class="text-sm text-yellow-400 underline hover:text-yellow-300"
 						onclick={() => (showSchema = !showSchema)}
 					>
-						{showSchema ? 'Hide' : 'Show'} TypeScript Schema
+						{showSchema ? m['editing.batch.hide_schema']() : m['editing.batch.show_schema']()}
 					</button>
 				</div>
 
@@ -696,14 +698,14 @@ const players: PlayerImportData[] = [
 					<div class="mb-4 rounded-md border border-slate-600 bg-slate-900 p-4">
 						<div class="mb-2 flex items-center justify-between">
 							<h4 class="text-sm font-medium text-slate-200">
-								TypeScript Schema for LLM Conversion
+								{m['editing.batch.schema_title']()}
 							</h4>
 							<button
 								type="button"
 								class="text-xs text-yellow-400 underline hover:text-yellow-300"
 								onclick={copySchema}
 							>
-								Copy Schema
+								{m['editing.batch.copy_schema']()}
 							</button>
 						</div>
 						<div class="styled-scroll max-h-100 overflow-x-auto overflow-y-auto text-xs">
@@ -724,7 +726,7 @@ const players: PlayerImportData[] = [
 						<div
 							class="h-4 w-4 animate-spin rounded-full border-2 border-yellow-400 border-t-transparent"
 						></div>
-						<span>Parsing data...</span>
+						<span>{m['editing.batch.parsing_data']()}</span>
 					</div>
 				{/if}
 			</div>
@@ -737,14 +739,16 @@ const players: PlayerImportData[] = [
 
 			{#if parsedPlayers && parsedPlayers.type === 'error'}
 				<div class="mb-4 rounded-md bg-red-900/50 p-3 text-sm text-red-200">
-					<strong>Parsing Error:</strong>
+					<strong>{m['editing.batch.parsing_error']()}</strong>
 					{parsedPlayers.error}
 				</div>
 			{/if}
 
 			{#if parsedPlayers && parsedPlayers.type === 'success'}
 				<div class="mb-4 rounded-md border border-slate-600 bg-slate-900 p-4">
-					<h4 class="mb-3 text-sm font-medium text-slate-200">Parsed Players</h4>
+					<h4 class="mb-3 text-sm font-medium text-slate-200">
+						{m['editing.batch.parsed_players']()}
+					</h4>
 					<ParsedPlayersTable
 						players={parsedPlayers.data}
 						showDuplicateHighlighting={true}
@@ -766,9 +770,11 @@ const players: PlayerImportData[] = [
 					<div class="flex items-start gap-2">
 						<div class="mt-0.5 h-4 w-4 flex-shrink-0 rounded-full bg-red-500"></div>
 						<div class="flex-1">
-							<p class="mb-1 text-sm font-medium text-red-200">Duplicate issues detected</p>
+							<p class="mb-1 text-sm font-medium text-red-200">
+								{m['editing.batch.duplicate_issues_detected']()}
+							</p>
 							<p class="text-xs text-red-300">
-								Please resolve the duplicate issues highlighted in red above before importing.
+								{m['editing.batch.resolve_duplicates_message']()}
 							</p>
 
 							{#if parsedPlayers && parsedPlayers.type === 'success'}
@@ -777,7 +783,9 @@ const players: PlayerImportData[] = [
 								)}
 								{#if duplicatePlayers.length > 0}
 									<div class="mt-2 rounded border border-red-600 bg-red-900/30 p-2">
-										<p class="mb-1 text-xs font-medium text-red-200">Duplicate issues:</p>
+										<p class="mb-1 text-xs font-medium text-red-200">
+											{m['editing.batch.duplicate_issues']()}
+										</p>
 										<div class="styled-scroll max-h-32 overflow-y-auto">
 											<ul class="space-y-1 text-xs text-red-300">
 												{#each duplicatePlayers as player}
@@ -857,11 +865,11 @@ const players: PlayerImportData[] = [
 						disabled={isImporting || hasAnyDuplicates}
 					>
 						{#if isImporting}
-							Importing...
+							{m['editing.batch.importing']()}
 						{:else if hasAnyDuplicates}
-							Fix Duplicates First
+							{m['editing.batch.fix_duplicates_first']()}
 						{:else}
-							Import Players
+							{m['editing.batch.import_players']()}
 						{/if}
 					</button>
 				{/if}

@@ -378,7 +378,12 @@
 			"duplicate_slugs_in_players": "Slug trùng lặp trong người chơi mới:",
 			"duplicate_account_ids_in_players": "ID tài khoản trùng lặp trong người chơi mới:",
 			"duplicate_slugs": "Slug trùng lặp",
-			"duplicate_team_names": "Tên đội trùng lặp"
+			"duplicate_team_names": "Tên đội trùng lặp",
+			"batch_import_players": "Nhập người chơi hàng loạt",
+			"import_players": "Nhập người chơi",
+			"parsed_players": "Người chơi đã xử lý",
+			"paste_json_label_players": "Dán dữ liệu JSON theo định dạng PlayerImportData:",
+			"duplicate_issues": "Vấn đề trùng lặp:"
 		}
 	},
 	"table_name": "Tên bảng",

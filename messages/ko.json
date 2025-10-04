@@ -378,7 +378,12 @@
 			"duplicate_slugs_in_players": "새 플레이어의 중복 슬러그:",
 			"duplicate_account_ids_in_players": "새 플레이어의 중복 계정 ID:",
 			"duplicate_slugs": "중복 슬러그",
-			"duplicate_team_names": "중복 팀 이름"
+			"duplicate_team_names": "중복 팀 이름",
+			"batch_import_players": "플레이어 일괄 가져오기",
+			"import_players": "플레이어 가져오기",
+			"parsed_players": "파싱된 플레이어",
+			"paste_json_label_players": "PlayerImportData 형식의 JSON 데이터 붙여넣기:",
+			"duplicate_issues": "중복 문제:"
 		}
 	},
 	"table_name": "테이블 이름",
