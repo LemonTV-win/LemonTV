@@ -518,6 +518,17 @@
 
 							<!-- Add New Slogan -->
 							<div class="mt-3 flex gap-2">
+								<LanguageSelect
+									id={`slogan-lang`}
+									class="block w-1/3 rounded-md border border-slate-600 bg-slate-800 px-2 py-1 text-sm text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+									value={newSloganState[team.id]?.language || ''}
+									onchange={({ value }) => {
+										if (!newSloganState[team.id])
+											newSloganState[team.id] = { text: '', language: '' };
+										newSloganState[team.id].language = value || null;
+									}}
+									placeholder={m['select_language_optional']()}
+								/>
 								<input
 									type="text"
 									value={newSloganState[team.id]?.text || ''}
@@ -529,22 +540,7 @@
 									}}
 									class="flex-1 rounded-md border border-slate-600 bg-slate-800 px-2 py-1 text-sm text-white placeholder:text-slate-400 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 								/>
-								<select
-									value={newSloganState[team.id]?.language || ''}
-									class="rounded-md border border-slate-600 bg-slate-800 px-2 py-1 text-sm text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-									onchange={(e) => {
-										if (!newSloganState[team.id])
-											newSloganState[team.id] = { text: '', language: '' };
-										newSloganState[team.id].language =
-											(e.target as HTMLSelectElement).value || null;
-									}}
-								>
-									<option value="">{m['select_language_optional']()}</option>
-									<option value="en">English</option>
-									<option value="zh">中文</option>
-									<option value="ja">日本語</option>
-									<option value="ko">한국어</option>
-								</select>
+
 								<button
 									type="button"
 									class="rounded-md bg-yellow-500 px-3 py-1 text-sm font-medium text-black hover:bg-yellow-600 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
