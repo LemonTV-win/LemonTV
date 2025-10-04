@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { m } from '$lib/paraglide/messages';
 	import { locales } from '$lib/paraglide/runtime';
 	import { toLocaleTitleCase } from '$lib/utils/strings';
 
@@ -16,7 +17,7 @@
 		value = $bindable<string | null>(null),
 		id = undefined,
 		name = undefined,
-		placeholder = 'Select language',
+		placeholder = m['slogans.select_language'](), // TODO: Rename slogans.select_language to select_language
 		class: className = '',
 		languages = [...locales],
 		includeEmptyOption = true
