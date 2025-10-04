@@ -11,6 +11,7 @@
 		class?: string;
 		languages?: string[];
 		includeEmptyOption?: boolean;
+		onchange?: ({ value }: { value: string | null }) => void;
 	}
 
 	let {
@@ -20,7 +21,8 @@
 		placeholder = m['select_language'](), // TODO: Rename slogans.select_language to select_language
 		class: className = '',
 		languages = [...locales],
-		includeEmptyOption = true
+		includeEmptyOption = true,
+		onchange = undefined
 	}: Props = $props();
 
 	function getNativeLanguageName(code: string): string {
@@ -32,6 +34,10 @@
 			return code;
 		}
 	}
+
+	$effect(() => {
+		onchange?.({ value });
+	});
 </script>
 
 <select {id} {name} class={className} bind:value>
