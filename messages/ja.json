@@ -54,14 +54,6 @@
 			"cauchy_district": "コーシー街区",
 			"cosmite": "キスメット",
 			"ocarnus": "オルカヌス"
-		},
-		"stages": {
-			"format": {
-				"single": "シングルエリミネーション",
-				"double": "ダブルエリミネーション",
-				"swiss": "スイス式",
-				"round-robin": "総当たり"
-			}
 		}
 	},
 	"name": "名前",
@@ -108,6 +100,8 @@
 	"official": "公式",
 	"unofficial": "非公式",
 	"highlights": "ハイライト",
+	"view_score": "スコアを見る",
+	"dnp": "未参加",
 	"home": "ホーム",
 	"profile_settings": "プロフィール設定",
 	"spoiler_mode": "ネタバレ防止モード",
@@ -390,6 +384,7 @@
 	"history": "履歴",
 	"update_event": "イベントを更新",
 	"create_event": "イベントを作成",
+	"create_event_from": "過去イベントから作成...",
 	"official_event": "公式イベント",
 	"unofficial_event": "非公式イベント",
 	"description": "説明",
@@ -809,6 +804,14 @@
 				"ads_sens_2_5x": "ADS感度2.5x",
 				"ads_sens_4_0x": "ADS感度4.0x",
 				"no_settings_available": "設定が利用できません。このプレイヤーの設定をご存知でしたら、{linkStart}お問い合わせください{linkEnd}。"
+			}
+		},
+		"stages": {
+			"format": {
+				"single": "シングルエリミネーション",
+				"double": "ダブルエリミネーション",
+				"swiss": "スイス式",
+				"round-robin": "総当たり"
 			}
 		}
 	},
