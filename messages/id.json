@@ -483,7 +483,6 @@
 	"select_language": "Pilih bahasa",
 	"select_event_optional": "Pilih acara (opsional)",
 	"select_language_optional": "Pilih bahasa (opsional)",
-	"select_event_optional_alt": "Pilih acara (opsional)",
 	"score": "Skor",
 	"remove_team": "Hapus Tim",
 	"other_players": "Pemain lain",
@@ -826,7 +825,8 @@
 		"event_optional": "Acara (opsional)",
 		"event_id": "id-acara",
 		"add_slogan": "Tambah slogan",
-		"event_id_optional": "id-acara (opsional)"
+		"event_id_optional": "id-acara (opsional)",
+		"team_slogans": "Slogan Tim"
 	},
 	"donation": {
 		"banner_title": "🍋 Dukung LemonTV",

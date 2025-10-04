@@ -483,7 +483,6 @@
 	"select_language": "Sprache auswählen",
 	"select_event_optional": "Event auswählen (optional)",
 	"select_language_optional": "Sprache auswählen (optional)",
-	"select_event_optional_alt": "Event auswählen (optional)",
 	"score": "Punktzahl",
 	"remove_team": "Team entfernen",
 	"add_team": "Team hinzufügen",
@@ -832,7 +831,8 @@
 		"event_optional": "Event (optional)",
 		"event_id": "event-id",
 		"add_slogan": "Slogan hinzufügen",
-		"event_id_optional": "event-id (optional)"
+		"event_id_optional": "event-id (optional)",
+		"team_slogans": "Team-Slogans"
 	},
 	"donation": {
 		"banner_title": "🍋 LemonTV unterstützen",

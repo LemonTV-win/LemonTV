@@ -483,7 +483,6 @@
 	"select_language": "Chọn ngôn ngữ",
 	"select_event_optional": "Chọn sự kiện (tùy chọn)",
 	"select_language_optional": "Chọn ngôn ngữ (tùy chọn)",
-	"select_event_optional_alt": "Chọn sự kiện (tùy chọn)",
 	"score": "Điểm",
 	"remove_team": "Xóa đội",
 	"other_players": "Người chơi khác",
@@ -826,7 +825,8 @@
 		"event_optional": "Sự kiện (tùy chọn)",
 		"event_id": "id-sự kiện",
 		"add_slogan": "Thêm khẩu hiệu",
-		"event_id_optional": "id-sự kiện (tùy chọn)"
+		"event_id_optional": "id-sự kiện (tùy chọn)",
+		"team_slogans": "Khẩu hiệu đội"
 	},
 	"donation": {
 		"banner_title": "🍋 Ủng hộ LemonTV",

@@ -483,7 +483,6 @@
 	"select_language": "选择语言",
 	"select_event_optional": "选择赛事（可选）",
 	"select_language_optional": "选择语言（可选）",
-	"select_event_optional_alt": "选择赛事（可选）",
 	"score": "比分",
 	"remove_team": "移除队伍",
 	"add_team": "添加队伍",
@@ -826,7 +825,8 @@
 		"event_optional": "赛事（可选）",
 		"event_id": "赛事ID",
 		"add_slogan": "添加口号",
-		"event_id_optional": "赛事ID（可选）"
+		"event_id_optional": "赛事ID（可选）",
+		"team_slogans": "队伍口号"
 	},
 	"donation": {
 		"banner_title": "🍋 支持 LemonTV",

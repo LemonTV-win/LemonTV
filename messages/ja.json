@@ -420,7 +420,6 @@
 	"select_language": "言語を選択",
 	"select_event_optional": "イベントを選択（任意）",
 	"select_language_optional": "言語を選択（任意）",
-	"select_event_optional_alt": "イベントを選択（任意）",
 	"score": "スコア",
 	"remove_team": "チームを削除",
 	"add_team": "チームを追加",
@@ -826,7 +825,8 @@
 		"event_optional": "イベント（任意）",
 		"event_id": "イベントID",
 		"add_slogan": "スローガンを追加",
-		"event_id_optional": "イベントID（任意）"
+		"event_id_optional": "イベントID（任意）",
+		"team_slogans": "チームスローガン"
 	},
 	"donation": {
 		"banner_title": "🍋 LemonTVを支援してください",

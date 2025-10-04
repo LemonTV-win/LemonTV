@@ -483,7 +483,6 @@
 	"select_language": "選擇語言",
 	"select_event_optional": "選擇賽事（可選）",
 	"select_language_optional": "選擇語言（可選）",
-	"select_event_optional_alt": "選擇賽事（可選）",
 	"score": "分數",
 	"remove_team": "刪除隊伍",
 	"other_players": "其他選手",
@@ -826,7 +825,8 @@
 		"event_optional": "賽事（可選）",
 		"event_id": "賽事ID",
 		"add_slogan": "新增口號",
-		"event_id_optional": "賽事ID（可選）"
+		"event_id_optional": "賽事ID（可選）",
+		"team_slogans": "隊伍口號"
 	},
 	"donation": {
 		"banner_title": "🍋 支持 LemonTV",

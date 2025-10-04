@@ -610,7 +610,6 @@
 	"select_language": "Select language",
 	"select_event_optional": "Select event (optional)",
 	"select_language_optional": "Select language (optional)",
-	"select_event_optional_alt": "Select event (optional)",
 	"score": "Score",
 	"remove_team": "Remove Team",
 	"add_team": "Add Team",
@@ -839,6 +838,7 @@
 		"event_optional": "Event (optional)",
 		"event_id": "event-id",
 		"add_slogan": "Add slogan",
-		"event_id_optional": "event-id (optional)"
+		"event_id_optional": "event-id (optional)",
+		"team_slogans": "Team Slogans"
 	}
 }

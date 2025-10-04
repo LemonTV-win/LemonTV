@@ -480,7 +480,6 @@
 	"select_language": "언어 선택",
 	"select_event_optional": "이벤트 선택 (선택사항)",
 	"select_language_optional": "언어 선택 (선택사항)",
-	"select_event_optional_alt": "이벤트 선택 (선택사항)",
 	"score": "점수",
 	"remove_team": "팀 제거",
 	"add_team": "팀 추가",
@@ -826,7 +825,8 @@
 		"event_optional": "이벤트 (선택사항)",
 		"event_id": "이벤트ID",
 		"add_slogan": "슬로건 추가",
-		"event_id_optional": "이벤트ID (선택사항)"
+		"event_id_optional": "이벤트ID (선택사항)",
+		"team_slogans": "팀 슬로건"
 	},
 	"donation": {
 		"banner_title": "🍋 LemonTV를 응원해 주세요",
