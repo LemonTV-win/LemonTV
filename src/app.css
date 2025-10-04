@@ -13,6 +13,26 @@ body {
 	--color-win: #f59e0b;
 	--color-loss: #ef4444;
 	--color-draw: #6b7280;
+
+	--animate-marquee: marquee 10s linear infinite;
+
+	@keyframes marquee {
+		0% {
+			transform: translateX(0);
+		}
+		100% {
+			transform: translateX(-100%);
+		}
+	}
+
+	@keyframes marquee-scroll {
+		0% {
+			transform: translateX(0);
+		}
+		100% {
+			transform: translateX(-50%);
+		}
+	}
 }
 
 @layer components {
@@ -71,5 +91,14 @@ body {
 
 	.styled-scroll-both {
 		@apply [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb:hover]:bg-slate-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-800;
+	}
+
+	.marquee-container {
+		@apply absolute inset-0 flex items-center;
+	}
+
+	.marquee-content {
+		@apply flex items-center;
+		width: 200%; /* Ensure content is wide enough to scroll */
 	}
 }

@@ -46,6 +46,9 @@
 	let selectedIndex = $state(-1);
 	let listboxElement: HTMLDivElement | null = $state(null);
 	let isFocused = $state(false);
+	let isOverflowing = $state(false);
+	let secondaryEl: HTMLDivElement | null = $state(null);
+	let secondaryWidth = $state(0);
 	// Helper function to format display text using the provided display function
 	function formatDisplayText(item: Item): string {
 		return displayFunction(item);
@@ -71,6 +74,27 @@
 	// Reset selected index when items change
 	$effect(() => {
 		selectedIndex = -1;
+	});
+
+	// Check for text overflow when search value or input element changes
+	$effect(() => {
+		if (inputElement && search) {
+			// Use setTimeout to ensure DOM is updated
+			setTimeout(() => {
+				if (inputElement) {
+					isOverflowing = inputElement.scrollWidth > inputElement.clientWidth;
+				}
+			}, 0);
+		} else {
+			isOverflowing = false;
+		}
+	});
+
+	// Measure secondary text width for reserving space on the right
+	$effect(() => {
+		setTimeout(() => {
+			secondaryWidth = secondaryEl?.offsetWidth || 0;
+		}, 0);
 	});
 
 	function handleSelect(item: Item) {
@@ -203,6 +227,18 @@
 		};
 	});
 
+	// Recalculate measurements on resize
+	$effect(() => {
+		function handleResize() {
+			if (inputElement) {
+				isOverflowing = inputElement.scrollWidth > inputElement.clientWidth;
+			}
+			secondaryWidth = secondaryEl?.offsetWidth || 0;
+		}
+		window.addEventListener('resize', handleResize);
+		return () => window.removeEventListener('resize', handleResize);
+	});
+
 	let currentItems = $derived.by(() => {
 		const filtered = search ? items.filter((item) => matchesSearch(item, search)) : items;
 
@@ -222,13 +258,26 @@
 	let listboxId = $derived.by(() => `${id || 'combobox'}-listbox`);
 	let expanded = $derived.by(() => isOpen);
 	let hasValue = $derived.by(() => !!value);
+
+	function hasSecondaryText() {
+		if (!hasValue) return false;
+		if (!secondaryTextFunction) return false;
+		const selectedItem = getFlattenedItems().find((item) => item.id === value);
+		if (!selectedItem) return false;
+		return hasValue && secondaryTextFunction && secondaryTextFunction(selectedItem);
+	}
 </script>
 
 <div class="combobox relative">
 	{#if name}
 		<input type="hidden" {name} {value} />
 	{/if}
-	<div class="relative">
+	<div
+		class={[
+			'relative block w-full rounded-md border border-slate-700 bg-slate-800 text-white focus-within:ring-2 focus-within:ring-yellow-500 focus-within:outline-none disabled:cursor-not-allowed disabled:opacity-50',
+			className
+		]}
+	>
 		<input
 			{id}
 			bind:this={inputElement}
@@ -250,15 +299,37 @@
 			aria-haspopup="listbox"
 			aria-describedby={hasValue ? `${id || 'combobox'}-selected` : undefined}
 			class={[
-				'block w-full rounded-md border border-slate-700 bg-slate-800 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50',
-				className
+				'm-0 border-none bg-transparent p-0 focus:ring-0',
+				hasSecondaryText() && isOverflowing ? 'text-transparent caret-white' : ''
 			]}
 			title={value}
+			style={`padding-right: ${Math.max(secondaryWidth, 0) + 16}px`}
 		/>
+
+		{#if hasSecondaryText() && isOverflowing}
+			<!-- Marquee overlay (non-interactive) -->
+			<div class="pointer-events-none absolute inset-y-0 left-4 w-2/3 overflow-hidden px-4 py-2">
+				<div class="relative h-full" style={`margin-right: ${secondaryWidth + 8}px`}>
+					<div class="absolute inset-y-0 right-0 left-0">
+						<div class="flex w-[200%] animate-[marquee-scroll_8s_linear_infinite] items-center">
+							<span class="inline-block whitespace-nowrap">
+								{search}
+							</span>
+							<span class="ml-8 inline-block whitespace-nowrap">
+								{search}
+							</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		{/if}
 		{#if hasValue && secondaryTextFunction}
 			{@const selectedItem = getFlattenedItems().find((item) => item.id === value)}
 			{#if selectedItem}
-				<div class="absolute top-1/2 right-2 -translate-y-1/2 text-xs text-slate-400">
+				<div
+					bind:this={secondaryEl}
+					class="absolute top-1/2 right-2 -translate-y-1/2 text-xs text-slate-400"
+				>
 					{secondaryTextFunction(selectedItem)}
 				</div>
 			{/if}
