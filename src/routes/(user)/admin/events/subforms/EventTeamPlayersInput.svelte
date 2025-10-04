@@ -8,6 +8,7 @@
 	import type { Team, Player, GameAccount } from '$lib/server/db/schema';
 	import { SvelteSet } from 'svelte/reactivity';
 	import { isActive, isSubstitute, isCoaching } from '$lib/data/teams';
+	import LanguageSelect from '$lib/components/forms/LanguageSelect.svelte';
 
 	interface Slogan {
 		id?: number;
@@ -487,22 +488,20 @@
 						</div>
 
 						<!-- Slogans Section -->
-						<div class="border-b border-slate-700 pb-4">
-							<div class="mb-3">
-								<h5 class="text-sm font-medium text-slate-300">Team Slogans</h5>
-							</div>
+						<div class="border-b border-slate-700 px-4 py-4">
+							<h5 class="text-sm font-medium text-slate-300">{m['slogans.team_slogans']()}</h5>
 
 							<!-- Existing Slogans -->
 							{#if teamSlogansState[team.id] && teamSlogansState[team.id].length > 0}
 								<div class="space-y-2">
 									{#each teamSlogansState[team.id] as slogan, sloganIndex (sloganIndex)}
-										<div class="flex items-center gap-2 rounded-md bg-slate-700/50 p-2">
-											<div class="flex-1">
-												<div class="text-sm text-slate-200">{slogan.slogan}</div>
-												{#if slogan.language}
-													<div class="text-xs text-slate-400">{slogan.language}</div>
-												{/if}
-											</div>
+										<div
+											class="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded-md bg-slate-700/50 p-2"
+										>
+											{#if slogan.language}
+												<div class="text-xs text-slate-400">{slogan.language}</div>
+											{/if}
+											<div class="text-sm text-slate-200">{slogan.slogan}</div>
 											<button
 												type="button"
 												class="text-red-400 hover:text-red-300"
@@ -517,7 +516,7 @@
 							{/if}
 
 							<!-- Add New Slogan -->
-							<div class="mt-3 flex gap-2">
+							<div class="mt-1 flex gap-2">
 								<LanguageSelect
 									id={`slogan-lang`}
 									class="block w-1/3 rounded-md border border-slate-600 bg-slate-800 px-2 py-1 text-sm text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
