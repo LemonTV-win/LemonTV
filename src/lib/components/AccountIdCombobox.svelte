@@ -17,12 +17,8 @@
 		onchange?: (value: number) => void;
 	} = $props();
 
-	let inputValue = $state(value?.toString() || '');
+	let inputValue = $derived(value?.toString() || '');
 	let showDropdown = $state(false);
-
-	$effect(() => {
-		inputValue = value?.toString() || '';
-	});
 
 	function getFilteredOptions() {
 		const searchTerm = inputValue.toLowerCase();
