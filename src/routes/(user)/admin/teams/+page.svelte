@@ -535,5 +535,13 @@
 	}}
 	existingTeams={data.teams}
 	existingPlayers={data.players}
+	existingTeamPlayers={data.teamPlayers.map((tp) => ({
+		teamId: tp.teamId,
+		playerId: tp.playerId,
+		role: tp.role,
+		startedOn: tp.startedOn,
+		endedOn: tp.endedOn,
+		note: tp.note
+	}))}
 	events={data.adminEvents}
 />

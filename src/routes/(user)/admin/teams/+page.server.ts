@@ -7,8 +7,10 @@ import { createTeam, updateTeam, deleteTeam } from '$lib/server/data/teams';
 import { createPlayer } from '$lib/server/data/players';
 import type { Region } from '$lib/data/game';
 import { processImageURL } from '$lib/server/storage';
+import { formatSlug } from '$lib/utils/strings';
 import { checkPermissions } from '$lib/server/security/permission';
 import type { GameAccountRegion, GameAccountServer } from '$lib/data/players';
+import { eq } from 'drizzle-orm';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const teamsList = await db.select().from(table.team);
@@ -235,6 +237,7 @@ export const actions = {
 		const formData = await request.formData();
 		const teamsData = formData.get('teams') as string;
 		const eventId = formData.get('eventId') as string | null;
+		const mergeMode = (formData.get('merge') as string | null) || null;
 
 		if (!teamsData) {
 			return fail(400, {
@@ -250,6 +253,11 @@ export const actions = {
 				region?: string;
 				logo?: string;
 				aliases?: string[];
+				slogans?: Array<{
+					slogan: string;
+					language?: string | null;
+					eventId?: string | null;
+				}>;
 				players?: {
 					player: {
 						name: string;
@@ -284,10 +292,19 @@ export const actions = {
 			}>;
 
 			let createdCount = 0;
+			let mergedCount = 0;
 			let playersCreated = 0;
 
 			// Use a single transaction for all operations
 			await db.transaction(async (tx) => {
+				// Cache existing teams for merge lookups
+				const existingTeams = await tx.select().from(table.team);
+				const teamsBySlug = new Map<string, (typeof existingTeams)[number]>();
+				const teamsByName = new Map<string, (typeof existingTeams)[number]>();
+				for (const t of existingTeams) {
+					if (t.slug) teamsBySlug.set(t.slug, t);
+					if (t.name) teamsByName.set(t.name, t);
+				}
 				// First, create any new players that are needed
 				const existingPlayers = await tx.select().from(table.player);
 				const existingPlayerNames = new Set(existingPlayers.map((p) => p.name));
@@ -344,7 +361,7 @@ export const actions = {
 					}
 				}
 
-				// Now create teams with the proper player relationships using the transaction
+				// Now create or merge teams with the proper player relationships using the transaction
 				for (const teamData of teams) {
 					try {
 						// Convert the new player structure to the expected format
@@ -394,73 +411,229 @@ export const actions = {
 								};
 							}) || [];
 
-						const newTeamId = await createTeam(
-							{
-								name: teamData.name,
-								logo: teamData.logo || undefined,
-								region: teamData.region as Region | undefined,
-								slug: teamData.slug || undefined,
-								abbr: teamData.abbr || undefined,
-								aliases: teamData.aliases || [],
-								players: convertedPlayers
-							},
-							result.userId,
-							tx
-						);
-						createdCount++;
+						// Determine if we should merge into an existing team
+						const targetSlug = teamData.slug || formatSlug(teamData.name);
+						const mergeTarget = mergeMode
+							? teamsBySlug.get(targetSlug) || teamsByName.get(teamData.name)
+							: undefined;
 
-						// If an event is selected, always create eventTeam;
-						// add eventTeamPlayer entries only when there are players
-						if (eventId) {
-							// Add the team to the event with default entry/status
-							await tx.insert(table.eventTeam).values({
-								eventId,
-								teamId: newTeamId,
-								entry: 'open',
-								status: 'active'
-							});
+						let teamIdToUse: string;
+						if (mergeTarget) {
+							// MERGE: Add missing aliases, players, slogans; do not overwrite core fields
+							teamIdToUse = mergeTarget.id;
 
-							if (convertedPlayers.length > 0) {
-								// Map team roles to event team player roles
-								const toEventRole = (
-									role: 'active' | 'substitute' | 'former' | 'coach' | 'manager' | 'owner'
-								): 'main' | 'sub' | 'coach' | null => {
-									switch (role) {
-										case 'active':
-											return 'main';
-										case 'substitute':
-											return 'sub';
-										case 'coach':
-											return 'coach';
-										default:
-											return null; // skip non-participating roles
-									}
-								};
+							// Merge aliases
+							if (teamData.aliases?.length) {
+								const existingAliases = await tx
+									.select()
+									.from(table.teamAlias)
+									.where(eq(table.teamAlias.teamId, teamIdToUse));
+								const existingAliasSet = new Set(existingAliases.map((a) => a.alias));
+								const aliasesToAdd = teamData.aliases.filter((a) => a && !existingAliasSet.has(a));
+								if (aliasesToAdd.length) {
+									await tx
+										.insert(table.teamAlias)
+										.values(aliasesToAdd.map((alias) => ({ teamId: teamIdToUse, alias })));
+								}
+							}
 
-								const eventTeamPlayers = convertedPlayers.flatMap((player) => {
-									const eventRole = toEventRole(
-										player.role as
-											| 'active'
-											| 'substitute'
-											| 'former'
-											| 'coach'
-											| 'manager'
-											| 'owner'
+							// Merge players (avoid duplicates by playerId)
+							if (convertedPlayers.length) {
+								const existingTeamPlayers = await tx
+									.select()
+									.from(table.teamPlayer)
+									.where(eq(table.teamPlayer.teamId, teamIdToUse));
+								const existingPlayerIds = new Set(existingTeamPlayers.map((p) => p.playerId));
+								const teamPlayersToAdd = convertedPlayers.filter(
+									(p) => !existingPlayerIds.has(p.playerId)
+								);
+								if (teamPlayersToAdd.length) {
+									await tx.insert(table.teamPlayer).values(
+										teamPlayersToAdd.map((p) => ({
+											teamId: teamIdToUse,
+											playerId: p.playerId,
+											role: p.role,
+											startedOn: p.startedOn,
+											endedOn: p.endedOn,
+											note: p.note
+										}))
 									);
-									return eventRole
-										? [
-												{
-													eventId,
-													teamId: newTeamId,
-													playerId: player.playerId,
-													role: eventRole
-												}
-											]
-										: [];
+								}
+							}
+
+							// Merge slogans
+							if (teamData.slogans?.length) {
+								const existingSlogans = await tx
+									.select()
+									.from(table.teamSlogan)
+									.where(eq(table.teamSlogan.teamId, teamIdToUse));
+								const existingSloganSet = new Set(existingSlogans.map((s) => s.slogan));
+								const slogansToAdd = (
+									teamData.slogans as Array<{
+										slogan: string;
+										language?: string | null;
+										eventId?: string | null;
+									}>
+								)
+									.filter((s) => s.slogan?.trim())
+									.filter((s) => !existingSloganSet.has(s.slogan.trim()));
+								if (slogansToAdd.length) {
+									await tx.insert(table.teamSlogan).values(
+										slogansToAdd.map(
+											(s: {
+												slogan: string;
+												language?: string | null;
+												eventId?: string | null;
+											}) => ({
+												teamId: teamIdToUse,
+												slogan: s.slogan.trim(),
+												language: (s.language as any) ?? null,
+												eventId: s.eventId ?? null
+											})
+										)
+									);
+								}
+							}
+
+							// Merge into event associations
+							if (eventId) {
+								const existingEventTeam = await tx
+									.select()
+									.from(table.eventTeam)
+									.where(eq(table.eventTeam.eventId, eventId));
+								if (!existingEventTeam.find((et) => et.teamId === teamIdToUse)) {
+									await tx.insert(table.eventTeam).values({
+										eventId,
+										teamId: teamIdToUse,
+										entry: 'open',
+										status: 'active'
+									});
+								}
+
+								if (convertedPlayers.length > 0) {
+									const toEventRole = (
+										role: 'active' | 'substitute' | 'former' | 'coach' | 'manager' | 'owner'
+									): 'main' | 'sub' | 'coach' | null => {
+										switch (role) {
+											case 'active':
+												return 'main';
+											case 'substitute':
+												return 'sub';
+											case 'coach':
+												return 'coach';
+											default:
+												return null;
+										}
+									};
+
+									// Existing event team players for this team/event
+									const existingETP = await tx
+										.select()
+										.from(table.eventTeamPlayer)
+										.where(eq(table.eventTeamPlayer.eventId, eventId));
+									const existingETPSet = new Set(
+										existingETP.filter((p) => p.teamId === teamIdToUse).map((p) => p.playerId)
+									);
+
+									const eventTeamPlayers = convertedPlayers.flatMap((player) => {
+										const eventRole = toEventRole(
+											player.role as
+												| 'active'
+												| 'substitute'
+												| 'former'
+												| 'coach'
+												| 'manager'
+												| 'owner'
+										);
+										return eventRole && !existingETPSet.has(player.playerId)
+											? [
+													{
+														eventId,
+														teamId: teamIdToUse,
+														playerId: player.playerId,
+														role: eventRole
+													}
+												]
+											: [];
+									});
+
+									if (eventTeamPlayers.length > 0) {
+										await tx.insert(table.eventTeamPlayer).values(eventTeamPlayers);
+									}
+								}
+							}
+
+							mergedCount++;
+						} else {
+							// CREATE: No merge target, create a new team
+							const newTeamId = await createTeam(
+								{
+									name: teamData.name,
+									logo: teamData.logo || undefined,
+									region: teamData.region as Region | undefined,
+									slug: teamData.slug || undefined,
+									abbr: teamData.abbr || undefined,
+									aliases: teamData.aliases || [],
+									players: convertedPlayers
+								},
+								result.userId,
+								tx
+							);
+							createdCount++;
+
+							// If an event is selected, always create eventTeam;
+							// add eventTeamPlayer entries only when there are players
+							if (eventId) {
+								// Add the team to the event with default entry/status
+								await tx.insert(table.eventTeam).values({
+									eventId,
+									teamId: newTeamId,
+									entry: 'open',
+									status: 'active'
 								});
 
-								if (eventTeamPlayers.length > 0) {
-									await tx.insert(table.eventTeamPlayer).values(eventTeamPlayers);
+								if (convertedPlayers.length > 0) {
+									// Map team roles to event team player roles
+									const toEventRole = (
+										role: 'active' | 'substitute' | 'former' | 'coach' | 'manager' | 'owner'
+									): 'main' | 'sub' | 'coach' | null => {
+										switch (role) {
+											case 'active':
+												return 'main';
+											case 'substitute':
+												return 'sub';
+											case 'coach':
+												return 'coach';
+											default:
+												return null; // skip non-participating roles
+										}
+									};
+
+									const eventTeamPlayers = convertedPlayers.flatMap((player) => {
+										const eventRole = toEventRole(
+											player.role as
+												| 'active'
+												| 'substitute'
+												| 'former'
+												| 'coach'
+												| 'manager'
+												| 'owner'
+										);
+										return eventRole
+											? [
+													{
+														eventId,
+														teamId: newTeamId,
+														playerId: player.playerId,
+														role: eventRole
+													}
+												]
+											: [];
+									});
+
+									if (eventTeamPlayers.length > 0) {
+										await tx.insert(table.eventTeamPlayer).values(eventTeamPlayers);
+									}
 								}
 							}
 						}
@@ -476,7 +649,8 @@ export const actions = {
 			return {
 				success: true,
 				createdCount,
-				playersCreated
+				playersCreated,
+				mergedCount
 			};
 		} catch (e) {
 			console.error('Error in batch team creation:', e);

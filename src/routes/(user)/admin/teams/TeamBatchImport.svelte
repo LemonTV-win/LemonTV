@@ -41,6 +41,7 @@
 		onSuccess,
 		existingTeams,
 		existingPlayers,
+		existingTeamPlayers = [],
 		events = []
 	}: {
 		showModal: boolean;
@@ -58,6 +59,14 @@
 			slug: string;
 			gameAccounts?: Array<{ accountId: number; server: string }>;
 		}>;
+		existingTeamPlayers?: Array<{
+			teamId: string;
+			playerId: string;
+			role: string | null;
+			startedOn?: string | null;
+			endedOn?: string | null;
+			note?: string | null;
+		}>;
 		events?: Array<{
 			id: string;
 			name: string;
@@ -71,6 +80,7 @@
 	let isImporting = $state(false);
 	let showSchema = $state(false);
 	let selectedEventId = $state<string | null>(null);
+	let allowMergeOnSlugDuplicates = $state(false);
 
 	type ParsedTeams =
 		| {
@@ -235,6 +245,28 @@
 
 	let hasDuplicateSlugs = $derived(duplicateSlugs.length > 0);
 	let hasDuplicateTeamNames = $derived(duplicateTeamNames.length > 0);
+
+	// Separate slug duplicate types for better gating
+	let hasInternalSlugDuplicates = $derived.by(() => {
+		if (!parsedTeams || parsedTeams.type !== 'success') return false;
+		const slugCounts = new Map<string, number>();
+		parsedTeams.data.forEach((team) => {
+			const slug = team.slug || formatSlug(team.name);
+			slugCounts.set(slug, (slugCounts.get(slug) || 0) + 1);
+		});
+		for (const [, count] of slugCounts) {
+			if (count > 1) return true;
+		}
+		return false;
+	});
+
+	let hasExistingSlugConflicts = $derived.by(() => {
+		if (!parsedTeams || parsedTeams.type !== 'success') return false;
+		return parsedTeams.data.some((team) => {
+			const slug = team.slug || formatSlug(team.name);
+			return existingSlugs.has(slug);
+		});
+	});
 
 	// Get duplicate slug values for highlighting (including existing teams)
 	let duplicateSlugValues = $derived.by(() => {
@@ -572,6 +604,16 @@
 		hasDuplicateSlugs || hasDuplicateTeamNames || hasNewPlayerDuplicates
 	);
 
+	// When merge is enabled, only new player duplicates block proceeding
+	let hasBlockingDuplicates = $derived(
+		allowMergeOnSlugDuplicates ? hasNewPlayerDuplicates : hasAnyDuplicates
+	);
+
+	// Will proceed with merge (duplicates present but not blocking)
+	let willMerge = $derived(
+		allowMergeOnSlugDuplicates && hasAnyDuplicates && !hasBlockingDuplicates
+	);
+
 	const TYPESCRIPT_SCHEMA = `// TypeScript schema for team data
 interface TeamImportData {
   name: string;                    // Required: Team's display name
@@ -721,6 +763,9 @@ const teams: TeamImportData[] = [
 			// Send to server
 			const formData = new FormData();
 			formData.append('teams', JSON.stringify(parsedTeams.data));
+			if (allowMergeOnSlugDuplicates) {
+				formData.append('merge', 'slug');
+			}
 
 			// Add event ID if selected
 			if (selectedEventId) {
@@ -740,8 +785,17 @@ const teams: TeamImportData[] = [
 			} else if (result.type === 'success') {
 				// Close the dialog and show success message
 				handleClose();
-				const createdCount = result.data?.createdCount || 0;
-				onSuccess(`Successfully imported ${createdCount} teams`);
+				const createdCount = Number(result.data?.createdCount ?? 0);
+				const mergedCount = Number(result.data?.mergedCount ?? 0);
+				let msg = '';
+				if (createdCount > 0 && mergedCount > 0) {
+					msg = `Successfully created ${createdCount} teams and merged ${mergedCount} teams`;
+				} else if (mergedCount > 0) {
+					msg = `Successfully merged ${mergedCount} teams`;
+				} else {
+					msg = `Successfully imported ${createdCount} teams`;
+				}
+				onSuccess(msg);
 			} else {
 				importError = 'Unexpected response from server';
 			}
@@ -760,6 +814,7 @@ const teams: TeamImportData[] = [
 		parsedTeams = null;
 		showSchema = false;
 		selectedEventId = null;
+		allowMergeOnSlugDuplicates = false;
 		onClose();
 	}
 
@@ -971,6 +1026,112 @@ const teams: TeamImportData[] = [
 				</div>
 			{/if}
 
+			{#if parsedTeams && parsedTeams.type === 'success'}
+				{#if hasExistingSlugConflicts}
+					<div
+						class="mb-3 flex items-start gap-2 rounded-md border border-slate-700 bg-slate-900 p-3"
+					>
+						<input
+							id="mergeSlugConflicts"
+							type="checkbox"
+							bind:checked={allowMergeOnSlugDuplicates}
+							class="mt-1 h-4 w-4 rounded border-slate-600 bg-slate-800 text-yellow-500 focus:ring-yellow-500"
+						/>
+						<label for="mergeSlugConflicts" class="text-xs text-slate-300">
+							Merge teams with duplicate slugs into existing records
+						</label>
+					</div>
+				{/if}
+
+				{#if willMerge}
+					<div class="mb-4 rounded-md border border-yellow-700 bg-yellow-900/40 p-3">
+						<p class="mb-2 text-sm font-medium text-yellow-200">Merge preview</p>
+						<div
+							class="styled-scroll max-h-96 overflow-x-auto overflow-y-auto rounded-md border border-slate-700 bg-slate-900"
+						>
+							<table
+								class="w-full table-auto border-collapse border-y-2 border-gray-500 bg-gray-800"
+							>
+								<thead>
+									<tr class="border-b-2 border-gray-500 text-left text-sm text-gray-400">
+										<th class="px-4 py-1">Existing team</th>
+										<th class="px-4 py-1">Parsed name</th>
+										<th class="px-4 py-1">Parsed slug</th>
+										<th class="px-4 py-1">Existing members</th>
+										<th class="px-4 py-1">New members</th>
+									</tr>
+								</thead>
+								<tbody>
+									{#each parsedTeams.data as team}
+										{#if isDuplicateSlug(team) || isDuplicateTeamName(team)}
+											{@const targetExisting = isDuplicateSlug(team)
+												? existingTeams.find((t) => t.slug === (team.slug || formatSlug(team.name)))
+												: existingTeams.find((t) => t.name === team.name)}
+											{#if targetExisting}
+												<tr class="border-b-1 border-gray-500 bg-gray-800 px-4 py-2">
+													<td class="px-4 py-1 text-white">
+														<div class="flex flex-col">
+															<a
+																href="/teams/{targetExisting.id}"
+																target="_blank"
+																class="text-yellow-400 hover:text-yellow-300 hover:underline"
+																>{targetExisting.name}</a
+															>
+															<span class="font-mono text-xs text-slate-400"
+																>{targetExisting.slug}</span
+															>
+														</div>
+													</td>
+													<td class="px-4 py-1 text-white">{team.name}</td>
+													<td class="px-4 py-1 text-white">{team.slug || formatSlug(team.name)}</td>
+													<td class="px-4 py-1 text-gray-300">
+														<ul>
+															{#each existingTeamPlayers.filter((tp) => tp.teamId === targetExisting.id) as tp}
+																{@const player = existingPlayers.find((p) => p.id === tp.playerId)}
+																{#if player}
+																	<li
+																		class="flex items-center justify-between rounded bg-slate-800/80 px-2 py-1"
+																	>
+																		<span class="text-slate-200">{player.name}</span>
+																		<span class="text-slate-400">{tp.role || 'active'}</span>
+																	</li>
+																{/if}
+															{/each}
+														</ul>
+													</td>
+													<td class="px-4 py-1 text-gray-300">
+														<ul>
+															{#each team.players || [] as m}
+																{@const playerName = m.player.name}
+																{@const alreadyInTeam = existingTeamPlayers
+																	.filter((tp) => tp.teamId === targetExisting.id)
+																	.some(
+																		(tp) =>
+																			existingPlayers.find((p) => p.id === tp.playerId)?.name ===
+																			playerName
+																	)}
+																{#if !alreadyInTeam}
+																	<li
+																		class="flex items-center justify-between rounded bg-yellow-900/50 px-2 py-1"
+																	>
+																		<span class="text-yellow-200">{m.player.name}</span>
+																		<span class="text-yellow-300">{m.teamPlayer.role}</span>
+																	</li>
+																{/if}
+															{/each}
+														</ul>
+													</td>
+												</tr>
+											{/if}
+										{/if}
+									{/each}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				{/if}
+			{/if}
+
 			{#if parsedTeams && hasNewPlayersRequired}
 				<div class="mb-4 rounded-md border border-yellow-700 bg-yellow-900/50 p-4">
 					<h4 class="mb-3 text-sm font-medium text-yellow-200">
@@ -1021,7 +1182,7 @@ const teams: TeamImportData[] = [
 				</div>
 			{/if}
 
-			{#if parsedTeams && (hasDuplicateSlugs || hasDuplicateTeamNames || hasNewPlayerDuplicates)}
+			{#if parsedTeams && (hasDuplicateSlugs || hasDuplicateTeamNames ? !allowMergeOnSlugDuplicates : true) && (hasDuplicateSlugs || hasDuplicateTeamNames || hasNewPlayerDuplicates)}
 				<div class="mb-4 rounded-md border border-red-700 bg-red-900/50 p-3">
 					<div class="flex items-start gap-2">
 						<div class="mt-0.5 h-4 w-4 flex-shrink-0 rounded-full bg-red-500"></div>
@@ -1160,10 +1321,12 @@ const teams: TeamImportData[] = [
 						type="button"
 						class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600 disabled:opacity-50"
 						onclick={handleImportJson}
-						disabled={isImporting || hasAnyDuplicates}
+						disabled={isImporting || hasBlockingDuplicates}
 					>
 						{#if isImporting}
 							{m['editing.batch.importing']()}
+						{:else if willMerge}
+							Proceed with merge
 						{:else if hasAnyDuplicates}
 							{m['editing.batch.fix_duplicates_first']()}
 						{:else}
