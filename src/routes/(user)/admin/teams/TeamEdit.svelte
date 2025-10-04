@@ -6,7 +6,7 @@
 	import IconParkSolidAdd from '~icons/icon-park-solid/add';
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import ImageUpload from '$lib/components/ImageUpload.svelte';
-	import PlayerInput from '$lib/components/forms/PlayerInput.svelte';
+	import TeamPlayerInput from '$lib/components/forms/TeamPlayerInput.svelte';
 	import SloganInput from './subforms/SloganInput.svelte';
 	import { formatSlug } from '$lib/utils/strings';
 	import { SITE_CANONICAL_HOST } from '$lib/consts';
@@ -322,7 +322,7 @@
 				>
 			</div>
 			<div id="players-section" class="mt-2 rounded-lg border border-slate-700 bg-slate-800 p-4">
-				<PlayerInput {players} bind:selectedPlayers />
+				<TeamPlayerInput {players} bind:selectedPlayers />
 			</div>
 		</div>
 
