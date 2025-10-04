@@ -1,13 +1,14 @@
 <script lang="ts">
-	import type { Player } from '$lib/server/db/schema';
+	import type { GameAccount, Player } from '$lib/server/db/schema';
 	import { m } from '$lib/paraglide/messages';
 	import IconParkSolidAdd from '~icons/icon-park-solid/add';
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import Combobox from '$lib/components/Combobox.svelte';
 	import countryCodeToFlagEmoji from 'country-code-to-flag-emoji';
+	import { formatGameAccountID } from '$lib/data/players';
 
 	interface Props {
-		players: Player[];
+		players: (Player & { gameAccounts: GameAccount[] })[];
 		selectedPlayers?: Array<{
 			playerId: string;
 			role: string;
@@ -63,7 +64,8 @@
 						...p,
 						id: p.id,
 						name: p.name,
-						group: selectedPlayers.some((sp) => sp.playerId === p.id) ? 'team' : 'other'
+						group: selectedPlayers.some((sp) => sp.playerId === p.id) ? 'team' : 'other',
+						gameAccounts: p.gameAccounts
 					}))}
 					bind:value={newPlayer.playerId}
 					placeholder={m.search_players()}
@@ -82,6 +84,9 @@
 						);
 						// TODO: Search for gameAccounts, aliases, etc.
 						// || item.gameAccounts?.some((ga) => ga.currentName?.toLowerCase().includes(searchLower) || ga.accountId.toString().toLowerCase().includes(searchLower));
+					}}
+					secondaryTextFunction={(item) => {
+						return item.gameAccounts.map((ga) => formatGameAccountID(ga)).join(', ');
 					}}
 				/>
 			</div>

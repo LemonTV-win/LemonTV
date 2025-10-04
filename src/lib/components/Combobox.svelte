@@ -19,6 +19,7 @@
 		name = '',
 		onChange,
 		displayFunction = (item: Item) => item.name,
+		secondaryTextFunction,
 		filterFunction = (item: Item, searchTerm: string) => {
 			if (!searchTerm) return true;
 			const searchLower = searchTerm.toLowerCase();
@@ -35,6 +36,7 @@
 		name?: string;
 		onChange?: (item: { id: string; name: string }) => void;
 		displayFunction?: (item: Item) => string;
+		secondaryTextFunction?: (item: Item) => string;
 		filterFunction?: (item: Item, searchTerm: string) => boolean;
 	} = $props();
 
@@ -226,30 +228,42 @@
 	{#if name}
 		<input type="hidden" {name} {value} />
 	{/if}
-	<input
-		{id}
-		bind:this={inputElement}
-		type="text"
-		value={search}
-		{placeholder}
-		{disabled}
-		oninput={handleInput}
-		onfocus={handleFocus}
-		onblur={handleBlur}
-		onkeydown={handleKeydown}
-		role="combobox"
-		aria-expanded={expanded}
-		aria-autocomplete="list"
-		aria-controls={listboxId}
-		aria-activedescendant={getSelectedItem() ? `${listboxId}-${getSelectedItem()?.id}` : undefined}
-		aria-haspopup="listbox"
-		aria-describedby={hasValue ? `${id || 'combobox'}-selected` : undefined}
-		class={[
-			'block w-full rounded-md border border-slate-700 bg-slate-800 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50',
-			className
-		]}
-		title={value}
-	/>
+	<div class="relative">
+		<input
+			{id}
+			bind:this={inputElement}
+			type="text"
+			value={search}
+			{placeholder}
+			{disabled}
+			oninput={handleInput}
+			onfocus={handleFocus}
+			onblur={handleBlur}
+			onkeydown={handleKeydown}
+			role="combobox"
+			aria-expanded={expanded}
+			aria-autocomplete="list"
+			aria-controls={listboxId}
+			aria-activedescendant={getSelectedItem()
+				? `${listboxId}-${getSelectedItem()?.id}`
+				: undefined}
+			aria-haspopup="listbox"
+			aria-describedby={hasValue ? `${id || 'combobox'}-selected` : undefined}
+			class={[
+				'block w-full rounded-md border border-slate-700 bg-slate-800 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50',
+				className
+			]}
+			title={value}
+		/>
+		{#if hasValue && secondaryTextFunction}
+			{@const selectedItem = getFlattenedItems().find((item) => item.id === value)}
+			{#if selectedItem}
+				<div class="absolute top-1/2 right-2 -translate-y-1/2 text-xs text-slate-400">
+					{secondaryTextFunction(selectedItem)}
+				</div>
+			{/if}
+		{/if}
+	</div>
 
 	{#if hasValue}
 		<div id="{id || 'combobox'}-selected" class="sr-only">
@@ -266,7 +280,7 @@
 			id={listboxId}
 			role="listbox"
 			aria-label="Options"
-			class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-slate-700 bg-slate-800 py-1 shadow-lg"
+			class="styled-scroll absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-slate-700 bg-slate-800 py-1 shadow-lg"
 		>
 			{#each currentItems as group (group.id)}
 				{#if group.items && group.items.length > 0}
@@ -288,7 +302,14 @@
 								: ''}"
 							onmousedown={() => handleSelect(item)}
 						>
-							{formatDisplayText(item)}
+							<div class="flex flex-col">
+								<span>
+									{formatDisplayText(item)}
+								</span>
+								{#if secondaryTextFunction}
+									<span class="text-xs text-slate-400">{secondaryTextFunction(item)}</span>
+								{/if}
+							</div>
 						</button>
 					{/each}
 					{#if group.label && !group.id.endsWith('last')}
