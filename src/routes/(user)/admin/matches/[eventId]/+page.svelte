@@ -373,7 +373,7 @@
 			{ id: string; name: string; logo?: string | null } | null,
 			{ id: string; name: string; logo?: string | null } | null
 		];
-		rosters: [
+		roasters: [
 			{
 				player: GameParticipant;
 				job: 'main' | 'sub' | 'coach';
@@ -437,7 +437,7 @@
 				: undefined,
 			matchId: match.id,
 			teams: [match.matchTeams[0].team, match.matchTeams[1].team],
-			rosters: [
+			roasters: [
 				match.matchTeams[0]?.team?.id
 					? (data.teamRosters.get(match.matchTeams[0].team.id) ?? [])
 					: [],

@@ -244,16 +244,16 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 				image: event.image ? await processImageURL(event.image) : null
 			};
 		})(),
-		// Process the raw roster data into the nested map structure
+		// Process the raw roaster data into the nested map structure
 		(async () => {
-			const rosters = new Map<string, { player: Player; job: string }[]>();
+			const roasters = new Map<string, { player: Player; job: string }[]>();
 			for (const row of teamRostersRaw) {
 				if (!row.teamId || !row.player) continue;
 
-				if (!rosters.has(row.teamId)) {
-					rosters.set(row.teamId, []);
+				if (!roasters.has(row.teamId)) {
+					roasters.set(row.teamId, []);
 				}
-				rosters.get(row.teamId)!.push({
+				roasters.get(row.teamId)!.push({
 					// Assuming your PlayerData structure matches this
 					player: {
 						id: row.player.id,
@@ -269,7 +269,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 					job: row.role
 				});
 			}
-			return rosters;
+			return roasters;
 		})()
 	]);
 

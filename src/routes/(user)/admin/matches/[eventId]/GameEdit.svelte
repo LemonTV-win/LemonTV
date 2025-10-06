@@ -45,7 +45,7 @@
 				{ id: string; name: string; logo?: string | null } | null,
 				{ id: string; name: string; logo?: string | null } | null
 			];
-			rosters: [
+			roasters: [
 				{
 					player: GameParticipant;
 					job: 'main' | 'sub' | 'coach';
@@ -82,7 +82,7 @@
 
 	$inspect('[admin/matches/GameEdit] game', data?.game);
 	$inspect('[admin/matches/GameEdit] teams', data?.teams);
-	$inspect('[admin/matches/GameEdit] rosters', data?.rosters);
+	$inspect('[admin/matches/GameEdit] roasters', data?.roasters);
 	$inspect('[admin/matches/GameEdit] match', data?.match);
 
 	// Calculate the next map to be played based on match's map pick order
@@ -225,8 +225,8 @@
 		}
 	}
 
-	function rostersToGameAccountIDMap(
-		rosters: {
+	function roastersToGameAccountIDMap(
+		roasters: {
 			player: GameParticipant;
 			job: 'main' | 'sub' | 'coach';
 		}[]
@@ -238,17 +238,17 @@
 				job: 'main' | 'sub' | 'coach';
 			}
 		>();
-		for (const roster of rosters) {
-			for (const account of roster.player.gameAccounts) {
-				map.set(account.accountId, roster);
+		for (const roaster of roasters) {
+			for (const account of roaster.player.gameAccounts) {
+				map.set(account.accountId, roaster);
 			}
 		}
 		return map;
 	}
 
 	let compiledGameAccountIDMaps = $derived([
-		rostersToGameAccountIDMap(data?.rosters?.[0] ?? []),
-		rostersToGameAccountIDMap(data?.rosters?.[1] ?? [])
+		roastersToGameAccountIDMap(data?.roasters?.[0] ?? []),
+		roastersToGameAccountIDMap(data?.roasters?.[1] ?? [])
 	]);
 
 	$inspect('[admin/matches/GameEdit] compiledGameAccountIDMaps', compiledGameAccountIDMaps);
@@ -415,16 +415,16 @@
 							value={ps.accountId ?? ''}
 							options={new Map(
 								Array.from(compiledGameAccountIDMaps[team === 'A' ? 0 : 1].entries()).map(
-									([accountId, roster]) => {
+									([accountId, roaster]) => {
 										// Find the specific game account to get the server
-										const account = roster.player.gameAccounts.find(
+										const account = roaster.player.gameAccounts.find(
 											(a) => a.accountId === accountId
 										);
 										const serverName =
 											account?.server === 'Strinova' ? m.strinova_server() : m.calabiyau_server();
 										return [
 											accountId,
-											`${roster.player.name} ${roster.player.aliases.map((a) => `(${a})`).join(' ')} (${serverName})`
+											`${roaster.player.name} ${roaster.player.aliases.map((a) => `(${a})`).join(' ')} (${serverName})`
 										];
 									}
 								)
@@ -434,9 +434,9 @@
 							onchange={(value) => {
 								ps.accountId = value;
 								if (!ps.player) {
-									const roster = compiledGameAccountIDMaps[team === 'A' ? 0 : 1].get(value);
-									if (roster) {
-										const account = roster.player.gameAccounts.find((a) => a.accountId === value);
+									const roaster = compiledGameAccountIDMaps[team === 'A' ? 0 : 1].get(value);
+									if (roaster) {
+										const account = roaster.player.gameAccounts.find((a) => a.accountId === value);
 										if (account) {
 											ps.player = account.currentName;
 										}
