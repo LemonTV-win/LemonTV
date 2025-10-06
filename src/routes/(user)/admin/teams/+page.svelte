@@ -230,12 +230,12 @@
 </script>
 
 <main class="mx-auto max-w-screen-lg px-4">
-	<div class="mb-6 flex items-center justify-between">
-		<div class="flex items-center gap-4">
+	<div class="mb-4 flex flex-wrap items-center justify-between gap-4">
+		<div class="flex w-full items-center gap-4 sm:w-auto">
 			<h1 class="text-2xl font-bold">{m.teams()}</h1>
 			<ContentActionLink href="/teams" type="view" />
 		</div>
-		<div class="flex gap-2">
+		<div class="mt-2 ml-auto flex flex-wrap justify-end gap-2 sm:mt-0 sm:flex-nowrap">
 			{#if ['admin', 'editor'].some((role) => data.user?.roles?.includes(role))}
 				<button
 					class="rounded-md bg-slate-700 px-4 py-2 font-medium text-white hover:bg-slate-600"
