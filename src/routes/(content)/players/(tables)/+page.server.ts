@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { getPlayersAgents } from '$lib/server/data/players';
+import { buildNationalities, getPlayersAgents } from '$lib/server/data/players';
 import { CHARACTERS } from '$lib/data/game';
 import { processImageURL } from '$lib/server/storage';
 import { db } from '$lib/server/db';
@@ -235,12 +235,7 @@ export const load: PageServerLoad = async ({ locals: { user }, url }) => {
 				eventsCount: stats.eventsCount,
 				gameAccounts: player.gameAccounts,
 				aliases: player.aliases.map((a) => a.alias),
-				nationalities: [
-					...new Set([
-						player.nationality,
-						...player.additionalNationalities.map((n) => n.nationality)
-					])
-				].filter(Boolean) as TCountryCode[],
+				nationalities: buildNationalities(player.nationality, player.additionalNationalities),
 				teams: player.teamMemberships.map((t) => t.team)
 			};
 		}),

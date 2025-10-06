@@ -2,6 +2,7 @@ import type { PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
 import type { Character } from '$lib/data/game';
 import { processImageURL } from '$lib/server/storage';
+import { buildNationalities } from '$lib/server/data/players';
 
 export const load: PageServerLoad = async () => {
 	// Fetch all player character stats from the database
@@ -67,12 +68,7 @@ export const load: PageServerLoad = async () => {
 		allPlayers: await Promise.all(
 			allPlayers.map(async (player) => ({
 				...player,
-				nationalities: [
-					...new Set([
-						player.nationality,
-						...player.additionalNationalities.map(({ nationality }) => nationality)
-					])
-				].filter((nationality) => nationality !== null),
+				nationalities: buildNationalities(player.nationality, player.additionalNationalities),
 				avatar: uniqueImageUrls.get(player.avatar),
 				teams: player.teamMemberships.map((team) => ({
 					id: team.team.id,

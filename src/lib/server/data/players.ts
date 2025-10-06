@@ -1755,27 +1755,67 @@ export async function getPlayerSuperstringPower(
 	return result;
 }
 
-// Apply nationality normalization to player data
-export function normalizePlayer<
-	T extends {
-		nationality: TCountryCode | null;
-		additionalNationalities: { nationality: TCountryCode }[];
+// #region -- Nationalities --
+
+export type Nationality = TCountryCode;
+
+export type PlayerNationalities = Pick<schema.Player, 'nationality'> & {
+	additionalNationalities: Pick<schema.PlayerAdditionalNationality, 'nationality'>[];
+};
+
+export function buildNationalities(
+	nationality: Nationality | null,
+	additionalNationalities: { nationality: Nationality }[]
+): Nationality[] {
+	const combined: Nationality[] = [
+		nationality,
+		...additionalNationalities.map((a) => a.nationality)
+	].filter((n) => n !== null);
+
+	return [...new Set(combined)];
+}
+
+export type PlayerPackedWithNationalities<T extends PlayerNationalities> = Omit<
+	T,
+	'additionalNationalities' | 'nationality'
+> & {
+	nationalities: TCountryCode[];
+};
+
+export function packPlayerNationalities<P extends PlayerNationalities>(
+	player: P
+): PlayerPackedWithNationalities<P> {
+	const { nationality, additionalNationalities, ...rest } = player;
+	return {
+		...rest,
+		nationalities: buildNationalities(nationality, additionalNationalities)
+	};
+}
+
+// #endregion
+
+export type NormalizedPlayer<
+	T extends PlayerNationalities & {
 		aliases: {
 			alias: string;
 		}[];
 	}
->(
-	player: T
-): Omit<T, 'nationalities' | 'aliases'> & {
-	nationalities: TCountryCode[];
+> = Omit<T, 'nationality' | 'additionalNationalities' | 'aliases'> & {
+	nationalities: Nationality[];
 	aliases: string[];
-} {
+};
+// Apply nationality normalization to player data
+export function normalizePlayer<
+	T extends PlayerNationalities & {
+		aliases: {
+			alias: string;
+		}[];
+	}
+>(player: T): NormalizedPlayer<T> {
+	const { aliases, ...rest } = player;
+
 	return {
-		...player,
-		nationalities: [
-			player.nationality,
-			...player.additionalNationalities.map((a) => a.nationality)
-		].filter((n) => n !== null),
+		...packPlayerNationalities(rest as PlayerNationalities),
 		aliases: player.aliases.map((a) => a.alias)
-	};
+	} as NormalizedPlayer<T>;
 }

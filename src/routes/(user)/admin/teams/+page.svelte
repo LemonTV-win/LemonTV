@@ -388,7 +388,7 @@
 										{@const playerObj = data.players?.find((p) => p.id === player.playerId)}
 										{#if playerObj}
 											<li>
-												<NationalityFlag nationality={playerObj.nationality} />
+												<NationalityFlag nationality={playerObj.nationalities[0]} />
 												<a
 													href="/players/{playerObj?.slug}"
 													class="text-sm text-white hover:text-yellow-400"

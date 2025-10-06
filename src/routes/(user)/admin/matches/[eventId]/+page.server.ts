@@ -10,6 +10,7 @@ import type { ActionData, Actions, PageServerLoad, RequestEvent } from './$types
 import { dev } from '$app/environment';
 import { checkPermissions } from '$lib/server/security/permission';
 import type { GameAccount, GameAccountRegion, GameAccountServer, Player } from '$lib/data/players';
+import { buildNationalities } from '$lib/server/data/players';
 
 type MapAction = 'ban' | 'pick' | 'decider' | 'set' | null;
 
@@ -259,10 +260,10 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 						slug: row.player.slug,
 						name: row.player.name,
 						aliases: row.player.aliases.map((a) => a.alias),
-						nationalities: [
+						nationalities: buildNationalities(
 							row.player.nationality,
-							...row.player.additionalNationalities.map((n) => n.nationality)
-						] as TCountryCode[],
+							row.player.additionalNationalities
+						),
 						gameAccounts: row.player.gameAccounts as GameAccount[]
 					},
 					job: row.role
