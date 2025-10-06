@@ -6,9 +6,10 @@
 	import Combobox from '$lib/components/Combobox.svelte';
 	import countryCodeToFlagEmoji from 'country-code-to-flag-emoji';
 	import { formatGameAccountID } from '$lib/data/players';
+	import type { TCountryCode } from 'countries-list';
 
 	interface Props {
-		players: (Player & { gameAccounts: GameAccount[] })[];
+		players: (Player & { gameAccounts: GameAccount[]; nationalities: TCountryCode[] })[];
 		selectedPlayers?: Array<{
 			playerId: string;
 			role: string;
@@ -86,7 +87,7 @@
 						// || item.gameAccounts?.some((ga) => ga.currentName?.toLowerCase().includes(searchLower) || ga.accountId.toString().toLowerCase().includes(searchLower));
 					}}
 					secondaryTextFunction={(item) => {
-						return item.gameAccounts.map((ga) => formatGameAccountID(ga)).join(', ');
+						return `${countryCodeToFlagEmoji(item.nationalities[0] ?? 'ZZ')} ${item.gameAccounts.map((ga) => formatGameAccountID(ga)).join(', ')}`;
 					}}
 				/>
 			</div>

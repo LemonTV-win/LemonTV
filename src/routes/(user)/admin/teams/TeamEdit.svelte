@@ -10,10 +10,17 @@
 	import SloganInput from './subforms/SloganInput.svelte';
 	import { formatSlug } from '$lib/utils/strings';
 	import { SITE_CANONICAL_HOST } from '$lib/consts';
+	import type { TCountryCode } from 'countries-list';
 
 	let { team, players, teamPlayers, teamAliases, teamSlogans, onCancel, events } = $props<{
 		team: Partial<Team>;
-		players: Player[];
+		players: {
+			id: string;
+			name: string;
+			slug: string;
+			avatar: string | null;
+			nationalities: TCountryCode[];
+		}[];
 		teamPlayers: TeamPlayer[];
 		teamAliases: TeamAlias[];
 		teamSlogans?: Array<{

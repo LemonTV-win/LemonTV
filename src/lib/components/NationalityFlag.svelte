@@ -8,7 +8,7 @@
 		showLabel = false,
 		class: className = ''
 	}: {
-		nationality: string | null;
+		nationality: string | null | undefined;
 		showLabel?: boolean;
 		class?: string;
 	} = $props();

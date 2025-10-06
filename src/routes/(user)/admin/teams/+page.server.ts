@@ -4,7 +4,7 @@ import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { getAdminEventSummaries } from '$lib/server/data/events';
 import { createTeam, updateTeam, deleteTeam } from '$lib/server/data/teams';
-import { createPlayer } from '$lib/server/data/players';
+import { createPlayer, packPlayerNationalities } from '$lib/server/data/players';
 import type { Region } from '$lib/data/game';
 import { processImageURL } from '$lib/server/storage';
 import { formatSlug } from '$lib/utils/strings';
@@ -18,13 +18,20 @@ export const load: PageServerLoad = async ({ locals }) => {
 	const teamAliases = await db.select().from(table.teamAlias);
 	const teamSlogans = await db.select().from(table.teamSlogan);
 	const players = await db.query.player.findMany({
-		// TODO:
-		// columns: {
-		// 	id: true,
-		// 	name: true,
-		// 	slug: true
-		// },
+		columns: {
+			id: true,
+			name: true,
+			slug: true,
+			avatar: true,
+			userId: true,
+			nationality: true
+		},
 		with: {
+			additionalNationalities: {
+				columns: {
+					nationality: true
+				}
+			},
 			gameAccounts: {
 				columns: {
 					accountId: true,
@@ -57,6 +64,9 @@ export const load: PageServerLoad = async ({ locals }) => {
 		logoURL: team.logo ? logoUrlMap.get(team.logo) || null : null
 	}));
 
+	// Transform players to include nationalities array
+	const playersWithNationalities = players.map(packPlayerNationalities);
+
 	// Minimal admin events: id, name, date, imageURL (processed)
 	const adminEvents = await getAdminEventSummaries();
 
@@ -65,7 +75,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 		teamPlayers,
 		teamAliases,
 		teamSlogans,
-		players,
+		players: playersWithNationalities,
 		adminEvents,
 		user: locals.user
 	};
