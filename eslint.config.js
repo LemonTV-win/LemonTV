@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import ts from 'typescript-eslint';
 import svelteConfig from './svelte.config.js';
 import lemonI18n from './tools/eslint-plugin-lemon-i18n/index.ts';
+import noEventTarget from './tools/eslint-plugin-no-event-target/index.ts';
 
 const gitignorePath = fileURLToPath(new URL('./.gitignore', import.meta.url));
 
@@ -119,6 +120,14 @@ export default ts.config(
 					translateFunctions: ['t', 'm.*']
 				}
 			]
+		}
+	},
+	{
+		plugins: {
+			'no-event-target': noEventTarget
+		},
+		rules: {
+			'no-event-target/no-event-target': 'warn'
 		}
 	}
 );

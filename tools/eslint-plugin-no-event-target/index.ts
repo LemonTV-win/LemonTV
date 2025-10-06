@@ -1,8 +1,8 @@
 import type { Rule } from 'eslint';
-import noUntranslatedText from './no-untranslated-text.ts';
+import noEventTarget from './no-event-target.ts';
 
 export const rules: Record<string, Rule.RuleModule> = {
-	'no-untranslated-text': noUntranslatedText
+	'no-event-target': noEventTarget
 };
 
 export default { rules } as const;
