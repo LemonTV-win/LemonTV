@@ -21,6 +21,7 @@
 	import type { EventResult } from '$lib/data/events';
 	import type { TCountryCode } from 'countries-list';
 	import { SITE_CANONICAL_HOST } from '$lib/consts';
+	import type { Nationality } from '$lib/server/data/players';
 
 	let {
 		event,
@@ -56,7 +57,9 @@
 		organizers: Organizer[];
 		eventOrganizers: EventOrganizer[];
 		teams: Team[];
-		players: (Player & { gameAccounts: GameAccount[] })[];
+		players: (Omit<Player, 'nationality'> & { gameAccounts: GameAccount[] } & {
+			nationalities: Nationality[];
+		})[];
 		teamPlayers: Array<{
 			teamId: string;
 			playerId: string;
@@ -637,7 +640,7 @@
 				<CasterInput
 					players={players.map((p) => ({
 						...p,
-						nationalities: (p.nationality ? [p.nationality] : []) as TCountryCode[],
+						nationalities: p.nationalities,
 						gameAccounts: [],
 						avatar: p.avatar || undefined,
 						aliases: []

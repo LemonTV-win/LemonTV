@@ -9,6 +9,9 @@
 	import { SvelteSet } from 'svelte/reactivity';
 	import { isActive, isSubstitute, isCoaching } from '$lib/data/teams';
 	import LanguageSelect from '$lib/components/forms/LanguageSelect.svelte';
+	import countryCodeToFlagEmoji from 'country-code-to-flag-emoji';
+	import type { Nationality } from '$lib/server/data/players';
+	import { formatGameAccountID } from '$lib/data/players';
 
 	interface Slogan {
 		id?: number;
@@ -20,7 +23,9 @@
 
 	interface Props {
 		teams: Team[];
-		players: (Player & { gameAccounts: GameAccount[] })[];
+		players: (Omit<Player, 'nationality'> & { gameAccounts: GameAccount[] } & {
+			nationalities: Nationality[];
+		})[];
 		selectedTeams: string[];
 		eventTeamPlayers: Array<{
 			teamId: string;
@@ -564,19 +569,17 @@
 											</label>
 											<div class="mt-1">
 												<Combobox
-													items={(() => {
-														const filteredPlayers = players.map((p) => ({
-															id: p.id,
-															name: p.name,
-															gameAccounts: p.gameAccounts || [],
-															group: eventTeamPlayers.some(
-																(tp) => tp.teamId === team.id && tp.playerId === p.id
-															)
-																? 'team'
-																: 'other'
-														}));
-														return filteredPlayers;
-													})()}
+													items={players.map((p) => ({
+														id: p.id,
+														name: p.name,
+														gameAccounts: p.gameAccounts || [],
+														group: eventTeamPlayers.some(
+															(tp) => tp.teamId === team.id && tp.playerId === p.id
+														)
+															? 'team'
+															: 'other',
+														nationalities: p.nationalities
+													}))}
 													bind:value={teamPlayer.playerId}
 													placeholder={m.search_players()}
 													groups={[
@@ -585,6 +588,9 @@
 													]}
 													disabled={false}
 													class="px-2 py-1 text-sm"
+													secondaryTextFunction={(item) => {
+														return `${countryCodeToFlagEmoji(item.nationalities[0] ?? 'ZZ')} ${item.gameAccounts.map((ga) => formatGameAccountID(ga)).join(', ')}`;
+													}}
 												/>
 												{#if teamPlayer.playerId}
 													{#if getPlayerValidationStatus(team.id, teamPlayer.playerId)}

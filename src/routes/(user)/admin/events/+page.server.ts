@@ -17,6 +17,7 @@ import {
 	updateEventTeamPlayers,
 	updateEventCasters
 } from '$lib/server/data/events';
+import { packPlayerNationalities } from '$lib/server/data/players';
 import type { Region } from '$lib/data/game';
 import { checkPermissions } from '$lib/server/security/permission';
 
@@ -43,40 +44,39 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 			withTimer('getEventOrganizers', () => db.select().from(table.eventOrganizer))(),
 			withTimer('getTeams', () => db.select().from(table.team))(),
 			withTimer('getPlayers', () =>
-				db
-					.select({
-						player: table.player,
-						gameAccount: table.gameAccount
-					})
-					.from(table.player)
-					.leftJoin(table.gameAccount, eq(table.player.id, table.gameAccount.playerId))
+				db.query.player.findMany({
+					columns: {
+						id: true,
+						name: true,
+						slug: true,
+						avatar: true,
+						userId: true,
+						nationality: true
+					},
+					with: {
+						additionalNationalities: {
+							columns: {
+								nationality: true
+							}
+						},
+						gameAccounts: {
+							columns: {
+								playerId: true,
+								server: true,
+								accountId: true,
+								currentName: true,
+								region: true
+							}
+						}
+					}
+				})
 			)(),
 			withTimer('getTeamPlayers', () => db.select().from(table.teamPlayer))(),
 			withTimer('getTeamSlogans', () => db.select().from(table.teamSlogan))()
 		]);
 
-	// Process players with game accounts
-	const processedPlayers = players.reduce(
-		(acc, row) => {
-			const existingPlayer = acc.find((p) => p.id === row.player.id);
-			if (existingPlayer) {
-				if (row.gameAccount) {
-					existingPlayer.gameAccounts.push(row.gameAccount);
-				}
-			} else {
-				acc.push({
-					...row.player,
-					gameAccounts: row.gameAccount ? [row.gameAccount] : []
-				});
-			}
-			return acc;
-		},
-		[] as Array<
-			typeof table.player.$inferSelect & {
-				gameAccounts: Array<typeof table.gameAccount.$inferSelect>;
-			}
-		>
-	);
+	// Transform players to include nationalities array
+	const processedPlayers = players.map(packPlayerNationalities);
 
 	const action = url.searchParams.get('action');
 	const id = url.searchParams.get('id');
