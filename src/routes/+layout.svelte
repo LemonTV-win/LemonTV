@@ -134,28 +134,28 @@
 		<div
 			class="flex items-center justify-center border-b-1 border-yellow-400/40 bg-yellow-500/15 px-3 py-3 text-yellow-100"
 		>
-			<div class="mx-auto flex w-full max-w-5xl items-start gap-3 md:items-center">
-				<p class="flex-1 text-sm leading-snug md:text-base">
+			<div class="mx-auto grid w-full max-w-5xl grid-cols-[minmax(0,1fr)_auto] items-start gap-3 md:flex md:items-center md:gap-4">
+				<p class="text-sm leading-snug text-center md:flex-1 md:text-left md:text-base">
 					<strong class="font-semibold">{m['donation.banner_title']()}</strong>
 					{m['donation.banner_message']()}
 				</p>
-				<a
-					href="https://ko-fi.com/mkpoli/"
-					target="_blank"
-					rel="noopener noreferrer nofollow"
-					class="flex shrink-0 items-center gap-2 rounded-md bg-yellow-400 px-3 py-1.5 text-sm font-semibold text-black transition-colors hover:bg-yellow-300 focus:ring-2 focus:ring-yellow-300 focus:outline-none"
-				>
-					<SimpleIconsKofi class="h-4 w-4" />
-					{m['donation.banner_button']()}
-				</a>
 				<button
-					class="ml-2 inline-flex cursor-pointer items-center rounded p-1 text-yellow-200 hover:bg-yellow-400/10 hover:text-yellow-100 focus:ring-2 focus:ring-yellow-300 focus:outline-none"
+					class="inline-flex cursor-pointer items-center justify-center rounded p-1 text-yellow-200 hover:bg-yellow-400/10 hover:text-yellow-100 focus:ring-2 focus:ring-yellow-300 focus:outline-none justify-self-end md:order-3 md:ml-3"
 					onclick={dismissDonationBanner}
 					aria-label={m['donation.banner_dismiss_title']()}
 					title={m['donation.banner_dismiss_title']()}
 				>
 					<MaterialSymbolsCloseRounded class="h-6 w-6" />
 				</button>
+				<a
+					href="https://ko-fi.com/mkpoli/"
+					target="_blank"
+					rel="noopener noreferrer nofollow"
+					class="col-span-2 flex w-full shrink-0 items-center justify-center gap-2 rounded-md bg-yellow-400 px-3 py-1.5 text-sm font-semibold text-black transition-colors hover:bg-yellow-300 focus:ring-2 focus:ring-yellow-300 focus:outline-none md:order-2 md:col-span-1 md:w-auto"
+				>
+					<SimpleIconsKofi class="h-4 w-4" />
+					{m['donation.banner_button']()}
+				</a>
 			</div>
 		</div>
 	{/if}
