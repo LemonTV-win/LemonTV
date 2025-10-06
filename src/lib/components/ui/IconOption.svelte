@@ -14,10 +14,20 @@
 	const options = getContext<Option[]>('options');
 
 	onMount(() => {
-		options.push({
+		const option: Option = {
 			value,
 			label,
 			icon: children
-		});
+		};
+
+		options.push(option);
+
+		return () => {
+			const index = options.findIndex((candidate) => candidate === option);
+
+			if (index !== -1) {
+				options.splice(index, 1);
+			}
+		};
 	});
 </script>
