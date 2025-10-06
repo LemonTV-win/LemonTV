@@ -6,7 +6,7 @@
 	import IconParkSolidAdd from '~icons/icon-park-solid/add';
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import ImageUpload from '$lib/components/ImageUpload.svelte';
-	import TeamPlayerInput from '$lib/components/forms/TeamPlayerInput.svelte';
+	import TeamPlayerInput from './subforms/TeamPlayerInput.svelte';
 	import SloganInput from './subforms/SloganInput.svelte';
 	import { formatSlug } from '$lib/utils/strings';
 	import { SITE_CANONICAL_HOST } from '$lib/consts';
