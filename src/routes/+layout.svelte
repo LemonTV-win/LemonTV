@@ -45,7 +45,7 @@
 	// One-time dismissible Ko-fi banner (uses centralized settings storage)
 	const DONATION_BANNER_ID = 'donation';
 	const DONATION_BANNER_VERSION = 1;
-	const DONATION_BANNER_RESHOW_MS = 1000 * 60 * 60 * 24 * 15; // 30 days
+	const DONATION_BANNER_RESHOW_MS = 1000 * 60 * 60 * 24 * 30; // 30 days
 	let showDonationBanner = $state(false);
 
 	// Initialize banner visibility on client only
