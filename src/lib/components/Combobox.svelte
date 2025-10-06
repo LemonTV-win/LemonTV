@@ -111,13 +111,6 @@
 		selectedIndex = -1;
 	}
 
-	function handleFocus() {
-		isFocused = true;
-		isOpen = true;
-		selectedIndex = -1;
-		// Don't clear search when opening to preserve current state
-	}
-
 	function handleBlur() {
 		isFocused = false;
 		setTimeout(() => {
@@ -286,7 +279,13 @@
 			{placeholder}
 			{disabled}
 			oninput={handleInput}
-			onfocus={handleFocus}
+			onfocus={(e) => {
+				isFocused = true;
+				isOpen = true;
+				selectedIndex = -1;
+
+				e.currentTarget.select();
+			}}
 			onblur={handleBlur}
 			onkeydown={handleKeydown}
 			role="combobox"
