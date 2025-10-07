@@ -1794,28 +1794,36 @@ export function packPlayerNationalities<P extends PlayerNationalities>(
 
 // #endregion
 
-export type NormalizedPlayer<
-	T extends PlayerNationalities & {
-		aliases: {
-			alias: string;
-		}[];
-	}
-> = Omit<T, 'nationality' | 'additionalNationalities' | 'aliases'> & {
+// #region -- Aliases --
+
+export type PlayerAliases = {
+	aliases: { alias: string }[];
+};
+
+export type PlayerPackedWithAliases<T extends PlayerAliases> = Omit<T, 'aliases'> & {
+	aliases: string[];
+};
+
+export function packPlayerAliases<P extends PlayerAliases>(player: P): PlayerPackedWithAliases<P> {
+	const { aliases, ...rest } = player;
+	return {
+		...rest,
+		aliases: aliases.map((a) => a.alias)
+	};
+}
+
+// #endregion
+
+export type NormalizedPlayer<T extends PlayerNationalities & PlayerAliases> = Omit<
+	T,
+	'nationality' | 'additionalNationalities' | 'aliases'
+> & {
 	nationalities: Nationality[];
 	aliases: string[];
 };
 // Apply nationality normalization to player data
-export function normalizePlayer<
-	T extends PlayerNationalities & {
-		aliases: {
-			alias: string;
-		}[];
-	}
->(player: T): NormalizedPlayer<T> {
-	const { aliases, ...rest } = player;
-
-	return {
-		...packPlayerNationalities(rest as PlayerNationalities),
-		aliases: player.aliases.map((a) => a.alias)
-	} as NormalizedPlayer<T>;
+export function normalizePlayer<T extends PlayerNationalities & PlayerAliases>(
+	player: T
+): NormalizedPlayer<T> {
+	return packPlayerNationalities(packPlayerAliases(player)) as NormalizedPlayer<T>;
 }
