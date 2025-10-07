@@ -134,13 +134,15 @@
 		<div
 			class="flex items-center justify-center border-b-1 border-yellow-400/40 bg-yellow-500/15 px-3 py-3 text-yellow-100"
 		>
-			<div class="mx-auto grid w-full max-w-5xl grid-cols-[minmax(0,1fr)_auto] items-start gap-3 md:flex md:items-center md:gap-4">
-				<p class="text-sm leading-snug text-center md:flex-1 md:text-left md:text-base">
+			<div
+				class="mx-auto grid w-full max-w-5xl grid-cols-[minmax(0,1fr)_auto] items-start gap-3 md:flex md:items-center md:gap-4"
+			>
+				<p class="text-center text-sm leading-snug md:flex-1 md:text-left md:text-base">
 					<strong class="font-semibold">{m['donation.banner_title']()}</strong>
 					{m['donation.banner_message']()}
 				</p>
 				<button
-					class="inline-flex cursor-pointer items-center justify-center rounded p-1 text-yellow-200 hover:bg-yellow-400/10 hover:text-yellow-100 focus:ring-2 focus:ring-yellow-300 focus:outline-none justify-self-end md:order-3 md:ml-3"
+					class="inline-flex cursor-pointer items-center justify-center justify-self-end rounded p-1 text-yellow-200 hover:bg-yellow-400/10 hover:text-yellow-100 focus:ring-2 focus:ring-yellow-300 focus:outline-none md:order-3 md:ml-3"
 					onclick={dismissDonationBanner}
 					aria-label={m['donation.banner_dismiss_title']()}
 					title={m['donation.banner_dismiss_title']()}
