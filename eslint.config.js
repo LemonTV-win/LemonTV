@@ -8,6 +8,7 @@ import ts from 'typescript-eslint';
 import svelteConfig from './svelte.config.js';
 import lemonI18n from './tools/eslint-plugin-lemon-i18n/index.ts';
 import noEventTarget from './tools/eslint-plugin-no-event-target/index.ts';
+import sveltePropsTyping from './tools/eslint-plugin-svelte-props-typing/index.ts';
 
 const gitignorePath = fileURLToPath(new URL('./.gitignore', import.meta.url));
 
@@ -124,10 +125,12 @@ export default ts.config(
 	},
 	{
 		plugins: {
-			'no-event-target': noEventTarget
+			'no-event-target': noEventTarget,
+			'svelte-props-typing': sveltePropsTyping
 		},
 		rules: {
-			'no-event-target/no-event-target': 'warn'
+			'no-event-target/no-event-target': 'warn',
+			'svelte-props-typing/no-props-generics': 'warn'
 		}
 	}
 );
