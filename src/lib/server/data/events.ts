@@ -6,6 +6,7 @@ import * as table from '$lib/server/db/schema';
 import { processImageURL } from '$lib/server/storage';
 import type { Region } from '$lib/data/game';
 import { eq, or, sql } from 'drizzle-orm';
+import { safeParseDateRange } from '$lib/utils/date';
 import type { EventParticipant, StageNode, Stage, EventResult } from '$lib/data/events';
 import type { GameAccount, GameAccountRegion, GameAccountServer, Player } from '$lib/data/players';
 import { normalizePlayer } from '$lib/server/data/players';
@@ -1341,8 +1342,8 @@ export async function getAdminEventSummaries(): Promise<
 			imageURL: e.image ? imageUrlMap.get(e.image) : undefined
 		}))
 		.sort((a, b) => {
-			const at = Date.parse(a.date.includes('/') ? a.date.split('/')[0] : a.date);
-			const bt = Date.parse(b.date.includes('/') ? b.date.split('/')[0] : b.date);
-			return (Number.isNaN(bt) ? 0 : bt) - (Number.isNaN(at) ? 0 : at);
+			const at = safeParseDateRange(a.date)?.start.getTime() ?? 0;
+			const bt = safeParseDateRange(b.date)?.start.getTime() ?? 0;
+			return bt - at;
 		});
 }

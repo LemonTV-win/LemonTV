@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { safeParseDateRange } from '$lib/utils/date';
+
 	interface EventOption {
 		id: string;
 		name: string;
@@ -30,10 +32,12 @@
 	}: Props = $props();
 
 	function parseStartDate(dateStr?: string): number {
-		if (!dateStr) return 0;
-		const start = dateStr.includes('/') ? dateStr.split('/')[0] : dateStr;
-		const ts = Date.parse(start);
-		return Number.isNaN(ts) ? 0 : ts;
+		if (!dateStr) {
+			return 0;
+		}
+
+		const parsed = safeParseDateRange(dateStr);
+		return parsed?.start.getTime() ?? 0;
 	}
 
 	const sortedEvents = $derived(
