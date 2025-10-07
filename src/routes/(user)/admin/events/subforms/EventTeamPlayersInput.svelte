@@ -22,7 +22,7 @@
 	}
 
 	interface Props {
-		teams: Team[];
+		teams: (Pick<Team, 'id' | 'name' | 'abbr' | 'slug'> & { aliases: string[] })[];
 		players: (Omit<Player, 'nationality'> & { gameAccounts: GameAccount[] } & {
 			nationalities: Nationality[];
 			aliases: string[];
@@ -355,7 +355,9 @@
 					.map((team) => ({
 						id: team.id,
 						name: team.name,
-						gameAccounts: [] // Teams don't have game accounts
+						abbr: team.abbr,
+						slug: team.slug,
+						aliases: team.aliases
 					}))}
 				value=""
 				placeholder={m.select_team()}
@@ -364,6 +366,19 @@
 				class="px-3 py-2"
 				onChange={(item) => {
 					addTeam(item.id);
+				}}
+				filterFunction={(item, searchTerm) => {
+					if (!searchTerm) return true;
+					const searchLower = searchTerm.toLowerCase();
+					return (
+						item.name.toLowerCase().includes(searchLower) ||
+						item.abbr?.toLowerCase().includes(searchLower) ||
+						item.slug?.toLowerCase().includes(searchLower) ||
+						item.aliases?.some((alias) => alias.toLowerCase().includes(searchLower))
+					);
+				}}
+				secondaryTextFunction={(item) => {
+					return item.abbr ?? '';
 				}}
 			/>
 		</div>

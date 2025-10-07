@@ -13,7 +13,7 @@
 			prizeAmount: number;
 			prizeCurrency: string;
 		}>;
-		teams: Team[];
+		teams: (Pick<Team, 'id' | 'name' | 'abbr' | 'slug'> & { aliases: string[] })[];
 		selectedTeams: string[];
 	}
 

@@ -56,7 +56,7 @@
 		};
 		organizers: Organizer[];
 		eventOrganizers: EventOrganizer[];
-		teams: Team[];
+		teams: (Pick<Team, 'id' | 'name' | 'abbr' | 'slug'> & { aliases: string[] })[];
 		players: (Omit<Player, 'nationality'> & { gameAccounts: GameAccount[] } & {
 			nationalities: Nationality[];
 			aliases: string[];

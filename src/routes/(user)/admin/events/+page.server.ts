@@ -42,7 +42,23 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 			withTimer('getEventsForAdminPage', () => getEventsForAdminPage())(),
 			withTimer('getOrganizers', () => db.select().from(table.organizer))(),
 			withTimer('getEventOrganizers', () => db.select().from(table.eventOrganizer))(),
-			withTimer('getTeams', () => db.select().from(table.team))(),
+			withTimer('getTeams', () =>
+				db.query.team.findMany({
+					columns: {
+						id: true,
+						name: true,
+						abbr: true,
+						slug: true
+					},
+					with: {
+						aliases: {
+							columns: {
+								alias: true
+							}
+						}
+					}
+				})
+			)(),
 			withTimer('getPlayers', () =>
 				db.query.player.findMany({
 					columns: {
@@ -81,6 +97,10 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		]);
 
 	// Transform players to include nationalities array
+	const packedTeams = teams.map(({ aliases, ...team }) => ({
+		...team,
+		aliases: aliases.map((a) => a.alias)
+	}));
 	const normalizedPlayers = players.map(normalizePlayer);
 
 	const action = url.searchParams.get('action');
@@ -91,7 +111,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		events,
 		organizers,
 		eventOrganizers,
-		teams,
+		teams: packedTeams,
 		players: normalizedPlayers,
 		teamPlayers,
 		teamSlogans,
