@@ -642,9 +642,9 @@
 					players={players.map((p) => ({
 						...p,
 						nationalities: p.nationalities,
-						gameAccounts: [],
+						gameAccounts: p.gameAccounts,
 						avatar: p.avatar || undefined,
-						aliases: []
+						aliases: p.aliases
 					}))}
 					bind:casters={newEvent.casters}
 				/>

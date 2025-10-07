@@ -5,13 +5,28 @@
 	import type { Player } from '$lib/data/players';
 	import Combobox from '$lib/components/Combobox.svelte';
 	import countryCodeToFlagEmoji from 'country-code-to-flag-emoji';
+	import type { GameAccount } from '$lib/server/db/schema';
+	import type { TCountryCode } from 'countries-list';
 
 	type Caster = {
 		playerId: string;
 		role: 'host' | 'analyst' | 'commentator';
 	};
 
-	let { players, casters = $bindable([]) }: { players: Player[]; casters: Caster[] } = $props();
+	let {
+		players,
+		casters = $bindable([])
+	}: {
+		players: {
+			id: string;
+			name: string;
+			slug: string;
+			gameAccounts: Omit<GameAccount, 'playerId'>[];
+			nationalities: TCountryCode[];
+			aliases: string[];
+		}[];
+		casters: Caster[];
+	} = $props();
 
 	const roleOptions = [
 		{ value: 'host', label: m.role_host() },
@@ -82,7 +97,9 @@
 								id: p.id,
 								name: p.name,
 								gameAccounts: p.gameAccounts || [],
-								group: casters.some((c) => c.playerId === p.id) ? 'selected' : 'available'
+								group: casters.some((c) => c.playerId === p.id) ? 'selected' : 'available',
+								aliases: p.aliases,
+								nationalities: p.nationalities
 							}))}
 							bind:value={caster.playerId}
 							placeholder={m.search_players()}
@@ -97,8 +114,17 @@
 								return (
 									item.id?.toLowerCase().includes(searchLower) ||
 									item.name?.toLowerCase().includes(searchLower) ||
-									item.slug?.toLowerCase().includes(searchLower)
+									item.slug?.toLowerCase().includes(searchLower) ||
+									item.aliases?.some((alias) => alias.toLowerCase().includes(searchLower)) ||
+									item.gameAccounts?.some(
+										(gameAccount) =>
+											gameAccount.currentName.toLowerCase().includes(searchLower) ||
+											gameAccount.accountId.toString().toLowerCase().includes(searchLower)
+									)
 								);
+							}}
+							secondaryTextFunction={(item) => {
+								return `${countryCodeToFlagEmoji(item.nationalities[0] ?? 'ZZ')} ${item.aliases?.join(', ') ?? ''}`;
 							}}
 						/>
 					</div>
