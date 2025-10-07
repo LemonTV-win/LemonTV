@@ -52,17 +52,14 @@
 					{m.team()}
 				</label>
 				<Combobox
-					items={(() => {
-						const filteredTeams = teams.map((t) => ({
-							id: t.id,
-							name: t.name,
-							group: selectedTeams.includes(t.id) ? 'participating' : 'other',
-							abbr: t.abbr,
-							slug: t.slug
-							// TODO: Aliases
-						}));
-						return filteredTeams;
-					})()}
+					items={teams.map((t) => ({
+						id: t.id,
+						name: t.name,
+						group: selectedTeams.includes(t.id) ? 'participating' : 'other',
+						abbr: t.abbr,
+						slug: t.slug,
+						aliases: t.aliases
+					}))}
 					bind:value={result.teamId}
 					placeholder={m.select_team()}
 					groups={[
@@ -78,8 +75,12 @@
 							item.id.toLowerCase().includes(searchLower) ||
 							item.name.toLowerCase().includes(searchLower) ||
 							item.slug.toLowerCase().includes(searchLower) ||
-							(item.abbr !== null && item.abbr.toLowerCase().includes(searchLower))
+							(item.abbr !== null && item.abbr.toLowerCase().includes(searchLower)) ||
+							item.aliases.some((alias) => alias.toLowerCase().includes(searchLower))
 						);
+					}}
+					secondaryTextFunction={(item) => {
+						return item.abbr ?? '';
 					}}
 				/>
 			</div>
