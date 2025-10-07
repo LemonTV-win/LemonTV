@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import type { Team, TeamPlayer, TeamAlias } from '$lib/server/db/schema';
-	import type { Player } from '$lib/server/db/schema';
+	import type { Team, TeamPlayer, TeamAlias, GameAccount } from '$lib/server/db/schema';
 	import { m } from '$lib/paraglide/messages';
 	import IconParkSolidAdd from '~icons/icon-park-solid/add';
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
@@ -20,6 +19,8 @@
 			slug: string;
 			avatar: string | null;
 			nationalities: TCountryCode[];
+			aliases: string[];
+			gameAccounts: Omit<GameAccount, 'playerId'>[];
 		}[];
 		teamPlayers: TeamPlayer[];
 		teamAliases: TeamAlias[];

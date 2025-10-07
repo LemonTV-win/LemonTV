@@ -9,7 +9,14 @@
 	import type { TCountryCode } from 'countries-list';
 
 	interface Props {
-		players: (Player & { gameAccounts: GameAccount[]; nationalities: TCountryCode[] })[];
+		players: {
+			id: string;
+			name: string;
+			slug: string;
+			gameAccounts: Omit<GameAccount, 'playerId'>[];
+			nationalities: TCountryCode[];
+			aliases: string[];
+		}[];
 		selectedPlayers?: Array<{
 			playerId: string;
 			role: string;
@@ -66,6 +73,7 @@
 						id: p.id,
 						name: p.name,
 						group: selectedPlayers.some((sp) => sp.playerId === p.id) ? 'team' : 'other',
+						aliases: p.aliases,
 						gameAccounts: p.gameAccounts
 					}))}
 					bind:value={newPlayer.playerId}
@@ -81,10 +89,14 @@
 						return (
 							item.id?.toLowerCase().includes(searchLower) ||
 							item.name?.toLowerCase().includes(searchLower) ||
-							item.slug?.toLowerCase().includes(searchLower)
+							item.slug?.toLowerCase().includes(searchLower) ||
+							item.gameAccounts?.some(
+								(ga) =>
+									ga.currentName?.toLowerCase().includes(searchLower) ||
+									ga.accountId.toString().toLowerCase().includes(searchLower)
+							) ||
+							item.aliases?.some((a) => a.toLowerCase().includes(searchLower))
 						);
-						// TODO: Search for gameAccounts, aliases, etc.
-						// || item.gameAccounts?.some((ga) => ga.currentName?.toLowerCase().includes(searchLower) || ga.accountId.toString().toLowerCase().includes(searchLower));
 					}}
 					secondaryTextFunction={(item) => {
 						return `${countryCodeToFlagEmoji(item.nationalities[0] ?? 'ZZ')} ${item.gameAccounts.map((ga) => formatGameAccountID(ga)).join(', ')}`;

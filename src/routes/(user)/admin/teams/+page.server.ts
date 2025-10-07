@@ -4,7 +4,7 @@ import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { getAdminEventSummaries } from '$lib/server/data/events';
 import { createTeam, updateTeam, deleteTeam } from '$lib/server/data/teams';
-import { createPlayer, packPlayerNationalities } from '$lib/server/data/players';
+import { createPlayer, normalizePlayer } from '$lib/server/data/players';
 import type { Region } from '$lib/data/game';
 import { processImageURL } from '$lib/server/storage';
 import { formatSlug } from '$lib/utils/strings';
@@ -35,7 +35,14 @@ export const load: PageServerLoad = async ({ locals }) => {
 			gameAccounts: {
 				columns: {
 					accountId: true,
-					server: true
+					server: true,
+					currentName: true,
+					region: true
+				}
+			},
+			aliases: {
+				columns: {
+					alias: true
 				}
 			}
 		}
@@ -65,7 +72,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	}));
 
 	// Transform players to include nationalities array
-	const playersWithNationalities = players.map(packPlayerNationalities);
+	const normalizedPlayers = players.map(normalizePlayer);
 
 	// Minimal admin events: id, name, date, imageURL (processed)
 	const adminEvents = await getAdminEventSummaries();
@@ -75,7 +82,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 		teamPlayers,
 		teamAliases,
 		teamSlogans,
-		players: playersWithNationalities,
+		players: normalizedPlayers,
 		adminEvents,
 		user: locals.user
 	};
