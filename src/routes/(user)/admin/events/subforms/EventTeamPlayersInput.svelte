@@ -371,6 +371,7 @@
 					if (!searchTerm) return true;
 					const searchLower = searchTerm.toLowerCase();
 					return (
+						item.id.toLowerCase().includes(searchLower) ||
 						item.name.toLowerCase().includes(searchLower) ||
 						item.abbr?.toLowerCase().includes(searchLower) ||
 						item.slug?.toLowerCase().includes(searchLower) ||

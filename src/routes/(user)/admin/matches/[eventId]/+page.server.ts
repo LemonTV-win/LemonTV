@@ -214,13 +214,23 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 					.select({ teamId: table.eventTeamPlayer.teamId })
 					.from(table.eventTeamPlayer)
 					.where(eq(table.eventTeamPlayer.eventId, eventId))
-			)
+			),
+			with: {
+				aliases: {
+					columns: {
+						alias: true
+					}
+				}
+			}
 		})
 		.then((rows) => {
 			console.info(
 				`[Admin][Matches][Event][Load] Teams query took ${performance.now() - teamsQueryStart}ms (rows=${rows.length})`
 			);
-			return rows;
+			return rows.map((row) => ({
+				...row,
+				aliases: row.aliases.map((a) => a.alias)
+			}));
 		});
 
 	const [matches, stageRounds, stageNodes, teamRostersRaw, teamsForEvent] = await Promise.all([

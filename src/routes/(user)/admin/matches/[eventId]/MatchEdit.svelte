@@ -23,7 +23,7 @@
 		match: Partial<Match>;
 		matchTeams: MatchTeam[];
 		matchMaps: MatchMap[];
-		teams: Team[];
+		teams: (Pick<Team, 'id' | 'name' | 'abbr' | 'slug'> & { aliases: string[] })[];
 		stages: { id: string; name: string; eventName: string }[];
 		onCancel: () => void;
 		onSuccess: () => void;
@@ -234,8 +234,7 @@
 											name: t.name,
 											slug: t.slug,
 											abbr: t.abbr,
-											// aliases: t.aliases,
-											// TODO: Aliases
+											aliases: t.aliases,
 											group: teamData.some((td) => td.teamId === t.id) ? 'selected' : 'available'
 										}))}
 										bind:value={team.teamId}
@@ -248,7 +247,8 @@
 													item.id.toLowerCase().includes(searchLower) ||
 													item.name.toLowerCase().includes(searchLower) ||
 													item.slug.toLowerCase().includes(searchLower) ||
-													item.abbr?.toLowerCase().includes(searchLower)
+													item.abbr?.toLowerCase().includes(searchLower) ||
+													item.aliases?.some((alias) => alias.toLowerCase().includes(searchLower))
 												)
 												// || (item.aliases &&
 												// 	Array.isArray(item.aliases) &&
@@ -263,6 +263,9 @@
 											{ id: 'available', label: m.other_teams() }
 										]}
 										class="mt-1 px-3 py-2"
+										secondaryTextFunction={(item) => {
+											return item.abbr ?? '';
+										}}
 									/>
 								</div>
 								<div>
