@@ -59,6 +59,7 @@
 		teams: Team[];
 		players: (Omit<Player, 'nationality'> & { gameAccounts: GameAccount[] } & {
 			nationalities: Nationality[];
+			aliases: string[];
 		})[];
 		teamPlayers: Array<{
 			teamId: string;

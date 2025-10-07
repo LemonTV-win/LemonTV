@@ -25,6 +25,7 @@
 		teams: Team[];
 		players: (Omit<Player, 'nationality'> & { gameAccounts: GameAccount[] } & {
 			nationalities: Nationality[];
+			aliases: string[];
 		})[];
 		selectedTeams: string[];
 		eventTeamPlayers: Array<{
@@ -572,13 +573,15 @@
 													items={players.map((p) => ({
 														id: p.id,
 														name: p.name,
+														slug: p.slug,
 														gameAccounts: p.gameAccounts || [],
 														group: eventTeamPlayers.some(
 															(tp) => tp.teamId === team.id && tp.playerId === p.id
 														)
 															? 'team'
 															: 'other',
-														nationalities: p.nationalities
+														nationalities: p.nationalities,
+														aliases: p.aliases
 													}))}
 													bind:value={teamPlayer.playerId}
 													placeholder={m.search_players()}
@@ -588,6 +591,21 @@
 													]}
 													disabled={false}
 													class="px-2 py-1 text-sm"
+													filterFunction={(item, searchTerm) => {
+														if (!searchTerm) return true;
+														const searchLower = searchTerm.toLowerCase();
+														return (
+															item.id?.toLowerCase().includes(searchLower) ||
+															item.name?.toLowerCase().includes(searchLower) ||
+															item.slug?.toLowerCase().includes(searchLower) ||
+															item.gameAccounts?.some(
+																(ga) =>
+																	ga.currentName?.toLowerCase().includes(searchLower) ||
+																	ga.accountId.toString().toLowerCase().includes(searchLower)
+															) ||
+															item.aliases?.some((a) => a.toLowerCase().includes(searchLower))
+														);
+													}}
 													secondaryTextFunction={(item) => {
 														return `${countryCodeToFlagEmoji(item.nationalities[0] ?? 'ZZ')} ${item.gameAccounts.map((ga) => formatGameAccountID(ga)).join(', ')}`;
 													}}

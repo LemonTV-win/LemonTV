@@ -17,7 +17,7 @@ import {
 	updateEventTeamPlayers,
 	updateEventCasters
 } from '$lib/server/data/events';
-import { packPlayerNationalities } from '$lib/server/data/players';
+import { normalizePlayer } from '$lib/server/data/players';
 import type { Region } from '$lib/data/game';
 import { checkPermissions } from '$lib/server/security/permission';
 
@@ -67,6 +67,11 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 								currentName: true,
 								region: true
 							}
+						},
+						aliases: {
+							columns: {
+								alias: true
+							}
 						}
 					}
 				})
@@ -76,7 +81,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		]);
 
 	// Transform players to include nationalities array
-	const processedPlayers = players.map(packPlayerNationalities);
+	const normalizedPlayers = players.map(normalizePlayer);
 
 	const action = url.searchParams.get('action');
 	const id = url.searchParams.get('id');
@@ -87,7 +92,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		organizers,
 		eventOrganizers,
 		teams,
-		players: processedPlayers,
+		players: normalizedPlayers,
 		teamPlayers,
 		teamSlogans,
 		action,
