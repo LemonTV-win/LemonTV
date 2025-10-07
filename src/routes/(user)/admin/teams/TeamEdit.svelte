@@ -12,7 +12,7 @@
 	import { SITE_CANONICAL_HOST } from '$lib/consts';
 	import type { TCountryCode } from 'countries-list';
 
-	let { team, players, teamPlayers, teamAliases, teamSlogans, onCancel, events } = $props<{
+	interface Props {
 		team: Partial<Team>;
 		players: {
 			id: string;
@@ -31,7 +31,9 @@
 		}>;
 		onCancel: () => void;
 		events?: Array<{ id: string; name: string; date?: string; imageURL?: string }>;
-	}>();
+	}
+
+	let { team, players, teamPlayers, teamAliases, teamSlogans, onCancel, events }: Props = $props();
 
 	let newTeam: Partial<Team> & { logo: string | null } = $state({
 		...team,
