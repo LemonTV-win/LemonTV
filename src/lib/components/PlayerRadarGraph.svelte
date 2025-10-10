@@ -23,20 +23,24 @@
 		Legend
 	);
 
-	export let playerStats: {
-		wins: number;
-		losses: number;
-		totalGames: number;
-		winRate: number;
-		kd: number;
-		totalKills: number;
-		totalDeaths: number;
-		totalAssists: number;
-		totalDamage: number;
-		averageScore: number;
-	};
+	interface Props {
+		playerStats: {
+			wins: number;
+			losses: number;
+			totalGames: number;
+			winRate: number;
+			kd: number;
+			totalKills: number;
+			totalDeaths: number;
+			totalAssists: number;
+			totalDamage: number;
+			averageScore: number;
+		};
+	}
 
-	let canvas: HTMLCanvasElement;
+	let { playerStats }: Props = $props();
+
+	let canvas: HTMLCanvasElement | null = $state(null);
 	let chart: Chart | null = null;
 
 	// Normalize values to 0-100 scale for radar chart
