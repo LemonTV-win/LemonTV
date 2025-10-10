@@ -79,6 +79,9 @@
 	// Track which teams are expanded
 	let expandedTeams = new SvelteSet<string>();
 
+	// Debug selectedTeams changes
+	$inspect('[EventTeamPlayersInput] selectedTeams:', selectedTeams);
+
 	// Slogan management state for each team
 	let teamSlogansState = $state<Record<string, Slogan[]>>({});
 	let newSloganState = $state<Record<string, { text: string; language: string | null }>>({});
@@ -135,6 +138,12 @@
 
 	function addTeam(teamId: string) {
 		if (!selectedTeams.includes(teamId)) {
+			console.log(
+				'[EventTeamPlayersInput] Adding team:',
+				teamId,
+				'Current selectedTeams:',
+				selectedTeams
+			);
 			selectedTeams = [...selectedTeams, teamId];
 			// Ensure meta defaults exist
 			if (!eventTeams.some((et) => et.teamId === teamId)) {
@@ -163,6 +172,24 @@
 			eventTeamPlayers = [...eventTeamPlayers, ...newTeamPlayers];
 			// Expand the team when adding it
 			expandedTeams.add(teamId);
+
+			// Initialize slogan state for the new team (defensive)
+			if (teamSlogansValue && teamSlogansValue.length > 0) {
+				const existingSlogans = teamSlogansValue.filter(
+					(slogan: Slogan) => slogan.teamId === teamId
+				);
+				if (existingSlogans.length > 0) {
+					teamSlogansState[teamId] = existingSlogans;
+				}
+			}
+
+			// Always ensure we have empty arrays for new teams
+			if (!teamSlogansState[teamId]) {
+				teamSlogansState[teamId] = [];
+			}
+			if (!newSloganState[teamId]) {
+				newSloganState[teamId] = { text: '', language: '' };
+			}
 		}
 	}
 
@@ -174,6 +201,9 @@
 		eventTeams = eventTeams.filter((et) => et.teamId !== teamId);
 		// Remove from expanded teams
 		expandedTeams.delete(teamId);
+		// Clean up slogan state for this team
+		delete teamSlogansState[teamId];
+		delete newSloganState[teamId];
 	}
 
 	function toggleTeam(teamId: string) {
@@ -263,17 +293,40 @@
 	}
 
 	function initializeSloganState() {
-		// Initialize slogan state from prop
-		teamSlogansValue = teamSlogans || [];
+		// Only run if we have selected teams and slogans data
+		if (!selectedTeams.length || !teamSlogansValue || teamSlogansValue.length === 0) return;
+
+		// Ensure all selected teams have slogan state initialized
 		selectedTeams.forEach((teamId) => {
 			const existingSlogans = teamSlogansValue.filter((slogan: Slogan) => slogan.teamId === teamId);
+
+			// Always set the state if we have slogans for this team
 			if (existingSlogans.length > 0) {
 				teamSlogansState[teamId] = existingSlogans;
+			} else if (!teamSlogansState[teamId]) {
+				// Only set empty array if it doesn't exist
+				teamSlogansState[teamId] = [];
 			}
+
 			if (!newSloganState[teamId]) {
 				newSloganState[teamId] = { text: '', language: '' };
 			}
 		});
+	}
+
+	function syncSlogansWithProp() {
+		// Only sync if we have both prop data and selected teams
+		if (!teamSlogans || teamSlogans.length === 0 || !selectedTeams.length) return;
+
+		// Check if we need to sync (avoid unnecessary updates)
+		const propLength = teamSlogans.length;
+		const localLength = teamSlogansValue.length;
+
+		// If lengths differ significantly, sync
+		if (Math.abs(propLength - localLength) > 5) {
+			teamSlogansValue = [...teamSlogans];
+			initializeSloganState();
+		}
 	}
 
 	// Initialize slogan state when component loads or when selected teams change
@@ -281,11 +334,17 @@
 		initializeSloganState();
 	});
 
-	// Sync with prop changes
+	// Sync with prop changes and initialize if needed (less frequent)
 	$effect(() => {
-		if (teamSlogans) {
-			teamSlogansValue = teamSlogans;
-			initializeSloganState();
+		if (teamSlogans && teamSlogans.length > 0) {
+			// If we have slogans prop but no local value, initialize
+			if (!teamSlogansValue || teamSlogansValue.length === 0) {
+				teamSlogansValue = [...teamSlogans];
+			}
+			// Only sync if we have selected teams to avoid unnecessary work
+			if (selectedTeams.length > 0) {
+				syncSlogansWithProp();
+			}
 		}
 	});
 
@@ -469,6 +528,9 @@
 				</div>
 
 				{#if expandedTeams.has(team.id)}
+					{@const slogansForTeam = teamSlogansState[team.id]}
+					{@const hasSlogans = slogansForTeam && slogansForTeam.length > 0}
+
 					<div class="border-t border-slate-700">
 						<div
 							class="flex items-center gap-3 border-b border-slate-700 bg-slate-800 px-4 py-3 text-xs"
@@ -513,10 +575,9 @@
 						<div class="border-b border-slate-700 px-4 py-4">
 							<h5 class="text-sm font-medium text-slate-300">{m['slogans.team_slogans']()}</h5>
 
-							<!-- Existing Slogans -->
-							{#if teamSlogansState[team.id] && teamSlogansState[team.id].length > 0}
+							{#if hasSlogans}
 								<div class="space-y-2">
-									{#each teamSlogansState[team.id] as slogan, sloganIndex (sloganIndex)}
+									{#each slogansForTeam as slogan, sloganIndex (sloganIndex)}
 										<div
 											class="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded-md bg-slate-700/50 p-2"
 										>
@@ -535,6 +596,8 @@
 										</div>
 									{/each}
 								</div>
+							{:else}
+								<p class="text-sm text-slate-400 italic">{m['none']()}</p>
 							{/if}
 
 							<!-- Add New Slogan -->

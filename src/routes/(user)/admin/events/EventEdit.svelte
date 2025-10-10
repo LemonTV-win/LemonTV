@@ -86,6 +86,9 @@
 	let templateIdInput = $state('');
 	let templateSelectId = $state('');
 
+	// Track which event id we have loaded to avoid repeated loads
+	let loadedEventId = $state<string | null>(null);
+
 	let newEvent = $state({
 		id: event.id || '',
 		name: event.name || '',
@@ -151,6 +154,9 @@
 	// Track selected teams
 	let selectedTeams = $state<string[]>([]);
 
+	// Debug selectedTeams changes
+	$inspect('[EventEdit] selectedTeams:', selectedTeams);
+
 	// Team slogans for the event
 	let teamSlogans = $state<
 		Array<{
@@ -162,55 +168,54 @@
 		}>
 	>([]);
 
-	// Load existing team players when editing an event
+	// Load existing event data once per event.id when editing an event
 	$effect(() => {
-		if (event.id) {
-			fetch(`/api/events/${event.id}/team-players`)
-				.then((res) => res.json())
-				.then((data) => {
-					eventTeamPlayers = data.map((tp: any) => ({
-						teamId: tp.teamId,
-						playerId: tp.playerId,
-						role: tp.role
-					}));
-					// Initialize selected teams from existing team players
-					selectedTeams = [...new Set(eventTeamPlayers.map((tp) => tp.teamId))];
-				})
-				.catch((e) => {
-					console.error('Failed to load team players:', e);
-				});
+		if (!event.id) return;
+		if (loadedEventId === event.id) return;
 
-			// Load event team meta (entry/status)
-			fetch(`/api/events/${event.id}/teams`)
-				.then((res) => res.json())
-				.then((data) => {
-					eventTeams = (data || []).map((et: any) => ({
-						teamId: et.teamId,
-						entry: et.entry,
-						status: et.status
-					}));
-				})
-				.catch((e) => {
-					console.error('Failed to load event teams:', e);
-				});
-		}
-	});
+		loadedEventId = event.id;
 
-	// Load existing casters when editing an event
-	$effect(() => {
-		if (event.id) {
-			fetch(`/api/events/${event.id}/casters`)
-				.then((res) => res.json())
-				.then((data) => {
-					newEvent.casters = data.map((c: any) => ({
-						playerId: c.playerId,
-						role: c.role
-					}));
-				})
-				.catch((e) => {
-					console.error('Failed to load casters:', e);
-				});
-		}
+		// Load all existing event data in parallel
+		Promise.all([
+			fetch(`/api/events/${event.id}/team-players`).then((res) => res.json()),
+			fetch(`/api/events/${event.id}/teams`).then((res) => res.json()),
+			fetch(`/api/events/${event.id}/casters`).then((res) => res.json()),
+			fetch(`/api/events/${event.id}/slogans`).then((res) => res.json())
+		])
+			.then(([teamPlayersData, eventTeamsData, castersData, slogansData]) => {
+				// Update team players and selected teams
+				eventTeamPlayers = teamPlayersData.map((tp: any) => ({
+					teamId: tp.teamId,
+					playerId: tp.playerId,
+					role: tp.role
+				}));
+				selectedTeams = [...new Set(eventTeamPlayers.map((tp) => tp.teamId))];
+
+				// Update event teams meta
+				eventTeams = (eventTeamsData || []).map((et: any) => ({
+					teamId: et.teamId,
+					entry: et.entry,
+					status: et.status
+				}));
+
+				// Update casters
+				newEvent.casters = castersData.map((c: any) => ({
+					playerId: c.playerId,
+					role: c.role
+				}));
+
+				// Update team slogans
+				teamSlogans = slogansData.map((s: any) => ({
+					id: s.id,
+					teamId: s.teamId,
+					eventId: s.eventId,
+					slogan: s.slogan,
+					language: s.language
+				}));
+			})
+			.catch((e) => {
+				console.error('Failed to load event data:', e);
+			});
 	});
 
 	let errorMessage = $state('');
