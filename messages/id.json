@@ -816,6 +816,18 @@
 				"swiss": "Sistem Swiss",
 				"round-robin": "Round-robin"
 			}
+		},
+		"stats": {
+			"metrics": {
+				"win_rate": "Kemenangan",
+				"kd_ratio": "K/D",
+				"kills_per_game": "Kill/Game",
+				"survival_rate": "Kelangsungan",
+				"deaths_per_game": "Kematian/Game",
+				"assists_per_game": "Assist/Game",
+				"damage_per_game": "Damage/Game",
+				"average_score": "Rata-rata"
+			}
 		}
 	},
 	"slogans": {

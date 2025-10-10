@@ -816,6 +816,18 @@
 				"swiss": "스위스 시스템",
 				"round-robin": "라운드 로빈"
 			}
+		},
+		"stats": {
+			"metrics": {
+				"win_rate": "승률",
+				"kd_ratio": "K/D",
+				"kills_per_game": "게임킬",
+				"survival_rate": "생존율",
+				"deaths_per_game": "게임데스",
+				"assists_per_game": "게임어시스트",
+				"damage_per_game": "게임데미지",
+				"average_score": "평균"
+			}
 		}
 	},
 	"slogans": {

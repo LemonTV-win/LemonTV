@@ -816,6 +816,18 @@
 				"swiss": "Thể thức Thụy Sĩ",
 				"round-robin": "Vòng tròn"
 			}
+		},
+		"stats": {
+			"metrics": {
+				"win_rate": "Thắng",
+				"kd_ratio": "K/D",
+				"kills_per_game": "Kill/trận",
+				"survival_rate": "Sống sót",
+				"deaths_per_game": "Chết/trận",
+				"assists_per_game": "Hỗ trợ/trận",
+				"damage_per_game": "ST/trận",
+				"average_score": "Điểm TB"
+			}
 		}
 	},
 	"slogans": {

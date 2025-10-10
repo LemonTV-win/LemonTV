@@ -816,6 +816,18 @@
 				"swiss": "スイス式",
 				"round-robin": "総当たり"
 			}
+		},
+		"stats": {
+			"metrics": {
+				"win_rate": "勝率",
+				"kd_ratio": "K/D",
+				"kills_per_game": "ゲームキル",
+				"survival_rate": "生存率",
+				"deaths_per_game": "ゲームデス",
+				"assists_per_game": "ゲームアシスト",
+				"damage_per_game": "ゲームダメージ",
+				"average_score": "平均"
+			}
 		}
 	},
 	"slogans": {

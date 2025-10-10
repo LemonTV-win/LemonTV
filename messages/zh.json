@@ -816,6 +816,18 @@
 				"swiss": "瑞士轮",
 				"round-robin": "循环赛"
 			}
+		},
+		"stats": {
+			"metrics": {
+				"win_rate": "胜率",
+				"kd_ratio": "K/D",
+				"kills_per_game": "局击杀",
+				"survival_rate": "生存率",
+				"deaths_per_game": "局死亡",
+				"assists_per_game": "局助攻",
+				"damage_per_game": "局伤害",
+				"average_score": "平均"
+			}
 		}
 	},
 	"slogans": {

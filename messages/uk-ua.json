@@ -834,6 +834,18 @@
 				"swiss": "Швейцарська система",
 				"round-robin": "Кожен з кожним"
 			}
+		},
+		"stats": {
+			"metrics": {
+				"win_rate": "Перемоги",
+				"kd_ratio": "K/D",
+				"kills_per_game": "Вбивств/гру",
+				"survival_rate": "Виживання",
+				"deaths_per_game": "Смертей/гру",
+				"assists_per_game": "Асистів/гру",
+				"damage_per_game": "Шкоди/гру",
+				"average_score": "Середній"
+			}
 		}
 	},
 	"slogans": {

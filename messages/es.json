@@ -822,6 +822,18 @@
 				"swiss": "Sistema suizo",
 				"round-robin": "Todos contra todos"
 			}
+		},
+		"stats": {
+			"metrics": {
+				"win_rate": "Victorias",
+				"kd_ratio": "K/D",
+				"kills_per_game": "Kills/partida",
+				"survival_rate": "Supervivencia",
+				"deaths_per_game": "Muertes/partida",
+				"assists_per_game": "Asists/partida",
+				"damage_per_game": "Daño/partida",
+				"average_score": "Media"
+			}
 		}
 	},
 	"slogans": {

@@ -822,6 +822,18 @@
 				"swiss": "Système suisse",
 				"round-robin": "Round-robin"
 			}
+		},
+		"stats": {
+			"metrics": {
+				"win_rate": "Victoires",
+				"kd_ratio": "K/D",
+				"kills_per_game": "Kills/partie",
+				"survival_rate": "Survie",
+				"deaths_per_game": "Morts/partie",
+				"assists_per_game": "Assists/partie",
+				"damage_per_game": "Dégâts/partie",
+				"average_score": "Moyen"
+			}
 		}
 	},
 	"slogans": {

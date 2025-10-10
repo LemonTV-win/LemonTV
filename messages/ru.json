@@ -834,6 +834,18 @@
 				"swiss": "Швейцарская система",
 				"round-robin": "Круговой турнир"
 			}
+		},
+		"stats": {
+			"metrics": {
+				"win_rate": "Победы",
+				"kd_ratio": "K/D",
+				"kills_per_game": "Убийств/игру",
+				"survival_rate": "Выживание",
+				"deaths_per_game": "Смертей/игру",
+				"assists_per_game": "Помощи/игру",
+				"damage_per_game": "Урона/игру",
+				"average_score": "Средний"
+			}
 		}
 	},
 	"slogans": {

@@ -177,6 +177,18 @@
 				"swiss": "Swiss System",
 				"round-robin": "Round-Robin"
 			}
+		},
+		"stats": {
+			"metrics": {
+				"win_rate": "Win Rate",
+				"kd_ratio": "K/D Ratio",
+				"kills_per_game": "Kills/Game",
+				"survival_rate": "Survival Rate",
+				"deaths_per_game": "Deaths/Game",
+				"assists_per_game": "Assists/Game",
+				"damage_per_game": "Damage/Game",
+				"average_score": "Avg Score"
+			}
 		}
 	},
 	"name": "Name",
@@ -840,5 +852,9 @@
 		"add_slogan": "Add slogan",
 		"event_id_optional": "event-id (optional)",
 		"team_slogans": "Team Slogans"
+	},
+	"player_radar": {
+		"title": "Performance Radar",
+		"dataset_performance": "Performance"
 	}
 }
