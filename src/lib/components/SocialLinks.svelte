@@ -28,6 +28,7 @@
 		{#each socialAccounts as account (account.platformId)}
 			{#each socialPlatforms as platform (platform.id)}
 				{#if platform.id === account.platformId}
+					<!-- eslint-disable-next-line no-navigation-without-resolve -->
 					<a
 						href={platform.url_template
 							? platform.url_template.replace('{accountId}', account.accountId)
