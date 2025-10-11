@@ -99,10 +99,10 @@
 		}
 	}
 
-	$inspect('history', history);
-	$inspect('loading', loading);
-	$inspect('groupedHistory', groupedHistory);
-	$inspect('sortedDates', sortedDates);
+	// $inspect('history', history);
+	// $inspect('loading', loading);
+	// $inspect('groupedHistory', groupedHistory);
+	// $inspect('sortedDates', sortedDates);
 
 	$effect(() => {
 		if (record.id) {

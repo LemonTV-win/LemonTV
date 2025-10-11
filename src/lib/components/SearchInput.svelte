@@ -28,8 +28,8 @@
 		search = '';
 	}
 
-	$inspect('[SearchInput] search', search);
-	$inspect('[SearchInput] debounced', debounced);
+	// $inspect('[SearchInput] search', search);
+	// $inspect('[SearchInput] debounced', debounced);
 </script>
 
 <div

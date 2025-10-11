@@ -90,7 +90,7 @@
 		});
 	}
 
-	$inspect('container', container);
+	// $inspect('container', container);
 
 	let matchRefs = new SvelteMap<string, HTMLElement>();
 

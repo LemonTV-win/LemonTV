@@ -129,7 +129,7 @@
 		};
 	}
 
-	$inspect('deleteDependencies', deleteDependencies);
+	// $inspect('deleteDependencies', deleteDependencies);
 
 	function closeDeleteModal() {
 		showDeleteModal = false;
