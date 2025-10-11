@@ -10,7 +10,7 @@ import { eq, inArray } from 'drizzle-orm';
 import { processImageURL } from '$lib/server/storage';
 
 export const load: PageServerLoad = async ({ params }) => {
-	let event: Event | undefined = await getEvent(params.id);
+	const event: Event | undefined = await getEvent(params.id);
 
 	if (!event) {
 		throw error(404, 'Event not found');

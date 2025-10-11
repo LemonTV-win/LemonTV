@@ -179,9 +179,26 @@
 			</section>
 
 			<p class="text-slate-200">
-				{@html m['about.thanks_message']({
-					idreamsky: `<a href="${['zh', 'zh-tw'].includes(getLocale()) ? IDREAMSKY_URL_ZH : IDREAMSKY_URL_EN}" class="underline hover:text-gray-300" target="_blank">${m.idreamsky()}</a>`
-				})}
+				{#snippet renderThanks()}
+					{@const message = m['about.thanks_message']({
+						idreamsky: '{{IDREAMSKY_LINK}}'
+					})}
+					{@const parts = message.split(/\{\{IDREAMSKY_LINK\}\}/)}
+					{#each parts as part, i}
+						{#if i % 2 === 1 && part.trim()}
+							<a
+								href={['zh', 'zh-tw'].includes(getLocale()) ? IDREAMSKY_URL_ZH : IDREAMSKY_URL_EN}
+								class="underline hover:text-gray-300"
+								target="_blank"
+							>
+								{part.trim()}
+							</a>
+						{:else if part.trim()}
+							{part}
+						{/if}
+					{/each}
+				{/snippet}
+				{@render renderThanks()}
 			</p>
 
 			<section class="my-12 text-center">

@@ -11,7 +11,7 @@ export function formatSlug(name: string): string {
 	return name
 		.trim()
 		.replace(/\s+/gu, '-') // Replace spaces with hyphens
-		.replace(/[^\p{L}\p{N}\-]/gu, '') // Remove special characters except hyphens and alphanumeric
+		.replace(/[^\p{L}\p{N}-]/gu, '') // Remove special characters except hyphens and alphanumeric
 		.replace(/-+/gu, '-') // Collapse multiple hyphens
 		.replace(/^-+|-+$/gu, ''); // Remove leading/trailing hyphens
 }

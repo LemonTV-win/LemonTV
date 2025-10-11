@@ -603,7 +603,7 @@
 							<!-- Add New Slogan -->
 							<div class="mt-1 flex gap-2">
 								<LanguageSelect
-									id={`slogan-lang`}
+									id="slogan-lang"
 									class="block w-1/3 rounded-md border border-slate-600 bg-slate-800 px-2 py-1 text-sm text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 									value={newSloganState[team.id]?.language || ''}
 									onchange={({ value }) => {

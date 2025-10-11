@@ -46,7 +46,7 @@ class DismissibleStore {
 	#loadAll(): DismissalStoreMap {
 		if (!browser) return {};
 		const now = Date.now();
-		let result: DismissalStoreMap = {};
+		const result: DismissalStoreMap = {};
 		try {
 			const raw = localStorage.getItem(this.#storageKeyV2);
 			if (raw) {
@@ -75,7 +75,7 @@ class DismissibleStore {
 				}
 			}
 		} catch {
-			// ignore parsing errors
+			console.error('Failed to load dismissals', this.#storageKeyV2);
 		}
 
 		// Migrate legacy banner-only map if present
@@ -95,11 +95,13 @@ class DismissibleStore {
 					}
 					try {
 						localStorage.removeItem(this.#legacyBannerKeyV1);
-					} catch {}
+					} catch {
+						console.error('Failed to remove legacy banner key', this.#legacyBannerKeyV1);
+					}
 				}
 			}
 		} catch {
-			// ignore legacy errors
+			console.error('Failed to migrate legacy banner key', this.#legacyBannerKeyV1);
 		}
 
 		return result;
@@ -110,7 +112,7 @@ class DismissibleStore {
 		try {
 			localStorage.setItem(this.#storageKeyV2, JSON.stringify(map));
 		} catch {
-			// ignore storage errors
+			console.error('Failed to save dismissals', this.#storageKeyV2);
 		}
 	}
 

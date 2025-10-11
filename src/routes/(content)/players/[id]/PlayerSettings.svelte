@@ -117,11 +117,27 @@
 		</div>
 	{:else}
 		<div class="text-gray-400">{m.no_data()}</div>
-		<p class="mt-4 text-center text-sm text-gray-400">
-			{@html m['content.players.pro_settings.no_settings_available']({
-				linkStart: `<a class="text-yellow-500 hover:underline" href="/about">`,
-				linkEnd: '</a>'
-			})}
-		</p>
+		<div class="mt-4 text-center">
+			{#snippet renderMessage()}
+				{@const message = m['content.players.pro_settings.no_settings_available']({
+					linkStart: '{{LINK_START}}',
+					linkEnd: '{{LINK_END}}'
+				})}
+				{@const parts = message.split(/\{\{LINK_START\}\}|\{\{LINK_END\}\}/)}
+				{#each parts as part, i}
+					{#if i % 2 === 1 && part.trim()}
+						<a
+							class="text-yellow-500 transition-colors hover:text-yellow-400 hover:underline"
+							href="/about"
+						>
+							{part.trim()}
+						</a>
+					{:else if part.trim()}
+						{part}
+					{/if}
+				{/each}
+			{/snippet}
+			{@render renderMessage()}
+		</div>
 	{/if}
 </div>
