@@ -443,6 +443,7 @@
 	"image": "图片",
 	"delete_event_confirmation": "您确定要删除此赛事吗？",
 	"search": "搜索",
+	"clear_search": "清除搜索",
 	"add_new": "添加新",
 	"history": "历史",
 	"update_event": "更新赛事",

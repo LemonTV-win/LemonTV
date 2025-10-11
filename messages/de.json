@@ -443,6 +443,7 @@
 	"image": "Bild",
 	"delete_event_confirmation": "Sind Sie sicher, dass Sie dieses Event löschen möchten?",
 	"search": "Suchen",
+	"clear_search": "Suche löschen",
 	"add_new": "Neu hinzufügen",
 	"history": "Verlauf",
 	"update_event": "Event aktualisieren",

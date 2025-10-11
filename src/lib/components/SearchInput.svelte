@@ -2,6 +2,7 @@
 	import MaterialSymbolsSearchRounded from '~icons/material-symbols/search-rounded';
 	import MaterialSymbolsClose from '~icons/material-symbols/close';
 	import debounce from 'debounce';
+	import { m } from '$lib/paraglide/messages';
 
 	let {
 		search = $bindable(''),
@@ -37,7 +38,7 @@
 	<MaterialSymbolsSearchRounded class="h-6 w-6 flex-shrink-0" />
 	<input
 		type="search"
-		placeholder="Search"
+		placeholder={m.search()}
 		bind:value={search}
 		class="w-full border-none bg-transparent p-2 ring-0 outline-none focus:text-white focus:outline-none [&::-webkit-search-cancel-button]:hidden"
 	/>
@@ -46,7 +47,7 @@
 			type="button"
 			onclick={clearSearch}
 			class="flex h-6 min-h-6 w-6 min-w-6 flex-shrink-0 cursor-pointer items-center justify-center rounded-full bg-transparent text-gray-400 transition-colors hover:bg-gray-500/50 hover:text-white"
-			aria-label="Clear search"
+			aria-label={m.clear_search()}
 		>
 			<MaterialSymbolsClose class="h-4 w-4" />
 		</button>

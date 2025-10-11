@@ -443,6 +443,7 @@
 	"image": "이미지",
 	"delete_event_confirmation": "이 이벤트를 삭제하시겠습니까?",
 	"search": "검색",
+	"clear_search": "검색 지우기",
 	"add_new": "새로 추가",
 	"history": "기록",
 	"update_event": "이벤트 업데이트",

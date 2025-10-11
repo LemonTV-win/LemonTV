@@ -380,6 +380,7 @@
 	"image": "画像",
 	"delete_event_confirmation": "このイベントを削除してもよろしいですか？",
 	"search": "検索",
+	"clear_search": "検索をクリア",
 	"add_new": "新規追加",
 	"history": "履歴",
 	"update_event": "イベントを更新",

@@ -443,6 +443,7 @@
 	"image": "圖片",
 	"delete_event_confirmation": "您確定要刪除此賽事嗎？",
 	"search": "搜尋",
+	"clear_search": "清除搜尋",
 	"add_new": "新增",
 	"history": "歷史",
 	"update_event": "更新賽事",

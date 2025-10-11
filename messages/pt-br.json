@@ -443,6 +443,7 @@
 	"image": "Imagem",
 	"delete_event_confirmation": "Tem certeza que deseja excluir este evento?",
 	"search": "Pesquisar",
+	"clear_search": "Limpar pesquisa",
 	"add_new": "Adicionar novo",
 	"history": "Histórico",
 	"update_event": "Atualizar evento",

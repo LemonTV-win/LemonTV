@@ -443,6 +443,7 @@
 	"image": "Gambar",
 	"delete_event_confirmation": "Apakah Anda yakin ingin menghapus acara ini?",
 	"search": "Cari",
+	"clear_search": "Hapus Pencarian",
 	"add_new": "Tambah Baru",
 	"history": "Riwayat",
 	"update_event": "Perbarui Acara",
