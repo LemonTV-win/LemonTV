@@ -31,9 +31,10 @@
 3. **Database**:
    - Development: `bun run db:dev:push` to apply migrations; the dev server seeds and syncs automatically. 【F:README.md†L33-L39】【F:src/hooks.server.ts†L10-L23】
    - Production-related scripts: use the `db:prod:*` commands; never run against prod without confirming env vars. 【F:package.json†L15-L43】
-4. **Lint & type-check**: `bun run lint` and `bun run check` before committing. ESLint enforces translation usage and Svelte best practices.
-5. **Tests**: `bun run test:unit` for Bun tests; `bun run test:e2e` (Playwright) for browser flows.
-6. **Build & deploy**: `bun run build`; production deploy uses `bun run deploy` which chains checks, DB sync, stats recalculation, and Vercel deploy. 【F:package.json†L12-L83】
+4. **Format code**: `bun run format` to auto-format all files with Prettier (uses default Prettier settings with Svelte plugin configuration). 【F:package.json†L13】
+5. **Lint & type-check**: `bun run lint` and `bun run check` before committing. ESLint enforces translation usage and Svelte best practices.
+6. **Tests**: `bun run test:unit` for Bun tests; `bun run test:e2e` (Playwright) for browser flows.
+7. **Build & deploy**: `bun run build`; production deploy uses `bun run deploy` which chains checks, DB sync, stats recalculation, and Vercel deploy. 【F:package.json†L12-L83】
 
 ## Coding Guidelines
 
