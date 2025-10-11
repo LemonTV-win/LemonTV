@@ -69,7 +69,7 @@ async function filterIgnored(eslint: ESLint, files: string[]) {
 	return out;
 }
 
-async function lintWithProgress(eslint: ESLint, files: string[], chunkSize = 40) {
+async function lintWithProgress(eslint: ESLint, files: string[], chunkSize = 5) {
 	const results: Res[] = [];
 	const total = files.length;
 	let done = 0;
