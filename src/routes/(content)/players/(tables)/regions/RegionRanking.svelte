@@ -33,10 +33,10 @@
 	let countryStats = $derived(
 		data.toSorted((a, b) => {
 			// Log the actual values being passed to countryCodeToLocalizedName
-			if (sortBy === 'region-asc' || sortBy === 'region-desc') {
-				const aName = a.nationality ? countryCodeToLocalizedName(a.nationality, getLocale()) : '';
-				const bName = b.nationality ? countryCodeToLocalizedName(b.nationality, getLocale()) : '';
-			}
+			// if (sortBy === 'region-asc' || sortBy === 'region-desc') {
+			// 	const aName = a.nationality ? countryCodeToLocalizedName(a.nationality, getLocale()) : '';
+			// 	const bName = b.nationality ? countryCodeToLocalizedName(b.nationality, getLocale()) : '';
+			// }
 
 			if (sortBy === 'region-asc') {
 				return (

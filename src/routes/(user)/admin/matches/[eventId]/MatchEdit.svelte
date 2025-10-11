@@ -1,7 +1,7 @@
 <!-- src/routes/(user)/admin/matches/MatchEdit.svelte -->
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import type { Match, MatchTeam, MatchMap, Team, Map as GameMap } from '$lib/server/db/schema';
+	import type { Match, MatchTeam, MatchMap, Team } from '$lib/server/db/schema';
 	import { m } from '$lib/paraglide/messages';
 	import type { ActionResult } from '@sveltejs/kit';
 	import Combobox from '$lib/components/Combobox.svelte';

@@ -1,9 +1,6 @@
 import type { PageMetadata } from '$lib/seo';
 import type { PageLoad } from './$types';
 import { m } from '$lib/paraglide/messages';
-import { countries, type TCountryCode } from 'countries-list';
-import { CHARACTERS, type Character } from '$lib/data/game';
-
 // Type guard for sortBy validation
 function isValidSortBy(
 	value: string

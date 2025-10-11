@@ -193,14 +193,14 @@ export type PlayerCharacterStats = typeof playerCharacterStats.$inferSelect;
 export type PlayerStatsHistory = typeof playerStatsHistory.$inferSelect;
 export type PlayerCharacterStatsHistory = typeof playerCharacterStatsHistory.$inferSelect;
 
-export const playerStatsRelations = relations(playerStats, ({ one, many }) => ({
+export const playerStatsRelations = relations(playerStats, ({ one }) => ({
 	player: one(player, {
 		fields: [playerStats.playerId],
 		references: [player.id]
 	})
 }));
 
-export const playerCharacterStatsRelations = relations(playerCharacterStats, ({ one, many }) => ({
+export const playerCharacterStatsRelations = relations(playerCharacterStats, ({ one }) => ({
 	player: one(player, {
 		fields: [playerCharacterStats.playerId],
 		references: [player.id]

@@ -4,7 +4,7 @@ import { CHARACTERS } from '$lib/data/game';
 import { processImageURL } from '$lib/server/storage';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { and, desc, asc, like, inArray, sql, eq, isNotNull } from 'drizzle-orm';
+import { and, desc, asc, like, inArray, sql, eq } from 'drizzle-orm';
 import type { TCountryCode } from 'countries-list';
 
 // Helper functions (kept from your original code)
@@ -27,7 +27,7 @@ function parseUrlParamEnum<T extends string>(
 	return value as T;
 }
 
-export const load: PageServerLoad = async ({ locals: { user }, url }) => {
+export const load: PageServerLoad = async ({ url }) => {
 	// -- Parsed URL params --
 	const page = parseUrlParamNumber(url.searchParams.get('page'), 1);
 	const pageSize = parseUrlParamNumber(url.searchParams.get('pageSize'), 100);

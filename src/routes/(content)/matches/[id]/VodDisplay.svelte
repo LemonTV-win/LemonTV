@@ -9,7 +9,6 @@ https://svelte.dev/e/legacy_reactive_statement_invalid -->
 
 	let {
 		vods,
-		gameId,
 		mapName
 	}: {
 		vods: Array<{
@@ -128,7 +127,7 @@ https://svelte.dev/e/legacy_reactive_statement_invalid -->
 		<div class="flex gap-3">
 			{#each availableVods.sort((a, b) => {
 				return (priority[a.type as keyof typeof priority] || 999) - (priority[b.type as keyof typeof priority] || 999);
-			}) as vod, index}
+			}) as vod}
 				{#if vod.url}
 					<div class="glass min-w-128 p-4">
 						<div class="mb-3 flex items-center justify-between">

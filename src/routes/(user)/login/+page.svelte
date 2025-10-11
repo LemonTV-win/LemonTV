@@ -5,7 +5,7 @@
 	import Lock from '~icons/lucide/lock';
 	import Mail from '~icons/lucide/mail';
 	import User from '~icons/lucide/user';
-	import Github from '~icons/lucide/github';
+	// import Github from '~icons/lucide/github';
 	import type { PageServerData } from './$types';
 	import { m } from '$lib/paraglide/messages';
 	import { LOGIN_SCHEMA, REGISTER_SCHEMA } from '$lib/validations/auth';

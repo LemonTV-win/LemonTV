@@ -2,13 +2,12 @@
 	import { enhance } from '$app/forms';
 	import Mail from '~icons/lucide/mail';
 	import ArrowLeft from '~icons/lucide/arrow-left';
-	import type { PageServerData } from './$types';
+	import type { PageProps } from './$types';
 	import { m } from '$lib/paraglide/messages';
 	import { FORGOT_PASSWORD_SCHEMA } from '$lib/validations/auth';
 	import InlineAlert from '$lib/components/InlineAlert.svelte';
 
-	type FormData = { message?: string; success?: boolean } | null;
-	let { form, data }: { form: FormData; data: PageServerData } = $props();
+	let { form }: PageProps = $props();
 	let email = $state('');
 	let isLoading = $state(false);
 	let successMessage = $state('');

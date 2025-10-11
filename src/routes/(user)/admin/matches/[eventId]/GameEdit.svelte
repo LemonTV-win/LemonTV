@@ -14,9 +14,6 @@
 
 	import Modal from '$lib/components/Modal.svelte';
 	import { m } from '$lib/paraglide/messages';
-	import IconParkSolidAdd from '~icons/icon-park-solid/add';
-	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
-	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import MinuteSecondTimeInput from '$lib/components/MinuteSecondTimeInput.svelte';
 	let {
 		onCancel,

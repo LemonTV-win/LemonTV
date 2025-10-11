@@ -1,4 +1,3 @@
-import type { Region } from '$lib/data/game';
 import type { TCountryCode } from 'countries-list';
 import type { User } from './user';
 

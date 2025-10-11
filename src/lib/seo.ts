@@ -1,4 +1,3 @@
-import { SITE_CANONICAL_HOST } from '$lib/consts';
 export interface PageMetadata {
 	title: string;
 	description: string;

@@ -25,11 +25,6 @@
 		winner: 0 | 1 | null;
 	}
 
-	interface GameImportData {
-		meta: GameMeta;
-		players: PlayerScoreData;
-	}
-
 	let {
 		showModal,
 		playerScoresA,
@@ -64,28 +59,28 @@
 		const teamBMap = compiledGameAccountIDMaps[1];
 
 		// Count how many players from each team are found in the imported data
-		let teamAMatches = 0;
-		let teamBMatches = 0;
+		// let teamAMatches = 0;
+		// let teamBMatches = 0;
 
 		// Check team A data (first array in imported data)
-		data[0].forEach((playerScore) => {
-			if (playerScore.accountId && teamAMap.has(playerScore.accountId)) {
-				teamAMatches++;
-			}
-			if (playerScore.accountId && teamBMap.has(playerScore.accountId)) {
-				teamBMatches++;
-			}
-		});
+		// data[0].forEach((playerScore) => {
+		// 	if (playerScore.accountId && teamAMap.has(playerScore.accountId)) {
+		// 		teamAMatches++;
+		// 	}
+		// 	if (playerScore.accountId && teamBMap.has(playerScore.accountId)) {
+		// 		teamBMatches++;
+		// 	}
+		// });
 
 		// Check team B data (second array in imported data)
-		data[1].forEach((playerScore) => {
-			if (playerScore.accountId && teamAMap.has(playerScore.accountId)) {
-				teamAMatches++;
-			}
-			if (playerScore.accountId && teamBMap.has(playerScore.accountId)) {
-				teamBMatches++;
-			}
-		});
+		// data[1].forEach((playerScore) => {
+		// 	if (playerScore.accountId && teamAMap.has(playerScore.accountId)) {
+		// 		teamAMatches++;
+		// 	}
+		// 	if (playerScore.accountId && teamBMap.has(playerScore.accountId)) {
+		// 		teamBMatches++;
+		// 	}
+		// });
 
 		// If more team B players are found in the first array (team A position),
 		// or more team A players are found in the second array (team B position),

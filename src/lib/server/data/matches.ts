@@ -1,6 +1,6 @@
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { eq, inArray } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import type { Match as AppMatch } from '$lib/data/matches';
 import type { Event } from '$lib/data/events';
 import type { GameMap, Region } from '$lib/data/game';

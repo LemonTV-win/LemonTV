@@ -2,7 +2,6 @@
 	import { m } from '$lib/paraglide/messages';
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import IconParkSolidAdd from '~icons/icon-park-solid/add';
-	import type { Player } from '$lib/data/players';
 	import Combobox from '$lib/components/Combobox.svelte';
 	import countryCodeToFlagEmoji from 'country-code-to-flag-emoji';
 	import type { GameAccount } from '$lib/server/db/schema';

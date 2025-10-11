@@ -3,9 +3,7 @@ import { db } from '$lib/server/db';
 import * as schema from '$lib/server/db/schema';
 import { sql, isNotNull, eq } from 'drizzle-orm';
 
-async function getRegionRankingData() {}
-
-export const load: PageServerLoad = async ({ locals: { user } }) => {
+export const load: PageServerLoad = async ({}) => {
 	// TODO: 1. Use a summary table specifically for region ranking
 	// TODO: 2. Account for players with multiple nationalities (additionalNationalities)
 	const regionRankingData = await db

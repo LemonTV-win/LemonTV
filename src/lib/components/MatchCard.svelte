@@ -59,8 +59,6 @@
 					capacity: number;
 					official: boolean;
 			  };
-		playerId?: string;
-		playerAccountIds?: number[];
 		player?: boolean;
 	} = $props();
 
@@ -138,7 +136,7 @@
 			class="relative z-30 mt-1 rounded-md border border-gray-700 bg-gray-900/70 px-3 py-3 shadow-inner backdrop-blur-sm"
 		>
 			<div class="flex flex-col gap-3">
-				{#each match.games as g, i}
+				{#each match.games as g}
 					{#key g.id}
 						<a
 							class="flex cursor-pointer items-center justify-between gap-3 rounded bg-gray-800/60 p-2 transition-all duration-200 hover:scale-102 hover:bg-gray-800/80"

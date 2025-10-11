@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { TCountryCode } from 'countries-list';
 	import Highlight from 'svelte-highlight';
 	import typescript from 'svelte-highlight/languages/typescript';
 	import '$lib/highlight.css';
@@ -174,7 +173,7 @@
 		const slugCounts = new Map<string, string[]>();
 
 		// Count slugs within the parsed data
-		parsedTeams.data.forEach((team, index) => {
+		parsedTeams.data.forEach((team) => {
 			const slug = team.slug || formatSlug(team.name);
 			if (!slugCounts.has(slug)) {
 				slugCounts.set(slug, []);
@@ -245,20 +244,6 @@
 
 	let hasDuplicateSlugs = $derived(duplicateSlugs.length > 0);
 	let hasDuplicateTeamNames = $derived(duplicateTeamNames.length > 0);
-
-	// Separate slug duplicate types for better gating
-	let hasInternalSlugDuplicates = $derived.by(() => {
-		if (!parsedTeams || parsedTeams.type !== 'success') return false;
-		const slugCounts = new Map<string, number>();
-		parsedTeams.data.forEach((team) => {
-			const slug = team.slug || formatSlug(team.name);
-			slugCounts.set(slug, (slugCounts.get(slug) || 0) + 1);
-		});
-		for (const [, count] of slugCounts) {
-			if (count > 1) return true;
-		}
-		return false;
-	});
 
 	let hasExistingSlugConflicts = $derived.by(() => {
 		if (!parsedTeams || parsedTeams.type !== 'success') return false;
@@ -576,26 +561,6 @@
 				reasons.push(`Account ID: ${accountDuplicate}`);
 			}
 		});
-
-		return reasons.join('; ');
-	}
-
-	// Check if a team has any duplicates (slug or name)
-	function hasAnyDuplicate(team: TeamImportData): boolean {
-		return isDuplicateSlug(team) || isDuplicateTeamName(team);
-	}
-
-	// Get all duplicate reasons for a team
-	function getAllDuplicateReasons(team: TeamImportData): string {
-		const reasons: string[] = [];
-
-		if (isDuplicateSlug(team)) {
-			reasons.push(getDuplicateReason(team));
-		}
-
-		if (isDuplicateTeamName(team)) {
-			reasons.push(getDuplicateTeamNameReason(team));
-		}
 
 		return reasons.join('; ');
 	}

@@ -7,7 +7,7 @@ import { processImageURL } from '$lib/server/storage';
 import type { Region } from '$lib/data/game';
 import { eq, or, sql } from 'drizzle-orm';
 import { safeParseDateRange } from '$lib/utils/date';
-import type { EventParticipant, StageNode, Stage, EventResult } from '$lib/data/events';
+import type { EventParticipant, StageNode } from '$lib/data/events';
 import type { GameAccount, GameAccountRegion, GameAccountServer, Player } from '$lib/data/players';
 import { normalizePlayer } from '$lib/server/data/players';
 import type { PlayerScore } from '$lib/data/matches';
@@ -331,7 +331,6 @@ function fakeLocalizedString(str: string): LocalizedString {
 }
 
 export async function getEvent(id: string): Promise<AppEvent | undefined> {
-	const totalStart = performance.now();
 	console.info(`[Events] Fetching single event: ${id}`);
 
 	// Simple query to get basic event data first

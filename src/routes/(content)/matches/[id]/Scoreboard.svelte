@@ -14,7 +14,6 @@
 		scores,
 		winner,
 		teams,
-		result,
 		sortBy = $bindable('score-desc')
 	}: {
 		scores: [PlayerScore[], PlayerScore[]];

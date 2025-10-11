@@ -6,7 +6,6 @@
 
 	let {
 		nodes,
-		matches,
 		rounds,
 		selectedObject,
 		confirmRemoveNode,

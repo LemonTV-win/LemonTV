@@ -57,16 +57,6 @@
 		) as Character[]
 	);
 
-	function isPlayer(player: any): player is (typeof players)[number] {
-		return player !== null;
-	}
-
-	type AugmentedPlayer = (typeof players)[number] & {
-		superstringPower: number;
-		gamesPlayed: number;
-		wins: number;
-	};
-
 	// Get players with Superstring Power for the selected character
 	let rankedPlayers = $derived.by(() => {
 		const characterData = superstringPowerData[selectedCharacter] || [];

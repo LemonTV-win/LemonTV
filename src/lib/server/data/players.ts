@@ -6,24 +6,16 @@ import {
 	player_social_account,
 	social_platform,
 	editHistory,
-	playerAdditionalNationality,
-	type GameAccount as GameAccountDB
+	playerAdditionalNationality
 } from '$lib/server/db/schema';
 import { eq, or, and, inArray, sql, desc } from 'drizzle-orm';
-import {
-	getGameAccountServer,
-	type GameAccount,
-	type Player,
-	type PlayerTeam
-} from '$lib/data/players';
+import { getGameAccountServer, type Player, type PlayerTeam } from '$lib/data/players';
 import { randomUUID } from 'node:crypto';
-import type { Team } from '$lib/data/teams';
 import type { Character, GameMap, Region } from '$lib/data/game';
 import type { TCountryCode } from 'countries-list';
 
 import * as schema from '$lib/server/db/schema';
-import type { Match, PlayerScore } from '$lib/data/matches';
-import type { Event } from '$lib/data/events';
+import type { PlayerScore } from '$lib/data/matches';
 import { formatSlug } from '$lib/utils/strings';
 
 // Unified player statistics interface
@@ -963,14 +955,6 @@ export async function getPlayerKD(playerId: string): Promise<number> {
 		')'
 	);
 	return kdRatio;
-}
-
-function identifyPlayerFromScore(score: PlayerScore, player: Player): boolean {
-	return (
-		(player.gameAccounts.some((acc) => acc.accountId === score.accountId) ||
-			player.aliases?.some((alias) => alias === score.player)) ??
-		false
-	);
 }
 
 export async function createPlayer(

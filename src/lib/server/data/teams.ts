@@ -5,7 +5,7 @@ import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { eq, inArray } from 'drizzle-orm';
 
-import type { Team, TeamPlayer, TeamPlayerRole } from '$lib/data/teams';
+import type { Team, TeamPlayerRole } from '$lib/data/teams';
 import type { Player } from '$lib/data/players';
 import type { User, UserRole } from '$lib/data/user';
 import type { TCountryCode } from 'countries-list';

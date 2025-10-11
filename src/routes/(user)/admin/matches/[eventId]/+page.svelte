@@ -4,7 +4,6 @@
 	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
 	import { invalidateAll } from '$app/navigation';
-	import MaterialSymbolsSearchRounded from '~icons/material-symbols/search-rounded';
 	import IconParkSolidEdit from '~icons/icon-park-solid/edit';
 	import TypcnArrowUnsorted from '~icons/typcn/arrow-unsorted';
 	import TypcnArrowSortedDown from '~icons/typcn/arrow-sorted-down';
@@ -13,14 +12,8 @@
 	import IconVideo from '~icons/icon-park-outline/video';
 	import { goto } from '$app/navigation';
 	import MatchEdit from './MatchEdit.svelte';
-	import {
-		type Match,
-		type MatchTeam,
-		type MatchMap,
-		type Team,
-		type Map as MapSchema
-	} from '$lib/server/db/schema';
-	import type { Game, GamePlayerScore, GameTeam, GameVod } from '$lib/server/db/schemas/game/match';
+	import { type Match, type MatchTeam, type MatchMap, type Team } from '$lib/server/db/schema';
+	import type { GamePlayerScore, GameVod } from '$lib/server/db/schemas/game/match';
 	import StageEdit from './StageEdit.svelte';
 	import Modal from '$lib/components/Modal.svelte';
 	import BracketEdit from './BracketEdit.svelte';
@@ -353,8 +346,8 @@
 	>(undefined);
 	let showStageEdit = $state(false);
 	let showBracketEdit = $state(false);
-	let errorMessage = $state('');
-	let successMessage = $state('');
+	// let errorMessage = $state('');
+	// let successMessage = $state('');
 
 	type EditingGame = {
 		game?: {
@@ -586,13 +579,13 @@
 		showStageEdit = false;
 		action = null;
 		actionParams = null;
-		successMessage = '';
-		errorMessage = '';
+		// successMessage = '';
+		// errorMessage = '';
 	}
 
 	function openBracketEdit() {
 		if (!selectedStage) {
-			errorMessage = 'Please select a stage first';
+			// errorMessage = 'Please select a stage first';
 			return;
 		}
 		action = 'editBracket';
@@ -604,19 +597,19 @@
 		showBracketEdit = false;
 		action = null;
 		actionParams = null;
-		successMessage = '';
-		errorMessage = '';
+		// successMessage = '';
+		// errorMessage = '';
 	}
 
 	function handleStageSuccess() {
-		successMessage = 'Stage updated successfully';
+		// successMessage = 'Stage updated successfully';
 		closeStageEdit();
 		// Refresh the page to get updated data
 		invalidateAll();
 	}
 
 	function handleBracketSuccess() {
-		successMessage = 'Bracket structure updated successfully';
+		// successMessage = 'Bracket structure updated successfully';
 		closeBracketEdit();
 		// Refresh the page to get updated data
 		invalidateAll();

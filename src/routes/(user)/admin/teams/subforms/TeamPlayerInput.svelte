@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { GameAccount, Player } from '$lib/server/db/schema';
+	import type { GameAccount } from '$lib/server/db/schema';
 	import { m } from '$lib/paraglide/messages';
 	import IconParkSolidAdd from '~icons/icon-park-solid/add';
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';

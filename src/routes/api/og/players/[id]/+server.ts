@@ -131,8 +131,6 @@ export const GET: RequestHandler = async ({ params, url }) => {
 		const winRateValueStyle = `${statBoxValueStyle}; color: #86efac`; // green-300
 		const winsValueStyle = `${statBoxValueStyle}; color: #ffffff`; // white
 
-		const latestEventLabel = 'Latest Event';
-
 		const markup = html`
 			<div
 				style="display: flex; flex-direction: column; width: 1200px; height: 630px; position: relative; font-family: Saira, 'Noto Sans JP', sans-serif; background: black;"

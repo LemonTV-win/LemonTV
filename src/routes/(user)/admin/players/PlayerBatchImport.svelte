@@ -35,7 +35,6 @@
 
 	import { deserialize } from '$app/forms';
 	import { m } from '$lib/paraglide/messages';
-	import type { Region } from '$lib/data/game';
 	import type { GameAccountRegion, GameAccountServer } from '$lib/data/players';
 
 	let {
@@ -133,7 +132,7 @@
 		const slugCounts = new Map<string, string[]>();
 
 		// Count slugs within the parsed data
-		parsedPlayers.data.forEach((player, index) => {
+		parsedPlayers.data.forEach((player) => {
 			const slug = player.slug || formatSlug(player.name);
 			if (!slugCounts.has(slug)) {
 				slugCounts.set(slug, []);
@@ -633,26 +632,6 @@ const players: PlayerImportData[] = [
 
 	function copySchema() {
 		navigator.clipboard.writeText(TYPESCRIPT_SCHEMA);
-	}
-
-	// Check if a player has any duplicates (slug or account ID)
-	function hasAnyDuplicate(player: PlayerImportData): boolean {
-		return isDuplicateSlug(player) || isDuplicateAccountId(player);
-	}
-
-	// Get all duplicate reasons for a player
-	function getAllDuplicateReasons(player: PlayerImportData): string {
-		const reasons: string[] = [];
-
-		if (isDuplicateSlug(player)) {
-			reasons.push(getDuplicateReason(player));
-		}
-
-		if (isDuplicateAccountId(player)) {
-			reasons.push(getDuplicateAccountIdReason(player));
-		}
-
-		return reasons.join('; ');
 	}
 </script>
 

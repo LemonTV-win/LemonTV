@@ -31,7 +31,7 @@ export const mouseSettings = sqliteTable('player_mouse_settings', {
 
 export type ProSettings = typeof mouseSettings.$inferSelect;
 
-export const proSettingsRelations = relations(mouseSettings, ({ one, many }) => ({
+export const proSettingsRelations = relations(mouseSettings, ({ one }) => ({
 	player: one(player, {
 		fields: [mouseSettings.playerId],
 		references: [player.id]

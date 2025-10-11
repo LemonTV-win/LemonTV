@@ -1,5 +1,4 @@
 import { type Player } from '$lib/data/players';
-import type { Match } from '$lib/data/matches';
 
 export function identifyPlayer(id: string, player: Player | string): boolean {
 	if (typeof player === 'string') {

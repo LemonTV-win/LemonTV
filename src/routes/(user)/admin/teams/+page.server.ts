@@ -325,7 +325,6 @@ export const actions = {
 				// First, create any new players that are needed
 				const existingPlayers = await tx.select().from(table.player);
 				const existingPlayerNames = new Set(existingPlayers.map((p) => p.name));
-				const existingPlayerIds = new Set(existingPlayers.map((p) => p.id));
 				const existingUserIds = new Set(existingPlayers.map((p) => p.userId).filter(Boolean));
 
 				// Get existing game accounts to check for duplicates

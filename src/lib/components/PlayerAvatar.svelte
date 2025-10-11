@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { Player } from '$lib/data/players';
 	import PlaceholderAvatar from '$assets/placeholder_avatar.png';
 
 	let {

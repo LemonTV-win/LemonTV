@@ -92,8 +92,6 @@
 			})
 		)
 	);
-	let newSloganText = $state('');
-	let newSloganLang = $state('');
 
 	function addAlias() {
 		if (newAlias && !aliases.includes(newAlias)) {
@@ -104,27 +102,6 @@
 
 	function removeAlias(alias: string) {
 		aliases = aliases.filter((a) => a !== alias);
-	}
-
-	function addSlogan() {
-		if (newSloganText.trim()) {
-			slogans = [
-				...slogans,
-				{
-					id: undefined,
-					slogan: newSloganText.trim(),
-					language: newSloganLang || null,
-					eventId: null as string | null
-				}
-			];
-			newSloganText = '';
-			newSloganLang = '';
-		}
-	}
-
-	function removeSlogan(index: number) {
-		slogans.splice(index, 1);
-		slogans = [...slogans];
 	}
 </script>
 

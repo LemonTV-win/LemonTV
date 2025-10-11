@@ -1,10 +1,9 @@
-import { error, fail } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { desc, eq, inArray, sql } from 'drizzle-orm';
 import { checkPermissions } from '$lib/server/security/permission';
 import type { PageServerLoad } from './$types';
-import { unique } from 'drizzle-orm/sqlite-core';
 import { processImageURL } from '$lib/server/storage';
 
 export const load: PageServerLoad = async ({ locals }) => {

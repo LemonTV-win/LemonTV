@@ -1,12 +1,12 @@
 import { error, fail } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { desc, eq, and, inArray } from 'drizzle-orm';
+import { eq, and, inArray } from 'drizzle-orm';
 import { processImageURL } from '$lib/server/storage';
 import type { TCountryCode, TLanguageCode } from 'countries-list';
-import type { Region, GameMap } from '$lib/data/game';
+import type { GameMap } from '$lib/data/game';
 import { MAPS } from '$lib/data/game';
-import type { ActionData, Actions, PageServerLoad, RequestEvent } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 import { dev } from '$app/environment';
 import { checkPermissions } from '$lib/server/security/permission';
 import type { GameAccount, GameAccountRegion, GameAccountServer, Player } from '$lib/data/players';

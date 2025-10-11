@@ -214,37 +214,6 @@ const TEAM_PLAYERS = {
 	]
 };
 
-// Team matchups for different stages
-const TEAM_MATCHUPS = [
-	// Qualifier stage - random matchups
-	[TEAMS[0].id, TEAMS[1].id], // Thunder Wolves vs Dragon Phoenix
-	[TEAMS[2].id, TEAMS[3].id], // Viking Storm vs Tiger Blades
-	[TEAMS[4].id, TEAMS[5].id], // Kangaroo Eagles vs Bear Falcons
-	[TEAMS[6].id, TEAMS[7].id], // Frost Valkyries vs Jaguar Condors
-	[TEAMS[8].id, TEAMS[9].id], // Desert Lions vs Tiger Dragons
-	[TEAMS[10].id, TEAMS[11].id], // Rose Thunder vs Aurora Vikings
-	// Cross-region matchups
-	[TEAMS[0].id, TEAMS[6].id], // Thunder Wolves vs Frost Valkyries
-	[TEAMS[1].id, TEAMS[7].id], // Dragon Phoenix vs Jaguar Condors
-	[TEAMS[2].id, TEAMS[8].id], // Viking Storm vs Desert Lions
-	[TEAMS[3].id, TEAMS[9].id], // Tiger Blades vs Tiger Dragons
-	[TEAMS[4].id, TEAMS[10].id], // Kangaroo Eagles vs Rose Thunder
-	[TEAMS[5].id, TEAMS[11].id], // Bear Falcons vs Aurora Vikings
-	// Additional matchups for more variety
-	[TEAMS[0].id, TEAMS[3].id], // Thunder Wolves vs Tiger Blades
-	[TEAMS[1].id, TEAMS[4].id], // Dragon Phoenix vs Kangaroo Eagles
-	[TEAMS[2].id, TEAMS[5].id], // Viking Storm vs Bear Falcons
-	[TEAMS[6].id, TEAMS[9].id], // Frost Valkyries vs Tiger Dragons
-	[TEAMS[7].id, TEAMS[10].id], // Jaguar Condors vs Rose Thunder
-	[TEAMS[8].id, TEAMS[11].id], // Desert Lions vs Aurora Vikings
-	// New teams matchups
-	[TEAMS[12].id, TEAMS[0].id], // Shadow Phoenixes vs Thunder Wolves
-	[TEAMS[13].id, TEAMS[1].id], // Storm Eagles vs Dragon Phoenix
-	[TEAMS[12].id, TEAMS[13].id], // Shadow Phoenixes vs Storm Eagles
-	[TEAMS[12].id, TEAMS[6].id], // Shadow Phoenixes vs Frost Valkyries
-	[TEAMS[13].id, TEAMS[8].id] // Storm Eagles vs Desert Lions
-];
-
 // Helper functions
 function getRandomInt(min: number, max: number): number {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -326,7 +295,7 @@ function generateGames() {
 	let playerScoreId = 1; // Global counter for unique player score IDs
 
 	// Generate games for each match based on its format and stage
-	MATCHES.forEach((match, matchIndex) => {
+	MATCHES.forEach((match) => {
 		const matchFormat = match.format;
 		const stageId = match.stageId;
 

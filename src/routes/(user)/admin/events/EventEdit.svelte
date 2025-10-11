@@ -18,8 +18,6 @@
 	import EventTeamPlayersInput from './subforms/EventTeamPlayersInput.svelte';
 	import OrganizerInput from './subforms/OrganizerInput.svelte';
 	import CasterInput from './subforms/CasterInput.svelte';
-	import type { EventResult } from '$lib/data/events';
-	import type { TCountryCode } from 'countries-list';
 	import { SITE_CANONICAL_HOST } from '$lib/consts';
 	import type { Nationality } from '$lib/server/data/players';
 
@@ -83,7 +81,6 @@
 
 	// Local template selection from within the editor (create mode only)
 	let internalTemplateEventId: string | null = $state(templateEventId || null);
-	let templateIdInput = $state('');
 	let templateSelectId = $state('');
 
 	// Track which event id we have loaded to avoid repeated loads
@@ -307,13 +304,6 @@
 			})();
 		}
 	});
-
-	function applyTemplateFromInput() {
-		const value = templateIdInput.trim();
-		if (!value) return;
-		internalTemplateEventId = value;
-		errorMessage = '';
-	}
 
 	// Update newEvent.date when dateRange changes
 	$effect(() => {

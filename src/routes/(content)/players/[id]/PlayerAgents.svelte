@@ -6,7 +6,7 @@
 </script>
 
 {#each playerAgents.toSorted((a, b) => b[1] - a[1]) as [character, count] (character)}
-	{@const percentage = (count / playerAgents.reduce((acc, [_, count]) => acc + count, 0)) * 100}
+	{@const percentage = (count / playerAgents.reduce((acc, [_char, count]) => acc + count, 0)) * 100}
 	<li class="grid grid-cols-[auto_1fr] items-center gap-2 rounded-lg bg-slate-800/50 p-3">
 		<CharacterIcon {character} />
 		<div class="flex flex-col gap-1">

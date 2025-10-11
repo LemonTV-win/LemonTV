@@ -25,12 +25,14 @@
 		onchange = undefined
 	}: Props = $props();
 
+	// TODO: Use common function
 	function getNativeLanguageName(code: string): string {
 		try {
 			const display = new Intl.DisplayNames([code], { type: 'language' });
 			const name = display.of(code) || code;
 			return toLocaleTitleCase(name, code);
 		} catch (e) {
+			console.error('Failed to get native language name', e);
 			return code;
 		}
 	}
