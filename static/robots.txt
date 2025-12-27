@@ -2,9 +2,10 @@ User-agent: *
 Disallow: /admin/
 Disallow: /api/
 Disallow: /profile/
-Disallow: /login/
+Disallow: /login
 Disallow: /register/
 Disallow: /reset-password/
+Disallow: /*?*redirect=
 
 # Allow all other paths
 Allow: /
