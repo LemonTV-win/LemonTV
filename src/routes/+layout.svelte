@@ -23,7 +23,8 @@
 		SITE_CANONICAL_HOST,
 		STRINOVA_ESPORTS_HUB_DISCORD_URL,
 		LEMON_TV_QQ_URL,
-		GITHUB_REPO_URL
+		GITHUB_REPO_URL,
+		LEMON_TV_ORG_URL
 	} from '$lib/consts';
 	import GameSelect from './GameSelect.svelte';
 	import LanguageSelect from './LanguageSelect.svelte';
@@ -402,6 +403,14 @@
 				</a>
 			</div>
 			<div class="mb-4 flex justify-center gap-4">
+				<a
+					href={LEMON_TV_ORG_URL}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="text-yellow-300 transition-colors duration-300 hover:text-yellow-400"
+				>
+					LemonTV Org
+				</a>
 				<a
 					href="https://lemonade.mkpo.li/"
 					target="_blank"
