@@ -1,0 +1,25 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "lemontv-landing-strinova-win",
+	"main": "worker.js",
+	"compatibility_date": "2025-12-27",
+	"workers_dev": false,
+	"routes": [
+		{
+			"pattern": "strinova.win",
+			"custom_domain": true
+		},
+		{
+			"pattern": "www.strinova.win",
+			"custom_domain": true
+		}
+	],
+	"rules": [
+		{
+			"type": "Text",
+			"globs": ["**/*.html"],
+			"fallthrough": true
+		}
+	]
+}
+

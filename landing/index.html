@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LemonTV Organization</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        lemon: {
+                            50: '#fefce8',
+                            100: '#fef9c3',
+                            200: '#fef08a',
+                            300: '#fde047',
+                            400: '#facc15',
+                            500: '#eab308',
+                            600: '#ca8a04',
+                            700: '#a16207',
+                            800: '#854d0e',
+                            900: '#713f12',
+                            950: '#422006',
+                        },
+                        dark: {
+                            bg: '#12120b',     // Very dark warm gray
+                            surface: '#1c1c11', // Lighter warm gray for cards
+                            border: '#2e2e1f',  // Border color
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-yellow-50 text-gray-900 dark:bg-dark-bg dark:text-yellow-50 min-h-screen flex flex-col transition-colors duration-200">
+    <!-- Navbar -->
+    <nav class="bg-white/80 dark:bg-dark-bg/80 backdrop-blur-md border-b border-yellow-100 dark:border-dark-border sticky top-0 z-50 transition-colors duration-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">🍋</span>
+                    <span class="text-xl font-bold text-gray-900 dark:text-yellow-100 tracking-tight transition-colors duration-200">LemonTV Org</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="theme-toggle" class="p-2 text-gray-500 dark:text-yellow-200/60 hover:text-yellow-600 dark:hover:text-yellow-400 transition-colors rounded-lg hover:bg-yellow-50 dark:hover:bg-dark-surface" aria-label="Toggle Dark Mode">
+                        <!-- Sun icon -->
+                        <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                        </svg>
+                        <!-- Moon icon -->
+                        <svg class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                        </svg>
+                    </button>
+                    <div class="h-6 w-px bg-gray-200 dark:bg-dark-border transition-colors duration-200"></div>
+                    <a href="https://github.com/LemonTV-win" class="text-gray-500 dark:text-yellow-200/60 hover:text-yellow-600 dark:hover:text-yellow-400 transition-colors">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow container mx-auto px-4 py-12 md:py-20">
+        <!-- Hero Section -->
+        <div class="text-center mb-20">
+            <div class="inline-block p-3 rounded-[1.5rem] bg-yellow-100 dark:bg-yellow-500/20 mb-6 animate-bounce transition-colors duration-200">
+                <span class="text-4xl">🍋</span>
+            </div>
+            <h1 class="text-4xl font-extrabold text-gray-900 dark:text-yellow-50 sm:text-5xl md:text-6xl mb-6 tracking-tight transition-colors duration-200">
+                The Home of <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-orange-500 dark:from-yellow-400 dark:to-orange-400">Strinova</span> Mastery
+            </h1>
+            <p class="mt-4 max-w-2xl mx-auto text-xl text-gray-600 dark:text-yellow-100/60 leading-relaxed transition-colors duration-200">
+                LemonTV Organization provides a comprehensive suite of tools and resources designed to help you dominate in Strinova.
+            </p>
+        </div>
+
+        <!-- Projects Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-24">
+            <!-- LemonTV -->
+            <a href="https://lemontv.win" class="group relative bg-white dark:bg-dark-surface rounded-[2rem] p-8 shadow-sm dark:shadow-lg hover:shadow-xl dark:hover:shadow-yellow-900/20 hover:-translate-y-1 transition-all duration-300 border border-gray-100 dark:border-dark-border overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-br from-yellow-50/50 dark:from-yellow-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div class="relative z-10">
+                    <div class="h-14 w-14 bg-yellow-100 dark:bg-dark-bg rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <span class="text-3xl">📺</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-yellow-50 mb-3 transition-colors duration-200">LemonTV</h3>
+                    <p class="text-gray-500 dark:text-yellow-100/60 leading-relaxed mb-6 transition-colors duration-200">The premier esports hub. Match schedules, real-time stats, rankings, and competitive analysis.</p>
+                    <div class="flex items-center text-yellow-600 dark:text-yellow-400 font-semibold group-hover:gap-2 transition-all">
+                        Visit Site <span class="ml-1 transition-transform group-hover:translate-x-1">→</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Lemonade -->
+            <a href="https://nade.lemontv.win" class="group relative bg-white dark:bg-dark-surface rounded-[2rem] p-8 shadow-sm dark:shadow-lg hover:shadow-xl dark:hover:shadow-yellow-900/20 hover:-translate-y-1 transition-all duration-300 border border-gray-100 dark:border-dark-border overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-br from-yellow-50/50 dark:from-yellow-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div class="relative z-10">
+                    <div class="h-14 w-14 bg-yellow-100 dark:bg-dark-bg rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <span class="text-3xl">🥤</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-yellow-50 mb-3 transition-colors duration-200">Lemonade</h3>
+                    <p class="text-gray-500 dark:text-yellow-100/60 leading-relaxed mb-6 transition-colors duration-200">Your knowledge base. Map guides, strategy breakdowns, utility usage, and game mechanics.</p>
+                    <div class="flex items-center text-yellow-600 dark:text-yellow-400 font-semibold group-hover:gap-2 transition-all">
+                        Visit Site <span class="ml-1 transition-transform group-hover:translate-x-1">→</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- LemonSlice -->
+            <a href="https://slice.lemontv.win" class="group relative bg-white dark:bg-dark-surface rounded-[2rem] p-8 shadow-sm dark:shadow-lg hover:shadow-xl dark:hover:shadow-yellow-900/20 hover:-translate-y-1 transition-all duration-300 border border-gray-100 dark:border-dark-border overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-br from-yellow-50/50 dark:from-yellow-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div class="relative z-10">
+                    <div class="h-14 w-14 bg-yellow-100 dark:bg-dark-bg rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <span class="text-3xl">🍕</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-yellow-50 mb-3 transition-colors duration-200">LemonSlice</h3>
+                    <p class="text-gray-500 dark:text-yellow-100/60 leading-relaxed mb-6 transition-colors duration-200">Advanced analytics. Track your performance, analyze replays, and visualize your improvement.</p>
+                    <div class="flex items-center text-yellow-600 dark:text-yellow-400 font-semibold group-hover:gap-2 transition-all">
+                        Visit Site <span class="ml-1 transition-transform group-hover:translate-x-1">→</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- About Section -->
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-white dark:bg-dark-surface rounded-[2.5rem] shadow-sm border border-gray-100 dark:border-dark-border p-8 md:p-12 relative overflow-hidden transition-colors duration-200">
+                <div class="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-yellow-50 dark:bg-yellow-500/10 rounded-full dark:blur-3xl opacity-50 dark:opacity-100"></div>
+                
+                <div class="relative z-10">
+                    <h2 class="text-3xl font-bold text-gray-900 dark:text-yellow-50 mb-6 transition-colors duration-200">About Our Mission</h2>
+                    <div class="prose dark:prose-invert prose-yellow max-w-none text-gray-600 dark:text-yellow-100/70 space-y-4 transition-colors duration-200">
+                        <p>
+                            At LemonTV, we believe that every Strinova player deserves access to high-quality resources that facilitate growth and success. Our mission is to build a centralized ecosystem where players can find everything they need—from esports data to learning materials and personal performance tracking.
+                        </p>
+                        <p>
+                            Whether you're a beginner learning the ropes or a competitive player aiming for the top, our tools are built by players, for players, to help you connect with the community and master the game.
+                        </p>
+                    </div>
+
+                    <div class="mt-12 pt-8 border-t border-gray-100 dark:border-dark-border transition-colors duration-200">
+                        <h3 class="text-sm font-semibold text-gray-400 dark:text-yellow-100/40 uppercase tracking-wider mb-6 transition-colors duration-200">Created with ❤️ by</h3>
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+                            <!-- mkpoli -->
+                            <div class="flex items-center space-x-4">
+                                <img src="https://github.com/mkpoli.png" alt="mkpoli" class="h-12 w-12 rounded-full bg-gray-100 dark:bg-dark-bg border border-transparent dark:border-dark-border transition-colors duration-200">
+                                <div>
+                                    <h4 class="text-lg font-bold text-gray-900 dark:text-yellow-50 transition-colors duration-200">mkpoli</h4>
+                                    <p class="text-sm text-gray-500 dark:text-yellow-100/50 transition-colors duration-200">Developer & Founder</p>
+                                </div>
+                            </div>
+                            
+                            <div class="hidden sm:block text-gray-300 dark:text-dark-border transition-colors duration-200">|</div>
+
+                            <a href="https://lemontv.win/about" class="flex items-center gap-2 group hover:text-yellow-600 dark:hover:text-yellow-400 transition-colors">
+                                <div class="h-12 w-12 rounded-full bg-yellow-100 dark:bg-dark-bg border border-transparent dark:border-dark-border flex items-center justify-center text-xl group-hover:border-yellow-200 dark:group-hover:border-yellow-500/30 transition-colors duration-200">👥</div>
+                                <div>
+                                    <h4 class="text-lg font-bold text-gray-900 dark:text-yellow-100 group-hover:text-yellow-600 dark:group-hover:text-yellow-400 transition-colors duration-200">And more people</h4>
+                                    <p class="text-sm text-gray-500 dark:text-yellow-100/50 transition-colors duration-200">Meet the team on LemonTV →</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-auto border-t border-gray-100 dark:border-dark-border bg-white dark:bg-dark-bg/50 transition-colors duration-200">
+        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center gap-2 mb-4 md:mb-0">
+                <span class="text-lg">🍋</span>
+                <span class="font-semibold text-gray-900 dark:text-yellow-100/80 transition-colors duration-200">LemonTV Org</span>
+            </div>
+            <div class="text-gray-400 dark:text-yellow-100/30 text-sm transition-colors duration-200">
+                &copy; 2025 LemonTV Organization. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        
+        // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
+        themeToggleBtn.addEventListener('click', function() {
+            // toggle icons inside button
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+            }
+        });
+    </script>
+</body>
+</html>
