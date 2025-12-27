@@ -257,11 +257,13 @@
 		{:else}
 			<div class="z-10 hidden items-stretch gap-2 lg:flex">
 				<LanguageSelect />
-				<a
-					href="/login?redirect={encodeURIComponent(page.url.pathname + page.url.search)}"
-					class="flex items-center rounded-md border-1 border-gray-500 bg-gray-800 px-4 py-1 text-white transition-colors duration-300 hover:bg-gray-700"
-					>{m.sign_in()}</a
-				>
+				{#if page.url.pathname !== '/login'}
+					<a
+						href="/login?redirect={encodeURIComponent(page.url.pathname + page.url.search)}"
+						class="flex items-center rounded-md border-1 border-gray-500 bg-gray-800 px-4 py-1 text-white transition-colors duration-300 hover:bg-gray-700"
+						>{m.sign_in()}</a
+					>
+				{/if}
 			</div>
 		{/if}
 	</header>
@@ -339,12 +341,14 @@
 						</div>
 					</div>
 
-					<hr class="my-2 border-gray-700" />
-					<a
-						href="/login?redirect={encodeURIComponent(page.url.pathname + page.url.search)}"
-						class="flex w-full items-center justify-center rounded-md border-1 border-gray-500 bg-gray-700 px-4 py-2 text-lg text-white transition-colors duration-300 hover:bg-gray-600"
-						onclick={toggleMobileMenu}>{m.sign_in()}</a
-					>
+					{#if page.url.pathname !== '/login'}
+						<hr class="my-2 border-gray-700" />
+						<a
+							href="/login?redirect={encodeURIComponent(page.url.pathname + page.url.search)}"
+							class="flex w-full items-center justify-center rounded-md border-1 border-gray-500 bg-gray-700 px-4 py-2 text-lg text-white transition-colors duration-300 hover:bg-gray-600"
+							onclick={toggleMobileMenu}>{m.sign_in()}</a
+						>
+					{/if}
 				</div>
 			{/if}
 		</nav>
