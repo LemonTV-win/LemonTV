@@ -7,9 +7,10 @@
 	import IconParkSolidUserPositioning from '~icons/icon-park-solid/user-positioning';
 	import IconParkSolidLock from '~icons/icon-park-solid/lock';
 	import IconParkSolidSetting from '~icons/icon-park-solid/setting';
+	import IconParkSolidKey from '~icons/icon-park-solid/key';
 	import type { Component } from 'svelte';
 
-	let { children }: LayoutProps = $props();
+	let { children, data }: LayoutProps = $props();
 	let isExpanded = $state(true);
 
 	function togglePanel() {
@@ -86,6 +87,9 @@
 		{@render tab('/profile', IconParkSolidUser, m.account())}
 		{@render tab('/profile/security', IconParkSolidLock, m.security())}
 		{@render tab('/profile/preferences', IconParkSolidSetting, m.preferences())}
+		{#if data.user?.roles?.some((role) => role === 'admin' || role === 'editor')}
+			{@render tab('/profile/mcp-tokens', IconParkSolidKey, m.mcp_tokens())}
+		{/if}
 	</nav>
 	<main class="overflow-auto p-8">
 		{@render children()}
