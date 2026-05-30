@@ -54,19 +54,19 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 		'/js/'
 	];
 
+	// Static-asset extensions are treated as public — but NOT under /api/,
+	// where a key ending in an image extension (e.g. /api/upload/<key>.png)
+	// is an authenticated API call, not a static file. Letting the extension
+	// shortcut apply there would null out locals.user and break per-route
+	// authorization checks for signed-in admins/editors.
+	const path = event.url.pathname;
+	const staticAssetExtensions = ['.css', '.js', '.png', '.jpg', '.jpeg', '.svg', '.ico'];
+	const isStaticAsset =
+		!path.startsWith('/api/') && staticAssetExtensions.some((ext) => path.endsWith(ext));
+
 	// Check if this is a public route
-	const isPublicRoute = publicRoutes.some(
-		(route) =>
-			event.url.pathname === route ||
-			event.url.pathname.startsWith(route) ||
-			event.url.pathname.endsWith('.css') ||
-			event.url.pathname.endsWith('.js') ||
-			event.url.pathname.endsWith('.png') ||
-			event.url.pathname.endsWith('.jpg') ||
-			event.url.pathname.endsWith('.jpeg') ||
-			event.url.pathname.endsWith('.svg') ||
-			event.url.pathname.endsWith('.ico')
-	);
+	const isPublicRoute =
+		isStaticAsset || publicRoutes.some((route) => path === route || path.startsWith(route));
 
 	// Skip authentication for public routes
 	if (isPublicRoute) {
