@@ -4,7 +4,8 @@ import {
 	MCP_PROTOCOL_VERSION,
 	type JsonRpcRequest,
 	type McpTool,
-	type McpIdentity
+	type McpIdentity,
+	type McpHooks
 } from './dispatch';
 
 const readTool: McpTool = {
@@ -34,8 +35,18 @@ const throwingTool: McpTool = {
 };
 
 const TOOLS = [readTool, writeTool, throwingTool];
-const reader: McpIdentity = { userId: 'u-read', username: 'reader', canWrite: false };
-const writer: McpIdentity = { userId: 'u-write', username: 'writer', canWrite: true };
+const reader: McpIdentity = {
+	tokenId: 't-read',
+	userId: 'u-read',
+	username: 'reader',
+	canWrite: false
+};
+const writer: McpIdentity = {
+	tokenId: 't-write',
+	userId: 'u-write',
+	username: 'writer',
+	canWrite: true
+};
 
 interface RpcResponse {
 	jsonrpc: string;
@@ -51,15 +62,15 @@ interface RpcResponse {
 	error?: { code: number; message: string };
 }
 
-async function rpc(
-	message: JsonRpcRequest,
-	identity: McpIdentity = reader
-): Promise<RpcResponse> {
+async function rpc(message: JsonRpcRequest, identity: McpIdentity = reader): Promise<RpcResponse> {
 	return (await dispatch(message, identity, TOOLS)) as unknown as RpcResponse;
 }
 
-const call = (id: number | string | null | undefined, method: string, params?: Record<string, unknown>) =>
-	rpc({ jsonrpc: '2.0', id, method, params });
+const call = (
+	id: number | string | null | undefined,
+	method: string,
+	params?: Record<string, unknown>
+) => rpc({ jsonrpc: '2.0', id, method, params });
 
 describe('dispatch — protocol', () => {
 	it('initialize advertises the protocol version, tool capability and server info', async () => {
@@ -152,5 +163,76 @@ describe('dispatch — tools/call', () => {
 		});
 		expect(res.result?.isError).toBe(true);
 		expect(res.result!.content![0].text).toContain('kaboom');
+	});
+});
+
+describe('dispatch — hooks (rate limit + audit)', () => {
+	type AuditEntry = { tool: string; status: string; detail?: string };
+
+	function makeHooks(allowed: boolean): { hooks: McpHooks; audits: AuditEntry[] } {
+		const audits: AuditEntry[] = [];
+		const hooks: McpHooks = {
+			rateLimit: async () => ({ allowed, retryAfterSeconds: allowed ? 0 : 7 }),
+			audit: async (entry) => {
+				audits.push(entry);
+			}
+		};
+		return { hooks, audits };
+	}
+
+	const callTool = (name: string, id: McpIdentity, hooks: McpHooks) =>
+		dispatch(
+			{ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name } },
+			id,
+			TOOLS,
+			hooks
+		) as Promise<RpcResponse>;
+
+	it('blocks the call and audits when the rate limiter denies', async () => {
+		const { hooks, audits } = makeHooks(false);
+		const res = await callTool('echo', reader, hooks);
+		expect(res.result?.isError).toBe(true);
+		expect(res.result!.content![0].text).toContain('rate limit exceeded');
+		expect(res.result!.content![0].text).toContain('7s');
+		expect(audits).toEqual([{ tool: 'echo', status: 'rate_limited', detail: 'retry after 7s' }]);
+	});
+
+	it('audits a successful tool call', async () => {
+		const { hooks, audits } = makeHooks(true);
+		const res = await callTool('echo', reader, hooks);
+		expect(res.result?.isError).toBeUndefined();
+		expect(audits).toEqual([{ tool: 'echo', status: 'success' }]);
+	});
+
+	it('audits a permission denial (and still consumes a rate-limit token)', async () => {
+		const calls: string[] = [];
+		const hooks: McpHooks = {
+			rateLimit: async () => {
+				calls.push('rateLimit');
+				return { allowed: true, retryAfterSeconds: 0 };
+			},
+			audit: async (e) => {
+				calls.push(`audit:${e.status}`);
+			}
+		};
+		const res = await callTool('mutate', reader, hooks); // reader can't write
+		expect(res.result?.isError).toBe(true);
+		expect(calls).toEqual(['rateLimit', 'audit:denied']);
+	});
+
+	it('audits a throwing handler as an error', async () => {
+		const { hooks, audits } = makeHooks(true);
+		await callTool('boom', reader, hooks);
+		expect(audits[0].status).toBe('error');
+		expect(audits[0].detail).toContain('kaboom');
+	});
+
+	it('works without hooks (back-compat)', async () => {
+		const res = (await dispatch(
+			{ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'echo', arguments: {} } },
+			reader,
+			TOOLS
+		)) as unknown as RpcResponse;
+		expect(res.result?.isError).toBeUndefined();
 	});
 });
