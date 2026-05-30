@@ -14,8 +14,10 @@
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
 		"lint:rule": "bun run scripts/check-specific-lint-rule.ts",
+		"db:generate": "drizzle-kit generate --config drizzle-dev.config.ts",
 		"db:prod:push": "bun run db:prod:dump && drizzle-kit push",
 		"db:prod:migrate": "drizzle-kit migrate",
+		"db:prod:baseline": "cross-env DEV=false bun scripts/baseline-migrations.ts",
 		"db:prod:studio": "drizzle-kit studio --port 4983",
 		"db:prod:dump": "source .env && echo Dumping... $DATABASE_NAME && turso db shell $DATABASE_NAME .dump > dumps/prod-$(date -u +%Y-%m-%dT%H-%M-%SZ).sql && echo Check the dump at dumps/prod-$(date -u +%Y-%m-%dT%H-%M-%SZ).sql, you may need to run again if your login session is expired.",
 		"db:prod:sync": "cross-env DEV=false bun scripts/sync-db.ts",
@@ -24,6 +26,7 @@
 		"db:prod:recalc-player-stats:periodic": "cross-env DEV=false PLAYER_STATS_UPDATE_REASON=periodic bun scripts/db-recalculate-player-stats.ts",
 		"db:dev:push": "drizzle-kit push --config drizzle-dev.config.ts",
 		"db:dev:migrate": "drizzle-kit migrate --config drizzle-dev.config.ts",
+		"db:dev:baseline": "cross-env DEV=true bun scripts/baseline-migrations.ts",
 		"db:dev:studio": "drizzle-kit studio --config drizzle-dev.config.ts --port 4984",
 		"db:dev:sync": "cross-env DEV=true bun scripts/sync-db.ts",
 		"db:dev:recalc-player-stats:deploy": "cross-env DEV=true PLAYER_STATS_UPDATE_REASON=deploy bun scripts/db-recalculate-player-stats.ts",
@@ -37,7 +40,7 @@
 		"test:unit": "bun test src/",
 		"test": "npm run test:e2e",
 		"deploy:vercel": "vercel --prod",
-		"deploy": "bun run check && bun run build && bun run db:prod:push && bun run db:prod:sync && bun run db:prod:recalc-player-stats:deploy && bun run deploy:vercel",
+		"deploy": "bun run check && bun run build && bun run db:prod:dump && bun run db:prod:migrate && bun run db:prod:sync && bun run db:prod:recalc-player-stats:deploy && bun run deploy:vercel",
 		"deploy:landing": "wrangler deploy --cwd landing/"
 	},
 	"devDependencies": {
