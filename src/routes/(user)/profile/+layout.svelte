@@ -88,7 +88,7 @@
 		{@render tab('/profile/security', IconParkSolidLock, m.security())}
 		{@render tab('/profile/preferences', IconParkSolidSetting, m.preferences())}
 		{#if data.user?.roles?.some((role) => role === 'admin' || role === 'editor')}
-			{@render tab('/profile/mcp-tokens', IconParkSolidKey, 'MCP Tokens')}
+			{@render tab('/profile/mcp-tokens', IconParkSolidKey, m.mcp_tokens())}
 		{/if}
 	</nav>
 	<main class="overflow-auto p-8">

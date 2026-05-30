@@ -2,6 +2,7 @@
 	import { enhance } from '$app/forms';
 	import type { ActionResult } from '@sveltejs/kit';
 	import type { PageProps } from './$types';
+	import { m } from '$lib/paraglide/messages';
 	import InlineAlert from '$lib/components/InlineAlert.svelte';
 	import Key from '~icons/lucide/key-round';
 	import Copy from '~icons/lucide/copy';
@@ -25,10 +26,18 @@
 	function tokenStatus(token: {
 		revokedAt: Date | string | null;
 		expiresAt: Date | string | null;
-	}) {
+	}): 'active' | 'revoked' | 'expired' {
 		if (token.revokedAt) return 'revoked';
 		if (token.expiresAt && new Date(token.expiresAt).getTime() <= Date.now()) return 'expired';
 		return 'active';
+	}
+
+	function scopeLabel(scope: string): string {
+		return scope === 'write' ? m.mcp_scope_write() : m.mcp_scope_read();
+	}
+
+	function statusLabel(status: 'revoked' | 'expired'): string {
+		return status === 'revoked' ? m.mcp_token_status_revoked() : m.mcp_token_status_expired();
 	}
 
 	function handleCreate() {
@@ -40,9 +49,9 @@
 			update: (options?: { reset?: boolean; invalidateAll?: boolean }) => Promise<void>;
 		}) => {
 			if (result.type === 'failure') {
-				error = (result.data?.error as string) ?? 'Failed to create token';
+				error = (result.data?.error as string) ?? m.mcp_token_create_failed();
 			} else if (result.type === 'error') {
-				error = result.error?.message ?? 'Failed to create token';
+				error = result.error?.message ?? m.mcp_token_create_failed();
 			} else {
 				error = null;
 			}
@@ -60,7 +69,7 @@
 			update: (options?: { reset?: boolean; invalidateAll?: boolean }) => Promise<void>;
 		}) => {
 			if (result.type === 'failure') {
-				error = (result.data?.error as string) ?? 'Failed to revoke token';
+				error = (result.data?.error as string) ?? m.mcp_token_revoke_failed();
 			} else {
 				error = null;
 			}
@@ -77,22 +86,16 @@
 </script>
 
 <svelte:head>
-	<title>MCP Tokens | LemonTV</title>
+	<title>{m.mcp_tokens()} | LemonTV</title>
 </svelte:head>
 
 <div class="mx-auto max-w-3xl space-y-8">
 	<header class="space-y-2">
 		<h2 class="flex items-center gap-2 text-xl font-semibold text-white">
 			<Key class="h-6 w-6 text-yellow-500" />
-			MCP Access Tokens
+			{m.mcp_tokens_heading()}
 		</h2>
-		<p class="text-sm text-slate-400">
-			Personal access tokens let you manage LemonTV data from an AI client (Claude Desktop, Claude
-			Code, etc.) through the authorized MCP server. Each token acts as <strong>you</strong> and
-			every edit is attributed to your account. A <strong>write</strong> token can create and edit
-			data; a <strong>read</strong> token can only read. Treat tokens like passwords — they are shown
-			once.
-		</p>
+		<p class="text-sm text-slate-400">{m.mcp_tokens_description()}</p>
 	</header>
 
 	{#if error}
@@ -102,8 +105,10 @@
 	{#if createdToken}
 		<div class="space-y-3 rounded-lg border border-yellow-600/50 bg-yellow-500/10 p-4">
 			<p class="text-sm font-medium text-yellow-300">
-				New token “{createdToken.name}” ({createdToken.scope}) created — copy it now. You won’t be
-				able to see it again.
+				{m.mcp_token_reveal({
+					name: createdToken.name,
+					scope: scopeLabel(createdToken.scope)
+				})}
 			</p>
 			<div class="flex items-center gap-2">
 				<code
@@ -116,9 +121,11 @@
 					class="flex items-center gap-1 rounded-md bg-yellow-500 px-3 py-2 text-sm font-medium text-black hover:bg-yellow-600"
 				>
 					{#if copied}
-						<Check class="h-4 w-4" /> Copied
+						<Check class="h-4 w-4" />
+						{m.mcp_copied()}
 					{:else}
-						<Copy class="h-4 w-4" /> Copy
+						<Copy class="h-4 w-4" />
+						{m.mcp_copy()}
 					{/if}
 				</button>
 			</div>
@@ -127,43 +134,43 @@
 
 	<!-- Create form -->
 	<section class="space-y-4 rounded-lg border border-slate-800 bg-slate-900/50 p-5">
-		<h3 class="text-lg font-semibold text-white">Generate a new token</h3>
+		<h3 class="text-lg font-semibold text-white">{m.mcp_token_generate_heading()}</h3>
 		<form method="post" action="?/create" use:enhance={handleCreate} class="space-y-4">
 			<div class="space-y-2">
-				<label for="name" class="block text-sm text-white">Name</label>
+				<label for="name" class="block text-sm text-white">{m.mcp_token_name()}</label>
 				<input
 					id="name"
 					name="name"
 					required
 					maxlength="100"
-					placeholder="e.g. Claude Desktop — laptop"
+					placeholder={m.mcp_token_name_placeholder()}
 					class="w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 				/>
 			</div>
 			<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 				<div class="space-y-2">
-					<label for="scope" class="block text-sm text-white">Scope</label>
+					<label for="scope" class="block text-sm text-white">{m.mcp_token_scope()}</label>
 					<select
 						id="scope"
 						name="scope"
 						class="w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 					>
-						<option value="read">Read only</option>
-						<option value="write">Read &amp; write</option>
+						<option value="read">{m.mcp_token_scope_read()}</option>
+						<option value="write">{m.mcp_token_scope_write()}</option>
 					</select>
 				</div>
 				<div class="space-y-2">
-					<label for="expiry" class="block text-sm text-white">Expires</label>
+					<label for="expiry" class="block text-sm text-white">{m.mcp_token_expires()}</label>
 					<select
 						id="expiry"
 						name="expiry"
 						class="w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 					>
-						<option value="90">90 days</option>
-						<option value="30">30 days</option>
-						<option value="7">7 days</option>
-						<option value="365">1 year</option>
-						<option value="never">Never</option>
+						<option value="90">{m.mcp_token_expiry_90d()}</option>
+						<option value="30">{m.mcp_token_expiry_30d()}</option>
+						<option value="7">{m.mcp_token_expiry_7d()}</option>
+						<option value="365">{m.mcp_token_expiry_1y()}</option>
+						<option value="never">{m.mcp_token_expiry_never()}</option>
 					</select>
 				</div>
 			</div>
@@ -171,16 +178,16 @@
 				type="submit"
 				class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 			>
-				Generate token
+				{m.mcp_token_generate()}
 			</button>
 		</form>
 	</section>
 
 	<!-- Token list -->
 	<section class="space-y-3">
-		<h3 class="text-lg font-semibold text-white">Your tokens</h3>
+		<h3 class="text-lg font-semibold text-white">{m.mcp_tokens_your_tokens()}</h3>
 		{#if data.tokens.length === 0}
-			<p class="text-sm text-slate-400">You have no MCP tokens yet.</p>
+			<p class="text-sm text-slate-400">{m.mcp_tokens_empty()}</p>
 		{:else}
 			<ul class="divide-y divide-slate-800 overflow-hidden rounded-lg border border-slate-800">
 				{#each data.tokens as token (token.id)}
@@ -192,19 +199,22 @@
 								<span
 									class="rounded px-1.5 py-0.5 text-xs font-medium {token.scope === 'write'
 										? 'bg-yellow-500/20 text-yellow-300'
-										: 'bg-slate-700 text-slate-300'}">{token.scope}</span
+										: 'bg-slate-700 text-slate-300'}">{scopeLabel(token.scope)}</span
 								>
 								{#if status !== 'active'}
 									<span class="rounded bg-red-500/20 px-1.5 py-0.5 text-xs font-medium text-red-300"
-										>{status}</span
+										>{statusLabel(status)}</span
 									>
 								{/if}
 							</div>
 							<div class="flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-slate-400">
 								<code class="font-mono text-slate-300">{token.prefix}…</code>
-								<span>Created {fmtDate(token.createdAt)}</span>
-								<span>Last used {fmtDate(token.lastUsedAt)}</span>
-								<span>Expires {token.expiresAt ? fmtDate(token.expiresAt) : 'never'}</span>
+								<span>{m.mcp_token_created_at()} {fmtDate(token.createdAt)}</span>
+								<span>{m.mcp_token_last_used()} {fmtDate(token.lastUsedAt)}</span>
+								<span
+									>{m.mcp_token_expires()}
+									{token.expiresAt ? fmtDate(token.expiresAt) : m.mcp_token_never()}</span
+								>
 							</div>
 						</div>
 						{#if status === 'active'}
@@ -214,7 +224,8 @@
 									type="submit"
 									class="flex items-center gap-1 rounded-md border border-red-700/60 px-3 py-1.5 text-sm text-red-300 hover:bg-red-500/10"
 								>
-									<Trash class="h-4 w-4" /> Revoke
+									<Trash class="h-4 w-4" />
+									{m.mcp_token_revoke()}
 								</button>
 							</form>
 						{/if}
