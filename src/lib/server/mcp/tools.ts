@@ -10,6 +10,7 @@ import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { createEvent, EVENT_FORMATS, EVENT_SERVERS, EVENT_STATUSES } from '$lib/server/data/events';
 import type { McpTool } from './dispatch';
+import { requireString } from './args';
 
 const EVENT_SUMMARY_COLUMNS = {
 	id: table.event.id,
@@ -134,16 +135,19 @@ export const TOOLS: McpTool[] = [
 			additionalProperties: false
 		},
 		handler: async (args, identity) => {
+			// Enforce required fields up front (dispatch does not validate
+			// inputSchema.required); the data layer then validates enum values.
+			const slug = requireString(args, 'slug');
 			const { id } = await createEvent(
 				{
-					name: String(args.name),
-					slug: String(args.slug),
-					server: String(args.server),
-					format: String(args.format),
-					region: args.region as never,
-					status: String(args.status),
-					date: String(args.date),
-					image: String(args.image),
+					name: requireString(args, 'name'),
+					slug,
+					server: requireString(args, 'server'),
+					format: requireString(args, 'format'),
+					region: requireString(args, 'region') as never,
+					status: requireString(args, 'status'),
+					date: requireString(args, 'date'),
+					image: requireString(args, 'image'),
 					official: Boolean(args.official ?? false),
 					capacity: typeof args.capacity === 'number' ? args.capacity : 0,
 					organizerIds: Array.isArray(args.organizerIds) ? (args.organizerIds as string[]) : [],
@@ -154,7 +158,7 @@ export const TOOLS: McpTool[] = [
 				identity.userId,
 				{ source: 'mcp:create_event' }
 			);
-			return { id, slug: String(args.slug), created: true };
+			return { id, slug, created: true };
 		}
 	}
 ];
