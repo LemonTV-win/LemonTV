@@ -66,9 +66,15 @@ export const POST: RequestHandler = async ({ request }) => {
 
 	// JSON-RPC batch or single message.
 	if (Array.isArray(body)) {
-		const responses = (
-			await Promise.all(body.map((msg) => handleMcpMessage(msg as never, identity, hooks)))
-		).filter((r): r is object => r !== null);
+		// Process sequentially: parallel handling would let every message in a
+		// batch read the same rate-limit bucket before any decrement is written,
+		// so one large batch could run far above the per-token limit. Sequential
+		// processing serializes each consume → write before the next call.
+		const responses: object[] = [];
+		for (const msg of body) {
+			const r = await handleMcpMessage(msg as never, identity, hooks);
+			if (r !== null) responses.push(r);
+		}
 		return responses.length === 0 ? new Response(null, { status: 202 }) : json(responses);
 	}
 
