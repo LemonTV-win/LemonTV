@@ -15,6 +15,7 @@ import {
 import { randomUUID } from 'node:crypto';
 import type { PageServerLoad, Actions } from './$types';
 import type { DiscordServer, CommunityTag } from '$lib/server/db/schemas/about/community';
+import { checkPermissions } from '$lib/server/security/permission';
 
 export const load: PageServerLoad = async ({ locals, url }) => {
 	const user = locals.user;
@@ -34,7 +35,12 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 };
 
 export const actions: Actions = {
-	create: async ({ request }) => {
+	create: async ({ request, locals }) => {
+		const permission = checkPermissions(locals, ['admin', 'editor']);
+		if (permission.status === 'error') {
+			return fail(permission.statusCode, { error: permission.error });
+		}
+
 		const formData = await request.formData();
 		const title = formData.get('title') as string;
 		const url = formData.get('url') as string;
@@ -71,7 +77,12 @@ export const actions: Actions = {
 		};
 	},
 
-	update: async ({ request }) => {
+	update: async ({ request, locals }) => {
+		const permission = checkPermissions(locals, ['admin', 'editor']);
+		if (permission.status === 'error') {
+			return fail(permission.statusCode, { error: permission.error });
+		}
+
 		const formData = await request.formData();
 		const id = formData.get('id') as string;
 		const title = formData.get('title') as string;
@@ -114,7 +125,12 @@ export const actions: Actions = {
 		};
 	},
 
-	delete: async ({ request }) => {
+	delete: async ({ request, locals }) => {
+		const permission = checkPermissions(locals, ['admin', 'editor']);
+		if (permission.status === 'error') {
+			return fail(permission.statusCode, { error: permission.error });
+		}
+
 		const formData = await request.formData();
 		const id = formData.get('id') as string;
 
@@ -134,7 +150,12 @@ export const actions: Actions = {
 		};
 	},
 
-	tag: async ({ request }) => {
+	tag: async ({ request, locals }) => {
+		const permission = checkPermissions(locals, ['admin', 'editor']);
+		if (permission.status === 'error') {
+			return fail(permission.statusCode, { error: permission.error });
+		}
+
 		const formData = await request.formData();
 		const id = formData.get('id') as string;
 		const category = formData.get('category') as string;
@@ -165,7 +186,12 @@ export const actions: Actions = {
 		};
 	},
 
-	deleteTag: async ({ request }) => {
+	deleteTag: async ({ request, locals }) => {
+		const permission = checkPermissions(locals, ['admin', 'editor']);
+		if (permission.status === 'error') {
+			return fail(permission.statusCode, { error: permission.error });
+		}
+
 		const formData = await request.formData();
 		const id = formData.get('id') as string;
 
@@ -179,7 +205,12 @@ export const actions: Actions = {
 		};
 	},
 
-	addTagToServer: async ({ request }) => {
+	addTagToServer: async ({ request, locals }) => {
+		const permission = checkPermissions(locals, ['admin', 'editor']);
+		if (permission.status === 'error') {
+			return fail(permission.statusCode, { error: permission.error });
+		}
+
 		const formData = await request.formData();
 		const serverId = formData.get('serverId') as string;
 		const tagId = formData.get('tagId') as string;
@@ -194,7 +225,12 @@ export const actions: Actions = {
 		};
 	},
 
-	removeTagFromServer: async ({ request }) => {
+	removeTagFromServer: async ({ request, locals }) => {
+		const permission = checkPermissions(locals, ['admin', 'editor']);
+		if (permission.status === 'error') {
+			return fail(permission.statusCode, { error: permission.error });
+		}
+
 		const formData = await request.formData();
 		const serverId = formData.get('serverId') as string;
 		const tagId = formData.get('tagId') as string;

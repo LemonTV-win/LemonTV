@@ -42,3 +42,18 @@ bun run db:dev:push
 ```bash
 bun run deploy
 ```
+
+## License
+
+LemonTV is split into two separately-licensed parts so that both the code and the
+data can be reused as openly as possible:
+
+- **Source code** — [MIT License](LICENSE).
+- **Esports dataset** (players, teams, events, matches, statistics, served via the
+  API / bulk dumps / database) — [Creative Commons Attribution 4.0 International
+  (CC BY 4.0)](LICENSE-DATA.md). Reuse freely with attribution to LemonTV.
+
+Trademarks, team/event logos, player avatars, and other third-party content are
+**not** covered by either license and remain the property of their respective
+owners. See [`LICENSE-DATA.md`](LICENSE-DATA.md) for the full scope and an
+important data-provenance note.
