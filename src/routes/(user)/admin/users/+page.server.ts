@@ -1,8 +1,9 @@
-import { redirect } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { and, eq } from 'drizzle-orm';
+import { checkPermissions } from '$lib/server/security/permission';
 
 export const load: PageServerLoad = async (event) => {
 	if (!event.locals.user || !event.locals.user.roles.includes('admin')) {
@@ -22,7 +23,12 @@ export const load: PageServerLoad = async (event) => {
 };
 
 export const actions: Actions = {
-	updateRole: async ({ request }) => {
+	updateRole: async ({ request, locals }) => {
+		const permission = checkPermissions(locals, ['admin']);
+		if (permission.status === 'error') {
+			return fail(permission.statusCode, { error: permission.error });
+		}
+
 		const formData = await request.formData();
 		const userId = formData.get('userId') as string;
 		const roleId = formData.get('roleId') as string;
@@ -50,7 +56,12 @@ export const actions: Actions = {
 		}
 	},
 
-	createRole: async ({ request }) => {
+	createRole: async ({ request, locals }) => {
+		const permission = checkPermissions(locals, ['admin']);
+		if (permission.status === 'error') {
+			return fail(permission.statusCode, { error: permission.error });
+		}
+
 		const formData = await request.formData();
 		const name = formData.get('name') as string;
 
@@ -70,7 +81,12 @@ export const actions: Actions = {
 		}
 	},
 
-	updateRoleName: async ({ request }) => {
+	updateRoleName: async ({ request, locals }) => {
+		const permission = checkPermissions(locals, ['admin']);
+		if (permission.status === 'error') {
+			return fail(permission.statusCode, { error: permission.error });
+		}
+
 		const formData = await request.formData();
 		const id = formData.get('id') as string;
 		const name = formData.get('name') as string;
@@ -88,7 +104,12 @@ export const actions: Actions = {
 		}
 	},
 
-	deleteRole: async ({ request }) => {
+	deleteRole: async ({ request, locals }) => {
+		const permission = checkPermissions(locals, ['admin']);
+		if (permission.status === 'error') {
+			return fail(permission.statusCode, { error: permission.error });
+		}
+
 		const formData = await request.formData();
 		const id = formData.get('id') as string;
 

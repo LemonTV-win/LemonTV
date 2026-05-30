@@ -3,8 +3,14 @@ import type { RequestHandler } from './$types';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { eq, and, inArray } from 'drizzle-orm';
+import { checkPermissions } from '$lib/server/security/permission';
 
-export const GET: RequestHandler = async ({ params }) => {
+export const GET: RequestHandler = async ({ params, locals }) => {
+	const permission = checkPermissions(locals, ['admin', 'editor']);
+	if (permission.status === 'error') {
+		return json({ error: permission.error }, { status: permission.statusCode });
+	}
+
 	const { id } = params;
 
 	try {

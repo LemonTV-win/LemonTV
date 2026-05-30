@@ -1,7 +1,13 @@
 import { json } from '@sveltejs/kit';
 import { getSignedImageUrl } from '$lib/server/storage';
+import { checkPermissions } from '$lib/server/security/permission';
 
-export async function GET({ params }) {
+export async function GET({ params, locals }) {
+	const permission = checkPermissions(locals, ['admin', 'editor']);
+	if (permission.status === 'error') {
+		return json({ error: permission.error }, { status: permission.statusCode });
+	}
+
 	const { key } = params;
 
 	if (!key) {
