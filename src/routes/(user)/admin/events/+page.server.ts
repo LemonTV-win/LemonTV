@@ -9,6 +9,7 @@ import {
 	type CreateEventData,
 	type UpdateEventData,
 	type EventTeamPlayerData,
+	createEvent,
 	toDatabaseEvent,
 	toDatabaseEventOrganizers,
 	toDatabaseEventVideos,
@@ -310,51 +311,10 @@ export const actions = {
 		}
 
 		try {
-			const eventId = randomUUID();
-			const dbEvent = toDatabaseEvent(eventData);
-			await db.insert(table.event).values({
-				id: eventId,
-				...dbEvent
-			});
-
-			// Handle event organizers
-			if (eventData.organizerIds && eventData.organizerIds.length > 0) {
-				await db
-					.insert(table.eventOrganizer)
-					.values(toDatabaseEventOrganizers(eventId, eventData.organizerIds));
-			}
-
-			// Handle event websites
-			if (eventData.websites && eventData.websites.length > 0) {
-				const websiteValues = eventData.websites
-					.filter((website) => website.url) // Only include websites with URLs
-					.map((website) => ({
-						id: randomUUID(),
-						eventId,
-						url: website.url,
-						label: website.label || null,
-						createdAt: new Date(),
-						updatedAt: new Date()
-					}));
-
-				if (websiteValues.length > 0) {
-					await db.insert(table.eventWebsite).values(websiteValues);
-				}
-			}
-
-			// Handle event videos
-			if (eventData.videos && eventData.videos.length > 0) {
-				const videoValues = toDatabaseEventVideos(eventId, eventData.videos).map((video) => ({
-					...video,
-					id: randomUUID(),
-					createdAt: new Date(),
-					updatedAt: new Date()
-				}));
-
-				if (videoValues.length > 0) {
-					await db.insert(table.eventVideo).values(videoValues);
-				}
-			}
+			// Core event creation (event row + organizers + websites + videos +
+			// creation history) goes through the shared service so the admin UI,
+			// the MCP server, and scripts all write events the same way.
+			const { id: eventId } = await createEvent(eventData, result.userId);
 
 			// Handle event casters
 			const castersData = formData.get('casters') as string;
@@ -425,18 +385,6 @@ export const actions = {
 			if (teamSlogansData) {
 				await handleTeamSlogansUpdate(eventId, teamSlogansData, result.userId);
 			}
-
-			// Add edit history
-			await db.insert(table.editHistory).values({
-				id: randomUUID(),
-				tableName: 'event',
-				recordId: eventId,
-				fieldName: 'creation',
-				oldValue: null,
-				newValue: 'created',
-				editedBy: result.userId,
-				editedAt: new Date()
-			});
 
 			return {
 				success: true,

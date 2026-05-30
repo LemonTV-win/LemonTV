@@ -6,6 +6,7 @@ import * as table from '$lib/server/db/schema';
 import { processImageURL } from '$lib/server/storage';
 import type { Region } from '$lib/data/game';
 import { eq, or, sql } from 'drizzle-orm';
+import { randomUUID } from 'node:crypto';
 import { safeParseDateRange } from '$lib/utils/date';
 import type { EventParticipant, StageNode } from '$lib/data/events';
 import type { GameAccount, GameAccountRegion, GameAccountServer, Player } from '$lib/data/players';
@@ -138,6 +139,149 @@ export function toDatabaseEventVideos(
 		url: video.url,
 		title: video.title || null
 	}));
+}
+
+export const EVENT_SERVERS = ['calabiyau', 'strinova'] as const;
+export const EVENT_FORMATS = ['lan', 'online', 'hybrid'] as const;
+export const EVENT_STATUSES = ['upcoming', 'live', 'finished', 'cancelled', 'postponed'] as const;
+
+/** Core fields needed to create an event, without UI-form coupling. */
+export interface CreateEventInput {
+	name: string;
+	slug: string;
+	official?: boolean;
+	server: string;
+	format: string;
+	region: Region;
+	image: string;
+	status: string;
+	capacity?: number;
+	date: string;
+	organizerIds?: string[];
+	websites?: { url: string; label?: string }[];
+	videos?: CreateEventData['videos'];
+}
+
+/**
+ * Create an event and its directly-owned records (organizers, websites,
+ * videos) in one transaction, emitting an `edit_history` row. This is the
+ * single canonical event-creation path, reused by the admin UI, the MCP
+ * server, and scripts. Authorization is the caller's responsibility — this
+ * trusts `editedBy`.
+ *
+ * `options.source` tags the provenance of the edit (e.g. 'mcp:create_event')
+ * in the audit trail so AI-originated creations are distinguishable.
+ */
+export async function createEvent(
+	data: CreateEventInput,
+	editedBy: string,
+	options: { source?: string } = {}
+): Promise<{ id: string }> {
+	const required: Array<[keyof CreateEventInput, unknown]> = [
+		['name', data.name],
+		['slug', data.slug],
+		['server', data.server],
+		['format', data.format],
+		['region', data.region],
+		['image', data.image],
+		['status', data.status],
+		['date', data.date]
+	];
+	const missing = required.filter(([, value]) => !value).map(([key]) => key);
+	if (missing.length > 0) {
+		throw new Error(`Missing required fields: ${missing.join(', ')}`);
+	}
+
+	if (!EVENT_SERVERS.includes(data.server as (typeof EVENT_SERVERS)[number])) {
+		throw new Error(
+			`Invalid server "${data.server}" (expected one of: ${EVENT_SERVERS.join(', ')})`
+		);
+	}
+	if (!EVENT_FORMATS.includes(data.format as (typeof EVENT_FORMATS)[number])) {
+		throw new Error(
+			`Invalid format "${data.format}" (expected one of: ${EVENT_FORMATS.join(', ')})`
+		);
+	}
+	if (!EVENT_STATUSES.includes(data.status as (typeof EVENT_STATUSES)[number])) {
+		throw new Error(
+			`Invalid status "${data.status}" (expected one of: ${EVENT_STATUSES.join(', ')})`
+		);
+	}
+
+	const [existing] = await db
+		.select({ id: table.event.id })
+		.from(table.event)
+		.where(eq(table.event.slug, data.slug))
+		.limit(1);
+	if (existing) {
+		throw new Error(`An event with slug "${data.slug}" already exists`);
+	}
+
+	const id = randomUUID();
+	const dbEvent = toDatabaseEvent({
+		name: data.name,
+		slug: data.slug,
+		official: data.official ?? false,
+		server: data.server,
+		format: data.format,
+		region: data.region,
+		image: data.image,
+		status: data.status,
+		capacity: data.capacity ?? 0,
+		date: data.date,
+		organizerIds: data.organizerIds ?? [],
+		websites: data.websites ?? [],
+		videos: data.videos ?? [],
+		casters: []
+	});
+
+	await db.transaction(async (tx) => {
+		await tx.insert(table.event).values({ id, ...dbEvent });
+
+		const organizerIds = data.organizerIds ?? [];
+		if (organizerIds.length > 0) {
+			await tx.insert(table.eventOrganizer).values(toDatabaseEventOrganizers(id, organizerIds));
+		}
+
+		const websites = (data.websites ?? []).filter((website) => website.url);
+		if (websites.length > 0) {
+			await tx.insert(table.eventWebsite).values(
+				websites.map((website) => ({
+					id: randomUUID(),
+					eventId: id,
+					url: website.url,
+					label: website.label || null,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				}))
+			);
+		}
+
+		const videos = data.videos ?? [];
+		if (videos.length > 0) {
+			await tx.insert(table.eventVideo).values(
+				toDatabaseEventVideos(id, videos).map((video) => ({
+					...video,
+					id: randomUUID(),
+					createdAt: new Date(),
+					updatedAt: new Date()
+				}))
+			);
+		}
+
+		await tx.insert(table.editHistory).values({
+			id: randomUUID(),
+			tableName: 'event',
+			recordId: id,
+			fieldName: 'creation',
+			oldValue: null,
+			newValue: options.source ? `created:${options.source}` : 'created',
+			editedBy,
+			editedAt: new Date()
+		});
+	});
+
+	return { id };
 }
 
 // Get changes between old and new event data
