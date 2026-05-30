@@ -1,5 +1,24 @@
 import { describe, it, expect } from 'bun:test';
-import { requireString } from './args';
+import { requireString, optionalEnum } from './args';
+
+describe('optionalEnum', () => {
+	const REGIONS = ['CN', 'APAC', 'NA', 'EU'] as const;
+
+	it('returns undefined for absent values', () => {
+		expect(optionalEnum(undefined, REGIONS, 'region')).toBeUndefined();
+		expect(optionalEnum(null, REGIONS, 'region')).toBeUndefined();
+	});
+
+	it('returns the value when it is in the allowed set', () => {
+		expect(optionalEnum('APAC', REGIONS, 'region')).toBe('APAC');
+	});
+
+	it('throws on a value outside the allowed set', () => {
+		expect(() => optionalEnum('MARS', REGIONS, 'region')).toThrow('Invalid region');
+		expect(() => optionalEnum('apac', REGIONS, 'region')).toThrow(); // case-sensitive
+		expect(() => optionalEnum(7, REGIONS, 'region')).toThrow();
+	});
+});
 
 describe('requireString', () => {
 	it('returns the value for a valid non-empty string', () => {

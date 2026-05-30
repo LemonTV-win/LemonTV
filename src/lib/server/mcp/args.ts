@@ -18,3 +18,20 @@ export function requireString(args: Record<string, unknown>, key: string): strin
 	}
 	return value;
 }
+
+/**
+ * Validate an optional enum argument. Returns `undefined` when absent, the value
+ * when it's one of `allowed`, and throws otherwise — the data layer stores these
+ * as plain text without validating, so the tool must.
+ */
+export function optionalEnum<T extends string>(
+	value: unknown,
+	allowed: readonly T[],
+	field: string
+): T | undefined {
+	if (value === undefined || value === null) return undefined;
+	if (typeof value === 'string' && (allowed as readonly string[]).includes(value)) {
+		return value as T;
+	}
+	throw new Error(`Invalid ${field}: expected one of ${allowed.join(', ')}`);
+}
