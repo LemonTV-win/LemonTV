@@ -73,7 +73,7 @@ export function validateDcrRequest(body: DcrRequestBody): DcrResult {
 	}
 	const redirectUris: string[] = [];
 	for (const uri of uris) {
-		if (typeof uri !== 'string' || !isAcceptableRedirectUri(uri)) {
+		if (typeof uri !== 'string' || uri.length > MAX_STR || !isAcceptableRedirectUri(uri)) {
 			return invalid(
 				`invalid redirect_uri: ${typeof uri === 'string' ? uri : typeof uri} (must be https, or http on localhost/127.0.0.1, with no fragment)`,
 				'invalid_redirect_uri'

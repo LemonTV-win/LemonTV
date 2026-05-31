@@ -57,6 +57,11 @@ describe('validateDcrRequest', () => {
 		expect(validateDcrRequest({ redirect_uris: many }).ok).toBe(false);
 	});
 
+	it('rejects an over-long redirect_uri (DoS guard)', () => {
+		const huge = 'https://app.example/cb?x=' + 'a'.repeat(3000);
+		expect(validateDcrRequest({ redirect_uris: [huge] }).ok).toBe(false);
+	});
+
 	it('rejects non-https client_uri / logo_uri', () => {
 		expect(validateDcrRequest({ redirect_uris: ['https://a/cb'], client_uri: 'http://x' }).ok).toBe(
 			false
