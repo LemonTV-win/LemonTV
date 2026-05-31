@@ -52,6 +52,15 @@
 				<option value={s} selected={s === data.status}>{statusLabel(s)}</option>
 			{/each}
 		</select>
+		<!-- With JS the onchange auto-submits; without it, this button submits the GET form. -->
+		<noscript>
+			<button
+				type="submit"
+				class="rounded-md border border-slate-700 px-3 py-1.5 text-sm text-gray-300 hover:bg-slate-800"
+			>
+				{m.mcp_log_apply()}
+			</button>
+		</noscript>
 	</form>
 
 	{#if data.entries.length === 0}
