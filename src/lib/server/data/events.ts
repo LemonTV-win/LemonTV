@@ -3,7 +3,7 @@ import type { Event, EventOrganizer } from '$lib/server/db/schemas/game/event';
 import type { Organizer } from '$lib/server/db/schemas/game/organizer';
 import { db } from '../db';
 import * as table from '$lib/server/db/schema';
-import { processImageURL } from '$lib/server/storage';
+import { processImageURL, ingestImageIfUrl } from '$lib/server/storage';
 import type { Region } from '$lib/data/game';
 import { eq, or, sql } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
@@ -218,6 +218,8 @@ export async function createEvent(
 	}
 
 	const id = randomUUID();
+	// Store a remote image URL in our own S3 (returns a key) instead of hotlinking.
+	const image = await ingestImageIfUrl(data.image);
 	const dbEvent = toDatabaseEvent({
 		name: data.name,
 		slug: data.slug,
@@ -225,7 +227,7 @@ export async function createEvent(
 		server: data.server,
 		format: data.format,
 		region: data.region,
-		image: data.image,
+		image,
 		status: data.status,
 		capacity: data.capacity ?? 0,
 		date: data.date,
@@ -342,6 +344,11 @@ export async function updateEvent(
 			.where(eq(table.event.slug, fields.slug))
 			.limit(1);
 		if (dupe) throw new Error(`An event with slug "${fields.slug}" already exists`);
+	}
+
+	// Store a remote image URL in our own S3 (returns a key) instead of hotlinking.
+	if (fields.image !== undefined) {
+		fields.image = await ingestImageIfUrl(fields.image);
 	}
 
 	const columns = [
