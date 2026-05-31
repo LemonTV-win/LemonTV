@@ -11,9 +11,22 @@ export const MCP_SERVER_INFO = { name: 'lemontv-mcp', version: '0.1.0' } as cons
 
 /** The authenticated caller, resolved from a Personal Access Token. */
 export interface McpIdentity {
+	tokenId: string;
 	userId: string;
 	username: string;
 	canWrite: boolean;
+}
+
+/** Audit/rate-limit side-effects, injected by the route (DB-backed in prod). */
+export interface McpHooks {
+	/** Consume one rate-limit token for this caller. */
+	rateLimit?: (identity: McpIdentity) => Promise<{ allowed: boolean; retryAfterSeconds: number }>;
+	/** Record the outcome of a tool call. */
+	audit?: (entry: {
+		tool: string;
+		status: 'success' | 'denied' | 'error' | 'rate_limited';
+		detail?: string;
+	}) => Promise<void>;
 }
 
 export interface JsonRpcRequest {
@@ -47,7 +60,8 @@ function rpcError(id: JsonRpcRequest['id'], code: number, message: string) {
 export async function dispatch(
 	message: JsonRpcRequest,
 	identity: McpIdentity,
-	tools: McpTool[]
+	tools: McpTool[],
+	hooks?: McpHooks
 ): Promise<object | null> {
 	if (!message || message.jsonrpc !== '2.0' || typeof message.method !== 'string') {
 		return rpcError(message?.id ?? null, -32600, 'Invalid Request');
@@ -87,8 +101,35 @@ export async function dispatch(
 			if (!tool) {
 				return rpcError(id, -32602, `Unknown tool: ${toolName}`);
 			}
+
+			// Rate limit every tool call (so even denied attempts cost a token).
+			if (hooks?.rateLimit) {
+				const rl = await hooks.rateLimit(identity);
+				if (!rl.allowed) {
+					await hooks.audit?.({
+						tool: toolName,
+						status: 'rate_limited',
+						detail: `retry after ${rl.retryAfterSeconds}s`
+					});
+					return rpcResult(id, {
+						content: [
+							{
+								type: 'text',
+								text: `Error: rate limit exceeded. Retry after ${rl.retryAfterSeconds}s.`
+							}
+						],
+						isError: true
+					});
+				}
+			}
+
 			// Deny-by-default: write tools require resolved write capability.
 			if (tool.requiresWrite && !identity.canWrite) {
+				await hooks?.audit?.({
+					tool: toolName,
+					status: 'denied',
+					detail: 'write permission required'
+				});
 				return rpcResult(id, {
 					content: [
 						{
@@ -99,14 +140,17 @@ export async function dispatch(
 					isError: true
 				});
 			}
+
 			try {
 				const result = await tool.handler(args, identity);
+				await hooks?.audit?.({ tool: toolName, status: 'success' });
 				return rpcResult(id, {
 					content: [{ type: 'text', text: JSON.stringify(result, null, 2) }]
 				});
 			} catch (error) {
 				const text = error instanceof Error ? error.message : 'Tool execution failed';
 				console.error(`[MCP] Tool "${toolName}" failed:`, error);
+				await hooks?.audit?.({ tool: toolName, status: 'error', detail: text });
 				return rpcResult(id, {
 					content: [{ type: 'text', text: `Error: ${text}` }],
 					isError: true

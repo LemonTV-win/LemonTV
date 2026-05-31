@@ -121,10 +121,21 @@ Sources: [Origami Cup 4 announcement](https://www.youtube.com/watch?v=TO8w1bOxZU
 [OrigamiCup Twitch](https://www.twitch.tv/origamicup),
 [EmikoAi Twitch](https://www.twitch.tv/emikoai_).
 
+## Rate limits & audit
+
+- **Rate limit:** each token gets a persisted token bucket (`mcp_rate_limit`) —
+  a burst of 120 requests, refilling 2/second. Exceeding it returns an
+  `isError` result with a retry-after hint; it does not drop the connection.
+- **Audit log:** every tool call's outcome (`success` / `denied` / `error` /
+  `rate_limited`) is recorded in `mcp_audit_log` with the token, user, tool, and
+  IP — so AI-driven access is moderatable and traceable to a revocable token.
+  (Successful data mutations are additionally in `edit_history`.)
+
 ## Implementation notes
 
 - Transport + auth: `src/routes/api/mcp/+server.ts`
 - Protocol dispatch (pure, unit-tested): `src/lib/server/mcp/dispatch.ts`
 - Tool registry: `src/lib/server/mcp/tools.ts`
+- Rate-limit core (pure, tested) + DB hooks: `src/lib/server/mcp/rate-limit.ts`, `hooks.ts`
 - Shared write path: `createEvent()` in `src/lib/server/data/events.ts` (also
   used by the admin UI), which emits `edit_history` tagged `mcp:create_event`.

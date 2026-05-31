@@ -9,7 +9,8 @@
 import { json, error as kitError } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { validateMcpToken } from '$lib/server/security/mcp-token-store';
-import { handleMcpMessage, type McpIdentity } from '$lib/server/mcp/server';
+import { handleMcpMessage, type McpIdentity, type McpHooks } from '$lib/server/mcp/server';
+import { consumeRateLimit, logMcpAudit } from '$lib/server/mcp/hooks';
 
 function bearerToken(request: Request): string | null {
 	const header = request.headers.get('authorization');
@@ -40,9 +41,17 @@ export const POST: RequestHandler = async ({ request }) => {
 	}
 
 	const identity: McpIdentity = {
+		tokenId: validation.token.id,
 		userId: validation.user.id,
 		username: validation.user.username,
 		canWrite: validation.canWrite
+	};
+
+	const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? null;
+	const hooks: McpHooks = {
+		rateLimit: (id) => consumeRateLimit(id.tokenId),
+		audit: (entry) =>
+			logMcpAudit({ ...entry, tokenId: identity.tokenId, userId: identity.userId, ip })
 	};
 
 	let body: unknown;
@@ -57,13 +66,19 @@ export const POST: RequestHandler = async ({ request }) => {
 
 	// JSON-RPC batch or single message.
 	if (Array.isArray(body)) {
-		const responses = (
-			await Promise.all(body.map((msg) => handleMcpMessage(msg as never, identity)))
-		).filter((r): r is object => r !== null);
+		// Process sequentially: parallel handling would let every message in a
+		// batch read the same rate-limit bucket before any decrement is written,
+		// so one large batch could run far above the per-token limit. Sequential
+		// processing serializes each consume → write before the next call.
+		const responses: object[] = [];
+		for (const msg of body) {
+			const r = await handleMcpMessage(msg as never, identity, hooks);
+			if (r !== null) responses.push(r);
+		}
 		return responses.length === 0 ? new Response(null, { status: 202 }) : json(responses);
 	}
 
-	const response = await handleMcpMessage(body as never, identity);
+	const response = await handleMcpMessage(body as never, identity, hooks);
 	return response === null ? new Response(null, { status: 202 }) : json(response);
 };
 
