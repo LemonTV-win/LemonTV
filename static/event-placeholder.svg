@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-label="No banner">
+	<defs>
+		<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+			<stop offset="0" stop-color="#1c1c22" />
+			<stop offset="1" stop-color="#0f0f13" />
+		</linearGradient>
+		<radialGradient id="glow" cx="50%" cy="40%" r="42%">
+			<stop offset="0" stop-color="#fbbf24" stop-opacity="0.16" />
+			<stop offset="1" stop-color="#fbbf24" stop-opacity="0" />
+		</radialGradient>
+	</defs>
+	<rect width="1200" height="800" fill="url(#bg)" />
+	<rect width="1200" height="800" fill="url(#glow)" />
+	<g transform="translate(600 350) rotate(-28)">
+		<path d="M126 0 l40 -4 -12 17 z" fill="#f59e0b" />
+		<path d="M-126 0 l-40 4 12 -17 z" fill="#f59e0b" />
+		<ellipse cx="0" cy="0" rx="124" ry="84" fill="#fbbf24" />
+		<ellipse cx="0" cy="0" rx="124" ry="84" fill="none" stroke="#f59e0b" stroke-width="6" opacity="0.55" />
+		<ellipse cx="-42" cy="-30" rx="38" ry="20" fill="#ffffff" opacity="0.28" />
+		<path d="M70 -70 q44 -34 84 -20 q-14 42 -56 50 q-24 -10 -28 -30 z" fill="#4ade80" />
+		<path d="M78 -64 q30 -16 64 -14" fill="none" stroke="#16a34a" stroke-width="4" opacity="0.6" />
+	</g>
+	<text x="600" y="540" text-anchor="middle" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="48" font-weight="800" letter-spacing="1" fill="#fbbf24" opacity="0.92">LemonTV</text>
+	<text x="600" y="588" text-anchor="middle" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="26" font-weight="500" letter-spacing="3" fill="#a1a1aa" opacity="0.65">NO BANNER</text>
+</svg>

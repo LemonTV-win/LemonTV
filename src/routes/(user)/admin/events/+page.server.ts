@@ -290,7 +290,7 @@ export const actions = {
 			!eventData.server ||
 			!eventData.format ||
 			!eventData.region ||
-			!eventData.image ||
+			// image is optional — a placeholder renders when absent
 			!eventData.status ||
 			// !eventData.capacity ||
 			!eventData.date
@@ -301,7 +301,6 @@ export const actions = {
 			if (!eventData.server) missingFields.push('server');
 			if (!eventData.format) missingFields.push('format');
 			if (!eventData.region) missingFields.push('region');
-			if (!eventData.image) missingFields.push('image');
 			if (!eventData.status) missingFields.push('status');
 			// if (!eventData.capacity) missingFields.push('capacity');
 			if (!eventData.date) missingFields.push('date');
@@ -435,7 +434,7 @@ export const actions = {
 			!eventData.server ||
 			!eventData.format ||
 			!eventData.region ||
-			!eventData.image ||
+			// image is optional — a placeholder renders when absent
 			!eventData.status ||
 			// !eventData.capacity ||
 			!eventData.date
@@ -447,7 +446,6 @@ export const actions = {
 			if (!eventData.server) missingFields.push('server');
 			if (!eventData.format) missingFields.push('format');
 			if (!eventData.region) missingFields.push('region');
-			if (!eventData.image) missingFields.push('image');
 			if (!eventData.status) missingFields.push('status');
 			// if (!eventData.capacity) missingFields.push('capacity');
 			if (!eventData.date) missingFields.push('date');

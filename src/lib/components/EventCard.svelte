@@ -25,6 +25,7 @@
 	import type { Event } from '$lib/data/events';
 	import { m } from '$lib/paraglide/messages';
 	import { safeFormatEventDate } from '$lib/utils/date';
+	import { EVENT_PLACEHOLDER_IMAGE } from '$lib/consts';
 
 	import IconParkSolidCalendar from '~icons/icon-park-solid/calendar';
 	import IconParkSolidPeoples from '~icons/icon-park-solid/peoples';
@@ -54,7 +55,7 @@
 		}}
 	>
 		<img
-			src={event.imageURL ?? event.image}
+			src={event.imageURL || event.image || EVENT_PLACEHOLDER_IMAGE}
 			alt={event.name}
 			class="max-h-40 w-full max-w-full object-cover sm:max-w-64"
 		/>

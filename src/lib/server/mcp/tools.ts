@@ -125,7 +125,8 @@ export const TOOLS: McpTool[] = [
 				date: { type: 'string', description: 'YYYY-MM-DD or a range YYYY-MM-DD/YYYY-MM-DD.' },
 				image: {
 					type: 'string',
-					description: 'Banner/logo URL (a placeholder URL is acceptable).'
+					description:
+						'Optional banner/logo URL — omit to create the event with no banner (a branded placeholder is shown). An https URL is fetched and stored in our own storage.'
 				},
 				official: {
 					type: 'boolean',
@@ -148,7 +149,7 @@ export const TOOLS: McpTool[] = [
 					description: 'Related links (optional).'
 				}
 			},
-			required: ['name', 'slug', 'server', 'format', 'region', 'status', 'date', 'image'],
+			required: ['name', 'slug', 'server', 'format', 'region', 'status', 'date'],
 			additionalProperties: false
 		},
 		handler: async (args, identity) => {
@@ -164,7 +165,7 @@ export const TOOLS: McpTool[] = [
 					region: requireString(args, 'region') as never,
 					status: requireString(args, 'status'),
 					date: requireString(args, 'date'),
-					image: requireString(args, 'image'),
+					image: typeof args.image === 'string' ? args.image : undefined,
 					official: Boolean(args.official ?? false),
 					capacity: typeof args.capacity === 'number' ? args.capacity : 0,
 					organizerIds: Array.isArray(args.organizerIds) ? (args.organizerIds as string[]) : [],

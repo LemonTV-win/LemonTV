@@ -2,6 +2,7 @@
 	import { error } from '@sveltejs/kit';
 	import type { PageProps } from './$types';
 	import { m } from '$lib/paraglide/messages.js';
+	import { EVENT_PLACEHOLDER_IMAGE } from '$lib/consts';
 	import MapIcon from '$lib/components/MapIcon.svelte';
 	import MatchCard from '$lib/components/MatchCard.svelte';
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
@@ -140,7 +141,11 @@
 									>
 										<a href="/events/{event.slug}" class="contents">
 											<div class="flex h-full w-full items-center justify-center bg-gray-700">
-												<img src={event.imageURL} alt={event.name} class="w-full object-cover" />
+												<img
+													src={event.imageURL || EVENT_PLACEHOLDER_IMAGE}
+													alt={event.name}
+													class="w-full object-cover"
+												/>
 											</div>
 											<div class="h-full p-4 text-white">{event.name}</div>
 										</a>

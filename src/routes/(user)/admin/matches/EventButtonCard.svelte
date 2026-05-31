@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { m } from '$lib/paraglide/messages';
 	import { safeFormatEventDate } from '$lib/utils/date';
+	import { EVENT_PLACEHOLDER_IMAGE } from '$lib/consts';
 
 	let {
 		event,
@@ -36,9 +37,11 @@
 	}}
 >
 	<div class="mb-2 flex items-center gap-3">
-		{#if event.imageURL}
-			<img src={event.imageURL} alt={event.name} class="h-12 w-12 rounded-lg object-cover" />
-		{/if}
+		<img
+			src={event.imageURL || EVENT_PLACEHOLDER_IMAGE}
+			alt={event.name}
+			class="h-12 w-12 rounded-lg object-cover"
+		/>
 		<div>
 			<h3 class="font-semibold text-white transition-colors group-hover:text-yellow-400">
 				{event.name}
