@@ -15,6 +15,13 @@
       "when": 1780171910052,
       "tag": "0001_empty_zzzax",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1780206859689,
+      "tag": "0002_awesome_carnage",
+      "breakpoints": true
     }
   ]
 }

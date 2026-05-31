@@ -883,5 +883,16 @@
 	"mcp_token_create_failed": "Failed to create token",
 	"mcp_token_revoke_failed": "Failed to revoke token",
 	"mcp_scope_read": "read",
-	"mcp_scope_write": "write"
+	"mcp_scope_write": "write",
+	"trash_title": "Trash",
+	"trash_description": "Recently deleted players and teams. Restoring re-creates the record with all its data.",
+	"trash_card_desc": "Recover deleted players and teams.",
+	"trash_empty": "Nothing has been deleted.",
+	"trash_col_type": "Type",
+	"trash_col_item": "Item",
+	"trash_col_deleted_at": "Deleted",
+	"trash_col_deleted_by": "By",
+	"trash_restore": "Restore",
+	"trash_restored": "Restored successfully.",
+	"trash_restore_failed": "Restore failed"
 }
