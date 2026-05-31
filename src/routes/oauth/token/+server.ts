@@ -20,6 +20,7 @@ import { mintAccessToken } from '$lib/server/oauth/token';
 import {
 	consumeAuthCode,
 	consumeRefreshToken,
+	getRefreshToken,
 	issueRefreshToken,
 	revokeRefreshTokensForUserClient
 } from '$lib/server/oauth/store';
@@ -126,35 +127,43 @@ export const POST: RequestHandler = async ({ request }) => {
 			return oauthError('invalid_request', 'missing refresh_token or client_id');
 		}
 
-		const row = await consumeRefreshToken(refreshToken);
-		if (!row) {
-			// Reuse of a rotated/expired refresh token → revoke the whole chain.
-			const [spent] = await db
-				.select({
-					userId: table.oauthRefreshToken.userId,
-					clientId: table.oauthRefreshToken.clientId
-				})
-				.from(table.oauthRefreshToken)
-				.where(eq(table.oauthRefreshToken.tokenHash, hashSecret(refreshToken)));
-			if (spent) await revokeRefreshTokensForUserClient(spent.userId, spent.clientId);
-			return oauthError('invalid_grant', 'refresh token is invalid, expired, or already used');
+		// Read the token first and validate BEFORE the rotating consume, so a
+		// malformed-but-authentic request (wrong client_id / resource / widened
+		// scope) is rejected WITHOUT burning the user's valid refresh token.
+		const existing = await getRefreshToken(refreshToken);
+		if (!existing) {
+			return oauthError('invalid_grant', 'refresh token is invalid');
 		}
-
-		if (row.clientId !== clientId) {
+		if (existing.consumedAt) {
+			// Reuse of an already-rotated token → revoke the whole chain (OAuth 2.1).
+			await revokeRefreshTokensForUserClient(existing.userId, existing.clientId);
+			return oauthError('invalid_grant', 'refresh token already used');
+		}
+		if (existing.expiresAt.getTime() <= Date.now()) {
+			return oauthError('invalid_grant', 'refresh token expired');
+		}
+		if (existing.clientId !== clientId) {
 			return oauthError('invalid_grant', 'client_id does not match the refresh token');
 		}
-		if (resource && resource !== row.resource) {
+		if (resource && resource !== existing.resource) {
 			return oauthError('invalid_target', 'resource does not match the refresh token');
 		}
-
 		// A refresh may narrow scope but never widen it.
-		let scope = row.scope;
+		let scope = existing.scope;
 		const requested = parseScope(requestedScope);
 		if (requested.length > 0) {
-			if (!isSubsetScope(requested, parseScope(row.scope))) {
+			if (!isSubsetScope(requested, parseScope(existing.scope))) {
 				return oauthError('invalid_scope', 'requested scope exceeds the granted scope');
 			}
 			scope = serializeScope(requested);
+		}
+
+		// Validation passed — now atomically claim the token. A null here means a
+		// concurrent request rotated it between our read and now → treat as reuse.
+		const row = await consumeRefreshToken(refreshToken);
+		if (!row) {
+			await revokeRefreshTokensForUserClient(existing.userId, existing.clientId);
+			return oauthError('invalid_grant', 'refresh token already used');
 		}
 
 		return success({

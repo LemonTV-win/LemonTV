@@ -130,6 +130,19 @@ export async function issueRefreshToken(params: {
 }
 
 /**
+ * Read a refresh-token row by its plaintext value, in ANY state (consumed or
+ * not). Used to validate a refresh request (client/resource/scope) BEFORE the
+ * rotating consume, so a malformed-but-authentic request never burns a token.
+ */
+export async function getRefreshToken(token: string): Promise<table.OAuthRefreshToken | null> {
+	const [row] = await db
+		.select()
+		.from(table.oauthRefreshToken)
+		.where(eq(table.oauthRefreshToken.tokenHash, hashSecret(token)));
+	return row ?? null;
+}
+
+/**
  * Atomically claim (rotate) a refresh token. Returns the row only if valid,
  * unconsumed, and unexpired. Caller issues a replacement.
  */
