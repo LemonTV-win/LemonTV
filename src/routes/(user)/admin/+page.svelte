@@ -10,6 +10,7 @@
 	import IconParkSolidGame from '~icons/icon-park-solid/game';
 	import IconParkSolidMessage from '~icons/icon-park-solid/message';
 	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
+	import IconParkSolidKey from '~icons/icon-park-solid/key';
 	import type { Component } from 'svelte';
 	import type { PageData } from './$types';
 	let { data }: { data: PageData } = $props();
@@ -113,6 +114,15 @@
 		m.trash_card_desc(),
 		'red'
 	)}
+	{#if data.user?.roles.includes('admin')}
+		{@render adminCard(
+			'/admin/mcp-log',
+			IconParkSolidKey,
+			m.mcp_log_title(),
+			m.mcp_log_card_desc(),
+			'green'
+		)}
+	{/if}
 	{#if data.user?.roles.includes('admin')}
 		{@render adminCard(
 			'/admin/settings',
