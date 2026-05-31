@@ -37,13 +37,26 @@ const ARCHIVE_CONFIG: Record<string, ArchiveTable[]> = {
 		{
 			table: schema.playerAdditionalNationality,
 			column: schema.playerAdditionalNationality.playerId
+		},
+		// Derived stats are cascade-deleted with the player (FK enforcement is ON) —
+		// snapshot them so restore brings back ratings/rankings/character stats and
+		// the historical snapshots, not just the bare profile.
+		{ table: schema.playerStats, column: schema.playerStats.playerId },
+		{ table: schema.playerCharacterStats, column: schema.playerCharacterStats.playerId },
+		{ table: schema.playerStatsHistory, column: schema.playerStatsHistory.playerId },
+		{
+			table: schema.playerCharacterStatsHistory,
+			column: schema.playerCharacterStatsHistory.playerId
 		}
 	],
 	team: [
 		{ table: schema.team, column: schema.team.id },
 		{ table: schema.teamAlias, column: schema.teamAlias.teamId },
 		{ table: schema.teamPlayer, column: schema.teamPlayer.teamId },
-		{ table: schema.teamSlogan, column: schema.teamSlogan.teamId }
+		{ table: schema.teamSlogan, column: schema.teamSlogan.teamId },
+		// event_team.team_id is onDelete: 'cascade' too — snapshot the team's event
+		// participations so restore reattaches them.
+		{ table: schema.eventTeam, column: schema.eventTeam.teamId }
 	]
 };
 
