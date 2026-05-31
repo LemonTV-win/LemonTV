@@ -4,6 +4,7 @@
 	import type { Stage } from '$lib/data/events';
 
 	import { m } from '$lib/paraglide/messages';
+	import { EVENT_PLACEHOLDER_IMAGE } from '$lib/consts';
 
 	let { data }: PageProps = $props();
 
@@ -97,7 +98,7 @@
 	<Breadcrumbs currentTitle={data.event.name} />
 	<div
 		class="banner flex min-h-48 flex-col gap-2 bg-cover bg-top p-4 text-white"
-		style:--banner-image={`url(${data.event.imageURL})`}
+		style:--banner-image={`url(${data.event.imageURL || EVENT_PLACEHOLDER_IMAGE})`}
 	>
 		<h1 class="my-2 flex items-center gap-2 text-3xl font-bold">
 			{data.event.name}

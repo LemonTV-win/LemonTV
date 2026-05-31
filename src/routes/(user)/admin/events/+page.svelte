@@ -18,6 +18,7 @@
 	import OrganizerChip from '$lib/components/OrganizerChip.svelte';
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
 	import { safeFormatEventDate, safeGetTimestamp } from '$lib/utils/date';
+	import { EVENT_PLACEHOLDER_IMAGE } from '$lib/consts';
 	import type { Region } from '$lib/data/game';
 
 	let { data }: { data: PageData } = $props();
@@ -415,13 +416,11 @@
 					<tr class="border-b-1 border-gray-500 bg-gray-800 px-4 py-2 shadow-2xl">
 						<td class="min-w-max overflow-hidden px-4 py-1">
 							<div class="flex min-w-max items-center">
-								{#if event.imageURL}
-									<img
-										class="mr-3 h-10 w-16 flex-shrink-0 rounded-md object-cover"
-										src={event.imageURL}
-										alt={event.name}
-									/>
-								{/if}
+								<img
+									class="mr-3 h-10 w-16 flex-shrink-0 rounded-md object-cover"
+									src={event.imageURL || EVENT_PLACEHOLDER_IMAGE}
+									alt={event.name}
+								/>
 								<div class="flex min-w-max flex-shrink-0 flex-col">
 									<div class="flex-shrink-0 whitespace-nowrap text-white">{event.name}</div>
 									<a

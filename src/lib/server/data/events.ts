@@ -153,7 +153,8 @@ export interface CreateEventInput {
 	server: string;
 	format: string;
 	region: Region;
-	image: string;
+	/** Optional — omit (or pass empty) to create an event with no banner; a placeholder is shown. */
+	image?: string;
 	status: string;
 	capacity?: number;
 	date: string;
@@ -183,7 +184,6 @@ export async function createEvent(
 		['server', data.server],
 		['format', data.format],
 		['region', data.region],
-		['image', data.image],
 		['status', data.status],
 		['date', data.date]
 	];
@@ -218,8 +218,9 @@ export async function createEvent(
 	}
 
 	const id = randomUUID();
-	// Store a remote image URL in our own S3 (returns a key) instead of hotlinking.
-	const image = await ingestImageIfUrl(data.image);
+	// Optional banner: empty when omitted (a placeholder renders). A remote URL is
+	// ingested into our own S3 (returns a key) instead of being hotlinked.
+	const image = data.image ? await ingestImageIfUrl(data.image) : '';
 	const dbEvent = toDatabaseEvent({
 		name: data.name,
 		slug: data.slug,
