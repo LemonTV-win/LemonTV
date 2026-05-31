@@ -24,6 +24,50 @@ export const init: ServerInit = async () => {
 	}
 };
 
+// OAuth machine endpoints that legitimately receive cross-origin form-encoded
+// POSTs from public clients. They carry no ambient cookie credentials (security
+// comes from the PKCE code / refresh token), so the origin-CSRF check does not
+// apply to them — they are the reason the global check is disabled.
+const CSRF_EXEMPT_PATHS = ['/oauth/token', '/oauth/register'];
+
+const FORM_CONTENT_TYPES = [
+	'application/x-www-form-urlencoded',
+	'multipart/form-data',
+	'text/plain'
+];
+
+function isFormContentType(request: Request): boolean {
+	const ct = (request.headers.get('content-type') ?? '').split(';')[0].trim().toLowerCase();
+	return FORM_CONTENT_TYPES.includes(ct);
+}
+
+// Re-implements SvelteKit's disabled built-in origin check (turned off globally
+// in svelte.config.js so the OAuth endpoints can accept cross-origin form posts).
+// This restores identical protection for every OTHER route: a mutating
+// form-encoded request whose Origin doesn't match this site is rejected. Mirrors
+// upstream by skipping the check in dev.
+const handleCsrf: Handle = ({ event, resolve }) => {
+	if (dev) return resolve(event);
+
+	const { request, url } = event;
+	const mutating =
+		request.method === 'POST' ||
+		request.method === 'PUT' ||
+		request.method === 'PATCH' ||
+		request.method === 'DELETE';
+
+	if (mutating && isFormContentType(request) && !CSRF_EXEMPT_PATHS.includes(url.pathname)) {
+		const origin = request.headers.get('origin');
+		if (origin !== url.origin) {
+			return new Response(`Cross-site ${request.method} form submissions are forbidden`, {
+				status: 403
+			});
+		}
+	}
+
+	return resolve(event);
+};
+
 const handleParaglide: Handle = ({ event, resolve }) => {
 	// Skip localization for specific paths
 	const excludedPaths = ['/sitemap.xml', '/api/'];
@@ -113,4 +157,4 @@ const handleJWKS: Handle = ({ event, resolve }) => {
 	return resolve(event);
 };
 
-export const handle: Handle = sequence(handleParaglide, handleAuth, handleJWKS);
+export const handle: Handle = sequence(handleCsrf, handleParaglide, handleAuth, handleJWKS);

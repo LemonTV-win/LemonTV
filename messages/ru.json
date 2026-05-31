@@ -927,5 +927,16 @@
 	"mcp_log_prev": "Previous",
 	"mcp_log_next": "Next",
 	"mcp_log_page_of": "Page {page} of {total}",
-	"mcp_log_apply": "Apply"
+	"mcp_log_apply": "Apply",
+	"oauth_authorize_title": "Authorize access",
+	"oauth_authorize_app_wants": "{app} wants to access your LemonTV account",
+	"oauth_authorize_unknown_app": "An application",
+	"oauth_authorize_signed_in_as": "Signed in as {username}",
+	"oauth_authorize_permissions": "This will allow it to:",
+	"oauth_scope_read": "Read data — tournaments, teams, players, and matches",
+	"oauth_scope_write": "Write data — create and edit content (requires an editor role)",
+	"oauth_authorize_button": "Authorize",
+	"oauth_deny_button": "Deny",
+	"oauth_authorize_error_title": "Authorization error",
+	"oauth_authorize_review_note": "Only authorize applications you trust — they will act on your behalf via the MCP API."
 }
