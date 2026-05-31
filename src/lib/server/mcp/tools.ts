@@ -15,7 +15,7 @@ import { createTeam, getTeam, getTeams } from '$lib/server/data/teams';
 import { getGameAccountServer } from '$lib/data/players';
 import { formatSlug } from '$lib/utils/strings';
 import type { McpTool } from './dispatch';
-import { requireString, optionalEnum } from './args';
+import { requireString, requireInt, optionalEnum, requireEnum } from './args';
 import { stripUser, stripRosterUserPII } from './project';
 
 const GAME_ACCOUNT_REGIONS = ['APAC', 'NA', 'EU', 'CN'] as const;
@@ -286,15 +286,15 @@ export const TOOLS: McpTool[] = [
 				const region = optionalEnum(a.region, GAME_ACCOUNT_REGIONS, 'gameAccounts.region');
 				return {
 					server: getGameAccountServer(region),
-					accountId: Number(a.accountId),
-					currentName: String(a.currentName ?? ''),
+					accountId: requireInt(a, 'accountId'),
+					currentName: requireString(a, 'currentName'),
 					region
 				};
 			});
 			const socialAccounts = Array.isArray(args.socialAccounts)
 				? (args.socialAccounts as Record<string, unknown>[]).map((a) => ({
-						platformId: String(a.platformId),
-						accountId: String(a.accountId),
+						platformId: requireString(a, 'platformId'),
+						accountId: requireString(a, 'accountId'),
 						overridingUrl: typeof a.overridingUrl === 'string' ? a.overridingUrl : undefined
 					}))
 				: undefined;
@@ -419,7 +419,7 @@ export const TOOLS: McpTool[] = [
 			const players = Array.isArray(args.players)
 				? (args.players as Record<string, unknown>[]).map((p) => ({
 						playerId: requireString(p, 'playerId'),
-						role: optionalEnum(p.role, TEAM_PLAYER_ROLES, 'players.role') ?? 'active',
+						role: requireEnum(p.role, TEAM_PLAYER_ROLES, 'players.role'),
 						startedOn: typeof p.startedOn === 'string' ? p.startedOn : undefined,
 						endedOn: typeof p.endedOn === 'string' ? p.endedOn : undefined,
 						note: typeof p.note === 'string' ? p.note : undefined

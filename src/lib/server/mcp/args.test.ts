@@ -1,5 +1,42 @@
 import { describe, it, expect } from 'bun:test';
-import { requireString, optionalEnum } from './args';
+import { requireString, requireInt, optionalEnum, requireEnum } from './args';
+
+describe('requireEnum', () => {
+	const ROLES = ['active', 'substitute', 'coach'] as const;
+
+	it('returns a valid value', () => {
+		expect(requireEnum('coach', ROLES, 'role')).toBe('coach');
+	});
+
+	it('throws (never defaults) when absent or misspelled', () => {
+		expect(() => requireEnum(undefined, ROLES, 'role')).toThrow('role');
+		expect(() => requireEnum('actve', ROLES, 'role')).toThrow();
+		expect(() => requireEnum('Active', ROLES, 'role')).toThrow(); // case-sensitive
+		expect(() => requireEnum(null, ROLES, 'role')).toThrow();
+	});
+});
+
+describe('requireInt', () => {
+	it('returns integer numbers and numeric strings', () => {
+		expect(requireInt({ accountId: 12345 }, 'accountId')).toBe(12345);
+		expect(requireInt({ accountId: '6789' }, 'accountId')).toBe(6789);
+		expect(requireInt({ accountId: 0 }, 'accountId')).toBe(0);
+	});
+
+	it('rejects null/undefined/missing (the Number(null)=0 footgun)', () => {
+		expect(() => requireInt({ accountId: null }, 'accountId')).toThrow('accountId');
+		expect(() => requireInt({ accountId: undefined }, 'accountId')).toThrow();
+		expect(() => requireInt({}, 'accountId')).toThrow();
+	});
+
+	it('rejects non-integer / non-numeric values', () => {
+		expect(() => requireInt({ accountId: 12.5 }, 'accountId')).toThrow();
+		expect(() => requireInt({ accountId: 'abc' }, 'accountId')).toThrow();
+		expect(() => requireInt({ accountId: '' }, 'accountId')).toThrow();
+		expect(() => requireInt({ accountId: NaN }, 'accountId')).toThrow();
+		expect(() => requireInt({ accountId: true }, 'accountId')).toThrow();
+	});
+});
 
 describe('optionalEnum', () => {
 	const REGIONS = ['CN', 'APAC', 'NA', 'EU'] as const;
