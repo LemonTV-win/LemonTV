@@ -6,11 +6,21 @@
  * are flagged `requiresWrite` and enforced by `dispatch`.
  */
 import { desc, eq, or } from 'drizzle-orm';
+import type { TCountryCode } from 'countries-list';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { createEvent, EVENT_FORMATS, EVENT_SERVERS, EVENT_STATUSES } from '$lib/server/data/events';
+import { createPlayer, getPlayer, getPlayers } from '$lib/server/data/players';
+import { createTeam, getTeam, getTeams } from '$lib/server/data/teams';
+import { getGameAccountServer } from '$lib/data/players';
+import { formatSlug } from '$lib/utils/strings';
 import type { McpTool } from './dispatch';
-import { requireString } from './args';
+import { requireString, requireInt, optionalEnum, requireEnum } from './args';
+import { stripUser, stripRosterUserPII } from './project';
+
+const GAME_ACCOUNT_REGIONS = ['APAC', 'NA', 'EU', 'CN'] as const;
+const TEAM_REGIONS = ['CN', 'APAC', 'NA', 'SA', 'EU', 'WA', 'Global'] as const;
+const TEAM_PLAYER_ROLES = ['active', 'substitute', 'former', 'coach', 'manager', 'owner'] as const;
 
 const EVENT_SUMMARY_COLUMNS = {
 	id: table.event.id,
@@ -157,6 +167,285 @@ export const TOOLS: McpTool[] = [
 				},
 				identity.userId,
 				{ source: 'mcp:create_event' }
+			);
+			return { id, slug, created: true };
+		}
+	},
+	{
+		name: 'list_players',
+		description:
+			'List LemonTV players (id, slug, name, nationalities, aliases, avatar). Optional case-insensitive name/slug filter and limit. No account PII.',
+		requiresWrite: false,
+		inputSchema: {
+			type: 'object',
+			properties: {
+				search: {
+					type: 'string',
+					description: 'Case-insensitive substring matched on name and slug.'
+				},
+				limit: {
+					type: 'integer',
+					minimum: 1,
+					maximum: 500,
+					description: 'Max players (default 100).'
+				}
+			},
+			additionalProperties: false
+		},
+		handler: async (args) => {
+			const search = typeof args.search === 'string' ? args.search.toLowerCase() : null;
+			const limit = Math.min(Math.max(Number(args.limit) || 100, 1), 500);
+			let players = await getPlayers();
+			if (search) {
+				players = players.filter(
+					(p) => p.name.toLowerCase().includes(search) || p.slug.toLowerCase().includes(search)
+				);
+			}
+			const items = players.slice(0, limit).map((p) => ({
+				id: p.id,
+				slug: p.slug,
+				name: p.name,
+				nationalities: p.nationalities,
+				aliases: p.aliases,
+				avatar: p.avatar ?? null
+			}));
+			return { count: items.length, players: items };
+		}
+	},
+	{
+		name: 'get_player',
+		description:
+			'Get a LemonTV player by id, slug, or name. Account PII (email/username/user linkage) is omitted.',
+		requiresWrite: false,
+		inputSchema: {
+			type: 'object',
+			properties: { idOrSlug: { type: 'string', description: 'Player id, slug, or name.' } },
+			required: ['idOrSlug'],
+			additionalProperties: false
+		},
+		handler: async (args) => {
+			const player = await getPlayer(requireString(args, 'idOrSlug'));
+			return player ? stripUser(player as unknown as Record<string, unknown>) : null;
+		}
+	},
+	{
+		name: 'create_player',
+		description:
+			'Create a new LemonTV player. Returns the new player id. Pass the COMPLETE set of nationalities/aliases/gameAccounts/socialAccounts (they are stored as given, not merged). Attributed to the token owner.',
+		requiresWrite: true,
+		inputSchema: {
+			type: 'object',
+			properties: {
+				name: { type: 'string', description: 'Display name.' },
+				slug: { type: 'string', description: 'URL slug; defaults to a slug of the name.' },
+				nationalities: {
+					type: 'array',
+					items: { type: 'string' },
+					description: 'ISO country codes; the first is the primary nationality.'
+				},
+				aliases: { type: 'array', items: { type: 'string' } },
+				avatar: { type: 'string', description: 'Avatar image URL/key.' },
+				gameAccounts: {
+					type: 'array',
+					items: {
+						type: 'object',
+						properties: {
+							accountId: { type: 'integer' },
+							currentName: { type: 'string' },
+							region: { type: 'string', enum: [...GAME_ACCOUNT_REGIONS] }
+						},
+						required: ['accountId', 'currentName'],
+						additionalProperties: false
+					},
+					description: 'In-game accounts; server is derived from region.'
+				},
+				socialAccounts: {
+					type: 'array',
+					items: {
+						type: 'object',
+						properties: {
+							platformId: { type: 'string' },
+							accountId: { type: 'string' },
+							overridingUrl: { type: 'string' }
+						},
+						required: ['platformId', 'accountId'],
+						additionalProperties: false
+					}
+				}
+			},
+			required: ['name'],
+			additionalProperties: false
+		},
+		handler: async (args, identity) => {
+			const name = requireString(args, 'name');
+			const slug =
+				typeof args.slug === 'string' && args.slug.trim() ? args.slug.trim() : formatSlug(name);
+			const gameAccounts = (
+				Array.isArray(args.gameAccounts) ? (args.gameAccounts as Record<string, unknown>[]) : []
+			).map((a) => {
+				const region = optionalEnum(a.region, GAME_ACCOUNT_REGIONS, 'gameAccounts.region');
+				return {
+					server: getGameAccountServer(region),
+					accountId: requireInt(a, 'accountId'),
+					currentName: requireString(a, 'currentName'),
+					region
+				};
+			});
+			const socialAccounts = Array.isArray(args.socialAccounts)
+				? (args.socialAccounts as Record<string, unknown>[]).map((a) => ({
+						platformId: requireString(a, 'platformId'),
+						accountId: requireString(a, 'accountId'),
+						overridingUrl: typeof a.overridingUrl === 'string' ? a.overridingUrl : undefined
+					}))
+				: undefined;
+			const id = await createPlayer(
+				{
+					name,
+					slug,
+					nationalities: (Array.isArray(args.nationalities)
+						? (args.nationalities as string[])
+						: []) as TCountryCode[],
+					aliases: Array.isArray(args.aliases) ? (args.aliases as string[]) : [],
+					avatar: typeof args.avatar === 'string' ? args.avatar : undefined,
+					gameAccounts,
+					socialAccounts
+				},
+				identity.userId
+			);
+			return { id, slug, created: true };
+		}
+	},
+	{
+		name: 'list_teams',
+		description:
+			'List LemonTV teams (id, slug, name, abbr, region, logo, wins, aliases). Optional region filter and limit. No account PII.',
+		requiresWrite: false,
+		inputSchema: {
+			type: 'object',
+			properties: {
+				region: { type: 'string', enum: [...TEAM_REGIONS] },
+				limit: {
+					type: 'integer',
+					minimum: 1,
+					maximum: 500,
+					description: 'Max teams (default 100).'
+				}
+			},
+			additionalProperties: false
+		},
+		handler: async (args) => {
+			const region = optionalEnum(args.region, TEAM_REGIONS, 'region');
+			const limit = Math.min(Math.max(Number(args.limit) || 100, 1), 500);
+			let teams = await getTeams();
+			if (region) teams = teams.filter((t) => t.region === region);
+			const items = teams.slice(0, limit).map((t) => ({
+				id: t.id,
+				slug: t.slug,
+				name: t.name,
+				abbr: t.abbr,
+				region: t.region,
+				logo: t.logoURL ?? t.logo ?? null,
+				wins: t.wins ?? null,
+				aliases: t.aliases ?? []
+			}));
+			return { count: items.length, teams: items };
+		}
+	},
+	{
+		name: 'get_team',
+		description:
+			'Get a LemonTV team by id or slug, including roster, aliases, region and logo. Account PII on roster players is omitted.',
+		requiresWrite: false,
+		inputSchema: {
+			type: 'object',
+			properties: { idOrSlug: { type: 'string', description: 'Team id or slug.' } },
+			required: ['idOrSlug'],
+			additionalProperties: false
+		},
+		handler: async (args) => {
+			const team = await getTeam(requireString(args, 'idOrSlug'));
+			return team ? stripRosterUserPII(team as unknown as { players?: unknown }) : null;
+		}
+	},
+	{
+		name: 'create_team',
+		description:
+			'Create a new LemonTV team. Requires name. Returns the new team id. Roster players (need existing player ids), aliases, and slogans are optional. Attributed to the token owner.',
+		requiresWrite: true,
+		inputSchema: {
+			type: 'object',
+			properties: {
+				name: { type: 'string' },
+				slug: { type: 'string', description: 'Defaults to a slug of the name.' },
+				abbr: { type: 'string', description: 'Short tag, e.g. "MMR".' },
+				region: { type: 'string', enum: [...TEAM_REGIONS] },
+				logo: { type: 'string', description: 'Logo image URL/key.' },
+				aliases: { type: 'array', items: { type: 'string' } },
+				players: {
+					type: 'array',
+					items: {
+						type: 'object',
+						properties: {
+							playerId: { type: 'string', description: 'Existing player id (see list_players).' },
+							role: { type: 'string', enum: [...TEAM_PLAYER_ROLES] },
+							startedOn: { type: 'string', description: 'YYYY-MM-DD' },
+							endedOn: { type: 'string', description: 'YYYY-MM-DD' },
+							note: { type: 'string' }
+						},
+						required: ['playerId', 'role'],
+						additionalProperties: false
+					}
+				},
+				slogans: {
+					type: 'array',
+					items: {
+						type: 'object',
+						properties: {
+							slogan: { type: 'string' },
+							language: { type: 'string', description: 'Locale code, e.g. "en".' },
+							eventId: { type: 'string', description: 'Existing event id (optional).' }
+						},
+						required: ['slogan'],
+						additionalProperties: false
+					}
+				}
+			},
+			required: ['name'],
+			additionalProperties: false
+		},
+		handler: async (args, identity) => {
+			const name = requireString(args, 'name');
+			const region = optionalEnum(args.region, TEAM_REGIONS, 'region');
+			const players = Array.isArray(args.players)
+				? (args.players as Record<string, unknown>[]).map((p) => ({
+						playerId: requireString(p, 'playerId'),
+						role: requireEnum(p.role, TEAM_PLAYER_ROLES, 'players.role'),
+						startedOn: typeof p.startedOn === 'string' ? p.startedOn : undefined,
+						endedOn: typeof p.endedOn === 'string' ? p.endedOn : undefined,
+						note: typeof p.note === 'string' ? p.note : undefined
+					}))
+				: undefined;
+			const slogans = Array.isArray(args.slogans)
+				? (args.slogans as Record<string, unknown>[]).map((s) => ({
+						slogan: requireString(s, 'slogan'),
+						language: typeof s.language === 'string' ? s.language : null,
+						eventId: typeof s.eventId === 'string' ? s.eventId : null
+					}))
+				: undefined;
+			const slug =
+				typeof args.slug === 'string' && args.slug.trim() ? args.slug.trim() : formatSlug(name);
+			const id = await createTeam(
+				{
+					name,
+					slug,
+					abbr: typeof args.abbr === 'string' ? args.abbr : undefined,
+					logo: typeof args.logo === 'string' ? args.logo : undefined,
+					region,
+					aliases: Array.isArray(args.aliases) ? (args.aliases as string[]) : undefined,
+					players,
+					slogans
+				},
+				identity.userId
 			);
 			return { id, slug, created: true };
 		}

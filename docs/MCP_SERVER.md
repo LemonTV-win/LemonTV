@@ -32,11 +32,19 @@ endpoint above and set the same `Authorization` header.
 
 ## Tools
 
-| Tool           | Scope     | Purpose                                                           |
-| -------------- | --------- | ----------------------------------------------------------------- |
-| `list_events`  | read      | List tournaments/events (newest first); optional `status` filter. |
-| `get_event`    | read      | Fetch one event by `idOrSlug`.                                    |
-| `create_event` | **write** | Create a new tournament/event. Returns the new id.                |
+| Tool            | Scope     | Purpose                                                           |
+| --------------- | --------- | ----------------------------------------------------------------- |
+| `list_events`   | read      | List tournaments/events (newest first); optional `status` filter. |
+| `get_event`     | read      | Fetch one event by `idOrSlug`.                                    |
+| `create_event`  | **write** | Create a new tournament/event. Returns the new id.                |
+| `list_players`  | read      | List players; optional name/slug `search` + `limit`.              |
+| `get_player`    | read      | Fetch one player by id/slug/name (account PII omitted).           |
+| `create_player` | **write** | Create a player. Returns the new id.                              |
+| `list_teams`    | read      | List teams; optional `region` filter + `limit`.                   |
+| `get_team`      | read      | Fetch one team by id/slug incl. roster (account PII omitted).     |
+| `create_team`   | **write** | Create a team. Returns the new id.                                |
+
+Read tools strip account PII (`user.email`/`username`/linkage) from output.
 
 `create_event` arguments: `name`, `slug`, `server` (`calabiyau`\|`strinova`),
 `format` (`lan`\|`online`\|`hybrid`), `region`, `status`
@@ -44,6 +52,20 @@ endpoint above and set the same `Authorization` header.
 (`YYYY-MM-DD` or `YYYY-MM-DD/YYYY-MM-DD`), `image` (required — a placeholder URL
 is fine), plus optional `official`, `capacity`, `organizerIds`, `websites`.
 Teams, results, and casters are added separately (admin UI for now).
+
+`create_player` arguments: `name` (required), optional `slug`, `nationalities`
+(ISO codes; first is primary), `aliases`, `avatar`, `gameAccounts`
+(`{ accountId, currentName, region? }`), `socialAccounts`
+(`{ platformId, accountId, overridingUrl? }`).
+
+`create_team` arguments: `name` (required), optional `slug`, `abbr`, `region`
+(`CN`/`APAC`/`NA`/`SA`/`EU`/`WA`/`Global`), `logo`, `aliases`, `players`
+(`{ playerId, role, startedOn?, endedOn?, note? }`; `role` ∈
+`active`/`substitute`/`former`/`coach`/`manager`/`owner`), `slogans`.
+
+> **Editing/deleting** existing players & teams over MCP is intentionally not
+> exposed yet: the underlying update is a full-replacement of nested collections
+> (a safe merge-based `update_*` is a follow-up) and delete is a hard delete.
 
 ## Example: adding a tournament
 
