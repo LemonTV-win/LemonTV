@@ -4,7 +4,12 @@
  * Verifies the JWT (aud-bound to the MCP resource), then loads the user and
  * their CURRENT roles from the DB — roles are never trusted from the token, so
  * de-authorizing an editor instantly defangs outstanding tokens (matching the
- * PAT path). Write requires BOTH the `mcp:write` scope AND a live editor/admin role.
+ * PAT path).
+ *
+ * Scope gate (least privilege): a token MUST carry `mcp:read` to get any access
+ * (the dispatcher serves tools/list + every read tool to any returned identity,
+ * so a scope-less token must be rejected, not silently granted read). `mcp:write`
+ * implies read. Write additionally requires a live editor/admin role.
  */
 import { eq } from 'drizzle-orm';
 import { db } from '$lib/server/db';
@@ -12,6 +17,7 @@ import * as table from '$lib/server/db/schema';
 import type { UserRole } from '$lib/data/user';
 import type { McpIdentity } from '$lib/server/mcp/server';
 import { MCP_WRITE_ROLES } from '$lib/server/security/mcp-token';
+import { parseScope } from './scope';
 import { verifyAccessToken } from './token';
 
 export async function identityFromOAuthToken(jwt: string): Promise<McpIdentity | null> {
@@ -30,7 +36,12 @@ export async function identityFromOAuthToken(jwt: string): Promise<McpIdentity |
 		.where(eq(table.userRole.userId, owner.id));
 	const roles = roleRows.map((r) => r.roleId as UserRole);
 
-	const hasWriteScope = claims.scope.split(' ').includes('mcp:write');
+	const scopes = parseScope(claims.scope);
+	const hasWriteScope = scopes.includes('mcp:write');
+	// mcp:write implies read. A token granting neither has no MCP access at all.
+	const hasReadScope = hasWriteScope || scopes.includes('mcp:read');
+	if (!hasReadScope) return null;
+
 	const canWrite = hasWriteScope && MCP_WRITE_ROLES.some((role) => roles.includes(role));
 
 	return {

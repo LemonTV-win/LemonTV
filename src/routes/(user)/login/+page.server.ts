@@ -5,22 +5,21 @@ import * as auth from '$lib/server/auth';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { LOGIN_SCHEMA, REGISTER_SCHEMA } from '$lib/validations/auth';
+import { safeInternalPath } from '$lib/server/oauth/redirect';
 import { dev } from '$app/environment';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
 	if (event.locals.user) {
 		console.info('[Login] User already authenticated, redirecting to intended destination');
-		const redirectTo = event.url.searchParams.get('redirect') || '/';
-
-		// If there's a redirect parameter, use it directly (it should contain the full URL)
-		// Otherwise, redirect to home
-		const targetUrl = redirectTo || '/';
-		return redirect(302, targetUrl);
+		// Only ever redirect to a same-origin path — never an attacker-supplied
+		// absolute URL (open redirect). This gate is what makes it safe to route
+		// the OAuth flow through `/login?redirect=/oauth/authorize?…`.
+		return redirect(302, safeInternalPath(event.url.searchParams.get('redirect')));
 	}
 
 	return {
-		redirect: event.url.searchParams.get('redirect') || '/',
+		redirect: safeInternalPath(event.url.searchParams.get('redirect')),
 		tab: event.url.searchParams.get('tab') === 'register' ? 'register' : 'login',
 		message: event.url.searchParams.get('message')
 	};
@@ -75,8 +74,8 @@ export const actions: Actions = {
 			`[Login] Successfully logged in user: ${result.data.username} with ${sessionType} session`
 		);
 
-		// Return success with redirect information
-		const redirectTo = event.url.searchParams.get('redirect') || '/';
+		// Return success with redirect information (same-origin only — open-redirect guard)
+		const redirectTo = safeInternalPath(event.url.searchParams.get('redirect'));
 		return { success: true, redirect: redirectTo };
 	},
 	register: async (event) => {
@@ -151,8 +150,8 @@ export const actions: Actions = {
 			console.info('[Register] ====== Registration complete ======');
 		}
 
-		// Return success with redirect information
-		const redirectTo = event.url.searchParams.get('redirect') || '/';
+		// Return success with redirect information (same-origin only — open-redirect guard)
+		const redirectTo = safeInternalPath(event.url.searchParams.get('redirect'));
 		return { success: true, redirect: redirectTo };
 	}
 };
