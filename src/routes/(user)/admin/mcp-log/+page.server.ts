@@ -34,12 +34,15 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 			ip: mcpAuditLog.ip,
 			createdAt: mcpAuditLog.createdAt,
 			username: user.username,
+			subject: mcpAuditLog.subject,
 			tokenName: mcpToken.name,
 			tokenPrefix: mcpToken.prefix
 		})
 		.from(mcpAuditLog)
 		.leftJoin(user, eq(mcpAuditLog.userId, user.id))
-		.leftJoin(mcpToken, eq(mcpAuditLog.tokenId, mcpToken.id))
+		// PAT subjects are raw token ids, so this join resolves their name;
+		// OAuth subjects (`oauth:<jti>`) never match and surface as "OAuth".
+		.leftJoin(mcpToken, eq(mcpAuditLog.subject, mcpToken.id))
 		.where(where)
 		.orderBy(desc(mcpAuditLog.createdAt))
 		.limit(PAGE_SIZE)

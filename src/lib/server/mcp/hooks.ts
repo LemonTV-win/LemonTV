@@ -8,14 +8,17 @@ import { randomUUID } from 'node:crypto';
 import { eq } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { consumeToken, DEFAULT_BUCKET, type BucketState } from './rate-limit';
+import { consumeToken, DEFAULT_BUCKET, type BucketState, type BucketConfig } from './rate-limit';
 
 /**
- * Consume one rate-limit token for `tokenId` (persisted token bucket). Runs in
- * a transaction so the read-modify-write is atomic per token.
+ * Consume one rate-limit token for `subject` (persisted token bucket). Runs in
+ * a transaction so the read-modify-write is atomic per subject. The subject is a
+ * PAT id, an `oauth:<jti>`, or an `ip:…` key; pass a custom `config` for a
+ * tighter bucket (e.g. the unauthenticated registration throttle).
  */
 export async function consumeRateLimit(
-	tokenId: string
+	subject: string,
+	config: BucketConfig = DEFAULT_BUCKET
 ): Promise<{ allowed: boolean; retryAfterSeconds: number }> {
 	const now = Date.now();
 	try {
@@ -23,23 +26,23 @@ export async function consumeRateLimit(
 			const [row] = await tx
 				.select()
 				.from(table.mcpRateLimit)
-				.where(eq(table.mcpRateLimit.tokenId, tokenId));
+				.where(eq(table.mcpRateLimit.subject, subject));
 
 			const state: BucketState = row
 				? { tokens: row.tokens, updatedAtMs: row.updatedAt.getTime() }
-				: { tokens: DEFAULT_BUCKET.capacity, updatedAtMs: now };
+				: { tokens: config.capacity, updatedAtMs: now };
 
-			const result = consumeToken(state, now, DEFAULT_BUCKET);
+			const result = consumeToken(state, now, config);
 
 			if (row) {
 				await tx
 					.update(table.mcpRateLimit)
 					.set({ tokens: result.tokens, updatedAt: new Date(now) })
-					.where(eq(table.mcpRateLimit.tokenId, tokenId));
+					.where(eq(table.mcpRateLimit.subject, subject));
 			} else {
 				await tx
 					.insert(table.mcpRateLimit)
-					.values({ tokenId, tokens: result.tokens, updatedAt: new Date(now) });
+					.values({ subject, tokens: result.tokens, updatedAt: new Date(now) });
 			}
 
 			return { allowed: result.allowed, retryAfterSeconds: Math.ceil(result.retryAfterSeconds) };
@@ -53,7 +56,7 @@ export async function consumeRateLimit(
 }
 
 export interface McpAuditEntry {
-	tokenId: string;
+	subject: string;
 	userId: string;
 	tool: string;
 	status: 'success' | 'denied' | 'error' | 'rate_limited';
@@ -66,7 +69,7 @@ export async function logMcpAudit(entry: McpAuditEntry): Promise<void> {
 	try {
 		await db.insert(table.mcpAuditLog).values({
 			id: randomUUID(),
-			tokenId: entry.tokenId,
+			subject: entry.subject,
 			userId: entry.userId,
 			tool: entry.tool,
 			status: entry.status,
