@@ -4,6 +4,7 @@
 	import IconParkSolidLocalPin from '~icons/icon-park-solid/local-pin';
 	import IconParkSolidComputer from '~icons/icon-park-solid/computer';
 	import { m } from '$lib/paraglide/messages';
+	import { EVENT_PLACEHOLDER_IMAGE } from '$lib/consts';
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 	import OrganizerTypeBadge from '$lib/components/OrganizerTypeBadge.svelte';
 	import ContentActionLink from '$lib/components/ContentActionLink.svelte';
@@ -58,7 +59,11 @@
 						class="glass-card group block overflow-hidden transition-transform hover:scale-[1.02]"
 					>
 						<div class="relative h-48">
-							<img src={event.imageURL} alt={event.name} class="h-full w-full object-cover" />
+							<img
+								src={event.imageURL || EVENT_PLACEHOLDER_IMAGE}
+								alt={event.name}
+								class="h-full w-full object-cover"
+							/>
 							<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
 							<div class="absolute right-0 bottom-0 left-0 p-4 text-white">
 								<h3 class="text-xl font-bold">{event.name}</h3>
