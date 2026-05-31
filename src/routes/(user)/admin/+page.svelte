@@ -9,6 +9,7 @@
 	import IconParkSolidTrophy from '~icons/icon-park-solid/trophy';
 	import IconParkSolidGame from '~icons/icon-park-solid/game';
 	import IconParkSolidMessage from '~icons/icon-park-solid/message';
+	import IconParkSolidDelete from '~icons/icon-park-solid/delete';
 	import type { Component } from 'svelte';
 	import type { PageData } from './$types';
 	let { data }: { data: PageData } = $props();
@@ -104,6 +105,13 @@
 		m['editing.history.edit_history'](),
 		m['editing.history.edit_history_desc'](),
 		'yellow'
+	)}
+	{@render adminCard(
+		'/admin/trash',
+		IconParkSolidDelete,
+		m.trash_title(),
+		m.trash_card_desc(),
+		'red'
 	)}
 	{#if data.user?.roles.includes('admin')}
 		{@render adminCard(

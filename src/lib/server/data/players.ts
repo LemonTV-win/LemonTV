@@ -1,4 +1,5 @@
 import { db } from '$lib/server/db';
+import { archiveEntity } from './archive';
 import {
 	player,
 	playerAlias,
@@ -1560,6 +1561,9 @@ export async function deletePlayer(id: string, deletedBy: string) {
 				editedBy: deletedBy
 			});
 		}
+
+		// Snapshot the player + related rows so the delete is recoverable.
+		await archiveEntity(tx, 'player', id, deletedBy, playerData.name);
 
 		// Delete the records
 		await tx.delete(playerAlias).where(eq(playerAlias.playerId, id));

@@ -4,6 +4,7 @@ import { getPlayerKD, getPlayerAgents } from './players';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { eq, inArray } from 'drizzle-orm';
+import { archiveEntity } from './archive';
 
 import type { Team, TeamPlayerRole } from '$lib/data/teams';
 import type { Player } from '$lib/data/players';
@@ -1332,6 +1333,10 @@ export async function deleteTeam(id: string, deletedBy: string) {
 				editedBy: deletedBy
 			});
 		}
+
+		// Snapshot the team + related rows (incl. cascade-deleted slogans) so the
+		// delete is recoverable.
+		await archiveEntity(tx, 'team', id, deletedBy, teamData.name);
 
 		// Delete the records
 		await tx.delete(table.teamAlias).where(eq(table.teamAlias.teamId, id));
