@@ -1,16 +1,24 @@
 /**
  * Authorized MCP server — HTTP transport.
  *
- * Speaks MCP over JSON-RPC via HTTP POST, authenticated by a LemonTV Personal
- * Access Token (`Authorization: Bearer lemon_pat_…`). NOT mounted under
- * /api/public/ (which is pre-auth) — this route authenticates every request
- * itself and resolves the caller's write capability before dispatch.
+ * Speaks MCP over JSON-RPC via HTTP POST. Two credential types are accepted:
+ *  - a LemonTV Personal Access Token (`Authorization: Bearer lemon_pat_…`), or
+ *  - an OAuth 2.1 access token (a JWT obtained via the browser login flow).
+ * NOT mounted under /api/public/ (which is pre-auth) — this route authenticates
+ * every request itself and resolves the caller's write capability before dispatch.
+ * On 401 it advertises the OAuth resource metadata so MCP clients can discover
+ * the login flow.
  */
 import { json, error as kitError } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { validateMcpToken } from '$lib/server/security/mcp-token-store';
+import { MCP_TOKEN_PREFIX } from '$lib/server/security/mcp-token';
 import { handleMcpMessage, type McpIdentity, type McpHooks } from '$lib/server/mcp/server';
 import { consumeRateLimit, logMcpAudit } from '$lib/server/mcp/hooks';
+import { identityFromOAuthToken } from '$lib/server/oauth/identity';
+import { WELL_KNOWN_PROTECTED_RESOURCE } from '$lib/server/oauth/config';
+
+const WWW_AUTHENTICATE = `Bearer resource_metadata="${WELL_KNOWN_PROTECTED_RESOURCE}"`;
 
 function bearerToken(request: Request): string | null {
 	const header = request.headers.get('authorization');
@@ -19,40 +27,44 @@ function bearerToken(request: Request): string | null {
 	return match ? match[1].trim() : null;
 }
 
+function unauthorized(message: string) {
+	return json(
+		{ jsonrpc: '2.0', id: null, error: { code: -32001, message } },
+		{ status: 401, headers: { 'WWW-Authenticate': WWW_AUTHENTICATE } }
+	);
+}
+
 export const POST: RequestHandler = async ({ request }) => {
 	const token = bearerToken(request);
-	if (!token) {
-		return json(
-			{ jsonrpc: '2.0', id: null, error: { code: -32001, message: 'Missing bearer token' } },
-			{ status: 401, headers: { 'WWW-Authenticate': 'Bearer' } }
-		);
+	if (!token) return unauthorized('Missing bearer token');
+
+	let identity: McpIdentity;
+	let hooks: McpHooks | undefined;
+
+	if (token.startsWith(MCP_TOKEN_PREFIX)) {
+		// Personal Access Token — audited + rate-limited by token id.
+		const validation = await validateMcpToken(token);
+		if (validation.status !== 'valid') return unauthorized(`Unauthorized (${validation.reason})`);
+		identity = {
+			tokenId: validation.token.id,
+			userId: validation.user.id,
+			username: validation.user.username,
+			canWrite: validation.canWrite
+		};
+		const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? null;
+		hooks = {
+			rateLimit: (id) => consumeRateLimit(id.tokenId),
+			audit: (entry) =>
+				logMcpAudit({ ...entry, tokenId: identity.tokenId, userId: identity.userId, ip })
+		};
+	} else {
+		// OAuth 2.1 access token (JWT). Audit/rate-limit for OAuth lands when the
+		// PAT-keyed audit/rate-limit tables are generalized (follow-up).
+		const oauthIdentity = await identityFromOAuthToken(token);
+		if (!oauthIdentity) return unauthorized('Unauthorized (invalid token)');
+		identity = oauthIdentity;
+		hooks = undefined;
 	}
-
-	const validation = await validateMcpToken(token);
-	if (validation.status !== 'valid') {
-		return json(
-			{
-				jsonrpc: '2.0',
-				id: null,
-				error: { code: -32001, message: `Unauthorized (${validation.reason})` }
-			},
-			{ status: 401 }
-		);
-	}
-
-	const identity: McpIdentity = {
-		tokenId: validation.token.id,
-		userId: validation.user.id,
-		username: validation.user.username,
-		canWrite: validation.canWrite
-	};
-
-	const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? null;
-	const hooks: McpHooks = {
-		rateLimit: (id) => consumeRateLimit(id.tokenId),
-		audit: (entry) =>
-			logMcpAudit({ ...entry, tokenId: identity.tokenId, userId: identity.userId, ip })
-	};
 
 	let body: unknown;
 	try {
