@@ -89,9 +89,15 @@
 							<td class="px-3 py-2 whitespace-nowrap text-gray-300">{fmt(e.createdAt)}</td>
 							<td class="px-3 py-2 text-white">{e.username ?? '—'}</td>
 							<td class="px-3 py-2 text-gray-300">
-								{e.tokenName ?? '—'}
-								{#if e.tokenPrefix}
-									<code class="ml-1 font-mono text-xs text-slate-400">{e.tokenPrefix}…</code>
+								{#if e.tokenName}
+									{e.tokenName}
+									{#if e.tokenPrefix}
+										<code class="ml-1 font-mono text-xs text-slate-400">{e.tokenPrefix}…</code>
+									{/if}
+								{:else if e.subject?.startsWith('oauth:')}
+									<span class="text-xs text-slate-400">OAuth</span>
+								{:else}
+									—
 								{/if}
 							</td>
 							<td class="px-3 py-2 font-mono text-xs text-gray-300">{e.tool}</td>

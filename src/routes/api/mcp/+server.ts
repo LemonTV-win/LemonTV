@@ -39,10 +39,9 @@ export const POST: RequestHandler = async ({ request }) => {
 	if (!token) return unauthorized('Missing bearer token');
 
 	let identity: McpIdentity;
-	let hooks: McpHooks | undefined;
 
 	if (token.startsWith(MCP_TOKEN_PREFIX)) {
-		// Personal Access Token — audited + rate-limited by token id.
+		// Personal Access Token. identity.tokenId is the raw mcp_token.id.
 		const validation = await validateMcpToken(token);
 		if (validation.status !== 'valid') return unauthorized(`Unauthorized (${validation.reason})`);
 		identity = {
@@ -51,20 +50,21 @@ export const POST: RequestHandler = async ({ request }) => {
 			username: validation.user.username,
 			canWrite: validation.canWrite
 		};
-		const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? null;
-		hooks = {
-			rateLimit: (id) => consumeRateLimit(id.tokenId),
-			audit: (entry) =>
-				logMcpAudit({ ...entry, tokenId: identity.tokenId, userId: identity.userId, ip })
-		};
 	} else {
-		// OAuth 2.1 access token (JWT). Audit/rate-limit for OAuth lands when the
-		// PAT-keyed audit/rate-limit tables are generalized (follow-up).
+		// OAuth 2.1 access token (JWT). identity.tokenId is `oauth:<jti>`.
 		const oauthIdentity = await identityFromOAuthToken(token);
 		if (!oauthIdentity) return unauthorized('Unauthorized (invalid token)');
 		identity = oauthIdentity;
-		hooks = undefined;
 	}
+
+	// Both auth paths are now audited + rate-limited, keyed by the caller's
+	// subject (identity.tokenId is a PAT id or `oauth:<jti>` — distinct namespaces).
+	const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? null;
+	const hooks: McpHooks = {
+		rateLimit: (id) => consumeRateLimit(id.tokenId),
+		audit: (entry) =>
+			logMcpAudit({ ...entry, subject: identity.tokenId, userId: identity.userId, ip })
+	};
 
 	let body: unknown;
 	try {

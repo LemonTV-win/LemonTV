@@ -45,7 +45,11 @@ export async function identityFromOAuthToken(jwt: string): Promise<McpIdentity |
 	const canWrite = hasWriteScope && MCP_WRITE_ROLES.some((role) => roles.includes(role));
 
 	return {
-		tokenId: `oauth:${claims.jti}`,
+		// Rate-limit + audit subject. MUST be stable across token refreshes — the
+		// access-token `jti` rotates on every refresh, so keying on it would let a
+		// caller reset its rate-limit bucket by refreshing. Key on the user instead
+		// (the human's MCP quota), which a refresh cannot change.
+		tokenId: `oauth:${owner.id}`,
 		userId: owner.id,
 		username: owner.username,
 		canWrite

@@ -28,6 +28,13 @@ export interface ConsumeResult {
 /** Default: burst of 120 requests, sustained 2 requests/second per token. */
 export const DEFAULT_BUCKET: BucketConfig = { capacity: 120, refillPerSecond: 2 };
 
+/**
+ * Tighter bucket for unauthenticated OAuth Dynamic Client Registration, keyed by
+ * client IP: burst of 10, sustained 1 every 20s. Enough for legitimate retries,
+ * stingy enough to blunt a flood of throwaway client rows.
+ */
+export const REGISTER_BUCKET: BucketConfig = { capacity: 10, refillPerSecond: 0.05 };
+
 /** Tokens available now, after replenishing for elapsed time (capped at capacity). */
 export function refilledTokens(state: BucketState, nowMs: number, config: BucketConfig): number {
 	const elapsedSeconds = Math.max(0, (nowMs - state.updatedAtMs) / 1000);
