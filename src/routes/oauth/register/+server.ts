@@ -11,19 +11,33 @@ import { registerClient } from '$lib/server/oauth/store';
 import { consumeRateLimit } from '$lib/server/mcp/hooks';
 import { REGISTER_BUCKET } from '$lib/server/mcp/rate-limit';
 
-export const POST: RequestHandler = async ({ request }) => {
-	// Throttle this unauthenticated, DB-writing endpoint per client IP so it
-	// can't be flooded with throwaway client registrations.
-	const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
-	const rl = await consumeRateLimit(`ip:register:${ip}`, REGISTER_BUCKET);
-	if (!rl.allowed) {
-		return json(
-			{ error: 'temporarily_unavailable', error_description: 'too many registrations; slow down' },
-			{
-				status: 429,
-				headers: { 'Cache-Control': 'no-store', 'Retry-After': String(rl.retryAfterSeconds) }
-			}
-		);
+export const POST: RequestHandler = async ({ request, getClientAddress }) => {
+	// Throttle this unauthenticated, DB-writing endpoint per client IP so it can't
+	// be flooded with throwaway client registrations. Resolve the IP via the
+	// adapter's getClientAddress() (which knows the proxy config), falling back to
+	// X-Forwarded-For. If it genuinely can't be determined, SKIP the throttle
+	// rather than collapse every such request into one shared bucket (which would
+	// let a few requests 429 unrelated clients).
+	let ip: string | null = null;
+	try {
+		ip = getClientAddress();
+	} catch {
+		ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || null;
+	}
+	if (ip) {
+		const rl = await consumeRateLimit(`ip:register:${ip}`, REGISTER_BUCKET);
+		if (!rl.allowed) {
+			return json(
+				{
+					error: 'temporarily_unavailable',
+					error_description: 'too many registrations; slow down'
+				},
+				{
+					status: 429,
+					headers: { 'Cache-Control': 'no-store', 'Retry-After': String(rl.retryAfterSeconds) }
+				}
+			);
+		}
 	}
 
 	let body: DcrRequestBody;
