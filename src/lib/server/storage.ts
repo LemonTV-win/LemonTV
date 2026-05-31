@@ -55,7 +55,11 @@ const INGEST_TYPE_EXT: Record<string, string> = {
 function pinnedPublicLookup(
 	hostname: string,
 	options: dns.LookupOptions,
-	callback: (err: NodeJS.ErrnoException | null, address: string, family: number) => void
+	callback: (
+		err: NodeJS.ErrnoException | null,
+		address: string | dns.LookupAddress[],
+		family?: number
+	) => void
 ): void {
 	dns.lookup(hostname, { all: true, family: options.family ?? 0 }, (err, addresses) => {
 		if (err) return callback(err, '', 0);
@@ -75,7 +79,13 @@ function pinnedPublicLookup(
 				);
 			}
 		}
-		callback(null, addresses[0].address, addresses[0].family);
+		// Node may call lookup with `all` (Happy Eyeballs / autoSelectFamily on
+		// Node 22) and then expects the FULL array; otherwise a single address.
+		if (options.all) {
+			callback(null, addresses);
+		} else {
+			callback(null, addresses[0].address, addresses[0].family);
+		}
 	});
 }
 
