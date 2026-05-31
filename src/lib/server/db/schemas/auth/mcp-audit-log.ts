@@ -1,23 +1,25 @@
 import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
 import { relations } from 'drizzle-orm';
 import { user } from './user';
-import { mcpToken } from './mcp-token';
 
 /**
  * Audit trail for the authorized MCP server.
  *
  * `edit_history` already records successful data mutations; this captures what
  * it can't — every MCP tool call's outcome including reads, permission denials,
- * rate-limit rejections, and errors — keyed by the token and its owner, so
- * AI-driven access can be moderated and abuse traced to a revocable token.
+ * rate-limit rejections, and errors — keyed by the caller's subject and owner.
+ *
+ * `subject` is the generic credential identifier so BOTH auth paths are audited:
+ * a PAT row stores the raw `mcp_token.id` (so the moderation view can still join
+ * it to the token's name); an OAuth row stores `oauth:<jti>`. There is
+ * deliberately NO foreign key — the audit trail must survive token revocation
+ * (cascade-deleting it would erase the record of what a now-revoked token did).
  */
 export const mcpAuditLog = sqliteTable(
 	'mcp_audit_log',
 	{
 		id: text('id').primaryKey(),
-		tokenId: text('token_id')
-			.notNull()
-			.references(() => mcpToken.id, { onDelete: 'cascade' }),
+		subject: text('token_id').notNull(),
 		userId: text('user_id')
 			.notNull()
 			.references(() => user.id),
@@ -29,7 +31,7 @@ export const mcpAuditLog = sqliteTable(
 	},
 	(table) => {
 		return {
-			idx_token: index('idx_mcp_audit_token').on(table.tokenId),
+			idx_subject: index('idx_mcp_audit_token').on(table.subject),
 			idx_created: index('idx_mcp_audit_created').on(table.createdAt)
 		};
 	}
@@ -39,10 +41,6 @@ export type McpAuditLog = typeof mcpAuditLog.$inferSelect;
 export type NewMcpAuditLog = typeof mcpAuditLog.$inferInsert;
 
 export const mcpAuditLogRelations = relations(mcpAuditLog, ({ one }) => ({
-	token: one(mcpToken, {
-		fields: [mcpAuditLog.tokenId],
-		references: [mcpToken.id]
-	}),
 	user: one(user, {
 		fields: [mcpAuditLog.userId],
 		references: [user.id]
