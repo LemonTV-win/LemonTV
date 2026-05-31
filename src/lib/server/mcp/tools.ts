@@ -9,7 +9,14 @@ import { desc, eq, or } from 'drizzle-orm';
 import type { TCountryCode } from 'countries-list';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { createEvent, EVENT_FORMATS, EVENT_SERVERS, EVENT_STATUSES } from '$lib/server/data/events';
+import {
+	createEvent,
+	updateEvent,
+	EVENT_FORMATS,
+	EVENT_SERVERS,
+	EVENT_STATUSES,
+	type UpdateEventFields
+} from '$lib/server/data/events';
 import { createPlayer, getPlayer, getPlayers } from '$lib/server/data/players';
 import { createTeam, getTeam, getTeams } from '$lib/server/data/teams';
 import { getGameAccountServer } from '$lib/data/players';
@@ -169,6 +176,58 @@ export const TOOLS: McpTool[] = [
 				{ source: 'mcp:create_event' }
 			);
 			return { id, slug, created: true };
+		}
+	},
+	{
+		name: 'update_event',
+		description:
+			'Update fields of an existing LemonTV event, located by id or slug. Only the fields you pass are changed (partial update); useful for filling in dates, region, status, capacity, etc. Returns the id and which fields changed. Edits are attributed to the token owner and recorded in edit history.',
+		requiresWrite: true,
+		inputSchema: {
+			type: 'object',
+			properties: {
+				idOrSlug: { type: 'string', description: 'The event id or slug to update.' },
+				name: { type: 'string', description: 'New display name.' },
+				slug: { type: 'string', description: 'New URL slug (lowercase-kebab, unique).' },
+				server: { type: 'string', enum: [...EVENT_SERVERS], description: 'Game server.' },
+				format: { type: 'string', enum: [...EVENT_FORMATS], description: 'Competition format.' },
+				region: {
+					type: 'string',
+					description: 'Region, e.g. "Global", "NA", "EU", "APAC", "CN", "SA".'
+				},
+				status: { type: 'string', enum: [...EVENT_STATUSES], description: 'Event status.' },
+				date: { type: 'string', description: 'YYYY-MM-DD or a range YYYY-MM-DD/YYYY-MM-DD.' },
+				image: { type: 'string', description: 'Banner/logo URL.' },
+				official: { type: 'boolean', description: 'Whether it is an official event.' },
+				capacity: { type: 'integer', minimum: 0, description: 'Team capacity.' }
+			},
+			required: ['idOrSlug'],
+			additionalProperties: false
+		},
+		handler: async (args, identity) => {
+			const idOrSlug = requireString(args, 'idOrSlug');
+
+			// Build a partial update from only the fields actually supplied, with
+			// per-field type/enum validation (the data layer trusts what it gets).
+			const fields: UpdateEventFields = {};
+			if (args.name !== undefined) fields.name = requireString(args, 'name');
+			if (args.slug !== undefined) fields.slug = formatSlug(requireString(args, 'slug'));
+			if (args.server !== undefined)
+				fields.server = requireEnum(args.server, EVENT_SERVERS, 'server');
+			if (args.format !== undefined)
+				fields.format = requireEnum(args.format, EVENT_FORMATS, 'format');
+			if (args.region !== undefined) fields.region = requireString(args, 'region');
+			if (args.status !== undefined)
+				fields.status = requireEnum(args.status, EVENT_STATUSES, 'status');
+			if (args.date !== undefined) fields.date = requireString(args, 'date');
+			if (args.image !== undefined) fields.image = requireString(args, 'image');
+			if (args.official !== undefined) fields.official = Boolean(args.official);
+			if (args.capacity !== undefined) fields.capacity = requireInt(args, 'capacity');
+
+			const { id, changed } = await updateEvent(idOrSlug, fields, identity.userId, {
+				source: 'mcp:update_event'
+			});
+			return { id, changed, updated: changed.length > 0 };
 		}
 	},
 	{

@@ -284,6 +284,111 @@ export async function createEvent(
 	return { id };
 }
 
+/** Scalar event fields an MCP/editor partial-update may change (no related tables). */
+export interface UpdateEventFields {
+	name?: string;
+	slug?: string;
+	server?: string;
+	format?: string;
+	region?: string;
+	status?: string;
+	date?: string;
+	image?: string;
+	official?: boolean;
+	capacity?: number;
+}
+
+/**
+ * Update an existing event's scalar fields, located by id OR slug. Only the
+ * fields provided are changed; enum fields are validated and a slug change is
+ * checked for uniqueness. One `edit_history` row is written per changed field
+ * (attributed to `editedBy`), mirroring the admin edit path.
+ */
+export async function updateEvent(
+	idOrSlug: string,
+	fields: UpdateEventFields,
+	editedBy: string,
+	options: { source?: string } = {}
+): Promise<{ id: string; changed: string[] }> {
+	const [existing] = await db
+		.select()
+		.from(table.event)
+		.where(or(eq(table.event.id, idOrSlug), eq(table.event.slug, idOrSlug)))
+		.limit(1);
+	if (!existing) {
+		throw new Error(`No event found with id or slug "${idOrSlug}"`);
+	}
+
+	if (fields.server !== undefined && !EVENT_SERVERS.includes(fields.server as never)) {
+		throw new Error(
+			`Invalid server "${fields.server}" (expected one of: ${EVENT_SERVERS.join(', ')})`
+		);
+	}
+	if (fields.format !== undefined && !EVENT_FORMATS.includes(fields.format as never)) {
+		throw new Error(
+			`Invalid format "${fields.format}" (expected one of: ${EVENT_FORMATS.join(', ')})`
+		);
+	}
+	if (fields.status !== undefined && !EVENT_STATUSES.includes(fields.status as never)) {
+		throw new Error(
+			`Invalid status "${fields.status}" (expected one of: ${EVENT_STATUSES.join(', ')})`
+		);
+	}
+
+	if (fields.slug !== undefined && fields.slug !== existing.slug) {
+		const [dupe] = await db
+			.select({ id: table.event.id })
+			.from(table.event)
+			.where(eq(table.event.slug, fields.slug))
+			.limit(1);
+		if (dupe) throw new Error(`An event with slug "${fields.slug}" already exists`);
+	}
+
+	const columns = [
+		'name',
+		'slug',
+		'server',
+		'format',
+		'region',
+		'status',
+		'date',
+		'image',
+		'official',
+		'capacity'
+	] as const;
+
+	const updates: Record<string, unknown> = {};
+	const changed: string[] = [];
+	for (const key of columns) {
+		const next = fields[key];
+		if (next !== undefined && next !== (existing as Record<string, unknown>)[key]) {
+			updates[key] = next;
+			changed.push(key);
+		}
+	}
+
+	if (changed.length === 0) return { id: existing.id, changed: [] };
+
+	await db.transaction(async (tx) => {
+		await tx.update(table.event).set(updates).where(eq(table.event.id, existing.id));
+		for (const field of changed) {
+			const oldValue = (existing as Record<string, unknown>)[field];
+			await tx.insert(table.editHistory).values({
+				id: randomUUID(),
+				tableName: 'event',
+				recordId: existing.id,
+				fieldName: options.source ? `${field} (${options.source})` : field,
+				oldValue: oldValue === null || oldValue === undefined ? null : String(oldValue),
+				newValue: String(updates[field]),
+				editedBy,
+				editedAt: new Date()
+			});
+		}
+	});
+
+	return { id: existing.id, changed };
+}
+
 // Get changes between old and new event data
 export function getEventChanges(
 	oldEvent: Event,
