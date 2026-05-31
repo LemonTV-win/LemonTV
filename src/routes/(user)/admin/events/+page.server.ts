@@ -15,6 +15,7 @@ import {
 	toDatabaseEventVideos,
 	getEventChanges,
 	getEventsForAdminPage,
+	updateEvent,
 	updateEventTeamPlayers,
 	updateEventCasters
 } from '$lib/server/data/events';
@@ -683,6 +684,29 @@ export const actions = {
 			return fail(500, {
 				error: 'Failed to delete event'
 			});
+		}
+	},
+
+	// Quick inline status change from the events list (no full edit form).
+	updateStatus: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
+		const result = checkPermissions(locals, ['admin', 'editor']);
+		if (result.status === 'error') {
+			return fail(result.statusCode, { error: result.error });
+		}
+
+		const formData = await request.formData();
+		const id = formData.get('id') as string;
+		const status = formData.get('status') as string;
+		if (!id || !status) {
+			return fail(400, { error: 'Event id and status are required' });
+		}
+
+		try {
+			await updateEvent(id, { status }, result.userId, { source: 'admin:status-quickedit' });
+			return { type: 'success' as const, data: { id, status } };
+		} catch (e) {
+			console.error('[Admin][Events][Status] Failed to update status:', e);
+			return fail(400, { error: e instanceof Error ? e.message : 'Failed to update status' });
 		}
 	},
 
