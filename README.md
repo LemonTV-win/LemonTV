@@ -43,6 +43,27 @@ bun run db:dev:push
 bun run deploy
 ```
 
+## MCP server
+
+LemonTV exposes an authorized [MCP](https://modelcontextprotocol.io) server so
+editors can read and edit data from an AI client (Claude Desktop, Claude Code,
+etc.). Every action is attributed to the token owner and recorded in the audit
+trail.
+
+- **Endpoint:** `https://lemontv.win/api/mcp`
+- **Auth:** a Personal Access Token minted at **Profile → MCP Tokens**
+  (`/profile/mcp-tokens`), sent as `Authorization: Bearer lemon_pat_…`.
+
+```bash
+claude mcp add --transport http lemontv https://lemontv.win/api/mcp \
+  --header "Authorization: Bearer lemon_pat_YOUR_TOKEN_HERE"
+```
+
+See **[docs/MCP_SERVER.md](docs/MCP_SERVER.md)** for the full tool reference,
+connection details, and examples. Database & migration workflow:
+**[docs/DATABASE.md](docs/DATABASE.md)**. Project roadmap:
+**[docs/SUNSET_PLAN.md](docs/SUNSET_PLAN.md)**.
+
 ## License
 
 LemonTV is split into two separately-licensed parts so that both the code and the
