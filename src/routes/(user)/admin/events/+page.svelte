@@ -25,6 +25,23 @@
 
 	$inspect('[admin/events] data', data);
 
+	// Inline status quick-edit on the list (auto-submits ?/updateStatus).
+	const statusOptions = ['upcoming', 'live', 'finished', 'cancelled', 'postponed'];
+	function statusBadgeClass(status: string): string {
+		switch (status) {
+			case 'live':
+				return 'bg-green-900/50 text-green-200';
+			case 'upcoming':
+				return 'bg-blue-900/50 text-blue-200';
+			case 'cancelled':
+				return 'bg-red-900/50 text-red-200';
+			case 'postponed':
+				return 'bg-yellow-900/50 text-yellow-200';
+			default:
+				return 'bg-gray-900/50 text-gray-200';
+		}
+	}
+
 	let selectedEvent: EventWithOrganizers | null = $state(null);
 	let searchQuery = $state(data.searchQuery || '');
 	let sortBy:
@@ -423,20 +440,24 @@
 						<td class="min-w-max px-4 py-1 whitespace-nowrap text-gray-300">{event.format}</td>
 						<td class="min-w-max px-4 py-1 whitespace-nowrap text-gray-300">{event.region}</td>
 						<td class="min-w-max px-4 py-1 whitespace-nowrap">
-							<span
-								class="inline-flex rounded-full px-2 text-xs leading-5 font-semibold {event.status ===
-								'live'
-									? 'bg-green-900/50 text-green-200'
-									: event.status === 'upcoming'
-										? 'bg-blue-900/50 text-blue-200'
-										: event.status === 'cancelled'
-											? 'bg-red-900/50 text-red-200'
-											: event.status === 'postponed'
-												? 'bg-yellow-900/50 text-yellow-200'
-												: 'bg-gray-900/50 text-gray-200'}"
-							>
-								{event.status}
-							</span>
+							<!-- Inline quick-edit: changing the select immediately saves via ?/updateStatus. -->
+							<form method="POST" action="?/updateStatus" use:enhance class="inline-flex">
+								<input type="hidden" name="id" value={event.id} />
+								<select
+									name="status"
+									value={event.status}
+									onchange={(e) => e.currentTarget.form?.requestSubmit()}
+									aria-label={m.status()}
+									title={m.status()}
+									class="cursor-pointer rounded-full border-0 px-2 py-0.5 text-xs leading-5 font-semibold focus:ring-2 focus:ring-yellow-500 focus:outline-none {statusBadgeClass(
+										event.status
+									)}"
+								>
+									{#each statusOptions as s (s)}
+										<option value={s} class="bg-slate-800 text-white">{s}</option>
+									{/each}
+								</select>
+							</form>
 						</td>
 						<td class="min-w-max px-4 py-1 whitespace-nowrap">
 							<span
