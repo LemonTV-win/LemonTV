@@ -368,6 +368,11 @@
 		"links_title": "リンク",
 		"links_github": "GitHubリポジトリ",
 		"links_discord": "Discordコミュニティ",
+		"alt_projects_title": "関連プロジェクト",
+		"alt_projects_description": "LemonTVのビジョンが情熱ある独立したコミュニティプロジェクトに受け継がれていることを嬉しく思います：",
+		"alt_projects_esports": "eスポーツ",
+		"alt_projects_utilities": "ユーティリティ",
+		"alt_projects_tools": "ツール",
 		"thanks_message": "過去および今後のイベントに関する情報を提供してくださったすべての方々、私たちが情熱を注ぐゲームを作成してくださった{idreamsky}（Day1 Studio）に、そしてeスポーツシーンを可能にしたすべてのプレイヤーに感謝いたします。"
 	},
 	"europe": "ヨーロッパ (EU)",
