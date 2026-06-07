@@ -25,7 +25,7 @@ import type { McpTool } from './dispatch';
 import { requireString, requireInt, optionalEnum, requireEnum } from './args';
 import { stripUser, stripRosterUserPII } from './project';
 
-const GAME_ACCOUNT_REGIONS = ['APAC', 'NA', 'EU', 'CN'] as const;
+const GAME_ACCOUNT_REGIONS = ['APAC', 'NA', 'EU', 'CN', 'Unknown'] as const;
 const TEAM_REGIONS = ['CN', 'APAC', 'NA', 'SA', 'EU', 'WA', 'Global'] as const;
 const TEAM_PLAYER_ROLES = ['active', 'substitute', 'former', 'coach', 'manager', 'owner'] as const;
 

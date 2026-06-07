@@ -350,6 +350,7 @@
 	"north_america": "North America (NA)",
 	"asia_pacific": "Asia Pacific (APAC)",
 	"select_region": "Select Region",
+	"region_unknown": "Unknown",
 	"remove_account": "Remove Account",
 	"create_player": "Create Player",
 	"update_player": "Update Player",
