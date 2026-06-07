@@ -431,6 +431,11 @@
 		"links_title": "我們的鏈接",
 		"links_github": "GitHub",
 		"links_discord": "Discord",
+		"alt_projects_tools": "工具",
+		"alt_projects_utilities": "實用工具",
+		"alt_projects_esports": "電競內容",
+		"alt_projects_description": "很高興 LemonTV 的願景正由充滿熱情的獨立社群專案繼續傳承：",
+		"alt_projects_title": "其他專案",
 		"thanks_message": "感謝為我們提供所有賽事信息的卡拉彼丘玩家們，感謝 {idreamsky} (Day1工作室) 創造了我們所熱愛的遊戲，感謝讓卡拉彼丘丘電競夢想成真的玩家們喵～<br /><p class=\"text-center text-xl\">祝願每一位為電競夢而努力的卡丘人心想事成喵！</p>"
 	},
 	"europe": "歐洲 (EU)",

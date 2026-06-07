@@ -431,6 +431,11 @@
 		"links_title": "Ссылки",
 		"links_github": "GitHub репозиторий",
 		"links_discord": "Discord сообщество",
+		"alt_projects_tools": "Tools",
+		"alt_projects_utilities": "Utilities",
+		"alt_projects_esports": "eSports coverage",
+		"alt_projects_description": "We're glad LemonTV's vision is being carried forward by independent, passionate community projects:",
+		"alt_projects_title": "Alternative Projects",
 		"thanks_message": "и спасибо всем, кто предоставил информацию о прошлых и предстоящих событиях, {idreamsky} (Day1 Studio) за создание игры, которой мы увлечены, и всем игрокам, которые сделали возможной eSports сцену."
 	},
 	"europe": "Европа (EU)",

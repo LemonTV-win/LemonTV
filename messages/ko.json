@@ -431,6 +431,11 @@
 		"links_title": "링크",
 		"links_github": "GitHub 저장소",
 		"links_discord": "Discord 커뮤니티",
+		"alt_projects_tools": "Tools",
+		"alt_projects_utilities": "Utilities",
+		"alt_projects_esports": "eSports coverage",
+		"alt_projects_description": "We're glad LemonTV's vision is being carried forward by independent, passionate community projects:",
+		"alt_projects_title": "Alternative Projects",
 		"thanks_message": "과거 및 예정된 이벤트에 대한 정보를 제공해 주신 모든 분들, 우리가 열정을 가진 게임을 만들어 주신 {idreamsky} (Day1 Studio)에, 그리고 e스포츠 씬을 가능하게 한 모든 플레이어에게 감사드립니다."
 	},
 	"europe": "유럽 (EU)",
