@@ -30,7 +30,7 @@ export interface PlayerTeam {
 }
 
 export type GameAccountServer = 'Strinova' | 'CalabiYau';
-export type GameAccountRegion = 'APAC' | 'NA' | 'EU' | 'CN';
+export type GameAccountRegion = 'APAC' | 'NA' | 'EU' | 'CN' | 'Unknown';
 
 export interface GameAccount {
 	server: GameAccountServer;
@@ -47,14 +47,16 @@ export interface GameAccount {
  *
  * CalabiYau only has one region of CN, and Strinova has three of APAC, NA (covers NA and SA), EU (covers EMEA).
  *
- * So if the region is CN, we use CalabiYau, otherwise we use Strinova. If no region is provided, we use Strinova as a default.
+ * So if the region is CN, we use CalabiYau, otherwise we use Strinova. If no region is provided
+ * or the region is Unknown, we use Strinova as a default (the international server is the more
+ * common case, and the account UID still has to be globally unique per server).
  *
  * @param region - The region of the player
  * @returns The server of the player
  */
 export function getGameAccountServer(region: GameAccountRegion | undefined): GameAccountServer {
-	// Default to Strinova if no region is provided
-	if (!region) return 'Strinova';
+	// Default to Strinova if no region is provided or it is unknown
+	if (!region || region === 'Unknown') return 'Strinova';
 	return region === 'CN' ? 'CalabiYau' : 'Strinova';
 }
 

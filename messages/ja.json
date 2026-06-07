@@ -487,6 +487,7 @@
 	"north_america": "北米（NA）",
 	"asia_pacific": "アジア太平洋（APAC）",
 	"select_region": "地域を選択",
+	"region_unknown": "不明",
 	"remove_account": "アカウントを削除",
 	"create_player": "プレイヤーを作成",
 	"update_player": "プレイヤーを更新",

@@ -10,7 +10,7 @@ export const gameAccount = sqliteTable(
 			.notNull()
 			.references(() => player.id),
 		currentName: text('current_name').notNull(),
-		region: text('region', { enum: ['APAC', 'NA', 'EU', 'CN'] })
+		region: text('region', { enum: ['APAC', 'NA', 'EU', 'CN', 'Unknown'] })
 	},
 	(table) => [
 		primaryKey({ columns: [table.server, table.accountId] }),
