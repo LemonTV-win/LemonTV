@@ -258,6 +258,8 @@
 	"confirm": "Confirm",
 	"confirm_title": "Are you sure?",
 	"notifications": "Notifications",
+	"game_account_conflict": "Game account UID {accountId} on the {server} server is already linked to player {name} ({slug}).",
+	"duplicate_game_account_same_server": "Two game accounts have the same UID on the same server. Each UID must be unique per server (CN and international servers are separate).",
 	"create": "Create",
 	"update": "Update",
 	"add": "Add",

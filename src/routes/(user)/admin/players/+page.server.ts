@@ -1,5 +1,6 @@
 import { fail } from '@sveltejs/kit';
 import * as schema from '$lib/server/db/schema';
+import { m } from '$lib/paraglide/messages';
 import { sql } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 import {
@@ -74,16 +75,16 @@ export const load: PageServerLoad = async () => {
 };
 
 function formatGameAccountConflictError(conflicts: GameAccountConflict[]): string {
-	return (
-		'Cannot save: ' +
-		conflicts
-			.map(
-				(c) =>
-					`game account UID ${c.accountId} on the ${c.server} server is already linked to player "${c.ownerName}" (${c.ownerSlug})`
-			)
-			.join('; ') +
-		'.'
-	);
+	return conflicts
+		.map((c) =>
+			m.game_account_conflict({
+				accountId: String(c.accountId),
+				server: c.server,
+				name: c.ownerName,
+				slug: c.ownerSlug
+			})
+		)
+		.join(' ');
 }
 
 export const actions = {

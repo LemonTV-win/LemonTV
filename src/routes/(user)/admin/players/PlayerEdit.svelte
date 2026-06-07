@@ -289,8 +289,7 @@
 
 		// Prevent submission if two game accounts share the same UID on the same server
 		if (hasDuplicateGameAccounts) {
-			errorMessage =
-				'Two game accounts have the same UID on the same server. Each UID must be unique per server (CN and international servers are separate).';
+			errorMessage = m.duplicate_game_account_same_server();
 			return;
 		}
 
