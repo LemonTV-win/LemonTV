@@ -154,6 +154,8 @@
 	"edit": "编辑",
 	"delete": "删除",
 	"cancel": "取消",
+	"open_menu": "打开菜单",
+	"toggle_sidebar": "切换侧边栏",
 	"confirm": "确认",
 	"confirm_title": "确定吗？",
 	"confirm_delete_message": "此操作无法撤销。",
