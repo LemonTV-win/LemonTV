@@ -658,9 +658,13 @@
 						<GameVodEdit
 							gameId={data.game.id}
 							vods={data.game.vods || []}
-							onSuccess={() => {
-								// Refresh the page data in place
-								invalidateAll();
+							onSuccess={async () => {
+								// `data` here is the editingGame snapshot built when the modal opened, so
+								// invalidateAll() refreshes the route but NOT this modal's stale vods prop.
+								// Refresh the page data, then close the modal so the change isn't shown
+								// against the old snapshot (which looked like the save had failed).
+								await invalidateAll();
+								onSuccess();
 							}}
 						/>
 					</div>
