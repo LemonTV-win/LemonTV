@@ -25,8 +25,6 @@
 
 	let { data }: PageProps = $props();
 
-	$inspect('[admin/matches] data', data);
-
 	let action:
 		| 'editMatch'
 		| 'editStage'
@@ -399,7 +397,6 @@
 	};
 
 	let editingGame = $state<EditingGame | null>(null);
-	$inspect('[admin/matches] editingGame', editingGame);
 
 	let deletingGame = $state<{ game: any; matchId: string } | null>(null);
 	let isDeletingGame = $state(false);

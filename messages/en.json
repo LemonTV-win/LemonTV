@@ -257,6 +257,7 @@
 	"cancel": "Cancel",
 	"confirm": "Confirm",
 	"confirm_title": "Are you sure?",
+	"confirm_delete_message": "This action cannot be undone.",
 	"notifications": "Notifications",
 	"create": "Create",
 	"update": "Update",

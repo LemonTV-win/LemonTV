@@ -7,6 +7,7 @@
 	import IconParkSolidAdd from '~icons/icon-park-solid/add';
 	import { m } from '$lib/paraglide/messages';
 	import { detectPlatform } from '$lib/utils/video';
+	import { confirm } from '$lib/stores/confirm.svelte';
 
 	let {
 		gameId,
@@ -135,6 +136,15 @@
 	}
 
 	async function handleDeleteVod(vod: GameVod) {
+		if (
+			!(await confirm.ask({
+				title: m.delete_vod_title(),
+				message: m.confirm_delete_message(),
+				destructive: true
+			}))
+		) {
+			return;
+		}
 		deletingVod = vod;
 		isDeleting = true;
 		errorMessage = '';

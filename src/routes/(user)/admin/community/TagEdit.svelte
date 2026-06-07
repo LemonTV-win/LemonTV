@@ -2,6 +2,7 @@
 	import { enhance } from '$app/forms';
 	import type { CommunityTag } from '$lib/server/db/schemas/about/community';
 	import { m } from '$lib/paraglide/messages';
+	import { toast } from '$lib/stores/toast.svelte';
 
 	let {
 		tag,
@@ -22,9 +23,14 @@
 	method="POST"
 	action="?/tag"
 	use:enhance={() => {
-		return async ({ update }) => {
-			await update();
-			onSuccess();
+		return async ({ result }) => {
+			if (result.type === 'success') {
+				onSuccess();
+			} else if (result.type === 'failure') {
+				toast.error((result.data?.error as string) ?? m.error_occurred());
+			} else if (result.type === 'error') {
+				toast.error(result.error?.message ?? m.error_occurred());
+			}
 		};
 	}}
 	class="flex flex-col gap-4"

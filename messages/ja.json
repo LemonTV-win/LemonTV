@@ -155,6 +155,7 @@
 	"cancel": "キャンセル",
 	"confirm": "確認",
 	"confirm_title": "よろしいですか？",
+	"confirm_delete_message": "この操作は取り消せません。",
 	"notifications": "通知",
 	"create": "作成",
 	"update": "更新",

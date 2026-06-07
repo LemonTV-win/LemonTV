@@ -156,6 +156,7 @@
 	"cancel": "取消",
 	"confirm": "确认",
 	"confirm_title": "确定吗？",
+	"confirm_delete_message": "此操作无法撤销。",
 	"notifications": "通知",
 	"create": "创建",
 	"update": "更新",
