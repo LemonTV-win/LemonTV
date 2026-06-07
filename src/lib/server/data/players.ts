@@ -10,7 +10,12 @@ import {
 	playerAdditionalNationality
 } from '$lib/server/db/schema';
 import { eq, or, and, inArray, sql, desc } from 'drizzle-orm';
-import { getGameAccountServer, type Player, type PlayerTeam } from '$lib/data/players';
+import {
+	getGameAccountServer,
+	type GameAccountServer,
+	type Player,
+	type PlayerTeam
+} from '$lib/data/players';
 import { randomUUID } from 'node:crypto';
 import type { Character, GameMap, Region } from '$lib/data/game';
 import type { TCountryCode } from 'countries-list';
@@ -956,6 +961,58 @@ export async function getPlayerKD(playerId: string): Promise<number> {
 		')'
 	);
 	return kdRatio;
+}
+
+export interface GameAccountConflict {
+	server: GameAccountServer;
+	accountId: number;
+	ownerPlayerId: string;
+	ownerName: string;
+	ownerSlug: string;
+}
+
+/**
+ * Find game accounts that are already linked to a different player.
+ *
+ * A game account is globally unique per (server, accountId) — see the composite primary key on the
+ * `game_account` table. The CN server (CalabiYau) and the international server (Strinova) are
+ * separate, so the same UID on both servers is fine; what collides is the same UID on the same
+ * server. This lets callers return a helpful error naming the owning player instead of surfacing a
+ * raw SQL constraint violation.
+ *
+ * @param gameAccounts - The accounts being created/updated for a player
+ * @param excludePlayerId - When updating, the player whose own accounts should be ignored
+ */
+export async function findGameAccountConflicts(
+	gameAccounts: Player['gameAccounts'] | undefined,
+	excludePlayerId?: string
+): Promise<GameAccountConflict[]> {
+	if (!gameAccounts?.length) return [];
+
+	const pairs = gameAccounts.map((account) => ({
+		server: getGameAccountServer(account.region),
+		accountId: account.accountId
+	}));
+
+	const rows = await db
+		.select({
+			server: gameAccount.server,
+			accountId: gameAccount.accountId,
+			ownerPlayerId: gameAccount.playerId,
+			ownerName: player.name,
+			ownerSlug: player.slug
+		})
+		.from(gameAccount)
+		.innerJoin(player, eq(player.id, gameAccount.playerId))
+		.where(
+			or(
+				...pairs.map((p) =>
+					and(eq(gameAccount.server, p.server), eq(gameAccount.accountId, p.accountId))
+				)
+			)
+		);
+
+	return rows.filter((row) => row.ownerPlayerId !== excludePlayerId) as GameAccountConflict[];
 }
 
 export async function createPlayer(

@@ -2,7 +2,14 @@ import { fail } from '@sveltejs/kit';
 import * as schema from '$lib/server/db/schema';
 import { sql } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
-import { createPlayer, updatePlayer, getPlayers, deletePlayer } from '$lib/server/data/players';
+import {
+	createPlayer,
+	updatePlayer,
+	getPlayers,
+	deletePlayer,
+	findGameAccountConflicts,
+	type GameAccountConflict
+} from '$lib/server/data/players';
 import type { Player } from '$lib/data/players';
 import type { TCountryCode } from 'countries-list';
 import type { User, UserRole } from '$lib/data/user';
@@ -66,6 +73,19 @@ export const load: PageServerLoad = async () => {
 	};
 };
 
+function formatGameAccountConflictError(conflicts: GameAccountConflict[]): string {
+	return (
+		'Cannot save: ' +
+		conflicts
+			.map(
+				(c) =>
+					`game account UID ${c.accountId} on the ${c.server} server is already linked to player "${c.ownerName}" (${c.ownerSlug})`
+			)
+			.join('; ') +
+		'.'
+	);
+}
+
 export const actions = {
 	create: async ({ request, locals }) => {
 		const result = checkPermissions(locals, ['admin', 'editor']);
@@ -93,6 +113,13 @@ export const actions = {
 		if (!name || !slug) {
 			return fail(400, {
 				error: 'Name and slug are required'
+			});
+		}
+
+		const createConflicts = await findGameAccountConflicts(gameAccounts);
+		if (createConflicts.length > 0) {
+			return fail(409, {
+				error: formatGameAccountConflictError(createConflicts)
 			});
 		}
 
@@ -176,6 +203,9 @@ export const actions = {
 					userMessage = 'This user is already linked to another player.';
 				} else if (errorMessage.includes('player_social_account')) {
 					userMessage = 'This social account is already linked to another player.';
+				} else if (errorMessage.includes('game_account')) {
+					userMessage =
+						'A game account UID is already linked to another player (each UID must be unique per server).';
 				}
 
 				return fail(409, {
@@ -216,6 +246,13 @@ export const actions = {
 		if (!id || !name || !slug) {
 			return fail(400, {
 				error: 'ID, name and slug are required'
+			});
+		}
+
+		const updateConflicts = await findGameAccountConflicts(gameAccounts, id);
+		if (updateConflicts.length > 0) {
+			return fail(409, {
+				error: formatGameAccountConflictError(updateConflicts)
 			});
 		}
 
@@ -319,6 +356,9 @@ export const actions = {
 					userMessage = 'This user is already linked to another player.';
 				} else if (errorMessage.includes('player_social_account')) {
 					userMessage = 'This social account is already linked to another player.';
+				} else if (errorMessage.includes('game_account')) {
+					userMessage =
+						'A game account UID is already linked to another player (each UID must be unique per server).';
 				}
 
 				return fail(409, {
