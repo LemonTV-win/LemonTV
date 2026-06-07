@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import type { Player } from '$lib/data/players';
+	import { getGameAccountServer, type Player } from '$lib/data/players';
 	import type { TCountryCode } from 'countries-list';
 	import { m } from '$lib/paraglide/messages';
 	import { getLocale } from '$lib/paraglide/runtime';
@@ -48,6 +48,29 @@
 		player.nationalities?.slice(1) || []
 	);
 	let playerAvatar = $state(player.avatar ?? null);
+
+	// Detect game accounts that collide within the form: the same UID on the same server.
+	// CN (CalabiYau) and international (Strinova) are separate, so the same UID across them is fine.
+	let duplicateGameAccountKeys = $derived.by(() => {
+		const counts = new Map<string, number>();
+		const duplicates = new Set<string>();
+		for (const account of newPlayer.gameAccounts ?? []) {
+			// Skip not-yet-filled rows (new accounts default to accountId 0)
+			if (!account.accountId) continue;
+			const key = `${getGameAccountServer(account.region)}:${account.accountId}`;
+			const next = (counts.get(key) ?? 0) + 1;
+			counts.set(key, next);
+			if (next > 1) duplicates.add(key);
+		}
+		return duplicates;
+	});
+	let hasDuplicateGameAccounts = $derived(duplicateGameAccountKeys.size > 0);
+	function isDuplicateGameAccount(account: { accountId: number; region?: string }) {
+		if (!account.accountId) return false;
+		return duplicateGameAccountKeys.has(
+			`${getGameAccountServer(account.region as Player['gameAccounts'][number]['region'])}:${account.accountId}`
+		);
+	}
 
 	// Pro settings state (optional)
 	let proSettings = $state({
@@ -261,6 +284,13 @@
 		// Prevent submission if there's a pending file upload
 		if (hasFile && !uploaded) {
 			errorMessage = 'Please upload the selected image before saving the player.';
+			return;
+		}
+
+		// Prevent submission if two game accounts share the same UID on the same server
+		if (hasDuplicateGameAccounts) {
+			errorMessage =
+				'Two game accounts have the same UID on the same server. Each UID must be unique per server (CN and international servers are separate).';
 			return;
 		}
 
@@ -503,8 +533,18 @@
 								type="number"
 								id="accountId"
 								bind:value={account.accountId}
-								class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+								class="mt-1 block w-full rounded-md border bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:outline-none {isDuplicateGameAccount(
+									account
+								)
+									? 'border-red-500 focus:ring-red-500'
+									: 'border-slate-700 focus:ring-yellow-500'}"
 							/>
+							{#if isDuplicateGameAccount(account)}
+								<p class="mt-1 text-xs text-red-400">
+									{getGameAccountServer(account.region)} · {m.account_id()}
+									{account.accountId} — duplicate on this server
+								</p>
+							{/if}
 						</div>
 						<div>
 							<label class="block text-sm font-medium text-slate-300" for="currentName">
@@ -852,7 +892,8 @@
 		</button>
 		<button
 			type="submit"
-			class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600"
+			disabled={hasDuplicateGameAccounts}
+			class="rounded-md bg-yellow-500 px-4 py-2 font-medium text-black hover:bg-yellow-600 disabled:cursor-not-allowed disabled:opacity-50"
 		>
 			{player.id ? m.update_player() : m.create_player()}
 		</button>
