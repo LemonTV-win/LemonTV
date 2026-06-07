@@ -215,6 +215,7 @@
 	"north_america": "北美 (NA)",
 	"asia_pacific": "亚太 (APAC)",
 	"select_region": "选择地区",
+	"region_unknown": "未知",
 	"remove_account": "删除账号",
 	"create_player": "创建玩家",
 	"update_player": "更新玩家",

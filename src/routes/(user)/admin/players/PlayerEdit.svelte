@@ -527,6 +527,7 @@
 								class="mt-1 block w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none"
 							>
 								<option value={undefined}>{m.select_region()}</option>
+								<option value="Unknown">{m.region_unknown()}</option>
 								<optgroup label={m.strinova_server()}>
 									<option value="NA">{m.north_america()}</option>
 									<option value="APAC">{m.asia_pacific()}</option>
