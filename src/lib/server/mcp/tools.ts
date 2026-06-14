@@ -14,6 +14,8 @@ import {
 	updateEvent,
 	addEventTeams,
 	setEventResults,
+	addEventTeamPlayers,
+	updateEventCasters,
 	EVENT_FORMATS,
 	EVENT_SERVERS,
 	EVENT_STATUSES,
@@ -22,8 +24,12 @@ import {
 import {
 	normalizeEventTeams,
 	normalizeEventResults,
+	normalizeEventRoster,
+	normalizeEventCasters,
 	EVENT_TEAM_ENTRIES,
-	EVENT_TEAM_STATUSES
+	EVENT_TEAM_STATUSES,
+	EVENT_TEAM_PLAYER_ROLES,
+	EVENT_CASTER_ROLES
 } from './event-args';
 import { createPlayer, getPlayer, getPlayers } from '$lib/server/data/players';
 import { createTeam, getTeam, getTeams } from '$lib/server/data/teams';
@@ -78,6 +84,23 @@ async function assertTeamsExist(teamIds: string[]): Promise<void> {
 	if (missing.length > 0) {
 		throw new Error(
 			`Unknown team id(s): ${missing.join(', ')} (create them with create_team first)`
+		);
+	}
+}
+
+/** Verify every player id exists before writing rows that reference them. */
+async function assertPlayersExist(playerIds: string[]): Promise<void> {
+	const unique = [...new Set(playerIds)];
+	if (unique.length === 0) return;
+	const found = await db
+		.select({ id: table.player.id })
+		.from(table.player)
+		.where(inArray(table.player.id, unique));
+	const foundIds = new Set(found.map((r) => r.id));
+	const missing = unique.filter((id) => !foundIds.has(id));
+	if (missing.length > 0) {
+		throw new Error(
+			`Unknown player id(s): ${missing.join(', ')} (create them with create_player first)`
 		);
 	}
 }
@@ -389,6 +412,85 @@ export const TOOLS: McpTool[] = [
 			await assertTeamsExist(results.map((r) => r.teamId));
 			const { count } = await setEventResults(eventId, results, identity.userId);
 			return { eventId, count };
+		}
+	},
+	{
+		name: 'add_event_team_players',
+		description:
+			'Attach roster players to teams at an event (by event id or slug). Records which players represented each team for this event. Additive and idempotent: upserts by (team, player) and leaves players not listed in place. Team and player ids must already exist. role is one of main/sub/coach. Attributed to the token owner.',
+		requiresWrite: true,
+		inputSchema: {
+			type: 'object',
+			properties: {
+				idOrSlug: { type: 'string', description: 'The event id or slug.' },
+				players: {
+					type: 'array',
+					minItems: 1,
+					description: 'Roster entries to attach.',
+					items: {
+						type: 'object',
+						properties: {
+							teamId: { type: 'string', description: 'Existing team id (must be a participant).' },
+							playerId: { type: 'string', description: 'Existing player id (see list_players).' },
+							role: {
+								type: 'string',
+								enum: [...EVENT_TEAM_PLAYER_ROLES],
+								description: 'Roster role for this event.'
+							}
+						},
+						required: ['teamId', 'playerId', 'role'],
+						additionalProperties: false
+					}
+				}
+			},
+			required: ['idOrSlug', 'players'],
+			additionalProperties: false
+		},
+		handler: async (args, identity) => {
+			const eventId = await resolveEventId(requireString(args, 'idOrSlug'));
+			const players = normalizeEventRoster(args.players);
+			await assertTeamsExist(players.map((p) => p.teamId));
+			await assertPlayersExist(players.map((p) => p.playerId));
+			const { count } = await addEventTeamPlayers(eventId, players, identity.userId);
+			return { eventId, count };
+		}
+	},
+	{
+		name: 'set_event_casters',
+		description:
+			'Set the casters/talent for an event (by id or slug). Replace-all semantics: the supplied list replaces all existing casters (pass an empty array to clear). Player ids must already exist. role is one of host/analyst/commentator. Attributed to the token owner.',
+		requiresWrite: true,
+		inputSchema: {
+			type: 'object',
+			properties: {
+				idOrSlug: { type: 'string', description: 'The event id or slug.' },
+				casters: {
+					type: 'array',
+					description: 'Casters; an empty array clears all casters.',
+					items: {
+						type: 'object',
+						properties: {
+							playerId: { type: 'string', description: 'Existing player id (see list_players).' },
+							role: {
+								type: 'string',
+								enum: [...EVENT_CASTER_ROLES],
+								description: 'Casting role.'
+							}
+						},
+						required: ['playerId', 'role'],
+						additionalProperties: false
+					}
+				}
+			},
+			required: ['idOrSlug', 'casters'],
+			additionalProperties: false
+		},
+		handler: async (args, identity) => {
+			const eventId = await resolveEventId(requireString(args, 'idOrSlug'));
+			const casters = normalizeEventCasters(args.casters);
+			await assertPlayersExist(casters.map((c) => c.playerId));
+			await updateEventCasters(eventId, casters, identity.userId);
+			return { eventId, count: casters.length };
 		}
 	},
 	{

@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'bun:test';
-import { normalizeEventTeams, normalizeEventResults } from './event-args';
+import {
+	normalizeEventTeams,
+	normalizeEventResults,
+	normalizeEventRoster,
+	normalizeEventCasters
+} from './event-args';
 
 describe('normalizeEventTeams', () => {
 	it('defaults entry to "open" and status to "active"', () => {
@@ -87,5 +92,82 @@ describe('normalizeEventResults', () => {
 
 	it('rejects an empty array', () => {
 		expect(() => normalizeEventResults([])).toThrow(/non-empty array/);
+	});
+});
+
+describe('normalizeEventRoster', () => {
+	it('normalizes roster entries', () => {
+		expect(
+			normalizeEventRoster([
+				{ teamId: 't1', playerId: 'p1', role: 'main' },
+				{ teamId: 't1', playerId: 'p2', role: 'sub' }
+			])
+		).toEqual([
+			{ teamId: 't1', playerId: 'p1', role: 'main' },
+			{ teamId: 't1', playerId: 'p2', role: 'sub' }
+		]);
+	});
+
+	it('requires a role', () => {
+		expect(() => normalizeEventRoster([{ teamId: 't1', playerId: 'p1' }])).toThrow(/role/);
+	});
+
+	it('rejects an invalid role', () => {
+		expect(() => normalizeEventRoster([{ teamId: 't1', playerId: 'p1', role: 'igl' }])).toThrow(
+			/role/
+		);
+	});
+
+	it('rejects a missing playerId', () => {
+		expect(() => normalizeEventRoster([{ teamId: 't1', role: 'main' }])).toThrow(/playerId/);
+	});
+
+	it('rejects duplicate teamId+playerId pairs', () => {
+		expect(() =>
+			normalizeEventRoster([
+				{ teamId: 't1', playerId: 'p1', role: 'main' },
+				{ teamId: 't1', playerId: 'p1', role: 'sub' }
+			])
+		).toThrow(/duplicate/);
+	});
+
+	it('allows the same player on different teams', () => {
+		expect(
+			normalizeEventRoster([
+				{ teamId: 't1', playerId: 'p1', role: 'main' },
+				{ teamId: 't2', playerId: 'p1', role: 'main' }
+			])
+		).toHaveLength(2);
+	});
+});
+
+describe('normalizeEventCasters', () => {
+	it('normalizes caster entries', () => {
+		expect(normalizeEventCasters([{ playerId: 'p1', role: 'host' }])).toEqual([
+			{ playerId: 'p1', role: 'host' }
+		]);
+	});
+
+	it('allows an empty array (clears casters)', () => {
+		expect(normalizeEventCasters([])).toEqual([]);
+	});
+
+	it('rejects a non-array', () => {
+		expect(() => normalizeEventCasters({ playerId: 'p1', role: 'host' })).toThrow(
+			/must be an array/
+		);
+	});
+
+	it('rejects an invalid role', () => {
+		expect(() => normalizeEventCasters([{ playerId: 'p1', role: 'caster' }])).toThrow(/role/);
+	});
+
+	it('rejects duplicate playerIds', () => {
+		expect(() =>
+			normalizeEventCasters([
+				{ playerId: 'p1', role: 'host' },
+				{ playerId: 'p1', role: 'analyst' }
+			])
+		).toThrow(/duplicate/);
 	});
 });

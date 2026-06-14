@@ -1657,6 +1657,66 @@ export async function setEventResults(
 	});
 }
 
+export interface EventRosterInput {
+	teamId: string;
+	playerId: string;
+	role: 'main' | 'sub' | 'coach';
+}
+
+/**
+ * Attach (or update) roster players for teams at an event. Additive/idempotent:
+ * upserts on (eventId, teamId, playerId) and leaves players not listed in place,
+ * so it never silently drops an existing roster. Unlike updateEventTeamPlayers
+ * (replace-all), this is safe for incremental population.
+ */
+export async function addEventTeamPlayers(
+	eventId: string,
+	players: EventRosterInput[],
+	userId: string
+): Promise<{ count: number }> {
+	return await db.transaction(async (tx) => {
+		const current = await tx
+			.select()
+			.from(table.eventTeamPlayer)
+			.where(eq(table.eventTeamPlayer.eventId, eventId));
+
+		const now = new Date();
+		await tx
+			.insert(table.eventTeamPlayer)
+			.values(
+				players.map((p) => ({
+					eventId,
+					teamId: p.teamId,
+					playerId: p.playerId,
+					role: p.role,
+					createdAt: now,
+					updatedAt: now
+				}))
+			)
+			.onConflictDoUpdate({
+				target: [
+					table.eventTeamPlayer.eventId,
+					table.eventTeamPlayer.teamId,
+					table.eventTeamPlayer.playerId
+				],
+				set: { role: sql`excluded.role`, updatedAt: now }
+			});
+
+		await tx.insert(table.editHistory).values({
+			id: crypto.randomUUID(),
+			tableName: 'event_team_player',
+			recordId: eventId,
+			fieldName: 'players',
+			oldValue: JSON.stringify(current),
+			newValue: JSON.stringify(players),
+			editedBy: userId,
+			editedAt: now
+		});
+
+		return { count: players.length };
+	});
+}
+
 // export interface Event {
 // 	id: number;
 // 	slug: string;
