@@ -13,3 +13,8 @@ export const GITHUB_REPO_URL = 'https://github.com/LemonTV-win/LemonTV';
 
 /** Branded fallback banner shown for events that have no image. */
 export const EVENT_PLACEHOLDER_IMAGE = '/event-placeholder.svg';
+
+// Independent community projects carrying LemonTV's vision forward.
+export const STRINOVAHUB_URL = 'https://strinovahub.com/';
+export const STRINGIFY_URL = 'https://stringify.gg/';
+export const STRINOPLANT_URL = 'https://sunguraa.github.io/StrinoPlant/';

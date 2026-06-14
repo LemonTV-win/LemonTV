@@ -17,7 +17,10 @@
 		IDREAMSKY_URL_ZH,
 		STRINOVA_ESPORTS_HUB_DISCORD_URL,
 		LEMON_TV_QQ_URL,
-		GITHUB_REPO_URL
+		GITHUB_REPO_URL,
+		STRINOVAHUB_URL,
+		STRINGIFY_URL,
+		STRINOPLANT_URL
 	} from '$lib/consts';
 	import { getLocale } from '$lib/paraglide/runtime';
 	import placeholderAvatar from '$assets/placeholder_avatar.png';
@@ -42,6 +45,27 @@
 		bilibili: IconBilibili,
 		homepage: IconHome
 	};
+
+	const ALT_PROJECTS: { name: string; url: string; focus: () => string; maintainer: string }[] = [
+		{
+			name: 'StrinovaHub',
+			url: STRINOVAHUB_URL,
+			focus: () => m['about.alt_projects_esports'](),
+			maintainer: 'MeowDev (#savepleco)'
+		},
+		{
+			name: 'Stringify',
+			url: STRINGIFY_URL,
+			focus: () => m['about.alt_projects_utilities'](),
+			maintainer: 'mini.soap'
+		},
+		{
+			name: 'StrinoPlant',
+			url: STRINOPLANT_URL,
+			focus: () => m['about.alt_projects_tools'](),
+			maintainer: 'sunguraa'
+		}
+	];
 </script>
 
 <svelte:head>
@@ -213,6 +237,30 @@
 						<IconGithub class="h-6 w-6" />
 						{m['about.links_github']()}
 					</a>
+				</div>
+			</section>
+
+			<section class="my-12 text-center">
+				<h2 class="mb-4 text-3xl font-semibold">{m['about.alt_projects_title']()}</h2>
+				<p class="mx-auto mb-8 max-w-2xl text-slate-300">
+					{m['about.alt_projects_description']()}
+				</p>
+				<div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+					{#each ALT_PROJECTS as project (project.url)}
+						<a
+							href={project.url}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="glass-card group flex flex-col items-center gap-2 p-6 transition-all duration-300 hover:scale-105"
+						>
+							<h3 class="flex items-center gap-2 text-xl font-semibold text-blue-400 group-hover:text-blue-300">
+								<IconGlobe class="h-5 w-5" />
+								{project.name}
+							</h3>
+							<p class="text-sm font-medium text-slate-200">{project.focus()}</p>
+							<p class="text-xs text-slate-400">{project.maintainer}</p>
+						</a>
+					{/each}
 				</div>
 			</section>
 
