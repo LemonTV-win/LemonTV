@@ -5,6 +5,7 @@
 	import { goto } from '$app/navigation';
 	import type { Role } from '$lib/server/db/schema';
 	import { browser } from '$app/environment';
+	import { confirm } from '$lib/stores/confirm.svelte';
 
 	import IconParkSolidShield from '~icons/icon-park-solid/shield';
 	import IconParkSolidDeleteFive from '~icons/icon-park-solid/delete-five';
@@ -81,18 +82,20 @@
 		});
 	}
 
-	function handleDeleteRole(event: SubmitEvent) {
+	async function handleDeleteRole(event: SubmitEvent) {
+		event.preventDefault();
+		const form = event.target as HTMLFormElement;
+		if (
+			!(await confirm.ask({
+				message: m.confirm_delete_message(),
+				destructive: true
+			}))
+		) {
+			return;
+		}
 		errorMessage = '';
 		successMessage = '';
-
-		const form = event.target as HTMLFormElement;
-		enhance(form, () => async ({ update }) => {
-			await update();
-			successMessage = m.role_deleted_successfully();
-			setTimeout(() => {
-				successMessage = '';
-			}, 3000);
-		});
+		form.submit();
 	}
 
 	function startEditRole(role: Role) {
@@ -116,8 +119,7 @@
 
 <main class="mx-auto max-w-screen-lg px-4">
 	<div class="mb-6 flex items-center justify-between">
-		<h1 class="text-2xl font-bold">{m.admin_dashboard()}</h1>
-		<h2 class="text-xl font-bold">{m.users()}</h2>
+		<h1 class="text-2xl font-bold">{m.users()}</h1>
 	</div>
 
 	{#if errorMessage}

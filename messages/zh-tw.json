@@ -154,6 +154,7 @@
 	"edit": "編輯",
 	"delete": "刪除",
 	"cancel": "取消",
+	"confirm_delete_message": "此操作無法撤銷。",
 	"notifications": "通知",
 	"confirm_title": "確定嗎？",
 	"confirm": "確認",

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
 	import type { ActionResult } from '@sveltejs/kit';
 	import CharacterSelect from '$lib/components/CharacterSelect.svelte';
 	import AccountIdCombobox from '$lib/components/AccountIdCombobox.svelte';
@@ -657,9 +658,13 @@
 						<GameVodEdit
 							gameId={data.game.id}
 							vods={data.game.vods || []}
-							onSuccess={() => {
-								// Refresh the page data
-								window.location.reload();
+							onSuccess={async () => {
+								// `data` here is the editingGame snapshot built when the modal opened, so
+								// invalidateAll() refreshes the route but NOT this modal's stale vods prop.
+								// Refresh the page data, then close the modal so the change isn't shown
+								// against the old snapshot (which looked like the save had failed).
+								await invalidateAll();
+								onSuccess();
 							}}
 						/>
 					</div>

@@ -23,8 +23,6 @@
 	let { data }: { data: PageData } = $props();
 	let { events, action, id, organizers, eventOrganizers } = $derived(data);
 
-	$inspect('[admin/events] data', data);
-
 	// Inline status quick-edit on the list (auto-submits ?/updateStatus).
 	const statusOptions = ['upcoming', 'live', 'finished', 'cancelled', 'postponed'];
 	function statusBadgeClass(status: string): string {

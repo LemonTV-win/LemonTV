@@ -702,7 +702,7 @@
 								</button>
 								<button
 									type="button"
-									class="text-gray-600 hover:text-gray-800"
+									class="text-gray-400 hover:text-white"
 									title="View edit history"
 									onclick={() => {
 										selectedPlayer = player;

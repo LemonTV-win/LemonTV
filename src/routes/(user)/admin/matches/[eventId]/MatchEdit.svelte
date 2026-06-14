@@ -134,7 +134,7 @@
 	}
 </script>
 
-<Modal show={true} title={m.edit_match()} onClose={() => {}}>
+<Modal show={true} title={m.edit_match()} onClose={onCancel}>
 	<form
 		method="POST"
 		action={match.id ? '?/update' : '?/create'}
@@ -143,7 +143,7 @@
 				if (result.type === 'success') {
 					onsuccess();
 				} else if (result.type === 'failure') {
-					errorMessage = result.data?.error || m.failed_to_change_password();
+					errorMessage = result.data?.error || m.error_occurred();
 				} else if (result.type === 'error') {
 					errorMessage = result.error?.message || m.error_occurred();
 				}

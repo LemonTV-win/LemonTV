@@ -154,6 +154,7 @@
 	"edit": "Modifier",
 	"delete": "Supprimer",
 	"cancel": "Annuler",
+	"confirm_delete_message": "This action cannot be undone.",
 	"notifications": "Notifications",
 	"confirm_title": "Are you sure?",
 	"confirm": "Confirm",
