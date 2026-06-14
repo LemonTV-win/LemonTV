@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
 	import {
 		Chart,
 		RadialLinearScale,
@@ -97,7 +96,11 @@
 		metricText.averageScore
 	]);
 
-	onMount(async () => {
+	// Rebuild the chart whenever the canvas, localized labels, or player stats change.
+	// `metricLabels` is reactive to the active locale and `playerStats` changes on
+	// client-side navigation between players, so a one-shot onMount would leave the
+	// chart showing stale labels or the previous player's data.
+	$effect(() => {
 		if (!canvas) return;
 
 		const metrics = calculateMetrics();
@@ -183,14 +186,14 @@
 			}
 		};
 
+		chart?.destroy();
 		chart = new Chart(canvas, config);
-	});
 
-	// Cleanup chart on component destroy
-	onDestroy(() => {
-		if (chart) {
-			chart.destroy();
-		}
+		// Destroy on re-run (before rebuild) and on component teardown.
+		return () => {
+			chart?.destroy();
+			chart = null;
+		};
 	});
 </script>
 
@@ -210,7 +213,7 @@
 		</div>
 		<div class="text-center">
 			<div class="font-semibold text-red-400">{metricText.killsPerGame}</div>
-			<div>{(playerStats.totalKills / playerStats.totalGames || 0).toFixed(1)}</div>
+			<div>{(playerStats.totalGames > 0 ? playerStats.totalKills / playerStats.totalGames : 0).toFixed(1)}</div>
 		</div>
 		<div class="text-center">
 			<div class="font-semibold text-yellow-400">{metricText.averageScore}</div>
