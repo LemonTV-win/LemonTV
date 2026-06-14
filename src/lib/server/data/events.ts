@@ -5,7 +5,7 @@ import { db } from '../db';
 import * as table from '$lib/server/db/schema';
 import { processImageURL, ingestImageIfUrl } from '$lib/server/storage';
 import type { Region } from '$lib/data/game';
-import { eq, or, sql } from 'drizzle-orm';
+import { and, eq, inArray, or, sql } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 import { safeParseDateRange } from '$lib/utils/date';
 import type { EventParticipant, StageNode } from '$lib/data/events';
@@ -1517,6 +1517,143 @@ export async function updateEventCasters(
 			editedBy: userId,
 			editedAt: new Date()
 		});
+	});
+}
+
+// Types for event participant + result management (used by the MCP write tools).
+export interface EventTeamInput {
+	teamId: string;
+	entry:
+		| 'open'
+		| 'invited'
+		| 'qualified'
+		| 'host'
+		| 'defending_champion'
+		| 'regional_slot'
+		| 'exhibition'
+		| 'wildcard';
+	status: 'active' | 'disqualified' | 'withdrawn' | 'eliminated';
+}
+
+export interface EventResultInput {
+	teamId: string;
+	rank: number;
+	rankTo: number | null;
+	prizeAmount: number | null;
+	prizeCurrency: string | null;
+}
+
+/**
+ * Attach (or update) participant teams on an event. Additive/idempotent: teams
+ * already on the event keep their row (entry/status refreshed), and teams not in
+ * `teams` are left untouched — so this never silently drops existing
+ * participants. Returns the teamIds that were newly added vs. updated.
+ */
+export async function addEventTeams(
+	eventId: string,
+	teams: EventTeamInput[],
+	userId: string
+): Promise<{ added: string[]; updated: string[] }> {
+	return await db.transaction(async (tx) => {
+		const teamIds = teams.map((t) => t.teamId);
+		const existing = await tx
+			.select()
+			.from(table.eventTeam)
+			.where(
+				and(
+					eq(table.eventTeam.eventId, eventId),
+					inArray(table.eventTeam.teamId, teamIds.length > 0 ? teamIds : [''])
+				)
+			);
+		const existingIds = new Set(existing.map((r) => r.teamId));
+
+		const now = new Date();
+		await tx
+			.insert(table.eventTeam)
+			.values(
+				teams.map((t) => ({
+					eventId,
+					teamId: t.teamId,
+					entry: t.entry,
+					status: t.status,
+					createdAt: now,
+					updatedAt: now
+				}))
+			)
+			.onConflictDoUpdate({
+				target: [table.eventTeam.eventId, table.eventTeam.teamId],
+				set: {
+					entry: sql`excluded.entry`,
+					status: sql`excluded.status`,
+					updatedAt: now
+				}
+			});
+
+		const added = teamIds.filter((id) => !existingIds.has(id));
+		const updated = teamIds.filter((id) => existingIds.has(id));
+
+		await tx.insert(table.editHistory).values({
+			id: crypto.randomUUID(),
+			tableName: 'event_team',
+			recordId: eventId,
+			fieldName: 'teams',
+			oldValue: JSON.stringify(existing),
+			newValue: JSON.stringify(teams),
+			editedBy: userId,
+			editedAt: now
+		});
+
+		return { added, updated };
+	});
+}
+
+/**
+ * Replace the final placements (event_result) for an event. Results model a
+ * complete ranking, so this is replace-all semantics (matching the admin UI):
+ * existing result rows for the event are removed and the given ones inserted.
+ */
+export async function setEventResults(
+	eventId: string,
+	results: EventResultInput[],
+	userId: string
+): Promise<{ count: number }> {
+	return await db.transaction(async (tx) => {
+		const current = await tx
+			.select()
+			.from(table.eventResult)
+			.where(eq(table.eventResult.eventId, eventId));
+
+		await tx.delete(table.eventResult).where(eq(table.eventResult.eventId, eventId));
+
+		const now = new Date();
+		if (results.length > 0) {
+			await tx.insert(table.eventResult).values(
+				results.map((r) => ({
+					id: crypto.randomUUID(),
+					eventId,
+					teamId: r.teamId,
+					rank: r.rank,
+					rankTo: r.rankTo,
+					prizeAmount: r.prizeAmount,
+					prizeCurrency: r.prizeCurrency,
+					createdAt: now,
+					updatedAt: now
+				}))
+			);
+		}
+
+		await tx.insert(table.editHistory).values({
+			id: crypto.randomUUID(),
+			tableName: 'event_result',
+			recordId: eventId,
+			fieldName: 'results',
+			oldValue: JSON.stringify(current),
+			newValue: JSON.stringify(results),
+			editedBy: userId,
+			editedAt: now
+		});
+
+		return { count: results.length };
 	});
 }
 
