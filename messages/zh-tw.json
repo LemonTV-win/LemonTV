@@ -154,6 +154,8 @@
 	"edit": "編輯",
 	"delete": "刪除",
 	"cancel": "取消",
+	"open_menu": "開啟選單",
+	"toggle_sidebar": "切換側邊欄",
 	"confirm_delete_message": "此操作無法撤銷。",
 	"notifications": "通知",
 	"confirm_title": "確定嗎？",

@@ -255,6 +255,8 @@
 	"edit": "Edit",
 	"delete": "Delete",
 	"cancel": "Cancel",
+	"open_menu": "Open menu",
+	"toggle_sidebar": "Toggle sidebar",
 	"confirm": "Confirm",
 	"confirm_title": "Are you sure?",
 	"confirm_delete_message": "This action cannot be undone.",

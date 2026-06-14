@@ -3,8 +3,11 @@ import { db } from '$lib/server/db';
 import { editHistory } from '$lib/server/db/schemas/edit-history';
 import { user } from '$lib/server/db/schemas/auth/user';
 import { eq, and, like, desc } from 'drizzle-orm';
+import { requirePageRole } from '$lib/server/security/permission';
 
-export const load: PageServerLoad = async ({ url }) => {
+export const load: PageServerLoad = async ({ locals, url }) => {
+	requirePageRole({ locals, url }, ['admin', 'editor']);
+
 	const tableName = url.searchParams.get('tableName');
 	const recordId = url.searchParams.get('recordId');
 	const fieldName = url.searchParams.get('fieldName');
@@ -32,8 +35,7 @@ export const load: PageServerLoad = async ({ url }) => {
 			editHistory,
 			editor: {
 				id: user.id,
-				username: user.username,
-				email: user.email
+				username: user.username
 			}
 		})
 		.from(editHistory)
@@ -57,8 +59,7 @@ export const load: PageServerLoad = async ({ url }) => {
 	const users = await db
 		.select({
 			id: user.id,
-			username: user.username,
-			email: user.email
+			username: user.username
 		})
 		.from(user);
 

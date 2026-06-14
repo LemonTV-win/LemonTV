@@ -153,6 +153,8 @@
 	"edit": "編集",
 	"delete": "削除",
 	"cancel": "キャンセル",
+	"open_menu": "メニューを開く",
+	"toggle_sidebar": "サイドバーを切り替え",
 	"confirm": "確認",
 	"confirm_title": "よろしいですか？",
 	"confirm_delete_message": "この操作は取り消せません。",

@@ -1,15 +1,12 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { and, eq } from 'drizzle-orm';
-import { checkPermissions } from '$lib/server/security/permission';
+import { checkPermissions, requirePageRole } from '$lib/server/security/permission';
 
 export const load: PageServerLoad = async (event) => {
-	if (!event.locals.user || !event.locals.user.roles.includes('admin')) {
-		const fullUrl = event.url.pathname + event.url.search;
-		throw redirect(302, `/login?redirect=${encodeURIComponent(fullUrl)}`);
-	}
+	requirePageRole(event, ['admin']);
 
 	const users = await db.select().from(table.user);
 	const roles = await db.select().from(table.role);

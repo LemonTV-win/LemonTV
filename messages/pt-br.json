@@ -154,6 +154,8 @@
 	"edit": "Editar",
 	"delete": "Deletar",
 	"cancel": "Cancelar",
+	"open_menu": "Open menu",
+	"toggle_sidebar": "Toggle sidebar",
 	"confirm_delete_message": "This action cannot be undone.",
 	"notifications": "Notifications",
 	"confirm_title": "Are you sure?",

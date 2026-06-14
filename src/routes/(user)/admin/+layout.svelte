@@ -3,104 +3,130 @@
 	import { page } from '$app/state';
 	import { m } from '$lib/paraglide/messages';
 
-	import IconParkSolidHome from '~icons/icon-park-solid/home';
-	import IconParkSolidUser from '~icons/icon-park-solid/user';
-	import IconParkSolidPeople from '~icons/icon-park-solid/people';
-	import IconParkSolidEveryUser from '~icons/icon-park-solid/every-user';
 	import IconParkSolidShield from '~icons/icon-park-solid/shield';
-	import IconParkSolidHistory from '~icons/icon-park-solid/history-query';
-	import IconParkSolidCalendar from '~icons/icon-park-solid/calendar';
-	import IconParkSolidTrophy from '~icons/icon-park-solid/trophy';
-	import IconParkSolidGame from '~icons/icon-park-solid/game';
-	import IconParkSolidMessage from '~icons/icon-park-solid/message';
+	import MaterialSymbolsMenuRounded from '~icons/material-symbols/menu-rounded';
+	import MaterialSymbolsCloseRounded from '~icons/material-symbols/close-rounded';
+	import MaterialSymbolsChevronLeftRounded from '~icons/material-symbols/chevron-left-rounded';
 
-	import type { Component } from 'svelte';
 	import Toaster from '$lib/components/Toaster.svelte';
 	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
+	import { adminHome, adminSections, visibleSections, type AdminSection } from './sections';
 
 	let { children, data }: LayoutProps = $props();
 	let isExpanded = $state(true);
+	let mobileOpen = $state(false);
 
-	function togglePanel() {
-		isExpanded = !isExpanded;
+	let sections = $derived<AdminSection[]>([
+		adminHome,
+		...visibleSections(adminSections, data.user?.roles)
+	]);
+
+	function isActive(href: string): boolean {
+		const path = page.url.pathname;
+		if (href === '/admin') return path === '/admin';
+		return path === href || path.startsWith(href + '/');
 	}
 </script>
 
-{#snippet tab(href: string, Icon: Component, label: string)}
+{#snippet tab(section: AdminSection, expanded: boolean)}
+	{@const Icon = section.icon}
 	<a
-		class="flex items-center rounded-lg transition-all duration-300 {isExpanded
-			? 'gap-2 px-4 py-2'
-			: 'h-12 w-12 justify-center'} text-lg font-medium text-gray-300 hover:bg-gray-800 hover:text-white {page
-			.url.pathname === href
-			? 'bg-gray-800 text-white'
-			: ''} {!isExpanded ? 'text-center text-base' : ''}"
-		{href}
+		href={section.href}
+		onclick={() => (mobileOpen = false)}
+		aria-current={isActive(section.href) ? 'page' : undefined}
+		class="flex items-center rounded-lg font-medium text-gray-300 transition-colors hover:bg-gray-800 hover:text-white {expanded
+			? 'gap-2 px-4 py-2 text-lg'
+			: 'h-12 w-12 justify-center'} {isActive(section.href) ? 'bg-gray-800 text-white' : ''}"
 	>
 		<div class="flex w-7 flex-shrink-0 justify-center">
 			<Icon class="h-7 w-7" />
 		</div>
-		<span
-			class="overflow-hidden whitespace-nowrap transition-all duration-300 {isExpanded
-				? 'ml-2 w-auto opacity-100'
-				: 'ml-0 w-0 opacity-0'}">{label}</span
-		>
+		{#if expanded}
+			<span class="overflow-hidden whitespace-nowrap">{section.label()}</span>
+		{/if}
 	</a>
 {/snippet}
 
+{#snippet brand(expanded: boolean)}
+	<span class="flex items-center gap-2 text-white">
+		<IconParkSolidShield class="h-7 w-7 flex-shrink-0" />
+		{#if expanded}<span class="text-xl font-bold whitespace-nowrap">{m.admin_panel()}</span>{/if}
+	</span>
+{/snippet}
+
 <div
-	class="grid h-screen transition-[grid-template-columns] duration-300 {isExpanded
-		? 'grid-cols-[280px_1fr]'
-		: 'grid-cols-[80px_1fr]'}"
+	class="flex h-screen flex-col lg:grid lg:transition-[grid-template-columns] lg:duration-300 {isExpanded
+		? 'lg:grid-cols-[280px_1fr]'
+		: 'lg:grid-cols-[80px_1fr]'}"
 >
+	<!-- Desktop sidebar -->
 	<nav
-		class="relative flex flex-col gap-4 border-r border-gray-800 bg-gray-900/50 p-6 transition-all duration-300 {!isExpanded
-			? 'items-center px-2'
+		class="relative hidden flex-col gap-2 overflow-y-auto border-r border-gray-800 bg-gray-900/50 p-4 lg:flex {!isExpanded
+			? 'items-center'
 			: ''}"
 	>
-		<div class="mb-6 flex flex-col items-center">
-			<h1 class="flex items-center justify-center text-2xl font-bold text-white">
-				<IconParkSolidShield class="h-7 w-7 text-white" />
-				<span
-					class="overflow-hidden whitespace-nowrap transition-all duration-300 {isExpanded
-						? 'ml-4 w-auto opacity-100'
-						: 'ml-0 w-0 opacity-0'} text-xl font-bold text-white"
-				>
-					{m.admin_panel()}
-				</span>
-			</h1>
-		</div>
+		<div class="mb-6 flex justify-center">{@render brand(isExpanded)}</div>
 		<button
-			class="absolute top-12 -right-4 rounded-full bg-gray-800 p-1 text-white hover:bg-gray-700"
-			onclick={togglePanel}
-			aria-label={isExpanded ? 'Collapse panel' : 'Expand panel'}
+			class="absolute top-10 -right-4 z-10 rounded-full bg-gray-800 p-1 text-white hover:bg-gray-700"
+			onclick={() => (isExpanded = !isExpanded)}
+			aria-label={m.toggle_sidebar()}
+			title={m.toggle_sidebar()}
 		>
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
+			<MaterialSymbolsChevronLeftRounded
 				class="h-6 w-6 transition-transform duration-300 {isExpanded ? '' : 'rotate-180'}"
-				viewBox="0 0 20 20"
-				fill="currentColor"
-			>
-				<path
-					fill-rule="evenodd"
-					d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-					clip-rule="evenodd"
-				/>
-			</svg>
+			/>
 		</button>
-
-		{@render tab('/admin', IconParkSolidHome, m.home())}
-		{#if data.user?.roles.includes('admin')}
-			{@render tab('/admin/users', IconParkSolidUser, m.users())}
-		{/if}
-		{@render tab('/admin/players', IconParkSolidPeople, m.players())}
-		{@render tab('/admin/teams', IconParkSolidEveryUser, m.teams())}
-		{@render tab('/admin/events', IconParkSolidCalendar, m.events())}
-		{@render tab('/admin/matches', IconParkSolidGame, m.matches())}
-		{@render tab('/admin/organizers', IconParkSolidTrophy, m.organizers())}
-		{@render tab('/admin/community', IconParkSolidMessage, m.community())}
-		{@render tab('/admin/edit-history', IconParkSolidHistory, m['editing.history.edit_history']())}
+		{#each sections as section (section.href)}
+			{@render tab(section, isExpanded)}
+		{/each}
 	</nav>
-	<main class="styled-scrollbar overflow-auto p-8">
+
+	<!-- Mobile top bar -->
+	<header
+		class="flex items-center gap-3 border-b border-gray-800 bg-gray-900/50 p-3 lg:hidden"
+	>
+		<button
+			onclick={() => (mobileOpen = true)}
+			aria-label={m.open_menu()}
+			title={m.open_menu()}
+			class="rounded-lg p-1 text-gray-300 hover:bg-gray-800 hover:text-white"
+		>
+			<MaterialSymbolsMenuRounded class="h-6 w-6" />
+		</button>
+		{@render brand(true)}
+	</header>
+
+	<!-- Mobile drawer -->
+	{#if mobileOpen}
+		<div class="fixed inset-0 z-50 lg:hidden">
+			<button
+				class="absolute inset-0 bg-black/50"
+				onclick={() => (mobileOpen = false)}
+				aria-label={m.close()}
+				tabindex="-1"
+			></button>
+			<nav
+				class="absolute top-0 left-0 flex h-full w-72 flex-col gap-2 overflow-y-auto border-r border-gray-800 bg-gray-900 p-4"
+			>
+				<div class="mb-4 flex items-center justify-between">
+					{@render brand(true)}
+					<button
+						onclick={() => (mobileOpen = false)}
+						aria-label={m.close()}
+						title={m.close()}
+						class="rounded-lg p-1 text-gray-300 hover:bg-gray-800 hover:text-white"
+					>
+						<MaterialSymbolsCloseRounded class="h-6 w-6" />
+					</button>
+				</div>
+				{#each sections as section (section.href)}
+					{@render tab(section, true)}
+				{/each}
+			</nav>
+		</div>
+	{/if}
+
+	<main class="styled-scrollbar flex-1 overflow-auto p-4 lg:p-8">
 		{@render children()}
 	</main>
 </div>

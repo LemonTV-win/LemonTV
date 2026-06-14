@@ -1,4 +1,4 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
 import {
 	getDiscordServers,
 	createDiscordServer,
@@ -15,18 +15,10 @@ import {
 import { randomUUID } from 'node:crypto';
 import type { PageServerLoad, Actions } from './$types';
 import type { DiscordServer, CommunityTag } from '$lib/server/db/schemas/about/community';
-import { checkPermissions } from '$lib/server/security/permission';
+import { checkPermissions, requirePageRole } from '$lib/server/security/permission';
 
 export const load: PageServerLoad = async ({ locals, url }) => {
-	const user = locals.user;
-	if (!user?.roles) {
-		const fullUrl = url.pathname + url.search;
-		throw redirect(302, `/login?redirect=${encodeURIComponent(fullUrl)}`);
-	}
-
-	if (!['admin', 'editor'].some((role) => user.roles.includes(role))) {
-		throw redirect(302, '/');
-	}
+	requirePageRole({ locals, url }, ['admin', 'editor']);
 
 	return {
 		discordServers: await getDiscordServers(),

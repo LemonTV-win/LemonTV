@@ -1,10 +1,10 @@
-import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
 import { mcpAuditLog } from '$lib/server/db/schemas/auth/mcp-audit-log';
 import { mcpToken } from '$lib/server/db/schemas/auth/mcp-token';
 import { user } from '$lib/server/db/schemas/auth/user';
 import { count, desc, eq } from 'drizzle-orm';
+import { requirePageRole } from '$lib/server/security/permission';
 
 const PAGE_SIZE = 50;
 const STATUSES = ['success', 'denied', 'error', 'rate_limited'] as const;
@@ -12,9 +12,7 @@ type Status = (typeof STATUSES)[number];
 
 export const load: PageServerLoad = async ({ locals, url }) => {
 	// Moderation view — shows every editor's token activity and IPs, so admin only.
-	if (!locals.user || !locals.user.roles.includes('admin')) {
-		throw redirect(302, '/admin');
-	}
+	requirePageRole({ locals, url }, ['admin']);
 
 	const statusParam = url.searchParams.get('status');
 	const status: Status | undefined = STATUSES.includes(statusParam as Status)
