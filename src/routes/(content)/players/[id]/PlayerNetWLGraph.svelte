@@ -227,12 +227,8 @@
 	// Generate data from real match history only
 	function generateNetWLData() {
 		if (!playerMatches || playerMatches.length === 0) {
-			console.log('No matches available, returning empty data');
 			return [];
 		}
-
-		// Use real match history data
-		console.log('Using real match history:', playerMatches.length, 'matches');
 
 		const sortedMatches = [...playerMatches].sort((a, b) => {
 			const dateA = new Date(a.event.date).getTime();
@@ -263,7 +259,6 @@
 			}
 		}
 
-		console.log('Generated real data (game-based):', data);
 		return data;
 	}
 

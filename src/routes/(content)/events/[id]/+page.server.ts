@@ -109,8 +109,6 @@ export const load: PageServerLoad = async ({ params }) => {
 			const slogans = byTeam[team.id];
 			const pick = slogans?.event?.[0] ?? slogans?.general?.[0];
 
-			console.log('[Slogans] Slogans', slogans);
-			console.log('[Slogans] Pick', pick);
 			return {
 				...team,
 				logoURL: imageUrlMap.get(team.logo || '') || team.logo,

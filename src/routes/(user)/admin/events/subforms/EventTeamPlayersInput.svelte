@@ -138,12 +138,6 @@
 
 	function addTeam(teamId: string) {
 		if (!selectedTeams.includes(teamId)) {
-			console.log(
-				'[EventTeamPlayersInput] Adding team:',
-				teamId,
-				'Current selectedTeams:',
-				selectedTeams
-			);
 			selectedTeams = [...selectedTeams, teamId];
 			// Ensure meta defaults exist
 			if (!eventTeams.some((et) => et.teamId === teamId)) {
