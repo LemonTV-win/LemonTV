@@ -55,8 +55,8 @@
 		const counts = new Map<string, number>();
 		const duplicates = new Set<string>();
 		for (const account of newPlayer.gameAccounts ?? []) {
-			// Skip not-yet-filled rows (new accounts default to accountId 0)
-			if (!account.accountId) continue;
+			// Skip not-yet-filled rows; treat UID 0 as a valid value.
+			if (account.accountId === undefined || `${account.accountId}` === '') continue;
 			const key = `${getGameAccountServer(account.region)}:${account.accountId}`;
 			const next = (counts.get(key) ?? 0) + 1;
 			counts.set(key, next);
@@ -66,7 +66,7 @@
 	});
 	let hasDuplicateGameAccounts = $derived(duplicateGameAccountKeys.size > 0);
 	function isDuplicateGameAccount(account: { accountId: number; region?: string }) {
-		if (!account.accountId) return false;
+		if (account.accountId === undefined || `${account.accountId}` === '') return false;
 		return duplicateGameAccountKeys.has(
 			`${getGameAccountServer(account.region as Player['gameAccounts'][number]['region'])}:${account.accountId}`
 		);
