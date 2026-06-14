@@ -77,24 +77,24 @@
 	}
 
 	let metricText = $derived({
-		winRate: m['content.stats.metrics.win_rate'],
-		kdRatio: m['content.stats.metrics.kd_ratio'],
-		killsPerGame: m['content.stats.metrics.kills_per_game'],
-		deathsPerGame: m['content.stats.metrics.deaths_per_game'],
-		survivalRate: m['content.stats.metrics.survival_rate'],
-		assistsPerGame: m['content.stats.metrics.assists_per_game'],
-		damagePerGame: m['content.stats.metrics.damage_per_game'],
-		averageScore: m['content.stats.metrics.average_score']
+		winRate: m['content.stats.metrics.win_rate'](),
+		kdRatio: m['content.stats.metrics.kd_ratio'](),
+		killsPerGame: m['content.stats.metrics.kills_per_game'](),
+		deathsPerGame: m['content.stats.metrics.deaths_per_game'](),
+		survivalRate: m['content.stats.metrics.survival_rate'](),
+		assistsPerGame: m['content.stats.metrics.assists_per_game'](),
+		damagePerGame: m['content.stats.metrics.damage_per_game'](),
+		averageScore: m['content.stats.metrics.average_score']()
 	} as const);
 
 	let metricLabels = $derived([
-		metricText.winRate(),
-		metricText.kdRatio(),
+		metricText.winRate,
+		metricText.kdRatio,
 		metricText.killsPerGame,
 		metricText.survivalRate,
-		metricText.assistsPerGame(),
-		metricText.damagePerGame(),
-		metricText.averageScore()
+		metricText.assistsPerGame,
+		metricText.damagePerGame,
+		metricText.averageScore
 	]);
 
 	onMount(async () => {
