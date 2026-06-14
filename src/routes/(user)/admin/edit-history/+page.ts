@@ -2,7 +2,7 @@ import { m } from '$lib/paraglide/messages';
 import type { PageMetadata } from '$lib/seo';
 import type { PageLoad } from './$types';
 
-export const load: PageLoad = async ({ data, url }) => {
+export const load: PageLoad = async ({ data }) => {
 	return {
 		...data,
 		page: data.page ? Number(data.page) : 1,
