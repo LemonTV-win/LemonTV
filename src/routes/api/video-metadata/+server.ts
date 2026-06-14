@@ -153,6 +153,41 @@ async function extractVideoMetadata(url: string): Promise<VideoMetadata> {
 	throw new Error('Unsupported video URL');
 }
 
+/**
+ * @swagger
+ * /api/video-metadata:
+ *   post:
+ *     summary: Extract metadata from a video URL
+ *     description: Extracts metadata (title, thumbnail, author, etc.) from YouTube, Bilibili, or Twitch video URLs
+ *     tags: [Video]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - url
+ *             properties:
+ *               url:
+ *                 type: string
+ *                 format: uri
+ *                 description: Video URL (supports YouTube, Bilibili, or Twitch)
+ *                 example: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+ *     responses:
+ *       200:
+ *         description: Video metadata extracted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/VideoMetadata'
+ *       400:
+ *         description: Bad request - missing URL or unsupported platform
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 export async function POST({ request }) {
 	try {
 		const formData = await request.formData();

@@ -11,6 +11,50 @@ const ALLOWED_MIME_TYPES = new Set([
 	'image/avif'
 ]);
 
+/**
+ * @swagger
+ * /api/upload:
+ *   post:
+ *     summary: Upload an image file
+ *     description: Uploads an image file to storage and returns the storage key
+ *     tags: [Upload]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - file
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *                 description: The image file to upload
+ *               prefix:
+ *                 type: string
+ *                 description: Optional prefix for the storage path (defaults to 'uploads')
+ *                 example: "avatars"
+ *     responses:
+ *       200:
+ *         description: File uploaded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UploadResponse'
+ *       400:
+ *         description: Bad request - no file provided
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 export async function POST({ request, locals }) {
 	const permission = checkPermissions(locals, ['admin', 'editor']);
 	if (permission.status === 'error') {
