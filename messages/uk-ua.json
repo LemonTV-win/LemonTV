@@ -876,6 +876,10 @@
 		"banner_button": "Підтримати на Ko‑fi",
 		"banner_dismiss_title": "Можливо пізніше"
 	},
+	"player_radar": {
+		"title": "Радар ефективності",
+		"dataset_performance": "Ефективність"
+	},
 	"mcp_tokens": "MCP Tokens",
 	"mcp_tokens_heading": "MCP Access Tokens",
 	"mcp_tokens_description": "Personal access tokens let you manage LemonTV data from an AI client through the authorized MCP server. Each token acts as you and every edit is attributed to your account. Treat tokens like passwords — they are shown only once.",
