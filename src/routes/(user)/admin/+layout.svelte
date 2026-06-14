@@ -15,6 +15,8 @@
 	import IconParkSolidMessage from '~icons/icon-park-solid/message';
 
 	import type { Component } from 'svelte';
+	import Toaster from '$lib/components/Toaster.svelte';
+	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
 
 	let { children, data }: LayoutProps = $props();
 	let isExpanded = $state(true);
@@ -102,3 +104,6 @@
 		{@render children()}
 	</main>
 </div>
+
+<Toaster />
+<ConfirmDialog />
