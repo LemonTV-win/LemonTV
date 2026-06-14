@@ -157,6 +157,8 @@
 	"confirm": "确认",
 	"confirm_title": "确定吗？",
 	"notifications": "通知",
+	"game_account_conflict": "游戏账号 UID {accountId}（{server} 服务器）已绑定到选手 {name}（{slug}）。",
+	"duplicate_game_account_same_server": "两个游戏账号在同一服务器上的 UID 相同。每个服务器内 UID 必须唯一（国服与国际服为不同服务器）。",
 	"create": "创建",
 	"update": "更新",
 	"add": "添加",

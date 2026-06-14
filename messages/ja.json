@@ -156,6 +156,8 @@
 	"confirm": "確認",
 	"confirm_title": "よろしいですか？",
 	"notifications": "通知",
+	"game_account_conflict": "ゲームアカウントUID {accountId}（{server}サーバー）はすでに選手 {name}（{slug}）に紐付けられています。",
+	"duplicate_game_account_same_server": "2つのゲームアカウントが同じサーバーで同じUIDになっています。UIDはサーバーごとに一意である必要があります（CNサーバーと国際サーバーは別です）。",
 	"create": "作成",
 	"update": "更新",
 	"add": "追加",
