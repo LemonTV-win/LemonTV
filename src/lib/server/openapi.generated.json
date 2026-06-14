@@ -1,0 +1,394 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "LemonTV API",
+    "version": "1.0.0",
+    "description": "API documentation for LemonTV - a competitive gaming platform",
+    "contact": {
+      "name": "API Support"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:23355",
+      "description": "Development server"
+    },
+    {
+      "url": "https://lemontv.app",
+      "description": "Production server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "cookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "session"
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error message"
+          }
+        },
+        "required": [
+          "error"
+        ]
+      },
+      "VideoMetadata": {
+        "type": "object",
+        "properties": {
+          "platform": {
+            "type": "string",
+            "enum": [
+              "youtube",
+              "bilibili",
+              "twitch"
+            ],
+            "description": "Video platform"
+          },
+          "title": {
+            "type": "string",
+            "description": "Video title"
+          },
+          "thumbnail": {
+            "type": "string",
+            "format": "uri",
+            "description": "Thumbnail URL"
+          },
+          "player": {
+            "type": "string",
+            "description": "Channel/player name"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Publication date",
+            "nullable": true
+          },
+          "startTime": {
+            "type": "number",
+            "description": "Start time in seconds",
+            "nullable": true
+          }
+        },
+        "required": [
+          "platform",
+          "title",
+          "thumbnail",
+          "player"
+        ]
+      },
+      "UploadResponse": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "Uploaded file key/path"
+          }
+        },
+        "required": [
+          "key"
+        ]
+      },
+      "SignedUrlResponse": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Signed URL for accessing the file"
+          }
+        },
+        "required": [
+          "url"
+        ]
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Upload",
+      "description": "File upload endpoints"
+    },
+    {
+      "name": "Video",
+      "description": "Video metadata extraction"
+    },
+    {
+      "name": "Players",
+      "description": "Player-related endpoints"
+    },
+    {
+      "name": "Events",
+      "description": "Event-related endpoints"
+    },
+    {
+      "name": "Teams",
+      "description": "Team-related endpoints"
+    }
+  ],
+  "paths": {
+    "/api/video-metadata": {
+      "post": {
+        "summary": "Extract metadata from a video URL",
+        "description": "Extracts metadata (title, thumbnail, author, etc.) from YouTube, Bilibili, or Twitch video URLs",
+        "tags": [
+          "Video"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "url"
+                ],
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Video URL (supports YouTube, Bilibili, or Twitch)",
+                    "example": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Video metadata extracted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VideoMetadata"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - missing URL or unsupported platform",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/players/{id}/history": {
+      "get": {
+        "summary": "Get edit history for a player",
+        "description": "Retrieves the edit history for a specific player. Requires admin or editor role.",
+        "tags": [
+          "Players"
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Player ID or slug"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Edit history retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "editedBy": {
+                        "type": "string"
+                      },
+                      "editedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "editor": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "email": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/upload": {
+      "post": {
+        "summary": "Upload an image file",
+        "description": "Uploads an image file to storage and returns the storage key",
+        "tags": [
+          "Upload"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "file"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "The image file to upload"
+                  },
+                  "prefix": {
+                    "type": "string",
+                    "description": "Optional prefix for the storage path (defaults to 'uploads')",
+                    "example": "avatars"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "File uploaded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - no file provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/upload/{key}": {
+      "get": {
+        "summary": "Get a signed URL for an uploaded file",
+        "description": "Generates a signed URL for accessing an uploaded file by its storage key",
+        "tags": [
+          "Upload"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Storage key/path of the file (can include multiple path segments)",
+            "example": "uploads/123e4567-e89b-12d3-a456-426614174000-image.jpg"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Signed URL generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignedUrlResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - no key provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
