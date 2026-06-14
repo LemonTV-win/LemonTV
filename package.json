@@ -34,6 +34,8 @@
 		"db:dev:recalc-player-stats:manual": "cross-env DEV=true PLAYER_STATS_UPDATE_REASON=manual bun scripts/db-recalculate-player-stats.ts",
 		"db:dev:recalc-player-stats:periodic": "cross-env DEV=true PLAYER_STATS_UPDATE_REASON=periodic bun scripts/db-recalculate-player-stats.ts",
 		"i18n:check": "bun scripts/check-messages.ts",
+		"data:check": "cross-env DEV=true bun scripts/check-data-integrity.ts",
+		"data:check:prod": "cross-env DEV=false bun scripts/check-data-integrity.ts",
 		"knip": "knip",
 		"changelog": "bun scripts/generate-changelog.ts",
 		"jwt:generate": "bun scripts/generate-jwt-keys.ts",
