@@ -50,7 +50,6 @@
 		"@iconify/json": "^2.2.421",
 		"@playwright/test": "^1.57.0",
 		"@scalar/sveltekit": "^0.1.27",
-		"@sveltejs/adapter-auto": "^7.0.0",
 		"@sveltejs/adapter-vercel": "^6.2.0",
 		"@sveltejs/kit": "^2.49.2",
 		"@sveltejs/vite-plugin-svelte": "^6.2.1",
