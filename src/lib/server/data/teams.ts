@@ -931,6 +931,62 @@ export async function createTeam(
 	return id;
 }
 
+export interface UpdateTeamFields {
+	name?: string;
+	slug?: string;
+	abbr?: string | null;
+	logo?: string | null;
+	region?: Region | null;
+}
+
+/**
+ * Partial scalar update of a team — only the fields you pass are changed, and it
+ * NEVER touches aliases/roster/slogans. (The full `updateTeam` deletes and
+ * re-inserts those collections, so calling it with a partial payload would wipe
+ * them.) Records one `edit_history` row per actually-changed field and returns
+ * the list of changed field names.
+ */
+export async function updateTeamFields(
+	id: string,
+	fields: UpdateTeamFields,
+	editedBy: string
+): Promise<{ changed: string[] }> {
+	return await db.transaction(async (tx) => {
+		const [current] = await tx.select().from(table.team).where(eq(table.team.id, id));
+		if (!current) throw new Error(`Team not found: ${id}`);
+
+		const columns: (keyof UpdateTeamFields)[] = ['name', 'slug', 'abbr', 'logo', 'region'];
+		const set: Record<string, unknown> = {};
+		const changed: string[] = [];
+
+		for (const key of columns) {
+			const next = fields[key];
+			if (next === undefined) continue;
+			const before = (current as Record<string, unknown>)[key] ?? null;
+			const after = next ?? null;
+			if (before === after) continue;
+			set[key] = after;
+			changed.push(key);
+			await tx.insert(editHistory).values({
+				id: randomUUID(),
+				tableName: 'team',
+				recordId: id,
+				fieldName: key,
+				oldValue: before === null ? null : String(before),
+				newValue: after === null ? null : String(after),
+				editedBy
+			});
+		}
+
+		if (changed.length > 0) {
+			set.updatedAt = new Date().toISOString();
+			await tx.update(table.team).set(set).where(eq(table.team.id, id));
+		}
+
+		return { changed };
+	});
+}
+
 export async function updateTeam(
 	data: {
 		id: string;

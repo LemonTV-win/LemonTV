@@ -1206,6 +1206,100 @@ export async function createPlayer(
 	return id;
 }
 
+export interface UpdatePlayerFields {
+	name?: string;
+	slug?: string;
+	avatar?: string | null;
+	/** Full replacement of nationalities; first is primary, rest are additional. */
+	nationalities?: string[];
+}
+
+/**
+ * Partial update of a player's scalar fields and (optionally) nationalities.
+ * Only the fields you pass are changed, and it never touches aliases / game
+ * accounts / social accounts (unlike the full `updatePlayer`, which replaces
+ * those collections). When `nationalities` is given it fully replaces the
+ * primary nationality and the additional-nationality rows. Records an
+ * `edit_history` row per changed field; returns the changed field names.
+ */
+export async function updatePlayerFields(
+	id: string,
+	fields: UpdatePlayerFields,
+	editedBy: string
+): Promise<{ changed: string[] }> {
+	return await db.transaction(async (tx) => {
+		const [current] = await tx.select().from(player).where(eq(player.id, id));
+		if (!current) throw new Error(`Player not found: ${id}`);
+
+		const set: Record<string, unknown> = {};
+		const changed: string[] = [];
+
+		const recordChange = (field: string, before: unknown, after: unknown) => {
+			changed.push(field);
+			return tx.insert(editHistory).values({
+				id: randomUUID(),
+				tableName: 'player',
+				recordId: id,
+				fieldName: field,
+				oldValue: before === null || before === undefined ? null : String(before),
+				newValue: after === null || after === undefined ? null : String(after),
+				editedBy
+			});
+		};
+
+		for (const key of ['name', 'slug', 'avatar'] as const) {
+			const next = fields[key];
+			if (next === undefined) continue;
+			const before = (current as Record<string, unknown>)[key] ?? null;
+			const after = next ?? null;
+			if (before === after) continue;
+			set[key] = after;
+			await recordChange(key, before, after);
+		}
+
+		if (fields.nationalities !== undefined) {
+			const list = fields.nationalities;
+			const primary = (list[0] ?? null) as TCountryCode | null;
+			if ((current.nationality ?? null) !== (primary ?? null)) {
+				set.nationality = primary;
+				await recordChange('nationality', current.nationality ?? null, primary);
+			}
+
+			const currentAdditional = await tx
+				.select()
+				.from(playerAdditionalNationality)
+				.where(eq(playerAdditionalNationality.playerId, id));
+			const oldAdditional = currentAdditional.map((a) => a.nationality);
+			const newAdditional = list.slice(1);
+
+			if (JSON.stringify(oldAdditional) !== JSON.stringify(newAdditional)) {
+				await tx
+					.delete(playerAdditionalNationality)
+					.where(eq(playerAdditionalNationality.playerId, id));
+				if (newAdditional.length > 0) {
+					await tx.insert(playerAdditionalNationality).values(
+						newAdditional.map((nationality) => ({
+							playerId: id,
+							nationality: nationality as TCountryCode
+						}))
+					);
+				}
+				await recordChange(
+					'additionalNationalities',
+					oldAdditional.join(',') || null,
+					newAdditional.join(',') || null
+				);
+			}
+		}
+
+		if (Object.keys(set).length > 0) {
+			await tx.update(player).set(set).where(eq(player.id, id));
+		}
+
+		return { changed };
+	});
+}
+
 export async function updatePlayer(
 	data: { id: string } & Partial<Omit<Player, 'gameAccounts'>> & {
 			gameAccounts: Player['gameAccounts'];
