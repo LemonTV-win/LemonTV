@@ -40,6 +40,51 @@ export function requireInt(args: Record<string, unknown>, key: string): number {
 }
 
 /**
+ * Read an optional integer argument. Accepts a number or numeric string, returns
+ * `defaultValue` when absent/null/blank, and rejects non-integers. Use `min`
+ * for fields such as capacity where negative numbers are never meaningful.
+ */
+export function optionalInt(
+	args: Record<string, unknown>,
+	key: string,
+	defaultValue: number,
+	options: { min?: number } = {}
+): number {
+	const value = args[key];
+	if (value === undefined || value === null || value === '') return defaultValue;
+	const n = requireInt(args, key);
+	if (options.min !== undefined && n < options.min) {
+		throw new Error(`Invalid ${key}: expected an integer >= ${options.min}`);
+	}
+	return n;
+}
+
+/**
+ * Read an optional boolean argument. Besides true booleans, accepts the common
+ * string/number forms produced by loosely-typed MCP clients. Importantly,
+ * `"false"` is false (not truthy), avoiding accidental official-event flips.
+ */
+export function optionalBoolean(
+	args: Record<string, unknown>,
+	key: string,
+	defaultValue = false
+): boolean {
+	const value = args[key];
+	if (value === undefined || value === null || value === '') return defaultValue;
+	if (typeof value === 'boolean') return value;
+	if (typeof value === 'number') {
+		if (value === 1) return true;
+		if (value === 0) return false;
+	}
+	if (typeof value === 'string') {
+		const normalized = value.trim().toLowerCase();
+		if (['true', '1', 'yes', 'y'].includes(normalized)) return true;
+		if (['false', '0', 'no', 'n'].includes(normalized)) return false;
+	}
+	throw new Error(`Invalid ${key}: expected a boolean`);
+}
+
+/**
  * Validate an optional enum argument. Returns `undefined` when absent, the value
  * when it's one of `allowed`, and throws otherwise — the data layer stores these
  * as plain text without validating, so the tool must.

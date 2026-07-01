@@ -1,10 +1,13 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { page } from '$app/state';
 	import type { ActionResult } from '@sveltejs/kit';
 	import type { PageProps } from './$types';
 	import { m } from '$lib/paraglide/messages';
 	import InlineAlert from '$lib/components/InlineAlert.svelte';
 	import Key from '~icons/lucide/key-round';
+	import BookOpen from '~icons/lucide/book-open';
+	import Info from '~icons/lucide/info';
 	import Copy from '~icons/lucide/copy';
 	import Check from '~icons/lucide/check';
 	import Trash from '~icons/lucide/trash-2';
@@ -17,6 +20,24 @@
 	// The freshly-minted plaintext token, available only in the create action's
 	// result. Cleared on any subsequent navigation/refresh — never stored.
 	let createdToken = $derived(form && 'created' in form ? form.created : null);
+
+	// The MCP endpoint clients should connect to, derived from the current origin
+	// so it stays correct across dev, preview, and production deployments.
+	let endpoint = $derived(`${page.url.origin}/api/mcp`);
+	const authHeaderExample = 'Authorization: Bearer lemon_pat_…';
+
+	// Copy-pasteable client configuration snippets. Built as expressions (not
+	// literal template text) so they carry the live endpoint and stay exempt
+	// from the i18n no-untranslated-text rule.
+	let codexSnippet = $derived(
+		`# ~/.codex/.env\nLEMONTV_MCP_TOKEN=lemon_pat_xxx\n\n# ~/.codex/config.toml\n[mcp_servers.lemontv]\nurl = "${endpoint}"\nbearer_token_env_var = "LEMONTV_MCP_TOKEN"`
+	);
+	let claudeSnippet = $derived(
+		`{\n  "mcpServers": {\n    "lemontv": {\n      "command": "npx",\n      "args": [\n        "-y",\n        "mcp-remote",\n        "${endpoint}",\n        "--header",\n        "Authorization:${'$'}{AUTH_HEADER}"\n      ],\n      "env": {\n        "AUTH_HEADER": "Bearer lemon_pat_xxx"\n      }\n    }\n  }\n}`
+	);
+	let curlSnippet = $derived(
+		`curl -X POST ${endpoint} \\\n  -H "Authorization: Bearer lemon_pat_xxx" \\\n  -H "Content-Type: application/json" \\\n  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'`
+	);
 
 	function fmtDate(d: Date | string | null | undefined): string {
 		if (!d) return '—';
@@ -97,6 +118,96 @@
 		</h2>
 		<p class="text-sm text-slate-400">{m.mcp_tokens_description()}</p>
 	</header>
+
+	<section class="space-y-5 rounded-lg border border-slate-800 bg-slate-900/50 p-5">
+		<div class="space-y-2">
+			<h3 class="flex items-center gap-2 text-lg font-semibold text-white">
+				<BookOpen class="h-5 w-5 text-yellow-500" />
+				{m.mcp_manual_heading()}
+			</h3>
+			<p class="text-sm text-slate-400">{m.mcp_manual_intro()}</p>
+		</div>
+
+		<div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+			<div class="rounded-md border border-slate-800 bg-slate-950/60 p-3">
+				<div class="text-xs font-medium tracking-wide text-slate-500 uppercase">
+					{m.mcp_manual_endpoint()}
+				</div>
+				<code class="mt-1 block font-mono text-sm break-all text-yellow-200">{endpoint}</code>
+			</div>
+			<div class="rounded-md border border-slate-800 bg-slate-950/60 p-3">
+				<div class="text-xs font-medium tracking-wide text-slate-500 uppercase">
+					{m.mcp_manual_transport()}
+				</div>
+				<p class="mt-1 text-sm text-slate-300">{m.mcp_manual_transport_value()}</p>
+			</div>
+		</div>
+
+		<div class="space-y-2 rounded-md border border-slate-800 bg-slate-950/60 p-3">
+			<h4 class="text-sm font-semibold text-white">{m.mcp_manual_auth()}</h4>
+			<p class="text-sm text-slate-400">{m.mcp_manual_auth_desc()}</p>
+			<code
+				class="block overflow-x-auto rounded border border-slate-800 bg-slate-950 px-3 py-2 font-mono text-sm text-yellow-200"
+				>{authHeaderExample}</code
+			>
+		</div>
+
+		<div class="space-y-2">
+			<h4 class="text-sm font-semibold text-white">{m.mcp_manual_scopes()}</h4>
+			<ul class="space-y-2 text-sm text-slate-400">
+				<li class="flex gap-2">
+					<span class="rounded bg-slate-700 px-1.5 py-0.5 text-xs font-medium text-slate-300"
+						>{m.mcp_token_scope_read()}</span
+					>
+					<span>{m.mcp_manual_scope_read_desc()}</span>
+				</li>
+				<li class="flex gap-2">
+					<span class="rounded bg-yellow-500/20 px-1.5 py-0.5 text-xs font-medium text-yellow-300"
+						>{m.mcp_token_scope_write()}</span
+					>
+					<span>{m.mcp_manual_scope_write_desc()}</span>
+				</li>
+			</ul>
+		</div>
+
+		<div class="space-y-3">
+			<h4 class="text-sm font-semibold text-white">{m.mcp_manual_clients()}</h4>
+			<p class="text-sm text-slate-400">{m.mcp_manual_clients_intro()}</p>
+
+			<div class="space-y-2">
+				<h5 class="text-sm font-medium text-slate-200">{m.mcp_manual_codex()}</h5>
+				<p class="text-sm text-slate-400">{m.mcp_manual_codex_desc()}</p>
+				<pre
+					class="overflow-x-auto rounded-md border border-slate-800 bg-slate-950 p-3 text-sm text-slate-200"><code
+						>{codexSnippet}</code
+					></pre>
+			</div>
+
+			<div class="space-y-2">
+				<h5 class="text-sm font-medium text-slate-200">{m.mcp_manual_claude()}</h5>
+				<p class="text-sm text-slate-400">{m.mcp_manual_claude_desc()}</p>
+				<pre
+					class="overflow-x-auto rounded-md border border-slate-800 bg-slate-950 p-3 text-sm text-slate-200"><code
+						>{claudeSnippet}</code
+					></pre>
+			</div>
+
+			<div class="space-y-2">
+				<h5 class="text-sm font-medium text-slate-200">{m.mcp_manual_curl()}</h5>
+				<pre
+					class="overflow-x-auto rounded-md border border-slate-800 bg-slate-950 p-3 text-sm text-slate-200"><code
+						>{curlSnippet}</code
+					></pre>
+			</div>
+		</div>
+
+		<div
+			class="flex gap-2 rounded-md border border-yellow-500/30 bg-yellow-500/10 px-3 py-2 text-sm text-yellow-100"
+		>
+			<Info class="mt-0.5 h-4 w-4 flex-shrink-0 text-yellow-300" />
+			<p>{m.mcp_manual_security_note()}</p>
+		</div>
+	</section>
 
 	{#if error}
 		<InlineAlert type="error" message={error} />

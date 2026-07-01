@@ -364,7 +364,7 @@
 	>
 		<div class="mx-auto max-w-2xl">
 			<p class="mb-4 text-lg">
-				© 2025 <a
+				© 2025–2026 <a
 					href="/about"
 					class="text-yellow-300 transition-colors duration-100 hover:text-yellow-400 hover:underline"
 					>LemonTV</a

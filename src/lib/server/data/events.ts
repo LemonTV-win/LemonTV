@@ -1520,6 +1520,59 @@ export async function updateEventCasters(
 	});
 }
 
+/** A related link on an event (used by the MCP `set_event_websites` tool). */
+export interface EventWebsiteInput {
+	url: string;
+	label: string | null;
+}
+
+/**
+ * Replace all related links (websites) on an event with the supplied list.
+ * Replace-all semantics mirror `updateEventCasters`: pass an empty array to
+ * clear every link. Writes one `edit_history` row capturing the before/after.
+ */
+export async function setEventWebsites(
+	eventId: string,
+	websites: EventWebsiteInput[],
+	userId: string,
+	options: { source?: string } = {}
+): Promise<{ count: number }> {
+	return await db.transaction(async (tx) => {
+		const currentWebsites = await tx
+			.select()
+			.from(table.eventWebsite)
+			.where(eq(table.eventWebsite.eventId, eventId));
+
+		await tx.delete(table.eventWebsite).where(eq(table.eventWebsite.eventId, eventId));
+
+		if (websites.length > 0) {
+			await tx.insert(table.eventWebsite).values(
+				websites.map((website) => ({
+					id: randomUUID(),
+					eventId,
+					url: website.url,
+					label: website.label,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				}))
+			);
+		}
+
+		await tx.insert(table.editHistory).values({
+			id: randomUUID(),
+			tableName: 'event_website',
+			recordId: eventId,
+			fieldName: options.source ? `websites (${options.source})` : 'websites',
+			oldValue: JSON.stringify(currentWebsites.map((w) => ({ url: w.url, label: w.label }))),
+			newValue: JSON.stringify(websites),
+			editedBy: userId,
+			editedAt: new Date()
+		});
+
+		return { count: websites.length };
+	});
+}
+
 // Types for event participant + result management (used by the MCP write tools).
 export interface EventTeamInput {
 	teamId: string;
