@@ -31,8 +31,20 @@ import {
 	EVENT_TEAM_PLAYER_ROLES,
 	EVENT_CASTER_ROLES
 } from './event-args';
-import { createPlayer, getPlayer, getPlayers } from '$lib/server/data/players';
-import { createTeam, getTeam, getTeams } from '$lib/server/data/teams';
+import {
+	createPlayer,
+	getPlayer,
+	getPlayers,
+	updatePlayerFields,
+	type UpdatePlayerFields
+} from '$lib/server/data/players';
+import {
+	createTeam,
+	getTeam,
+	getTeams,
+	updateTeamFields,
+	type UpdateTeamFields
+} from '$lib/server/data/teams';
 import { getGameAccountServer } from '$lib/data/players';
 import { formatSlug } from '$lib/utils/strings';
 import type { McpTool } from './dispatch';
@@ -86,6 +98,28 @@ async function assertTeamsExist(teamIds: string[]): Promise<void> {
 			`Unknown team id(s): ${missing.join(', ')} (create them with create_team first)`
 		);
 	}
+}
+
+/** Resolve a team id-or-slug to its id, throwing a clear error if unknown. */
+async function resolveTeamId(idOrSlug: string): Promise<string> {
+	const [row] = await db
+		.select({ id: table.team.id })
+		.from(table.team)
+		.where(or(eq(table.team.id, idOrSlug), eq(table.team.slug, idOrSlug)))
+		.limit(1);
+	if (!row) throw new Error(`Team not found: ${idOrSlug}`);
+	return row.id;
+}
+
+/** Resolve a player id-or-slug to its id, throwing a clear error if unknown. */
+async function resolvePlayerId(idOrSlug: string): Promise<string> {
+	const [row] = await db
+		.select({ id: table.player.id })
+		.from(table.player)
+		.where(or(eq(table.player.id, idOrSlug), eq(table.player.slug, idOrSlug)))
+		.limit(1);
+	if (!row) throw new Error(`Player not found: ${idOrSlug}`);
+	return row.id;
 }
 
 /** Verify every player id exists before writing rows that reference them. */
@@ -770,6 +804,77 @@ export const TOOLS: McpTool[] = [
 				identity.userId
 			);
 			return { id, slug, created: true };
+		}
+	},
+	{
+		name: 'update_team',
+		description:
+			'Update scalar fields of an existing team (by id or slug): name, slug, abbr, logo, region. Partial — only the fields you pass change, and it never touches the roster, aliases, or slogans (use the admin UI for those). Returns which fields changed. Attributed to the token owner.',
+		requiresWrite: true,
+		inputSchema: {
+			type: 'object',
+			properties: {
+				idOrSlug: { type: 'string', description: 'The team id or slug to update.' },
+				name: { type: 'string', description: 'New display name.' },
+				slug: { type: 'string', description: 'New URL slug (lowercase-kebab, unique).' },
+				abbr: { type: 'string', description: 'Short tag, e.g. "DRG".' },
+				logo: { type: 'string', description: 'Logo image URL/key.' },
+				region: { type: 'string', enum: [...TEAM_REGIONS], description: 'Team region.' }
+			},
+			required: ['idOrSlug'],
+			additionalProperties: false
+		},
+		handler: async (args, identity) => {
+			const teamId = await resolveTeamId(requireString(args, 'idOrSlug'));
+			const fields: UpdateTeamFields = {};
+			if (args.name !== undefined) fields.name = requireString(args, 'name');
+			if (args.slug !== undefined) fields.slug = formatSlug(requireString(args, 'slug'));
+			if (args.abbr !== undefined) fields.abbr = requireString(args, 'abbr');
+			if (args.logo !== undefined) fields.logo = requireString(args, 'logo');
+			if (args.region !== undefined)
+				fields.region = requireEnum(args.region, TEAM_REGIONS, 'region');
+			const { changed } = await updateTeamFields(teamId, fields, identity.userId);
+			return { id: teamId, changed, updated: changed.length > 0 };
+		}
+	},
+	{
+		name: 'update_player',
+		description:
+			'Update an existing player (by id or slug): name, slug, avatar, and/or nationalities. Partial — only the fields you pass change; it never touches aliases, game accounts, or social accounts (use the admin UI for those). Passing nationalities fully replaces them (first = primary). Returns which fields changed. Attributed to the token owner.',
+		requiresWrite: true,
+		inputSchema: {
+			type: 'object',
+			properties: {
+				idOrSlug: { type: 'string', description: 'The player id or slug to update.' },
+				name: { type: 'string', description: 'New display name.' },
+				slug: { type: 'string', description: 'New URL slug.' },
+				avatar: { type: 'string', description: 'Avatar image URL/key.' },
+				nationalities: {
+					type: 'array',
+					items: { type: 'string' },
+					description: 'ISO country codes; first is primary. Replaces all nationalities.'
+				}
+			},
+			required: ['idOrSlug'],
+			additionalProperties: false
+		},
+		handler: async (args, identity) => {
+			const playerId = await resolvePlayerId(requireString(args, 'idOrSlug'));
+			const fields: UpdatePlayerFields = {};
+			if (args.name !== undefined) fields.name = requireString(args, 'name');
+			if (args.slug !== undefined) fields.slug = formatSlug(requireString(args, 'slug'));
+			if (args.avatar !== undefined) fields.avatar = requireString(args, 'avatar');
+			if (args.nationalities !== undefined) {
+				if (!Array.isArray(args.nationalities)) throw new Error('nationalities must be an array');
+				const list = args.nationalities
+					.map((n) => (typeof n === 'string' ? n.trim().toUpperCase() : ''))
+					.filter((n) => n !== '');
+				if (new Set(list).size !== list.length)
+					throw new Error('nationalities contains duplicates');
+				fields.nationalities = list;
+			}
+			const { changed } = await updatePlayerFields(playerId, fields, identity.userId);
+			return { id: playerId, changed, updated: changed.length > 0 };
 		}
 	}
 ];
