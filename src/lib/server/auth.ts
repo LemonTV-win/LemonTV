@@ -225,28 +225,20 @@ export async function generatePasswordResetToken(userId: string): Promise<string
 }
 
 export async function validatePasswordResetToken(token: string): Promise<string | null> {
-	console.info('[Auth] Validating password reset token:', token);
-
 	// Find the token in the database
 	const [tokenRecord] = await db
 		.select()
 		.from(table.passwordResetToken)
 		.where(eq(table.passwordResetToken.token, token));
 
-	console.info('[Auth] Token record found:', tokenRecord ? 'Yes' : 'No');
-
 	if (!tokenRecord) {
-		console.info('[Auth] No token record found in database');
+		console.info('[Auth] No password reset token record found');
 		return null;
 	}
 
-	console.info('[Auth] Token expires at:', tokenRecord.expiresAt);
-	console.info('[Auth] Current time:', new Date());
-	console.info('[Auth] Token expired:', Date.now() >= tokenRecord.expiresAt.getTime());
-
 	// Check if token is expired
 	if (Date.now() >= tokenRecord.expiresAt.getTime()) {
-		console.info('[Auth] Token is expired, cleaning up');
+		console.info('[Auth] Password reset token expired, cleaning up');
 		// Clean up expired token
 		await db
 			.delete(table.passwordResetToken)
@@ -254,7 +246,7 @@ export async function validatePasswordResetToken(token: string): Promise<string 
 		return null;
 	}
 
-	console.info('[Auth] Token is valid, returning userId:', tokenRecord.userId);
+	console.info('[Auth] Password reset token valid for user:', tokenRecord.userId);
 	return tokenRecord.userId;
 }
 

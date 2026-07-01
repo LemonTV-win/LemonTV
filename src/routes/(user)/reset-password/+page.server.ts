@@ -11,14 +11,7 @@ import {
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ url }) => {
-	console.info('[Reset Password Load] URL:', url.toString());
-	console.info(
-		'[Reset Password Load] Search params:',
-		Object.fromEntries(url.searchParams.entries())
-	);
-
 	const encodedToken = url.searchParams.get('token');
-	console.info('[Reset Password Load] Encoded token:', encodedToken);
 
 	if (!encodedToken) {
 		console.info('[Reset Password Load] No token found in URL');
@@ -27,11 +20,9 @@ export const load: PageServerLoad = async ({ url }) => {
 
 	// Decode the URL-encoded token
 	const token = decodeURIComponent(encodedToken);
-	console.info('[Reset Password Load] Decoded token:', token);
 
 	// Validate the token
 	const userId = await validatePasswordResetToken(token);
-	console.info('[Reset Password Load] Validation result - userId:', userId);
 
 	if (!userId) {
 		console.info('[Reset Password Load] Token validation failed');
@@ -45,11 +36,6 @@ export const load: PageServerLoad = async ({ url }) => {
 export const actions: Actions = {
 	resetPassword: async (event) => {
 		console.info('[Reset Password Action] Attempting password reset');
-		console.info('[Reset Password Action] URL:', event.url.toString());
-		console.info(
-			'[Reset Password Action] Search params:',
-			Object.fromEntries(event.url.searchParams.entries())
-		);
 
 		const formData = await event.request.formData();
 		const data = {
@@ -57,8 +43,6 @@ export const actions: Actions = {
 			confirmPassword: formData.get('confirmPassword'),
 			token: formData.get('token')
 		};
-
-		console.info('[Reset Password Action] Form data:', data);
 
 		const result = RESET_PASSWORD_SCHEMA.safeParse(data);
 		if (!result.success) {
@@ -69,7 +53,6 @@ export const actions: Actions = {
 		}
 
 		const token = data.token as string;
-		console.info('[Reset Password Action] Token from form:', token);
 
 		if (!token) {
 			console.info('[Reset Password Action] No token found in form submission');
