@@ -53,11 +53,6 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 		}))
 	}));
 
-	console.log(
-		`[players/[id]] playerDetailedMatches`,
-		JSON.stringify(playerDetailedMatches, null, 2)
-	);
-
 	// Create a teams Map using team names/abbreviations as keys
 	// This is what the MatchCard component expects
 	const teamsMap = new Map<string, any>();

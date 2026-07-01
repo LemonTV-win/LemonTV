@@ -48,8 +48,6 @@
 	const startersCount = $derived(participant?.main?.filter(Boolean).length ?? 0);
 	const subsCount = $derived(participant?.reserve?.filter(Boolean).length ?? 0);
 	const coachesCount = $derived(participant?.coach?.filter(Boolean).length ?? 0);
-
-	console.log('[Slogans] Participant', participant);
 </script>
 
 {#snippet playerLink(player: { name: string; slug: string; nationalities: string[] })}

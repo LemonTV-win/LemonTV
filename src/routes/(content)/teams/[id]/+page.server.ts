@@ -47,7 +47,6 @@ export const load: PageServerLoad = async ({ params, locals: { user } }) => {
 
 	// Get detailed match data for the team
 	const teamDetailedMatches = await getTeamDetailedMatches(team.id);
-	console.log(`[teams/[id]] teamDetailedMatches`, teamDetailedMatches);
 
 	// Transform match data to include team objects
 	const transformedMatches = teamDetailedMatches.map((match) => ({

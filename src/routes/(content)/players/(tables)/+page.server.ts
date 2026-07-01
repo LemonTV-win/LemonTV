@@ -54,16 +54,6 @@ export const load: PageServerLoad = async ({ url }) => {
 	const offset = (page - 1) * pageSize;
 	const limit = pageSize;
 
-	console.log(`[Players] Loading players with conditions:`, {
-		search,
-		nationalities,
-		page,
-		pageSize,
-		sortBy,
-		offset,
-		limit
-	});
-
 	// -- Dynamic Query Conditions --
 	const whereConditions = [
 		search.length > 0 ? like(table.player.name, `%${search}%`) : undefined,
@@ -71,8 +61,6 @@ export const load: PageServerLoad = async ({ url }) => {
 			? inArray(table.player.nationality, nationalities as TCountryCode[])
 			: undefined
 	].filter((x): x is NonNullable<typeof x> => x !== undefined);
-
-	console.log(`[Players] Where conditions:`, whereConditions);
 
 	const orderByConditions = [
 		sortBy === 'name-abc'
@@ -118,16 +106,12 @@ export const load: PageServerLoad = async ({ url }) => {
 		.select({ cnt: sql<number>`count(distinct ${table.player.id})` })
 		.from(table.player);
 
-	console.log(`[Players] Total players:`, totalPlayers.length);
-
 	// -- 1. Get total count with filters applied --
 	const [{ cnt: totalCount }] = await db
 		.select({ cnt: sql<number>`count(distinct ${table.player.id})` })
 		.from(table.player)
 		.leftJoin(table.playerStats, eq(table.player.id, table.playerStats.playerId))
 		.where(and(...whereConditions));
-
-	console.log(`[Players] Total count:`, totalCount);
 
 	// -- 2. Get the sorted and paginated list of player IDs --
 	const playerIdsQuery = await db
