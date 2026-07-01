@@ -32,26 +32,51 @@ endpoint above and set the same `Authorization` header.
 
 ## Tools
 
-| Tool            | Scope     | Purpose                                                           |
-| --------------- | --------- | ----------------------------------------------------------------- |
-| `list_events`   | read      | List tournaments/events (newest first); optional `status` filter. |
-| `get_event`     | read      | Fetch one event by `idOrSlug`.                                    |
-| `create_event`  | **write** | Create a new tournament/event. Returns the new id.                |
-| `list_players`  | read      | List players; optional name/slug `search` + `limit`.              |
-| `get_player`    | read      | Fetch one player by id/slug/name (account PII omitted).           |
-| `create_player` | **write** | Create a player. Returns the new id.                              |
-| `list_teams`    | read      | List teams; optional `region` filter + `limit`.                   |
-| `get_team`      | read      | Fetch one team by id/slug incl. roster (account PII omitted).     |
-| `create_team`   | **write** | Create a team. Returns the new id.                                |
+| Tool                     | Scope     | Purpose                                                                                 |
+| ------------------------ | --------- | --------------------------------------------------------------------------------------- |
+| `list_events`            | read      | List tournaments/events (newest first); optional `status` filter.                       |
+| `get_event`              | read      | Fetch one event by `idOrSlug`, including organizers/links/videos/teams/results/casters. |
+| `draft_event_from_url`   | read      | Fetch a public source URL and return a best-effort event draft plus evidence.           |
+| `create_event`           | **write** | Create a new tournament/event. Returns the new id plus the full created event.          |
+| `update_event`           | **write** | Partially update scalar event fields and return the full updated event.                 |
+| `set_event_websites`     | **write** | Replace all related links/websites for an event.                                        |
+| `add_event_teams`        | **write** | Add/update event participant teams without dropping existing participants.              |
+| `set_event_results`      | **write** | Replace final placements/results for an event.                                          |
+| `add_event_team_players` | **write** | Add event roster players for participant teams.                                         |
+| `set_event_casters`      | **write** | Replace event casters/talent.                                                           |
+| `list_players`           | read      | List players; optional name/slug `search` + `limit`.                                    |
+| `get_player`             | read      | Fetch one player by id/slug/name (account PII omitted).                                 |
+| `create_player`          | **write** | Create a player. Returns the new id.                                                    |
+| `list_teams`             | read      | List teams; optional `region` filter + `limit`.                                         |
+| `get_team`               | read      | Fetch one team by id/slug incl. roster (account PII omitted).                           |
+| `create_team`            | **write** | Create a team. Returns the new id.                                                      |
 
 Read tools strip account PII (`user.email`/`username`/linkage) from output.
 
-`create_event` arguments: `name`, `slug`, `server` (`calabiyau`\|`strinova`),
+`create_event` arguments: `name`, `server` (`calabiyau`\|`strinova`),
 `format` (`lan`\|`online`\|`hybrid`), `region`, `status`
-(`upcoming`\|`live`\|`finished`\|`cancelled`\|`postponed`), `date`
-(`YYYY-MM-DD` or `YYYY-MM-DD/YYYY-MM-DD`), `image` (required — a placeholder URL
-is fine), plus optional `official`, `capacity`, `organizerIds`, `websites`.
-Teams, results, and casters are added separately (admin UI for now).
+(`upcoming`\|`live`\|`finished`\|`cancelled`\|`postponed`), and `date`
+(`YYYY-MM-DD` or `YYYY-MM-DD/YYYY-MM-DD`). Optional fields: `slug` (generated
+from `name` when omitted, with a numeric suffix if needed), `image` (if omitted
+the site shows a branded placeholder; an `https` URL is fetched into LemonTV
+storage), `official`, `capacity`, `organizerIds`, and `websites`.
+`official`/`capacity` also accept common loosely-typed MCP forms such as
+`"true"`/`"false"` and numeric strings. `websites` is normally an array of
+`{ url, label? }`, but the server also tolerates a single URL, newline/comma
+separated URLs, or a JSON-stringified array for less capable clients. Teams, results, and casters are added separately. `create_event` and `update_event`
+return the full event object after writing so clients can verify stored image keys,
+websites, participants, results, and casters immediately.
+
+`set_event_websites` arguments: `idOrSlug` and `websites`. It uses replace-all
+semantics: pass the complete desired list, or an empty array to clear links. Like
+`create_event`, it accepts arrays of `{ url, label? }`, URL strings, a single URL,
+newline/comma-separated URLs, or a JSON-stringified array. The response includes
+the full updated event.
+
+`draft_event_from_url` arguments: `url`. It is read-only: it fetches the public
+source page, extracts title/image/date candidates, infers basic fields where
+possible, and returns a draft plus evidence/warnings. Always review the draft
+before calling `create_event`/`update_event`.
 
 `create_player` arguments: `name` (required), optional `slug`, `nationalities`
 (ISO codes; first is primary), `aliases`, `avatar`, `gameAccounts`
@@ -69,7 +94,7 @@ Teams, results, and casters are added separately (admin UI for now).
 
 ## Example: adding a tournament
 
-A `tools/call` request to create an event:
+A `tools/call` request to create an event (the slug is optional and will be generated from the name if omitted):
 
 ```json
 {
@@ -80,7 +105,6 @@ A `tools/call` request to create an event:
 		"name": "create_event",
 		"arguments": {
 			"name": "Origami Cup 4",
-			"slug": "origami-cup-4",
 			"server": "strinova",
 			"format": "online",
 			"region": "Global",

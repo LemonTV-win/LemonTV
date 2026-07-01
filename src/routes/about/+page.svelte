@@ -253,7 +253,9 @@
 							rel="noopener noreferrer"
 							class="glass-card group flex flex-col items-center gap-2 p-6 transition-all duration-300 hover:scale-105"
 						>
-							<h3 class="flex items-center gap-2 text-xl font-semibold text-blue-400 group-hover:text-blue-300">
+							<h3
+								class="flex items-center gap-2 text-xl font-semibold text-blue-400 group-hover:text-blue-300"
+							>
 								<IconGlobe class="h-5 w-5" />
 								{project.name}
 							</h3>
@@ -264,7 +266,7 @@
 				</div>
 			</section>
 
-			<footer class="mt-8 text-center text-sm text-slate-400">© 2025 LemonTV</footer>
+			<footer class="mt-8 text-center text-sm text-slate-400">© 2025–2026 LemonTV</footer>
 		</div>
 	</div>
 </main>

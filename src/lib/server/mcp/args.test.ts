@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'bun:test';
-import { requireString, requireInt, optionalEnum, requireEnum } from './args';
+import {
+	requireString,
+	requireInt,
+	optionalInt,
+	optionalBoolean,
+	optionalEnum,
+	requireEnum
+} from './args';
 
 describe('requireEnum', () => {
 	const ROLES = ['active', 'substitute', 'coach'] as const;
@@ -35,6 +42,37 @@ describe('requireInt', () => {
 		expect(() => requireInt({ accountId: '' }, 'accountId')).toThrow();
 		expect(() => requireInt({ accountId: NaN }, 'accountId')).toThrow();
 		expect(() => requireInt({ accountId: true }, 'accountId')).toThrow();
+	});
+});
+
+describe('optionalInt', () => {
+	it('returns the default for absent values and accepts numeric strings', () => {
+		expect(optionalInt({}, 'capacity', 0)).toBe(0);
+		expect(optionalInt({ capacity: null }, 'capacity', 8)).toBe(8);
+		expect(optionalInt({ capacity: '24' }, 'capacity', 0)).toBe(24);
+	});
+
+	it('enforces a minimum when provided', () => {
+		expect(optionalInt({ capacity: 0 }, 'capacity', 1, { min: 0 })).toBe(0);
+		expect(() => optionalInt({ capacity: -1 }, 'capacity', 0, { min: 0 })).toThrow('capacity');
+	});
+});
+
+describe('optionalBoolean', () => {
+	it('accepts booleans and common MCP string/number forms', () => {
+		expect(optionalBoolean({ official: true }, 'official')).toBe(true);
+		expect(optionalBoolean({ official: 'true' }, 'official')).toBe(true);
+		expect(optionalBoolean({ official: '1' }, 'official')).toBe(true);
+		expect(optionalBoolean({ official: 1 }, 'official')).toBe(true);
+		expect(optionalBoolean({ official: false }, 'official')).toBe(false);
+		expect(optionalBoolean({ official: 'false' }, 'official')).toBe(false);
+		expect(optionalBoolean({ official: '0' }, 'official')).toBe(false);
+		expect(optionalBoolean({ official: 0 }, 'official')).toBe(false);
+	});
+
+	it('returns the default when absent and rejects ambiguous values', () => {
+		expect(optionalBoolean({}, 'official', true)).toBe(true);
+		expect(() => optionalBoolean({ official: 'definitely' }, 'official')).toThrow('official');
 	});
 });
 
