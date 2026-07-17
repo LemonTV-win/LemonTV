@@ -10,6 +10,18 @@ import * as schema from '$lib/server/db/schema';
 import { sql } from 'drizzle-orm';
 import placeholderAvatar from '$assets/placeholder_avatar.png';
 
+/**
+ * Load a same-origin static asset as a data URI through SvelteKit's fetch,
+ * which serves it internally — the worker cannot reach its own hostname over
+ * the network, and satori needs a resolvable image source.
+ */
+async function loadAssetDataUri(fetchFn: typeof fetch, path: string): Promise<string> {
+	const res = await fetchFn(path);
+	if (!res.ok) throw new Error(`Failed to load asset ${path}: HTTP ${res.status}`);
+	const type = res.headers.get('content-type') ?? 'image/png';
+	return `data:${type};base64,${Buffer.from(await res.arrayBuffer()).toString('base64')}`;
+}
+
 async function loadGoogleFont(font: string, text: string) {
 	const url = `https://fonts.googleapis.com/css2?family=${font}&text=${encodeURIComponent(text)}`;
 	const css = await (await fetch(url)).text();
@@ -115,14 +127,14 @@ export const GET: RequestHandler = async ({ params, url, fetch }) => {
 		// Nationality names from country codes
 		const nationalityNames = (player.nationalities || []).join(', ');
 
-		const bgImage = `${SITE_CANONICAL_HOST}/blurred.jpg`;
+		const bgImage = await loadAssetDataUri(fetch, '/blurred.jpg');
 		const labelTeam = m['content.players.current_teams']
 			? m['content.players.current_teams']({ count: currentTeams.length }, { locale })
 			: 'Team';
 		const labelLatestEvent = m.attended_events(undefined, { locale });
 		const profileLabel = 'Player Profile • LemonTV';
 		const canonicalUrl = `${SITE_CANONICAL_HOST}/players/${player.slug || player.id}`;
-		const logo = `${SITE_CANONICAL_HOST}/favicon-96x96.png`;
+		const logo = await loadAssetDataUri(fetch, '/favicon-96x96.png');
 
 		console.info(`[API][OG][Players] Building markup`);
 		const statBoxStyle =
