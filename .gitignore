@@ -28,3 +28,4 @@ src/lib/paraglide
 
 # SQLite
 *.db
+.dev.vars

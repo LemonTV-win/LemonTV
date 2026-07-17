@@ -2,15 +2,20 @@ import { sequence } from '@sveltejs/kit/hooks';
 import * as auth from '$lib/server/auth.js';
 import type { Handle, ServerInit } from '@sveltejs/kit';
 import { paraglideMiddleware } from '$lib/paraglide/server';
-import { syncAll } from '$lib/server/db/sync';
 import { dev } from '$app/environment';
-import { seed } from '$lib/server/db/seed';
 import { LEMON_PUBLIC_JWK_BASE64 } from '$env/static/private';
 import { db } from '$lib/server/db';
 import { recalculateAllPlayerStats } from '$lib/server/data/stats';
 
 export const init: ServerInit = async () => {
 	if (dev) {
+		// Deferred imports: the seed data modules run top-level DB queries, which
+		// the workerd runtime rejects outside a handler. They must never load in
+		// production.
+		const [{ syncAll }, { seed }] = await Promise.all([
+			import('$lib/server/db/sync'),
+			import('$lib/server/db/seed')
+		]);
 		console.info('[ServerInit] Development environment detected');
 		console.info('[ServerInit] Syncing database enum tables...');
 		await syncAll(db);
