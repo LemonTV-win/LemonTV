@@ -11,9 +11,10 @@ import { sql } from 'drizzle-orm';
 import placeholderAvatar from '$assets/placeholder_avatar.png';
 
 /**
- * Load a same-origin static asset as a data URI through SvelteKit's fetch,
- * which serves it internally — the worker cannot reach its own hostname over
- * the network, and satori needs a resolvable image source.
+ * Load a static asset as a data URI. Static files must come from the ASSETS
+ * binding — SvelteKit's fetch falls through to the network for them, and the
+ * worker cannot reach its own hostname (HTTP 522) — while satori needs a
+ * resolvable image source.
  */
 async function loadAssetDataUri(fetchFn: typeof fetch, path: string): Promise<string> {
 	const res = await fetchFn(path);
@@ -37,7 +38,13 @@ async function loadGoogleFont(font: string, text: string) {
 	throw new Error('failed to load font data');
 }
 
-export const GET: RequestHandler = async ({ params, url, fetch }) => {
+export const GET: RequestHandler = async ({ params, url, fetch, platform }) => {
+	const assetFetch: typeof fetch = platform?.env?.ASSETS
+		? (input, init) =>
+				platform.env.ASSETS.fetch(
+					new Request(new URL(input instanceof Request ? input.url : input, url.origin), init)
+				)
+		: fetch;
 	try {
 		console.info(`[API][OG][Players] Incoming request`, {
 			id: params.id,
@@ -127,14 +134,14 @@ export const GET: RequestHandler = async ({ params, url, fetch }) => {
 		// Nationality names from country codes
 		const nationalityNames = (player.nationalities || []).join(', ');
 
-		const bgImage = await loadAssetDataUri(fetch, '/blurred.jpg');
+		const bgImage = await loadAssetDataUri(assetFetch, '/blurred.jpg');
 		const labelTeam = m['content.players.current_teams']
 			? m['content.players.current_teams']({ count: currentTeams.length }, { locale })
 			: 'Team';
 		const labelLatestEvent = m.attended_events(undefined, { locale });
 		const profileLabel = 'Player Profile • LemonTV';
 		const canonicalUrl = `${SITE_CANONICAL_HOST}/players/${player.slug || player.id}`;
-		const logo = await loadAssetDataUri(fetch, '/favicon-96x96.png');
+		const logo = await loadAssetDataUri(assetFetch, '/favicon-96x96.png');
 
 		console.info(`[API][OG][Players] Building markup`);
 		const statBoxStyle =
