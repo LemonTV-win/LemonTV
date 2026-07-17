@@ -34,7 +34,7 @@
 4. **Format code**: `bun run format` to auto-format all files with Prettier (uses default Prettier settings with Svelte plugin configuration). 【F:package.json†L13】
 5. **Lint & type-check**: `bun run lint` and `bun run check` before committing. ESLint enforces translation usage and Svelte best practices.
 6. **Tests**: `bun run test:unit` for Bun tests; `bun run test:e2e` (Playwright) for browser flows.
-7. **Build & deploy**: `bun run build`; production deploy uses `bun run deploy` which chains checks, DB sync, stats recalculation, and Vercel deploy. 【F:package.json†L12-L83】
+7. **Build & deploy**: `bun run build`; production deploy uses `bun run deploy` which chains checks, DB sync, stats recalculation, and a Cloudflare Workers deploy (`wrangler deploy`). Pushing to `main` also deploys via GitHub Actions. 【F:package.json†L12-L83】【F:.github/workflows/deploy.yml†L1-L36】
 
 ## Coding Guidelines
 
@@ -61,6 +61,8 @@
 
 ## Deployment Notes
 
-- Manual deploy via `bun run deploy` runs checks, rebuilds, pushes schema, syncs data, recalculates player stats, and then deploys to Vercel. Coordinate schema changes carefully and keep `.env` secrets up-to-date. 【F:package.json†L12-L83】【F:README.md†L40-L47】
+- The site runs as a Cloudflare Worker (`wrangler.jsonc`: nodejs_compat, custom domains). Pushing to `main` builds and deploys through GitHub Actions; manual deploy via `bun run deploy` runs checks, rebuilds, pushes schema, syncs data, recalculates player stats, and then runs `wrangler deploy`. Coordinate schema changes carefully and keep `.env` secrets up-to-date. 【F:package.json†L12-L83】【F:.github/workflows/deploy.yml†L1-L36】
+- Server code executes on workerd: no native Node addons, no I/O at module scope (workerd rejects it — dev-only seed/sync modules are dynamically imported for this reason), and password hashing uses `hash-wasm` argon2id. 【F:src/hooks.server.ts†L12-L31】【F:src/lib/server/auth.ts†L190-L206】
+- The daily player-stats recalculation runs from the `recalculate-player-stats` GitHub Actions schedule, which calls `/api/cron/recalculate-player-stats` with `CRON_SECRET`. 【F:.github/workflows/recalculate-player-stats.yml†L1-L19】
 
 Happy hacking! When in doubt, look for existing patterns in `src/lib` and follow their conventions before introducing new abstractions.
