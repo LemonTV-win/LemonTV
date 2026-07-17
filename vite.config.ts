@@ -18,10 +18,11 @@ export default defineConfig({
 		Icons({ compiler: 'svelte' }),
 		devtoolsJson()
 	],
-	optimizeDeps: { exclude: ['@node-rs/argon2'] },
 	build: {
 		target: 'esnext',
-		rollupOptions: { external: ['@node-rs/argon2-wasm32-wasi'] }
+		// Left as a bare import for wrangler, which bundles .wasm as a module —
+		// the form workerd accepts (runtime compilation from bytes is rejected).
+		rollupOptions: { external: ['@phi-ag/argon2/argon2.wasm'] }
 	},
 	server: {
 		port: 23355,

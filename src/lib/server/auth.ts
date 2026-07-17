@@ -36,7 +36,7 @@ import { sha256 } from '@oslojs/crypto/sha2';
 import { encodeBase64url, encodeHexLowerCase } from '@oslojs/encoding';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { argon2id, argon2Verify } from 'hash-wasm';
+import type Argon2 from '@phi-ag/argon2';
 import { dev } from '$app/environment';
 import { Resend } from 'resend';
 import { RESEND_API_KEY } from '$env/static/private';
@@ -187,21 +187,43 @@ export function deleteSessionTokenCookie(event: RequestEvent) {
 	});
 }
 
+// Deferred, per-runtime argon2 setup: workerd forbids compiling WASM from
+// bytes, so the worker path imports the .wasm as a module; the Node path
+// covers `vite dev`. The imports stay dynamic because Node cannot load .wasm
+// modules during SvelteKit's build analysis.
+let argon2Instance: Promise<Argon2> | undefined;
+
+function getArgon2(): Promise<Argon2> {
+	argon2Instance ??= (async () => {
+		if (dev) {
+			const { default: initialize } = await import('@phi-ag/argon2/node');
+			return initialize();
+		}
+		const [{ default: Argon2 }, { default: wasm }] = await Promise.all([
+			import('@phi-ag/argon2'),
+			import('@phi-ag/argon2/argon2.wasm')
+		]);
+		return new Argon2(await WebAssembly.instantiate(wasm));
+	})();
+	return argon2Instance;
+}
+
+const ARGON2_OPTIONS = {
+	// recommended minimum parameters
+	memoryCost: 19456,
+	timeCost: 2,
+	outputLength: 32,
+	parallelism: 1
+};
+
 export async function hashPassword(password: string) {
-	return argon2id({
-		password,
-		salt: crypto.getRandomValues(new Uint8Array(16)),
-		// recommended minimum parameters
-		memorySize: 19456,
-		iterations: 2,
-		hashLength: 32,
-		parallelism: 1,
-		outputType: 'encoded'
-	});
+	const argon2 = await getArgon2();
+	return argon2.hash(password, ARGON2_OPTIONS).encoded;
 }
 
 export async function verifyPassword(password: string, passwordHash: string) {
-	return argon2Verify({ password, hash: passwordHash });
+	const argon2 = await getArgon2();
+	return argon2.tryVerify(passwordHash, password).success;
 }
 
 // Password Reset Functions
