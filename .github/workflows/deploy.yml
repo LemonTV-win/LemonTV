@@ -18,6 +18,8 @@ jobs:
       - run: bun install --frozen-lockfile
       - run: bun run build
         env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_AUTH_TOKEN: ${{ secrets.DATABASE_AUTH_TOKEN }}
           LEMON_PUBLIC_JWK_BASE64: ${{ secrets.LEMON_PUBLIC_JWK_BASE64 }}
           LEMON_PRIVATE_JWK_BASE64: ${{ secrets.LEMON_PRIVATE_JWK_BASE64 }}
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
