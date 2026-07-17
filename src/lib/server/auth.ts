@@ -36,7 +36,7 @@ import { sha256 } from '@oslojs/crypto/sha2';
 import { encodeBase64url, encodeHexLowerCase } from '@oslojs/encoding';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { hash, verify } from '@node-rs/argon2';
+import { argon2id, argon2Verify } from 'hash-wasm';
 import { dev } from '$app/environment';
 import { Resend } from 'resend';
 import { RESEND_API_KEY } from '$env/static/private';
@@ -188,17 +188,20 @@ export function deleteSessionTokenCookie(event: RequestEvent) {
 }
 
 export async function hashPassword(password: string) {
-	return hash(password, {
+	return argon2id({
+		password,
+		salt: crypto.getRandomValues(new Uint8Array(16)),
 		// recommended minimum parameters
-		memoryCost: 19456,
-		timeCost: 2,
-		outputLen: 32,
-		parallelism: 1
+		memorySize: 19456,
+		iterations: 2,
+		hashLength: 32,
+		parallelism: 1,
+		outputType: 'encoded'
 	});
 }
 
 export async function verifyPassword(password: string, passwordHash: string) {
-	return verify(passwordHash, password);
+	return argon2Verify({ password, hash: passwordHash });
 }
 
 // Password Reset Functions

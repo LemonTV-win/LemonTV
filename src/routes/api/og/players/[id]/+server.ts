@@ -1,4 +1,3 @@
-import { ImageResponse } from '@vercel/og';
 import type { RequestHandler } from './$types';
 import { SITE_CANONICAL_HOST } from '$lib/consts';
 import { getPlayer, getPlayerStats } from '$lib/server/data/players';
@@ -10,7 +9,6 @@ import { db } from '$lib/server/db';
 import * as schema from '$lib/server/db/schema';
 import { sql } from 'drizzle-orm';
 import placeholderAvatar from '$assets/placeholder_avatar.png';
-export const config = { runtime: 'nodejs22.x' };
 
 async function loadGoogleFont(font: string, text: string) {
 	const url = `https://fonts.googleapis.com/css2?family=${font}&text=${encodeURIComponent(text)}`;
@@ -27,7 +25,7 @@ async function loadGoogleFont(font: string, text: string) {
 	throw new Error('failed to load font data');
 }
 
-export const GET: RequestHandler = async ({ params, url }) => {
+export const GET: RequestHandler = async ({ params, url, fetch }) => {
 	try {
 		console.info(`[API][OG][Players] Incoming request`, {
 			id: params.id,
@@ -94,15 +92,20 @@ export const GET: RequestHandler = async ({ params, url }) => {
 		}
 
 		console.info(`[API][OG][Players] Processing avatar`);
-		let avatarURL: string = placeholderAvatar; // fallback
+		// Vite resolves the asset import to a root-relative path; satori and
+		// fetch() both need an absolute URL.
+		let avatarURL: string = new URL(placeholderAvatar, url.origin).href; // fallback
 		if (player.avatar) {
 			const processed = await processImageURL(player.avatar);
 			if (processed) avatarURL = processed;
 		}
 
 		let avatarImageBase64: string | null = null;
+		let avatarImageType = 'image/png';
 		try {
 			const fetchedAvatarImage = await fetch(avatarURL);
+			if (!fetchedAvatarImage.ok) throw new Error(`HTTP ${fetchedAvatarImage.status}`);
+			avatarImageType = fetchedAvatarImage.headers.get('content-type') ?? avatarImageType;
 			const avatarImage = await fetchedAvatarImage.blob();
 			avatarImageBase64 = Buffer.from(await avatarImage.arrayBuffer()).toString('base64');
 		} catch (error) {
@@ -169,7 +172,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
 							>
 								<img
 									src="${avatarImageBase64
-										? `data:image/png;base64,${avatarImageBase64}`
+										? `data:${avatarImageType};base64,${avatarImageBase64}`
 										: avatarURL}"
 									width="240"
 									height="240"
@@ -261,8 +264,17 @@ export const GET: RequestHandler = async ({ params, url }) => {
 			</div>
 		`;
 
+		// Deferred import: workers-og pulls in a .wasm ES module, which only the
+		// workerd runtime can load at module scope.
+		const { ImageResponse } = await import('workers-og');
+
 		console.info(`[API][OG][Players] Loading fonts`);
-		const textForFont = `${player.name} Player Profile LemonTV ${m.wins(undefined, { locale })} ${m.win_rate(undefined, { locale })} ${m.kd_ratio(undefined, { locale })} ${m.rating(undefined, { locale })}`;
+		// Every string the markup renders must be present here: the fonts are
+		// fetched as glyph subsets, and characters outside the subset render as
+		// tofu boxes.
+		const asciiGlyphs =
+			'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,:;/#%()-–—•?';
+		const textForFont = `${player.name} ${currentTeamLabel} ${latestEventName ?? ''} ${labelTeam} ${labelLatestEvent} ${nationalityNames} ${canonicalUrl} ${profileLabel} ${asciiGlyphs} ${m.wins(undefined, { locale })} ${m.win_rate(undefined, { locale })} ${m.kd_ratio(undefined, { locale })} ${m.rating(undefined, { locale })}`;
 		const res = new ImageResponse(markup as any, {
 			width: 1200,
 			height: 630,

@@ -1,7 +1,5 @@
 import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import https from 'node:https';
-import dns from 'node:dns';
 import { isPrivateIp } from './storage-ssrf';
 import {
 	S3_BUCKET_NAME,
@@ -45,50 +43,6 @@ const INGEST_TYPE_EXT: Record<string, string> = {
 	'image/avif': 'avif'
 };
 
-/**
- * Custom DNS lookup that resolves the host, REJECTS if ANY resolved address is
- * non-public, and otherwise hands a validated address to the socket. Because the
- * value the socket connects to IS the value we validated (one atomic resolve),
- * there is no check-then-connect window — this defeats DNS rebinding, not just a
- * literal private hostname.
- */
-function pinnedPublicLookup(
-	hostname: string,
-	options: dns.LookupOptions,
-	callback: (
-		err: NodeJS.ErrnoException | null,
-		address: string | dns.LookupAddress[],
-		family?: number
-	) => void
-): void {
-	dns.lookup(hostname, { all: true, family: options.family ?? 0 }, (err, addresses) => {
-		if (err) return callback(err, '', 0);
-		if (addresses.length === 0) {
-			return callback(
-				new Error(`Could not resolve host: ${hostname}`) as NodeJS.ErrnoException,
-				'',
-				0
-			);
-		}
-		for (const a of addresses) {
-			if (isPrivateIp(a.address)) {
-				return callback(
-					new Error(`Host ${hostname} resolves to a non-public address`) as NodeJS.ErrnoException,
-					'',
-					0
-				);
-			}
-		}
-		// Node may call lookup with `all` (Happy Eyeballs / autoSelectFamily on
-		// Node 22) and then expects the FULL array; otherwise a single address.
-		if (options.all) {
-			callback(null, addresses);
-		} else {
-			callback(null, addresses[0].address, addresses[0].family);
-		}
-	});
-}
-
 interface FetchedImage {
 	buffer: Buffer;
 	type: string;
@@ -96,51 +50,61 @@ interface FetchedImage {
 }
 
 /**
- * GET an https image with all SSRF/DoS guards applied: the connection is pinned
- * to a validated public IP (no rebinding), redirects are refused, the
+ * GET an https image with SSRF/DoS guards applied: literal-IP hosts must be
+ * public (the workerd runtime already refuses connections into private and
+ * link-local networks, covering DNS rebinding), redirects are refused, the
  * content-type must be an allowed image, and the size cap is enforced from
- * Content-Length AND while streaming (so the body is never fully buffered first).
+ * Content-Length AND while streaming (so the body is never fully buffered
+ * first).
  */
-function fetchGuardedImage(parsed: URL): Promise<FetchedImage> {
-	return new Promise<FetchedImage>((resolve, reject) => {
-		const req = https.get(
-			parsed,
-			{ lookup: pinnedPublicLookup, servername: parsed.hostname, timeout: 15_000 },
-			(res) => {
-				const status = res.statusCode ?? 0;
-				const failWith = (msg: string) => {
-					res.destroy();
-					reject(new Error(msg));
-				};
-				if (status >= 300 && status < 400)
-					return failWith('Image URL redirected; redirects are not allowed');
-				if (status !== 200) return failWith(`Failed to fetch image (HTTP ${status})`);
+async function fetchGuardedImage(parsed: URL): Promise<FetchedImage> {
+	const literalHost = parsed.hostname.replace(/^\[|\]$/g, '');
+	if (isPrivateIp(literalHost)) {
+		throw new Error(`Host ${parsed.hostname} is a non-public address`);
+	}
 
-				const type = String(res.headers['content-type'] ?? '')
-					.split(';')[0]
-					.trim()
-					.toLowerCase();
-				const ext = INGEST_TYPE_EXT[type];
-				if (!ext) return failWith(`Unsupported image content-type: ${type || 'unknown'}`);
-
-				const tooLarge = `Image too large (max ${MAX_INGEST_BYTES / (1024 * 1024)} MB)`;
-				const declared = Number(res.headers['content-length']);
-				if (Number.isFinite(declared) && declared > MAX_INGEST_BYTES) return failWith(tooLarge);
-
-				const chunks: Buffer[] = [];
-				let total = 0;
-				res.on('data', (chunk: Buffer) => {
-					total += chunk.length;
-					if (total > MAX_INGEST_BYTES) return failWith(tooLarge);
-					chunks.push(chunk);
-				});
-				res.on('end', () => resolve({ buffer: Buffer.concat(chunks), type, ext }));
-				res.on('error', reject);
-			}
-		);
-		req.on('timeout', () => req.destroy(new Error('Image fetch timed out')));
-		req.on('error', reject);
+	const res = await fetch(parsed, {
+		redirect: 'manual',
+		signal: AbortSignal.timeout(15_000)
 	});
+	if (res.status >= 300 && res.status < 400) {
+		res.body?.cancel();
+		throw new Error('Image URL redirected; redirects are not allowed');
+	}
+	if (res.status !== 200) {
+		res.body?.cancel();
+		throw new Error(`Failed to fetch image (HTTP ${res.status})`);
+	}
+
+	const type = (res.headers.get('content-type') ?? '').split(';')[0].trim().toLowerCase();
+	const ext = INGEST_TYPE_EXT[type];
+	if (!ext) {
+		res.body?.cancel();
+		throw new Error(`Unsupported image content-type: ${type || 'unknown'}`);
+	}
+
+	const tooLarge = `Image too large (max ${MAX_INGEST_BYTES / (1024 * 1024)} MB)`;
+	const declared = Number(res.headers.get('content-length'));
+	if (Number.isFinite(declared) && declared > MAX_INGEST_BYTES) {
+		res.body?.cancel();
+		throw new Error(tooLarge);
+	}
+
+	const chunks: Uint8Array[] = [];
+	let total = 0;
+	const reader = res.body?.getReader();
+	if (!reader) throw new Error('Image response has no body');
+	for (;;) {
+		const { done, value } = await reader.read();
+		if (done) break;
+		total += value.length;
+		if (total > MAX_INGEST_BYTES) {
+			reader.cancel();
+			throw new Error(tooLarge);
+		}
+		chunks.push(value);
+	}
+	return { buffer: Buffer.concat(chunks.map((c) => Buffer.from(c))), type, ext };
 }
 
 /**
